@@ -3,38 +3,74 @@
 <head>
 	<title>Simva Login</title>
 	<link href="/css/style.css" rel="stylesheet" type="text/css">
+	<link href="/css/loader.css" rel="stylesheet" type="text/css">
 	<script type="text/javascript" src="/jquery.js"></script>
+	<script type="text/javascript" src="/utils.js"></script>
 	<script type="text/javascript">
 		var apiurl = "<%= config.simva.url %>";
+		var jwt = "<%= user.jwt %>";
+		var roller = '<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>';
 
 		$(document).ready(function() {
-			$("#login_form").on('submit', function(event){
+			$("#new_study_form").on('submit', function(event){
 				event.preventDefault();
-				login($("#login_username").val(), $("#login_password").val(), function(error, result){
+				let form = Utils.getFormData($("#new_study_form"));
+
+				addStudy(form.name, function(error, result){
 					if(error && error.responseJSON){
 						$("#error").text(error.responseJSON.message);
-					};
+					}else{
+						toggleAddForm();
+						getStudies(function(error, result){
+							if(!error){
+								paintStudies(result);
+							}
+						});
+					}
 				});
 
 				return false;
 			});
+
+			getStudies(function(error, result){
+				if(!error){
+					paintStudies(result);
+				}
+			});
 		});
 
-		let getStudies = function(username, password, callback){
+		let toggleAddForm = function(){
+			$('#new_study').toggleClass('shown');
+		}
 
-			let body = { username: username, password: password }
+		let getStudies = function(callback){
+			$('#studies_list').html(roller);
+			Utils.get(apiurl + '/studies', callback, jwt);
+		}
 
-			$.ajax({
-				type: 'POST',
-				url: apiurl + '/users/login',
-				data: JSON.stringify(body),
-				contentType: 'application/json',
-				dataType: 'json',
-				success: function(data){
-					callback(null, data);
-				},
-				error: callback
-			});
+		let addStudy = function(name, callback){
+			let body = { name: name };
+			Utils.post(apiurl + '/studies', body, callback, jwt);
+		}
+
+		let paintStudies = function(studies){
+			$('#studies_list').text('');
+			if(studies.length > 0){
+				for (var i = 0; i < studies.length; i++) {
+					$('#studies_list').append(toCard(studies[i]));
+				}
+			}else{
+				$('#studies_list').text('You have not studies jet. Create one using the bottom right (+) button.');
+			}
+		}
+
+		let toCard = function(study){
+			return '<a href="test"><div class="selectable card third">'
+				+ '<h1>Study: ' + study.name + '</h1>'
+				+ '<p><strong>Groups:</strong> ' + study.groups.length + '</p>'
+				+ '<p><strong>Tests:</strong> ' + study.tests.length + '</p>'
+				+ '<p><strong>owners:</strong> ' + study.owners.length + '</p>'
+				+ '</div></a>';
 		}
 	</script>
 </head>
@@ -59,40 +95,21 @@
 
 	<div class="content">
 		<h1>Studies</h1>
-		<a href="test"><div class="selectable card third">
-			<h1>Study: name</h1>
-			<p><strong>Groups:</strong> 1</p>
-			<p><strong>Tests:</strong> 1</p>
-			<p><strong>Groups:</strong> 1</p>
-		</div></a>
-
-		<a href="test"><div class="selectable card third">
-			<h1>Study: name</h1>
-			<p><strong>Groups:</strong> 1</p>
-			<p><strong>Tests:</strong> 1</p>
-			<p><strong>Groups:</strong> 1</p>
-		</div></a>
-
-		<a href="test"><div class="selectable card third">
-			<h1>Study: name</h1>
-			<p><strong>Groups:</strong> 1</p>
-			<p><strong>Tests:</strong> 1</p>
-			<p><strong>Groups:</strong> 1</p>
-		</div></a>
-
-		<a href="test"><div class="selectable card third">
-			<h1>Study: name</h1>
-			<p><strong>Groups:</strong> 1</p>
-			<p><strong>Tests:</strong> 1</p>
-			<p><strong>Groups:</strong> 1</p>
-		</div></a>
-
-		<a href="test"><div class="selectable card third">
-			<h1>Study: name</h1>
-			<p><strong>Groups:</strong> 1</p>
-			<p><strong>Tests:</strong> 1</p>
-			<p><strong>Groups:</strong> 1</p>
-		</div></a>
+		<div id="studies_list">
+			<div style="width: 100%; text-align: center; padding: 200px;">
+				<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+			</div>
+		</div>
+		<div id="new_study" class="new_element">
+			<div class="form">
+				<h1>Add new</h1>
+				<form id="new_study_form">
+					<input type="text" name="name" placeholder="Study name">
+					<input type="submit" value="Submit">
+				</form>
+			</div>
+		</div>
+		<a unselectable="on" class="addbutton" onclick="toggleAddForm()">+</a>
 	</div>
 </body>
 </html>

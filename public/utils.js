@@ -10,13 +10,19 @@ var Utils = {
 	    return indexed_array;
 	},
 
-	post: function(url, body, callback){
+	post: function(url, body, callback, jwt){
 		$.ajax({
 			type: 'POST',
 			url: url,
 			data: JSON.stringify(body),
 			contentType: 'application/json',
 			dataType: 'json',
+			cache: false,
+			beforeSend: function (xhr) {
+				if(jwt){
+					xhr.setRequestHeader("Authorization", "Bearer " + jwt);
+				}
+			},
 			success: function(data){
 				callback(null, data);
 			},
@@ -24,12 +30,19 @@ var Utils = {
 		});
 	},
 
-	get: function(url, callback){
+	get: function(url, callback, jwt){
+
 		$.ajax({
 			type: 'GET',
 			url: url,
 			contentType: 'application/json',
 			dataType: 'json',
+			cache: false,
+			beforeSend: function (xhr) {
+				if(jwt){
+					xhr.setRequestHeader("Authorization", "Bearer " + jwt);
+				}
+			},
 			success: function(data){
 				callback(null, data);
 			},
