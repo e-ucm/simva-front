@@ -17,7 +17,7 @@ input[type="time"],
 input[type="number"],
 select{margin:4px 10px 8px 0;padding:6px;font-size:15px; border: 1px solid black;}
 input[type="submit"],
-input[type="button"]{width:auto;border:0;padding:6px;background:#F6D44E;font-size:15px;color:#fff;cursor:pointer;}
+input[type="button"]{width:auto;border:0;padding:6px;background:#f0913f;font-size:15px;color:#fff;cursor:pointer;}
 input[type="submit"].orange,
 input[type="button"].orange{border:1px solid #0B617D;background:#0B617D}
 input[type="submit"].violet,
