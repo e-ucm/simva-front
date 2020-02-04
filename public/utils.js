@@ -30,6 +30,26 @@ var Utils = {
 		});
 	},
 
+	put: function(url, body, callback, jwt){
+		$.ajax({
+			type: 'PUT',
+			url: url,
+			data: JSON.stringify(body),
+			contentType: 'application/json',
+			dataType: 'json',
+			cache: false,
+			beforeSend: function (xhr) {
+				if(jwt){
+					xhr.setRequestHeader("Authorization", "Bearer " + jwt);
+				}
+			},
+			success: function(data){
+				callback(null, data);
+			},
+			error: callback
+		});
+	},
+
 	get: function(url, callback, jwt){
 
 		$.ajax({
