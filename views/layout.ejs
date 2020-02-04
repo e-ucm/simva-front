@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Simva - Studies</title>
+	<title>Simva - A Simple Validator</title>
 	<link href="/css/style.css" rel="stylesheet" type="text/css">
 	<link href="/css/loader.css" rel="stylesheet" type="text/css">
 	<script type="text/javascript" src="/jquery.js"></script>
@@ -13,6 +13,14 @@
 		Simva.setJWT("<%= user.jwt %>");
 		Simva.setAPIURL("<%= config.simva.url %>");
 		var roller = '<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>';
+
+		$(document).ready(function() {
+			$(".floater").on('click', function(event){
+				if (event.target !== this)
+    				return;
+				$(this).parent().toggleClass('shown');
+			});
+		});
 	</script>
 </head>
 <body>
