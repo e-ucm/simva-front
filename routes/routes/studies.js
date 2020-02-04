@@ -7,5 +7,9 @@ module.exports = function(auth, config){
     res.render('studies_list', { config: config, user: req.session.user });
   });
 
+  router.get('/:studyid', auth, function(req, res, next) {
+    res.render('study_view', { config: config, user: req.session.user, studyid: req.params['studyid'] });
+  });
+
   return router;
 }

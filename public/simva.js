@@ -21,6 +21,19 @@ var Simva = {
 		Utils.post(this.apiurl + '/users/', body, callback);
 	},
 
+	// GROUPS
+	
+	getGroups: function(callback){
+		Utils.get(this.apiurl + '/groups', callback, this.jwt);
+	},
+
+	addGroup: function(name, callback){
+		let body = { name: name };
+		Utils.post(this.apiurl + '/groups', body, callback, this.jwt);
+	},
+
+	// STUDIES
+
 	getStudies: function(callback){
 		Utils.get(this.apiurl + '/studies', callback, this.jwt);
 	},

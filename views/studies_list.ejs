@@ -49,7 +49,7 @@
 	}
 
 	let toCard = function(study){
-		return '<a href="test"><div class="selectable card third">'
+		return '<a href="/studies/' + study._id + '"><div class="selectable card third">'
 			+ '<h1>Study: ' + study.name + '</h1>'
 			+ '<p><strong>Groups:</strong> ' + study.groups.length + '</p>'
 			+ '<p><strong>Tests:</strong> ' + study.tests.length + '</p>'

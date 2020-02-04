@@ -40,6 +40,7 @@ router.get('/', auth(0), function(req, res, next) {
 app.use('/', router);
 app.use('/users', require('./routes/users.js')(auth(1), config));
 app.use('/studies', require('./routes/studies.js')(auth(1), config));
+app.use('/groups', require('./routes/groups.js')(auth(1), config));
 //app.use('/activities', require('./activities.js')(auth(1)));
 
 // catch 404

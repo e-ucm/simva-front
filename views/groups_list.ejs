@@ -1,0 +1,74 @@
+<%# views/groups_list.ejs %>
+ 
+<% extend('layout') %>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("#new_group_form").on('submit', function(event){
+			event.preventDefault();
+			let form = Utils.getFormData($("#new_group_form"));
+
+			Simva.addGroup(form.name, function(error, result){
+				if(error && error.responseJSON){
+					$("#error").text(error.responseJSON.message);
+				}else{
+					toggleAddForm();
+					$('#groups_list').html(roller);
+					Simva.getGroups(function(error, result){
+						if(!error){
+							paintStudies(result);
+						}
+					});
+				}
+			});
+
+			return false;
+		});
+
+		$('#groups_list').html(roller);
+		Simva.getGroups(function(error, result){
+			if(!error){
+				paintGroups(result);
+			}
+		});
+	});
+
+	let toggleAddForm = function(){
+		$('#new_group').toggleClass('shown');
+	}
+
+	let paintGroups = function(studies){
+		$('#groups_list').text('');
+		if(studies.length > 0){
+			for (var i = 0; i < studies.length; i++) {
+				$('#groups_list').append(toCard(studies[i]));
+			}
+		}else{
+			$('#groups_list').text('You have not groups jet. Create one using the bottom right (+) button.');
+		}
+	}
+
+	let toCard = function(group){
+		return '<a href="/groups/' + group._id + '"><div class="selectable card third">'
+			+ '<h1>Group: ' + group.name + '</h1>'
+			+ '<p><strong>Participants:</strong> ' + group.participants.length + '</p>'
+			+ '<p><strong>Owners:</strong> ' + group.owners.length + '</p>'
+			+ '</div></a>';
+	}
+</script>
+<h1>Groups</h1>
+<div id="groups_list">
+	<div style="width: 100%; text-align: center; padding: 200px;">
+		<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+	</div>
+</div>
+<div id="new_group" class="new_element">
+	<div class="form">
+		<h1>Add new</h1>
+		<form id="new_group_form">
+			<input type="text" name="name" placeholder="Group name">
+			<input type="submit" value="Submit">
+		</form>
+	</div>
+</div>
+<a unselectable="on" class="addbutton" onclick="toggleAddForm()">+</a>

@@ -1,0 +1,130 @@
+<%# views/study_view.ejs %>
+ 
+<% extend('layout') %>
+
+<!--<div id="roller" style="width: 100%; text-align: center; padding: 200px;">
+	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+</div>-->
+<div class="n">
+	<h1>Study: <span id="study_name"></span></h1>
+	<div class="card" id="study">
+		<div class="left">
+			<div class="graybox allocator default">
+				<h2>Allocator</h2>
+					<p class="subtitle italic">Type: <span id="allocator_type">default</span></p>
+					<p class="subtitle justified">This allocator automatically assigns upcoming participants to the first test available.</p>
+					<table id="allocator_participants" class="allocations">
+						<tr>
+							<th>Participant</th>
+							<th>Test</th>
+						</tr>
+						<tr>
+							<td>student1</td>
+							<td>
+								<select>
+									<option value="1">test 1</option>
+									<option value="1">test 2</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>student1</td>
+							<td>
+								<select>
+									<option value="1">test 1</option>
+									<option value="1">test 2</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>student1</td>
+							<td>
+								<select>
+									<option value="1">test 1</option>
+									<option value="1">test 2</option>
+								</select>
+							</td>
+						</tr>
+					</table>
+					<input class="violet" type="button" value="Add Allocation">
+				</div>
+
+			<div class="graybox groups">
+				<h2>Groups</h2>
+				<p></p>
+				<table id="allocator_participants" class="allocations">
+						<tr>
+							<td>group1</td>
+							<td>
+								<input type="button" value="Remove">
+							</td>
+						</tr>
+						<tr>
+							<td>group2</td>
+							<td>
+								<input type="button" value="Remove">
+							</td>
+						</tr>
+						<tr>
+							<td>group3</td>
+							<td>
+								<input type="button" value="Remove">
+							</td>
+						</tr>
+					</table>
+				<input class="violet" type="button" value="Add Allocation">
+			</div>
+		</div>
+		<div class="center">
+			<h2>Tests</h2>
+			<div>
+				
+			</div>
+		</div>
+	</div>
+	<div id="new_study" class="new_element">
+		<div class="form">
+			<h1>Add new</h1>
+			<form id="new_study_form">
+				<input type="text" name="name" placeholder="Study name">
+				<input type="submit" value="Submit">
+			</form>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("#new_study_form").on('submit', function(event){
+			event.preventDefault();
+			let form = Utils.getFormData($("#new_study_form"));
+
+			Simva.addStudy(form.name, function(error, result){
+				if(error && error.responseJSON){
+					$("#error").text(error.responseJSON.message);
+				}else{
+					toggleAddForm();
+					$('#studies_list').html(roller);
+					Simva.getStudies(function(error, result){
+						if(!error){
+							paintStudies(result);
+						}
+					});
+				}
+			});
+
+			return false;
+		});
+
+		$('#studies_list').html(roller);
+		Simva.getStudies(function(error, result){
+			if(!error){
+				paintStudies(result);
+			}
+		});
+	});
+
+	let toggleAddForm = function(){
+		$('#new_study').toggleClass('shown');
+	}
+</script>

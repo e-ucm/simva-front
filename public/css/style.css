@@ -78,7 +78,7 @@ input[type="button"].black{border:1px solid #2b2e31;background:#2b2e31}
 	padding: 60px 10px 10px 185px; 
 }
 
-.content .card { padding: 10px; background-color: white; box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3); margin-bottom: 10px; margin-right: 5px;}
+.content .card { padding: 10px; background-color: white; box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3); margin-bottom: 10px; margin-right: 5px; overflow: hidden;}
 .content .card.third { min-width: 370px; width: 32%; display: inline-block;}
 
 .content .selectable { background-color: #c1c1c1; color: black; transition: all 0.2s;}
@@ -125,6 +125,24 @@ input[type="button"].black{border:1px solid #2b2e31;background:#2b2e31}
 	box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.3);
 }
 .content .new_element form input{width:100%}
+
+.content .left {float: left;}
+.content .left .graybox { background-color: lightgray; padding: 10px; margin-right: 10px; width: 200px; margin-bottom: 10px; }
+.content .left .graybox h2 { text-align: center;}
+.content .left .allocator .subtitle { text-align: center; font-size: 12px; padding-top: 0px; margin-top: 0px; }
+.content .left .allocator .subtitle.italic { font-style: italic; }
+.content .left .allocator .subtitle.justified { text-align: justify; padding: 0px 0px 10px 0px; }
+
+.content .left .groups table,
+.content .left .allocator.default .allocations {width: 100% }
+.content .left .groups table td,
+.content .left .allocator.default .allocations td { width: 50%; }
+.content .left .groups table td select,
+.content .left .allocator.default .allocations td select {width: 100%}
+.content .left .groups table td input[type="button"],
+.content .left .allocator.default .allocations td input[type="button"] {width: 100%; margin-top: 0px; }
+.content .left .groups input[type="button"], 
+.content .left .allocator input[type="button"] { width: 100%; margin-top: 10px;} 
 
 /*
 .menu { background-color: #332d26;color: white; width: 200px; height: 100%; position: fixed; top: 50px; padding: 10px;}
