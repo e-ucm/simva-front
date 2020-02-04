@@ -1,0 +1,354 @@
+<%# views/group_view.ejs %>
+ 
+<% extend('layout') %>
+
+<!--<div id="roller" style="width: 100%; text-align: center; padding: 200px;">
+	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+</div>-->
+<div>
+	<h1>Group: <span id="group_name"></span></h1>
+	<div class="left">
+		<div class="graybox owners">
+			<h2>Owners</h2>
+			<p></p>
+			<table id="owners">
+			</table>
+			<input class="violet" type="button" value="Add owner"  onclick="toggleAddForm('add_owner')">
+		</div>
+	</div>
+	<div class="card" id="study">
+		<div class="top">
+			<h2>Participants</h2>
+			<input class="violet" type="button" value="Add Participants" onclick="toggleAddForm('add_participant')">
+		</div>
+		
+		<div class="participants" id="participants_list">
+			<table id="participants">
+			</table>
+		</div>
+	</div>
+	<div id="add_owner" class="new_element floating">
+		<div class="floater">
+			<div class="form">
+				<div id="existing_owner_tab" class="subform selected">
+					<h2>Add owner</h2>
+					<form id="existing_owner_form">
+						<input type="text" name="name" placeholder="Owner username" required>
+						<input type="submit" value="Add">
+						<span class="error"></span>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="add_participant" class="new_element floating">
+		<div class="floater">
+			<div class="form">
+				<div class="tabs">
+					<span class="tab selected" onclick="changeTab(this, 'add_participant','existing_participant_tab')">Add existing</span>
+					<span class="tab" onclick="changeTab(this, 'add_participant','new_participant_tab')">Add new</span>
+					<span class="tab" onclick="changeTab(this, 'add_participant','batch_participant_tab')">Add batch</span>
+				</div>
+				<div id="existing_participant_tab" class="subform selected">
+					<form id="existing_participant_form">
+						<input type="text" name="name" placeholder="Participant username" required>
+						<input type="submit" value="Add">
+						<span class="error"></span>
+					</form>
+				</div>
+				<div id="new_participant_tab" class="subform">
+					<form id="new_participant_form">
+						<input type="text" name="username" placeholder="Username" value="" required>
+						<input type="email" name="email" placeholder="email@example.com" value="" required>
+						<input type="password" name="password" placeholder="Password" required>
+						<div class="role_selector">
+							<input id="teacher_role" type="radio" name="role" value="teacher"><label for="teacher_role">Teacher</label>
+							<input id="student_role" type="radio" name="role" value="student" checked><label for="student_role">Student</label>
+						</div>
+						<input type="submit" value="Add Batch">
+						<span class="error"></span>
+					</form>
+				</div>
+				<div id="batch_participant_tab" class="subform">
+					<form id="batch_participant_form">
+						<p>How many?</p>
+						<input type="number" step="1" min='1' max="100" name="amount" value="1">
+						<p>Participants will be added with random usernames created using: </p>
+						<select name="algorithm">
+							<option value="letters">Only letters</option>
+							<option value="alphanumeric">Letters and numbers</option>
+						</select>
+						<p>And a length of: </p>
+						<input type="number" step="1" min='4' max="10" name="length" value="4">
+						<input type="submit" value="Add batch">
+						<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+						<span class="error"></span>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	let group = {};
+	$(document).ready(function() {
+		$("#existing_owner_form").on('submit', function(event){
+			event.preventDefault();
+			let form = Utils.getFormData($("#existing_owner_form"));
+			let errorbox = $(this).find('.error');
+
+			for (var i = 0; i < group.owners.length; i++) {
+				if(group.owners[i] == form.name){
+					errorbox.text('The owner is already in the group.');
+					return false;
+				}
+			}
+
+			group.owners.push(form.name);
+
+			Simva.updateGroup(group, function(error, result){
+				reloadGroup();
+
+				if(error && error.responseJSON){
+					errorbox.text(error.responseJSON.message);
+				}else{
+					toggleAddForm('add_owner');
+				}
+			});
+
+			return false;
+		});
+
+		$("#existing_participant_form").on('submit', function(event){
+			event.preventDefault();
+			let form = Utils.getFormData($("#existing_participant_form"));
+			let errorbox = $(this).find('.error');
+
+			for (var i = 0; i < group.participants.length; i++) {
+				if(group.participants[i] == form.name){
+					errorbox.text('The participant is already in the group.');
+					return false;
+				}
+			}
+
+			group.participants.push(form.name);
+
+			Simva.updateGroup(group, function(error, result){
+				reloadGroup();
+
+				if(error && error.responseJSON){
+					errorbox.text(error.responseJSON.message);
+				}else{
+					toggleAddForm('add_participant');
+				}
+			});
+
+			return false;
+		});
+
+		$("#new_participant_form").on('submit', function(event){
+			event.preventDefault();
+			let form = Utils.getFormData($("#new_participant_form"));
+			let errorbox = $(this).find('.error');
+
+			Simva.register(form.username, form.email, form.password, form.role, function(error, result){
+				if(error && error.responseJSON){
+					errorbox.text(error.responseJSON.message);
+				}else{
+					group.participants.push(form.username);
+
+					Simva.updateGroup(group, function(error, result){
+						reloadGroup();
+
+						if(error && error.responseJSON){
+							errorbox.text(error.responseJSON.message);
+						}else{
+							toggleAddForm('add_participant');
+						}
+					});
+				}
+			});
+
+			return false;
+		});
+
+		$("#batch_participant_form").on('submit', function(event){
+			event.preventDefault();
+			let currentform = this;
+			toggleSubmit(currentform);
+			let form = Utils.getFormData($("#batch_participant_form"));
+			let errorbox = $(this).find('.error');
+
+			let generated = [];
+			let completed = function(username){
+				generated.push(username);
+
+				if(generated.length == form.amount){
+					group.participants = group.participants.concat(generated);
+					Simva.updateGroup(group, function(error, result){
+						toggleSubmit(currentform);
+						reloadGroup();
+
+						if(error && error.responseJSON){
+							errorbox.text(error.responseJSON.message);
+						}else{
+							toggleAddForm('add_participant');
+						}
+					});
+				}
+			}
+
+			let generateAndRegister = function(algorithm, length, callback){
+				let username = generateUsername(algorithm, length);
+
+				Simva.register(username, username + '@dummy.dum', username, 'student', function(error, result){
+					if(error && error.responseJSON){
+						generateAndRegister(algorithm, length, callback);
+					}else{
+						callback(username);
+					}
+				});
+			}
+
+			console.log(form);
+
+			for (var i = 0; i < form.amount; i++) {
+				generateAndRegister(form.algorithm, form.length, completed);
+			}
+
+			return false;
+		});
+
+		//$('#studies_list').html(roller);
+		reloadGroup();
+	});
+
+	let toggleSubmit = function(form){
+		$(form).find('input[type="submit"]').toggle();
+		$(form).find('.loader').toggle();
+	}
+
+	let reloadGroup = function(){
+		Simva.getGroup("<%= group %>", function(error, result){
+			if(!error){
+				group = result;
+				Simva.getGroupParticipants("<%= group %>", function(error, result){
+					if(!error){
+						paintGroup(group, result);
+					}
+				});
+			}
+		});
+	}
+
+	let removeParticipant = function(participant){
+		let toremove = -1;
+		for (var i = 0; i < group.participants.length; i++) {
+			if(group.participants[i] === participant){
+				toremove = i;
+				break;
+			}
+		}
+
+		group.participants.splice(i, 1);
+
+		Simva.updateGroup(group, function(error, result){
+			reloadGroup();
+		});
+	}
+
+	let removeOwner = function(owner){
+		let toremove = -1;
+		for (var i = 0; i < group.owners.length; i++) {
+			if(group.owners[i] === owner){
+				toremove = i;
+				break;
+			}
+		}
+
+		group.owners.splice(i, 1);
+
+		Simva.updateGroup(group, function(error, result){
+			reloadGroup();
+		});
+	}
+
+	let paintGroup = function(group, participants){
+		$('#group_name').text(group.name);
+
+		$('#owners').html('');
+		for (var i = 0; i < group.owners.length; i++) {
+			$('#owners').append(ownerRow(group.owners[i]));
+		}
+
+		$('#participants').empty();
+		if(group.participants.length == 0){
+			$('#participants').append('<p>There are no participants in this group. Try adding some using the button on the right.</p>');
+		}else{
+			$('#participants').append(participantHeader());
+			for (var i = 0; i < participants.length; i++) {
+				$('#participants').append(participantRow(participants[i]));
+			}
+		}
+	}
+
+	let ownerRow = function(owner){
+		let toret = '<tr><td>' + owner + '</td><td><input class="red" type="button" value="Remove"';
+		if(owner == '<%= user.data.username %>'){
+			toret += ' disabled="disabled"';
+		}else{
+			toret += ' onclick="removeOwner(\'' + owner + '\')"'
+		}
+
+		toret += '></td></tr>';
+		return toret;
+	}
+
+	let participantHeader = function(){
+		return '<tr><th>Pic</th><th>Username</th><th>Email</th><th>Role</th><th></th></tr>';
+	}
+
+	let participantRow = function(participant){
+		return '<tr><td><img src="/icon/user.png"></td>'
+			+ '<td>' + participant.username + '</td>'
+			+ '<td><a href="' + participant.email + '">' + participant.email + '</a></td>'
+			+ '<td>' + participant.role + '</td>'
+			+ '<td><input class="red" type="button" value="Remove" onclick="removeParticipant(\'' + participant.username + '\')"></td>';
+	}
+
+	let changeTab = function(tab, form, subform){
+		$('#' + form + ' .tab').removeClass('selected');
+		$('#' + form + ' .subform').removeClass('selected');
+		$(tab).toggleClass('selected');
+		$('#' + subform).toggleClass('selected');
+	}
+
+	let toggleAddForm = function(id){
+		$('#' + id).toggleClass('shown');
+	}
+
+	let generateUsername = function(algorithm, length){
+		switch (algorithm) {
+			case 'alphanumeric':
+				return randomString(length, 'a#');
+				break;
+			case 'letters':
+			default: 
+				return randomString(length, 'a');
+				break;
+		}
+	}
+
+	let randomString = function(length, chars) {
+		var mask = '';
+		if (chars.indexOf('a') > -1) mask += 'abcdefghijklmnopqrstuvwxyz';
+		if (chars.indexOf('A') > -1) mask += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		if (chars.indexOf('#') > -1) mask += '0123456789';
+		if (chars.indexOf('!') > -1) mask += '~`!@#$%^&*()_+-={}[]:";\'<>?,./|\\';
+		var result = '';
+		for (var i = length; i > 0; i--) result += mask[Math.floor(Math.random() * mask.length)];
+		return result;
+	}
+</script>
