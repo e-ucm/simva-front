@@ -5,8 +5,9 @@
 	<link href="/css/style.css" rel="stylesheet" type="text/css">
 	<script type="text/javascript" src="/jquery.js"></script>
 	<script type="text/javascript" src="/utils.js"></script>
+	<script type="text/javascript" src="/simva.js"></script>
 	<script type="text/javascript">
-		var apiurl = "<%= config.simva.url %>";
+		Simva.setAPIURL("<%= config.simva.url %>");
 
 		$(document).ready(function() {
 			$("#register_form").on('submit', function(event){
@@ -16,7 +17,7 @@
 
 				console.log(form);
 
-				register(form.username, form.email, form.password, form.role, function(error, result){
+				Simva.register(form.username, form.email, form.password, form.role, function(error, result){
 					if(error && error.responseJSON){
 						$("#error").text(error.responseJSON.message);
 					}else{
@@ -28,11 +29,6 @@
 				return false;
 			});
 		});
-
-		let register = function(username, email, password, role, callback){
-			let body = { username: username, email: email, password: password, role: role };
-			Utils.post(apiurl + '/users/', body, callback);
-		}
 	</script>
 </head>
 <body class=login>

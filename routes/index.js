@@ -13,9 +13,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '/../public')));
 
 // view engine setup
+app.engine('ejs', require('express-ejs-extend'));
 app.set('views', path.join(__dirname, '/../views'));
-app.engine('html', require('ejs').renderFile);
-app.set('view engine', 'html');
+app.set('view engine', 'ejs');
 
 var auth = function(level){
   return function(req, res, next) {
@@ -34,7 +34,7 @@ var auth = function(level){
 
 router = express.Router();
 router.get('/', auth(0), function(req, res, next) {
-  res.render('dashboard', { config: config, user: req.session.user });
+  res.render('home', { config: config, user: req.session.user });
 });
 
 app.use('/', router);

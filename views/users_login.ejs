@@ -5,13 +5,14 @@
 	<link href="/css/style.css" rel="stylesheet" type="text/css">
 	<script type="text/javascript" src="/jquery.js"></script>
 	<script type="text/javascript" src="/utils.js"></script>
+	<script type="text/javascript" src="/simva.js"></script>
 	<script type="text/javascript">
-		var apiurl = "<%= config.simva.url %>";
+		Simva.setAPIURL("<%= config.simva.url %>");
 
 		$(document).ready(function() {
 			$("#login_form").on('submit', function(event){
 				event.preventDefault();
-				login($("#login_username").val(), $("#login_password").val(), function(error, result){
+				Simva.login($("#login_username").val(), $("#login_password").val(), function(error, result){
 					if(error && error.responseJSON){
 						$("#error").text(error.responseJSON.message);
 					}else{
@@ -30,11 +31,6 @@
 				return false;
 			});
 		});
-
-		let login = function(username, password, callback){
-			let body = { username: username, password: password }
-			Utils.post(apiurl + '/users/login', body, callback);
-		}
 	</script>
 </head>
 <body class=login>
