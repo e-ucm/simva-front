@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Simva Login</title>
+	<link href="/css/style.css" rel="stylesheet" type="text/css">
+	<script type="text/javascript" src="/jquery.js"></script>
+	<script type="text/javascript" src="/utils.js"></script>
+	<script type="text/javascript">
+		var apiurl = "<%= config.simva.url %>";
+
+		$(document).ready(function() {
+			$("#login_form").on('submit', function(event){
+				event.preventDefault();
+				login($("#login_username").val(), $("#login_password").val(), function(error, result){
+					if(error && error.responseJSON){
+						$("#error").text(error.responseJSON.message);
+					}else{
+						console.log(result);
+						Utils.post('/users/savetoken', { jwt: result.token }, function(error, result){
+							if(error){
+								$("#error").text('An error has happened');
+								console.log(error.responseJSON);
+							}else{
+								window.location.replace('/users/login');
+							}
+						});
+					}
+				});
+
+				return false;
+			});
+		});
+
+		let login = function(username, password, callback){
+			let body = { username: username, password: password }
+			Utils.post(apiurl + '/users/login', body, callback);
+		}
+	</script>
+</head>
+<body class=login>
+	<div id="login_box">
+		<img src="/logo_text.png" alt="logo" />
+		<form method="post" id="login_form">
+			<fieldset>
+				<input type="text" id="login_username" name="username" placeholder="Username" value="" required>
+				<input type="password" id="login_password" name="password" placeholder="Password" required>
+			</fieldset>
+			<input type="submit" value="Login">
+			<span id="error"></span>
+			<hr>
+			<p style="font-size: 11px; margin-top: 5px; text-align: center">Don't you have an account? <a href="/users/register">Register here</a></p>
+		</form>
+	</div>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Simva - Registration</title>
+	<link href="/css/style.css" rel="stylesheet" type="text/css">
+	<script type="text/javascript" src="/jquery.js"></script>
+	<script type="text/javascript" src="/utils.js"></script>
+	<script type="text/javascript">
+		var apiurl = "<%= config.simva.url %>";
+
+		$(document).ready(function() {
+			$("#register_form").on('submit', function(event){
+				event.preventDefault();
+
+				let form = Utils.getFormData($("#register_form"));
+
+				console.log(form);
+
+				register(form.username, form.email, form.password, form.role, function(error, result){
+					if(error && error.responseJSON){
+						$("#error").text(error.responseJSON.message);
+					}else{
+						console.log(result);
+						window.location.replace('/users/login');
+					}
+				});
+
+				return false;
+			});
+		});
+
+		let register = function(username, email, password, role, callback){
+			let body = { username: username, email: email, password: password, role: role };
+			Utils.post(apiurl + '/users/', body, callback);
+		}
+	</script>
+</head>
+<body class=login>
+	<div id="register_box">
+		<img src="/logo_text.png" alt="logo" />
+		<form method="post" id="register_form">
+			<fieldset>
+				<input type="text" name="username" placeholder="Username" value="" required>
+				<input type="email" name="email" placeholder="email@example.com" value="" required>
+				<input type="password" name="password" placeholder="Password" required>
+				<input type="password" name="password2" placeholder="Repeat Password" required>
+				<div class="role_selector">
+					<input id="teacher_role" type="radio" name="role" value="teacher"><label for="teacher_role">Teacher</label>
+					<input id="student_role" type="radio" name="role" value="student" checked><label for="student_role">Student</label>
+				</div>
+			</fieldset>
+			<input type="submit" value="Register" />
+			<span id="error"></span>
+			<hr>
+			<p style="font-size: 11px; margin-top: 5px; text-align: center">Do you have an account? <a href="/users/login">Login here</a></p>
+		</form>
+	</div>
+</body>
+</html>
