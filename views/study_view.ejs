@@ -325,7 +325,7 @@
 			paintTest(test);
 
 			Simva.getTestActivities(studyid, test._id, function(error, result){
-				paintTestActivities(test, activities, participants);
+				paintTestActivities(test, result, participants);
 			});
 		}
 
@@ -404,7 +404,11 @@
 	}
 
 	let paintTestActivities = function(test, activities, participants){
+		$('#test_' + test._id + ' .activities').empty();
 
+		if(activities.length === 0){
+			$('#test_' + test._id + ' .activities').text('There are no activities in this test. Add one using the button on the right.');
+		}
 	}
 
 	// Minor paint functions
