@@ -95,11 +95,36 @@
 	<div id="add_activity" class="new_element floating">
 		<div class="floater">
 			<div class="form">
-				<div id="add_activity_tab" class="subform selected">
-					<h2>Add Test</h2>
-					<form id="add_activity_form">
-						<input type="text" name="name" placeholder="Test name" required>
+				<div class="tabs">
+					<span class="tab selected" onclick="changeTab(this, 'add_activity','new_activity_tab')">Add new activity</span>
+					<span class="tab" onclick="changeTab(this, 'add_activity','existing_activity_tab')">Select from existing</span>
+				</div>
+				<div id="new_activity_tab" class="subform selected">
+					<form id="new_activity_form">
+						<input type="hidden" name="test">
+						<input type="text" name="name" placeholder="Activity name" required>
+						<select name="type">
+							<option value="activity" selected>Default Activity</option>
+							<option value="limesurvey">LimeSurvey Activity</option>
+						</select>
+						<fieldset id="new_activity_extras">
+						</fieldset>
 						<input type="submit" value="Add">
+						<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+						<span class="error"></span>
+					</form>
+				</div>
+				<div id="existing_activity_tab" class="subform">
+					<form id="existing_activity_form">
+						<input type="hidden" name="test">
+						<input type="text" name="username" placeholder="Username" value="" required>
+						<input type="email" name="email" placeholder="email@example.com" value="" required>
+						<input type="password" name="password" placeholder="Password" required>
+						<div class="role_selector">
+							<input id="teacher_role" type="radio" name="role" value="teacher"><label for="teacher_role">Teacher</label>
+							<input id="student_role" type="radio" name="role" value="student" checked><label for="student_role">Student</label>
+						</div>
+						<input type="submit" value="Add Batch">
 						<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 						<span class="error"></span>
 					</form>
@@ -179,6 +204,28 @@
 			return false;
 		});
 
+		$("#new_activity_form").on('submit', function(event){
+			event.preventDefault();
+			let form = Utils.getFormData($("#new_activity_form"));
+			let errorbox = $(this).find('.error');
+
+			let activity = {
+				name: form.name,
+				type: form.type
+			}
+
+			Simva.addActivityToTest(studyid, form.test, activity, function(error, result){
+				if(error && error.responseJSON){
+					errorbox.text(error.responseJSON.message);
+				}else{
+					toggleAddForm('add_activity');
+					reloadStudy();
+				}
+			});
+
+			return false;
+		});
+
 		loadAddGroups();
 		reloadStudy();
 	});
@@ -186,6 +233,13 @@
 	let toggleSubmit = function(form){
 		$(form).find('input[type="submit"]').toggle();
 		$(form).find('.loader').toggle();
+	}
+
+	let changeTab = function(tab, form, subform){
+		$('#' + form + ' .tab').removeClass('selected');
+		$('#' + form + ' .subform').removeClass('selected');
+		$(tab).toggleClass('selected');
+		$('#' + subform).toggleClass('selected');
 	}
 
 	let reloadStudy = function(){
@@ -306,6 +360,20 @@
 		}
 	}
 
+	let deleteActivity = function(activity){
+
+		if(confirm("Are you sure do you want to delete the test?\nAll the activities and data will be deleted too.")){
+			Simva.deleteActivity(activity, function(error, result){
+				reloadStudy();
+			});
+		}
+	}
+
+	let openActivityForm = function(test){
+		$('#add_activity').toggleClass('shown');
+		$('#add_activity input[name="test"]').val(test);
+	}
+
 	let toggleAddForm = function(id){
 		$('#' + id).toggleClass('shown');
 	}
@@ -398,22 +466,75 @@
 
 	let paintTest = function(test){
 		$('#tests').append('<div id="test_' + test._id + '" class="test">'
-			+ '<div class="top"><h3>' + test.name + '</h3><input class="green" type="button" value="Add activity" onclick="toggleAddForm(\'add_test\')">'
+			+ '<div class="top"><h3>' + test.name + '</h3><input class="green" type="button" value="Add activity" onclick="openActivityForm(\'' + test._id + '\')">'
 			+ '<input class="red" type="button" value="Delete" onclick="deleteTest(\'' + test._id + '\')"></div>'
 			+ '<div class="activities">' + roller + '</div>');
 	}
 
 	let paintTestActivities = function(test, activities, participants){
+
+		let fullyPaintActivity = function(activity){
+			paintActivity(activity, participants);
+
+			Simva.getActivityCompletion(activity._id, function(error, result){
+				paintActivityCompletion(activity, result);
+			});
+
+			Simva.getActivityResult(activity._id, function(error, result){
+				paintActivityResult(activity, result);
+			});
+		}
+
 		$('#test_' + test._id + ' .activities').empty();
 
 		if(activities.length === 0){
 			$('#test_' + test._id + ' .activities').text('There are no activities in this test. Add one using the button on the right.');
+		}else{
+			for (var i = 0; i < activities.length; i++) {
+				fullyPaintActivity(activities[i]);
+			}
 		}
 	}
 
-	// Minor paint functions
+	let paintActivity = function(activity, participants){
+		$('#test_' + activity.test + ' .activities').append('<div id="activity_' + activity._id + '" class="activity t' + activity.type + '">'
+			+ '<div class="top"><h4>' + activity.name + '</h4>'
+			+ '<input class="red" type="button" value="X" onclick="deleteActivity(\'' + activity._id + '\')"></div>'
+			+ paintActivityParticipantsTable(activity, participants) + '</div>');
+	}
 
-	let testRow = function(test, participants){
+	let paintActivityParticipantsTable = function(activity, participants){
+		let toret = '<table><tr><th>User</th><th>Completed</th><th>Result</th></tr>';
+
+		for (var i = 0; i < participants.length; i++) {
+			toret += '<tr><td>' + participants[i].username + '</td>'
+				+ '<td id="completion_' + activity._id + '_' + participants[i].username + '">---</td>'
+				+ '<td id="result_' + activity._id + '_' + participants[i].username + '">---</td>';
+		}
+
+		toret += '</table>';
+
+		return toret;
+	}
+
+	let paintActivityCompletion = function(activity, status){
+		let usernames = Object.keys(status);
+
+		for (var i = 0; i < usernames.length; i++) {
+			let completion = '<span class="' + ( !status[usernames[i]] ? 'red' : 'green') + '">' + status[usernames[i]] + '</span>'
+			$('#completion_' + activity._id + '_' + usernames[i]).empty();
+			$('#completion_' + activity._id + '_' + usernames[i]).append(completion);
+		}
+	}
+
+	paintActivityResult = function(activity, results){
+		let usernames = Object.keys(results);
+
+		for (var i = 0; i < usernames.length; i++) {
+			let completion = '<span class="' + (results[usernames[i]] == 'No results' ? 'red' : 'green') + '">' + results[usernames[i]] + '</span>'
+			$('#result_' + activity._id + '_' + usernames[i]).empty();
+			$('#result_' + activity._id + '_' + usernames[i]).append(completion);
+		}
 	}
 
 	let ownerRow = function(owner){

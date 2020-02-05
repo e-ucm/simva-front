@@ -69,4 +69,24 @@ var Utils = {
 			error: callback
 		});
 	},
+
+	delete: function(url, callback, jwt){
+
+		$.ajax({
+			type: 'DELETE',
+			url: url,
+			contentType: 'application/json',
+			dataType: 'json',
+			cache: false,
+			beforeSend: function (xhr) {
+				if(jwt){
+					xhr.setRequestHeader("Authorization", "Bearer " + jwt);
+				}
+			},
+			success: function(data){
+				callback(null, data);
+			},
+			error: callback
+		});
+	},
 }

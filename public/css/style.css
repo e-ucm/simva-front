@@ -170,8 +170,9 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .content .left .allocator input[type="button"] { width: 100%; margin-top: 10px;} 
 
 .content .top {overflow: hidden;}
-.content .top h2 {float: left;}
-.content .top h3 {float: left;}
+.content .top h2,
+.content .top h3,
+.content .top h4 {float: left;}
 .content .top input[type="button"] {float: right; margin-left: 10px;}
 
 .content .participants table { width: 100% }
@@ -183,6 +184,18 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .content .participants table img {width: 30px;}
 
 .content .test { background-color: lightgray; padding: 10px; margin-top: 10px; box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3);}
+.content .test .activities {overflow-x: auto; white-space: nowrap; padding-bottom: 10px;}
+.content .test .activities .activity { background-color: gray; width: 250px; padding: 10px; margin-top: 10px; box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3); display: inline-block; margin-right: 10px;}
+.content .test .activities .activity .top input[type="button"] {float: right; margin-left: 10px; height: 15px; width: 15px; font-size: 10px; padding: 0px; text-align: center;}
+
+.content .test .activities .activity table { width: 100%; font-size: 14px; }
+.content .test .activities .activity table tr:nth-child(even) {background: #c5c5c5}
+.content .test .activities .activity table tr:nth-child(odd) {background: #a5a5a5}
+.content .test .activities .activity table tr th {padding: 5px;}
+.content .test .activities .activity table tr td {padding: 5px; width: 33.33%; text-align: center;}
+.content .test .activities .activity table tr td .red { color: #b70000; }
+.content .test .activities .activity table tr td .green { color: #008800; }
+
 /*
 .menu { background-color: #332d26;color: white; width: 200px; height: 100%; position: fixed; top: 50px; padding: 10px;}
 .menu ul {}

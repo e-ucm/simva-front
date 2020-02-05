@@ -88,4 +88,21 @@ var Simva = {
 		Utils.get(this.apiurl + '/studies/' + study_id + '/participants', callback, this.jwt);
 	},
 
+	// Activities
+
+	addActivityToTest: function(study_id, test_id, activity, callback){
+		Utils.post(this.apiurl + '/studies/' + study_id + '/tests/' + test_id + '/activities', activity, callback, this.jwt);
+	},
+
+	getActivityCompletion: function(activity_id, callback){
+		Utils.get(this.apiurl + '/activities/' + activity_id + '/completion', callback, this.jwt);
+	},
+
+	getActivityResult: function(activity_id, callback){
+		Utils.get(this.apiurl + '/activities/' + activity_id + '/result', callback, this.jwt);
+	},
+
+	deleteActivity: function(activity_id, callback){
+		Utils.delete(this.apiurl + '/activities/' + activity_id, callback, this.jwt);
+	},
 }
