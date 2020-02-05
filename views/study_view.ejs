@@ -7,124 +7,452 @@
 </div>-->
 <div class="n">
 	<h1>Study: <span id="study_name"></span></h1>
-	<div class="card" id="study">
+	<div id="study">
 		<div class="left">
-			<div class="graybox allocator default">
-				<h2>Allocator</h2>
-					<p class="subtitle italic">Type: <span id="allocator_type">default</span></p>
-					<p class="subtitle justified">This allocator automatically assigns upcoming participants to the first test available.</p>
-					<table id="allocator_participants" class="allocations">
-						<tr>
-							<th>Participant</th>
-							<th>Test</th>
-						</tr>
-						<tr>
-							<td>student1</td>
-							<td>
-								<select>
-									<option value="1">test 1</option>
-									<option value="1">test 2</option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<td>student1</td>
-							<td>
-								<select>
-									<option value="1">test 1</option>
-									<option value="1">test 2</option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<td>student1</td>
-							<td>
-								<select>
-									<option value="1">test 1</option>
-									<option value="1">test 2</option>
-								</select>
-							</td>
-						</tr>
-					</table>
-					<input class="violet" type="button" value="Add Allocation">
-				</div>
+			<div class="graybox owners">
+				<h2>Owners</h2>
+				<p></p>
+				<table id="owners">
+				</table>
+				<input class="violet" type="button" value="Add owner" onclick="toggleAddForm('add_owner')">
+			</div>
 
 			<div class="graybox groups">
 				<h2>Groups</h2>
 				<p></p>
+				<table id="groups">
+				</table>
+				<input class="violet" type="button" value="Add Group" onclick="toggleAddForm('add_group')">
+			</div>
+
+			<div class="graybox allocator default">
+				<h2>Allocator</h2>
+				<p class="subtitle italic">Type: <span id="allocator_type">default</span></p>
+				<p class="subtitle justified">This allocator automatically assigns upcoming participants to the first test available.</p>
 				<table id="allocator_participants" class="allocations">
-						<tr>
-							<td>group1</td>
-							<td>
-								<input type="button" value="Remove">
-							</td>
-						</tr>
-						<tr>
-							<td>group2</td>
-							<td>
-								<input type="button" value="Remove">
-							</td>
-						</tr>
-						<tr>
-							<td>group3</td>
-							<td>
-								<input type="button" value="Remove">
-							</td>
-						</tr>
-					</table>
+				</table>
 				<input class="violet" type="button" value="Add Allocation">
 			</div>
 		</div>
-		<div class="center">
-			<h2>Tests</h2>
-			<div>
-				
+		<div class="card">
+			<div class="top">
+				<h2>Tests</h2>
+				<input class="violet" type="button" value="Add Test" onclick="toggleAddForm('add_test')">
+			</div>
+			<div id="tests" class="tests">
 			</div>
 		</div>
 	</div>
-	<div id="new_study" class="new_element">
-		<div class="form">
-			<h1>Add new</h1>
-			<form id="new_study_form">
-				<input type="text" name="name" placeholder="Study name">
-				<input type="submit" value="Submit">
-			</form>
+	<div id="add_group" class="new_element floating">
+		<div class="floater">
+			<div class="form">
+				<div id="add_group_tab" class="subform selected">
+					<h2>Add group</h2>
+					<form id="add_group_form">
+						<select id="group_select" name="group">
+						</select>
+						<input type="submit" value="Add">
+						<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+						<span class="error"></span>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="add_owner" class="new_element floating">
+		<div class="floater">
+			<div class="form">
+				<div id="existing_owner_tab" class="subform selected">
+					<h2>Add owner</h2>
+					<form id="existing_owner_form">
+						<input type="text" name="name" placeholder="Owner username" required>
+						<input type="submit" value="Add">
+						<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+						<span class="error"></span>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="add_test" class="new_element floating">
+		<div class="floater">
+			<div class="form">
+				<div id="add_test_tab" class="subform selected">
+					<h2>Add Test</h2>
+					<form id="add_test_form">
+						<input type="text" name="name" placeholder="Test name" required>
+						<input type="submit" value="Add">
+						<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+						<span class="error"></span>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="add_activity" class="new_element floating">
+		<div class="floater">
+			<div class="form">
+				<div id="add_activity_tab" class="subform selected">
+					<h2>Add Test</h2>
+					<form id="add_activity_form">
+						<input type="text" name="name" placeholder="Test name" required>
+						<input type="submit" value="Add">
+						<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+						<span class="error"></span>
+					</form>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
 
 <script type="text/javascript">
-	$(document).ready(function() {
-		$("#new_study_form").on('submit', function(event){
-			event.preventDefault();
-			let form = Utils.getFormData($("#new_study_form"));
+	let studyid = "<%= study %>";
+	let study = null, participants = null, tests = null, allocator = null, groups = null;
 
-			Simva.addStudy(form.name, function(error, result){
+	$(document).ready(function() {
+		$("#existing_owner_form").on('submit', function(event){
+			event.preventDefault();
+			let form = Utils.getFormData($("#existing_owner_form"));
+			let errorbox = $(this).find('.error');
+
+			for (var i = 0; i < study.owners.length; i++) {
+				if(study.owners[i] == form.name){
+					errorbox.text('The owner is already in the study.');
+					return false;
+				}
+			}
+
+			study.owners.push(form.name);
+
+			Simva.updateStudy(study, function(error, result){
 				if(error && error.responseJSON){
-					$("#error").text(error.responseJSON.message);
+					errorbox.text(error.responseJSON.message);
 				}else{
-					toggleAddForm();
-					$('#studies_list').html(roller);
-					Simva.getStudies(function(error, result){
-						if(!error){
-							paintStudies(result);
-						}
-					});
+					reloadStudy();
+					toggleAddForm('add_owner');
 				}
 			});
 
 			return false;
 		});
 
-		$('#studies_list').html(roller);
-		Simva.getStudies(function(error, result){
-			if(!error){
-				paintStudies(result);
+		$("#add_group_form").on('submit', function(event){
+			event.preventDefault();
+			let form = Utils.getFormData($("#add_group_form"));
+			let errorbox = $(this).find('.error');
+
+			if(study.groups.indexOf(form.group) !== -1){
+				errorbox.text('The group is already in the study');
+			}else{
+				study.groups.push(form.group);
+				Simva.updateStudy(study, function(error, result){
+					if(error && error.responseJSON){
+						errorbox.text(error.responseJSON.message);
+					}else{
+						toggleAddForm('add_group');
+						reloadStudy();
+					}
+				});
 			}
+
+			return false;
 		});
+
+		$("#add_test_form").on('submit', function(event){
+			event.preventDefault();
+			let form = Utils.getFormData($("#add_test_form"));
+			let errorbox = $(this).find('.error');
+
+			Simva.addTestToStudy(studyid, form.name, function(error, result){
+				if(error && error.responseJSON){
+					errorbox.text(error.responseJSON.message);
+				}else{
+					toggleAddForm('add_test');
+					reloadStudy();
+				}
+			});
+
+			return false;
+		});
+
+		loadAddGroups();
+		reloadStudy();
 	});
 
-	let toggleAddForm = function(){
-		$('#new_study').toggleClass('shown');
+	let toggleSubmit = function(form){
+		$(form).find('input[type="submit"]').toggle();
+		$(form).find('.loader').toggle();
+	}
+
+	let reloadStudy = function(){
+		Simva.getStudy(studyid, function(error, result){
+
+			if(!error){
+				study = result;
+
+				let tocomplete = 5, done = 0;
+				let completed = function(){
+					done++
+
+					if(done === tocomplete){
+						paintStudy(study, participants, tests, allocator, groups);
+					}
+				}
+
+				let errorhappened = function(error){
+					// paint the errors
+				}
+
+				Simva.getStudyParticipants(studyid, function(error, result){
+					if(!error){
+						participants = result;
+						completed();
+					}
+				});
+
+				Simva.getStudyTests(studyid, function(error, result){
+					if(!error){
+						tests = result;
+						completed();
+					}
+				});
+
+				Simva.getAllocator(studyid, function(error, result){
+					if(!error){
+						allocator = result;
+						completed();
+					}
+				});
+
+				Simva.getStudyGroups(studyid, function(error, result){
+					if(!error){
+						groups = result;
+						completed();
+					}
+				});
+
+				Simva.getGroups(function(error, result){
+					if(!error){
+						allgroups = result;
+						completed();
+					}
+				});
+			}
+		});
+	}
+
+	let loadAddGroups = function(){
+		Simva.getGroups(function(error, result){
+			if(!error){
+				paintAddGroup(result);
+			}
+		});
+	}
+
+	// Functionality
+
+	let removeGroup = function(group){
+		let toremove = -1;
+		for (var i = 0; i < study.groups.length; i++) {
+			if(study.groups[i] === group){
+				toremove = i;
+				break;
+			}
+		}
+
+		study.groups.splice(i, 1);
+
+		Simva.updateStudy(study, function(error, result){
+			reloadStudy();
+		});
+	}
+
+	let removeOwner = function(owner){
+		let toremove = -1;
+		for (var i = 0; i < study.owners.length; i++) {
+			if(study.owners[i] === owner){
+				toremove = i;
+				break;
+			}
+		}
+
+		study.owners.splice(i, 1);
+
+		Simva.updateStudy(study, function(error, result){
+			reloadStudy();
+		});
+	}
+
+	let deleteTest = function(test){
+
+		if(confirm("Are you sure do you want to delete the test?\nAll the activities and data will be deleted too.")){
+			let toremove = -1;
+			for (var i = 0; i < study.tests.length; i++) {
+				if(study.tests[i] === test){
+					toremove = i;
+					break;
+				}
+			}
+
+			study.tests.splice(i, 1);
+
+			Simva.updateStudy(study, function(error, result){
+				reloadStudy();
+			});
+		}
+	}
+
+	let toggleAddForm = function(id){
+		$('#' + id).toggleClass('shown');
+	}
+
+	// Main Paint functions
+
+	let paintStudy = function(study, participants, tests, allocator, groups){
+		$('#study_name').text(study.name);
+
+		paintOwners(study.owners);
+
+		paintDefaultAllocator(allocator, tests);
+
+		paintGroups(groups);
+
+		let fullyPaintTest = function(test){
+			paintTest(test);
+
+			Simva.getTestActivities(studyid, test._id, function(error, result){
+				paintTestActivities(test, activities, participants);
+			});
+		}
+
+		$('#tests').empty();
+		if(tests.length === 0){
+			$('#tests').append('<p>There are no tests for this study. Try adding one using the button on the right.</p>');
+		}else{
+			for (var i = 0; i < tests.length; i++) {
+				fullyPaintTest(tests[i]);
+			}
+		}
+
+		/*$('#participants').empty();
+		if(group.participants.length == 0){
+			$('#participants').append('<p>There are no participants in this group. Try adding some using the button on the right.</p>');
+		}else{
+			$('#participants').append(participantHeader());
+			for (var i = 0; i < participants.length; i++) {
+				$('#participants').append(participantRow(participants[i]));
+			}
+		}*/
+	}
+
+	let paintAddGroup = function(groups){
+		$('#group_select').empty('');
+		if(groups.length == 0){
+			$('#group_select').append('<p>You dont have any group. Go to groups tab to create one.</p>');
+		}else{
+			for (var i = 0; i < groups.length; i++) {
+				$('#group_select').append(addGroupRow(groups[i]));
+			}
+		}
+	}
+
+	let paintOwners = function(owners){
+		$('#owners').html('');
+		for (var i = 0; i < owners.length; i++) {
+			$('#owners').append(ownerRow(owners[i]));
+		}
+	}
+
+	let paintGroups = function(groups){
+		$('#groups').html('');
+		if(groups.length == 0){
+			$('#groups').append('<p>There are no groups yet.</p>');
+		}else{
+			for (var i = 0; i < groups.length; i++) {
+				$('#groups').append(groupRow(groups[i]));
+			}
+		}
+	}
+
+	let paintDefaultAllocator = function(allocator, tests){
+		$('#allocator_participants').empty();
+		if(allocator.allocations){
+			$('#allocator_participants').append('<tr><th>Participant</th><th>Test</th></tr>');
+			let keys = Object.keys(allocator.allocations);
+			for (var i = 0; i < keys.length; i++) {
+				let tmp = {
+					username: keys[i],
+					test: allocator.allocations[keys[i]]
+				}
+
+				$('#allocator_participants').append(allocationRow(allocator.allocations[i]))
+			}
+		}else{
+			$('#allocator_participants').append('<tr><th>There are no allocations yet.</th></tr>');
+		}
+	}
+
+	let paintTest = function(test){
+		$('#tests').append('<div id="test_' + test._id + '" class="test">'
+			+ '<div class="top"><h3>' + test.name + '</h3><input class="green" type="button" value="Add activity" onclick="toggleAddForm(\'add_test\')">'
+			+ '<input class="red" type="button" value="Delete" onclick="deleteTest(\'' + test._id + '\')"></div>'
+			+ '<div class="activities">' + roller + '</div>');
+	}
+
+	let paintTestActivities = function(test, activities, participants){
+
+	}
+
+	// Minor paint functions
+
+	let testRow = function(test, participants){
+	}
+
+	let ownerRow = function(owner){
+		let toret = '<tr><td>' + owner + '</td><td><input class="red" type="button" value="Remove"';
+		if(owner == '<%= user.data.username %>'){
+			toret += ' disabled="disabled"';
+		}else{
+			toret += ' onclick="removeOwner(\'' + owner + '\')"'
+		}
+
+		toret += '></td></tr>';
+		return toret;
+	}
+
+	let groupRow = function(group){
+		let toret = '<tr><td>' + group.name + '</td><td><input class="red" type="button" value="Remove"';
+		toret += ' onclick="removeGroup(\'' + group._id + '\')"';
+		toret += '></td></tr>';
+
+		return toret;
+	}
+
+	let addGroupRow = function(group){
+		return '<option value="' + group._id + '">' + group.name + '</option>';
+	}
+
+	let allocationRow = function(allocation, tests){
+		let toret = '<tr><td>' + allocation.username + '</td><td><select name="test">';
+
+		if(tests.length > 0){
+			for (var i = 0; i < tests.length; i++) {
+				if(allocation.test == tests[i]._id){
+					toret += '<option value="' + tests[i]._id + '">' + tests[i].name +'</option>';
+				}else{
+					toret += '<option value="' + tests[i]._id + '" selected>' + tests[i].name +'</option>';
+				}
+			}
+		}else{
+			toret += '<option>NO TESTS</option>';
+		}
+		
+
+		toret += '</select></td></tr>';
+		return 
 	}
 </script>

@@ -55,16 +55,37 @@ var Simva = {
 		Utils.post(this.apiurl + '/studies', body, callback, this.jwt);
 	},
 
+	addTestToStudy: function(study_id, name, callback){
+		let body = { name: name };
+		Utils.post(this.apiurl + '/studies/' + study_id + '/tests', body, callback, this.jwt);
+	},
+
 	getStudy: function(study_id, callback){
 		Utils.get(this.apiurl + '/studies/' + study_id, callback, this.jwt);
+	},
+
+	updateStudy: function(study, callback){
+		Utils.put(this.apiurl + '/studies/' + study._id, study, callback, this.jwt);
+	},
+
+	getAllocator: function(study_id, callback){
+		Utils.get(this.apiurl + '/studies/' + study_id + '/allocator', callback, this.jwt);
 	},
 
 	getStudyTests: function(study_id, callback){
 		Utils.get(this.apiurl + '/studies/' + study_id + '/tests', callback, this.jwt);
 	},
 
+	getStudyGroups: function(study_id, callback){
+		Utils.get(this.apiurl + '/studies/' + study_id + '/groups', callback, this.jwt);
+	},
+
 	getTestActivities: function(study_id, test_id, callback){
-		Utils.get(this.apiurl + '/studies/' + id + '/tests/ ' + test_id + '/activities', callback, this.jwt);
+		Utils.get(this.apiurl + '/studies/' + study_id + '/tests/' + test_id + '/activities', callback, this.jwt);
+	},
+
+	getStudyParticipants: function(study_id, callback){
+		Utils.get(this.apiurl + '/studies/' + study_id + '/participants', callback, this.jwt);
 	},
 
 }
