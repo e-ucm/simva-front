@@ -45,7 +45,7 @@ app.use('/', router);
 app.use('/users', require('./routes/users.js')(auth(1), config));
 app.use('/studies', require('./routes/studies.js')(auth(1), config));
 app.use('/groups', require('./routes/groups.js')(auth(1), config));
-//app.use('/activities', require('./activities.js')(auth(1)));
+app.use('/activities', require('./routes/activities.js')(auth(1), config));
 
 // catch 404
 app.use((req, res, next) => {
