@@ -37,6 +37,10 @@ router.get('/', auth(0), function(req, res, next) {
   res.render('home', { config: config, user: req.session.user });
 });
 
+router.get('/about', auth(0), function(req, res, next) {
+  res.render('about', { config: config, user: req.session.user });
+});
+
 app.use('/', router);
 app.use('/users', require('./routes/users.js')(auth(1), config));
 app.use('/studies', require('./routes/studies.js')(auth(1), config));
