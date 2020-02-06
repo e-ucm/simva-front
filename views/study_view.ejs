@@ -104,8 +104,6 @@
 						<input type="hidden" name="test">
 						<input type="text" name="name" placeholder="Activity name" required>
 						<select name="type">
-							<option value="activity" selected>Default Activity</option>
-							<option value="limesurvey">LimeSurvey Activity</option>
 						</select>
 						<fieldset id="new_activity_extras">
 						</fieldset>
@@ -139,6 +137,18 @@
 	let study = null, participants = null, tests = null, allocator = null, groups = null;
 
 	$(document).ready(function() {
+
+		let painters = Object.keys(PainterFactory.Painters);
+		for (var i = 0; i < painters.length; i++) {
+			let row = '<option value="' + painters[i] + '">' + PainterFactory.Painters[painters[i]].simpleName + '</option>';
+			$('#new_activity_form select[name="type"]').append(row);
+		}
+
+		$('#new_activity_form select[name="type"]').on('change', function(event){
+			$('#new_activity_extras').empty();
+			$('#new_activity_extras').append(PainterFactory.Painters[$(this).val()].getExtraForm());
+		});
+
 		$("#existing_owner_form").on('submit', function(event){
 			event.preventDefault();
 			let form = Utils.getFormData($("#existing_owner_form"));
@@ -209,17 +219,18 @@
 			let form = Utils.getFormData($("#new_activity_form"));
 			let errorbox = $(this).find('.error');
 
-			let activity = {
-				name: form.name,
-				type: form.type
-			}
-
-			Simva.addActivityToTest(studyid, form.test, activity, function(error, result){
-				if(error && error.responseJSON){
-					errorbox.text(error.responseJSON.message);
+			PainterFactory.Painters[form.type].extractInformation('#new_activity_form', function(error, activity){
+				if(error){
+					errorbox.text(error);
 				}else{
-					toggleAddForm('add_activity');
-					reloadStudy();
+					Simva.addActivityToTest(studyid, form.test, activity, function(error, result){
+						if(error && error.responseJSON){
+							errorbox.text(error.responseJSON.message);
+						}else{
+							toggleAddForm('add_activity');
+							reloadStudy();
+						}
+					});
 				}
 			});
 
@@ -405,16 +416,6 @@
 				fullyPaintTest(tests[i]);
 			}
 		}
-
-		/*$('#participants').empty();
-		if(group.participants.length == 0){
-			$('#participants').append('<p>There are no participants in this group. Try adding some using the button on the right.</p>');
-		}else{
-			$('#participants').append(participantHeader());
-			for (var i = 0; i < participants.length; i++) {
-				$('#participants').append(participantRow(participants[i]));
-			}
-		}*/
 	}
 
 	let paintAddGroup = function(groups){
@@ -472,70 +473,22 @@
 	}
 
 	let paintTestActivities = function(test, activities, participants){
-
-		let fullyPaintActivity = function(activity){
-			paintActivity(activity, participants);
-
-			Simva.getActivityCompletion(activity._id, function(error, result){
-				paintActivityCompletion(activity, result);
-			});
-
-			Simva.getActivityResult(activity._id, function(error, result){
-				paintActivityResult(activity, result);
-			});
-		}
-
 		$('#test_' + test._id + ' .activities').empty();
 
 		if(activities.length === 0){
 			$('#test_' + test._id + ' .activities').text('There are no activities in this test. Add one using the button on the right.');
 		}else{
 			for (var i = 0; i < activities.length; i++) {
-				fullyPaintActivity(activities[i]);
+				switch(activities[i].type){
+					case 'activity':
+					default:
+						ActivityPainter.fullyPaintActivity(activities[i]);
+						break;
+				}
 			}
 		}
 	}
 
-	let paintActivity = function(activity, participants){
-		$('#test_' + activity.test + ' .activities').append('<div id="activity_' + activity._id + '" class="activity t' + activity.type + '">'
-			+ '<div class="top"><h4>' + activity.name + '</h4>'
-			+ '<input class="red" type="button" value="X" onclick="deleteActivity(\'' + activity._id + '\')"></div>'
-			+ paintActivityParticipantsTable(activity, participants) + '</div>');
-	}
-
-	let paintActivityParticipantsTable = function(activity, participants){
-		let toret = '<table><tr><th>User</th><th>Completed</th><th>Result</th></tr>';
-
-		for (var i = 0; i < participants.length; i++) {
-			toret += '<tr><td>' + participants[i].username + '</td>'
-				+ '<td id="completion_' + activity._id + '_' + participants[i].username + '">---</td>'
-				+ '<td id="result_' + activity._id + '_' + participants[i].username + '">---</td>';
-		}
-
-		toret += '</table>';
-
-		return toret;
-	}
-
-	let paintActivityCompletion = function(activity, status){
-		let usernames = Object.keys(status);
-
-		for (var i = 0; i < usernames.length; i++) {
-			let completion = '<span class="' + ( !status[usernames[i]] ? 'red' : 'green') + '">' + status[usernames[i]] + '</span>'
-			$('#completion_' + activity._id + '_' + usernames[i]).empty();
-			$('#completion_' + activity._id + '_' + usernames[i]).append(completion);
-		}
-	}
-
-	paintActivityResult = function(activity, results){
-		let usernames = Object.keys(results);
-
-		for (var i = 0; i < usernames.length; i++) {
-			let completion = '<span class="' + (results[usernames[i]] == 'No results' ? 'red' : 'green') + '">' + results[usernames[i]] + '</span>'
-			$('#result_' + activity._id + '_' + usernames[i]).empty();
-			$('#result_' + activity._id + '_' + usernames[i]).append(completion);
-		}
-	}
 
 	let ownerRow = function(owner){
 		let toret = '<tr><td>' + owner + '</td><td><input class="red" type="button" value="Remove"';
@@ -581,3 +534,5 @@
 		return 
 	}
 </script>
+<script type="text/javascript" src="/activities/activitypainter.js"></script>
+<script type="text/javascript" src="/activities/limesurveypainter.js"></script>
