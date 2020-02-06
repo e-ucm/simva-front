@@ -16,18 +16,25 @@ input[type="date"],
 input[type="time"],
 input[type="number"],
 select{margin:4px 10px 8px 0;padding:6px;font-size:15px; border: 1px solid black;}
+.button,
 input[type="submit"],
 input[type="button"]{width:auto;border:0;padding:6px;background:#f0913f;font-size:15px;color:#fff;cursor:pointer;}
+.button.orange,
 input[type="submit"].orange,
 input[type="button"].orange{border:1px solid #0B617D;background:#0B617D}
+.button.violet,
 input[type="submit"].violet,
 input[type="button"].violet{border:1px solid #6b5faa;background:#6b5faa}
+.button.blue,
 input[type="submit"].blue,
 input[type="button"].blue{border:0px solid #F6D44E;background:#F6D44E}
+.button.green,
 input[type="submit"].green,
 input[type="button"].green{border:0px solid #52B846;background:#52B846}
+.button.red,
 input[type="submit"].red,
 input[type="button"].red{border:0px solid #f64e4e;background:#f64e4e}
+.button.black,
 input[type="submit"].black,
 input[type="button"].black{border:1px solid #2b2e31;background:#2b2e31}
 
@@ -186,6 +193,10 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .content .test { background-color: lightgray; padding: 10px; margin-top: 10px; box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3);}
 .content .test .activities {overflow-x: auto; white-space: nowrap; padding-bottom: 10px;}
 .content .test .activities .activity { background-color: gray; width: 250px; padding: 10px; margin-top: 10px; box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3); display: inline-block; margin-right: 10px;}
+
+.content .test .activities .activity.tactivity { background-color: gray; }
+.content .test .activities .activity.tlimesurvey { background-color: #3f8446; }
+
 .content .test .activities .activity .top input[type="button"] {float: right; margin-left: 10px; height: 15px; width: 15px; font-size: 10px; padding: 0px; text-align: center;}
 
 .content .test .activities .activity table { width: 100%; font-size: 14px; }
