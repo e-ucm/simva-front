@@ -137,7 +137,6 @@
 	let study = null, participants = null, tests = null, allocator = null, groups = null;
 
 	$(document).ready(function() {
-
 		let painters = Object.keys(PainterFactory.Painters);
 		for (var i = 0; i < painters.length; i++) {
 			let row = '<option value="' + painters[i] + '">' + PainterFactory.Painters[painters[i]].simpleName + '</option>';
@@ -240,6 +239,10 @@
 		loadAddGroups();
 		reloadStudy();
 	});
+
+	let toggleTest = function(id){
+		$('#test_' + id).find('.activities').toggleClass('collapsed');
+	}
 
 	let toggleSubmit = function(form){
 		$(form).find('input[type="submit"]').toggle();
@@ -467,9 +470,10 @@
 
 	let paintTest = function(test){
 		$('#tests').append('<div id="test_' + test._id + '" class="test">'
-			+ '<div class="top"><h3>' + test.name + '</h3><input class="green" type="button" value="Add activity" onclick="openActivityForm(\'' + test._id + '\')">'
+			+ '<div class="top"><h3>' + test.name + '</h3><input class="violet" type="button" value="Expand/Collapse" onclick="toggleTest(\'' + test._id + '\')">'
+			+ '<input class="green" type="button" value="Add activity" onclick="openActivityForm(\'' + test._id + '\')">'
 			+ '<input class="red" type="button" value="Delete" onclick="deleteTest(\'' + test._id + '\')"></div>'
-			+ '<div class="activities">' + roller + '</div>');
+			+ '<div class="activities collapsed">' + roller + '</div>');
 	}
 
 	let paintTestActivities = function(test, activities, participants){
@@ -480,7 +484,10 @@
 		}else{
 			for (var i = 0; i < activities.length; i++) {
 				switch(activities[i].type){
+					case 'limesurvey':
 					case 'activity':
+						PainterFactory.Painters[activities[i].type].fullyPaintActivity(activities[i]);
+						break;
 					default:
 						ActivityPainter.fullyPaintActivity(activities[i]);
 						break;
