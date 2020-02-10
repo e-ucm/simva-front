@@ -29,9 +29,22 @@ var LimeSurveyPainter = {
 			+ 	'<p>Survey ID:</p>'
 			+ 	'<input type="number" name="surveyid" placeholder="Survey ID">'
 			+ '</div>'
-			+ '<div id="limesurvey_byexisting" class="subform">'
-			+ 	'<p>Not available yet.</p>'
-			+ '</div>'
+			+ '<div id="limesurvey_byexisting" class="subform">';
+
+		if(this.utils.surveys.length > 0){
+			form += '<select name="existingid">';
+			for (var i = 0; i < this.utils.surveys.length; i++) {
+				form += '<option value="' + this.utils.surveys[i].sid + '"> ' + this.utils.surveys[i].surveyls_title + '</option>';
+			}
+
+			form += '</select>';
+		}else{
+			form += '<p>You don\'t have surveys.</p>'
+		}
+
+
+
+		form += '</div>'
 			+ '<div id="limesurvey_bynew" class="subform">'
 			+ 	'<p>Click to open LimeSurvey</p>'
 			+ 	'<p><a class="button green">LimeSurvey</a></p>'
@@ -61,7 +74,8 @@ var LimeSurveyPainter = {
 				callback(null, activity);
 				break;
 			case 'byexisting':
-				callback('Not yet.');
+				activity.copysurvey = formdata.existingid;
+				callback(null, activity);
 				break;
 			case 'bynew':
 				callback('After creating new, you have to select from existing.');
