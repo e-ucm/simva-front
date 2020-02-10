@@ -13,6 +13,11 @@ var LimeSurveyPainter = {
 	supportedType: 'limesurvey',
 	simpleName: 'LimeSurvey activity',
 
+	utils: {},
+	setUtils: function(utils){
+		this.utils = utils;
+	},
+
 	getExtraForm: function () {
 		let form = '<div class="tabs">'
 			+ 	'<span class="tab selected" method="byid" onclick="changeTab(this, \'new_activity_extras\',\'limesurvey_byid\')">Survey ID</span>'
@@ -96,6 +101,11 @@ var LimeSurveyPainter = {
 			activity.tmp.result = result;
 			tmp.paintActivityResult(activity, result);
 		});
+
+		Simva.getActivityTarget(activity._id, function(error, result){
+			activity.tmp.result = result;
+			tmp.paintActivityTargets(activity, result);
+		});
 	},
 
 	paintActivity: function(activity, participants){
@@ -112,7 +122,7 @@ var LimeSurveyPainter = {
 		let toret = '<table><tr><th>User</th><th>Completed</th><th>Result</th></tr>';
 
 		for (var i = 0; i < participants.length; i++) {
-			toret += '<tr><td><a target="_blank" href="' + this.limesurveyurl + activity.extra_data.surveyId + '?token=' + participants[i].username + '">'
+			toret += '<tr><td><a class="targeturl" target="_blank" href="">'
 				+ participants[i].username + '</a></td>'
 				+ '<td id="completion_' + activity._id + '_' + participants[i].username + '">---</td>'
 				+ '<td id="result_' + activity._id + '_' + participants[i].username + '">---</td>';
@@ -191,6 +201,16 @@ var LimeSurveyPainter = {
 		$('#result_progress_' + activity._id + ' .partial').css('width', partialprogress + '%' );
 		$('#result_progress_' + activity._id + ' done').text(progress);
 		$('#result_progress_' + activity._id + ' partial').text(partialprogress);
+	},
+
+	paintActivityTargets: function(activity, results){
+		let usernames = Object.keys(results);
+
+		let done = 0, partial = 0;
+		
+		for (var i = 0; i < usernames.length; i++) {
+			$('#activity_' + activity._id + ' ' + '.targeturl').attr('href', results[usernames[i]]);
+		}
 	}
 }
 

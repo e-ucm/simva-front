@@ -138,10 +138,18 @@
 
 	$(document).ready(function() {
 		let painters = Object.keys(PainterFactory.Painters);
-		for (var i = 0; i < painters.length; i++) {
-			let row = '<option value="' + painters[i] + '">' + PainterFactory.Painters[painters[i]].simpleName + '</option>';
-			$('#new_activity_form select[name="type"]').append(row);
-		}
+
+		Simva.getActivityTypes(function(error, activitytypes){
+			for (var i = 0; i < activitytypes.length; i++) {
+				if(PainterFactory.Painters[activitytypes[i].type]){
+					PainterFactory.Painters[activitytypes[i].type].utils = activitytypes[i].utils;
+					PainterFactory.Painters[activitytypes[i].type].simpleName = activitytypes[i].name;
+
+					let row = '<option value="' + painters[i] + '">' + PainterFactory.Painters[activitytypes[i].type].simpleName + '</option>';
+					$('#new_activity_form select[name="type"]').append(row);
+				}
+			}
+		})
 
 		$('#new_activity_form select[name="type"]').on('change', function(event){
 			$('#new_activity_extras').empty();

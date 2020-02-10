@@ -11,6 +11,11 @@ var ActivityPainter = {
 	supportedType: 'activity',
 	simpleName: 'Default activity',
 
+	utils: {},
+	setUtils: function(utils){
+		this.utils = utils;
+	},
+
 	getExtraForm: function () {
 		return '';
 	},
