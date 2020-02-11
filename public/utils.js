@@ -70,6 +70,21 @@ var Utils = {
 		});
 	},
 
+	getPDF: function(url, callback, jwt){
+
+		var req = new XMLHttpRequest();
+		req.open("GET", url, true);
+		req.setRequestHeader('Authorization','Bearer ' + jwt);
+		req.responseType = "blob";
+
+		req.onload = function (event) {
+			var blob = req.response;
+			callback(null, blob);
+		};
+
+		req.send();
+	},
+
 	delete: function(url, callback, jwt){
 
 		$.ajax({
@@ -89,4 +104,17 @@ var Utils = {
 			error: callback
 		});
 	},
+
+	download: function(filename, text){
+		var element = document.createElement('a');
+		element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+		element.setAttribute('download', filename);
+
+		element.style.display = 'none';
+		document.body.appendChild(element);
+
+		element.click();
+
+		document.body.removeChild(element);
+	}
 }

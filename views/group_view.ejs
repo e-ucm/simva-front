@@ -91,8 +91,14 @@
 	</div>
 </div>
 
+<div class="floating_buttons">
+	<a unselectable="on" class="pdf" onclick="openPDF()">PDF</a>
+</div>
+
 <script type="text/javascript">
 	let group = {};
+	let groupid = "<%= group %>";
+
 	$(document).ready(function() {
 		$("#existing_owner_form").on('submit', function(event){
 			event.preventDefault();
@@ -225,16 +231,25 @@
 		reloadGroup();
 	});
 
+	let openPDF = function(){
+		Simva.getGroupPrintable(groupid, function(error, result){
+			var link=document.createElement('a');
+			link.href=window.URL.createObjectURL(result);
+			link.download= 'SimvaGroup_' + group.name.replace(' ', '-') + '.pdf';
+			link.click();
+		});
+	}
+
 	let toggleSubmit = function(form){
 		$(form).find('input[type="submit"]').toggle();
 		$(form).find('.loader').toggle();
 	}
 
 	let reloadGroup = function(){
-		Simva.getGroup("<%= group %>", function(error, result){
+		Simva.getGroup(groupid, function(error, result){
 			if(!error){
 				group = result;
-				Simva.getGroupParticipants("<%= group %>", function(error, result){
+				Simva.getGroupParticipants(groupid, function(error, result){
 					if(!error){
 						paintGroup(group, result);
 					}

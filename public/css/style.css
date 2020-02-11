@@ -130,6 +130,14 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.3);
 }
 
+.content .floating_buttons a.pdf {
+	padding-top: 17px;
+	color: white;
+	font-weight: bold;
+	background-color: red;
+	font-size: 22px;
+}
+
 .content .floating_buttons a img {
 	display: block;
 	width: 60px;

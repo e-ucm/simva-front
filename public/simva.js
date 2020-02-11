@@ -44,6 +44,10 @@ var Simva = {
 		Utils.get(this.apiurl + '/groups/' + group_id + '/participants', callback, this.jwt);
 	},
 
+	getGroupPrintable: function(group_id, callback){
+		Utils.getPDF(this.apiurl + '/groups/' + group_id + '/printable', callback, this.jwt);
+	},
+
 	// STUDIES
 
 	getStudies: function(callback){
