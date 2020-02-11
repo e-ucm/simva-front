@@ -105,10 +105,32 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .content ul { padding: 10px; list-style: square inside; }
 .content li { padding: 10px; }
 
-.content .addbutton {
+.content .floating_buttons {
 	position: fixed;
+	text-align: right;
 	bottom: 20px;
 	right: 20px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	width: 100%;
+}
+
+.content .floating_buttons a {
+	display: inline-block;
+	width: 60px;
+	height: 60px;
+	background-color: #ff8f22;
+	font-size: 55px;
+	text-align: center;
+	margin-left: 10px;
+	cursor: pointer;
+	border-radius: 30px;
+	box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.3);
+}
+
+.content .floating_buttons a img {
 	display: block;
 	width: 60px;
 	height: 60px;
@@ -118,10 +140,6 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	cursor: pointer;
 	border-radius: 30px;
 	box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.3);
-	-webkit-user-select: none; /* Safari */        
-	-moz-user-select: none; /* Firefox */
-	-ms-user-select: none; /* IE10+/Edge */
-	user-select: none; /* Standard */
 }
 
 .content .new_element.shown { display: table; }

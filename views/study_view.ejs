@@ -132,6 +132,10 @@
 	</div>
 </div>
 
+<div class="floating_buttons">
+	<a unselectable="on" class="basic" onclick="downloadUAConfig()"><img src="/ua.png"></a>
+</div>
+
 <script type="text/javascript">
 	let studyid = "<%= study %>";
 	let study = null, participants = null, tests = null, allocator = null, groups = null;
@@ -247,6 +251,37 @@
 		loadAddGroups();
 		reloadStudy();
 	});
+	function download(filename, text) {
+		var element = document.createElement('a');
+		element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+		element.setAttribute('download', filename);
+
+		element.style.display = 'none';
+		document.body.appendChild(element);
+
+		element.click();
+
+		document.body.removeChild(element);
+	}
+
+	let downloadUAConfig = function(){
+		var content = JSON.stringify({
+			study: study._id,
+			host: "<%= config.simva.host %>",
+			protocol: "<%= config.simva.protocol %>",
+			port: "<%= config.simva.port %>",
+			url: "<%= config.simva.url %>"
+		});
+
+
+		var filename = "simva.conf";
+
+		var blob = new Blob([content], {
+		 type: "text/plain;charset=utf-8"
+		});
+
+		download(filename, content);
+	}
 
 	let toggleTest = function(id){
 		$('#test_' + id).find('.activities').toggleClass('collapsed');

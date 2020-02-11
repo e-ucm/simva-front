@@ -15,6 +15,7 @@ var LimeSurveyPainter = {
 
 	utils: {},
 	setUtils: function(utils){
+		this.limesurveyurl = utils.url;
 		this.utils = utils;
 	},
 
