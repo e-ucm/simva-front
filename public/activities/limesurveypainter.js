@@ -137,7 +137,7 @@ var LimeSurveyPainter = {
 		let toret = '<table><tr><th>User</th><th>Completed</th><th>Result</th></tr>';
 
 		for (var i = 0; i < participants.length; i++) {
-			toret += '<tr><td><a class="targeturl" target="_blank" href="">'
+			toret += '<tr><td><a id="' + activity._id + "_" + participants[i].username + '_target"class="targeturl" target="_blank" href="">'
 				+ participants[i].username + '</a></td>'
 				+ '<td id="completion_' + activity._id + '_' + participants[i].username + '">---</td>'
 				+ '<td id="result_' + activity._id + '_' + participants[i].username + '">---</td>';
@@ -224,7 +224,7 @@ var LimeSurveyPainter = {
 		let done = 0, partial = 0;
 		
 		for (var i = 0; i < usernames.length; i++) {
-			$('#activity_' + activity._id + ' ' + '.targeturl').attr('href', results[usernames[i]]);
+			$('#' + activity._id + '_' + usernames[i] + '_target').attr('href', results[usernames[i]]);
 		}
 	}
 }
