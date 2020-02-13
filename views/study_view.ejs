@@ -27,11 +27,9 @@
 
 			<div class="graybox allocator default">
 				<h2>Allocator</h2>
-				<p class="subtitle italic">Type: <span id="allocator_type">default</span></p>
-				<p class="subtitle justified">This allocator automatically assigns upcoming participants to the first test available.</p>
-				<table id="allocator_participants" class="allocations">
-				</table>
-				<input class="violet" type="button" value="Add Allocation">
+				<div id="allocator_content">
+					
+				</div>
 			</div>
 		</div>
 		<div class="card">
@@ -56,6 +54,19 @@
 						<span class="error"></span>
 					</form>
 				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="edit_allocator" class="new_element floating">
+		<div class="floater">
+			<div class="form">
+				<h2 id="edit_allocator_title"></h2>
+				<form id="edit_allocator_form">
+					<div id="edit_allocator_content">
+					</div>
+					<span class="error"></span>
+				</form>
 			</div>
 		</div>
 	</div>
@@ -271,6 +282,12 @@
 		Utils.download(filename, content);
 	}
 
+	let toggleAllocatorForm = function(){
+		$('#edit_allocator_title').html(AllocatorFactory.Painters[allocator.type].getFormTitle());
+		$('#edit_allocator_content').html(AllocatorFactory.Painters[allocator.type].getFormContent());
+		$('#edit_allocator').toggleClass('shown');
+	}
+
 	let toggleTest = function(id){
 		$('#test_' + id).find('.activities').toggleClass('collapsed');
 	}
@@ -430,7 +447,7 @@
 
 		paintOwners(study.owners);
 
-		paintDefaultAllocator(allocator, tests);
+		paintAllocator(allocator, tests, groups, participants);
 
 		paintGroups(groups);
 
@@ -481,22 +498,13 @@
 		}
 	}
 
-	let paintDefaultAllocator = function(allocator, tests){
-		$('#allocator_participants').empty();
-		if(allocator.allocations){
-			$('#allocator_participants').append('<tr><th>Participant</th><th>Test</th></tr>');
-			let keys = Object.keys(allocator.allocations);
-			for (var i = 0; i < keys.length; i++) {
-				let tmp = {
-					username: keys[i],
-					test: allocator.allocations[keys[i]]
-				}
+	let paintAllocator = function(allocator, tests, groups, participants){
+		AllocatorFactory.Painters[allocator.type].setTests(tests);
+		AllocatorFactory.Painters[allocator.type].setGroups(groups);
+		AllocatorFactory.Painters[allocator.type].setStudy(study);
+		AllocatorFactory.Painters[allocator.type].setParticipants(participants);
 
-				$('#allocator_participants').append(allocationRow(allocator.allocations[i]))
-			}
-		}else{
-			$('#allocator_participants').append('<tr><th>There are no allocations yet.</th></tr>');
-		}
+		AllocatorFactory.Painters[allocator.type].paintAllocator(allocator);
 	}
 
 	let paintTest = function(test){
@@ -574,3 +582,4 @@
 </script>
 <script type="text/javascript" src="/activities/activitypainter.js"></script>
 <script type="text/javascript" src="/activities/limesurveypainter.js"></script>
+<script type="text/javascript" src="/allocators/defaultallocatorpainter.js"></script>
