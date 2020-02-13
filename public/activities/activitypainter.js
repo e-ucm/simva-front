@@ -33,8 +33,18 @@ var ActivityPainter = {
 	},
 
 	fullyPaintActivity: function(activity){
-		let tmp = this;
 		this.paintActivity(activity, participants);
+		let tmp = this;
+
+		this.updateParticipants(activity);
+		setInterval(function(){
+			tmp.updateParticipants(activity);
+		}, 5000);
+	},
+
+	updateParticipants: function(activity){
+		let tmp = this;
+		activity.tmp = {};
 
 		Simva.getActivityCompletion(activity._id, function(error, result){
 			tmp.paintActivityCompletion(activity, result);

@@ -103,9 +103,18 @@ var LimeSurveyPainter = {
 	},
 
 	fullyPaintActivity: function(activity){
+		this.paintActivity(activity, participants);
+		let tmp = this;
+
+		this.updateParticipants(activity);
+		setInterval(function(){
+			tmp.updateParticipants(activity);
+		}, 5000);
+	},
+
+	updateParticipants: function(activity){
 		let tmp = this;
 		activity.tmp = {};
-		this.paintActivity(activity, participants);
 
 		Simva.getActivityCompletion(activity._id, function(error, result){
 			activity.tmp.completion = result;
@@ -159,6 +168,7 @@ var LimeSurveyPainter = {
 			}
 
 			let completion = '<span>' + status[usernames[i]] + '</span>'
+			$('#completion_' + activity._id + '_' + usernames[i]).removeClass();
 			$('#completion_' + activity._id + '_' + usernames[i]).addClass(!status[usernames[i]] ? 'red' : 'green');
 			$('#completion_' + activity._id + '_' + usernames[i]).empty();
 			$('#completion_' + activity._id + '_' + usernames[i]).append(completion);
@@ -197,6 +207,7 @@ var LimeSurveyPainter = {
 			}
 
 			let completion = '<span>' + state + '</span>'
+			$('#result_' + activity._id + '_' + usernames[i]).removeClass();
 			$('#result_' + activity._id + '_' + usernames[i]).addClass(color);
 			$('#result_' + activity._id + '_' + usernames[i]).empty();
 			$('#result_' + activity._id + '_' + usernames[i]).append(completion);
