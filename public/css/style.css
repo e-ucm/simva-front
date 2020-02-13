@@ -114,7 +114,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
-	width: 100%;
+	white-space: nowrap;
 }
 
 .content .floating_buttons a {
