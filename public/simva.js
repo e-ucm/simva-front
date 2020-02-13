@@ -76,6 +76,10 @@ var Simva = {
 		Utils.get(this.apiurl + '/studies/' + study_id + '/allocator', callback, this.jwt);
 	},
 
+	updateAllocator: function(study_id, allocator, callback){
+		Utils.put(this.apiurl + '/studies/' + study_id + '/allocator', allocator, callback, this.jwt);
+	},
+
 	getStudyTests: function(study_id, callback){
 		Utils.get(this.apiurl + '/studies/' + study_id + '/tests', callback, this.jwt);
 	},
