@@ -204,6 +204,8 @@ var LimeSurveyPainter = {
 					color = 'yellow';
 					state = 'Started';
 				}
+
+				state ='<a onclick="LimeSurveyPainter.openResults(\'' + activity._id + '\',\'' + usernames[i] + '\')">' + state + '</a>';
 			}
 
 			let completion = '<span>' + state + '</span>'
@@ -242,6 +244,26 @@ var LimeSurveyPainter = {
 	openLimesurvey: function(){
 		$('#iframe_floating iframe').prop('src', this.limesurveyurl + '/admin/survey/sa/newsurvey');
 		toggleAddForm('iframe_floating');
+	},
+
+	openResults: function(activity, user){
+		Simva.getActivityResultForUser(activity, user, function(error, result){
+			if(error){
+				$.toast({
+					heading: 'Error loading the result',
+					text: error.message,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+			}else{
+				let content = '<div style="padding: 20px;">' + JSON.stringify(result[user], null, 2) + '</div>';
+				let context = $('#iframe_floating iframe')[0].contentWindow.document;
+				let body = $('body', context);
+				body.html(content);
+				toggleAddForm('iframe_floating');
+			}
+		})
 	}
 }
 

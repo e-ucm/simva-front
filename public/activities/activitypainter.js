@@ -50,7 +50,7 @@ var ActivityPainter = {
 			tmp.paintActivityCompletion(activity, result);
 		});
 
-		Simva.getActivityResult(activity._id, function(error, result){
+		Simva.hasActivityResult(activity._id, function(error, result){
 			tmp.paintActivityResult(activity, result);
 		});
 	},
@@ -111,7 +111,7 @@ var ActivityPainter = {
 		let done = 0, partial = 0;
 
 		for (var i = 0; i < usernames.length; i++) {
-			let status = (results[usernames[i]] !== 'No results');
+			let status = results[usernames[i]];
 			let result = '<span>No results</span>'
 
 			if(status){
