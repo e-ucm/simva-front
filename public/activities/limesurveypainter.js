@@ -48,7 +48,7 @@ var LimeSurveyPainter = {
 		form += '</div>'
 			+ '<div id="limesurvey_bynew" class="subform">'
 			+ 	'<p>Click to open LimeSurvey</p>'
-			+ 	'<p><a class="button green">LimeSurvey</a></p>'
+			+ 	'<p><a class="button green" onclick="LimeSurveyPainter.openLimesurvey()">LimeSurvey</a></p>'
 			+ '</div>'
 			+ '<div id="limesurvey_byupload" class="subform">'
 			+ 	'<p>Select LLS file</p>'
@@ -237,6 +237,11 @@ var LimeSurveyPainter = {
 		for (var i = 0; i < usernames.length; i++) {
 			$('#' + activity._id + '_' + usernames[i] + '_target').attr('href', results[usernames[i]]);
 		}
+	},
+
+	openLimesurvey: function(){
+		$('#iframe_floating iframe').prop('src', this.limesurveyurl + '/admin/survey/sa/newsurvey');
+		toggleAddForm('iframe_floating');
 	}
 }
 
