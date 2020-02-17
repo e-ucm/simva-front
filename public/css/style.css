@@ -246,7 +246,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .content .test .activities .activity .progress div.done {height: 30px; float: left; position: absolute; background-color: #adffad;}
 .content .test .activities .activity .progress div.partial {height: 30px; float: left; position: absolute; background-color: #fff688;}
 .content .test .activities .activity .progress span {float: left; width: 100%; position: absolute; top: 7px; left: 0px; text-align: center; font-size: 12px; font-weight: bold;}
-
+.content .test .activities .activity a {font-weight: bold; cursor: pointer;}
 /*
 .menu { background-color: #332d26;color: white; width: 200px; height: 100%; position: fixed; top: 50px; padding: 10px;}
 .menu ul {}

@@ -112,14 +112,18 @@ var ActivityPainter = {
 
 		for (var i = 0; i < usernames.length; i++) {
 			let status = (results[usernames[i]] !== 'No results');
+			let result = '<span>No results</span>'
+
 			if(status){
 				done++;
+				result = '<span><a onclick="ActivityPainter.openResults(\'' + activity._id + '\',\'' + usernames[i] + '\')">'
+					+'See Results</a></span>';
 			}
 
-			let completion = '<span>' + results[usernames[i]] + '</span>'
+
 			$('#result_' + activity._id + '_' + usernames[i]).addClass(status ? 'green' : 'red');
 			$('#result_' + activity._id + '_' + usernames[i]).empty();
-			$('#result_' + activity._id + '_' + usernames[i]).append(completion);
+			$('#result_' + activity._id + '_' + usernames[i]).append(result);
 		}
 
 		let progress = Math.round((done / usernames.length) * 1000) / 10; 
@@ -136,6 +140,26 @@ var ActivityPainter = {
 		$('#result_progress_' + activity._id + ' .partial').css('width', partialprogress + '%' );
 		$('#result_progress_' + activity._id + ' done').text(progress);
 		$('#result_progress_' + activity._id + ' partial').text(partialprogress);
+	},
+
+	openResults: function(activity, user){
+		Simva.getActivityResultForUser(activity, user, function(error, result){
+			if(error){
+				$.toast({
+					heading: 'Error loading the result',
+					text: error.message,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+			}else{
+				let content = '<div style="padding: 20px;">' + result[user] + '</div>';
+				let context = $('#iframe_floating iframe')[0].contentWindow.document;
+				let body = $('body', context);
+				body.html(content);
+				toggleAddForm('iframe_floating');
+			}
+		})
 	}
 }
 

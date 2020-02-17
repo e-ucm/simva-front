@@ -106,6 +106,10 @@ var Simva = {
 		Utils.get(this.apiurl + '/activities/' + activity_id + '/completion', callback, this.jwt);
 	},
 
+	getActivityResultForUser(activity_id, student, callback){
+		Utils.get(this.apiurl + '/activities/' + activity_id + '/result?users=' + student, callback, this.jwt);
+	},
+
 	getActivityResult: function(activity_id, callback){
 		Utils.get(this.apiurl + '/activities/' + activity_id + '/result', callback, this.jwt);
 	},
