@@ -5,141 +5,145 @@
 <!--<div id="roller" style="width: 100%; text-align: center; padding: 200px;">
 	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 </div>-->
-<div class="n">
-	<h1>Study: <span id="study_name"></span></h1>
-	<div id="study">
-		<div class="left">
-			<div class="graybox owners">
-				<h2>Owners</h2>
-				<p></p>
-				<table id="owners">
-				</table>
-				<input class="violet" type="button" value="Add owner" onclick="toggleAddForm('add_owner')">
-			</div>
-
-			<div class="graybox groups">
-				<h2>Groups</h2>
-				<p></p>
-				<table id="groups">
-				</table>
-				<input class="violet" type="button" value="Add Group" onclick="toggleAddForm('add_group')">
-			</div>
-
-			<div class="graybox allocator default">
-				<h2>Allocator</h2>
-				<div id="allocator_content">
-					
-				</div>
-			</div>
+<h1>Study: <span id="study_name"></span></h1>
+<div id="study">
+	<div class="left">
+		<div class="graybox owners">
+			<h2>Owners</h2>
+			<p></p>
+			<table id="owners">
+			</table>
+			<input class="violet" type="button" value="Add owner" onclick="toggleAddForm('add_owner')">
 		</div>
-		<div class="card">
-			<div class="top">
-				<h2>Tests</h2>
-				<input class="violet" type="button" value="Add Test" onclick="toggleAddForm('add_test')">
-			</div>
-			<div id="tests" class="tests">
+
+		<div class="graybox groups">
+			<h2>Groups</h2>
+			<p></p>
+			<table id="groups">
+			</table>
+			<input class="violet" type="button" value="Add Group" onclick="toggleAddForm('add_group')">
+		</div>
+
+		<div class="graybox allocator default">
+			<h2>Allocator</h2>
+			<div id="allocator_content">
+				
 			</div>
 		</div>
 	</div>
-	<div id="add_group" class="new_element floating">
-		<div class="floater">
-			<div class="form">
-				<div id="add_group_tab" class="subform selected">
-					<h2>Add group</h2>
-					<form id="add_group_form">
-						<select id="group_select" name="group">
-						</select>
-						<input type="submit" value="Add">
-						<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-						<span class="error"></span>
-					</form>
-				</div>
-			</div>
+	<div class="card">
+		<div class="top">
+			<h2>Tests</h2>
+			<input class="violet" type="button" value="Add Test" onclick="toggleAddForm('add_test')">
+		</div>
+		<div id="tests" class="tests">
 		</div>
 	</div>
-
-	<div id="edit_allocator" class="new_element floating">
-		<div class="floater">
-			<div class="form">
-				<h2 id="edit_allocator_title"></h2>
-				<form id="edit_allocator_form">
-					<div id="edit_allocator_content">
-					</div>
+</div>
+<div id="add_group" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<div id="add_group_tab" class="subform selected">
+				<h2>Add group</h2>
+				<form id="add_group_form">
+					<select id="group_select" name="group">
+					</select>
+					<input type="submit" value="Add">
+					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 					<span class="error"></span>
 				</form>
 			</div>
 		</div>
 	</div>
+</div>
 
-	<div id="add_owner" class="new_element floating">
-		<div class="floater">
-			<div class="form">
-				<div id="existing_owner_tab" class="subform selected">
-					<h2>Add owner</h2>
-					<form id="existing_owner_form">
-						<input type="text" name="name" placeholder="Owner username" required>
-						<input type="submit" value="Add">
-						<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-						<span class="error"></span>
-					</form>
+<div id="edit_allocator" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<h2 id="edit_allocator_title"></h2>
+			<form id="edit_allocator_form">
+				<div id="edit_allocator_content">
 				</div>
+				<span class="error"></span>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div id="add_owner" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<div id="existing_owner_tab" class="subform selected">
+				<h2>Add owner</h2>
+				<form id="existing_owner_form">
+					<input type="text" name="name" placeholder="Owner username" required>
+					<input type="submit" value="Add">
+					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+					<span class="error"></span>
+				</form>
 			</div>
 		</div>
 	</div>
+</div>
 
-	<div id="add_test" class="new_element floating">
-		<div class="floater">
-			<div class="form">
-				<div id="add_test_tab" class="subform selected">
-					<h2>Add Test</h2>
-					<form id="add_test_form">
-						<input type="text" name="name" placeholder="Test name" required>
-						<input type="submit" value="Add">
-						<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-						<span class="error"></span>
-					</form>
-				</div>
+<div id="add_test" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<div id="add_test_tab" class="subform selected">
+				<h2>Add Test</h2>
+				<form id="add_test_form">
+					<input type="text" name="name" placeholder="Test name" required>
+					<input type="submit" value="Add">
+					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+					<span class="error"></span>
+				</form>
 			</div>
 		</div>
 	</div>
+</div>
 
-	<div id="add_activity" class="new_element floating">
-		<div class="floater">
-			<div class="form">
-				<div class="tabs">
-					<span class="tab selected" onclick="changeTab(this, 'add_activity','new_activity_tab')">Add new activity</span>
-					<span class="tab" onclick="changeTab(this, 'add_activity','existing_activity_tab')">Select from existing</span>
-				</div>
-				<div id="new_activity_tab" class="subform selected">
-					<form id="new_activity_form">
-						<input type="hidden" name="test">
-						<input type="text" name="name" placeholder="Activity name" required>
-						<select name="type">
-						</select>
-						<fieldset id="new_activity_extras">
-						</fieldset>
-						<input type="submit" value="Add">
-						<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-						<span class="error"></span>
-					</form>
-				</div>
-				<div id="existing_activity_tab" class="subform">
-					<form id="existing_activity_form">
-						<input type="hidden" name="test">
-						<input type="text" name="username" placeholder="Username" value="" required>
-						<input type="email" name="email" placeholder="email@example.com" value="" required>
-						<input type="password" name="password" placeholder="Password" required>
-						<div class="role_selector">
-							<input id="teacher_role" type="radio" name="role" value="teacher"><label for="teacher_role">Teacher</label>
-							<input id="student_role" type="radio" name="role" value="student" checked><label for="student_role">Student</label>
-						</div>
-						<input type="submit" value="Add Batch">
-						<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-						<span class="error"></span>
-					</form>
-				</div>
+<div id="add_activity" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<div class="tabs">
+				<span class="tab selected" onclick="changeTab(this, 'add_activity','new_activity_tab')">Add new activity</span>
+				<span class="tab" onclick="changeTab(this, 'add_activity','existing_activity_tab')">Select from existing</span>
+			</div>
+			<div id="new_activity_tab" class="subform selected">
+				<form id="new_activity_form">
+					<input type="hidden" name="test">
+					<input type="text" name="name" placeholder="Activity name" required>
+					<select name="type">
+					</select>
+					<fieldset id="new_activity_extras">
+					</fieldset>
+					<input type="submit" value="Add">
+					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+					<span class="error"></span>
+				</form>
+			</div>
+			<div id="existing_activity_tab" class="subform">
+				<form id="existing_activity_form">
+					<input type="hidden" name="test">
+					<input type="text" name="username" placeholder="Username" value="" required>
+					<input type="email" name="email" placeholder="email@example.com" value="" required>
+					<input type="password" name="password" placeholder="Password" required>
+					<div class="role_selector">
+						<input id="teacher_role" type="radio" name="role" value="teacher"><label for="teacher_role">Teacher</label>
+						<input id="student_role" type="radio" name="role" value="student" checked><label for="student_role">Student</label>
+					</div>
+					<input type="submit" value="Add Batch">
+					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+					<span class="error"></span>
+				</form>
 			</div>
 		</div>
+	</div>
+</div>
+
+<div id="iframe_floating" class="new_element floating">
+	<div class="floater">
+		<iframe src=""></iframe>
 	</div>
 </div>
 

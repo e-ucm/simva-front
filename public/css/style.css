@@ -55,8 +55,9 @@ input[type="button"]:disabled {border:1px solid  lightgray; background: darkgray
 .login #error,
 .error { width: 100%; color: red; font-size: 14px; text-align: center; }
 
-.floating { display: table; width: 100%; height: 100%; }
+.floating { display: table; width: 100%; height: 100%; z-index: 101; }
 .floating .floater {display: table-cell; vertical-align: middle; text-align: center; width: 100%; height: 100%;}
+.floating .floater iframe { width: 90%; height: 90%; background-color: white; border: 2px black solid; }
 
 
 .login .role_selector { text-align: left; margin-bottom: 10px; }
