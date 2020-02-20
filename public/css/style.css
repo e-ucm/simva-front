@@ -225,6 +225,14 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 
 .content .test .activities .activity.tactivity { background-color: gray; }
 .content .test .activities .activity.tlimesurvey { background-color: #3f8446; }
+.content .test .activities .activity.trageanalytics {
+	background-color: #c84949;
+    background: -webkit-linear-gradient(left, #ff7d7d, #ffd17d , #ffff7b, #7bff7b, #84ffff, #8080ff, #ff7aff);
+    background: -o-linear-gradient(right, #ff7d7d, #ffd17d, #ffff7b, #7bff7b, #84ffff, #8080ff, #ff7aff); 
+    background: -moz-linear-gradient(right, #ff7d7d, #ffd17d, #ffff7b, #7bff7b, #84ffff, #8080ff, #ff7aff); 
+    background: linear-gradient(to right, #ff7d7d, #ffd17d, #ffff7b, #7bff7b, #84ffff, #8080ff, #ff7aff); 
+}
+
 
 .content .test .activities .activity .top input[type="button"] {float: right; margin-left: 10px; height: 15px; width: 15px; font-size: 10px; padding: 0px; text-align: center;}
 

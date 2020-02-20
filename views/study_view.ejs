@@ -242,7 +242,9 @@
 
 		$("#new_activity_form").on('submit', function(event){
 			event.preventDefault();
+			let currentform = this;
 			let form = Utils.getFormData($("#new_activity_form"));
+			toggleSubmit(currentform);
 			let errorbox = $(this).find('.error');
 
 			PainterFactory.Painters[form.type].extractInformation('#new_activity_form', function(error, activity){
@@ -250,6 +252,7 @@
 					errorbox.text(error);
 				}else{
 					Simva.addActivityToTest(studyid, form.test, activity, function(error, result){
+						toggleSubmit(currentform);
 						if(error && error.responseJSON){
 							errorbox.text(error.responseJSON.message);
 						}else{
@@ -527,6 +530,7 @@
 		}else{
 			for (var i = 0; i < activities.length; i++) {
 				switch(activities[i].type){
+					case 'rageanalytics':
 					case 'limesurvey':
 					case 'activity':
 						PainterFactory.Painters[activities[i].type].fullyPaintActivity(activities[i]);
@@ -586,4 +590,5 @@
 </script>
 <script type="text/javascript" src="/activities/activitypainter.js"></script>
 <script type="text/javascript" src="/activities/limesurveypainter.js"></script>
+<script type="text/javascript" src="/activities/rageanalyticspainter.js"></script>
 <script type="text/javascript" src="/allocators/defaultallocatorpainter.js"></script>
