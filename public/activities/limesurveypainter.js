@@ -136,7 +136,8 @@ var LimeSurveyPainter = {
 		$('#test_' + activity.test + ' .activities').append('<div id="activity_' + activity._id + '" class="activity t' + activity.type + '">'
 			+ '<div class="top"><h4>' + activity.name + '</h4>'
 			+ '<input class="red" type="button" value="X" onclick="deleteActivity(\'' + activity._id + '\')"></div>'
-			+ '<p>Survey ID: <a target="_blank" href="' + this.limesurveyurl + activity.extra_data.surveyId + '">' + activity.extra_data.surveyId + '</a></p>'
+			+ '<p class="subtitle">' + this.simpleName + '</p>'
+			+ '<p>Survey ID: <a target="_blank" href="' + this.utils.url + activity.extra_data.surveyId + '">' + activity.extra_data.surveyId + '</a></p>'
 			+ '<div id="completion_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>'
 			+ '<div id="result_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>'
 			+ this.paintActivityParticipantsTable(activity, participants) + '</div>');
