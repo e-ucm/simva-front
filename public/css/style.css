@@ -233,8 +233,11 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
     background: linear-gradient(to right, #ff7d7d, #ffd17d, #ffff7b, #7bff7b, #84ffff, #8080ff, #ff7aff); 
 }
 
+.content .test .activities .activity.tminiokafka { background-color: #30819a; }
+
 
 .content .test .activities .activity .top input[type="button"] {float: right; margin-left: 10px; height: 15px; width: 15px; font-size: 10px; padding: 0px; text-align: center;}
+.content .test .activities .activity .subtitle { font-style: italic; font-size: 14px; width: 100%; white-space: normal; margin: 0px; padding: 0px;}
 
 .content .test .activities .activity table { width: 100%; font-size: 14px; border-collapse: collapse; }
 .content .test .activities .activity table tr:nth-child(even) {background: #c5c5c5}
