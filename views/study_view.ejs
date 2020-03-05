@@ -163,11 +163,13 @@
 				if(PainterFactory.Painters[activitytypes[i].type]){
 					PainterFactory.Painters[activitytypes[i].type].utils = activitytypes[i].utils;
 					PainterFactory.Painters[activitytypes[i].type].simpleName = activitytypes[i].name;
+					PainterFactory.Painters[activitytypes[i].type].description = activitytypes[i].description;
 
 					let row = '<option value="' + painters[i] + '">' + PainterFactory.Painters[activitytypes[i].type].simpleName + '</option>';
 					$('#new_activity_form select[name="type"]').append(row);
 				}
 			}
+			reloadStudy();
 		})
 
 		$('#new_activity_form select[name="type"]').on('change', function(event){
@@ -267,7 +269,6 @@
 		});
 
 		loadAddGroups();
-		reloadStudy();
 	});
 
 	let downloadUAConfig = function(){
@@ -530,6 +531,7 @@
 		}else{
 			for (var i = 0; i < activities.length; i++) {
 				switch(activities[i].type){
+					case 'miniokafka':
 					case 'rageanalytics':
 					case 'limesurvey':
 					case 'activity':
@@ -591,4 +593,5 @@
 <script type="text/javascript" src="/activities/activitypainter.js"></script>
 <script type="text/javascript" src="/activities/limesurveypainter.js"></script>
 <script type="text/javascript" src="/activities/rageanalyticspainter.js"></script>
+<script type="text/javascript" src="/activities/miniopainter.js"></script>
 <script type="text/javascript" src="/allocators/defaultallocatorpainter.js"></script>
