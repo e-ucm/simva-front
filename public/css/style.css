@@ -231,6 +231,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
     background: -o-linear-gradient(right, #ff7d7d, #ffd17d, #ffff7b, #7bff7b, #84ffff, #8080ff, #ff7aff); 
     background: -moz-linear-gradient(right, #ff7d7d, #ffd17d, #ffff7b, #7bff7b, #84ffff, #8080ff, #ff7aff); 
     background: linear-gradient(to right, #ff7d7d, #ffd17d, #ffff7b, #7bff7b, #84ffff, #8080ff, #ff7aff); 
+    width: 325px;
 }
 
 .content .test .activities .activity.tminiokafka { background-color: #30819a; }
@@ -253,9 +254,13 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .content .test .activities .activity table tr td .green { color: #008800; }
 .content .test .activities .activity table tr td .yellow { color: #fff145; }
 
-.content .test .activities .activity .progress { position: relative; width: 100%; background-color: #ff9696; height: 30px; border: 2px solid black; overflow: hidden; margin-bottom: 10px; z-index: 0;}
-.content .test .activities .activity .progress div.done {height: 30px; float: left; position: absolute; background-color: #adffad;}
-.content .test .activities .activity .progress div.partial {height: 30px; float: left; position: absolute; background-color: #fff688;}
+.content .test .activities .activity table tr td.progress,
+.content .test .activities .activity table tr td.progress div.done, 
+.content .test .activities .activity table tr td.progress div.partial {height: 28px;}
+
+.content .test .activities .activity .progress { position: relative; width: 100%; background-color: #ff9696; height: 30px; border: 2px solid black; overflow: hidden; margin-bottom: 10px; z-index: 0; padding: 0px;}
+.content .test .activities .activity .progress div.done {height: 30px; float: left; position: absolute; background-color: #adffad; top: 0px; left: 0px; }
+.content .test .activities .activity .progress div.partial {height: 30px; float: left; position: absolute; background-color: #fff688; top: 0px; left: 0px; }
 .content .test .activities .activity .progress span {float: left; width: 100%; position: absolute; top: 7px; left: 0px; text-align: center; font-size: 12px; font-weight: bold;}
 .content .test .activities .activity a {font-weight: bold; cursor: pointer;}
 /*

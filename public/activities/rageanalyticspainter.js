@@ -50,7 +50,7 @@ var RageAnalyticsActivityPainter = {
 			tmp.paintActivityCompletion(activity, result);
 		});
 
-		Simva.hasActivityResult(activity._id, function(error, result){
+		Simva.getActivityResult(activity._id, function(error, result){
 			tmp.paintActivityResult(activity, result);
 		});
 	},
@@ -67,11 +67,12 @@ var RageAnalyticsActivityPainter = {
 	},
 
 	paintActivityParticipantsTable: function(activity, participants){
-		let toret = '<table><tr><th>User</th><th>Completed</th><th>Result</th></tr>';
+		let toret = '<table><tr><th>User</th><th>Completed</th><th>Progress</th><th>Result</th></tr>';
 
 		for (var i = 0; i < participants.length; i++) {
 			toret += '<tr><td>' + participants[i].username + '</td>'
 				+ '<td id="completion_' + activity._id + '_' + participants[i].username + '">---</td>'
+				+ '<td id="progress_' + activity._id + '_' + participants[i].username + '" class="progress"><div class="partial"></div><div class="done"></div><span><done>0</done>%</span></td>'
 				+ '<td id="result_' + activity._id + '_' + participants[i].username + '">---</td>';
 		}
 
@@ -117,7 +118,25 @@ var RageAnalyticsActivityPainter = {
 
 			if(status){
 				done++;
-				result = '<span>See Results</a></span>';
+				result = '<span><a onclick="RageAnalyticsActivityPainter.openResults(\'' + activity._id + '\',\'' + usernames[i]
+					 + '\')">See Results</a></span>';
+
+				let tmpprogress = 0; 
+				if(results[usernames[i]]
+					&& results[usernames[i]].progressed
+					&& results[usernames[i]].progressed['serious-game']){
+					let keys = Object.keys(results[usernames[i]].progressed['serious-game']);
+					if(keys.length > 0){
+						if(results[usernames[i]].progressed['serious-game'][keys[0]].progress){
+							tmpprogress = results[usernames[i]].progressed['serious-game'][keys[0]].progress;
+						}
+					}
+				}
+
+				tmpprogress = (tmpprogress * 1000) / 10;
+
+				$('#progress_' + activity._id + '_' + usernames[i] +' .done').css('width', tmpprogress + '%' );
+				$('#progress_' + activity._id + '_' + usernames[i] +' done').text(tmpprogress);
 			}
 
 
@@ -140,6 +159,26 @@ var RageAnalyticsActivityPainter = {
 		$('#result_progress_' + activity._id + ' .partial').css('width', partialprogress + '%' );
 		$('#result_progress_' + activity._id + ' done').text(progress);
 		$('#result_progress_' + activity._id + ' partial').text(partialprogress);
+	},
+
+	openResults: function(activity, user){
+		Simva.getActivityResultForUser(activity, user, function(error, result){
+			if(error){
+				$.toast({
+					heading: 'Error loading the result',
+					text: error.message,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+			}else{
+				let content = '<div style="padding: 20px;">' + JSON.stringify(result[user], null, 2) + '</div>';
+				let context = $('#iframe_floating iframe')[0].contentWindow.document;
+				let body = $('body', context);
+				body.html(content);
+				toggleAddForm('iframe_floating');
+			}
+		})
 	},
 
 	openDashboard: function(activityId){
