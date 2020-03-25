@@ -236,6 +236,17 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 
 .content .test .activities .activity.tminiokafka { background-color: #30819a; }
 
+.content .test .activities .activity.trageminio {
+	background-color: #c84949;
+    background: -webkit-linear-gradient(left, #ff7d7d 7%, #ffd17d 14%, #ffff7b 21%, #7bff7b 28%, #84ffff 35%, #8080ff 42%, #ff7aff 49%, white 49%, white 51%, #30819a 51%, #30819a 100%);
+    background: -o-linear-gradient(right, #ff7d7d 7%, #ffd17d 14%, #ffff7b 21%, #7bff7b 28%, #84ffff 35%, #8080ff 42%, #ff7aff 49%, white 49%, white 51%, #30819a 51%, #30819a 100%); 
+    background: -moz-linear-gradient(right, #ff7d7d 7%, #ffd17d 14%, #ffff7b 21%, #7bff7b 28%, #84ffff 35%, #8080ff 42%, #ff7aff 49%, white 49%, white 51%, #30819a 51%, #30819a 100%); 
+    background: linear-gradient(to right, #ff7d7d 7%, #ffd17d 14%, #ffff7b 21%, #7bff7b 28%, #84ffff 35%, #8080ff 42%, #ff7aff 49%, white 49%, white 51%, #30819a 51%, #30819a 100%); 
+    width: 400px;
+}
+
+.analysis div { padding-left: 20px; }
+.analysis div { background-color: rgba(0,0,0,0.1); }
 
 .content .test .activities .activity .top input[type="button"] {float: right; margin-left: 10px; height: 15px; width: 15px; font-size: 10px; padding: 0px; text-align: center;}
 .content .test .activities .activity .subtitle { font-style: italic; font-size: 14px; width: 100%; white-space: normal; margin: 0px; padding: 0px;}
