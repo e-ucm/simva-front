@@ -11,16 +11,23 @@ module.exports = function(auth, config){
   // Passport configuration
   // Using Keycloak openID
   var KeyCloakStrategy = require('passport-keycloak-oauth2-oidc').Strategy;
+
+  let keycloakConfig = {
+    clientID: config.sso.clientId,
+    realm: config.sso.realm,
+    publicClient: config.sso.publicClient,
+    clientSecret: config.sso.clientSecret,
+    sslRequired: config.sso.sslRequired,
+    authServerURL: config.sso.authUrl,
+    callbackURL: config.api.url + '/users/openid/return'
+  }
+
+  console.log('--- SSO CONFIG ---');
+  console.log(keycloakConfig);
+  console.log('------------------');
+
   passport.use('openid', new KeyCloakStrategy(
-    {
-      clientID: config.sso.clientId,
-      realm: config.sso.realm,
-      publicClient: config.sso.publicClient,
-      clientSecret: config.sso.clientSecret,
-      sslRequired: config.sso.sslRequired,
-      authServerURL: config.sso.authUrl,
-      callbackURL: config.api.url + '/users/openid/return'
-    },
+    keycloakConfig,
     function(accessToken, refreshToken, profile, done) {
       let user = {};
 
