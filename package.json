@@ -16,6 +16,7 @@
     "html": "*",
     "jsonwebtoken": "*",
     "passport": "*",
-    "passport-keycloak-oauth2-oidc": "*"
+    "passport-keycloak-oauth2-oidc": "*",
+    "request": "*"
   }
 }

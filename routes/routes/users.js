@@ -2,6 +2,9 @@ var jwt = require('jsonwebtoken');
 
 var passport = require('passport');
 
+let request = require('request');
+let querystring = require('querystring');
+
 let setUser = function(req, user){
   req.session.user = user;
 }
@@ -63,8 +66,30 @@ module.exports = function(auth, config){
   });
 
   router.get('/logout', auth, function(req, res, next){
-    req.session.user = null;
-    res.redirect('login');
+
+    if(req.session.user.refreshToken){
+      request.post({
+        url: config.sso.authUrl + '/realms/' + config.sso.realm + '/protocol/openid-connect/logout',
+        headers: {
+          'Authorization': 'Basic ' + new Buffer(config.sso.clientId + ':' + config.sso.clientSecret).toString('base64'),
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: querystring.stringify({
+          'grant_type': 'refresh_token',
+          'refresh_token': req.session.user.refreshToken
+        })
+      }, function(error, response, body){
+        if(!error){
+          req.session.user = null;
+          res.redirect('login');
+        }else{
+          res.redirect('/');
+        }
+      });
+    }else{
+      req.session.user = null;
+      res.redirect('login');
+    }
   });
 
   router.get('/register', function(req, res, next) {
