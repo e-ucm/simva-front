@@ -78,6 +78,7 @@
 						<select name="algorithm">
 							<option value="letters">Only letters</option>
 							<option value="alphanumeric">Letters and numbers</option>
+							<option value="base58">Simplified alphanumeric (Base58)</option>
 						</select>
 						<p>And a length of: </p>
 						<input type="number" step="1" min='4' max="10" name="length" value="4">
@@ -349,6 +350,9 @@
 			case 'alphanumeric':
 				return randomString(length, 'a#');
 				break;
+			case 'base58':
+				return randomString(length, 'b*');
+				break;
 			case 'letters':
 			default: 
 				return randomString(length, 'a');
@@ -358,8 +362,11 @@
 
 	let randomString = function(length, chars) {
 		var mask = '';
+		if (chars.indexOf('b') > -1) mask += 'abcdefghijkmnopqrstuvwxyz';
+		if (chars.indexOf('B') > -1) mask += 'ABCDEFGHJKLMNPQRSTUVWXYZ';
 		if (chars.indexOf('a') > -1) mask += 'abcdefghijklmnopqrstuvwxyz';
 		if (chars.indexOf('A') > -1) mask += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		if (chars.indexOf('*') > -1) mask += '123456789';
 		if (chars.indexOf('#') > -1) mask += '0123456789';
 		if (chars.indexOf('!') > -1) mask += '~`!@#$%^&*()_+-={}[]:";\'<>?,./|\\';
 		var result = '';
