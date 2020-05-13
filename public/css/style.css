@@ -233,6 +233,11 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
     background: linear-gradient(to right, #ff7d7d, #ffd17d, #ffff7b, #7bff7b, #84ffff, #8080ff, #ff7aff); 
     width: 325px;
 }
+.content .test .activities .activity.tgameplay {
+	background-color: black;
+	color: white;
+    width: 400px;
+}
 
 .content .test .activities .activity.tminiokafka { background-color: #30819a; }
 
@@ -274,6 +279,10 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .content .test .activities .activity .progress div.partial {height: 30px; float: left; position: absolute; background-color: #fff688; top: 0px; left: 0px; }
 .content .test .activities .activity .progress span {float: left; width: 100%; position: absolute; top: 7px; left: 0px; text-align: center; font-size: 12px; font-weight: bold;}
 .content .test .activities .activity a {font-weight: bold; cursor: pointer;}
+
+.content .new_element form .gameplay_activity label {width: 50%; display: inline-block; text-align: left;}
+.content .new_element form .gameplay_activity input[type="checkbox"] { width: 50%; }
+.content .new_element form .gameplay_activity .info { font-size: 14px; font-style: italic; }
 /*
 .menu { background-color: #332d26;color: white; width: 200px; height: 100%; position: fixed; top: 50px; padding: 10px;}
 .menu ul {}

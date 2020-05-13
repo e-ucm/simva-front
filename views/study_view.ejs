@@ -165,7 +165,7 @@
 					PainterFactory.Painters[activitytypes[i].type].simpleName = activitytypes[i].name;
 					PainterFactory.Painters[activitytypes[i].type].description = activitytypes[i].description;
 
-					let row = '<option value="' + painters[i] + '">' + PainterFactory.Painters[activitytypes[i].type].simpleName + '</option>';
+					let row = '<option value="' + activitytypes[i].type + '">' + PainterFactory.Painters[activitytypes[i].type].simpleName + '</option>';
 					$('#new_activity_form select[name="type"]').append(row);
 				}
 			}
@@ -535,6 +535,7 @@
 					case 'miniokafka':
 					case 'rageanalytics':
 					case 'limesurvey':
+					case 'gameplay':
 					case 'activity':
 						PainterFactory.Painters[activities[i].type].fullyPaintActivity(activities[i]);
 						break;
@@ -596,4 +597,5 @@
 <script type="text/javascript" src="/activities/rageanalyticspainter.js"></script>
 <script type="text/javascript" src="/activities/miniopainter.js"></script>
 <script type="text/javascript" src="/activities/rageminiopainter.js"></script>
+<script type="text/javascript" src="/activities/gameplaypainter.js"></script>
 <script type="text/javascript" src="/allocators/defaultallocatorpainter.js"></script>

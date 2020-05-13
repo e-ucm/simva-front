@@ -122,6 +122,10 @@ var Simva = {
 		Utils.get(this.apiurl + '/activities/' + activity_id + '/target', callback, this.jwt);
 	},
 
+	isActivityOpenable: function(activity_id, callback){
+		Utils.get(this.apiurl + '/activities/' + activity_id + '/openable', callback, this.jwt);
+	},
+
 	deleteActivity: function(activity_id, callback){
 		Utils.delete(this.apiurl + '/activities/' + activity_id, callback, this.jwt);
 	},
