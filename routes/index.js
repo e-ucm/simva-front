@@ -34,6 +34,9 @@ var auth = function(level){
 
 router = express.Router();
 router.get('/', auth(0), function(req, res, next) {
+  console.log(req.cookies);
+  console.log(req.signedCookies);
+  
   res.render('home', { config: config, user: req.session.user });
 });
 
