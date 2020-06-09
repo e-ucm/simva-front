@@ -2,6 +2,7 @@ body,div,p,h1,h2,h3,ul,li,form {margin:0px; padding: 0px;}
 *{margin:0px;padding:0px;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}
 html,body{font-family: sans-serif; margin:0;height:100%;width:100%}
 body {background-color: #fff6ec}
+body.black {background-color: #171717;}
 ul,ol,dl{list-style:none}
 a,img,input,select,textarea,fieldset{border:0;outline:0; font-family: sans-serif;}
 textarea{resize:none}
@@ -73,15 +74,22 @@ form .role_selector label{
 form .role_selector input[type="radio"]:checked+label { font-weight: bold; background-color: #de6700; color: white;}
 
 .header { width: 100%; background-color: #ff8f22; height: 50px; overflow: hidden; box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.3); padding: 10px; position: fixed; z-index: 100;}
+.header.black { background-color: black; color: white; }
 .header .left { float: left; display: table; height: 100%;}
 .header .left .logo img { height: 30px; width: auto; }
 .header .right { float: right; display: table; height: 100%; vertical-align: middle; }
 .header .left span,
 .header .right span { display: table-cell; vertical-align: middle; padding-right: 10px; font-weight: bold; }
+.header.black .left span,
+.header.black .right span { color: white; }
 .header .right img {height: 30px;}
 .header .right a { height: 30px; display: table; text-decoration: none; color: black}
 .header .right a img {height: 20px; margin: 5px;}
-.header .right .logout {background-color: black; color: white; }
+.header .right .logout {background-color: black; color: white; border: 0px; margin: 0px; padding: 0px; }
+
+#activity_content { width: 100%; height: 100%; padding-top: 50px; position: absolute; z-index: 1;}
+.underlay {position: absolute; top: 0px; left: 0px; z-index: 0; display: table; width: 100%; height: 100%; }
+.underlay .centered {display: table-cell; width: 100%; height: 100%; text-align: center; vertical-align: middle;}
 
 .menu { background-color: #332d26;color: white; width: 175px; height: 100%; position: fixed; top: 50px; padding: 10px;}
 .menu ul {}
