@@ -1,0 +1,134 @@
+<%# views/layout.ejs %>
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Simva - A Simple Validator</title>
+	<link href="/css/style.css" rel="stylesheet" type="text/css">
+	<link href="/css/loader.css" rel="stylesheet" type="text/css">
+	<link href="/toast/jquery.toast.css" rel="stylesheet" type="text/css">
+	<link href="/libs/jsonTree/jsonTree.css" rel="stylesheet" />
+	<script src="/libs/jsonTree/jsonTree.js"></script>
+	<script type="text/javascript" src="/jquery.js"></script>
+	<script type="text/javascript" src="/toast/jquery.toast.js"></script>
+	<script type="text/javascript" src="/utils.js"></script>
+	<script type="text/javascript" src="/simva.js"></script>
+	<script type="text/javascript">
+		Simva.setJWT("<%= user.jwt %>");
+		Simva.setAPIURL("<%= config.simva.url %>");
+		var roller = '<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>';
+
+		$(document).ready(function() {
+			$(".floater").on('click', function(event){
+				if (event.target !== this)
+    				return;
+				$(this).parent().toggleClass('shown');
+			});
+		});
+	</script>
+	<script type="text/javascript">
+		let studyId = "<%= study %>";
+		let username = "<%= user.data.username %>";
+
+		var manual = '<body style="background-color: black; color: white; font-family: sans-serif; text-align: center;"><h1>External Activity</h1><p>Ask or listen your teacher for what you have to do on this activity.</p><p>If you are allowed to complete the activity on your own, there should be a "complete activity" button above.</p></body>';
+
+		var completed = '<body style="background-color: black; color: white; font-family: sans-serif; text-align: center;"><h1>Study Completed!</h1><p>Congratulations, you have completed all the activities of the study.</p><p>Ask the teacher if there are more steps to continue.</p></body>';
+
+		let current_activity_id = null;
+		$(document).ready(function() {
+			
+			reloadSchedule();
+			setInterval(function(){
+				reloadSchedule();
+			}, 3000);
+		});
+
+		let avoid_refreshing = false;
+		let reloadSchedule = function(){
+			Simva.getStudySchedule(studyId, function(error, result){
+				if(!current_activity_id || current_activity_id !== result.next){
+					current_activity_id = result.next;
+
+					if(!result.next){
+						if(!avoid_refreshing){
+						avoid_refreshing = true;
+							$("#complete_activity").hide();
+							$('#activity_content').hide(10, function(){
+								$('#activity_content').attr('src', 'about:blank');
+								paintCurrentActivity('Completed');
+								document.getElementById('activity_content').src = "data:text/html;charset=utf-8," + escape(completed);
+								setTimeout(function(){
+									$('#activity_content').show();
+									console.log('showing');
+								}, 50);
+							});
+						}
+						return;
+					}
+
+					avoid_refreshing = false;
+
+					if(!error){
+						let activity = result.activities[result.next];
+						activity._id = result.next;
+						Simva.isActivityOpenable(activity._id, function(error, result){
+							if(!error){
+								if(activity.details.user_managed){
+									$("#complete_activity").show();
+								}else{
+									$("#complete_activity").hide();
+								}
+							}
+							if(result.openable){
+								Simva.getActivityTarget(activity._id, function(error, result){
+									$('#activity_content').attr('src', result[username]);
+								});
+							}else{
+								$('#activity_content').hide(10, function(){
+									$('#activity_content').attr('src', 'about:blank');
+									document.getElementById('activity_content').src = "data:text/html;charset=utf-8," + escape(manual);
+									setTimeout(function(){
+										$('#activity_content').show();
+										console.log('showing');
+									}, 50);
+								});
+							}
+						});
+
+						paintCurrentActivity(activity.name);
+					}
+				}
+			});
+		}
+
+		let paintCurrentActivity = function(name){
+			$("#current_activity_name").text(name);
+		}
+
+		let completeActivity = function(){
+			Simva.setActivityCompletion(current_activity_id, username, true, function(){
+				reloadSchedule();
+			});
+		}
+	</script>
+</head>
+<body class="black">
+	<div class="header black">
+		<div class="left"><span class="logo"><img src="/logo.png"></span> <span class="title">Current Activity: </span><span id="current_activity_name"></span></div>
+		<div class="right">
+			<span id="complete_activity" style="display: none"><a style="cursor: pointer;" onclick="completeActivity()"><img src="/icon/check.png"> <span>Complete Activity</span></a></span>
+			<span><a><img src="/icon/user_white.png"> <span><%= user.data.username %></span></a></span>
+			<span><a class="logout" href="/studies/"><img src="/icon/back.png"> <span>Exit study</span></a></span>
+		</div>
+	</div>
+
+	<iframe id="activity_content" frameBorder="0">
+		
+	</iframe>
+	<div class="underlay">
+		<div class="centered">
+			<div class="lds-roller white"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+		</div>
+	</div>
+</body>
+</html>
