@@ -13,7 +13,7 @@ module.exports = function(auth, config){
   });
 
   router.get('/:studyid', auth, function(req, res, next) {
-    res.render('study_view', { config: config, user: req.session.user, study: req.params['studyid'] });
+    res.render('scheduler', { config: config, user: req.session.user, study: req.params['studyid'] });
   });
 
   return router;

@@ -34,10 +34,12 @@ var auth = function(level){
 
 router = express.Router();
 router.get('/', auth(0), function(req, res, next) {
-  console.log(req.cookies);
-  console.log(req.signedCookies);
-  
-  res.render('home', { config: config, user: req.session.user });
+  console.log(req.session.user);
+  if(req.session.user == 'teacher'){
+    res.render('home', { config: config, user: req.session.user });
+  }else{
+    res.render('studenthome', { config: config, user: req.session.user });
+  }
 });
 
 router.get('/about', auth(0), function(req, res, next) {
@@ -49,6 +51,7 @@ app.use('/users', require('./routes/users.js')(auth(1), config));
 app.use('/studies', require('./routes/studies.js')(auth(1), config));
 app.use('/groups', require('./routes/groups.js')(auth(1), config));
 app.use('/activities', require('./routes/activities.js')(auth(1), config));
+app.use('/scheduler', require('./routes/scheduler.js')(auth(1), config));
 
 // catch 404
 app.use((req, res, next) => {
