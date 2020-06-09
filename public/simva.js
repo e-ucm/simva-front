@@ -96,6 +96,10 @@ var Simva = {
 		Utils.get(this.apiurl + '/studies/' + study_id + '/participants', callback, this.jwt);
 	},
 
+	getStudySchedule: function(study_id, callback){
+		Utils.get(this.apiurl + '/studies/' + study_id + '/schedule', callback, this.jwt);
+	},
+
 	// Activities
 
 	addActivityToTest: function(study_id, test_id, activity, callback){
@@ -104,6 +108,10 @@ var Simva = {
 
 	getActivityCompletion: function(activity_id, callback){
 		Utils.get(this.apiurl + '/activities/' + activity_id + '/completion', callback, this.jwt);
+	},
+
+	setActivityCompletion: function(activity_id, user, status, callback){
+		Utils.post(this.apiurl + '/activities/' + activity_id + '/completion?user=' + user, { status: status }, callback, this.jwt);
 	},
 
 	getActivityResultForUser(activity_id, student, callback){
