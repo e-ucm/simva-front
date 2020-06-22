@@ -15,8 +15,10 @@ var LimeSurveyPainter = {
 
 	utils: {},
 	setUtils: function(utils){
-		this.limesurveyurl = utils.url;
 		this.utils = utils;
+
+		this.limesurveyurl = this.utils.url;
+		console.log(utils);
 	},
 
 	getExtraForm: function () {

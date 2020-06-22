@@ -161,7 +161,7 @@
 		Simva.getActivityTypes(function(error, activitytypes){
 			for (var i = 0; i < activitytypes.length; i++) {
 				if(PainterFactory.Painters[activitytypes[i].type]){
-					PainterFactory.Painters[activitytypes[i].type].utils = activitytypes[i].utils;
+					PainterFactory.Painters[activitytypes[i].type].setUtils(activitytypes[i].utils);
 					PainterFactory.Painters[activitytypes[i].type].simpleName = activitytypes[i].name;
 					PainterFactory.Painters[activitytypes[i].type].description = activitytypes[i].description;
 
