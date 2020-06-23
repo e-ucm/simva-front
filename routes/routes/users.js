@@ -6,7 +6,26 @@ let request = require('request');
 let querystring = require('querystring');
 
 let setUser = function(req, user){
+  console.log(user);
+  let decoded = jwt.decode(user.jwt);
+
+  user.data.roles = decoded.realm_access.roles;
+  user.data.role = getRoleFromJWT(decoded);
+
   req.session.user = user;
+}
+
+let getRoleFromJWT = function(decoded){
+  let role = 'student';
+
+  for (var i = decoded.realm_access.roles.length - 1; i >= 0; i--) {
+    if(decoded.realm_access.roles[i] === 'teacher' || decoded.realm_access.roles[i] === 'researcher'){
+      role = 'teacher';
+      break;
+    };
+  }
+
+  return role;
 }
 
 module.exports = function(auth, config){
@@ -60,6 +79,10 @@ module.exports = function(auth, config){
 
   router.get('/openid/return', function (req, res, next) {
     passport.authenticate('openid', { failureRedirect: '/users/login' }, function(err, user) {
+      if(err){
+        return res.redirect('../login');
+      }
+
       setUser(req, user);
       res.redirect('/');
     })(req, res, next);
