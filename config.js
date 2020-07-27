@@ -1,13 +1,16 @@
 let config = {}
 
-let ignored_ports = [80, 8080, 443];
+let default_protocol_ports = {
+	"http": 80,
+	"https": 443
+};
 
-config.api = {}
-config.api.port  = parseInt(process.env.PORT || 3050);
-config.api.host = process.env.URL || 'simva.e-ucm.es'
-config.api.protocol = process.env.SSO_PROTOCOL || 'https'
-config.api.url = config.api.protocol + '://' + config.api.host
-				+ ( (ignored_ports.indexOf(config.api.port) !== -1) ? ':' + config.api.port : '' );
+config.simva = {}
+config.simva.port  = parseInt(process.env.SIMVA_PORT || 3050);
+config.simva.host = process.env.SIMVA_HOST || 'simva.e-ucm.es'
+config.simva.protocol = process.env.SIMVA_PROTOCOL || 'https'
+config.simva.url = config.simva.protocol + '://' + config.simva.host
+				+ ( (default_protocol_ports[config.simva.protocol] !== config.simva.port) ? ':' + config.simva.port : '' );
 
 config.sso = {}
 config.sso.host = process.env.SSO_HOST || 'sso.simva.e-ucm.es'
@@ -23,11 +26,11 @@ config.sso.clientSecret = process.env.SSO_CLIENT_SECRET || 'th1s_1s_th3_s3cr3t'
 config.sso.sslRequired = process.env.SSO_SSL_REQUIRED || 'external'
 config.sso.publicClient = process.env.SSO_PUBLIC_CLIENT || 'false'
 
-config.simva = {}
-config.simva.host = process.env.SIMVA_HOST || 'api.simva.e-ucm.es'
-config.simva.protocol = process.env.SIMVA_PROTOCOL || 'https'
-config.simva.port = process.env.SIMVA_PORT || '443'
-config.simva.url = config.simva.protocol + '://' + config.simva.host + ':' + config.simva.port;
+config.api = {}
+config.api.host = process.env.SIMVA_API_HOST || 'api.simva.e-ucm.es'
+config.api.protocol = process.env.SIMVA_API_PROTOCOL || 'https'
+config.api.port = process.env.SIMVA_API_PORT || '443'
+config.api.url = config.api.protocol + '://' + config.api.host + ':' + config.api.port;
 
 config.limesurvey = {}
 config.limesurvey.host = process.env.LIMESURVEY_HOST || 'limesurvey-dev.external.test'
