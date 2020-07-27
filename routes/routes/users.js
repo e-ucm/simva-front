@@ -9,9 +9,10 @@ let setUser = function(req, user){
   console.log(user);
   let decoded = jwt.decode(user.jwt);
 
-  user.data.roles = decoded.realm_access.roles;
-  user.data.role = getRoleFromJWT(decoded);
-
+  if (user.data.provider != 'simva') {
+    user.data.roles = decoded.realm_access.roles;
+    user.data.role = getRoleFromJWT(decoded);
+  }
   req.session.user = user;
 }
 
@@ -41,7 +42,7 @@ module.exports = function(auth, config){
     clientSecret: config.sso.clientSecret,
     sslRequired: config.sso.sslRequired,
     authServerURL: config.sso.authUrl,
-    callbackURL: config.api.url + '/users/openid/return'
+    callbackURL: config.simva.url + '/users/openid/return'
   }
 
   console.log('--- SSO CONFIG ---');
@@ -75,6 +76,39 @@ module.exports = function(auth, config){
     res.render('users_login', { config: config });
   });
 
+  router.post('/login', function(req, res, next) {
+    if(req.session.user){
+      return res.redirect('../');
+    }
+
+    request.post({
+      url: config.api.url + '/users/login',
+      json: true,
+      body: req.body
+      },
+      function(error, response, body){
+        if(!error){
+          let user = {};
+          let profile = {};
+          let simvaToken = body.token;
+          let simvaJwtToken = jwt.decode(simvaToken);
+          profile.provider = simvaJwtToken.iss;
+          profile.id = simvaJwtToken.data.id;
+          profile.username = simvaJwtToken.data.username;
+          profile.email = simvaJwtToken.email;
+          profile.roles = [simvaJwtToken.data.role];
+          profile.role = simvaJwtToken.data.role;
+          user.data = profile;
+          user.jwt = simvaToken;
+          setUser(req, user);
+          res.status(200).send({'message': 'ok'});
+        } else {
+          res.status(500).send({message:"Unexpected error"});
+        }
+      }
+    );
+  });
+
   router.get('/openid', passport.authenticate('openid'));
 
   router.get('/openid/return', function (req, res, next) {
@@ -94,7 +128,7 @@ module.exports = function(auth, config){
       request.post({
         url: config.sso.authUrl + '/realms/' + config.sso.realm + '/protocol/openid-connect/logout',
         headers: {
-          'Authorization': 'Basic ' + new Buffer(config.sso.clientId + ':' + config.sso.clientSecret).toString('base64'),
+          'Authorization': 'Basic ' + Buffer.from(config.sso.clientId + ':' + config.sso.clientSecret).toString('base64'),
           'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: querystring.stringify({
@@ -119,21 +153,8 @@ module.exports = function(auth, config){
     if(req.session.user){
       return res.redirect('../');
     }
-    
+
     res.render('users_register', { config: config });
-  });
-
-  router.post('/savetoken', function(req, res) {
-    let token = req.body.jwt;
-
-    let user = jwt.decode(token);
-    user.jwt = token;
-
-    setUser(req, user);
-
-    return res.status(200).send({
-      message: 'Success'
-    });
   });
 
   return router;

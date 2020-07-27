@@ -17,14 +17,7 @@
 						$("#error").text(error.responseJSON.message);
 					}else{
 						console.log(result);
-						Utils.post('/users/savetoken', { jwt: result.token }, function(error, result){
-							if(error){
-								$("#error").text('An error has happened');
-								console.log(error.responseJSON);
-							}else{
-								window.location.replace('/users/login');
-							}
-						});
+						window.location.replace('/users/login');
 					}
 				});
 

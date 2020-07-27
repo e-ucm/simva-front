@@ -13,7 +13,7 @@ var Simva = {
 
 	login: function(username, password, callback){
 		let body = { username: username, password: password }
-		Utils.post(this.apiurl + '/users/login', body, callback);
+		Utils.post('/users/login', body, callback);
 	},
 
 	register: function(username, email, password, role, callback){
