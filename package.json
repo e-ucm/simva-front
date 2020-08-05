@@ -11,7 +11,7 @@
     "ejs": "^3.0.1",
     "express": "4.13.1",
     "express-ejs-extend": "*",
-    "express-fileupload": "0.0.5",
+    "express-fileupload": "1.1.9",
     "express-session": "1.15.6",
     "html": "*",
     "jsonwebtoken": "*",
