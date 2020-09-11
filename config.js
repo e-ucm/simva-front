@@ -9,7 +9,7 @@ config.simva = {}
 config.simva.port  = parseInt(process.env.SIMVA_PORT || 3050);
 config.simva.host = process.env.SIMVA_HOST || 'simva.external.test'
 config.simva.protocol = process.env.SIMVA_PROTOCOL || 'https'
-config.simva.url = config.simva.protocol + '://' + config.simva.host
+config.simva.url = process.env.SIMVA_URL || config.simva.protocol + '://' + config.simva.host
 				+ ( (default_protocol_ports[config.simva.protocol] !== config.simva.port) ? ':' + config.simva.port : '' );
 
 config.sso = {}
