@@ -5,6 +5,8 @@ var passport = require('passport');
 let request = require('request');
 let querystring = require('querystring');
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
 let setUser = function(req, user){
   console.log(user);
   let decoded = jwt.decode(user.jwt);
@@ -88,21 +90,29 @@ module.exports = function(auth, config){
       },
       function(error, response, body){
         if(!error){
-          let user = {};
-          let profile = {};
-          let simvaToken = body.token;
-          let simvaJwtToken = jwt.decode(simvaToken);
-          profile.provider = simvaJwtToken.iss;
-          profile.id = simvaJwtToken.data.id;
-          profile.username = simvaJwtToken.data.username;
-          profile.email = simvaJwtToken.email;
-          profile.roles = [simvaJwtToken.data.role];
-          profile.role = simvaJwtToken.data.role;
-          user.data = profile;
-          user.jwt = simvaToken;
-          setUser(req, user);
-          res.status(200).send({'message': 'ok'});
+          console.log(response);
+          if(response.statusCode !== 200){
+            res.status(response.statusCode).send(body);
+          }else{
+            let user = {};
+            let profile = {};
+            let simvaToken = body.token;
+            console.log(response);
+            console.log(body);
+            let simvaJwtToken = jwt.decode(simvaToken);
+            profile.provider = simvaJwtToken.iss
+            profile.id = simvaJwtToken.data.id;
+            profile.username = simvaJwtToken.data.username;
+            profile.email = simvaJwtToken.email;
+            profile.roles = [simvaJwtToken.data.role];
+            profile.role = simvaJwtToken.data.role;
+            user.data = profile;
+            user.jwt = simvaToken;
+            setUser(req, user);
+            res.status(200).send({'message': 'ok'});
+          }
         } else {
+          console.log(error);
           res.status(500).send({message:"Unexpected error"});
         }
       }
