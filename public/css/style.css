@@ -247,6 +247,11 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
     width: 400px;
 }
 
+.content .test .activities .activity.tgameplay table,
+.content .test .activities .activity.tgameplay .progress {
+	color: black;
+}
+
 .content .test .activities .activity.tminiokafka { background-color: #30819a; }
 
 .content .test .activities .activity.trageminio {

@@ -185,22 +185,22 @@ var GameplayActivityPainter = {
 
 				let tmpprogress = 0; 
 				if(status){
-					if(status.analytics
-						&& status.analytics.progressed
-						&& status.analytics.progressed['serious-game']){
-						let keys = Object.keys(status.analytics.progressed['serious-game']);
+					if(status.realtime
+						&& status.realtime.progressed
+						&& status.realtime.progressed['serious-game']){
+						let keys = Object.keys(status.realtime.progressed['serious-game']);
 						if(keys.length > 0){
-							if(status.analytics.progressed['serious-game'][keys[0]].progress){
-								tmpprogress = status.analytics.progressed['serious-game'][keys[0]].progress;
+							if(status.realtime.progressed['serious-game'][keys[0]].progress){
+								tmpprogress = status.realtime.progressed['serious-game'][keys[0]].progress;
 							}
 						}
 
-						traces = '<span><a onclick="RageMinioActivityPainter.openTraces(\'' + activity._id + '\',\'' + usernames[i]
+						traces = '<span><a onclick="GameplayActivityPainter.openTraces(\'' + activity._id + '\',\'' + usernames[i]
 							 + '\')">See traces</a></span>';
 					}
 
 					if(activity.extra_data.config.backup && results[usernames[i]].backup){
-						backup = '<span><a onclick="RageMinioActivityPainter.downloadBackup(\'' + activity._id + '\',\'' + usernames[i]
+						backup = '<span><a onclick="GameplayActivityPainter.downloadBackup(\'' + activity._id + '\',\'' + usernames[i]
 							 + '\')">Download</a></span>';
 					}
 					
@@ -213,7 +213,7 @@ var GameplayActivityPainter = {
 			}
 
 
-			$('#traces_' + activity._id + '_' + usernames[i]).addClass(status && status.analytics ? 'green' : 'red');
+			$('#traces_' + activity._id + '_' + usernames[i]).addClass(status && status.realtime ? 'green' : 'red');
 			$('#traces_' + activity._id + '_' + usernames[i]).empty();
 			$('#traces_' + activity._id + '_' + usernames[i]).append(traces);
 
@@ -297,7 +297,7 @@ var GameplayActivityPainter = {
 				}
 
 
-				let content = '<link href="/css/style.css" rel="stylesheet" type="text/css"><div style="padding: 20px;" class="analysis">' + printAnalysisRecursive(result[user].analytics) + '</div>';
+				let content = '<link href="/css/style.css" rel="stylesheet" type="text/css"><div style="padding: 20px;" class="analysis">' + printAnalysisRecursive(result[user].realtime) + '</div>';
 				
 				let context = $('#iframe_floating iframe')[0].contentWindow.document;
 				let body = $('body', context);
