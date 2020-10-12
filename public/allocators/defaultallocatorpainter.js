@@ -10,6 +10,7 @@ if(!AllocatorFactory){
 var DefaultAllocatorPainter = {
 	supportedType: 'default',
 	simpleName: 'Default Allocator',
+	description: 'This allocator automatically assigns upcoming participants to the first test available.',
 
 	tests: [],
 	groups: [],
@@ -64,7 +65,7 @@ var DefaultAllocatorPainter = {
 		this.allocator = allocator;
 
 		let topaint = '<p class="subtitle italic">Type: <span id="allocator_type">' + allocator.type + '</span></p>'
-			+ '<p class="subtitle justified">This allocator automatically assigns upcoming participants to the first test available.</p>'
+			+ '<p class="subtitle justified">' + this.description + '</p>'
 			+ '<table id="allocator_participants" class="allocations">';
 
 		if(allocator.extra_data && allocator.extra_data.allocations){
