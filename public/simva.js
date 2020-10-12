@@ -141,4 +141,8 @@ var Simva = {
 	getActivityTypes: function(callback){
 		Utils.get(this.apiurl + '/activitytypes', callback, this.jwt);
 	},
+
+	getAllocatorTypes: function(callback){
+		Utils.get(this.apiurl + '/allocatortypes', callback, this.jwt);
+	},
 }
