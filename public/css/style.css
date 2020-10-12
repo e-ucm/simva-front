@@ -191,9 +191,18 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .content .left {float: left; display: inline-block;}
 .content .left .graybox { background-color: lightgray; padding: 10px; margin-right: 10px; width: 200px; margin-bottom: 10px; box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3); }
 .content .left .graybox h2 { text-align: center;}
+.content .left .allocator { position: relative; }
 .content .left .allocator .subtitle { text-align: center; font-size: 12px; padding-top: 0px; margin-top: 0px; }
 .content .left .allocator .subtitle.italic { font-style: italic; }
 .content .left .allocator .subtitle.justified { text-align: justify; padding: 0px 0px 10px 0px; }
+.content .left .allocator .edit { position: absolute; top: 10px; right: 10px; cursor: pointer;}
+.content .left .allocator .edit img { width: 20px; height: auto;}
+
+#change_allocator_content .row { margin-top: 10px; }
+#change_allocator_content input[type="radio"]{ width: 10%; height: 20px; margin-top: 5px; vertical-align: top;}
+#change_allocator_content label{ display: inline-block; width: 89%; text-align: left;}
+#change_allocator_content label .name { display: inline-block; font-size: 20px; font-weight: bold; width: 100%; }
+#change_allocator_content label .description { display: inline-block; font-size: 16px; font-style: italic; width: 100%; }
 
 .content .left .groups table,
 .content .left .owners table,

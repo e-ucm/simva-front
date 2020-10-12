@@ -25,7 +25,8 @@
 		</div>
 
 		<div class="graybox allocator default">
-			<h2>Allocator</h2>
+			<h2>Allocator</h2> 
+			<span class="edit"><img src="/icon/editar.png" onclick="toggleAddForm('change_allocator')"></span>
 			<div id="allocator_content">
 				
 			</div>
@@ -53,6 +54,20 @@
 					<span class="error"></span>
 				</form>
 			</div>
+		</div>
+	</div>
+</div>
+
+<div id="change_allocator" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<h2>Select the new allocator</h2>
+			<form id="change_allocator_form">
+				<div id="change_allocator_content">
+				</div>
+				<input type="button" value="Change Allocator" onclick="changeAllocator()">
+				<span class="error"></span>
+			</form>
 		</div>
 	</div>
 </div>
@@ -170,6 +185,18 @@
 				}
 			}
 			reloadStudy();
+		})
+
+		Simva.getAllocatorTypes(function(error, allocatortypes){
+			for (var i = 0; i < allocatortypes.length; i++) {
+				if(AllocatorFactory.Painters[allocatortypes[i].type]){
+					AllocatorFactory.Painters[allocatortypes[i].type].simpleName = allocatortypes[i].name;
+					AllocatorFactory.Painters[allocatortypes[i].type].description = allocatortypes[i].description;
+
+					let row = '<div class="row"><input type="radio" name="type" id="allocator_' + allocatortypes[i].type + '" value="' + allocatortypes[i].type + '"><label for="allocator_' + allocatortypes[i].type + '"><span class="name">' + AllocatorFactory.Painters[allocatortypes[i].type].simpleName + '</span><span class="description">' + AllocatorFactory.Painters[allocatortypes[i].type].description + '</span></label></div>';
+					$('#change_allocator_content').append(row);
+				}
+			}
 		})
 
 		$('#new_activity_form select[name="type"]').on('change', function(event){
@@ -513,6 +540,25 @@
 		AllocatorFactory.Painters[allocator.type].setParticipants(participants);
 
 		AllocatorFactory.Painters[allocator.type].paintAllocator(allocator);
+
+		$('#allocator_' + allocator.type).prop('checked',true);
+	}
+
+	let changeAllocator = function(){
+		let type = $('#change_allocator_form input:radio[name=type]:checked').val();
+
+		if(allocator.type !== type){
+			Simva.updateAllocator(study._id, { type: type }, function(error, result){
+				if(error){
+					$('#change_allocator_form .error').val(error.message);
+				}else{
+					toggleAddForm('change_allocator');
+					reloadStudy();
+				}
+			});
+		}else{
+			toggleAddForm('change_allocator');
+		}
 	}
 
 	let paintTest = function(test){
@@ -601,3 +647,4 @@
 <script type="text/javascript" src="/activities/gameplaypainter.js"></script>
 <script type="text/javascript" src="/activities/manualpainter.js"></script>
 <script type="text/javascript" src="/allocators/defaultallocatorpainter.js"></script>
+<script type="text/javascript" src="/allocators/groupallocatorpainter.js"></script>
