@@ -217,7 +217,7 @@ var GameplayActivityPainter = {
 			$('#traces_' + activity._id + '_' + usernames[i]).empty();
 			$('#traces_' + activity._id + '_' + usernames[i]).append(traces);
 
-			$('#backup_' + activity._id + '_' + usernames[i]).addClass(status && status.minio ? 'green' : 'red');
+			$('#backup_' + activity._id + '_' + usernames[i]).addClass(status && status.backup ? 'green' : 'red');
 			$('#backup_' + activity._id + '_' + usernames[i]).empty();
 			$('#backup_' + activity._id + '_' + usernames[i]).append(backup);
 		}
@@ -261,7 +261,7 @@ var GameplayActivityPainter = {
 			}else{
 				var filename = activity + "_" + user + ".csv";
 
-				Utils.download(filename, result[user].minio);
+				Utils.download(filename, result[user].backup);
 			}
 		})
 	},
