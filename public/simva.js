@@ -145,4 +145,14 @@ var Simva = {
 	getAllocatorTypes: function(callback){
 		Utils.get(this.apiurl + '/allocatortypes', callback, this.jwt);
 	},
+
+	// LTI
+
+	getLtiTools: function(callback){
+		Utils.get(this.apiurl + '/lti/tools', callback, this.jwt);
+	},
+
+	addLtiTool: function(tool, callback){
+		Utils.post(this.apiurl + '/lti/tools', tool, callback, this.jwt);
+	},
 }
