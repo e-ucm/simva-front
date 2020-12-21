@@ -26,12 +26,16 @@
 		});
 
 		$('#studies_list').html(roller);
+		refreshStudies();
+	});
+
+	let refreshStudies = function(){
 		Simva.getStudies(function(error, result){
 			if(!error){
 				paintStudies(result);
 			}
 		});
-	});
+	}
 
 	let toggleAddForm = function(){
 		$('#new_study').toggleClass('shown');
@@ -41,15 +45,28 @@
 		$('#studies_list').text('');
 		if(studies.length > 0){
 			for (var i = 0; i < studies.length; i++) {
-				$('#studies_list').append(toCard(studies[i]));
+				let card = $(toCard(studies[i]));
+
+				$('#studies_list').append(card);
 			}
 		}else{
 			$('#studies_list').text('You have not studies jet. Create one using the bottom right (+) button.');
 		}
 	}
 
+	let deleteStudy = function(study){
+		event.preventDefault();
+		event.stopPropagation();
+		Simva.deleteStudy(study, function(error, result){
+			if(!error){
+				refreshStudies();
+			}
+		});
+	}
+
 	let toCard = function(study){
-		return '<a href="/studies/' + study._id + '"><div class="selectable card third">'
+		return '<a class="stopable" href="/studies/' + study._id + '"><div class="studycard selectable card third">'
+			+ '<span class="button red delete" onclick="deleteStudy(\'' + study._id + '\')">X</span>'
 			+ '<h1>Study: ' + study.name + '</h1>'
 			+ '<p><strong>Groups:</strong> ' + study.groups.length + '</p>'
 			+ '<p><strong>Tests:</strong> ' + study.tests.length + '</p>'

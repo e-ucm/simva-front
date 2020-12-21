@@ -72,6 +72,10 @@ var Simva = {
 		Utils.put(this.apiurl + '/studies/' + study._id, study, callback, this.jwt);
 	},
 
+	deleteStudy: function(study_id, callback){
+		Utils.delete(this.apiurl + '/studies/' + study_id, callback, this.jwt);
+	},
+
 	getAllocator: function(study_id, callback){
 		Utils.get(this.apiurl + '/studies/' + study_id + '/allocator', callback, this.jwt);
 	},
@@ -154,5 +158,9 @@ var Simva = {
 
 	addLtiTool: function(tool, callback){
 		Utils.post(this.apiurl + '/lti/tools', tool, callback, this.jwt);
+	},
+
+	deleteLtiTool: function(tool, callback){
+		Utils.delete(this.apiurl + '/lti/tools/' + tool, callback, this.jwt);
 	},
 }
