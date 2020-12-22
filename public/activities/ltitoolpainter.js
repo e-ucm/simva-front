@@ -29,12 +29,12 @@ var LTIToolPainter = {
 		form += '</div>'
 			+ '<div id="ltitool_bynew" class="subform">'
 
-			+ '<p><label for="ltitool_name">Name</label><input id="ltitool_name" type="text" name="name"></p>'
-			+ '<p><label for="ltitool_description">Description</label><input id="ltitool_description" type="text" name="description"></p>'
-			+ '<p><label for="ltitool_url">URL</label><input id="ltitool_url" type="text" name="url" placeholder="https://lti-tool.test/"></p>'
-			+ '<p><label for="ltitool_jwks_uri">JWKS URI</label><input id="ltitool_jwks_uri" type="text" name="jwks_uri" placeholder=".../.well-known/jwks.json"></p>'
-			+ '<p><label for="ltitool_login_uri">Login URI</label><input id="ltitool_login_uri" type="text" name="login_uri" placeholder=".../oidc/init"></p>'
-			+ '<p><label for="ltitool_redirect_uri">Redirect URI</label><input id="ltitool_redirect_uri" type="text" name="redirect_uri" placeholder=".../launch"></p>'
+			+ '<p><label for="ltitool_name">Name</label><input id="ltitool_name" type="text" name="ltitool_name"></p>'
+			+ '<p><label for="ltitool_description">Description</label><input id="ltitool_description" type="text" name="ltitool_description"></p>'
+			+ '<p><label for="ltitool_url">URL</label><input id="ltitool_url" type="text" name="ltitool_url" placeholder="https://lti-tool.test/"></p>'
+			+ '<p><label for="ltitool_jwks_uri">JWKS URI</label><input id="ltitool_jwks_uri" type="text" name="ltitool_jwks_uri" placeholder=".../.well-known/jwks.json"></p>'
+			+ '<p><label for="ltitool_login_uri">Login URI</label><input id="ltitool_login_uri" type="text" name="ltitool_login_uri" placeholder=".../oidc/init"></p>'
+			+ '<p><label for="ltitool_redirect_uri">Redirect URI</label><input id="ltitool_redirect_uri" type="text" name="ltitool_redirect_uri" placeholder=".../launch"></p>'
 			+ '<p><a class="button green" onclick="LTIToolPainter.addLtiTool()">AddTool</a></p>'
 			+ '</div>'
 
@@ -51,12 +51,12 @@ var LTIToolPainter = {
 			let form = '';
 
 			if(this.tools.length > 0){
-				form += '<select name="existingid">';
+				form += '<select id="lti_tool_id" name="existingid" style="width: 87%">';
 				for (var i = 0; i < this.tools.length; i++) {
 					form += '<option value="' + this.tools[i]._id + '"> ' + this.tools[i].name + '</option>';
 				}
 
-				form += '</select>';
+				form += '</select><a style="width: 10%" class="button red" onclick="LTIToolPainter.deleteSelectedLtiTool()">X</a>';
 			}else{
 				form += '<p>No tools available. Create a new one.</p>'
 			}
@@ -80,31 +80,12 @@ var LTIToolPainter = {
 		activity.type = this.supportedType;
 
 		switch(method){
-			case 'byid':
-				activity.copysurvey = formdata.surveyid;
-				callback(null, activity);
-				break;
 			case 'byexisting':
-				activity.copysurvey = formdata.existingid;
+				activity.tool = formdata.existingid;
 				callback(null, activity);
 				break;
 			case 'bynew':
 				callback('After creating new, you have to select from existing.');
-				break;
-			case 'byupload':
-				if($(form).find('input[name="lss"]').get(0).files[0]){
-					var reader = new FileReader();
-					var input = event.target;
-					reader.onload = function(){
-						let raw = reader.result;
-						raw = raw.substr(raw.indexOf(',') + 1);
-						activity.rawsurvey = raw;
-						callback(null, activity);
-					};
-					reader.readAsDataURL($(form).find('input[name="lss"]').get(0).files[0]);
-				}else{
-					callback('Select the file to upload first.');
-				}
 				break;
 			default:
 				callback('Select a method first');
@@ -143,11 +124,19 @@ var LTIToolPainter = {
 	},
 
 	paintActivity: function(activity, participants){
+		let tool = { name: 'Not found' };
+		for (var i = 0; i < this.tools.length; i++) {
+			if(this.tools[i]._id === activity.extra_data.tool){
+				tool = this.tools[i]._id
+				break;
+			}
+		}
+
 		$('#test_' + activity.test + ' .activities').append('<div id="activity_' + activity._id + '" class="activity t' + activity.type + '">'
 			+ '<div class="top"><h4>' + activity.name + '</h4>'
 			+ '<input class="red" type="button" value="X" onclick="deleteActivity(\'' + activity._id + '\')"></div>'
 			+ '<p class="subtitle">' + this.simpleName + '</p>'
-			+ '<p>Survey ID: <a target="_blank" href="' + this.utils.url + activity.extra_data.surveyId + '">' + activity.extra_data.surveyId + '</a></p>'
+			+ '<p>Tool Name: ' + tool.name + '</p>'
 			+ '<div id="completion_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>'
 			+ '<div id="result_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>'
 			+ this.paintActivityParticipantsTable(activity, participants) + '</div>');
@@ -306,6 +295,31 @@ var LTIToolPainter = {
 					$('#ltitool_login_uri').val('');
 					$('#ltitool_redirect_uri').val('');
 					changeTab($('#ltitoolpainter_tab_byexising'), 'new_activity_extras','ltitool_byexisting');
+				});
+			}
+		});
+	},
+
+	deleteSelectedLtiTool: function(){
+		let id = $('#lti_tool_id').val();
+
+		Simva.deleteLtiTool(id, function(error, result){
+			if(error){
+				$.toast({
+					heading: 'Error deleting the lti Tool',
+					text: error.message,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+			}else{
+				LTIToolPainter.loadToolList(function(){
+					$.toast({
+						heading: 'Tool Deleted',
+						position: 'top-right',
+						icon: 'success',
+						stack: false
+					});
 				});
 			}
 		});
