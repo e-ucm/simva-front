@@ -125,9 +125,9 @@ var LTIToolPainter = {
 
 	paintActivity: function(activity, participants){
 		let tool = { name: 'Not found' };
-		for (var i = 0; i < this.tools.length; i++) {
-			if(this.tools[i]._id === activity.extra_data.tool){
-				tool = this.tools[i]._id
+		for (var i = 0; i < this.utils.tools.length; i++) {
+			if(this.utils.tools[i]._id === activity.extra_data.tool){
+				tool = this.utils.tools[i];
 				break;
 			}
 		}
@@ -136,7 +136,7 @@ var LTIToolPainter = {
 			+ '<div class="top"><h4>' + activity.name + '</h4>'
 			+ '<input class="red" type="button" value="X" onclick="deleteActivity(\'' + activity._id + '\')"></div>'
 			+ '<p class="subtitle">' + this.simpleName + '</p>'
-			+ '<p>Tool Name: ' + tool.name + '</p>'
+			+ '<p>Tool ClientID: ' + tool.client_id + '</p>'
 			+ '<div id="completion_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>'
 			+ '<div id="result_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>'
 			+ this.paintActivityParticipantsTable(activity, participants) + '</div>');
