@@ -31,6 +31,14 @@
 				
 			</div>
 		</div>
+
+		<div class="graybox lti_platforms default">
+			<h2>LTI Platforms</h2>
+			<p></p>
+			<table id="lti_platforms">
+			</table>
+			<input class="violet" type="button" value="Add Group" onclick="toggleAddForm('add_platform')">
+		</div>
 	</div>
 	<div class="card">
 		<div class="top">
@@ -49,6 +57,34 @@
 				<form id="add_group_form">
 					<select id="group_select" name="group">
 					</select>
+					<input type="submit" value="Add">
+					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+					<span class="error"></span>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="add_platform" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<div id="add_platform_tab" class="subform selected">
+				<h2>Add LTI Platform</h2>
+				<form id="add_platform_form">
+					<p>Name:</p>
+					<input type="text" name="name" placeholder="imsglobal">
+					<p>UTL:</p>
+					<input type="text" name="url" placeholder="https://lti-ri.imsglobal.org/platforms/2056">
+					<p>Client ID:</p>
+					<input type="text" name="clientId" placeholder="lti-test">
+					<p>Authentication Endpoint:</p>
+					<input type="text" name="authenticationEndpoint" placeholder="https://lti-ri.imsglobal.org/platforms/2056/authorizations/new">
+					<p>Accesstoken Endpoint:</p>
+					<input type="text" name="accesstokenEndpoint" placeholder="https://lti-ri.imsglobal.org/platforms/2056/access_tokens">
+					<p>JWKS URL:</p>
+					<input type="text" name="jkwsUrl" placeholder="https://lti-ri.imsglobal.org/platforms/2056/platform_keys/1952.json">
+
 					<input type="submit" value="Add">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 					<span class="error"></span>
@@ -168,7 +204,7 @@
 
 <script type="text/javascript">
 	let studyid = "<%= study %>";
-	let study = null, participants = null, tests = null, allocator = null, groups = null;
+	let study = null, participants = null, tests = null, allocator = null, groups = null, platforms = null;
 
 	$(document).ready(function() {
 		let painters = Object.keys(PainterFactory.Painters);
@@ -248,6 +284,32 @@
 					}
 				});
 			}
+
+			return false;
+		});
+
+		$("#add_platform_form").on('submit', function(event){
+			event.preventDefault();
+			let form = Utils.getFormData($("#add_platform_form"));
+			let errorbox = $(this).find('.error');
+
+			let platform = {
+				url: form.url,
+				name: form.name,
+				clientId: form.clientId,
+				authenticationEndpoint: form.authenticationEndpoint,
+				accesstokenEndpoint: form.accesstokenEndpoint,
+				authConfig: { "method": "JWK_SET", "key": form.jkwsUrl }
+			}
+
+			Simva.addLtiPlatform(platform, function(error, result){
+				if(error && error.responseJSON){
+					errorbox.text(error.responseJSON.message);
+				}else{
+					toggleAddForm('add_platform');
+					reloadStudy();
+				}
+			});
 
 			return false;
 		});
@@ -345,12 +407,12 @@
 			if(!error){
 				study = result;
 
-				let tocomplete = 5, done = 0;
+				let tocomplete = 6, done = 0;
 				let completed = function(){
 					done++
 
 					if(done === tocomplete){
-						paintStudy(study, participants, tests, allocator, groups);
+						paintStudy(study, participants, tests, allocator, groups, platforms);
 					}
 				}
 
@@ -392,6 +454,13 @@
 						completed();
 					}
 				});
+
+				Simva.getLtiPlatforms(function(error, result){
+					if(!error){
+						platforms = result;
+						completed();
+					}
+				});
 			}
 		});
 	}
@@ -418,6 +487,12 @@
 		study.groups.splice(i, 1);
 
 		Simva.updateStudy(study, function(error, result){
+			reloadStudy();
+		});
+	}
+
+	let removePlatform = function(platform){
+		Simva.removePlatform(platform, function(error, result){
 			reloadStudy();
 		});
 	}
@@ -477,7 +552,7 @@
 
 	// Main Paint functions
 
-	let paintStudy = function(study, participants, tests, allocator, groups){
+	let paintStudy = function(study, participants, tests, allocator, groups, platforms){
 		$('#study_name').text(study.name);
 
 		paintOwners(study.owners);
@@ -485,6 +560,8 @@
 		paintAllocator(allocator, tests, groups, participants);
 
 		paintGroups(groups);
+
+		paintPlatforms(platforms);
 
 		let fullyPaintTest = function(test){
 			paintTest(test);
@@ -529,6 +606,17 @@
 		}else{
 			for (var i = 0; i < groups.length; i++) {
 				$('#groups').append(groupRow(groups[i]));
+			}
+		}
+	}
+
+	let paintPlatforms = function(platforms){
+		$('#platforms').html('');
+		if(platforms.length == 0){
+			$('#platforms').append('<p>There are no platforms yet.</p>');
+		}else{
+			for (var i = 0; i < platforms.length; i++) {
+				$('#platforms').append(groupRow(platforms[i]));
 			}
 		}
 	}
@@ -612,6 +700,14 @@
 	let groupRow = function(group){
 		let toret = '<tr><td>' + group.name + '</td><td><input class="red" type="button" value="Remove"';
 		toret += ' onclick="removeGroup(\'' + group._id + '\')"';
+		toret += '></td></tr>';
+
+		return toret;
+	}
+
+	let platformRow = function(group){
+		let toret = '<tr><td>' + platform.name + '</td><td><input class="red" type="button" value="Remove"';
+		toret += ' onclick="removePlatform(\'' + platform._id + '\')"';
 		toret += '></td></tr>';
 
 		return toret;
