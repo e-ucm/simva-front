@@ -37,7 +37,7 @@
 			<p></p>
 			<table id="lti_platforms">
 			</table>
-			<input class="violet" type="button" value="Add Group" onclick="toggleAddForm('add_platform')">
+			<input class="violet" type="button" value="Add Platform" onclick="toggleAddForm('add_platform')">
 		</div>
 	</div>
 	<div class="card">
@@ -299,7 +299,8 @@
 				clientId: form.clientId,
 				authenticationEndpoint: form.authenticationEndpoint,
 				accesstokenEndpoint: form.accesstokenEndpoint,
-				authConfig: { "method": "JWK_SET", "key": form.jkwsUrl }
+				authConfig: { "method": "JWK_SET", "key": form.jkwsUrl },
+				studyId: studyid
 			}
 
 			Simva.addLtiPlatform(platform, function(error, result){
@@ -455,7 +456,7 @@
 					}
 				});
 
-				Simva.getLtiPlatforms(function(error, result){
+				Simva.getLtiPlatforms(studyid, function(error, result){
 					if(!error){
 						platforms = result;
 						completed();
@@ -611,12 +612,12 @@
 	}
 
 	let paintPlatforms = function(platforms){
-		$('#platforms').html('');
+		$('#lti_platforms').html('');
 		if(platforms.length == 0){
-			$('#platforms').append('<p>There are no platforms yet.</p>');
+			$('#lti_platforms').append('<p>There are no platforms yet.</p>');
 		}else{
 			for (var i = 0; i < platforms.length; i++) {
-				$('#platforms').append(groupRow(platforms[i]));
+				$('#lti_platforms').append(platformRow(platforms[i]));
 			}
 		}
 	}
@@ -700,12 +701,15 @@
 	let groupRow = function(group){
 		let toret = '<tr><td>' + group.name + '</td><td><input class="red" type="button" value="Remove"';
 		toret += ' onclick="removeGroup(\'' + group._id + '\')"';
+		if(group.link && group.link.type){
+			toret += ' disabled';
+		}
 		toret += '></td></tr>';
 
 		return toret;
 	}
 
-	let platformRow = function(group){
+	let platformRow = function(platform){
 		let toret = '<tr><td>' + platform.name + '</td><td><input class="red" type="button" value="Remove"';
 		toret += ' onclick="removePlatform(\'' + platform._id + '\')"';
 		toret += '></td></tr>';

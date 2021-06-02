@@ -72,10 +72,32 @@ module.exports = function(auth, config){
   });
 
   router.get('/login', function(req, res, next) {
-    if(req.session.user){
-      return res.redirect('../');
+    if(req.query.jwt){
+      let user = {};
+        let profile = {};
+        let simvaToken = req.query.jwt;
+        let simvaJwtToken = jwt.decode(simvaToken);
+        profile.provider = simvaJwtToken.iss
+        profile.id = simvaJwtToken.data.id;
+        profile.username = simvaJwtToken.data.username;
+        profile.email = simvaJwtToken.email;
+        profile.roles = [simvaJwtToken.data.role];
+        profile.role = simvaJwtToken.data.role;
+        user.data = profile;
+        user.jwt = simvaToken;
+        setUser(req, user);
+
+        if(req.query.next){
+          res.redirect(req.query.next);
+        }else{
+          res.status(200).send({'message': 'ok'});
+        }
+    }else{
+      if(req.session.user){
+        return res.redirect('../');
+      }
+      res.render('users_login', { config: config });
     }
-    res.render('users_login', { config: config });
   });
 
   router.post('/login', function(req, res, next) {

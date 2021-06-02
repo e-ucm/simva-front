@@ -209,17 +209,23 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .content .left .owners table,
 .content .left .allocator.default .allocations {width: 100% }
 .content .left .groups table td,
+.content .left .lti_platforms table td,
 .content .left .owners table td,
 .content .left .allocator.default .allocations td { width: 50%; }
 .content .left .groups table td select,
+.content .left .lti_platforms table td select,
 .content .left .owners table td select,
 .content .left .allocator.default .allocations td select {width: 100%}
 .content .left .groups table td input[type="button"],
+.content .left .lti_platforms table td input[type="button"],
 .content .left .owners table td input[type="button"],
 .content .left .allocator.default .allocations td input[type="button"] {width: 100%; margin-top: 0px; }
 .content .left .groups input[type="button"], 
+.content .left .lti_platforms input[type="button"], 
 .content .left .owners input[type="button"], 
 .content .left .allocator input[type="button"] { width: 100%; margin-top: 10px;} 
+
+
 
 .content .top {overflow: hidden;}
 .content .top h2,

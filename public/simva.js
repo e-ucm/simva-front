@@ -163,4 +163,22 @@ var Simva = {
 	deleteLtiTool: function(tool, callback){
 		Utils.delete(this.apiurl + '/lti/tools/' + tool, callback, this.jwt);
 	},
+
+	getLtiPlatforms: function(study, callback){
+		let query = '';
+		if(study){
+			console.log(study);
+			query = '?searchString=' + encodeURI('{"studyId":"' + study + '"}');
+		}
+
+		Utils.get(this.apiurl + '/lti/platforms' + query, callback, this.jwt);
+	},
+
+	addLtiPlatform: function(platform, callback){
+		Utils.post(this.apiurl + '/lti/platforms', platform, callback, this.jwt);
+	},
+
+	removePlatform: function(platform_id, callback){
+		Utils.delete(this.apiurl + '/lti/platforms/' + platform_id, callback, this.jwt);
+	}
 }
