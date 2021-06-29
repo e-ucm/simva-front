@@ -7,29 +7,7 @@ let querystring = require('querystring');
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
-let setUser = function(req, user){
-  console.log(user);
-  let decoded = jwt.decode(user.jwt);
-
-  if (user.data.provider != 'simva') {
-    user.data.roles = decoded.realm_access.roles;
-    user.data.role = getRoleFromJWT(decoded);
-  }
-  req.session.user = user;
-}
-
-let getRoleFromJWT = function(decoded){
-  let role = 'student';
-
-  for (var i = decoded.realm_access.roles.length - 1; i >= 0; i--) {
-    if(decoded.realm_access.roles[i] === 'teacher' || decoded.realm_access.roles[i] === 'researcher'){
-      role = 'teacher';
-      break;
-    };
-  }
-
-  return role;
-}
+let usertools = require('../lib/usertools');
 
 module.exports = function(auth, config){
 
@@ -74,24 +52,17 @@ module.exports = function(auth, config){
   router.get('/login', function(req, res, next) {
     if(req.query.jwt){
       let user = {};
-        let profile = {};
-        let simvaToken = req.query.jwt;
-        let simvaJwtToken = jwt.decode(simvaToken);
-        profile.provider = simvaJwtToken.iss
-        profile.id = simvaJwtToken.data.id;
-        profile.username = simvaJwtToken.data.username;
-        profile.email = simvaJwtToken.email;
-        profile.roles = [simvaJwtToken.data.role];
-        profile.role = simvaJwtToken.data.role;
-        user.data = profile;
-        user.jwt = simvaToken;
-        setUser(req, user);
+      let simvaToken = req.query.jwt;
+      let profile = usertools.getProfileFromJWT(simvaToken);
+      user.data = profile;
+      user.jwt = simvaToken;
+      usertools.setUser(req, user);
 
-        if(req.query.next){
-          res.redirect(req.query.next);
-        }else{
-          res.status(200).send({'message': 'ok'});
-        }
+      if(req.query.next){
+        res.redirect(req.query.next + '?jwt=' + req.query.jwt);
+      }else{
+        res.status(200).send({'message': 'ok'});
+      }
     }else{
       if(req.session.user){
         return res.redirect('../');
@@ -101,6 +72,7 @@ module.exports = function(auth, config){
   });
 
   router.post('/login', function(req, res, next) {
+
     if(req.session.user){
       return res.redirect('../');
     }
@@ -117,20 +89,11 @@ module.exports = function(auth, config){
             res.status(response.statusCode).send(body);
           }else{
             let user = {};
-            let profile = {};
             let simvaToken = body.token;
-            console.log(response);
-            console.log(body);
-            let simvaJwtToken = jwt.decode(simvaToken);
-            profile.provider = simvaJwtToken.iss
-            profile.id = simvaJwtToken.data.id;
-            profile.username = simvaJwtToken.data.username;
-            profile.email = simvaJwtToken.email;
-            profile.roles = [simvaJwtToken.data.role];
-            profile.role = simvaJwtToken.data.role;
+            let profile = usertools.getProfileFromJWT(simvaToken);
             user.data = profile;
             user.jwt = simvaToken;
-            setUser(req, user);
+            usertools.setUser(req, user);
             res.status(200).send({'message': 'ok'});
           }
         } else {
@@ -149,7 +112,7 @@ module.exports = function(auth, config){
         return res.redirect('../login');
       }
 
-      setUser(req, user);
+      usertools.setUser(req, user);
       res.redirect('/');
     })(req, res, next);
   });

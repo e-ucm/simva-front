@@ -4,10 +4,39 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const config = require('../config');
+let usertools = require('./lib/usertools');
+
+
+const MongoStore = require("connect-mongo")(session);
+const mongoose = require('mongoose');
+
+var isTest = (process.env.NODE_ENV === 'test');
+mongoose.connect( !isTest ? config.mongo.url : config.mongo.test, {useNewUrlParser: true});
+mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
+mongoose.connection.once('open', function() {
+  console.log('connected');
+});
 
 const app = express();
 
 app.use(bodyParser.json({limit: '1mb'}));
+/*app.use(session(
+  {
+    secret: 'simva app',
+    name: 'sessionID',
+    cookie: {
+      httpOnly: false,
+      sameSite: 'none',
+      secure: true
+    },
+    resave: false,
+    saveUninitialized: false,
+    store: new MongoStore({
+      mongooseConnection: mongoose.connection,
+      ttl: 60 * 60 * 24 * 1000,
+    })
+  })
+);*/
 app.use(session({secret: 'simva app', cookie: {}}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '/../public')));
@@ -21,7 +50,16 @@ var auth = function(level){
   return function(req, res, next) {
     if (req.session && req.session.user)
       return next();
-    else{
+    else if(req.query.jwt){
+      let user = {};
+      let simvaToken = req.query.jwt;
+      let profile = usertools.getProfileFromJWT(simvaToken);
+      user.data = profile;
+      user.jwt = simvaToken;
+      usertools.setUser(req, user);
+
+      return next();
+    }else{
       var pre = '';
       for(var i = 0; i < level; i++){
         pre += '../';
@@ -30,7 +68,6 @@ var auth = function(level){
     }
   };
 };
-
 
 router = express.Router();
 router.get('/', auth(0), function(req, res, next) {
