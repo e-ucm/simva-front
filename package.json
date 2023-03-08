@@ -16,7 +16,7 @@
     "express-session": "1.15.6",
     "html": "*",
     "jsonwebtoken": "*",
-    "mongoose": "*",
+    "mongoose": "^5.7.8",
     "connect-mongo": "3",
     "passport": "*",
     "passport-keycloak-oauth2-oidc": "*",
