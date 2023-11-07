@@ -94,7 +94,7 @@ var GameplayActivityPainter = {
 
 		activitybox += ' - Trace Storage: '
 		if(activity.extra_data.config.trace_storage){
-			activitybox += '<a href="' + this.utils.minio_url + "/minio/"+ this.utils.minio_bucket + '/kafka-topics/_id=' + activity._id + '/" target="_blank">Folder</a></p>';
+			activitybox += '<a href="' + this.utils.minio_url + "minio/"+ this.utils.minio_bucket + '/kafka-topics/traces/_id=' + activity._id + '/" target="_blank">Folder</a></p>';
 		}else{
 			activitybox += '<i>Disabled</i>';
 		}
