@@ -35,12 +35,14 @@
 		var completed = '<body style="background-color: black; color: white; font-family: sans-serif; text-align: center;"><h1>Study Completed!</h1><p>Congratulations, you have completed all the activities of the study.</p><p>Ask the teacher if there are more steps to continue.</p></body>';
 
 		let current_activity_id = null;
+		let auto_refresh = false;
 		$(document).ready(function() {
-			
 			reloadSchedule();
-			setInterval(function(){
-				reloadSchedule();
-			}, 3000);
+			if(auto_refresh){
+				setInterval(function(){
+					reloadSchedule();
+				}, 3000);
+			}
 		});
 
 		let avoid_refreshing = false;
