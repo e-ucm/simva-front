@@ -96,7 +96,7 @@ var GameplayActivityPainter = {
 		if(activity.extra_data.config.trace_storage){
 			activitybox += '<a href="' + this.utils.minio_url + "minio/"+ this.utils.minio_bucket 
 				+ '/kafka-topics/traces/_id=' + activity._id + '/" target="_blank">Folder</a>' 
-				+ '<a onclick="GameplayActivityPainter.downloadBackup(\'' + activity._id + '\')">Backup ⬇️</a>' 
+				+ '<a onclick="GameplayActivityPainter.downloadBackup(\'' + activity._id + '\')"> ⬇️</a>' 
 				+ '</p>';
 		}else{
 			activitybox += '<i>Disabled</i>';
@@ -249,11 +249,9 @@ var GameplayActivityPainter = {
 			$('#' + activity._id + '_' + usernames[i] + '_target').attr('href', results[usernames[i]]);
 		}
 	},
-
 	downloadBackup: function(activity, user){
 		var toastParams = {
 			heading: 'Error loading the result',
-			text: error.message,
 			position: 'top-right',
 			icon: 'error',
 			stack: false
@@ -262,6 +260,7 @@ var GameplayActivityPainter = {
 		if(user){
 			Simva.getActivityResultForUser(activity, user, function(error, result){
 				if(error){
+					toastParams.text = error.message;
 					$.toast(toastParams);
 				}else{
 					var filename = activity + "_" + user + ".json";
@@ -271,14 +270,7 @@ var GameplayActivityPainter = {
 		} 
 		else 
 		{
-			Simva.getActivityResult(activity, function(error, result){
-				if(error){
-					$.toast(toastParams);
-				}else{
-					var filename = activity + ".json";
-					Utils.download(filename, result);
-				}
-			});
+			Simva.downloadActivityResult(activity);
 		}
 
 	},

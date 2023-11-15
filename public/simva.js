@@ -125,6 +125,36 @@ var Simva = {
 	getActivityResult: function(activity_id, callback){
 		Utils.get(this.apiurl + '/activities/' + activity_id + '/result', callback, this.jwt);
 	},
+	
+	downloadActivityResult: async function(activity_id) {
+		try {
+			let url = this.apiurl + '/activities/' + activity_id + '/result';
+			const response = await fetch(url, {
+				method: 'GET',
+				headers: new Headers({
+					'Authorization': `Bearer ${this.jwt}`
+				})
+			});
+	
+			if (!response.ok) {
+				throw new Error(`Error ${response.status}: ${response.statusText}`);
+			}
+	
+			const blob = await response.blob();
+			const objectUrl = window.URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = objectUrl;
+			a.download = activity_id + ".json";
+			document.body.appendChild(a);
+			a.click();
+	
+			// Limpiar el DOM y liberar recursos
+			window.URL.revokeObjectURL(objectUrl);
+			document.body.removeChild(a);
+		} catch (error) {
+			console.error('Error al descargar el archivo:', error);
+		}
+	},
 
 	hasActivityResult: function(activity_id, callback){
 		Utils.get(this.apiurl + '/activities/' + activity_id + '/hasresult', callback, this.jwt);
