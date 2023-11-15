@@ -59,9 +59,6 @@ var GameplayActivityPainter = {
 
 			tmp.updateParticipants(activity);
 			
-			setInterval(function(){
-				tmp.updateParticipants(activity);
-			}, 5000);
 		});
 	},
 

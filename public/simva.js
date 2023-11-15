@@ -128,29 +128,9 @@ var Simva = {
 	
 	downloadActivityResult: async function(activity_id) {
 		try {
-			let url = this.apiurl + '/activities/' + activity_id + '/result';
-			const response = await fetch(url, {
-				method: 'GET',
-				headers: new Headers({
-					'Authorization': `Bearer ${this.jwt}`
-				})
-			});
-	
-			if (!response.ok) {
-				throw new Error(`Error ${response.status}: ${response.statusText}`);
-			}
-	
-			const blob = await response.blob();
-			const objectUrl = window.URL.createObjectURL(blob);
-			const a = document.createElement('a');
-			a.href = objectUrl;
-			a.download = activity_id + ".json";
-			document.body.appendChild(a);
-			a.click();
-	
-			// Limpiar el DOM y liberar recursos
-			window.URL.revokeObjectURL(objectUrl);
-			document.body.removeChild(a);
+			let url = this.apiurl + `/activities/${activity_id}/result?token=${this.jwt}`;
+			window.location.href = url; // Redirige al usuario para iniciar la descarga
+
 		} catch (error) {
 			console.error('Error al descargar el archivo:', error);
 		}
