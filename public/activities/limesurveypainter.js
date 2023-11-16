@@ -74,7 +74,7 @@ var LimeSurveyPainter = {
 				$.toast(toastParams);
 			}else{
 				var filename = activity + ".json";
-				Utils.download(filename, result);
+				Utils.download(filename, JSON.stringify(result));
 			}
 		});
 
