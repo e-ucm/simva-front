@@ -70,9 +70,9 @@ var GameplayActivityPainter = {
 			tmp.paintActivityCompletion(activity, result);
 		});
 
-		Simva.getActivityResult(activity._id, function(error, result){
+		/*Simva.getActivityResult(activity._id, function(error, result){
 			tmp.paintActivityResult(activity, result);
-		});
+		});*/
 	},
 
 	paintActivity: function(activity, participants){

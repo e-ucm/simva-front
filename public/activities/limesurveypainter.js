@@ -60,7 +60,25 @@ var LimeSurveyPainter = {
 
 		return form;
 	},
+	downloadBackup: function(activity, user){
+		var toastParams = {
+			heading: 'Error loading the result',
+			position: 'top-right',
+			icon: 'error',
+			stack: false
+		};
+		
+		Simva.getActivityResult(activity, function(error, result){
+			if(error){
+				toastParams.text = error.message;
+				$.toast(toastParams);
+			}else{
+				var filename = activity + ".json";
+				Utils.download(filename, result[user].backup);
+			}
+		});
 
+	},
 	extractInformation: function(form, callback){
 		let activity = {};
 
@@ -109,9 +127,9 @@ var LimeSurveyPainter = {
 		let tmp = this;
 
 		this.updateParticipants(activity);
-		setInterval(function(){
+		/*setInterval(function(){
 			tmp.updateParticipants(activity);
-		}, 5000);
+		}, 5000);*/
 	},
 
 	updateParticipants: function(activity){
@@ -123,10 +141,10 @@ var LimeSurveyPainter = {
 			tmp.paintActivityCompletion(activity, result);
 		});
 
-		Simva.getActivityResult(activity._id, function(error, result){
+		/*Simva.getActivityResult(activity._id, function(error, result){
 			activity.tmp.result = result;
 			tmp.paintActivityResult(activity, result);
-		});
+		});*/
 
 		Simva.getActivityTarget(activity._id, function(error, result){
 			activity.tmp.result = result;
@@ -139,7 +157,8 @@ var LimeSurveyPainter = {
 			+ '<div class="top"><h4>' + activity.name + '</h4>'
 			+ '<input class="red" type="button" value="X" onclick="deleteActivity(\'' + activity._id + '\')"></div>'
 			+ '<p class="subtitle">' + this.simpleName + '</p>'
-			+ '<p>Survey ID: <a target="_blank" href="' + this.utils.url + activity.extra_data.surveyId + '">' + activity.extra_data.surveyId + '</a></p>'
+			+ '<p>Survey ID: <a target="_blank" href="' + this.utils.url + activity.extra_data.surveyId + '">' + activity.extra_data.surveyId + '</a>'
+			+ '<a onclick="LimeSurveyPainter.downloadBackup(\'' + activity._id + '\')"> ⬇️</a></p>'
 			+ '<div id="completion_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>'
 			+ '<div id="result_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>'
 			+ this.paintActivityParticipantsTable(activity, participants) + '</div>');
