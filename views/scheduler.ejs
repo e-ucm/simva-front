@@ -87,31 +87,12 @@
      									console.error("Error getting the URL of the activity target:", error);
         								return;
     								}
-									async function getSrc(fullUrl) {
-										console.log(fullUrl);
-										const Url = new URL(fullUrl);
-										const baseURL = `${Url.protocol}//${Url.host}`;
-										console.log(baseURL);
-										const headers = new Headers();
-										headers.append('Access-Control-Allow-Origin', "*");
-										const res = await fetch(fullUrl, {
-											method: 'GET',
-											mode: 'cors',  // Set the mode to 'cors'
-											headers: headers
-										});
-										const blob = await res.blob();
-										const targetUrlObject = URL.createObjectURL(blob);
-										return targetUrlObject;
+									try {
+										$('#activity_content').attr('src', result[username]);
+									} catch (error) {
+										console.error("Error getting source:", error);
+										return;
 									}
-									(async () => {
-										try {
-											const target = await getSrc(result[username]);
-											$('#activity_content').attr('src', target);
-										} catch (error) {
-											console.error("Error getting source:", error);
-											$('#activity_content').attr('src', result[username]);
-										}
-									})();
 								});
 							}else{
 								$('#activity_content').hide(10, function(){
@@ -124,7 +105,6 @@
 								});
 							}
 						});
-
 						paintCurrentActivity(activity.name);
 					}
 				}
