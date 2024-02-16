@@ -62,7 +62,7 @@ var RageMinioActivityPainter = {
 			+ '<p class="subtitle">' + this.simpleName + '</p>'
 			+ '<p>Analytics: <a href="' + this.utils.dashboard_url + activity.extra_data.analytics.activity._id + this.utils.dashboard_query + '" target="_blank">Dashboard</a> - '
 			+ 'Minio: <a href="' + this.utils.minio_url
-			+ this.utils.minio_bucket + '/topics/' + this.utils.kafka_topic + '/_id=' + activity._id + '/'
+			+ this.utils.minio_bucket + '/' + this.utils.topics_dir + '/' + this.utils.trace_topic + '/_id=' + activity._id + '/'
 			+ '" target="_blank">Folder</a></p>'
 			+ '<div id="completion_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>'
 			+ '<div id="result_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>'

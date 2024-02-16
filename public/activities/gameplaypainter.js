@@ -92,7 +92,7 @@ var GameplayActivityPainter = {
 		activitybox += ' - Trace Storage: '
 		if(activity.extra_data.config.trace_storage){
 			activitybox += '<a href="' + this.utils.minio_url + "minio/"+ this.utils.minio_bucket 
-				+ '/kafka-topics/traces/_id=' + activity._id + '/" target="_blank">Folder</a>' 
+				+ '/' + this.utils.topics_dir + '/' + this.utils.trace_topic  + '/_id=' + activity._id + '/" target="_blank">Folder</a>' 
 				+ '<a onclick="GameplayActivityPainter.downloadBackup(\'' + activity._id + '\')"> ⬇️</a>' 
 				+ '</p>';
 		}else{
