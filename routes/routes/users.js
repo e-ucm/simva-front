@@ -66,6 +66,9 @@ module.exports = function(auth, config){
 
   router.get('/openid/return', function (req, res, next) {
     passport.authenticate('openid', { failureRedirect: '/users/login' }, function(err, user) {
+      console.log(JSON.stringify(user));
+      let allowed_roles = ['teacher', 'teaching-assistant', 'researcher', 'administrator', 'student'];
+
       if(err){
         return res.redirect('../login');
       }
@@ -73,11 +76,11 @@ module.exports = function(auth, config){
       usertools.setUser(req, user);
 
       //Check if user doesnt exist in SIMVA and it´s the first connexion
-      if(user.role == '') {
+      if(!allowed_roles.includes(user.role)) {
         if(config.sso.userCanSelectRole) {
-          res.redirect('/users/roleSelection');
+          res.redirect('/users/role_selection');
         } else {
-          res.redirect('/users/contactAdmin?error=no_role');
+          res.redirect('/users/contact_admin?error=no_role');
         }
       } else {
         res.redirect('/');
