@@ -48,6 +48,10 @@ module.exports = function(auth, config){
   router.get('/', auth, function(req, res, next) {
     res.redirect('../');
   });
+  
+  router.get('/login', function(req, res, next) {
+      res.render('users_login', { config: config });
+  });
 
   router.get('/role_selection', function(req, res, next) {
     res.render('users_role_edit', { config: config, user: req.session.user });
