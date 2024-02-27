@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Simva Role Selection</title>
+	<link href="/css/style.css" rel="stylesheet" type="text/css">
+	<script type="text/javascript" src="/jquery.js"></script>
+	<script type="text/javascript" src="/utils.js"></script>
+	<script type="text/javascript" src="/simva.js"></script>
+	<script type="text/javascript">
+		Simva.setAPIURL("<%= config.api.url %>");
+		$(document).ready(function() {
+			$("#role_form").on('submit', function(event){
+				event.preventDefault();
+
+				let form = Utils.getFormData($("#role_form"));
+
+				console.log(form);
+
+				Simva.giveRoleToUserInKeycloak(form.role, function(error, result){
+					if(error && error.responseJSON){
+						$("#error").text(error.responseJSON.message);
+					}else{
+						console.log(result);
+						window.location.replace('/');
+					}
+				});
+				return false;
+			});
+		});
+
+	</script>
+</head>
+<body class="login floating">
+	<div class="floater">
+		<div id="login_box">
+			<img src="/logo_text.png" alt="logo" />
+			<form method="post" id="role_form">
+				<fieldset>
+					<div class="role_selector">
+						<input id="teacher_role" type="radio" name="role" value="teacher"><label for="teacher_role">Teacher</label>
+						<input id="teacher_role" type="radio" name="role" value="teaching_assistant"><label for="teaching_assistant_role">Teaching Assistant</label>
+						<input id="student_role" type="radio" name="role" value="student" checked><label for="student_role">Student</label>
+					</div>
+				</fieldset>
+				<input type="submit" value="Choose this Role" />
+			</form>
+		</div>
+	</div>
+</body>
+</html>

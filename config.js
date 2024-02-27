@@ -34,6 +34,8 @@ config.sso.publicClient = process.env.SSO_PUBLIC_CLIENT || 'false'
 config.sso.accountPath = process.env.SSO_ACCOUNT_PATH || '/account'
 config.sso.accountUrl = config.sso.authUrl + "/realms/" + config.sso.realm + config.sso.accountPath
 
+config.sso.userCanSelectRole=process.env.SSO_USER_CAN_SELECT_ROLE || "true"
+
 config.api = {}
 config.api.host = process.env.SIMVA_API_HOST || 'simva-api.external.test'
 config.api.protocol = process.env.SIMVA_API_PROTOCOL || 'https'

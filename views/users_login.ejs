@@ -3,12 +3,6 @@
 <head>
 	<title>Simva Login</title>
 	<link href="/css/style.css" rel="stylesheet" type="text/css">
-	<script type="text/javascript" src="/jquery.js"></script>
-	<script type="text/javascript" src="/utils.js"></script>
-	<script type="text/javascript" src="/simva.js"></script>
-	<script type="text/javascript">
-		Simva.setAPIURL("<%= config.api.url %>");
-	</script>
 </head>
 <body class="login floating">
 	<div class="floater">
@@ -19,8 +13,6 @@
 					<br>
 					<a class="button violet" href="/users/openid">Login With Keycloak</a>
 				</p>
-				<span id="error"></span>
-				<hr>
 			</form>
 		</div>
 	</div>
