@@ -49,59 +49,13 @@ module.exports = function(auth, config){
     res.redirect('../');
   });
 
-  router.get('/login', function(req, res, next) {
-    if(req.query.jwt){
-      let user = {};
-      let simvaToken = req.query.jwt;
-      let profile = usertools.getProfileFromJWT(simvaToken);
-      user.data = profile;
-      user.jwt = simvaToken;
-      usertools.setUser(req, user);
-
-      if(req.query.next){
-        res.redirect(req.query.next + '?jwt=' + req.query.jwt);
-      }else{
-        res.status(200).send({'message': 'ok'});
-      }
-    }else{
-      if(req.session.user){
-        return res.redirect('../');
-      }
-      res.render('users_login', { config: config });
-    }
+  router.get('/role_selection', function(req, res, next) {
+    res.render('users_role_edit', { config: config, user: req.session.user });
   });
 
-  router.post('/login', function(req, res, next) {
-
-    if(req.session.user){
-      return res.redirect('../');
-    }
-
-    request.post({
-      url: config.api.url + '/users/login',
-      json: true,
-      body: req.body
-      },
-      function(error, response, body){
-        if(!error){
-          console.log(response);
-          if(response.statusCode !== 200){
-            res.status(response.statusCode).send(body);
-          }else{
-            let user = {};
-            let simvaToken = body.token;
-            let profile = usertools.getProfileFromJWT(simvaToken);
-            user.data = profile;
-            user.jwt = simvaToken;
-            usertools.setUser(req, user);
-            res.status(200).send({'message': 'ok'});
-          }
-        } else {
-          console.log(error);
-          res.status(500).send({message:"Unexpected error"});
-        }
-      }
-    );
+  
+  router.get('/contact_admin', function(req, res, next) {
+    res.render('users_contact_admin', { config: config, user: req.session.user , error : req.query.error });
   });
 
   router.get('/openid', passport.authenticate('openid'));
@@ -113,7 +67,17 @@ module.exports = function(auth, config){
       }
 
       usertools.setUser(req, user);
-      res.redirect('/');
+
+      //Check if user doesnt exist in SIMVA and it´s the first connexion
+      if(user.role == '') {
+        if(config.sso.userCanSelectRole) {
+          res.redirect('/users/roleSelection');
+        } else {
+          res.redirect('/users/contactAdmin?error=no_role');
+        }
+      } else {
+        res.redirect('/');
+      }    
     })(req, res, next);
   });
 
@@ -142,14 +106,6 @@ module.exports = function(auth, config){
       req.session.user = null;
       res.redirect('login');
     }
-  });
-
-  router.get('/register', function(req, res, next) {
-    if(req.session.user){
-      return res.redirect('../');
-    }
-
-    res.render('users_register', { config: config });
   });
 
   return router;
