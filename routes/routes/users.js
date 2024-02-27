@@ -66,6 +66,7 @@ module.exports = function(auth, config){
 
   router.get('/openid/return', function (req, res, next) {
     passport.authenticate('openid', { failureRedirect: '/users/login' }, function(err, user) {
+      console.log('/openid/return: USER');
       console.log(JSON.stringify(user));
       let allowed_roles = ['teacher', 'teaching-assistant', 'researcher', 'administrator', 'student'];
 
