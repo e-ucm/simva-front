@@ -1,9 +1,8 @@
 <%# views/users_role_edit.ejs %>
  
-<% extend('layout') %>
-
-<div class="floater">
-	<title>Simva Role Selection</title>
+<!DOCTYPE html>
+<html>
+<head>
 	<link href="/css/style.css" rel="stylesheet" type="text/css">
 	<script type="text/javascript" src="/jquery.js"></script>
 	<script type="text/javascript" src="/utils.js"></script>
@@ -29,20 +28,33 @@
 				return false;
 			});
 		});
-
 	</script>
-	<div id="login_box">
-		<img src="/logo_text.png" alt="logo" />
-		<form method="post" id="role_form">
-			<fieldset>
-				<div class="role_selector">
-					<input id="researcher_role" type="radio" name="role" value="researcher"><label for="researcher_role">Researcher</label>
-					<input id="teacher_role" type="radio" name="role" value="teacher"><label for="teacher_role">Teacher</label>
-					<input id="teacher_assistant_role" type="radio" name="role" value="teacher_assistant"><label for="teaching_assistant_role">Teaching Assistant</label>
-					<input id="student_role" type="radio" name="role" value="student" checked><label for="student_role">Student</label>
-				</div>
-			</fieldset>
-			<input type="submit" value="Choose this Role" />
-		</form>
+</head>
+<body>
+	<div class="header">
+		<div class="left"><span class="logo"><img src="/logo.png"></span> <span class="title">Simva - A Simple Validator</span></div>
+		<div class="right">
+			<span><a href="<%= config.sso.accountUrl%>"><img src="/icon/user.png"> <span><%= user.data.username %></span></a></span>
+			<span><a class="logout" href="/users/logout"><img src="/icon/power.png"> <span>Logout</span></a></span>
+		</div>
 	</div>
-</div>
+	<div class="floater">
+		<title>Simva Role Selection</title>
+
+		<div id="login_box">
+			<img src="/logo_text.png" alt="logo" />
+			<form method="post" id="role_form">
+				<fieldset>
+					<div class="role_selector">
+						<input id="researcher_role" type="radio" name="role" value="researcher"><label for="researcher_role">Researcher</label>
+						<input id="teacher_role" type="radio" name="role" value="teacher"><label for="teacher_role">Teacher</label>
+						<input id="teacher_assistant_role" type="radio" name="role" value="teaching-assistant"><label for="teaching_assistant_role">Teaching Assistant</label>
+						<input id="student_role" type="radio" name="role" value="student" checked><label for="student_role">Student</label>
+					</div>
+				</fieldset>
+				<input type="submit" value="Choose this Role" />
+			</form>
+		</div>
+	</div>
+</body>
+</html>
