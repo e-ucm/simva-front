@@ -1,32 +1,10 @@
 <%# views/users_contact_admin.ejs %>
 
-<!DOCTYPE html>
-<html>
-<head>
-	<link href="/css/style.css" rel="stylesheet" type="text/css">
-	<link href="/css/loader.css" rel="stylesheet" type="text/css">
-	<link href="/toast/jquery.toast.css" rel="stylesheet" type="text/css">
-	<link href="/libs/jsonTree/jsonTree.css" rel="stylesheet" />
-	<script src="/libs/jsonTree/jsonTree.js"></script>
-	<script type="text/javascript" src="/jquery.js"></script>
-	<script type="text/javascript" src="/toast/jquery.toast.js"></script>
-	<script type="text/javascript" src="/utils.js"></script>
-	<script type="text/javascript" src="/simva.js"></script>
-</head>
-<body>
-	<div class="header">
-		<div class="left"><span class="logo"><img src="/logo.png"></span> <span class="title">Simva - A Simple Validator</span></div>
-		<div class="right">
-			<span><a href="<%= config.sso.accountUrl%>"><img src="/icon/user.png"> <span><%= user.data.username %></span></a></span>
-			<span><a class="logout" href="/users/logout"><img src="/icon/power.png"> <span>Logout</span></a></span>
-		</div>
-	</div>
-	
+<% extend('layout') %>
+
+<div id="role_selection" class="content">
 	<div class="floater">
 		<title>Error : Contact Administrator</title>
-		<div id="login_box">
-			<img src="/logo_text.png" alt="logo" />
-		</div>
+		<img src="/logo_text.png" alt="logo" />
 	</div>
-</body>
-</html>
+</div>
