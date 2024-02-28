@@ -58,7 +58,16 @@ var auth = function(level){
       user.jwt = simvaToken;
       usertools.setUser(req, user);
 
-      return next();
+      //Check if user doesnt exist in SIMVA and it´s the first connexion
+      if(!config.sso.allowed_roles.includes(user.data.role)) {
+        if(config.sso.userCanSelectRole == "true") {
+          return res.redirect('/users/role_selection');
+        } else {
+          return res.redirect('/users/contact_admin?error=no_role');
+        }
+      } else {
+        return next();
+      }
     }else{
       var pre = '';
       for(var i = 0; i < level; i++){
