@@ -32,10 +32,10 @@ module.exports = function(auth, config){
   passport.use('openid', new KeyCloakStrategy(
     keycloakConfig,
     function(accessToken, refreshToken, profile, done) {
-      console.log(accessToken);
-      console.log(refreshToken);
-      console.log(profile);
-      console.log(done);
+      console.log("Access token : " + accessToken);
+      console.log("refreshToken" + refreshToken);
+      console.log("Profile : " + JSON.stringify(profile));
+      console.log("Done :" + done);
 
       let user = {};
 
