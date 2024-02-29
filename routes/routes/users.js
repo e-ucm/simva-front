@@ -48,72 +48,43 @@ module.exports = function(auth, config){
   router.get('/', auth, function(req, res, next) {
     res.redirect('../');
   });
-
+  
   router.get('/login', function(req, res, next) {
-    if(req.query.jwt){
-      let user = {};
-      let simvaToken = req.query.jwt;
-      let profile = usertools.getProfileFromJWT(simvaToken);
-      user.data = profile;
-      user.jwt = simvaToken;
-      usertools.setUser(req, user);
-
-      if(req.query.next){
-        res.redirect(req.query.next + '?jwt=' + req.query.jwt);
-      }else{
-        res.status(200).send({'message': 'ok'});
-      }
-    }else{
-      if(req.session.user){
-        return res.redirect('../');
-      }
       res.render('users_login', { config: config });
-    }
   });
 
-  router.post('/login', function(req, res, next) {
+  router.get('/role_selection', function(req, res, next) {
+    res.render('users_role_edit', { config: config, user: req.session.user });
+  });
 
-    if(req.session.user){
-      return res.redirect('../');
-    }
-
-    request.post({
-      url: config.api.url + '/users/login',
-      json: true,
-      body: req.body
-      },
-      function(error, response, body){
-        if(!error){
-          console.log(response);
-          if(response.statusCode !== 200){
-            res.status(response.statusCode).send(body);
-          }else{
-            let user = {};
-            let simvaToken = body.token;
-            let profile = usertools.getProfileFromJWT(simvaToken);
-            user.data = profile;
-            user.jwt = simvaToken;
-            usertools.setUser(req, user);
-            res.status(200).send({'message': 'ok'});
-          }
-        } else {
-          console.log(error);
-          res.status(500).send({message:"Unexpected error"});
-        }
-      }
-    );
+  
+  router.get('/contact_admin', function(req, res, next) {
+    res.render('users_contact_admin', { config: config, user: req.session.user , error : req.query.error });
   });
 
   router.get('/openid', passport.authenticate('openid'));
 
   router.get('/openid/return', function (req, res, next) {
     passport.authenticate('openid', { failureRedirect: '/users/login' }, function(err, user) {
+      console.log('/openid/return: USER');
+      console.log(JSON.stringify(user));
+
       if(err){
         return res.redirect('../login');
       }
 
       usertools.setUser(req, user);
-      res.redirect('/');
+
+      //Check if user doesnt exist in SIMVA and it´s the first connexion
+      if(!config.sso.allowed_roles.includes(user.role)) {
+        if(config.sso.userCanSelectRole == "true") {
+          res.redirect('/users/role_selection');
+        } else {
+          res.redirect('/users/contact_admin?error=no_role');
+        }
+      } else {
+        res.redirect('/');
+      }    
     })(req, res, next);
   });
 
@@ -142,14 +113,6 @@ module.exports = function(auth, config){
       req.session.user = null;
       res.redirect('login');
     }
-  });
-
-  router.get('/register', function(req, res, next) {
-    if(req.session.user){
-      return res.redirect('../');
-    }
-
-    res.render('users_register', { config: config });
   });
 
   return router;

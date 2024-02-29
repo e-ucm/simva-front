@@ -29,6 +29,11 @@ config.sso.clientSecret = process.env.SSO_CLIENT_SECRET || 'th1s_1s_th3_s3cr3t'
 config.sso.sslRequired = process.env.SSO_SSL_REQUIRED || 'external'
 config.sso.publicClient = process.env.SSO_PUBLIC_CLIENT || 'false'
 
+config.sso.accountPath = process.env.SSO_ACCOUNT_PATH || '/account'
+config.sso.accountUrl = config.sso.authUrl + "/realms/" + config.sso.realm + config.sso.accountPath
+config.sso.userCanSelectRole=process.env.SSO_USER_CAN_SELECT_ROLE || "true"
+config.sso.allowed_roles = ['teacher', 'teaching-assistant', 'researcher', 'administrator', 'student'];
+
 config.api = {}
 config.api.host = process.env.SIMVA_API_HOST || 'simva-api.external.test'
 config.api.protocol = process.env.SIMVA_API_PROTOCOL || 'https'
