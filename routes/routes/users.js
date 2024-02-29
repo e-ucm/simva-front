@@ -70,6 +70,8 @@ module.exports = function(auth, config){
   router.get('/openid', passport.authenticate('openid'));
 
   router.get('/openid/return', function (req, res, next) {
+    console.log("Req : " + JSON.stringify(req));
+    console.log("Res : " + JSON.stringify(res));
     passport.authenticate('openid', { failureRedirect: '/users/login' }, function(err, user) {
       console.log('/openid/return: USER');
       console.log(JSON.stringify(user));
