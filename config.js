@@ -7,7 +7,7 @@ let default_protocol_ports = {
 
 config.simva = {}
 config.simva.port  = parseInt(process.env.SIMVA_PORT || 3050);
-config.simva.host = process.env.SIMVA_HOST || 'simva.external.test'
+config.simva.host = process.env.SIMVA_HOST || 'external.test'
 config.simva.protocol = process.env.SIMVA_PROTOCOL || 'https'
 config.simva.url = process.env.SIMVA_URL || config.simva.protocol + '://' + config.simva.host
 				+ ( (default_protocol_ports[config.simva.protocol] !== config.simva.port) ? ':' + config.simva.port : '' );
@@ -22,8 +22,6 @@ config.sso.host = process.env.SSO_HOST || 'sso.external.test'
 config.sso.protocol = process.env.SSO_PROTOCOL || 'https'
 config.sso.port = process.env.SSO_PORT || '443'
 config.sso.url = config.sso.protocol + '://' + config.sso.host + ':' + config.sso.port
-config.sso.authPath = process.env.SSO_AUTH_PATH || '/auth'
-config.sso.authUrl = config.sso.url + config.sso.authPath
 
 config.sso.realm = process.env.SSO_REALM || 'simva'
 config.sso.clientId = process.env.SSO_CLIENT_ID || 'simva'

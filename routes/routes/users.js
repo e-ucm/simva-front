@@ -21,7 +21,7 @@ module.exports = function(auth, config){
     publicClient: config.sso.publicClient,
     clientSecret: config.sso.clientSecret,
     sslRequired: config.sso.sslRequired,
-    authServerURL: config.sso.authUrl,
+    authServerURL: config.sso.url,
     callbackURL: config.simva.url + '/users/openid/return'
   }
 
@@ -121,7 +121,7 @@ module.exports = function(auth, config){
 
     if(req.session.user.refreshToken){
       request.post({
-        url: config.sso.authUrl + '/realms/' + config.sso.realm + '/protocol/openid-connect/logout',
+        url: config.sso.url + '/realms/' + config.sso.realm + '/protocol/openid-connect/logout',
         headers: {
           'Authorization': 'Basic ' + Buffer.from(config.sso.clientId + ':' + config.sso.clientSecret).toString('base64'),
           'Content-Type': 'application/x-www-form-urlencoded'
