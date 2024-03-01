@@ -12,7 +12,7 @@
 			event.preventDefault();
 			let form = Utils.getFormData($("#role_form"));
 			console.log(form);
-			Simva.SetRole(form.role, function(error, result){
+			Simva.setRole(form.role, function(error, result){
 				if(error && error.responseJSON){
 					$("#error").text(error.responseJSON.message);
 				}else{
