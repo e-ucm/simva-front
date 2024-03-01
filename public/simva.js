@@ -21,6 +21,11 @@ var Simva = {
 		Utils.post(this.apiurl + '/users/', body, callback);
 	},
 
+	setRole: function(role, callback){
+		let body = { role: role };
+		Utils.post(this.apiurl + '/users/role', body, callback, this.jwt);
+	},
+
 	// GROUPS
 	
 	getGroups: function(callback){

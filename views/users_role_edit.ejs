@@ -11,14 +11,14 @@
 			event.preventDefault();
 			let form = Utils.getFormData($("#role_form"));
 			console.log(form);
-			//Simva.roleSelection(form.role, function(error, result){
-			//	if(error && error.responseJSON){
-			//		$("#error").text(error.responseJSON.message);
-			//	}else{
-			//		console.log(result);
-			//		window.location.replace('/');
-			//	}
-			//});
+			Simva.SetRole(form.role, function(error, result){
+				if(error && error.responseJSON){
+					$("#error").text(error.responseJSON.message);
+				}else{
+					console.log(result);
+					window.location.replace('/');
+				}
+			});
 			return false;
 		});
 	});
