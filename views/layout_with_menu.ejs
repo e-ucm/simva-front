@@ -1,19 +1,56 @@
 <%# views/layout_with_menu.ejs %>
 
-<% extend('layout') %>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Simva - A Simple Validator</title>
+	<link href="/css/style.css" rel="stylesheet" type="text/css">
+	<link href="/css/loader.css" rel="stylesheet" type="text/css">
+	<link href="/toast/jquery.toast.css" rel="stylesheet" type="text/css">
+	<link href="/libs/jsonTree/jsonTree.css" rel="stylesheet" />
+	<script src="/libs/jsonTree/jsonTree.js"></script>
+	<script type="text/javascript" src="/jquery.js"></script>
+	<script type="text/javascript" src="/toast/jquery.toast.js"></script>
+	<script type="text/javascript" src="/utils.js"></script>
+	<script type="text/javascript" src="/simva.js"></script>
+	<script type="text/javascript">
+		Simva.setJWT("<%= user.jwt %>");
+		Simva.setAPIURL("<%= config.api.url %>");
+		var roller = '<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>';
 
-<div class="menu">
-	<ul>
-		<li><a href="/"><span><img src="/icon/home.png"></span> <span>Home</span></a></li>
-		<li><a href="/studies/"><span><img src="/icon/study.png"></span> <span>Studies</span></a></li>
-<% if(user.data.role === 'teacher'){ %>
-		<li><a href="/activities/"><span><img src="/icon/survey.png"></span> <span>Activities</span></a></li>
-		<li><a href="/groups/"><span><img src="/icon/group.png"></span> <span>Groups</span></a></li>
-<% } %>
-		<li><a href="/about"><span><img src="/icon/info.png"></span> <span>About</span></a></li>
-	</ul>
-</div>
+		$(document).ready(function() {
+			$(".floater").on('click', function(event){
+				if (event.target !== this)
+    				return;
+				$(this).parent().toggleClass('shown');
+			});
+		});
+	</script>
+</head>
+<body>
+	<div class="header">
+		<div class="left"><span class="logo"><img src="/logo.png"></span> <span class="title">Simva - A Simple Validator</span></div>
+		<div class="right">
+			<span><a href="<%= config.sso.accountUrl%>"><img src="/icon/user.png"> <span><%= user.data.username %></span></a></span>
+			<span><a class="logout" href="/users/logout"><img src="/icon/power.png"> <span>Logout</span></a></span>
+		</div>
+	</div>
+	
+	<div class="menu">
+		<ul>
+			<li><a href="/"><span><img src="/icon/home.png"></span> <span>Home</span></a></li>
+			<li><a href="/studies/"><span><img src="/icon/study.png"></span> <span>Studies</span></a></li>
+	<% if(user.data.role === 'teacher'){ %>
+			<li><a href="/activities/"><span><img src="/icon/survey.png"></span> <span>Activities</span></a></li>
+			<li><a href="/groups/"><span><img src="/icon/group.png"></span> <span>Groups</span></a></li>
+	<% } %>
+			<li><a href="/about"><span><img src="/icon/info.png"></span> <span>About</span></a></li>
+		</ul>
+	</div>
+	
+	<div class="content">
+		<%- content %>
+	</div>
+</body>
+</html>
 
-<div class="content">
-	<%- content %>
-</div>
