@@ -12,7 +12,6 @@ module.exports = {
 		user.data.roles = decoded.realm_access.roles;
 		user.data.role = this.getRoleFromJWT(decoded);
 		req.session.user = user;
-		console.log("USER : " + JSON.stringify(user));
 	},
 
 	getProfileFromJWT: function(token){
