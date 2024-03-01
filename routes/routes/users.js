@@ -21,6 +21,7 @@ module.exports = function(auth, config){
     publicClient: config.sso.publicClient,
     clientSecret: config.sso.clientSecret,
     sslRequired: config.sso.sslRequired,
+    scope: "openid profile email roles",
     authServerURL: config.sso.url,
     callbackURL: config.simva.url + '/users/openid/return'
   }
