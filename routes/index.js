@@ -57,17 +57,7 @@ var auth = function(level){
       user.data = profile;
       user.jwt = simvaToken;
       usertools.setUser(req, user);
-
-      //Check if user doesnt exist in SIMVA and it´s the first connexion
-      if(!config.sso.allowedRoles.split(",").includes(user.data.role)) {
-        if(config.sso.userCanSelectRole == "true") {
-          return res.redirect('/users/role_selection');
-        } else {
-          return res.redirect('/users/contact_admin?error=no_role');
-        }
-      } else {
-        return next();
-      }
+      return next();
     }else{
       var pre = '';
       for(var i = 0; i < level; i++){
@@ -91,8 +81,6 @@ router.get('/about', auth(0), function(req, res, next) {
 });
 
 router.get('/', auth(0), function(req, res, next) {
-  console.log("/HOME PAGE");
-  console.log(req.session.user);
   if(req.session.user.data.role == 'teacher'){
     res.render('home', { config: config, user: req.session.user });
   }else if(req.session.user.data.role == 'student'){
