@@ -54,12 +54,12 @@ module.exports = function(auth, config){
       res.render('users_login', { config: config });
   });
 
-  router.get('/role_selection', function(req, res, next) {
+  router.get('/role_selection', auth, function(req, res, next) {
     res.render('users_role_edit', { config: config, user: req.session.user });
   });
 
   
-  router.get('/contact_admin', function(req, res, next) {
+  router.get('/contact_admin', auth, function(req, res, next) {
     res.render('users_contact_admin', { config: config, user: req.session.user , error : req.query.error });
   });
 
@@ -72,7 +72,6 @@ module.exports = function(auth, config){
       if(err){
         return res.redirect('../login');
       }
-      user.data = usertools.getProfileFromJWT(simvaToken);
       usertools.setUser(req, user);
       console.log(user);
       res.redirect('/');

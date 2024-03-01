@@ -98,9 +98,9 @@ router.get('/', auth(0), function(req, res, next) {
     res.render('studenthome', { config: config, user: req.session.user });
   } else {
     if(config.sso.userCanSelectRole == "true") {
-      return res.redirect('/users/role_selection');
+      return res.redirect('/users/role_selection', { config: config, user: req.session.user });
     } else {
-      return res.redirect('/users/contact_admin?error=no_role');
+      return res.redirect('/users/contact_admin?error=no_role', { config: config, user: req.session.user });
     }
   }
 });
