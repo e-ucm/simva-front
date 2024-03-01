@@ -25,15 +25,15 @@ module.exports = {
 		profile.id = simvaJwtToken.data.id;
 		profile.username = simvaJwtToken.data.username;
 		profile.email = simvaJwtToken.email;
-		profile.roles = [simvaJwtToken.data.role];
-		profile.role = simvaJwtToken.data.role;
+		profile.roles = simvaJwtToken.realm_access.roles;
+		profile.role = this.getRoleFromJWT(simvaJwtToken);
 
 		return profile;
 	},
 
 	getRoleFromJWT: function(decoded){
 		console.log("Role : " + JSON.stringify(decoded));
-		let role = 'null';
+		let role = 'norole';
 
 		for (var i = decoded.realm_access.roles.length - 1; i >= 0; i--) {
 			if(decoded.realm_access.roles[i] === 'teacher' || decoded.realm_access.roles[i] === 'researcher'){
