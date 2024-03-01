@@ -6,6 +6,7 @@
 <script type="text/javascript" src="/simva.js"></script>
 <script type="text/javascript">
 	Simva.setAPIURL("<%= config.api.url %>");
+	Simva.setJWT("<%= user.jwt %>");
 	$(document).ready(function() {
 		$("#register_form").on('submit', function(event){
 			event.preventDefault();
