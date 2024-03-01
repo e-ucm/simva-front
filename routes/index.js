@@ -91,10 +91,11 @@ router.get('/about', auth(0), function(req, res, next) {
 });
 
 router.get('/', auth(0), function(req, res, next) {
+  console.log("/HOME PAGE");
   console.log(req.session.user);
-  if(req.session.user == 'teacher'){
+  if(req.session.user.data.role == 'teacher'){
     res.render('home', { config: config, user: req.session.user });
-  }else if(req.session.user == 'student'){
+  }else if(req.session.user.data.role == 'student'){
     res.render('studenthome', { config: config, user: req.session.user });
   } else {
     if(config.sso.userCanSelectRole == "true") {
