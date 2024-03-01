@@ -1,7 +1,28 @@
 <%# views/users_role_edit.ejs %>
 
 <% extend('layout') %>
-
+<script type="text/javascript" src="/jquery.js"></script>
+<script type="text/javascript" src="/utils.js"></script>
+<script type="text/javascript" src="/simva.js"></script>
+<script type="text/javascript">
+	Simva.setAPIURL("<%= config.simva.url %>");
+	$(document).ready(function() {
+		$("#register_form").on('submit', function(event){
+			event.preventDefault();
+			let form = Utils.getFormData($("#role_form"));
+			console.log(form);
+			//Simva.roleSelection(form.role, function(error, result){
+			//	if(error && error.responseJSON){
+			//		$("#error").text(error.responseJSON.message);
+			//	}else{
+			//		console.log(result);
+			//		window.location.replace('/');
+			//	}
+			//});
+			return false;
+		});
+	});
+</script>
 <div id="role_selection" class="content">
 	<img id="logo" src="/logo_text.png" alt="logo" />
 	<title>Simva Role Selection</title>

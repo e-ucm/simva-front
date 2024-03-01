@@ -59,7 +59,7 @@ var auth = function(level){
       usertools.setUser(req, user);
 
       //Check if user doesnt exist in SIMVA and it´s the first connexion
-      if(!config.sso.allowed_roles.includes(user.data.role)) {
+      if(!config.sso.allowedRoles.split(",").includes(user.data.role)) {
         if(config.sso.userCanSelectRole == "true") {
           return res.redirect('/users/role_selection');
         } else {

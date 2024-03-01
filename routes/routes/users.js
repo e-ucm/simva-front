@@ -33,11 +33,6 @@ module.exports = function(auth, config){
   passport.use('openid', new KeyCloakStrategy(
     keycloakConfig,
     function(accessToken, refreshToken, profile, done) {
-      console.log("Access token : " + accessToken);
-      console.log("refreshToken" + refreshToken);
-      console.log("Profile : " + JSON.stringify(profile));
-      console.log("Done :" + done);
-
       let user = {};
 
       user.data = profile;
@@ -71,10 +66,6 @@ module.exports = function(auth, config){
   router.get('/openid', passport.authenticate('openid'));
 
   router.get('/openid/return', function (req, res, next) {
-    console.log("Req : " + req);
-    console.log(req);
-    console.log("Res : " + res);
-    console.log(res);
     passport.authenticate('openid', { failureRedirect: '/users/login' }, function(err, user) {
       console.log('/openid/return: USER');
       console.log(JSON.stringify(user));
@@ -86,7 +77,7 @@ module.exports = function(auth, config){
       usertools.setUser(req, user);
 
       //Check if user doesnt exist in SIMVA and it´s the first connexion
-      if(!config.sso.allowed_roles.includes(user.role)) {
+      if(!config.sso.allowedRoles.split(",").includes(user.role)) {
         if(config.sso.userCanSelectRole == "true") {
           res.redirect('/users/role_selection');
         } else {
