@@ -8,7 +8,7 @@
 	Simva.setAPIURL("<%= config.api.url %>");
 	Simva.setJWT("<%= user.jwt %>");
 	$(document).ready(function() {
-		$("#register_form").on('submit', function(event){
+		$("#role_selection").on('submit', function(event){
 			event.preventDefault();
 			let form = Utils.getFormData($("#role_form"));
 			console.log(form);
