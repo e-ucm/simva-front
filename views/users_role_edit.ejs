@@ -3,14 +3,14 @@
 <% extend('layout') %>
 
 <div id="role_selection" class="content">
-	<img src="/logo_text.png" alt="logo" />
+	<img id="logo" src="/logo_text.png" alt="logo" />
 	<title>Simva Role Selection</title>
 	<form method="post" id="role_form">
 		<fieldset>
 			<div class="role_selector">
 				<input id="researcher_role" type="radio" name="role" value="researcher"><label for="researcher_role">Researcher</label>
 				<input id="teacher_role" type="radio" name="role" value="teacher"><label for="teacher_role">Teacher</label>
-				<input id="teacher_assistant_role" type="radio" name="role" value="teacherassistant"><label for="teaching_assistant_role">Teaching Assistant</label>
+				<input id="teaching_assistant_role" type="radio" name="role" value="teaching-assistant"><label for="teaching_assistant_role">Teaching Assistant</label>
 				<input id="student_role" type="radio" name="role" value="student" checked><label for="student_role">Student</label>
 			</div>
 		</fieldset>
