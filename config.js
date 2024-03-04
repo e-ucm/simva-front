@@ -32,6 +32,7 @@ config.sso.publicClient = process.env.SSO_PUBLIC_CLIENT || 'false'
 config.sso.accountPath = process.env.SSO_ACCOUNT_PATH || '/account'
 config.sso.accountUrl = config.sso.url + "/realms/" + config.sso.realm + config.sso.accountPath
 config.sso.userCanSelectRole=process.env.SSO_USER_CAN_SELECT_ROLE || "true"
+config.sso.administratorContact= process.env.SSO_ADMINISTRATOR_CONTACT || "contact@administrator.com"
 config.sso.allowedRoles = process.env.SSO_ALLOWED_ROLES || 'teacher,teaching-assistant,researcher,student'
 
 config.api = {}
