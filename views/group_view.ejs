@@ -232,12 +232,14 @@
 		reloadGroup();
 	});
 
-	let openPDF = function(){
-		Simva.getGroupPrintable(groupid, function(error, result){
-			var link=document.createElement('a');
-			link.href=window.URL.createObjectURL(result);
-			link.download= 'SimvaGroup_' + group.name.replace(' ', '-') + '.pdf';
-			link.click();
+	let openPDF = async function(){
+		await Simva.getGroupPrintable(groupid, function(error, result){
+			var blob = new Blob([result], { type: 'application/pdf' });
+			console.log(blob);
+    		var link = document.createElement('a');
+    		link.href = window.URL.createObjectURL(blob);
+    		link.download = 'SimvaGroup_' + group.name.replace(' ', '-') + '.pdf';
+    		link.click();
 		});
 	}
 
