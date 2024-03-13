@@ -18,7 +18,7 @@ var GameplayActivityPainter = {
 
 	getExtraForm: function () {
 		return '<div class="gameplay_activity"><p><label for="gameplay_trace_storage">Trace Storage</label><input id="gameplay_trace_storage" type="checkbox" name="trace_storage"></p>'
-			 + '<p><label for="gameplay_realtime">Realtime</label><input id="gameplay_realtime" type="checkbox" name="realtime"></p>'
+			// + '<p><label for="gameplay_realtime">Realtime</label><input id="gameplay_realtime" type="checkbox" name="realtime"></p>'
 			 + '<p><label for="gameplay_backup">Backup</label><input id="gameplay_backup" type="checkbox" name="backup" checked></p>'
 			 + '<p><label for="gameplay_game_uri" style="width: 100%; text-align: center;">Game URI (optional)</label><input id="gameplay_game_uri" type="text" name="game_uri">'
 			 + '<span class="info">Game URI can include tags: {authToken}, {username}, and {activityId}</p></div>';
