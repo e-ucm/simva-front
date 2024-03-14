@@ -18,7 +18,7 @@ var ImsPackagePainter = {
 
 	getExtraForm: function () {
 		return '<div class="imspackage_activity"><p><label for="imspackage_trace_storage">Trace Storage</label><input id="imspackage_trace_storage" type="checkbox" name="trace_storage"></p>'
-			 + '<p><label for="imspackage_realtime">Realtime</label><input id="imspackage_realtime" type="checkbox" name="realtime"></p>'
+			 //+ '<p><label for="imspackage_realtime">Realtime</label><input id="imspackage_realtime" type="checkbox" name="realtime"></p>'
 			 + '<p><label for="imspackage_backup">Backup</label><input id="imspackage_backup" type="checkbox" name="backup"></p>'
 			 + '<p><label for="imspackage_package" style="width: 100%; text-align: center;">Package</label><input id="imspackage_package" type="file" name="imspackage">';
 	},
@@ -83,6 +83,7 @@ var ImsPackagePainter = {
 			+ '<input class="red" type="button" value="X" onclick="deleteActivity(\'' + activity._id + '\')"></div>'
 			+ '<p class="subtitle">' + this.simpleName + '</p>';
 
+		/*
 		activitybox += '<p>Realtime: ';
 		if(activity.extra_data.config.realtime){
 			activitybox += '<a href="' + this.utils.dashboard_url
@@ -90,8 +91,10 @@ var ImsPackagePainter = {
 		}else{
 			activitybox += '<i>Disabled</i>';
 		}
-
-		activitybox += ' - Trace Storage: '
+		activitybox += ' - '
+		*/
+		
+		activitybox += 'Trace Storage: '
 		if(activity.extra_data.config.trace_storage){
 			activitybox += '<a href="' + this.utils.minio_url+ this.utils.minio_bucket + '/' + this.utils.users_dir + '/' + this.utils.user_folder
 			+ '/' + activity._id + '/" target="_blank">Folder</a></p>';
