@@ -56,7 +56,7 @@ var DefaultAllocatorPainter = {
 			toret += '<option value="' + tests[i]._id + '">' + tests[i].name + '</option>';
 		}
 
-		toret += '</select><input type="button" onclick="DefaultAllocatorPainter.addAllocation()">';
+		toret += '</select><input type="button" value="Add Allocator" onclick="DefaultAllocatorPainter.addAllocation()">';
 
 		return toret;
 	},
