@@ -47,6 +47,9 @@ config.limesurvey.protocol = process.env.LIMESURVEY_PROTOCOL || 'https'
 config.limesurvey.port = process.env.LIMESURVEY_PORT || '443'
 config.limesurvey.url =  config.limesurvey.protocol + '://' + config.limesurvey.host + ':' + config.limesurvey.port
 config.limesurvey.adminUser =  process.env.LIMESURVEY_ADMIN_USER || 'admin'
-config.limesurvey.adminPassword =  process.env.LIMESURVEY_ADMIN_PASSWORD || 'password'
+config.limesurvey.adminPassword = process.env.LIMESURVEY_ADMIN_PASSWORD || 'password'
+
+config.lti = {}
+config.lti.enabled = process.env.LTI_ENABLED || 'false'
 
 module.exports = config;

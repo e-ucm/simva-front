@@ -43,6 +43,9 @@
 	<% if(user.data.role === 'teacher'){ %>
 			<li><a href="/activities/"><span><img src="/icon/survey.png"></span> <span>Activities</span></a></li>
 			<li><a href="/groups/"><span><img src="/icon/group.png"></span> <span>Groups</span></a></li>
+			<% if(config.lti.enabled == 'true'){ %>
+				<li><a href="/lti-platform/"><span><img src="/icon/survey.png"></span> <span>LTI Platform</span></a></li>
+			<% } %>
 	<% } %>
 			<li><a href="/about"><span><img src="/icon/info.png"></span> <span>About</span></a></li>
 		</ul>

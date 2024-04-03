@@ -31,7 +31,7 @@
 				
 			</div>
 		</div>
-
+		<% if(config.lti.enabled == 'true'){ %>
 		<div class="graybox lti_platforms default">
 			<h2>LTI Platforms</h2>
 			<p></p>
@@ -39,6 +39,7 @@
 			</table>
 			<input class="violet" type="button" value="Add Platform" onclick="toggleAddForm('add_platform')">
 		</div>
+		<% } %>
 	</div>
 	<div class="card">
 		<div class="top">
@@ -314,7 +315,7 @@
 
 			return false;
 		});
-
+		
 		$("#add_test_form").on('submit', function(event){
 			event.preventDefault();
 			let form = Utils.getFormData($("#add_test_form"));
@@ -561,7 +562,7 @@
 		paintAllocator(allocator, tests, groups, participants);
 
 		paintGroups(groups);
-
+	
 		paintPlatforms(platforms);
 
 		let fullyPaintTest = function(test){
