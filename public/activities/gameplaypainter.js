@@ -129,7 +129,7 @@ var GameplayActivityPainter = {
 		}else{
 			activitybox += '<i>Disabled</i>';
 		}
-		activitybox += '<a onclick="GameplayActivityPainter.downloadXasuConfig(\'' + activity._id + '\')"> Xasu Config</a>'
+		activitybox += '<a onclick="GameplayActivityPainter.downloadXasuConfig(\'' + activity._id + '\')"><img src="/ua.png"></a>'
 
 		activitybox += '<div id="completion_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>'
 			+ '<div id="result_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>'
