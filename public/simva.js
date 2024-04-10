@@ -45,7 +45,7 @@ var Simva = {
 	post: function(url, body, callback){
 		this.checkAndUpdateAuth(function(error, result){
 			if(!error){
-				Utils.post(url, body, callback, this.jwt);
+				Utils.post(url, body, callback, Simva.jwt);
 			}else{
 				console.log(error);
 			}
@@ -55,7 +55,7 @@ var Simva = {
 	put: function(url, body, callback){
 		this.checkAndUpdateAuth(function(error){
 			if(!error){
-				Utils.put(url, body, callback, this.jwt);
+				Utils.put(url, body, callback, Simva.jwt);
 			}else{
 				console.log(error);
 			}
@@ -65,7 +65,7 @@ var Simva = {
 	get: function(url, callback){
 		this.checkAndUpdateAuth(function(error){
 			if(!error){
-				Utils.get(url, callback, this.jwt);
+				Utils.get(url, callback, Simva.jwt);
 			}else{
 				console.log(error);
 			}
@@ -75,7 +75,7 @@ var Simva = {
 	getPDF: function(url, callback){
 		this.checkAndUpdateAuth(function(error){
 			if(!error){
-				Utils.getPDF(url, callback, this.jwt);
+				Utils.getPDF(url, callback, Simva.jwt);
 			}else{
 				console.log(error);
 			}
@@ -85,7 +85,7 @@ var Simva = {
 	delete: function(url, callback){
 		this.checkAndUpdateAuth(function(error){
 			if(!error){
-				Utils.delete(url, callback, this.jwt);
+				Utils.delete(url, callback, Simva.jwt);
 			}else{
 				console.log(error);
 			}
