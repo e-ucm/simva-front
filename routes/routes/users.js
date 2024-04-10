@@ -108,7 +108,7 @@ module.exports = function(auth, config){
   router.get('/refresh_auth', auth, function (req, res, next) {
     usertools.refreshAuth(req, config, function(error, result){
       if(!error){
-        req.send(result);
+        res.send(result);
       }else{
         res.status(error.status).send(error.data);
       }
