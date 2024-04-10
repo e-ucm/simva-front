@@ -74,6 +74,30 @@ var GameplayActivityPainter = {
 			tmp.paintActivityResult(activity, result);
 		});*/
 	},
+	
+	downloadXasuConfig: function(activityId){
+		var content = JSON.stringify({
+			online: true,
+			simva:true,
+			lrs_endpoint:"<%= config.api.url %>/activities/" + activityId,
+			auth_protocol: "oauth2",
+			auth_parameters: {
+				grant_type: "code",
+       			auth_endpoint: "<%= config.sso.url %>/realms/<%= config.sso.realm %>/protocol/openid-connect/auth", 
+        		token_endpoint: "<%= config.sso.url %>/realms/<%= config.sso.realm %>/protocol/openid-connect/token", 
+        		client_id: "simva-plugin",
+        		code_challenge_method: "S256"
+			}
+		});
+
+		var filename = "tracker_config.js";
+
+		var blob = new Blob([content], {
+		 type: "text/plain;charset=utf-8"
+		});
+
+		Utils.download(filename, content);
+	},
 
 	paintActivity: function(activity, participants){
 		let activitybox = '<div id="activity_' + activity._id + '" class="activity t' + activity.type + '">'
@@ -105,6 +129,7 @@ var GameplayActivityPainter = {
 		}else{
 			activitybox += '<i>Disabled</i>';
 		}
+		activitybox += '<a onclick="GameplayActivityPainter.downloadXasuConfig(\'' + activity._id + '\')"> Xasu Config</a>'
 
 		activitybox += '<div id="completion_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>'
 			+ '<div id="result_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>'
