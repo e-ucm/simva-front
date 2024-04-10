@@ -78,15 +78,15 @@ var GameplayActivityPainter = {
 	downloadXasuConfig: function(activityId){
 		var content = JSON.stringify({
 			online: true,
-			simva:true,
-			lrs_endpoint:"<%= config.api.url %>/activities/" + activityId,
-			auth_protocol: "oauth2",
-			auth_parameters: {
-				grant_type: "code",
-       			auth_endpoint: "<%= config.sso.url %>/realms/<%= config.sso.realm %>/protocol/openid-connect/auth", 
-        		token_endpoint: "<%= config.sso.url %>/realms/<%= config.sso.realm %>/protocol/openid-connect/token", 
-        		client_id: "simva-plugin",
-        		code_challenge_method: "S256"
+			simva :true,
+			lrs_endpoint : config.api.url + "/activities/" + activityId,
+			auth_protocol : "oauth2",
+			auth_parameters : {
+				grant_type : "code",
+       			auth_endpoint : config.sso.url + "/realms/" + config.sso.realm + "/protocol/openid-connect/auth", 
+        		token_endpoint : config.sso.url + "/realms/" + config.sso.realm + "/protocol/openid-connect/token", 
+        		client_id : "simva-plugin",
+        		code_challenge_method : "S256"
 			}
 		});
 
