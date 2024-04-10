@@ -243,24 +243,24 @@ var GameplayActivityPainter = {
 			$('#traces_' + activity._id + '_' + usernames[i]).empty();
 			$('#traces_' + activity._id + '_' + usernames[i]).append(traces);*/
 
-			$('#backup_' + activity._id + '_' + usernames[i]).addClass(status && status.backup ? 'green' : 'red');
+			$('#backup_' + activity._id + '_' + usernames[i]).addClass(status ? 'green' : 'red');
 			$('#backup_' + activity._id + '_' + usernames[i]).empty();
 			$('#backup_' + activity._id + '_' + usernames[i]).append(backup);
 		}
 
-		/*let progress = Math.round((done / usernames.length) * 1000) / 10; 
-		let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
-
+		let progress = Math.round((done / usernames.length) * 1000) / 10; 
 		if(isNaN(progress)){
 			progress = 0;
 		}
+		$('#result_progress_' + activity._id + ' .done').css('width', progress + '%' );
+		$('#result_progress_' + activity._id + ' done').text(progress);
+
+		/*
+		let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
 		if(isNaN(partialprogress)){
 			partialprogress = 0;
 		}
-
-		$('#result_progress_' + activity._id + ' .done').css('width', progress + '%' );
 		$('#result_progress_' + activity._id + ' .partial').css('width', partialprogress + '%' );
-		$('#result_progress_' + activity._id + ' done').text(progress);
 		$('#result_progress_' + activity._id + ' partial').text(partialprogress);*/
 	},
 
