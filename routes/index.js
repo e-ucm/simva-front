@@ -48,9 +48,15 @@ app.set('view engine', 'ejs');
 
 var auth = function(level){
   return function(req, res, next) {
-    if (req.session && req.session.user)
-      return next();
-    else if(req.query.jwt){
+    if (req.session && req.session.user){
+      usertools.authExpired(req, config, function(error, result){
+        if(error){
+          res.status(error.status).send(error.data);
+        }else{
+          return next();
+        }
+      });
+    }else if(req.query.jwt){
       let user = {};
       let simvaToken = req.query.jwt;
       let profile = usertools.getProfileFromJWT(simvaToken);

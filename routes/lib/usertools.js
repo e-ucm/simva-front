@@ -14,9 +14,24 @@ module.exports = {
 		req.session.user = user;
 	},
 
+	authExpired: function(req, config, callback){
+		let current = Math.floor(Date.now() / 1000);
+		let expiration = parseInt(this.decodeJWT(req.user.jwt).exp);
+
+		if(true){
+			this.refreshAuth(req, config, callback);
+		}else{
+			callback();
+		}
+	},
+
+	decodeJWT: function(token){
+		return jwt.decode(token);
+	},
+
 	getProfileFromJWT: function(token){
 		let profile = {};
-		let simvaJwtToken = jwt.decode(token);
+		let simvaJwtToken = this.decodeJWT(token);
 		console.log(JSON.stringify(simvaJwtToken));
 		profile.provider = simvaJwtToken.iss
 		profile.id = simvaJwtToken.data.id;
@@ -35,5 +50,41 @@ module.exports = {
 			role = 'student';
 		};
 		return role;
+	},
+
+	refreshAuth: function(req, config, callback){
+		if(req.session.user && req.session.user.refreshToken){
+		  request.post({
+			url: config.sso.url + '/realms/' + config.sso.realm + '/protocol/openid-connect/token',
+			headers: {
+				'Authorization': 'Basic ' + Buffer.from(config.sso.clientId + ':' + config.sso.clientSecret).toString('base64'),
+				'Content-Type': 'application/x-www-form-urlencoded'
+			},
+			body: querystring.stringify({
+				'grant_type': 'refresh_token',
+				'refresh_token': req.session.user.refreshToken
+			})
+		  }, function(error, response, body){
+			if(!error){
+				req.session.user.jwt = body.access_token;
+				callback(null, body);
+			}else{
+				callback({
+					status: 500,
+					data: {
+						message: 'Unable to refresh accessToken',
+						error: error
+					}
+				});
+			}
+		  });
+		}else{
+			callback({
+				status: 401,
+				data: {
+					message: 'No user or refreshToken'
+				}
+			});
+		}
 	}
 }
