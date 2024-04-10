@@ -88,7 +88,7 @@ var GameplayActivityPainter = {
         		client_id : "simva-plugin",
         		code_challenge_method : "S256"
 			}
-		});
+		}, null, 2);
 
 		var filename = "tracker_config.json";
 
