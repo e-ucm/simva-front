@@ -115,23 +115,24 @@ var GameplayActivityPainter = {
 		}
 		activitybox += ' - '
 		*/
-		activitybox += 'Config: '
-		activitybox += '<a onclick="GameplayActivityPainter.downloadXasuConfig(\'' + activity._id + '\')"><img src="/ua.png"  width="20" height="20"></a>'
 		activitybox += 'Trace Storage: '
-		if(activity.extra_data.config.trace_storage || activity.extra_data.config.backup){
-			if(activity.extra_data.config.trace_storage) {
-				activitybox += '<a href="' + this.utils.minio_url + "minio/"+ this.utils.minio_bucket + '/' + this.utils.topics_dir + '/' + this.utils.trace_topic  + '/_id=' + activity._id + '/" target="_blank">Folder</a>' 
-			}
+		if(activity.extra_data.config.trace_storage) {
+			activitybox += '<a href="' + this.utils.minio_url + "minio/"+ this.utils.minio_bucket + '/' + this.utils.topics_dir + '/' + this.utils.trace_topic  + '/_id=' + activity._id + '/" target="_blank">Folder</a>' 
+			activitybox += ' / '
+			activitybox += '<a href="' + this.utils.minio_url + "minio/"+ this.utils.minio_bucket + '/' + this.utils.users_dir + '/' + this.utils.user_folder + '/' + activity._id + '/" target="_blank">Combined Data</a>'
+			activitybox += 'XASU: '
+			activitybox += '<a onclick="GameplayActivityPainter.downloadXasuConfig(\'' + activity._id + '\')"><img src="/ua.png"  width="20" height="20"></a>'
+		} else {
+			activitybox += '<i>Disabled</i>';
+		}
+		activitybox += 'Backup: '
+		if(activity.extra_data.config.backup){
 			activitybox += '<a onclick="GameplayActivityPainter.downloadBackup(\'' + activity._id + '\')"> ⬇️</a>' 
-			if(activity.extra_data.config.trace_storage) {
-				activitybox += '<a href="' + this.utils.minio_url + "minio/"+ this.utils.minio_bucket + '/' + this.utils.users_dir + '/' + this.utils.user_folder + '/' + activity._id + '/" target="_blank">Combined Data</a>'
-			}
 			activitybox += '</p>';
-		}else{
+		} else {
 			activitybox += '<i>Disabled</i>';
 		}
 		
-
 		activitybox += '<div id="completion_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>'
 		if(activity.extra_data.config.backup){
 			activitybox += '<div id="result_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>'
