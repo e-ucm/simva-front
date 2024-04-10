@@ -120,7 +120,8 @@ var GameplayActivityPainter = {
 			activitybox += '<a href="' + this.utils.minio_url + "minio/"+ this.utils.minio_bucket + '/' + this.utils.topics_dir + '/' + this.utils.trace_topic  + '/_id=' + activity._id + '/" target="_blank">Folder</a>' 
 			activitybox += ' / '
 			activitybox += '<a href="' + this.utils.minio_url + "minio/"+ this.utils.minio_bucket + '/' + this.utils.users_dir + '/' + this.utils.user_folder + '/' + activity._id + '/" target="_blank">Combined Data</a>'
-			activitybox += 'XASU: '
+			activitybox += '<br>'
+			activitybox += 'XASU Config: '
 			activitybox += '<a onclick="GameplayActivityPainter.downloadXasuConfig(\'' + activity._id + '\')"><img src="/ua.png"  width="20" height="20"></a>'
 		} else {
 			activitybox += '<i>Disabled</i>';
