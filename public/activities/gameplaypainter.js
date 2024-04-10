@@ -83,8 +83,8 @@ var GameplayActivityPainter = {
 			auth_protocol : "oauth2",
 			auth_parameters : {
 				grant_type : "code",
-       			auth_endpoint : Simva.ssourl+ "/realms/" + Simva.ssorealm + "/protocol/openid-connect/auth", 
-        		token_endpoint : Simva.ssourl + "/realms/" + Simva.ssorealm + "/protocol/openid-connect/token", 
+       			auth_endpoint : Simva.ssoUrl+ "/realms/" + Simva.ssoRealm + "/protocol/openid-connect/auth", 
+        		token_endpoint : Simva.ssoUrl + "/realms/" + Simva.ssoRealm + "/protocol/openid-connect/token", 
         		client_id : "simva-plugin",
         		code_challenge_method : "S256"
 			}
