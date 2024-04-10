@@ -54,33 +54,34 @@ module.exports = {
 
 	refreshAuth: function(req, config, callback){
 		if(req.session.user && req.session.user.refreshToken){
-		  request.post({
-			url: config.sso.url + '/realms/' + config.sso.realm + '/protocol/openid-connect/token',
-			headers: {
-				'Authorization': 'Basic ' + Buffer.from(config.sso.clientId + ':' + config.sso.clientSecret).toString('base64'),
-				'Content-Type': 'application/x-www-form-urlencoded'
-			},
-			body: querystring.stringify({
-				'grant_type': 'refresh_token',
-				'refresh_token': req.session.user.refreshToken
-			})
-		  }, function(error, response, body){
-			if(!error){
-				console.log(body);
-				let body = JSON.parse(body);
-				console.log(body);
-				req.session.user.jwt = body.access_token;
-				callback(null, body);
-			}else{
-				callback({
-					status: 500,
-					data: {
-						message: 'Unable to refresh accessToken',
-						error: error
-					}
-				});
-			}
-		  });
+			request.post({
+				url: config.sso.url + '/realms/' + config.sso.realm + '/protocol/openid-connect/token',
+				headers: {
+					'Authorization': 'Basic ' + Buffer.from(config.sso.clientId + ':' + config.sso.clientSecret).toString('base64'),
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				body: querystring.stringify({
+					'grant_type': 'refresh_token',
+					'refresh_token': req.session.user.refreshToken
+				})
+			}, function(error, response, body){
+				if(!error){
+					console.log(response);
+					console.log(body);
+					body = JSON.parse(body);
+					console.log(body);
+					req.session.user.jwt = body.access_token;
+					callback(null, body);
+				}else{
+					callback({
+						status: 500,
+						data: {
+							message: 'Unable to refresh accessToken',
+							error: error
+						}
+					});
+				}
+		 	});
 		}else{
 			callback({
 				status: 401,
