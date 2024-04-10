@@ -18,7 +18,7 @@ module.exports = {
 		let current = Math.floor(Date.now() / 1000);
 		let expiration = parseInt(this.decodeJWT(req.session.user.jwt).exp);
 
-		if(true){
+		if(current > expiration){
 			this.refreshAuth(req, config, callback);
 		}else{
 			callback();
@@ -66,10 +66,7 @@ module.exports = {
 				})
 			}, function(error, response, body){
 				if(!error){
-					console.log(response);
-					console.log(body);
 					body = JSON.parse(body);
-					console.log(body);
 					req.session.user.jwt = body.access_token;
 					callback(null, body);
 				}else{
