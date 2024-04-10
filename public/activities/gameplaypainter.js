@@ -115,7 +115,8 @@ var GameplayActivityPainter = {
 		}
 		activitybox += ' - '
 		*/
-
+		activitybox += 'Config: '
+		activitybox += '<a onclick="GameplayActivityPainter.downloadXasuConfig(\'' + activity._id + '\')"><img src="/ua.png"  width="20" height="20"></a>'
 		activitybox += 'Trace Storage: '
 		if(activity.extra_data.config.trace_storage || activity.extra_data.config.backup){
 			if(activity.extra_data.config.trace_storage) {
@@ -129,7 +130,7 @@ var GameplayActivityPainter = {
 		}else{
 			activitybox += '<i>Disabled</i>';
 		}
-		activitybox += '<a onclick="GameplayActivityPainter.downloadXasuConfig(\'' + activity._id + '\')"><img src="/ua.png"  width="10" height="10"></a>'
+		
 
 		activitybox += '<div id="completion_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>'
 			+ '<div id="result_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>'
