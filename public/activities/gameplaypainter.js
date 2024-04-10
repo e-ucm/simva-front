@@ -133,7 +133,7 @@ var GameplayActivityPainter = {
 		
 
 		activitybox += '<div id="completion_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>'
-		if(activity.extra_data.config.realtime){
+		if(activity.extra_data.config.backup){
 			activitybox += '<div id="result_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>'
 		}
 		activitybox += this.paintActivityParticipantsTable(activity, participants) + '</div>';
