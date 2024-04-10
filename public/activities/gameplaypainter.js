@@ -140,7 +140,11 @@ var GameplayActivityPainter = {
 	},
 
 	paintActivityParticipantsTable: function(activity, participants){
-		let toret = '<table><tr><th>User</th><th>Completed</th><th>Progress</th><th>Traces</th><th>Backup</th></tr>';
+		let toret = '<table><tr><th>User</th><th>Completed</th>';
+		if(activity.extra_data.config.realtime){
+			toret += '<th>Progress</th><th>Traces</th>';
+		}
+		toret += '<th>Backup</th></tr>';
 
 		for (var i = 0; i < participants.length; i++) {
 			toret += '<tr>';
@@ -158,7 +162,7 @@ var GameplayActivityPainter = {
 				toret += '<td id="progress_' + activity._id + '_' + participants[i].username + '" class="progress"><div class="partial"></div><div class="done"></div><span><done>0</done>%</span></td>'
 						+ '<td id="traces_' + activity._id + '_' + participants[i].username + '">---</td>';
 			}else{
-				toret += '<td colspan="2"><i>Disabled</i></td>'
+				toret += ''
 			}
 			
 			if(activity.extra_data.config.backup){
