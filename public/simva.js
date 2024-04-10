@@ -23,7 +23,7 @@ var Simva = {
 		let current = Math.floor(Date.now() / 1000);
 
 		if(current > this.expiration){
-			refreshAuth(callback);
+			this.refreshAuth(callback);
 		}else{
 			callback(null);
 		}
