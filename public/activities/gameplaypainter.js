@@ -105,15 +105,16 @@ var GameplayActivityPainter = {
 			+ '<input class="red" type="button" value="X" onclick="deleteActivity(\'' + activity._id + '\')"></div>'
 			+ '<p class="subtitle">' + this.simpleName + '</p>';
 
+		activitybox += '<p>'
 		/*
-		activitybox += '<p>Realtime: ';
+		activitybox += 'Realtime: ';
 		if(activity.extra_data.config.realtime){
 			activitybox += '<a href="' + this.utils.dashboard_url
 			+ activity.extra_data.analytics.activity._id + this.utils.dashboard_query + '" target="_blank">Dashboard</a>';
 		}else{
 			activitybox += '<i>Disabled</i>';
 		}
-		activitybox += ' - '
+		activitybox += '<br>'
 		*/
 		activitybox += 'Trace Storage: '
 		if(activity.extra_data.config.trace_storage) {
@@ -130,11 +131,10 @@ var GameplayActivityPainter = {
 		activitybox += 'Backup: '
 		if(activity.extra_data.config.backup){
 			activitybox += '<a onclick="GameplayActivityPainter.downloadBackup(\'' + activity._id + '\')"> ⬇️</a>' 
-			activitybox += '</p>';
 		} else {
 			activitybox += '<i>Disabled</i>';
 		}
-		
+		activitybox += '</p>';		
 		activitybox += '<div id="completion_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>'
 		if(activity.extra_data.config.backup){
 			activitybox += '<div id="result_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>'
