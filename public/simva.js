@@ -220,6 +220,10 @@ var Simva = {
 	getActivityResult: function(activity_id, callback){
 		this.get(this.apiurl + '/activities/' + activity_id + '/result', callback);
 	},
+
+	getActivityHasResult: function(activity_id, callback){
+		this.get(this.apiurl + '/activities/' + activity_id + '/hasresult', callback);
+	},
 	
 	downloadActivityResult: async function(activity_id) {
 		try {

@@ -70,9 +70,9 @@ var GameplayActivityPainter = {
 			tmp.paintActivityCompletion(activity, result);
 		});
 
-		/*Simva.getActivityResult(activity._id, function(error, result){
+		Simva.getActivityHasResult(activity._id, function(error, result){
 			tmp.paintActivityResult(activity, result);
-		});*/
+		});
 	},
 	
 	downloadXasuConfig: function(activityId){
@@ -226,21 +226,7 @@ var GameplayActivityPainter = {
 
 				let tmpprogress = 0; 
 				if(status){
-					if(status.realtime
-						&& status.realtime.progressed
-						&& status.realtime.progressed['serious-game']){
-						let keys = Object.keys(status.realtime.progressed['serious-game']);
-						if(keys.length > 0){
-							if(status.realtime.progressed['serious-game'][keys[0]].progress){
-								tmpprogress = status.realtime.progressed['serious-game'][keys[0]].progress;
-							}
-						}
-
-						traces = '<span><a onclick="GameplayActivityPainter.openTraces(\'' + activity._id + '\',\'' + usernames[i]
-							 + '\')">See traces</a></span>';
-					}
-
-					if(activity.extra_data.config.backup && results[usernames[i]].backup){
+					if(activity.extra_data.config.backup && results[usernames[i]]){
 						backup = '<span><a onclick="GameplayActivityPainter.downloadBackup(\'' + activity._id + '\',\'' + usernames[i]
 							 + '\')">Download</a></span>';
 					}
@@ -303,7 +289,7 @@ var GameplayActivityPainter = {
 					$.toast(toastParams);
 				}else{
 					var filename = activity + "_" + user + ".json";
-					Utils.download(filename, result[user].backup);
+					Utils.download(filename, result[user]);
 				}
 			});
 		} 
