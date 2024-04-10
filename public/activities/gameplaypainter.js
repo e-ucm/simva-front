@@ -227,22 +227,21 @@ var GameplayActivityPainter = {
 				let tmpprogress = 0; 
 				if(status){
 					if(activity.extra_data.config.backup && results[usernames[i]]){
-						backup = '<span><a onclick="GameplayActivityPainter.downloadBackup(\'' + activity._id + '\',\'' + usernames[i]
+						backup = '<span ><a onclick="GameplayActivityPainter.downloadBackup(\'' + activity._id + '\',\'' + usernames[i]
 							 + '\')">Download</a></span>';
 					}
 					
 				}
-
+				/*
 				tmpprogress = (tmpprogress * 1000) / 10;
-
 				$('#progress_' + activity._id + '_' + usernames[i] +' .done').css('width', tmpprogress + '%' );
-				$('#progress_' + activity._id + '_' + usernames[i] +' done').text(tmpprogress);
+				$('#progress_' + activity._id + '_' + usernames[i] +' done').text(tmpprogress);*/
 			}
 
 
-			$('#traces_' + activity._id + '_' + usernames[i]).addClass(status && status.realtime ? 'green' : 'red');
+			/*$('#traces_' + activity._id + '_' + usernames[i]).addClass(status && status.realtime ? 'green' : 'red');
 			$('#traces_' + activity._id + '_' + usernames[i]).empty();
-			$('#traces_' + activity._id + '_' + usernames[i]).append(traces);
+			$('#traces_' + activity._id + '_' + usernames[i]).append(traces);*/
 
 			$('#backup_' + activity._id + '_' + usernames[i]).addClass(status && status.backup ? 'green' : 'red');
 			$('#backup_' + activity._id + '_' + usernames[i]).empty();
@@ -289,7 +288,7 @@ var GameplayActivityPainter = {
 					$.toast(toastParams);
 				}else{
 					var filename = activity + "_" + user + ".json";
-					Utils.download(filename, result[user]);
+					Utils.download(filename, JSON.stringify(result[user]));
 				}
 			});
 		} 
