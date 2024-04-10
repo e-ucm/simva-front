@@ -66,9 +66,7 @@ module.exports = {
 				})
 			}, function(error, response, body){
 				if(!error){
-					console.log(response.body);
-					console.log(body);
-					body = JSON.parse(response.body);
+					body = querystring.parse(response.body);
 					req.session.user.jwt = body.access_token;
 					callback(null, body);
 				}else{
