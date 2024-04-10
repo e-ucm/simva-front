@@ -125,6 +125,7 @@ var GameplayActivityPainter = {
 		} else {
 			activitybox += '<i>Disabled</i>';
 		}
+		activitybox += '<br>'
 		activitybox += 'Backup: '
 		if(activity.extra_data.config.backup){
 			activitybox += '<a onclick="GameplayActivityPainter.downloadBackup(\'' + activity._id + '\')"> ⬇️</a>' 
