@@ -3,9 +3,20 @@ var Simva = {
 	apiurl: null,
 	jwt: null,
 	expiration: null,
+	ssoUrl:null,
+	ssoRealm:null,
 
 	setAPIURL: function(apiurl){
 		this.apiurl = apiurl;
+	},
+
+	
+	setSSOURL: function(ssoUrl){
+		this.ssoUrl = ssoUrl;
+	},
+
+	setSSOREALM: function(ssoRealm){
+		this.ssoRealm = ssoRealm;
 	},
 
 	setJWT: function(jwt){

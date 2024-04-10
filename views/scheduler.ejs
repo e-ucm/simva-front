@@ -16,6 +16,8 @@
 	<script type="text/javascript">
 		Simva.setJWT("<%= user.jwt %>");
 		Simva.setAPIURL("<%= config.api.url %>");
+		Simva.setSSOURL("<%= config.sso.url %>");
+		Simva.setSSOREALM("<%= config.sso.realm %>");
 		var roller = '<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>';
 
 		$(document).ready(function() {
