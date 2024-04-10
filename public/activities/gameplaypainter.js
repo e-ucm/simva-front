@@ -90,7 +90,7 @@ var GameplayActivityPainter = {
 			}
 		});
 
-		var filename = "tracker_config.js";
+		var filename = "tracker_config.json";
 
 		var blob = new Blob([content], {
 		 type: "text/plain;charset=utf-8"
