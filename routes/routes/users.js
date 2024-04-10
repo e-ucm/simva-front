@@ -105,5 +105,32 @@ module.exports = function(auth, config){
     }
   });
 
+  router.get('/refresh_auth', auth, function (req, res, next) {
+    if(req.session.user.refreshToken){
+      request.post({
+        url: config.sso.url + '/realms/' + config.sso.realm + '/protocol/openid-connect/token',
+        headers: {
+          'Authorization': 'Basic ' + Buffer.from(config.sso.clientId + ':' + config.sso.clientSecret).toString('base64'),
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: querystring.stringify({
+          'grant_type': 'refresh_token',
+          'refresh_token': req.session.user.refreshToken
+        })
+      }, function(error, response, body){
+        if(!error){
+          console.log(JSON.stringify(body));
+          req.session.user.jwt = body.access_token;
+          res.json(body);
+        }else{
+          res.redirect('/');
+        }
+      });
+    }else{
+      req.session.user = null;
+      res.redirect('login');
+    }
+  });
+
   return router;
 }
