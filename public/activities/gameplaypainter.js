@@ -248,7 +248,7 @@ var GameplayActivityPainter = {
 			$('#backup_' + activity._id + '_' + usernames[i]).append(backup);
 		}
 
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
+		/*let progress = Math.round((done / usernames.length) * 1000) / 10; 
 		let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
 
 		if(isNaN(progress)){
@@ -261,7 +261,7 @@ var GameplayActivityPainter = {
 		$('#result_progress_' + activity._id + ' .done').css('width', progress + '%' );
 		$('#result_progress_' + activity._id + ' .partial').css('width', partialprogress + '%' );
 		$('#result_progress_' + activity._id + ' done').text(progress);
-		$('#result_progress_' + activity._id + ' partial').text(partialprogress);
+		$('#result_progress_' + activity._id + ' partial').text(partialprogress);*/
 	},
 
 	paintActivityTargets: function(activity, results){
