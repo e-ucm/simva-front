@@ -16,8 +16,7 @@ module.exports = {
 
 	authExpired: function(req, config, callback){
 		let current = Math.floor(Date.now() / 1000);
-		console.log("REQ:" + req);
-		console.log("REQ:" + JSON.stringify(req));
+		console.log("REQ:" + req.session);
 		let jwtdecoded = this.decodeJWT(req.session.user.jwt);
 		console.log("JWT:" + JSON.stringify(jwtdecoded));
 		let expiration = parseInt(jwtdecoded.exp);
