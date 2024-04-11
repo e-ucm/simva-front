@@ -78,7 +78,9 @@ module.exports = {
 					try {
 						console.log("refreshAuth() - Body : " + response.body);
 						let b = JSON.parse(response.body);
-						callback(null, b);
+						let simvaToken = b.access_token;
+          				console.log("refreshAuth() - Access Token : " + simvaToken);
+						callback(null, simvaToken);
 					} catch(e) {
 						console.log(e);
 						callback({

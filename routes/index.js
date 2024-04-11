@@ -60,8 +60,8 @@ var auth = function(level){
         } else if(result) {
           console.log("auth() - Refreshing token");
           let u = {};
-          let simvaToken = result.access_token;
-          console.log("auth() - Access Token : " + simvaToken);
+          let simvaToken = result;
+          console.log("auth() - Access Token : " + result);
           u.jwt = simvaToken;
           let profile = usertools.getProfileFromJWT(simvaToken);
           u.data = profile;
