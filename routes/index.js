@@ -52,6 +52,7 @@ var auth = function(level){
       usertools.authExpired(req, config, function(error, result){
         if(error){
           //res.status(error.status).send(error.data);
+          var pre = '/';
           for(var i = 0; i < level; i++){
             pre += '../';
           }

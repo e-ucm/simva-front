@@ -82,10 +82,10 @@ module.exports = {
 						req.session.user.jwt = body.access_token;
 						let u = {};
 						let simvaToken = body.access_token;
-						let profile = usertools.getProfileFromJWT(simvaToken);
+						let profile = this.getProfileFromJWT(simvaToken);
 						u.data = profile;
 						u.jwt = simvaToken;
-						usertools.setUser(req, u);
+						this.setUser(req, u);
 						callback(null, body);
 					} catch(e) {
 						console.log(e);
