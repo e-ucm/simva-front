@@ -57,17 +57,32 @@ var auth = function(level){
             pre += '../';
           }
           return res.redirect(pre + 'users/login'); 
-        }else{
+        } else if(result) {
+          console.log("auth() - Refreshing token");
+          let u = {};
+          let simvaToken = result.access_token;
+          console.log("auth() - Access Token : " + simvaToken);
+          u.jwt = simvaToken;
+          let profile = usertools.getProfileFromJWT(simvaToken);
+          u.data = profile;
+          req.session.user.jwt = jwt;
+          usertools.setUser(req, u);
+          console.log("auth() - Refreshing token done");
+          return next();
+        } else {
+          console.log("auth() - Token OK");
           return next();
         }
       });
     }else if(req.query.jwt){
+      console.log("auth() - New token");
       let user = {};
       let simvaToken = req.query.jwt;
       let profile = usertools.getProfileFromJWT(simvaToken);
       user.data = profile;
       user.jwt = simvaToken;
       usertools.setUser(req, user);
+      console.log("auth() - New token done");
       return next();
     }else{
       var pre = '';

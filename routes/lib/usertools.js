@@ -77,16 +77,8 @@ module.exports = {
 				if(!error){
 					try {
 						console.log("refreshAuth() - Body : " + response.body);
-						body = JSON.parse(response.body);
-						console.log("refreshAuth() - Access Token : " + body.access_token);
-						req.session.user.jwt = body.access_token;
-						let u = {};
-						let simvaToken = body.access_token;
-						let profile = getProfileFromJWT(simvaToken);
-						u.data = profile;
-						u.jwt = simvaToken;
-						setUser(req, u);
-						callback(null, body);
+						let b = JSON.parse(response.body);
+						callback(null, b);
 					} catch(e) {
 						console.log(e);
 						callback({
