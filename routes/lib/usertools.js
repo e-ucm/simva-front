@@ -72,10 +72,9 @@ module.exports = {
 			}, function(error, response, body){
 				if(!error){
 					console.log("refreshAuth() - Body : " + response.body);
-					console.log("refreshAuth() - Access Token : " + response.body.access_token);
-					body = querystring.parse(response.body);
-					console.log("refreshAuth() - Access Token v2 : " + body.access_token);
-					req.session.user.jwt = body.access_token;
+					body = JSON.parse(response.body);
+					console.log("refreshAuth() - Access Token : " + b.access_token);
+					req.session.user.jwt = b.access_token;
 					callback(null, body);
 				}else{
 					callback({
