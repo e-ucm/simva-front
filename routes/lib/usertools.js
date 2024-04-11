@@ -16,8 +16,12 @@ module.exports = {
 
 	authExpired: function(req, config, callback){
 		let current = Math.floor(Date.now() / 1000);
-		let expiration = parseInt(this.decodeJWT(req.session.user.jwt).exp);
-
+		console.log("REQ:" + req);
+		console.log("REQ:" + JSON.stringify(req));
+		let jwtdecoded = this.decodeJWT(req.session.user.jwt);
+		console.log("JWT:" + JSON.stringify(jwtdecoded));
+		let expiration = parseInt(jwtdecoded.exp);
+		console.log("Expiration:" + expiration);
 		if(current > expiration){
 			this.refreshAuth(req, config, callback);
 		}else{
