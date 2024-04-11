@@ -85,8 +85,18 @@ module.exports = {
 						console.log("refreshAuth() - Body : " + response.body);
 						let b = JSON.parse(response.body);
 						let simvaToken = b.access_token;
-          				console.log("refreshAuth() - Access Token : " + simvaToken);
-						callback(null, simvaToken);
+						console.log("refreshAuth() - Access Token : " + simvaToken);
+						if(simvaToken == "undefined" || simvaToken == null) {
+							callback({
+								status: 500,
+								data: {
+									message: 'Token not active.',
+									error: b
+								}
+							});
+						} else {
+							callback(null, simvaToken);
+						}
 					} catch(e) {
 						console.log(e);
 						callback({
