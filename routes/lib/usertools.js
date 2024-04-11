@@ -29,7 +29,13 @@ module.exports = {
 				callback();
 			}
 		} catch(e) {
-			callback();
+			callback({
+				status: 500,
+				data: {
+					message: 'Unable to parse accessToken',
+					error: e
+				}
+			});
 		}
 	},
 
