@@ -51,7 +51,11 @@ var auth = function(level){
     if (req.session && req.session.user){
       usertools.authExpired(req, config, function(error, result){
         if(error){
-          res.status(error.status).send(error.data);
+          //res.status(error.status).send(error.data);
+          for(var i = 0; i < level; i++){
+            pre += '../';
+          }
+          return res.redirect(pre + 'users/login'); 
         }else{
           return next();
         }
