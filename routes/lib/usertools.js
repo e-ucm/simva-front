@@ -86,7 +86,7 @@ module.exports = {
 						user.data = profile;
 						user.jwt = simvaToken;
 						usertools.setUser(req, user);
-						callback(null, body.access_token);
+						callback(null, body);
 					} catch(e) {
 						callback(e);
 					}
