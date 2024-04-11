@@ -88,7 +88,13 @@ module.exports = {
 						usertools.setUser(req, user);
 						callback(null, body);
 					} catch(e) {
-						callback(e);
+						callback({
+							status: 500,
+							data: {
+								message: 'Unable to refresh accessToken',
+								error: error
+							}
+						});
 					}
 				}else{
 					callback({
