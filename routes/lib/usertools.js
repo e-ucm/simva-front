@@ -40,8 +40,8 @@ module.exports = {
 	getProfileFromJWT: function(token){
 		let profile = {};
 		let simvaJwtToken = this.decodeJWT(token);
-		console.log(JSON.stringify(simvaJwtToken));
-		profile.provider = simvaJwtToken.iss
+		console.log("getProfileFromJWT() : " + JSON.stringify(simvaJwtToken));
+		profile.provider = simvaJwtToken.iss;
 		profile.id = simvaJwtToken.data.id;
 		profile.username = simvaJwtToken.data.username;
 		profile.email = simvaJwtToken.email;
