@@ -17,14 +17,18 @@ module.exports = {
 	authExpired: function(req, config, callback){
 		let current = Math.floor(Date.now() / 1000);
 		let jwtdecoded = this.decodeJWT(req.session.user.jwt);
-		let expiration = parseInt(jwtdecoded.exp);
-		if(current > expiration){
-			console.log("authExpired() - JWT:" + JSON.stringify(jwtdecoded));
-			console.log("authExpired() - Expiration:" + expiration);
-			console.log("authExpired() - Token Expired");
-			this.refreshAuth(req, config, callback);
-		}else{
-			console.log("authExpired() - Token OK");
+		try {
+			let expiration = parseInt(jwtdecoded.exp);
+			if(current > expiration){
+				console.log("authExpired() - JWT:" + JSON.stringify(jwtdecoded));
+				console.log("authExpired() - Expiration:" + expiration);
+				console.log("authExpired() - Token Expired");
+				this.refreshAuth(req, config, callback);
+			}else{
+				console.log("authExpired() - Token OK");
+				callback();
+			}
+		} catch(e) {
 			callback();
 		}
 	},
@@ -71,11 +75,14 @@ module.exports = {
 				})
 			}, function(error, response, body){
 				if(!error){
-					console.log("refreshAuth() - Body : " + response.body);
-					body = JSON.parse(response.body);
-					console.log("refreshAuth() - Access Token : " + body.access_token);
-					req.session.user.jwt = body.access_token;
-					callback(null, body);
+					try {
+						console.log("refreshAuth() - Body : " + response.body);
+						body = JSON.parse(response.body);
+						console.log("refreshAuth() - Access Token : " + body.access_token);
+						callback(null, body.access_token);
+					} catch(e) {
+						callback(e);
+					}
 				}else{
 					callback({
 						status: 500,
