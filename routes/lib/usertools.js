@@ -16,14 +16,15 @@ module.exports = {
 
 	authExpired: function(req, config, callback){
 		let current = Math.floor(Date.now() / 1000);
-		console.log("REQ JWT:" + req.session.user.jwt);
 		let jwtdecoded = this.decodeJWT(req.session.user.jwt);
-		console.log("JWT:" + JSON.stringify(jwtdecoded));
 		let expiration = parseInt(jwtdecoded.exp);
-		console.log("Expiration:" + expiration);
 		if(current > expiration){
+			console.log("authExpired() - JWT:" + JSON.stringify(jwtdecoded));
+			console.log("authExpired() - Expiration:" + expiration);
+			console.log("authExpired() - Token Expired");
 			this.refreshAuth(req, config, callback);
 		}else{
+			console.log("authExpired() - Token OK");
 			callback();
 		}
 	},
@@ -57,6 +58,7 @@ module.exports = {
 
 	refreshAuth: function(req, config, callback){
 		if(req.session.user && req.session.user.refreshToken){
+			console.log("refreshAuth() - Refresh Token : " + req.session.user.refreshToken)
 			request.post({
 				url: config.sso.url + '/realms/' + config.sso.realm + '/protocol/openid-connect/token',
 				headers: {
@@ -69,7 +71,10 @@ module.exports = {
 				})
 			}, function(error, response, body){
 				if(!error){
+					console.log("refreshAuth() - Body : " + response.body);
+					console.log("refreshAuth() - Access Token : " + response.body.access_token);
 					body = querystring.parse(response.body);
+					console.log("refreshAuth() - Access Token v2 : " + body.access_token);
 					req.session.user.jwt = body.access_token;
 					callback(null, body);
 				}else{
