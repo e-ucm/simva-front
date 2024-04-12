@@ -288,7 +288,7 @@ var GameplayActivityPainter = {
 					$.toast(toastParams);
 				}else{
 					var filename = activity + "_" + user + ".json";
-					Utils.download(filename, JSON.stringify(result[user]));
+					Utils.download(filename, result[user]);
 				}
 			});
 		} 
