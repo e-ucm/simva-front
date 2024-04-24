@@ -120,11 +120,12 @@ var GroupAllocatorPainter = {
 				});
 			}else{
 				$.toast({
-				heading: 'Allocator updated',
-				position: 'top-right',
-				icon: 'success',
-				stack: false
-			});
+					heading: 'Allocator updated',
+					position: 'top-right',
+					icon: 'success',
+					stack: false
+				});
+				reloadStudy();
 			}
 		});
 	},

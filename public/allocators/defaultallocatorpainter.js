@@ -172,6 +172,7 @@ var DefaultAllocatorPainter = {
 				});
 				toggleAllocatorForm();
 				tmp.paintAllocator(tmp.allocator);
+				reloadStudy();
 			}
 		});
 	}
