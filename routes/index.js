@@ -56,7 +56,7 @@ var auth = function(level){
           for(var i = 0; i < level; i++){
             pre += '../';
           }
-          return res.redirect(pre + 'users/openid'); 
+          return res.redirect(pre + 'users/login'); 
         } else if(result) {
           console.log("auth() - Refreshing token");
           let user = req.session.user;
