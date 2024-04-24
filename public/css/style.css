@@ -211,7 +211,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .content .left .groups table td,
 .content .left .lti_platforms table td,
 .content .left .owners table td,
-.content .left .allocator.default .allocations td { width: 50%; }
+.content .left .allocator.default .allocations td { width: 50%; white-space: normal; word-wrap: break-word; word-break: break-all;}
 .content .left .groups table td select,
 .content .left .lti_platforms table td select,
 .content .left .owners table td select,
