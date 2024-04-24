@@ -146,6 +146,10 @@ var LTIToolPainter = {
 		let toret = '<table><tr><th>User</th><th>Completed</th><th>Result</th></tr>';
 
 		for (var i = 0; i < participants.length; i++) {
+			if(!AllocatorFactory.Painters[allocator.type].isAllocatedToActivity(participants[i].username, activity)){
+				continue;
+			}
+			
 			toret += '<tr><td><a id="' + activity._id + "_" + participants[i].username + '_target"class="targeturl" target="_blank" href="">'
 				+ participants[i].username + '</a></td>'
 				+ '<td id="completion_' + activity._id + '_' + participants[i].username + '">---</td>'

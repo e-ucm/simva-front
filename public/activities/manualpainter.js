@@ -78,6 +78,10 @@ var ManualActivityPainter = {
 		let toret = '<table><tr><th>User</th><th>Completed</th><th>Result</th></tr>';
 
 		for (var i = 0; i < participants.length; i++) {
+			if(!AllocatorFactory.Painters[allocator.type].isAllocatedToActivity(participants[i].username, activity)){
+				continue;
+			}
+			
 			toret += '<tr><td>' + participants[i].username + '</td>'
 				+ '<td id="completion_' + activity._id + '_' + participants[i].username + '"><input type="checkbox" onchange="ManualActivityPainter.toggleCompletion(this, \'' + activity._id + '\', \'' + participants[i].username + '\')"></td>'
 				+ '<td id="result_' + activity._id + '_' + participants[i].username + '">---</td>';

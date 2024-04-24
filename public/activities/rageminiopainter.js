@@ -73,6 +73,10 @@ var RageMinioActivityPainter = {
 		let toret = '<table><tr><th>User</th><th>Completed</th><th>Progress</th><th>Traces</th><th>Backup</th></tr>';
 
 		for (var i = 0; i < participants.length; i++) {
+			if(!AllocatorFactory.Painters[allocator.type].isAllocatedToActivity(participants[i].username, activity)){
+				continue;
+			}
+			
 			toret += '<tr><td>' + participants[i].username + '</td>'
 				+ '<td id="completion_' + activity._id + '_' + participants[i].username + '">---</td>'
 				+ '<td id="progress_' + activity._id + '_' + participants[i].username + '" class="progress"><div class="partial"></div><div class="done"></div><span><done>0</done>%</span></td>'
