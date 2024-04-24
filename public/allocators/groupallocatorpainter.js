@@ -54,7 +54,7 @@ var GroupAllocatorPainter = {
 		let notallocated = (typeof this.allocator.extra_data === 'undefined');
 
 		return (!notallocated && this.allocator.extra_data.allocations[groupid] === activity.test)
-				|| (notallocated && this.groups[0]._id === groupid);
+				|| (notallocated && this.tests[0]._id === activity.test);
 	},
 
 	paintAllocator: function(allocator){
