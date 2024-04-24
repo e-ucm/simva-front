@@ -39,7 +39,7 @@ var DefaultAllocatorPainter = {
 	},
 
 	isAllocatedToActivity: function(student, activity){
-		let isallocated = (allocator.extra_data.allocations.findIndex(student) >= 0);
+		let isallocated = typeof allocator.extra_data.allocations[student] === 'undefined';
 
 		return (isallocated && allocator.extra_data.allocations[student] === activity.test)
 				|| (!isallocated && activity.test === this.tests[0]._id);
