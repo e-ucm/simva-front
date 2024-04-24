@@ -39,8 +39,8 @@ var DefaultAllocatorPainter = {
 	},
 
 	isAllocatedToActivity: function(student, activity){
-		let notallocated = typeof allocator.extra_data === 'undefined'
-						|| (typeof allocator.extra_data.allocations[student] === 'undefined');
+		let notallocated = !((typeof allocator.extra_data !== 'undefined')
+						&& (typeof allocator.extra_data.allocations[student] !== 'undefined'));
 
 		return (!notallocated && allocator.extra_data.allocations[student] === activity.test)
 				|| (notallocated && activity.test === this.tests[0]._id);
