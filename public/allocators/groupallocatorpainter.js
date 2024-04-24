@@ -42,6 +42,18 @@ var GroupAllocatorPainter = {
 		return "";
 	},
 
+	isAllocatedToActivity: function(student, activity){
+		let groupid = null;
+		for (var i = this.groups.length - 1; i >= 0; i--) {
+			if(this.groups[i].participants.findIndex(student) >= 0){
+				groupid = this.groups[i]._id;
+				break;
+			}
+		}
+
+		return this.allocator.extra_data.allocations[groupid] === activity.test;
+	},
+
 	paintAllocator: function(allocator){
 		this.allocator = allocator;
 

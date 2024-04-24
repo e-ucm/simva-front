@@ -38,6 +38,13 @@ var DefaultAllocatorPainter = {
 		return 'Add Allocation';
 	},
 
+	isAllocatedToActivity: function(student, activity){
+		let isallocated = (allocator.extra_data.allocations.findIndex(student) >= 0);
+
+		return (isallocated && allocator.extra_data.allocations[student] === activity.test)
+				|| (!isallocated && activity.test === this.tests[0]._id);
+	},
+
 	getFormContent: function(){
 		let toret = '<p>Participant: </p><select name="username">';
 		for (var i = 0; i < participants.length; i++) {

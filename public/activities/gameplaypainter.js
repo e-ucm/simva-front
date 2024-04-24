@@ -152,6 +152,10 @@ var GameplayActivityPainter = {
 		toret += '<th>Backup</th></tr>';
 
 		for (var i = 0; i < participants.length; i++) {
+			if(!AllocatorFactory.Painters[allocator.type].isAllocatedToActivity(participants[i].username, activity)){
+				continue;
+			}
+
 			toret += '<tr>';
 
 			if(activity.isOpenable || (activity.extra_data.game_uri && activity.extra_data.game_uri !== '') ){
