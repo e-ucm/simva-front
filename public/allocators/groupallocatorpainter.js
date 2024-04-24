@@ -45,13 +45,16 @@ var GroupAllocatorPainter = {
 	isAllocatedToActivity: function(student, activity){
 		let groupid = null;
 		for (var i = this.groups.length - 1; i >= 0; i--) {
-			if(this.groups[i].participants.find(student) >= 0){
+			if(typeof this.groups[i].participants[student] !== 'undefined'){
 				groupid = this.groups[i]._id;
 				break;
 			}
 		}
 
-		return this.allocator.extra_data.allocations[groupid] === activity.test;
+		let notallocated = (typeof this.allocator.extra_data === 'undefined');
+
+		return (!notallocated && this.allocator.extra_data.allocations[groupid] === activity.test)
+				|| (notallocated && this.groups[0]._id === groupid);
 	},
 
 	paintAllocator: function(allocator){

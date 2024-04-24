@@ -39,10 +39,11 @@ var DefaultAllocatorPainter = {
 	},
 
 	isAllocatedToActivity: function(student, activity){
-		let isallocated = typeof allocator.extra_data.allocations[student] === 'undefined';
+		let notallocated = typeof allocator.extra_data === 'undefined'
+						|| (typeof allocator.extra_data.allocations[student] === 'undefined');
 
-		return (isallocated && allocator.extra_data.allocations[student] === activity.test)
-				|| (!isallocated && activity.test === this.tests[0]._id);
+		return (!notallocated && allocator.extra_data.allocations[student] === activity.test)
+				|| (notallocated && activity.test === this.tests[0]._id);
 	},
 
 	getFormContent: function(){
