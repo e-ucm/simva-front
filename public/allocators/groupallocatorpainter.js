@@ -45,7 +45,7 @@ var GroupAllocatorPainter = {
 	isAllocatedToActivity: function(student, activity){
 		let groupid = null;
 		for (var i = this.groups.length - 1; i >= 0; i--) {
-			if(typeof this.groups[i].participants[student] !== 'undefined'){
+			if(this.groups[i].participants.includes(student)){
 				groupid = this.groups[i]._id;
 				break;
 			}
