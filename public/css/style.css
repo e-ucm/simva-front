@@ -243,7 +243,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 
 .content .test { background-color: lightgray; padding: 10px; margin-top: 10px; box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3);}
 .content .test .activities {overflow-x: auto; white-space: nowrap; padding-bottom: 10px; }
-.content .test .activities table {display: block; overflow: hidden; }
+.content .test .activities table {display: table; overflow: hidden; }
 .content .test .activities.collapsed table { height: 0px; }
 .content .test .activities .activity { background-color: gray; width: 250px; padding: 10px; margin-top: 10px; box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3); display: inline-block; margin-right: 10px;}
 
