@@ -168,6 +168,7 @@ var GroupAllocatorPainter = {
 				});
 				toggleAllocatorForm();
 				tmp.paintAllocator(tmp.allocator);
+				reloadStudy();
 			}
 		});
 	}

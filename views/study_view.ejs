@@ -221,7 +221,6 @@
 					$('#new_activity_form select[name="type"]').append(row);
 				}
 			}
-			reloadStudy();
 		})
 
 		Simva.getAllocatorTypes(function(error, allocatortypes){
@@ -310,6 +309,9 @@
 				}else{
 					toggleAddForm('add_platform');
 					reloadStudy();
+					Simva.updateStudy(study, function(error, result){
+						reloadStudy();
+					});
 				}
 			});
 
@@ -351,6 +353,9 @@
 						}else{
 							toggleAddForm('add_activity');
 							reloadStudy();
+							Simva.updateStudy(study, function(error, result){
+								reloadStudy();
+							});
 						}
 					});
 				}
@@ -360,6 +365,13 @@
 		});
 
 		loadAddGroups();
+		Simva.getStudy("<%= study %>", function(error, study){
+			if(!error) {
+				Simva.updateStudy(study, function(error, result){
+					reloadStudy();
+				});
+			}
+		});
 	});
 
 	let downloadUAConfig = function(){
