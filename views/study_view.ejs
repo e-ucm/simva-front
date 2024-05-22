@@ -177,14 +177,10 @@
 			<div id="existing_activity_tab" class="subform">
 				<form id="existing_activity_form">
 					<input type="hidden" name="test">
-					<input type="text" name="username" placeholder="Username" value="" required>
-					<input type="email" name="email" placeholder="email@example.com" value="" required>
-					<input type="password" name="password" placeholder="Password" required>
-					<div class="role_selector">
-						<input id="teacher_role" type="radio" name="role" value="teacher"><label for="teacher_role">Teacher</label>
-						<input id="student_role" type="radio" name="role" value="student" checked><label for="student_role">Student</label>
-					</div>
-					<input type="submit" value="Add Batch">
+					<input type="text" name="name" placeholder="Activity name" required>
+					<select name="type">
+					</select>
+					<input type="submit" value="Add">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 					<span class="error"></span>
 				</form>
