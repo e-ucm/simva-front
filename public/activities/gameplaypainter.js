@@ -117,9 +117,9 @@ var GameplayActivityPainter = {
 		*/
 		activitybox += '<p>Trace Storage: '
 		if(activity.extra_data.config.trace_storage) {
-			activitybox += `<a href="${this.utils.minio_url}minio/${this.utils.minio_bucket}/${this.utils.topics_dir}/${this.utils.trace_topic}/_id=${activity._id}/" target="_blank">Folder</a>
+			activitybox += `<a href="${this.utils.minio_url}browser/${this.utils.minio_bucket}/${this.utils.topics_dir}/${this.utils.trace_topic}/_id=${activity._id}/" target="_blank">Folder</a>
 			/
-			<a href="${this.utils.minio_url}minio/${this.utils.minio_bucket}/${this.utils.users_dir}/${this.utils.user_folder}/${activity._id}/" target="_blank">Combined Data</a>
+			<a href="${this.utils.minio_url}browser/${this.utils.minio_bucket}/${this.utils.users_dir}/${this.utils.user_folder}/${activity._id}/" target="_blank">Combined Data</a>
 			<br>
 			XASU Config:
 			<a onclick="GameplayActivityPainter.downloadXasuConfig('${activity._id}')">
