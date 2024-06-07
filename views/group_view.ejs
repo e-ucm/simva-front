@@ -5,7 +5,7 @@
 <!--<div id="roller" style="width: 100%; text-align: center; padding: 200px;">
 	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 </div>-->
-<div>
+<div id="group_view">
 	<h1>Group: <span id="group_name"></span></h1>
 	<div class="left">
 		<div class="graybox owners">
@@ -90,6 +90,11 @@
 			</div>
 		</div>
 	</div>
+</div>
+
+<div id="pdf_printable">
+	<table id="pdf_printable_table">
+	</table>
 </div>
 
 <div class="floating_buttons">
@@ -302,12 +307,17 @@
 		}
 
 		$('#participants').empty();
+		$('#pdf_printable_table').empty();
 		if(group.participants.length == 0){
 			$('#participants').append('<p>There are no participants in this group. Try adding some using the button on the right.</p>');
 		}else{
 			$('#participants').append(participantHeader());
 			for (var i = 0; i < participants.length; i++) {
 				$('#participants').append(participantRow(participants[i]));
+				if(i%30 === 0){
+					$('#pdf_printable_table').append(headerRowPDF(group));
+				}
+				$('#pdf_printable_table').append(participantRowPDF(participants[i], i+1));
 			}
 		}
 	}
@@ -334,6 +344,15 @@
 			+ '<td><a href="' + participant.email + '">' + participant.email + '</a></td>'
 			+ '<td>' + participant.role + '</td>'
 			+ '<td><input class="red" type="button" value="Remove" onclick="removeParticipant(\'' + participant.username + '\')"></td>';
+	}
+
+	let headerRowPDF = function(group){
+		return '<tr><th colspan="6">Group: ' + group.name + '</th></tr>'
+			+ '<tr><td width="5%">No.</td><td width="45%">Nombre</td><td width="40%" colspan="4">Código</td></tr>';
+	}
+
+	let participantRowPDF = function(participant, position){
+		return '<tr><td>' + position + '</td><td></td><td>'+participant.username+'</td><td>'+participant.username+'</td><td>'+participant.username+'</td><td>'+participant.username+'</td></tr>';
 	}
 
 	let changeTab = function(tab, form, subform){
