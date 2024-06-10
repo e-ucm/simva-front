@@ -139,10 +139,6 @@ var Simva = {
 		this.get(this.apiurl + '/groups/' + group_id + '/participants', callback);
 	},
 
-	getGroupPrintable: function(group_id, callback){
-		this.getPDF(this.apiurl + '/groups/' + group_id + '/printable', callback);
-	},
-
 	// STUDIES
 
 	getStudies: function(callback){

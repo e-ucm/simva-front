@@ -98,7 +98,7 @@
 </div>
 
 <div class="floating_buttons">
-	<a unselectable="on" class="pdf" onclick="openPDF()">PDF</a>
+	<a unselectable="on" class="pdf" onclick="window.print();">PDF</a>
 </div>
 
 <script type="text/javascript">
@@ -237,17 +237,6 @@
 		reloadGroup();
 	});
 
-	let openPDF = async function(){
-		await Simva.getGroupPrintable(groupid, function(error, result){
-			var blob = new Blob([result], { type: 'application/pdf' });
-			console.log(blob);
-    		var link = document.createElement('a');
-    		link.href = window.URL.createObjectURL(blob);
-    		link.download = 'SimvaGroup_' + group.name.replace(' ', '-') + '.pdf';
-    		link.click();
-		});
-	}
-
 	let toggleSubmit = function(form){
 		$(form).find('input[type="submit"]').toggle();
 		$(form).find('.loader').toggle();
@@ -305,18 +294,17 @@
 		for (var i = 0; i < group.owners.length; i++) {
 			$('#owners').append(ownerRow(group.owners[i]));
 		}
-
 		$('#participants').empty();
 		$('#pdf_printable_table').empty();
 		if(group.participants.length == 0){
 			$('#participants').append('<p>There are no participants in this group. Try adding some using the button on the right.</p>');
+			$('#pdf_printable_table').append(groupHeaderNoParticipantsPDF(group));
+			$('#pdf_printable_table').append('<p>There are no participants in this group. Try adding some using the button on the right.</p>');
 		}else{
 			$('#participants').append(participantHeader());
+			$('#pdf_printable_table').append(headerRowPDF(group));
 			for (var i = 0; i < participants.length; i++) {
 				$('#participants').append(participantRow(participants[i]));
-				if(i%30 === 0){
-					$('#pdf_printable_table').append(headerRowPDF(group));
-				}
 				$('#pdf_printable_table').append(participantRowPDF(participants[i], i+1));
 			}
 		}
@@ -334,6 +322,10 @@
 		return toret;
 	}
 
+	let groupHeaderNoParticipantsPDF = function(groupname) {
+		return'<thead><tr><th colspan="6">Group: ' + group.name + '</th></tr></thead>';
+	}
+
 	let participantHeader = function(){
 		return '<tr><th>Pic</th><th>Username</th><th>Email</th><th>Role</th><th></th></tr>';
 	}
@@ -347,8 +339,7 @@
 	}
 
 	let headerRowPDF = function(group){
-		return '<tr><th colspan="6">Group: ' + group.name + '</th></tr>'
-			+ '<tr><td width="5%">No.</td><td width="45%">Nombre</td><td width="40%" colspan="4">Código</td></tr>';
+		return '<thead><tr><th colspan="6">Group: ' + group.name + '</th></tr><tr><td width="5%">No.</td><td width="45%">Name</td><td width="40%" colspan="4">Code</td></tr></thead>';
 	}
 
 	let participantRowPDF = function(participant, position){
