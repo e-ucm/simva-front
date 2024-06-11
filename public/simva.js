@@ -64,6 +64,16 @@ var Simva = {
 		})
 	},
 
+	patch: function(url, body, callback){
+		this.checkAndUpdateAuth(function(error, result){
+			if(!error){
+				Utils.patch(url, body, callback, Simva.jwt);
+			}else{
+				console.log(error);
+			}
+		})
+	},
+
 	put: function(url, body, callback){
 		this.checkAndUpdateAuth(function(error){
 			if(!error){
@@ -111,13 +121,12 @@ var Simva = {
 		Utils.post(`${this.apiurl}/users/`, body, callback);
 	},
 
-	setRole: function(role, callback){
+	setRole: function(userId, role, callback){
 		let body = { role: role };
-		this.post(`${this.apiurl}/users/role`, body, callback);
+		this.patch(`${this.apiurl}/users/${userId}`, body, callback);
 	},
 
 	// GROUPS
-	
 	getGroups: function(callback){
 		this.get(`${this.apiurl}/groups`, callback);
 	},
