@@ -121,9 +121,9 @@ var Simva = {
 		Utils.post(`${this.apiurl}/users/`, body, callback);
 	},
 
-	setRole: function(userId, role, callback){
-		let body = { role: role };
-		this.patch(`${this.apiurl}/users/${userId}`, body, callback);
+	setRole: function(username, role, callback){
+		let body = { username: username, role: role };
+		this.patch(`${this.apiurl}/users/${username}`, body, callback);
 	},
 
 	// GROUPS
