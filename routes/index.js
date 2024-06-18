@@ -11,6 +11,10 @@ const MongoStore = require("connect-mongo")(session);
 const mongoose = require('mongoose');
 
 var isTest = (process.env.NODE_ENV !== 'production');
+console.log(process.env.NODE_ENV);
+console.log(isTest);
+console.log(config.mongo.url);
+console.log(config.mongo.test);
 mongoose.connect( !isTest ? config.mongo.url : config.mongo.test, {useNewUrlParser: true});
 mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
 mongoose.connection.once('open', function() {
