@@ -16,6 +16,7 @@ config.mongo = {}
 config.mongo.host = process.env.MONGO_HOST || 'localhost:27017'
 config.mongo.db = process.env.MONGO_DB || '/simva-front'
 config.mongo.url = `mongodb://${config.mongo.host}${config.mongo.db}`
+config.mongo.test = config.mongo.url
 
 config.sso = {}
 config.sso.host = process.env.SSO_HOST || 'sso.external.test'
