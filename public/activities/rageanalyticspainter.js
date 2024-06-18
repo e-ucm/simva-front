@@ -8,8 +8,8 @@ if(!PainterFactory){
 }
 
 var RageAnalyticsActivityPainter = {
-	supportedType: `rageanalytics`,
-	simpleName: `RAGE Analytics activity`,
+	supportedType: 'rageanalytics',
+	simpleName: 'RAGE Analytics activity',
 
 	utils: {},
 	setUtils: function(utils){
@@ -17,7 +17,7 @@ var RageAnalyticsActivityPainter = {
 	},
 
 	getExtraForm: function () {
-		return ``;
+		return '';
 	},
 
 	extractInformation: function(form, callback){
@@ -67,7 +67,7 @@ var RageAnalyticsActivityPainter = {
 	},
 
 	paintActivityParticipantsTable: function(activity, participants){
-		let toret = `<table><tr><th>User</th><th>Completed</th><th>Progress</th><th>Result</th></tr>`;
+		let toret = '<table><tr><th>User</th><th>Completed</th><th>Progress</th><th>Result</th></tr>';
 
 		for (var i = 0; i < participants.length; i++) {
 			if(!AllocatorFactory.Painters[allocator.type].isAllocatedToActivity(participants[i].username, activity)){
@@ -80,7 +80,7 @@ var RageAnalyticsActivityPainter = {
 				<td id="result_${activity._id}_${participants[i].username}">---</td>`;
 		}
 
-		toret += `</table>`;
+		toret += '</table>';
 
 		return toret;
 	},
@@ -96,7 +96,7 @@ var RageAnalyticsActivityPainter = {
 			}
 
 			let completion = `<span>${status[usernames[i]]}</span>`
-			$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? `red` : `green`);
+			$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
 			$(`#completion_${activity._id}_${usernames[i]}`).empty();
 			$(`#completion_${activity._id}_${usernames[i]}`).append(completion);
 		}
@@ -107,7 +107,7 @@ var RageAnalyticsActivityPainter = {
 			progress = 0;
 		}
 
-		$(`#completion_progress_${activity._id} .done`).css(`width`, `${progress}%` );
+		$(`#completion_progress_${activity._id} .done`).css('width', `${progress}%` );
 		$(`#completion_progress_${activity._id} done`).text(progress);
 	},
 
@@ -118,7 +118,7 @@ var RageAnalyticsActivityPainter = {
 
 		for (var i = 0; i < usernames.length; i++) {
 			let status = results[usernames[i]];
-			let result = `<span>No results</span>`
+			let result = '<span>No results</span>'
 
 			if(status){
 				done++;
@@ -127,23 +127,23 @@ var RageAnalyticsActivityPainter = {
 				let tmpprogress = 0; 
 				if(results[usernames[i]]
 					&& results[usernames[i]].progressed
-					&& results[usernames[i]].progressed[`serious-game`]){
-					let keys = Object.keys(results[usernames[i]].progressed[`serious-game`]);
+					&& results[usernames[i]].progressed['serious-game']){
+					let keys = Object.keys(results[usernames[i]].progressed['serious-game']);
 					if(keys.length > 0){
-						if(results[usernames[i]].progressed[`serious-game`][keys[0]].progress){
-							tmpprogress = results[usernames[i]].progressed[`serious-game`][keys[0]].progress;
+						if(results[usernames[i]].progressed['serious-game'][keys[0]].progress){
+							tmpprogress = results[usernames[i]].progressed['serious-game'][keys[0]].progress;
 						}
 					}
 				}
 
 				tmpprogress = (tmpprogress * 1000) / 10;
 
-				$(`#progress_${activity._id}_${usernames[i]} .done`).css(`width`, `${tmpprogress}%` );
+				$(`#progress_${activity._id}_${usernames[i]} .done`).css('width', `${tmpprogress}%` );
 				$(`#progress_${activity._id}_${usernames[i]} done`).text(tmpprogress);
 			}
 
 
-			$(`#result_${activity._id}_${usernames[i]}`).addClass(status ? `green` : `red`);
+			$(`#result_${activity._id}_${usernames[i]}`).addClass(status ? 'green' : 'red');
 			$(`#result_${activity._id}_${usernames[i]}`).empty();
 			$(`#result_${activity._id}_${usernames[i]}`).append(result);
 		}
@@ -158,8 +158,8 @@ var RageAnalyticsActivityPainter = {
 			partialprogress = 0;
 		}
 
-		$(`#result_progress_${activity._id} .done`).css(`width`, `${progress}%` );
-		$(`#result_progress_${activity._id} .partial`).css(`width`, `${partialprogress}%` );
+		$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
+		$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
 		$(`#result_progress_${activity._id} done`).text(progress);
 		$(`#result_progress_${activity._id} partial`).text(partialprogress);
 	},
@@ -168,26 +168,26 @@ var RageAnalyticsActivityPainter = {
 		Simva.getActivityResultForUser(activity, user, function(error, result){
 			if(error){
 				$.toast({
-					heading: `Error loading the result`,
+					heading: 'Error loading the result',
 					text: error.message,
-					position: `top-right`,
-					icon: `error`,
+					position: 'top-right',
+					icon: 'error',
 					stack: false
 				});
 			}else{
 				let content = `<div style="padding: 20px;">${result[user]}</div>`;
-				let context = $(`#iframe_floating iframe`)[0].contentWindow.document;
-				let body = $(`body`, context);
+				let context = $('#iframe_floating iframe')[0].contentWindow.document;
+				let body = $('body', context);
 				body.html(content);
-				toggleAddForm(`iframe_floating`);
+				toggleAddForm('iframe_floating');
 			}
 		})
 	},
 
 	openDashboard: function(activityId){
 		console.log(`${this.utils.dashboard_url}${activityId}${this.utils.dashboard_query}`);
-		$(`#iframe_floating iframe`).prop(`src`, `${this.utils.dashboard_url}${activityId}${this.utils.dashboard_query}`);
-		toggleAddForm(`iframe_floating`);
+		$('#iframe_floating iframe').prop('src', `${this.utils.dashboard_url}${activityId}${this.utils.dashboard_query}`);
+		toggleAddForm('iframe_floating');
 	},
 }
 

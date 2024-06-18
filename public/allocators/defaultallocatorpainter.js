@@ -8,9 +8,9 @@ if(!AllocatorFactory){
 }
 
 var DefaultAllocatorPainter = {
-	supportedType: `default`,
-	simpleName: `Default Allocator`,
-	description: `This allocator automatically assigns upcoming participants to the first test available.`,
+	supportedType: 'default',
+	simpleName: 'Default Allocator',
+	description: 'This allocator automatically assigns upcoming participants to the first test available.',
 
 	tests: [],
 	groups: [],
@@ -35,19 +35,19 @@ var DefaultAllocatorPainter = {
 	},
 
 	getFormTitle: function(){
-		return `Add Allocation`;
+		return 'Add Allocation';
 	},
 
 	isAllocatedToActivity: function(student, activity){
-		let notallocated = !((typeof allocator.extra_data !== `undefined`)
-						&& (typeof allocator.extra_data.allocations[student] !== `undefined`));
+		let notallocated = !((typeof allocator.extra_data !== 'undefined')
+						&& (typeof allocator.extra_data.allocations[student] !== 'undefined'));
 
 		return (!notallocated && allocator.extra_data.allocations[student] === activity.test)
 				|| (notallocated && activity.test === this.tests[0]._id);
 	},
 
 	getFormContent: function(){
-		let toret = `<p>Participant: </p><select name="username">`;
+		let toret = '<p>Participant: </p><select name="username">';
 		for (var i = 0; i < participants.length; i++) {
 			if(allocator.extra_data && allocator.extra_data.allocations){
 				if(allocator.extra_data.allocations[participants[i].username]){
@@ -58,13 +58,13 @@ var DefaultAllocatorPainter = {
 			toret += `<option value="${participants[i].username}">${participants[i].username}</option>`;
 		}
 
-		toret += `</select><p>Test: </p><select name="test">`;
+		toret += '</select><p>Test: </p><select name="test">';
 
 		for (var i = 0; i < tests.length; i++) {
 			toret += `<option value="${tests[i]._id}">${tests[i].name}</option>`;
 		}
 
-		toret += `</select><input type="button" value="Add Allocator" onclick="DefaultAllocatorPainter.addAllocation()">`;
+		toret += '</select><input type="button" value="Add Allocator" onclick="DefaultAllocatorPainter.addAllocation()">';
 
 		return toret;
 	},
@@ -84,10 +84,9 @@ var DefaultAllocatorPainter = {
 			}
 		}
 
-		topaint += `</table>
-			<input class="violet" type="button" value="Add Allocation" onclick="toggleAllocatorForm()">`;
+		topaint += '</table><input class="violet" type="button" value="Add Allocation" onclick="toggleAllocatorForm()">';
 
-		$(`#allocator_content`).html(topaint);
+		$('#allocator_content').html(topaint);
 	},
 
 	generateRow: function(allocation){
@@ -96,7 +95,7 @@ var DefaultAllocatorPainter = {
 			onchange="DefaultAllocatorPainter.updateAllocation('${allocation.username}')">`;
 
 		for (var i = 0; i < this.tests.length; i++) {
-			selected=(this.tests[i]._id === allocation.test ? `selected` : ``)
+			selected=(this.tests[i]._id === allocation.test ? 'selected' : '')
 			topaint += `<option value="${this.tests[i]._id}" ${selected}> 
 			${this.tests[i].name}</option>`;
 		}
@@ -116,17 +115,17 @@ var DefaultAllocatorPainter = {
 					$(`#allocation_${participant}`).val(previous);
 
 					$.toast({
-						heading: `Error adding the allocation`,
+						heading: 'Error adding the allocation',
 						text: error.message,
-						position: `top-right`,
-						icon: `error`,
+						position: 'top-right',
+						icon: 'error',
 						stack: false
 					});
 				}else{
 					$.toast({
-						heading: `Allocator updated`,
-						position: `top-right`,
-						icon: `success`,
+						heading: 'Allocator updated',
+						position: 'top-right',
+						icon: 'success',
 						stack: false
 					});
 					reloadStudy();
@@ -138,8 +137,8 @@ var DefaultAllocatorPainter = {
 	addAllocation: function(){
 		let tmp = this;
 
-		let participant = $(`#edit_allocator_content select[name="username"]`).val();
-		let test = $(`#edit_allocator_content select[name="test"]`).val();
+		let participant = $('#edit_allocator_content select[name="username"]').val();
+		let test = $('#edit_allocator_content select[name="test"]').val();
 
 		console.log(participant);
 		console.log(test);
@@ -158,17 +157,17 @@ var DefaultAllocatorPainter = {
 			if(error){
 				delete tmp.allocator.extra_data.allocations[participant];
 				$.toast({
-					heading: `Error adding the allocation`,
+					heading: 'Error adding the allocation',
 					text: error.message,
-					position: `top-right`,
-					icon: `error`,
+					position: 'top-right',
+					icon: 'error',
 					stack: false
 				});
 			}else{
 				$.toast({
-					heading: `Allocator updated`,
-					position: `top-right`,
-					icon: `success`,
+					heading: 'Allocator updated',
+					position: 'top-right',
+					icon: 'success',
 					stack: false
 				});
 				toggleAllocatorForm();

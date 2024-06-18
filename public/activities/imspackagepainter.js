@@ -8,8 +8,8 @@ if(!PainterFactory){
 }
 
 var ImsPackagePainter = {
-	supportedType: `imspackage`,
-	simpleName: `Ims Package activity`,
+	supportedType: 'imspackage',
+	simpleName: 'Ims Package activity',
 
 	utils: {},
 	setUtils: function(utils){
@@ -32,10 +32,10 @@ var ImsPackagePainter = {
 		activity.name = formdata.name;
 		activity.type = this.supportedType;
 
-		activity.trace_storage = formdata.trace_storage === `on`;
-		activity.realtime = formdata.realtime === `on`;
-		activity.backup = formdata.backup === `on`;
-		if(formdata.game_uri !== ``){
+		activity.trace_storage = formdata.trace_storage === 'on';
+		activity.realtime = formdata.realtime === 'on';
+		activity.backup = formdata.backup === 'on';
+		if(formdata.game_uri !== ''){
 			activity.game_uri = formdata.game_uri;
 		}
 
@@ -80,24 +80,24 @@ var ImsPackagePainter = {
 	paintActivity: function(activity, participants){
 		let activitybox = `<div id="activity_${activity._id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
-			<input class="red" type="button" value="X" onclick="deleteActivity(`${activity._id}`)"></div>
+			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
 			<p class="subtitle">${this.simpleName}</p>`;
 
 		/*
-		activitybox += `<p>Realtime: `;
+		activitybox += '<p>Realtime: ';
 		if(activity.extra_data.config.realtime){
 			activitybox += `<a href="${this.utils.dashboard_url}${activity.extra_data.analytics.activity._id}${this.utils.dashboard_query}" target="_blank">Dashboard</a>`;
 		}else{
-			activitybox += `<i>Disabled</i>`;
+			activitybox += '<i>Disabled</i>';
 		}
-		activitybox += ` - `
+		activitybox += ' - '
 		*/
 		
-		activitybox += `Trace Storage: `
+		activitybox += 'Trace Storage: '
 		if(activity.extra_data.config.trace_storage){
 			activitybox += `<a href="${this.utils.minio_url}minio/${this.utils.minio_bucket}/${this.utils.topics_dir}/${this.utils.trace_topic}/_id=${activity._id}/" target="_blank">Folder</a>`;
 		}else{
-			activitybox += `<i>Disabled</i>`;
+			activitybox += '<i>Disabled</i>';
 		}
 		
 		activitybox += `<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>
@@ -108,16 +108,16 @@ var ImsPackagePainter = {
 	},
 
 	paintActivityParticipantsTable: function(activity, participants){
-		let toret = `<table><tr><th>User</th><th>Completed</th><th>Progress</th><th>Traces</th><th>Backup</th></tr>`;
+		let toret = '<table><tr><th>User</th><th>Completed</th><th>Progress</th><th>Traces</th><th>Backup</th></tr>';
 
 		for (var i = 0; i < participants.length; i++) {
 			if(!AllocatorFactory.Painters[allocator.type].isAllocatedToActivity(participants[i].username, activity)){
 				continue;
 			}
 			
-			toret += `<tr>`;
+			toret += '<tr>';
 
-			if(activity.isOpenable || (activity.extra_data.game_uri && activity.extra_data.game_uri !== ``) ){
+			if(activity.isOpenable || (activity.extra_data.game_uri && activity.extra_data.game_uri !== '') ){
 				toret += `<td><a id="${activity._id}_" ${participants[i].username}_target" 
 				class="targeturl" target="_blank" href="">${participants[i].username}</a></td>`;
 			}else{
@@ -130,17 +130,17 @@ var ImsPackagePainter = {
 				toret += `<td id="progress_${activity._id}_${participants[i].username}" class="progress"><div class="partial"></div><div class="done"></div><span><done>0</done>%</span></td>
 						<td id="traces_${activity._id}_${participants[i].username}">---</td>`;
 			}else{
-				toret += `<td colspan="2"><i>Disabled</i></td>`
+				toret += '<td colspan="2"><i>Disabled</i></td>'
 			}
 			
 			if(activity.extra_data.config.backup){
 				toret += `<td id="backup_${activity._id}_${participants[i].username}">---</td></tr>`;
 			}else{
-				toret += `<td><i>Disabled</i></td>`;
+				toret += '<td><i>Disabled</i></td>';
 			}
 		}
 
-		toret += `</table>`;
+		toret += '</table>';
 
 		return toret;
 	},
@@ -156,7 +156,7 @@ var ImsPackagePainter = {
 			}
 
 			let completion = `<span>${status[usernames[i]]}</span>`
-			$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? `red` : `green`);
+			$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
 			$(`#completion_${activity._id}_${usernames[i]}`).empty();
 			$(`#completion_${activity._id}_${usernames[i]}`).append(completion);
 		}
@@ -167,7 +167,7 @@ var ImsPackagePainter = {
 			progress = 0;
 		}
 
-		$(`#completion_progress_${activity._id} .done`).css(`width`, `${progress}%` );
+		$(`#completion_progress_${activity._id} .done`).css('width', `${progress}%` );
 		$(`#completion_progress_${activity._id} done`).text(progress);
 	},
 
@@ -178,10 +178,10 @@ var ImsPackagePainter = {
 
 		for (var i = 0; i < usernames.length; i++) {
 			let status = results[usernames[i]];
-			let traces = `<span>No traces</span>`;
-			let backup = `<span><i>Disabled</i></span>`;
+			let traces = '<span>No traces</span>';
+			let backup = '<span><i>Disabled</i></span>';
 			if(activity.extra_data.config.backup){
-				backup = `<span>No backup</span>`;
+				backup = '<span>No backup</span>';
 			}
 
 			if(status){
@@ -191,11 +191,11 @@ var ImsPackagePainter = {
 				if(status){
 					if(status.realtime
 						&& status.realtime.progressed
-						&& status.realtime.progressed[`serious-game`]){
-						let keys = Object.keys(status.realtime.progressed[`serious-game`]);
+						&& status.realtime.progressed['serious-game']){
+						let keys = Object.keys(status.realtime.progressed['serious-game']);
 						if(keys.length > 0){
-							if(status.realtime.progressed[`serious-game`][keys[0]].progress){
-								tmpprogress = status.realtime.progressed[`serious-game`][keys[0]].progress;
+							if(status.realtime.progressed['serious-game'][keys[0]].progress){
+								tmpprogress = status.realtime.progressed['serious-game'][keys[0]].progress;
 							}
 						}
 
@@ -216,16 +216,16 @@ var ImsPackagePainter = {
 
 				tmpprogress = (tmpprogress * 1000) / 10;
 
-				$(`#progress_${activity._id}_${usernames[i]} .done`).css(`width`, `${tmpprogress}%` );
+				$(`#progress_${activity._id}_${usernames[i]} .done`).css('width', `${tmpprogress}%` );
 				$(`#progress_${activity._id}_${usernames[i]} done`).text(tmpprogress);
 			}
 
 
-			$(`#traces_${activity._id}_${usernames[i]}`).addClass(status && status.realtime ? `green` : `red`);
+			$(`#traces_${activity._id}_${usernames[i]}`).addClass(status && status.realtime ? 'green' : 'red');
 			$(`#traces_${activity._id}_${usernames[i]}`).empty();
 			$(`#traces_${activity._id}_${usernames[i]}`).append(traces);
 
-			$(`#backup_${activity._id}_${usernames[i]}`).addClass(status && status.backup ? `green` : `red`);
+			$(`#backup_${activity._id}_${usernames[i]}`).addClass(status && status.backup ? 'green' : 'red');
 			$(`#backup_${activity._id}_${usernames[i]}`).empty();
 			$(`#backup_${activity._id}_${usernames[i]}`).append(backup);
 		}
@@ -240,8 +240,8 @@ var ImsPackagePainter = {
 			partialprogress = 0;
 		}
 
-		$(`#result_progress_${activity._id} .done`).css(`width`, `${progress}%` );
-		$(`#result_progress_${activity._id} .partial`).css(`width`, `${partialprogress}%` );
+		$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
+		$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
 		$(`#result_progress_${activity._id} done`).text(progress);
 		$(`#result_progress_${activity._id} partial`).text(partialprogress);
 	},
@@ -252,7 +252,7 @@ var ImsPackagePainter = {
 		let done = 0, partial = 0;
 		
 		for (var i = 0; i < usernames.length; i++) {
-			$(`#${activity._id}_${usernames[i]}_target`).attr(`href`, results[usernames[i]]);
+			$(`#${activity._id}_${usernames[i]}_target`).attr('href', results[usernames[i]]);
 		}
 	},
 
@@ -260,10 +260,10 @@ var ImsPackagePainter = {
 		Simva.getActivityResultForUser(activity, user, function(error, result){
 			if(error){
 				$.toast({
-					heading: `Error loading the result`,
+					heading: 'Error loading the result',
 					text: error.message,
-					position: `top-right`,
-					icon: `error`,
+					position: 'top-right',
+					icon: 'error',
 					stack: false
 				});
 			}else{
@@ -278,20 +278,20 @@ var ImsPackagePainter = {
 		Simva.getActivityResultForUser(activity, user, function(error, result){
 			if(error){
 				$.toast({
-					heading: `Error loading the result`,
+					heading: 'Error loading the result',
 					text: error.message,
-					position: `top-right`,
-					icon: `error`,
+					position: 'top-right',
+					icon: 'error',
 					stack: false
 				});
 			}else{
 
 				let printAnalysisRecursive = function(analysis){
-					let block = `<div>`;
+					let block = '<div>';
 					let keys = Object.keys(analysis);
 
 					for (var i = keys.length - 1; i >= 0; i--) {
-						if(typeof analysis[keys[i]] === `object`){
+						if(typeof analysis[keys[i]] === 'object'){
 							block += `<p>${keys[i]}</p>`;
 							block += printAnalysisRecursive(analysis[keys[i]]);
 						}else{
@@ -299,7 +299,7 @@ var ImsPackagePainter = {
 						}
 					}
 					
-					block += `</div>`;
+					block += '</div>';
 
 					return block;
 				}
@@ -307,10 +307,10 @@ var ImsPackagePainter = {
 
 				let content = `<link href="/css/style.css" rel="stylesheet" type="text/css"><div style="padding: 20px;" class="analysis">${printAnalysisRecursive(result[user].realtime)}</div>`;
 				
-				let context = $(`#iframe_floating iframe`)[0].contentWindow.document;
-				let body = $(`body`, context);
+				let context = $('#iframe_floating iframe')[0].contentWindow.document;
+				let body = $('body', context);
 				body.html(content);
-				toggleAddForm(`iframe_floating`);
+				toggleAddForm('iframe_floating');
 			}
 		})
 	},

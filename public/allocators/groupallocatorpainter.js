@@ -8,9 +8,9 @@ if(!AllocatorFactory){
 }
 
 var GroupAllocatorPainter = {
-	supportedType: `group`,
-	simpleName: `Group Allocator`,
-	description: `Group Allocator`,
+	supportedType: 'group',
+	simpleName: 'Group Allocator',
+	description: 'Group Allocator',
 
 	tests: [],
 	groups: [],
@@ -35,7 +35,7 @@ var GroupAllocatorPainter = {
 	},
 
 	getFormTitle: function(){
-		return `Add Allocation`;
+		return 'Add Allocation';
 	},
 
 	getFormContent: function(){
@@ -51,8 +51,8 @@ var GroupAllocatorPainter = {
 			}
 		}
 
-		let notallocated = !((typeof this.allocator.extra_data !== `undefined`)
-						&& (typeof this.allocator.extra_data.allocations[groupid] !== `undefined`));
+		let notallocated = !((typeof this.allocator.extra_data !== 'undefined')
+						&& (typeof this.allocator.extra_data.allocations[groupid] !== 'undefined'));
 
 		return (!notallocated && this.allocator.extra_data.allocations[groupid] === activity.test)
 				|| (notallocated && this.tests[0]._id === activity.test);
@@ -73,9 +73,9 @@ var GroupAllocatorPainter = {
 			}
 		}
 
-		topaint += `</table>`;
+		topaint += '</table>';
 
-		$(`#allocator_content`).html(topaint);
+		$('#allocator_content').html(topaint);
 	},
 
 	generateRow: function(allocation){
@@ -87,7 +87,7 @@ var GroupAllocatorPainter = {
 				>`;
 
 		for (var i = 0; i < this.tests.length; i++) {
-			let selected=(this.tests[i]._id === allocation.test ? `selected` : ``)
+			let selected=(this.tests[i]._id === allocation.test ? 'selected' : '')
 			topaint += `<option value="${this.tests[i]._id}" ${selected}>${this.tests[i].name}</option>`;
 		}
 		return topaint;
@@ -113,17 +113,17 @@ var GroupAllocatorPainter = {
 				$(`#allocation_${group}`).val(previous);
 
 				$.toast({
-					heading: `Error adding the allocation`,
+					heading: 'Error adding the allocation',
 					text: error.message,
-					position: `top-right`,
-					icon: `error`,
+					position: 'top-right',
+					icon: 'error',
 					stack: false
 				});
 			}else{
 				$.toast({
-					heading: `Allocator updated`,
-					position: `top-right`,
-					icon: `success`,
+					heading: 'Allocator updated',
+					position: 'top-right',
+					icon: 'success',
 					stack: false
 				});
 				reloadStudy();
@@ -134,8 +134,8 @@ var GroupAllocatorPainter = {
 	addAllocation: function(){
 		let tmp = this;
 
-		let participant = $(`#edit_allocator_content select[name="username"]`).val();
-		let test = $(`#edit_allocator_content select[name="test"]`).val();
+		let participant = $('#edit_allocator_content select[name="username"]').val();
+		let test = $('#edit_allocator_content select[name="test"]').val();
 
 		console.log(participant);
 		console.log(test);
@@ -154,17 +154,17 @@ var GroupAllocatorPainter = {
 			if(error){
 				delete tmp.allocator.extra_data.allocations[participant];
 				$.toast({
-					heading: `Error adding the allocation`,
+					heading: 'Error adding the allocation',
 					text: error.message,
-					position: `top-right`,
-					icon: `error`,
+					position: 'top-right',
+					icon: 'error',
 					stack: false
 				});
 			}else{
 				$.toast({
-					heading: `Allocator updated`,
-					position: `top-right`,
-					icon: `success`,
+					heading: 'Allocator updated',
+					position: 'top-right',
+					icon: 'success',
 					stack: false
 				});
 				toggleAllocatorForm();

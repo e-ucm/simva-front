@@ -8,9 +8,9 @@ if(!PainterFactory){
 }
 
 var ActivityPainter = {
-	supportedType: `activity`,
-	simpleName: `Default activity`,
-	description: ``,
+	supportedType: 'activity',
+	simpleName: 'Default activity',
+	description: '',
 
 	utils: {},
 	setUtils: function(utils){
@@ -18,7 +18,7 @@ var ActivityPainter = {
 	},
 
 	getExtraForm: function () {
-		return ``;
+		return '';
 	},
 
 	extractInformation: function(form, callback){
@@ -68,7 +68,7 @@ var ActivityPainter = {
 	},
 
 	paintActivityParticipantsTable: function(activity, participants){
-		let toret = `<table><tr><th>User</th><th>Completed</th><th>Result</th></tr>`;
+		let toret = '<table><tr><th>User</th><th>Completed</th><th>Result</th></tr>';
 
 		for (var i = 0; i < participants.length; i++) {
 			if(!AllocatorFactory.Painters[allocator.type].isAllocatedToActivity(participants[i].username, activity)){
@@ -80,7 +80,7 @@ var ActivityPainter = {
 				<td id="result_${activity._id}_${participants[i].username}">---</td>`;
 		}
 
-		toret += `</table>`;
+		toret += '</table>';
 
 		return toret;
 	},
@@ -96,7 +96,7 @@ var ActivityPainter = {
 			}
 
 			let completion = `<span>${status[usernames[i]]}</span>`;
-			$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? `red` : `green`);
+			$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
 			$(`#completion_${activity._id}_${usernames[i]}`).empty();
 			$(`#completion_${activity._id}_${usernames[i]}`).append(completion);
 		}
@@ -107,7 +107,7 @@ var ActivityPainter = {
 			progress = 0;
 		}
 
-		$(`#completion_progress_${activity._id} .done`).css(`width`, `${progress}%` );
+		$(`#completion_progress_${activity._id} .done`).css('width', `${progress}%` );
 		$(`#completion_progress_${activity._id} done`).text(progress);
 	},
 
@@ -118,7 +118,7 @@ var ActivityPainter = {
 
 		for (var i = 0; i < usernames.length; i++) {
 			let status = results[usernames[i]];
-			let result = `<span>No results</span>`
+			let result = '<span>No results</span>'
 
 			if(status){
 				done++;
@@ -127,7 +127,7 @@ var ActivityPainter = {
 			}
 
 
-			$(`#result_${activity._id}_${usernames[i]}`).addClass(status ? `green` : `red`);
+			$(`#result_${activity._id}_${usernames[i]}`).addClass(status ? 'green' : 'red');
 			$(`#result_${activity._id}_${usernames[i]}`).empty();
 			$(`#result_${activity._id}_${usernames[i]}`).append(result);
 		}
@@ -142,8 +142,8 @@ var ActivityPainter = {
 			partialprogress = 0;
 		}
 
-		$(`#result_progress_${activity._id} .done`).css(`width`, `${progress}%` );
-		$(`#result_progress_${activity._id} .partial`).css(`width`, `${partialprogress}%` );
+		$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
+		$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
 		$(`#result_progress_${activity._id} done`).text(progress);
 		$(`#result_progress_${activity._id} partial`).text(partialprogress);
 	},
@@ -152,18 +152,18 @@ var ActivityPainter = {
 		Simva.getActivityResultForUser(activity, user, function(error, result){
 			if(error){
 				$.toast({
-					heading: `Error loading the result`,
+					heading: 'Error loading the result',
 					text: error.message,
-					position: `top-right`,
-					icon: `error`,
+					position: 'top-right',
+					icon: 'error',
 					stack: false
 				});
 			}else{
 				let content = `<div style="padding: 20px;">${result[user]}</div>`;
-				let context = $(`#iframe_floating iframe`)[0].contentWindow.document;
-				let body = $(`body`, context);
+				let context = $('#iframe_floating iframe')[0].contentWindow.document;
+				let body = $('body', context);
 				body.html(content);
-				toggleAddForm(`iframe_floating`);
+				toggleAddForm('iframe_floating');
 			}
 		})
 	}

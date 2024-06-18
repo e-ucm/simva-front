@@ -9,8 +9,8 @@ if(!PainterFactory){
 
 var LTIToolPainter = {
 
-	supportedType: `ltitool`,
-	simpleName: `LTI tool activity`,
+	supportedType: 'ltitool',
+	simpleName: 'LTI tool activity',
 
 	utils: {},
 	tools: [],
@@ -48,22 +48,22 @@ var LTIToolPainter = {
 		Simva.getLtiTools(function(error, result){
 			this.tools = result;
 
-			let form = ``;
+			let form = '';
 
 			if(this.tools.length > 0){
-				form += `<select id="lti_tool_id" name="existingid" style="width: 87%">`;
+				form += '<select id="lti_tool_id" name="existingid" style="width: 87%">';
 				for (var i = 0; i < this.tools.length; i++) {
 					form += `<option value="${this.tools[i]._id}">${this.tools[i].name}</option>`;
 				}
 
-				form += `</select><a style="width: 10%" class="button red" onclick="LTIToolPainter.deleteSelectedLtiTool()">X</a>`;
+				form += '</select><a style="width: 10%" class="button red" onclick="LTIToolPainter.deleteSelectedLtiTool()">X</a>';
 			}else{
-				form += `<p>No tools available. Create a new one.</p>`
+				form += '<p>No tools available. Create a new one.</p>'
 			}
 
 			console.log(form);
 
-			$(`#ltitool_byexisting`).html(form);
+			$('#ltitool_byexisting').html(form);
 
 			callback();
 		});
@@ -74,21 +74,21 @@ var LTIToolPainter = {
 
 		let jform = $(form);
 		let formdata = Utils.getFormData(jform);
-		let method = $(`#new_activity_extras .tab.selected`).attr(`method`);
+		let method = $('#new_activity_extras .tab.selected').attr('method');
 
 		activity.name = formdata.name;
 		activity.type = this.supportedType;
 
 		switch(method){
-			case `byexisting`:
+			case 'byexisting':
 				activity.tool = formdata.existingid;
 				callback(null, activity);
 				break;
-			case `bynew`:
-				callback(`After creating new, you have to select from existing.`);
+			case 'bynew':
+				callback('After creating new, you have to select from existing.');
 				break;
 			default:
-				callback(`Select a method first`);
+				callback('Select a method first');
 				break;
 		}
 	},
@@ -124,7 +124,7 @@ var LTIToolPainter = {
 	},
 
 	paintActivity: function(activity, participants){
-		let tool = { name: `Not found` };
+		let tool = { name: 'Not found' };
 		for (var i = 0; i < this.utils.tools.length; i++) {
 			if(this.utils.tools[i]._id === activity.extra_data.tool){
 				tool = this.utils.tools[i];
@@ -143,7 +143,7 @@ var LTIToolPainter = {
 	},
 
 	paintActivityParticipantsTable: function(activity, participants){
-		let toret = `<table><tr><th>User</th><th>Completed</th><th>Result</th></tr>`;
+		let toret = '<table><tr><th>User</th><th>Completed</th><th>Result</th></tr>';
 
 		for (var i = 0; i < participants.length; i++) {
 			if(!AllocatorFactory.Painters[allocator.type].isAllocatedToActivity(participants[i].username, activity)){
@@ -156,7 +156,7 @@ var LTIToolPainter = {
 			<td id="result_${activity._id}_${participants[i].username}">---</td>`;
 		}
 
-		toret += `</table>`;
+		toret += '</table>';
 
 		return toret;
 	},
@@ -173,7 +173,7 @@ var LTIToolPainter = {
 
 			let completion = `<span>${status[usernames[i]]}</span>`
 			$(`#completion_${activity._id}_${usernames[i]}`).removeClass();
-			$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? `red` : `green`);
+			$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
 			$(`#completion_${activity._id}_${usernames[i]}`).empty();
 			$(`#completion_${activity._id}_${usernames[i]}`).append(completion);
 		}
@@ -184,7 +184,7 @@ var LTIToolPainter = {
 			progress = 0;
 		}
 
-		$(`#completion_progress_${activity._id} .done`).css(`width`, `${progress}%` );
+		$(`#completion_progress_${activity._id} .done`).css('width', `${progress}%` );
 		$(`#completion_progress_${activity._id} done`).text(progress);
 	},
 
@@ -195,21 +195,21 @@ var LTIToolPainter = {
 		
 		for (var i = 0; i < usernames.length; i++) {
 
-			let color = `red`;
-			let state = `No Results`;
+			let color = 'red';
+			let state = 'No Results';
 
 			if(results[usernames[i]]){
 				partial++;
 				if(results[usernames[i]].submitdate){
-					color = `green`;
-					state = `Completed`;
+					color = 'green';
+					state = 'Completed';
 					done++;
 				}else{
-					color = `yellow`;
-					state = `Started`;
+					color = 'yellow';
+					state = 'Started';
 				}
 
-				state =`<a onclick="LTIToolPainter.openResults('${activity._id}','${usernames[i]}')">${state}</a>'`
+				state =`<a onclick="LTIToolPainter.openResults('${activity._id}','${usernames[i]}')">${state}</a>`
 			}
 
 			let completion = `<span>${state}</span>`
@@ -229,8 +229,8 @@ var LTIToolPainter = {
 			partialprogress = 0;
 		}
 
-		$(`#result_progress_${activity._id} .done`).css(`width`, `${progress}%` );
-		$(`#result_progress_${activity._id} .partial`).css(`width`, `${partialprogress}%` );
+		$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
+		$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
 		$(`#result_progress_${activity._id} done`).text(progress);
 		$(`#result_progress_${activity._id} partial`).text(partialprogress);
 	},
@@ -241,7 +241,7 @@ var LTIToolPainter = {
 		let done = 0, partial = 0;
 		
 		for (var i = 0; i < usernames.length; i++) {
-			$(`#${activity._id}_${usernames[i]}_target`).attr(`href`, results[usernames[i]]);
+			$(`#${activity._id}_${usernames[i]}_target`).attr('href', results[usernames[i]]);
 		}
 	},
 
@@ -249,79 +249,79 @@ var LTIToolPainter = {
 		Simva.getActivityResultForUser(activity, user, function(error, result){
 			if(error){
 				$.toast({
-					heading: `Error loading the result`,
+					heading: 'Error loading the result',
 					text: error.message,
-					position: `top-right`,
-					icon: `error`,
+					position: 'top-right',
+					icon: 'error',
 					stack: false
 				});
 			}else{
 				let content = `<div style="padding: 20px;">${JSON.stringify(result[user], null, 2)}</div>`;
-				let context = $(`#iframe_floating iframe`)[0].contentWindow.document;
-				let body = $(`body`, context);
+				let context = $('#iframe_floating iframe')[0].contentWindow.document;
+				let body = $('body', context);
 				body.html(content);
-				toggleAddForm(`iframe_floating`);
+				toggleAddForm('iframe_floating');
 			}
 		})
 	},
 
 	addLtiTool: function(){
 		let tool = {
-			name: $(`#ltitool_name`).val(),
-			description: $(`#ltitool_description`).val(),
-			url: $(`#ltitool_url`).val(),
-			jwks_uri: $(`#ltitool_jwks_uri`).val(),
-			login_uri: $(`#ltitool_login_uri`).val(),
-			redirect_uri: $(`#ltitool_redirect_uri`).val()
+			name: $('#ltitool_name').val(),
+			description: $('#ltitool_description').val(),
+			url: $('#ltitool_url').val(),
+			jwks_uri: $('#ltitool_jwks_uri').val(),
+			login_uri: $('#ltitool_login_uri').val(),
+			redirect_uri: $('#ltitool_redirect_uri').val()
 		}
 
 		Simva.addLtiTool(tool, function(error, result){
 			if(error){
 				$.toast({
-					heading: `Error adding the lti Tool`,
+					heading: 'Error adding the lti Tool',
 					text: error.message,
-					position: `top-right`,
-					icon: `error`,
+					position: 'top-right',
+					icon: 'error',
 					stack: false
 				});
 			}else{
 				LTIToolPainter.loadToolList(function(){
 					$.toast({
-						heading: `Tool Added`,
-						position: `top-right`,
-						icon: `success`,
+						heading: 'Tool Added',
+						position: 'top-right',
+						icon: 'success',
 						stack: false
 					});
-					$(`#ltitool_name`).val(``);
-					$(`#ltitool_description`).val(``);
-					$(`#ltitool_url`).val(``);
-					$(`#ltitool_jwks_uri`).val(``);
-					$(`#ltitool_login_uri`).val(``);
-					$(`#ltitool_redirect_uri`).val(``);
-					changeTab($(`#ltitoolpainter_tab_byexising`), `new_activity_extras`,`ltitool_byexisting`);
+					$('#ltitool_name').val('');
+					$('#ltitool_description').val('');
+					$('#ltitool_url').val('');
+					$('#ltitool_jwks_uri').val('');
+					$('#ltitool_login_uri').val('');
+					$('#ltitool_redirect_uri').val('');
+					changeTab($('#ltitoolpainter_tab_byexising'), 'new_activity_extras','ltitool_byexisting');
 				});
 			}
 		});
 	},
 
 	deleteSelectedLtiTool: function(){
-		let id = $(`#lti_tool_id`).val();
+		let id = $('#lti_tool_id').val();
 
 		Simva.deleteLtiTool(id, function(error, result){
 			if(error){
 				$.toast({
-					heading: `Error deleting the lti Tool`,
+					heading: 'Error deleting the lti Tool',
 					text: error.message,
-					position: `top-right`,
-					icon: `error`,
+					position: 'top-right',
+					icon: 'error',
 					stack: false
 				});
 			}else{
 				LTIToolPainter.loadToolList(function(){
 					$.toast({
-						heading: `Tool Deleted`,
-						position: `top-right`,
-						icon: `success`,
+						heading: 'Tool Deleted',
+						position: 'top-right',
+						icon: 'success',
 						stack: false
 					});
 				});
@@ -330,6 +330,6 @@ var LTIToolPainter = {
 	}
 }
 
-if(config.lti.enabled == `true`) {
+if(config.lti.enabled == 'true') {
 	PainterFactory.addPainter(LTIToolPainter);
 }

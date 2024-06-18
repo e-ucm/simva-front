@@ -8,8 +8,8 @@ if(!PainterFactory){
 }
 
 var GameplayActivityPainter = {
-	supportedType: `gameplay`,
-	simpleName: `Gameplay activity`,
+	supportedType: 'gameplay',
+	simpleName: 'Gameplay activity',
 
 	utils: {},
 	setUtils: function(utils){
@@ -33,10 +33,10 @@ var GameplayActivityPainter = {
 		activity.name = formdata.name;
 		activity.type = this.supportedType;
 
-		activity.trace_storage = formdata.trace_storage === `on`;
-		activity.realtime = formdata.realtime === `on`;
-		activity.backup = formdata.backup === `on`;
-		if(formdata.game_uri !== ``){
+		activity.trace_storage = formdata.trace_storage === 'on';
+		activity.realtime = formdata.realtime === 'on';
+		activity.backup = formdata.backup === 'on';
+		if(formdata.game_uri !== ''){
 			activity.game_uri = formdata.game_uri;
 		}
 
@@ -105,17 +105,17 @@ var GameplayActivityPainter = {
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
 			<p class="subtitle">${this.simpleName}</p>`;
 
-		activitybox += `<p>`
+		
 		/*
-		activitybox += `Realtime: `;
+		activitybox += 'Realtime: ';
 		if(activity.extra_data.config.realtime){
 			activitybox += `<a href="${this.utils.dashboard_url}${activity.extra_data.analytics.activity._id}${this.utils.dashboard_query}" target="_blank">Dashboard</a>`;
 		}else{
-			activitybox += `<i>Disabled</i>`;
+			activitybox += '<i>Disabled</i>';
 		}
-		activitybox += `<br>`
+		activitybox += '<br>'
 		*/
-		activitybox += `Trace Storage: `
+		activitybox += '<p>Trace Storage: '
 		if(activity.extra_data.config.trace_storage) {
 			activitybox += `<a href="${this.utils.minio_url}minio/${this.utils.minio_bucket}/${this.utils.topics_dir}/${this.utils.trace_topic}/_id=${activity._id}/" target="_blank">Folder</a>
 			/
@@ -126,16 +126,16 @@ var GameplayActivityPainter = {
 				<img src="/ua.png"  width="20" height="20">
 			</a>`;
 		} else {
-			activitybox += `<i>Disabled</i>`;
+			activitybox += '<i>Disabled</i>';
 		}
-		activitybox += `<br>`
-		activitybox += `Backup: `
+		activitybox +='<br>'
+		activitybox += 'Backup: '
 		if(activity.extra_data.config.backup){
 			activitybox += `<a onclick="GameplayActivityPainter.downloadBackup('${activity._id}')"> ⬇️</a>` 
 		} else {
-			activitybox += `<i>Disabled</i>`;
+			activitybox += '<i>Disabled</i>';
 		}
-		activitybox += `</p>`;		
+		activitybox += '</p>';		
 		activitybox += `<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>`
 		if(activity.extra_data.config.backup){
 			activitybox += `<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>`
@@ -146,20 +146,20 @@ var GameplayActivityPainter = {
 	},
 
 	paintActivityParticipantsTable: function(activity, participants){
-		let toret = `<table><tr><th>User</th><th>Completed</th>`;
+		let toret = '<table><tr><th>User</th><th>Completed</th>';
 		if(activity.extra_data.config.realtime){
-			toret += `<th>Progress</th><th>Traces</th>`;
+			toret += '<th>Progress</th><th>Traces</th>';
 		}
-		toret += `<th>Backup</th></tr>`;
+		toret += '<th>Backup</th></tr>';
 
 		for (var i = 0; i < participants.length; i++) {
 			if(!AllocatorFactory.Painters[allocator.type].isAllocatedToActivity(participants[i].username, activity)){
 				continue;
 			}
 
-			toret += `<tr>`;
+			toret += '<tr>';
 
-			if(activity.isOpenable || (activity.extra_data.game_uri && activity.extra_data.game_uri !== ``) ){
+			if(activity.isOpenable || (activity.extra_data.game_uri && activity.extra_data.game_uri !== '') ){
 				toret += `<td><a id="${activity._id}_" ${participants[i].username}_target"class="targeturl" target="_blank" href="">
 				${participants[i].username}</a></td>`;
 			}else{
@@ -172,17 +172,17 @@ var GameplayActivityPainter = {
 				toret += `<td id="progress_${activity._id}_${participants[i].username}" class="progress"><div class="partial"></div><div class="done"></div><span><done>0</done>%</span></td>
 						<td id="traces_${activity._id}_${participants[i].username}">---</td>`;
 			}else{
-				toret += ``
+				toret += ''
 			}
 			
 			if(activity.extra_data.config.backup){
 				toret += `<td id="backup_${activity._id}_${participants[i].username}">---</td></tr>`;
 			}else{
-				toret += `<td><i>Disabled</i></td>`;
+				toret += '<td><i>Disabled</i></td>';
 			}
 		}
 
-		toret += `</table>`;
+		toret += '</table>';
 
 		return toret;
 	},
@@ -198,7 +198,7 @@ var GameplayActivityPainter = {
 			}
 
 			let completion = `<span>${status[usernames[i]]}</span>`
-			$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? `red` : `green`);
+			$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
 			$(`#completion_${activity._id}_${usernames[i]}`).empty();
 			$(`#completion_${activity._id}_${usernames[i]}`).append(completion);
 		}
@@ -209,7 +209,7 @@ var GameplayActivityPainter = {
 			progress = 0;
 		}
 
-		$(`#completion_progress_${activity._id} .done`).css(`width`, `${progress}%` );
+		$(`#completion_progress_${activity._id} .done`).css('width', `${progress}%` );
 		$(`#completion_progress_${activity._id} done`).text(progress);
 	},
 
@@ -220,10 +220,10 @@ var GameplayActivityPainter = {
 
 		for (var i = 0; i < usernames.length; i++) {
 			let status = results[usernames[i]];
-			let traces = `<span>No traces</span>`;
-			let backup = `<span><i>Disabled</i></span>`;
+			let traces = '<span>No traces</span>';
+			let backup = '<span><i>Disabled</i></span>';
 			if(activity.extra_data.config.backup){
-				backup = `<span>No backup</span>`;
+				backup = '<span>No backup</span>';
 			}
 
 			if(status){
@@ -241,16 +241,16 @@ var GameplayActivityPainter = {
 				}
 				/*
 				tmpprogress = (tmpprogress * 1000) / 10;
-				$(`#progress_${activity._id}_${usernames[i]} .done`).css(`width`, `${tmpprogress}%` );
+				$(`#progress_${activity._id}_${usernames[i]} .done`).css('width', `${tmpprogress}%` );
 				$(`#progress_${activity._id}_${usernames[i]} done`).text(tmpprogress);*/
 			}
 
 
-			/*$(`traces_${activity._id}_${usernames[i]}`).addClass(status && status.realtime ? `green` : `red`);
+			/*$(`traces_${activity._id}_${usernames[i]}`).addClass(status && status.realtime ? 'green' : 'red');
 			$(`#traces_${activity._id}_${usernames[i]}`).empty();
 			$(`#traces_${activity._id}_${usernames[i]}`).append(traces);*/
 
-			$(`#backup_${activity._id}_${usernames[i]}`).addClass(status ? `green` : `red`);
+			$(`#backup_${activity._id}_${usernames[i]}`).addClass(status ? 'green' : 'red');
 			$(`#backup_${activity._id}_${usernames[i]}`).empty();
 			$(`#backup_${activity._id}_${usernames[i]}`).append(backup);
 		}
@@ -259,7 +259,7 @@ var GameplayActivityPainter = {
 		if(isNaN(progress)){
 			progress = 0;
 		}
-		$(`#result_progress_${activity._id} .done`).css(`width`, `${progress}%` );
+		$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
 		$(`#result_progress_${activity._id} done`).text(progress);
 
 		/*
@@ -267,7 +267,7 @@ var GameplayActivityPainter = {
 		if(isNaN(partialprogress)){
 			partialprogress = 0;
 		}
-		$(`#result_progress_${activity._id} .partial`).css(`width`, `${partialprogress}%` );
+		$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
 		$(`#result_progress_${activity._id} partial`).text(partialprogress);*/
 	},
 
@@ -277,14 +277,14 @@ var GameplayActivityPainter = {
 		let done = 0, partial = 0;
 		
 		for (var i = 0; i < usernames.length; i++) {
-			$(`#${activity._id}_${usernames[i]}_target`).attr(`href`, results[usernames[i]]);
+			$(`#${activity._id}_${usernames[i]}_target`).attr('href', results[usernames[i]]);
 		}
 	},
 	downloadBackup: function(activity, user){
 		var toastParams = {
-			heading: `Error loading the result`,
-			position: `top-right`,
-			icon: `error`,
+			heading: 'Error loading the result',
+			position: 'top-right',
+			icon: 'error',
 			stack: false
 		};
 		
@@ -310,20 +310,20 @@ var GameplayActivityPainter = {
 		Simva.getActivityResultForUser(activity, user, function(error, result){
 			if(error){
 				$.toast({
-					heading: `Error loading the result`,
+					heading: 'Error loading the result',
 					text: error.message,
-					position: `top-right`,
-					icon: `error`,
+					position: 'top-right',
+					icon: 'error',
 					stack: false
 				});
 			}else{
 
 				let printAnalysisRecursive = function(analysis){
-					let block = `<div>`;
+					let block = '<div>';
 					let keys = Object.keys(analysis);
 
 					for (var i = keys.length - 1; i >= 0; i--) {
-						if(typeof analysis[keys[i]] === `object`){
+						if(typeof analysis[keys[i]] === 'object'){
 							block += `<p>${keys[i]}</p>`;
 							block += printAnalysisRecursive(analysis[keys[i]]);
 						}else{
@@ -331,17 +331,17 @@ var GameplayActivityPainter = {
 						}
 					}
 					
-					block += `</div>`;
+					block += '</div>';
 
 					return block;
 				}
 
 
 				let content = `<link href="/css/style.css" rel="stylesheet" type="text/css"><div style="padding: 20px;" class="analysis">${printAnalysisRecursive(result[user].realtime)}</div>`;
-				let context = $(`#iframe_floating iframe`)[0].contentWindow.document;
-				let body = $(`body`, context);
+				let context = $('#iframe_floating iframe')[0].contentWindow.document;
+				let body = $('body', context);
 				body.html(content);
-				toggleAddForm(`iframe_floating`);
+				toggleAddForm('iframe_floating');
 			}
 		})
 	},
