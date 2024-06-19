@@ -20,23 +20,23 @@ var LTIToolPainter = {
 	},
 
 	getExtraForm: function () {
-		let form = '<div class="tabs">'
-			+ 	'<span id="ltitoolpainter_tab_byexising" class="tab" method="byexisting" onclick="changeTab(this, \'new_activity_extras\',\'ltitool_byexisting\')">Existing Tool</span>'
-			+ 	'<span class="tab" method="bynew" onclick="changeTab(this, \'new_activity_extras\',\'ltitool_bynew\')">New Tool</span>'
-			+ '</div>'
-			+ '<div id="ltitool_byexisting" class="subform">';
+		let form = `<div class="tabs">
+				<span id="ltitoolpainter_tab_byexising" class="tab" method="byexisting" onclick="changeTab(this, \`new_activity_extras\`,\`ltitool_byexisting\`)">Existing Tool</span>
+				<span class="tab" method="bynew" onclick="changeTab(this, \`new_activity_extras\`,\`ltitool_bynew\`)">New Tool</span>
+			</div>
+			<div id="ltitool_byexisting" class="subform">`;
 
-		form += '</div>'
-			+ '<div id="ltitool_bynew" class="subform">'
+		form += `</div>
+			<div id="ltitool_bynew" class="subform">
 
-			+ '<p><label for="ltitool_name">Name</label><input id="ltitool_name" type="text" name="ltitool_name"></p>'
-			+ '<p><label for="ltitool_description">Description</label><input id="ltitool_description" type="text" name="ltitool_description"></p>'
-			+ '<p><label for="ltitool_url">URL</label><input id="ltitool_url" type="text" name="ltitool_url" placeholder="https://lti-tool.test/"></p>'
-			+ '<p><label for="ltitool_jwks_uri">JWKS URI</label><input id="ltitool_jwks_uri" type="text" name="ltitool_jwks_uri" placeholder=".../.well-known/jwks.json"></p>'
-			+ '<p><label for="ltitool_login_uri">Login URI</label><input id="ltitool_login_uri" type="text" name="ltitool_login_uri" placeholder=".../oidc/init"></p>'
-			+ '<p><label for="ltitool_redirect_uri">Redirect URI</label><input id="ltitool_redirect_uri" type="text" name="ltitool_redirect_uri" placeholder=".../launch"></p>'
-			+ '<p><a class="button green" onclick="LTIToolPainter.addLtiTool()">AddTool</a></p>'
-			+ '</div>'
+			<p><label for="ltitool_name">Name</label><input id="ltitool_name" type="text" name="ltitool_name"></p>
+			<p><label for="ltitool_description">Description</label><input id="ltitool_description" type="text" name="ltitool_description"></p>
+			<p><label for="ltitool_url">URL</label><input id="ltitool_url" type="text" name="ltitool_url" placeholder="https://lti-tool.test/"></p>
+			<p><label for="ltitool_jwks_uri">JWKS URI</label><input id="ltitool_jwks_uri" type="text" name="ltitool_jwks_uri" placeholder=".../.well-known/jwks.json"></p>
+			<p><label for="ltitool_login_uri">Login URI</label><input id="ltitool_login_uri" type="text" name="ltitool_login_uri" placeholder=".../oidc/init"></p>
+			<p><label for="ltitool_redirect_uri">Redirect URI</label><input id="ltitool_redirect_uri" type="text" name="ltitool_redirect_uri" placeholder=".../launch"></p>
+			<p><a class="button green" onclick="LTIToolPainter.addLtiTool()">AddTool</a></p>
+			</div>`
 
 		this.loadToolList(function(){});
 
@@ -53,7 +53,7 @@ var LTIToolPainter = {
 			if(this.tools.length > 0){
 				form += '<select id="lti_tool_id" name="existingid" style="width: 87%">';
 				for (var i = 0; i < this.tools.length; i++) {
-					form += '<option value="' + this.tools[i]._id + '"> ' + this.tools[i].name + '</option>';
+					form += `<option value="${this.tools[i]._id}">${this.tools[i].name}</option>`;
 				}
 
 				form += '</select><a style="width: 10%" class="button red" onclick="LTIToolPainter.deleteSelectedLtiTool()">X</a>';
@@ -132,24 +132,28 @@ var LTIToolPainter = {
 			}
 		}
 
-		$('#test_' + activity.test + ' .activities').append('<div id="activity_' + activity._id + '" class="activity t' + activity.type + '">'
-			+ '<div class="top"><h4>' + activity.name + '</h4>'
-			+ '<input class="red" type="button" value="X" onclick="deleteActivity(\'' + activity._id + '\')"></div>'
-			+ '<p class="subtitle">' + this.simpleName + '</p>'
-			+ '<p>Tool ClientID: ' + tool.client_id + '</p>'
-			+ '<div id="completion_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>'
-			+ '<div id="result_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>'
-			+ this.paintActivityParticipantsTable(activity, participants) + '</div>');
+		$(`#test_${activity.test} .activities`).append(`<div id="activity_${activity._id}" class="activity t${activity.type}">
+			<div class="top"><h4>${activity.name}</h4>
+			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
+			<p class="subtitle">${this.simpleName}</p>
+			<p>Tool ClientID: ${tool.client_id}</p>
+			<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>
+			<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>
+			${this.paintActivityParticipantsTable(activity, participants)}</div>`);
 	},
 
 	paintActivityParticipantsTable: function(activity, participants){
 		let toret = '<table><tr><th>User</th><th>Completed</th><th>Result</th></tr>';
 
 		for (var i = 0; i < participants.length; i++) {
-			toret += '<tr><td><a id="' + activity._id + "_" + participants[i].username + '_target"class="targeturl" target="_blank" href="">'
-				+ participants[i].username + '</a></td>'
-				+ '<td id="completion_' + activity._id + '_' + participants[i].username + '">---</td>'
-				+ '<td id="result_' + activity._id + '_' + participants[i].username + '">---</td>';
+			if(!AllocatorFactory.Painters[allocator.type].isAllocatedToActivity(participants[i].username, activity)){
+				continue;
+			}
+			
+			toret += `<tr><td><a id="${activity._id}_${participants[i].username}_target"class="targeturl" 
+			target="_blank" href="">${participants[i].username}</a></td>
+			<td id="completion_${activity._id}_${participants[i].username}">---</td>
+			<td id="result_${activity._id}_${participants[i].username}">---</td>`;
 		}
 
 		toret += '</table>';
@@ -167,11 +171,11 @@ var LTIToolPainter = {
 				done++;
 			}
 
-			let completion = '<span>' + status[usernames[i]] + '</span>'
-			$('#completion_' + activity._id + '_' + usernames[i]).removeClass();
-			$('#completion_' + activity._id + '_' + usernames[i]).addClass(!status[usernames[i]] ? 'red' : 'green');
-			$('#completion_' + activity._id + '_' + usernames[i]).empty();
-			$('#completion_' + activity._id + '_' + usernames[i]).append(completion);
+			let completion = `<span>${status[usernames[i]]}</span>`
+			$(`#completion_${activity._id}_${usernames[i]}`).removeClass();
+			$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
+			$(`#completion_${activity._id}_${usernames[i]}`).empty();
+			$(`#completion_${activity._id}_${usernames[i]}`).append(completion);
 		}
 
 		let progress = Math.round((done / usernames.length) * 1000) / 10; 
@@ -180,8 +184,8 @@ var LTIToolPainter = {
 			progress = 0;
 		}
 
-		$('#completion_progress_' + activity._id + ' .done').css('width', progress + '%' );
-		$('#completion_progress_' + activity._id + ' done').text(progress);
+		$(`#completion_progress_${activity._id} .done`).css('width', `${progress}%` );
+		$(`#completion_progress_${activity._id} done`).text(progress);
 	},
 
 	paintActivityResult: function(activity, results){
@@ -205,14 +209,14 @@ var LTIToolPainter = {
 					state = 'Started';
 				}
 
-				state ='<a onclick="LimeSurveyPainter.openResults(\'' + activity._id + '\',\'' + usernames[i] + '\')">' + state + '</a>';
+				state =`<a onclick="LTIToolPainter.openResults('${activity._id}','${usernames[i]}')">${state}</a>`
 			}
 
-			let completion = '<span>' + state + '</span>'
-			$('#result_' + activity._id + '_' + usernames[i]).removeClass();
-			$('#result_' + activity._id + '_' + usernames[i]).addClass(color);
-			$('#result_' + activity._id + '_' + usernames[i]).empty();
-			$('#result_' + activity._id + '_' + usernames[i]).append(completion);
+			let completion = `<span>${state}</span>`
+			$(`#result_${activity._id}_${usernames[i]}`).removeClass();
+			$(`#result_${activity._id}_${usernames[i]}`).addClass(color);
+			$(`#result_${activity._id}_${usernames[i]}`).empty();
+			$(`#result_${activity._id}_${usernames[i]}`).append(completion);
 		}
 
 		let progress = Math.round((done / usernames.length) * 1000) / 10; 
@@ -225,10 +229,10 @@ var LTIToolPainter = {
 			partialprogress = 0;
 		}
 
-		$('#result_progress_' + activity._id + ' .done').css('width', progress + '%' );
-		$('#result_progress_' + activity._id + ' .partial').css('width', partialprogress + '%' );
-		$('#result_progress_' + activity._id + ' done').text(progress);
-		$('#result_progress_' + activity._id + ' partial').text(partialprogress);
+		$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
+		$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
+		$(`#result_progress_${activity._id} done`).text(progress);
+		$(`#result_progress_${activity._id} partial`).text(partialprogress);
 	},
 
 	paintActivityTargets: function(activity, results){
@@ -237,7 +241,7 @@ var LTIToolPainter = {
 		let done = 0, partial = 0;
 		
 		for (var i = 0; i < usernames.length; i++) {
-			$('#' + activity._id + '_' + usernames[i] + '_target').attr('href', results[usernames[i]]);
+			$(`#${activity._id}_${usernames[i]}_target`).attr('href', results[usernames[i]]);
 		}
 	},
 
@@ -252,7 +256,7 @@ var LTIToolPainter = {
 					stack: false
 				});
 			}else{
-				let content = '<div style="padding: 20px;">' + JSON.stringify(result[user], null, 2) + '</div>';
+				let content = `<div style="padding: 20px;">${JSON.stringify(result[user], null, 2)}</div>`;
 				let context = $('#iframe_floating iframe')[0].contentWindow.document;
 				let body = $('body', context);
 				body.html(content);
@@ -326,4 +330,6 @@ var LTIToolPainter = {
 	}
 }
 
-PainterFactory.addPainter(LTIToolPainter);
+if(config.lti.enabled == 'true') {
+	PainterFactory.addPainter(LTIToolPainter);
+}

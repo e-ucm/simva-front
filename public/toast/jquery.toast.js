@@ -57,18 +57,18 @@ if ( typeof Object.create !== 'function' ) {
             if ( this.options.text instanceof Array ) {
 
                 if ( this.options.heading ) {
-                    _toastContent +='<h2 class="jq-toast-heading">' + this.options.heading + '</h2>';
+                    _toastContent +=`<h2 class="jq-toast-heading">${this.options.heading}</h2>`;
                 };
 
                 _toastContent += '<ul class="jq-toast-ul">';
                 for (var i = 0; i < this.options.text.length; i++) {
-                    _toastContent += '<li class="jq-toast-li" id="jq-toast-item-' + i + '">' + this.options.text[i] + '</li>';
+                    _toastContent += `<li class="jq-toast-li" id="jq-toast-item-${i}">${this.options.text[i]}</li>`;
                 }
                 _toastContent += '</ul>';
 
             } else {
                 if ( this.options.heading ) {
-                    _toastContent +='<h2 class="jq-toast-heading">' + this.options.heading + '</h2>';
+                    _toastContent +=`<h2 class="jq-toast-heading">${this.options.heading}</h2>`;
                 };
                 _toastContent += this.options.text;
             }
@@ -91,7 +91,7 @@ if ( typeof Object.create !== 'function' ) {
                 this._toastEl.addClass('jq-has-icon');
 
                 if ( $.inArray(this.options.icon, this._defaultIcons) !== -1 ) {
-                    this._toastEl.addClass('jq-icon-' + this.options.icon);
+                    this._toastEl.addClass(`jq-icon-${this.options.icon}`);
                 };
             };
 
@@ -245,16 +245,16 @@ if ( typeof Object.create !== 'function' ) {
 
             // 400 is the default time that jquery uses for fade/slide
             // Divide by 1000 for milliseconds to seconds conversion
-            var transitionTime = (this.options.hideAfter - 400) / 1000 + 's';
+            var transitionTime = `${(this.options.hideAfter - 400) / 1000}s`;
             var loaderBg = this.options.loaderBg;
 
             var style = loader.attr('style') || '';
             style = style.substring(0, style.indexOf('-webkit-transition')); // Remove the last transition definition
 
-            style += '-webkit-transition: width ' + transitionTime + ' ease-in; \
-                      -o-transition: width ' + transitionTime + ' ease-in; \
-                      transition: width ' + transitionTime + ' ease-in; \
-                      background-color: ' + loaderBg + ';';
+            style += `-webkit-transition: width ${transitionTime} ease-in;
+                      -o-transition: width ${transitionTime} ease-in;
+                      transition: width ${transitionTime} ease-in;
+                      background-color: ${loaderBg};`;
 
 
             loader.attr('style', style).addClass('jq-toast-loaded');

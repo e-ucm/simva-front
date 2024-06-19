@@ -22,22 +22,22 @@ var LimeSurveyPainter = {
 	},
 
 	getExtraForm: function () {
-		let form = '<div class="tabs">'
-			+ 	'<span class="tab selected" method="byid" onclick="changeTab(this, \'new_activity_extras\',\'limesurvey_byid\')">Survey ID</span>'
-			+ 	'<span class="tab" method="byexisting" onclick="changeTab(this, \'new_activity_extras\',\'limesurvey_byexisting\')">Existing Survey</span>'
-			+ 	'<span class="tab" method="bynew" onclick="changeTab(this, \'new_activity_extras\',\'limesurvey_bynew\')">New Survey</span>'
-			+ 	'<span class="tab" method="byupload" onclick="changeTab(this, \'new_activity_extras\',\'limesurvey_byupload\')">Upload LSS</span>'
-			+ '</div>'
-			+ '<div id="limesurvey_byid" class="subform selected">'
-			+ 	'<p>Survey ID:</p>'
-			+ 	'<input type="number" name="surveyid" placeholder="Survey ID">'
-			+ '</div>'
-			+ '<div id="limesurvey_byexisting" class="subform">';
+		let form = `<div class="tabs">
+			<span class="tab selected" method="byid" onclick="changeTab(this, 'new_activity_extras','limesurvey_byid')">Survey ID</span>
+			<span class="tab" method="byexisting" onclick="changeTab(this,'new_activity_extras','limesurvey_byexisting')">Existing Survey</span>
+			<span class="tab" method="bynew" onclick="changeTab(this, 'new_activity_extras','limesurvey_bynew')">New Survey</span>
+			<span class="tab" method="byupload" onclick="changeTab(this, 'new_activity_extras','limesurvey_byupload')">Upload LSS</span>
+			</div>
+			<div id="limesurvey_byid" class="subform selected">
+			<p>Survey ID:</p>
+			<input type="number" name="surveyid" placeholder="Survey ID">
+			</div>
+			<div id="limesurvey_byexisting" class="subform">`;
 
 		if(this.utils.surveys.length > 0){
 			form += '<select name="existingid">';
 			for (var i = 0; i < this.utils.surveys.length; i++) {
-				form += '<option value="' + this.utils.surveys[i].sid + '"> ' + this.utils.surveys[i].surveyls_title + '</option>';
+				form += `<option value="${this.utils.surveys[i].sid}">${this.utils.surveys[i].surveyls_title}</option>`;
 			}
 
 			form += '</select>';
@@ -45,18 +45,15 @@ var LimeSurveyPainter = {
 			form += '<p>You don\'t have surveys.</p>'
 		}
 
-
-
-		form += '</div>'
-			+ '<div id="limesurvey_bynew" class="subform">'
-			+ 	'<p>Click to open LimeSurvey</p>'
-			+ 	'<p><a class="button green" onclick="LimeSurveyPainter.openLimesurvey()">LimeSurvey</a></p>'
-			+ '</div>'
-			+ '<div id="limesurvey_byupload" class="subform">'
-			+ 	'<p>Select LLS file</p>'
-			+ 	'<input type="file" name="lss" placeholder="Activity name">'
-			+ '</div>'
-
+		form += `</div>
+			<div id="limesurvey_bynew" class="subform">
+				<p>Click to open LimeSurvey</p>
+				<p><a class="button green" onclick="LimeSurveyPainter.openLimesurvey()">LimeSurvey</a></p>
+			</div>
+			<div id="limesurvey_byupload" class="subform">
+				<p>Select LLS file</p>
+				<input type="file" name="lss" placeholder="Activity name">
+			</div>`
 
 		return form;
 	},
@@ -73,7 +70,7 @@ var LimeSurveyPainter = {
 				toastParams.text = error.message;
 				$.toast(toastParams);
 			}else{
-				var filename = activity + ".json";
+				var filename = `${activity}.json`;
 				Utils.download(filename, JSON.stringify(result));
 			}
 		});
@@ -141,10 +138,10 @@ var LimeSurveyPainter = {
 			tmp.paintActivityCompletion(activity, result);
 		});
 
-		/*Simva.getActivityResult(activity._id, function(error, result){
+		Simva.getActivityResult(activity._id, function(error, result){
 			activity.tmp.result = result;
 			tmp.paintActivityResult(activity, result);
-		});*/
+		});
 
 		Simva.getActivityTarget(activity._id, function(error, result){
 			activity.tmp.result = result;
@@ -153,25 +150,29 @@ var LimeSurveyPainter = {
 	},
 
 	paintActivity: function(activity, participants){
-		$('#test_' + activity.test + ' .activities').append('<div id="activity_' + activity._id + '" class="activity t' + activity.type + '">'
-			+ '<div class="top"><h4>' + activity.name + '</h4>'
-			+ '<input class="red" type="button" value="X" onclick="deleteActivity(\'' + activity._id + '\')"></div>'
-			+ '<p class="subtitle">' + this.simpleName + '</p>'
-			+ '<p>Survey ID: <a target="_blank" href="' + this.utils.url + activity.extra_data.surveyId + '">' + activity.extra_data.surveyId + '</a>'
-			+ '<a onclick="LimeSurveyPainter.downloadBackup(\'' + activity._id + '\')"> ⬇️</a></p>'
-			+ '<div id="completion_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>'
-			+ '<div id="result_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>'
-			+ this.paintActivityParticipantsTable(activity, participants) + '</div>');
+		$(`#test_${activity.test} .activities`).append(`<div id="activity_${activity._id}" class="activity t${activity.type}">
+			<div class="top"><h4>${activity.name}</h4>
+			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
+			<p class="subtitle">${this.simpleName}</p>
+			<p>Survey ID: <a target="_blank" href="${this.utils.url}${activity.extra_data.surveyId}">${activity.extra_data.surveyId}</a>
+			<a onclick="LimeSurveyPainter.downloadBackup('${activity._id}')"> ⬇️</a></p>
+			<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>
+			<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>
+			${this.paintActivityParticipantsTable(activity, participants)}</div>`);
 	},
 
 	paintActivityParticipantsTable: function(activity, participants){
 		let toret = '<table><tr><th>User</th><th>Completed</th><th>Result</th></tr>';
 
 		for (var i = 0; i < participants.length; i++) {
-			toret += '<tr><td><a id="' + activity._id + "_" + participants[i].username + '_target"class="targeturl" target="_blank" href="">'
-				+ participants[i].username + '</a></td>'
-				+ '<td id="completion_' + activity._id + '_' + participants[i].username + '">---</td>'
-				+ '<td id="result_' + activity._id + '_' + participants[i].username + '">---</td>';
+			if(!AllocatorFactory.Painters[allocator.type].isAllocatedToActivity(participants[i].username, activity)){
+				continue;
+			}
+			
+			toret += `<tr><td><a id="${activity._id}_${participants[i].username}_target" class="targeturl" target="_blank" 
+			href="">${participants[i].username}</a></td>
+				<td id="completion_${activity._id}_${participants[i].username}">---</td>
+				<td id="result_${activity._id}_${participants[i].username}">---</td>`;
 		}
 
 		toret += '</table>';
@@ -189,11 +190,11 @@ var LimeSurveyPainter = {
 				done++;
 			}
 
-			let completion = '<span>' + status[usernames[i]] + '</span>'
-			$('#completion_' + activity._id + '_' + usernames[i]).removeClass();
-			$('#completion_' + activity._id + '_' + usernames[i]).addClass(!status[usernames[i]] ? 'red' : 'green');
-			$('#completion_' + activity._id + '_' + usernames[i]).empty();
-			$('#completion_' + activity._id + '_' + usernames[i]).append(completion);
+			let completion = `<span>${status[usernames[i]]}</span>`
+			$(`#completion_${activity._id}_${usernames[i]}`).removeClass();
+			$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
+			$(`#completion_${activity._id}_${usernames[i]}`).empty();
+			$(`#completion_${activity._id}_${usernames[i]}`).append(completion);
 		}
 
 		let progress = Math.round((done / usernames.length) * 1000) / 10; 
@@ -202,8 +203,8 @@ var LimeSurveyPainter = {
 			progress = 0;
 		}
 
-		$('#completion_progress_' + activity._id + ' .done').css('width', progress + '%' );
-		$('#completion_progress_' + activity._id + ' done').text(progress);
+		$(`#completion_progress_${activity._id} .done`).css('width', `${progress}%` );
+		$(`#completion_progress_${activity._id} done`).text(progress);
 	},
 
 	paintActivityResult: function(activity, results){
@@ -227,14 +228,14 @@ var LimeSurveyPainter = {
 					state = 'Started';
 				}
 
-				state ='<a onclick="LimeSurveyPainter.openResults(\'' + activity._id + '\',\'' + usernames[i] + '\')">' + state + '</a>';
+				state =`<a onclick="LimeSurveyPainter.openResults('${activity._id}','${usernames[i]}')">${state}</a>`;
 			}
 
-			let completion = '<span>' + state + '</span>'
-			$('#result_' + activity._id + '_' + usernames[i]).removeClass();
-			$('#result_' + activity._id + '_' + usernames[i]).addClass(color);
-			$('#result_' + activity._id + '_' + usernames[i]).empty();
-			$('#result_' + activity._id + '_' + usernames[i]).append(completion);
+			let completion = '<span>${state}</span>'
+			$(`#result_${activity._id}_${usernames[i]}`).removeClass();
+			$(`#result_${activity._id}_${usernames[i]}`).addClass(color);
+			$(`#result_${activity._id}_${usernames[i]}`).empty();
+			$(`#result_${activity._id}_${usernames[i]}`).append(completion);
 		}
 
 		let progress = Math.round((done / usernames.length) * 1000) / 10; 
@@ -247,10 +248,10 @@ var LimeSurveyPainter = {
 			partialprogress = 0;
 		}
 
-		$('#result_progress_' + activity._id + ' .done').css('width', progress + '%' );
-		$('#result_progress_' + activity._id + ' .partial').css('width', partialprogress + '%' );
-		$('#result_progress_' + activity._id + ' done').text(progress);
-		$('#result_progress_' + activity._id + ' partial').text(partialprogress);
+		$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
+		$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
+		$(`#result_progress_${activity._id} done`).text(progress);
+		$(`#result_progress_${activity._id} partial`).text(partialprogress);
 	},
 
 	paintActivityTargets: function(activity, results){
@@ -259,12 +260,12 @@ var LimeSurveyPainter = {
 		let done = 0, partial = 0;
 		
 		for (var i = 0; i < usernames.length; i++) {
-			$('#' + activity._id + '_' + usernames[i] + '_target').attr('href', results[usernames[i]]);
+			$(`#${activity._id}_${usernames[i]}_target`).attr('href', results[usernames[i]]);
 		}
 	},
 
 	openLimesurvey: function(){
-		$('#iframe_floating iframe').prop('src', this.limesurveyurl + '/admin/survey/sa/newsurvey');
+		$('#iframe_floating iframe').prop('src', `${this.limesurveyurl}/admin/survey/sa/newsurvey`);
 		toggleAddForm('iframe_floating');
 	},
 
@@ -279,7 +280,7 @@ var LimeSurveyPainter = {
 					stack: false
 				});
 			}else{
-				let content = '<div style="padding: 20px;">' + JSON.stringify(result[user], null, 2) + '</div>';
+				let content = `<div style="padding: 20px;">${JSON.stringify(result[user], null, 2)}</div>`;
 				let context = $('#iframe_floating iframe')[0].contentWindow.document;
 				let body = $('body', context);
 				body.html(content);

@@ -21,8 +21,9 @@ module.exports = function(auth, config){
     publicClient: config.sso.publicClient,
     clientSecret: config.sso.clientSecret,
     sslRequired: config.sso.sslRequired,
-    authServerURL: config.sso.authUrl,
-    callbackURL: config.simva.url + '/users/openid/return'
+    scope: "openid profile email roles",
+    authServerURL: config.sso.url,
+    callbackURL: `${config.simva.url}/users/openid/return`
   }
 
   console.log('--- SSO CONFIG ---');
@@ -48,71 +49,31 @@ module.exports = function(auth, config){
   router.get('/', auth, function(req, res, next) {
     res.redirect('../');
   });
-
+  
   router.get('/login', function(req, res, next) {
-    if(req.query.jwt){
-      let user = {};
-      let simvaToken = req.query.jwt;
-      let profile = usertools.getProfileFromJWT(simvaToken);
-      user.data = profile;
-      user.jwt = simvaToken;
-      usertools.setUser(req, user);
-
-      if(req.query.next){
-        res.redirect(req.query.next + '?jwt=' + req.query.jwt);
-      }else{
-        res.status(200).send({'message': 'ok'});
-      }
-    }else{
-      if(req.session.user){
-        return res.redirect('../');
-      }
       res.render('users_login', { config: config });
-    }
   });
 
-  router.post('/login', function(req, res, next) {
+  router.get('/role_selection', auth, function(req, res, next) {
+    res.render('users_role_edit', { config: config, user: req.session.user });
+  });
 
-    if(req.session.user){
-      return res.redirect('../');
-    }
-
-    request.post({
-      url: config.api.url + '/users/login',
-      json: true,
-      body: req.body
-      },
-      function(error, response, body){
-        if(!error){
-          console.log(response);
-          if(response.statusCode !== 200){
-            res.status(response.statusCode).send(body);
-          }else{
-            let user = {};
-            let simvaToken = body.token;
-            let profile = usertools.getProfileFromJWT(simvaToken);
-            user.data = profile;
-            user.jwt = simvaToken;
-            usertools.setUser(req, user);
-            res.status(200).send({'message': 'ok'});
-          }
-        } else {
-          console.log(error);
-          res.status(500).send({message:"Unexpected error"});
-        }
-      }
-    );
+  
+  router.get('/contact_admin', auth, function(req, res, next) {
+    res.render('users_contact_admin', { config: config, user: req.session.user , error : req.query.error });
   });
 
   router.get('/openid', passport.authenticate('openid'));
 
   router.get('/openid/return', function (req, res, next) {
     passport.authenticate('openid', { failureRedirect: '/users/login' }, function(err, user) {
+      console.log('/openid/return: USER');
+      
       if(err){
         return res.redirect('../login');
       }
-
       usertools.setUser(req, user);
+      console.log(user);
       res.redirect('/');
     })(req, res, next);
   });
@@ -120,12 +81,13 @@ module.exports = function(auth, config){
   router.get('/logout', auth, function(req, res, next){
 
     if(req.session.user.refreshToken){
-      request.post({
-        url: config.sso.authUrl + '/realms/' + config.sso.realm + '/protocol/openid-connect/logout',
-        headers: {
-          'Authorization': 'Basic ' + Buffer.from(config.sso.clientId + ':' + config.sso.clientSecret).toString('base64'),
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
+      clientConfig= `${config.sso.clientId}:${config.sso.clientSecret}`
+			request.post({
+				url: `${config.sso.url}/realms/${config.sso.realm}/protocol/openid-connect/logout`,
+				headers: {
+					'Authorization': `Basic ${Buffer.from(clientConfig).toString('base64')}`,
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
         body: querystring.stringify({
           'grant_type': 'refresh_token',
           'refresh_token': req.session.user.refreshToken
@@ -144,12 +106,14 @@ module.exports = function(auth, config){
     }
   });
 
-  router.get('/register', function(req, res, next) {
-    if(req.session.user){
-      return res.redirect('../');
-    }
-
-    res.render('users_register', { config: config });
+  router.get('/refresh_auth', auth, function (req, res, next) {
+    usertools.refreshAuth(req, config, function(error, result){
+      if(!error){
+        res.send(result);
+      }else{
+        res.status(error.status).send(error.data);
+      }
+    });
   });
 
   return router;

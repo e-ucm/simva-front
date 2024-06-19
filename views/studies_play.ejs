@@ -1,6 +1,6 @@
 <%# views/studies_list.ejs %>
  
-<% extend('layout') %>
+<% extend('layout_with_menu') %>
 
 <script type="text/javascript">
 	$(document).ready(function() {
@@ -44,15 +44,15 @@
 				$('#studies_list').append(toCard(studies[i]));
 			}
 		}else{
-			$('#studies_list').text('You have not studies jet. Create one using the bottom right (+) button.');
+			$('#studies_list').text('You have no studies yet. Create one using the bottom right (+) button.');
 		}
 	}
 
 	let toCard = function(study){
-		return '<a href="/scheduler/' + study._id + '"><div class="selectable card third">'
-			+ '<h1>Study: ' + study.name + '</h1>'
-			+ '<p>Click here to start or continue your session in the study.</p>'
-			+ '</div></a>';
+		return `<a href="/scheduler/${study._id}"><div class="selectable card third">
+			<h1>Study: ${study.name}</h1>
+			<p>Click here to start or continue your session in the study.</p>
+			</div></a>`;
 	}
 </script>
 <h1>Studies</h1>

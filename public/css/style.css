@@ -8,6 +8,7 @@ a,img,input,select,textarea,fieldset{border:0;outline:0; font-family: sans-serif
 textarea{resize:none}
 img{border:0;user-drag:none;-moz-user-drag:none;-webkit-user-drag:none;user-select:none;-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none}
 hr{margin:10px 0 0;border:1px solid #000}
+thead {display: table-header-group;}
 
 input[type="text"],
 input[type="email"],
@@ -211,7 +212,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .content .left .groups table td,
 .content .left .lti_platforms table td,
 .content .left .owners table td,
-.content .left .allocator.default .allocations td { width: 50%; }
+.content .left .allocator.default .allocations td { width: 50%; white-space: normal; word-wrap: break-word; word-break: break-all;}
 .content .left .groups table td select,
 .content .left .lti_platforms table td select,
 .content .left .owners table td select,
@@ -241,10 +242,36 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .content .participants table input[type="button"] {width: 100%;}
 .content .participants table img {width: 30px;}
 
+.content #pdf_printable {display: none;}
+.content #pdf_printable {padding:10px}
+.content #pdf_printable table {width: 100%; position: relative; font-size: 26px; font-family: "DejaVu Sans Mono"; border: solid 2px black; border-collapse: collapse; }
+.content #pdf_printable table td {border: solid 2px black; text-align: center;}
+
+
+@page {
+	size: A4;
+	margin: 4mm 4mm 4mm 4mm;
+}
+
+@media print {
+    .content #pdf_printable {display: block;}
+    .content #group_view,
+    .header,
+    .menu {display: none;}
+    body {background-color: white;}
+    .content {
+		padding: 0px;
+		width: 210mm;
+		height: 297mm;
+	}
+    .floating_buttons {display: none;}
+	thead {display: table-header-group;}
+}
+
 .content .test { background-color: lightgray; padding: 10px; margin-top: 10px; box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3);}
 .content .test .activities {overflow-x: auto; white-space: nowrap; padding-bottom: 10px; }
-.content .test .activities table {display: block; overflow: hidden; }
-.content .test .activities.collapsed table { height: 0px; }
+.content .test .activities table {display: table; overflow: hidden; }
+.content .test .activities.collapsed table { display: none;}
 .content .test .activities .activity { background-color: gray; width: 250px; padding: 10px; margin-top: 10px; box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3); display: inline-block; margin-right: 10px;}
 
 .content .test .activities .activity.tactivity { background-color: gray; }
@@ -291,22 +318,24 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .content .test .activities .activity .subtitle { font-style: italic; font-size: 14px; width: 100%; white-space: normal; margin: 0px; padding: 0px;}
 
 .content .test .activities .activity table { width: 100%; font-size: 14px; border-collapse: collapse; }
-.content .test .activities .activity table tr:nth-child(even) {background: #c5c5c5}
-.content .test .activities .activity table tr:nth-child(odd) {background: #a5a5a5}
-.content .test .activities .activity table td,
-.content .test .activities .activity table th { border: solid 2px black; }
-.content .test .activities .activity table tr th {padding: 5px; }
-.content .test .activities .activity table tr td {padding: 5px; width: 33.33%; text-align: center;}
-.content .test .activities .activity table tr td.red { background-color: #ff9696; }
-.content .test .activities .activity table tr td.green { background-color: #adffad; }
-.content .test .activities .activity table tr td.yellow { background-color: #fff688; }
-.content .test .activities .activity table tr td .red { color: #b70000; }
-.content .test .activities .activity table tr td .green { color: #008800; }
-.content .test .activities .activity table tr td .yellow { color: #fff145; }
+.content .test .activities .activity table tbody { width: 100%; }
+.content .test .activities .activity table tbody tr:nth-child(even) {background: #c5c5c5}
+.content .test .activities .activity table tbody tr:nth-child(odd) {background: #a5a5a5}
+.content .test .activities .activity table tbody tr { width: 100%; }
+.content .test .activities .activity table tbody tr td,
+.content .test .activities .activity table tbody tr th { border: solid 2px black; }
+.content .test .activities .activity table tbody tr th {padding: 5px; }
+.content .test .activities .activity table tbody tr td {padding: 5px; width: 33.33%; text-align: center;}
+.content .test .activities .activity table tbody tr td.red { background-color: #ff9696; }
+.content .test .activities .activity table tbody tr td.green { background-color: #adffad; }
+.content .test .activities .activity table tbody tr td.yellow { background-color: #fff688; }
+.content .test .activities .activity table tbody tr td .red { color: #b70000; }
+.content .test .activities .activity table tbody tr td .green { color: #008800; }
+.content .test .activities .activity table tbody tr td .yellow { color: #fff145; }
 
-.content .test .activities .activity table tr td.progress,
-.content .test .activities .activity table tr td.progress div.done, 
-.content .test .activities .activity table tr td.progress div.partial {height: 28px;}
+.content .test .activities .activity table tbody tr td.progress,
+.content .test .activities .activity table tbody tr td.progress div.done, 
+.content .test .activities .activity table tbody tr td.progress div.partial {height: 28px;}
 
 .content .test .activities .activity .progress { position: relative; width: 100%; background-color: #ff9696; height: 30px; border: 2px solid black; overflow: hidden; margin-bottom: 10px; z-index: 0; padding: 0px;}
 .content .test .activities .activity .progress div.done {height: 30px; float: left; position: absolute; background-color: #adffad; top: 0px; left: 0px; }

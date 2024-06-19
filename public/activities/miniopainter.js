@@ -56,25 +56,28 @@ var ActivityPainter = {
 	},
 
 	paintActivity: function(activity, participants){
-		$('#test_' + activity.test + ' .activities').append('<div id="activity_' + activity._id + '" class="activity t' + activity.type + '">'
-			+ '<div class="top"><h4>' + activity.name + '</h4>'
-			+ '<input class="red" type="button" value="X" onclick="deleteActivity(\'' + activity._id + '\')"></div>'
-			+ '<p class="subtitle">' + this.simpleName + '</p>'
-			+ '<p>Minio: <a href="' + this.utils.minio_url
-			+ this.utils.minio_bucket + '/topics/' + this.utils.kafka_topic + '/_id=' + activity._id + '/'
-			+ '" target="_blank">Open minio</a></p>'
-			+ '<div id="completion_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>'
-			+ '<div id="result_progress_' + activity._id + '" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>'
-			+ this.paintActivityParticipantsTable(activity, participants) + '</div>');
+		$(`#test_${activity.test} .activities`).append(`<div id="activity_${activity._id}" class="activity t${activity.type}">
+			<div class="top"><h4>${activity.name}</h4>
+			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
+			<p class="subtitle">${this.simpleName}</p>
+			<p>Minio: <a href="${this.utils.minio_url}${this.utils.minio_bucket}/${this.utils.topics_dir}/${this.utils.trace_topic}/_id=${activity._id}/
+			" target="_blank">Open minio</a></p>
+			<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>
+			<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>
+			${this.paintActivityParticipantsTable(activity, participants)}</div>`);
 	},
 
 	paintActivityParticipantsTable: function(activity, participants){
 		let toret = '<table><tr><th>User</th><th>Completed</th><th>Result</th></tr>';
 
 		for (var i = 0; i < participants.length; i++) {
-			toret += '<tr><td>' + participants[i].username + '</td>'
-				+ '<td id="completion_' + activity._id + '_' + participants[i].username + '">---</td>'
-				+ '<td id="result_' + activity._id + '_' + participants[i].username + '">---</td>';
+			if(!AllocatorFactory.Painters[allocator.type].isAllocatedToActivity(participants[i].username, activity)){
+				continue;
+			}
+			
+			toret += `<tr><td>${participants[i].username}</td>
+				<td id="completion_${activity._id}_${participants[i].username}">---</td>
+				<td id="result_${activity._id}_${participants[i].username}">---</td>`;
 		}
 
 		toret += '</table>';
@@ -92,10 +95,10 @@ var ActivityPainter = {
 				done++;
 			}
 
-			let completion = '<span>' + status[usernames[i]] + '</span>'
-			$('#completion_' + activity._id + '_' + usernames[i]).addClass(!status[usernames[i]] ? 'red' : 'green');
-			$('#completion_' + activity._id + '_' + usernames[i]).empty();
-			$('#completion_' + activity._id + '_' + usernames[i]).append(completion);
+			let completion = `<span>${status[usernames[i]]}</span>`
+			$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
+			$(`#completion_${activity._id}_${usernames[i]}`).empty();
+			$(`#completion_${activity._id}_${usernames[i]}`).append(completion);
 		}
 
 		let progress = Math.round((done / usernames.length) * 1000) / 10; 
@@ -104,8 +107,8 @@ var ActivityPainter = {
 			progress = 0;
 		}
 
-		$('#completion_progress_' + activity._id + ' .done').css('width', progress + '%' );
-		$('#completion_progress_' + activity._id + ' done').text(progress);
+		$(`#completion_progress_${activity._id} .done`).css('width', `${progress}%` );
+		$(`#completion_progress_${activity._id} done`).text(progress);
 	},
 
 	paintActivityResult: function(activity, results){
@@ -119,14 +122,13 @@ var ActivityPainter = {
 
 			if(status){
 				done++;
-				result = '<span><a onclick="ActivityPainter.openResults(\'' + activity._id + '\',\'' + usernames[i] + '\')">'
-					+'See Results</a></span>';
+				result = `<span><a onclick="ActivityPainter.openResults('${activity._id}','${usernames[i]}')">See Results</a></span>`;
 			}
 
 
-			$('#result_' + activity._id + '_' + usernames[i]).addClass(status ? 'green' : 'red');
-			$('#result_' + activity._id + '_' + usernames[i]).empty();
-			$('#result_' + activity._id + '_' + usernames[i]).append(result);
+			$(`#result_${activity._id}_${usernames[i]}`).addClass(status ? 'green' : 'red');
+			$(`#result_${activity._id}_${usernames[i]}`).empty();
+			$(`#result_${activity._id}_${usernames[i]}`).append(result);
 		}
 
 		let progress = Math.round((done / usernames.length) * 1000) / 10; 
@@ -139,10 +141,10 @@ var ActivityPainter = {
 			partialprogress = 0;
 		}
 
-		$('#result_progress_' + activity._id + ' .done').css('width', progress + '%' );
-		$('#result_progress_' + activity._id + ' .partial').css('width', partialprogress + '%' );
-		$('#result_progress_' + activity._id + ' done').text(progress);
-		$('#result_progress_' + activity._id + ' partial').text(partialprogress);
+		$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
+		$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
+		$(`#result_progress_${activity._id} done`).text(progress);
+		$(`#result_progress_${activity._id} partial`).text(partialprogress);
 	},
 
 	openResults: function(activity, user){
@@ -156,7 +158,7 @@ var ActivityPainter = {
 					stack: false
 				});
 			}else{
-				let content = '<div style="padding: 20px;">' + result[user] + '</div>';
+				let content = `<div style="padding: 20px;">${result[user]}</div>`;
 				let context = $('#iframe_floating iframe')[0].contentWindow.document;
 				let body = $('body', context);
 				body.html(content);

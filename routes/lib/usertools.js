@@ -7,39 +7,124 @@ let querystring = require('querystring');
 
 module.exports = {
 	setUser: function(req, user){
-		console.log(user);
 		let decoded = jwt.decode(user.jwt);
-
-		if (user.data.provider != 'simva') {
+		console.log(`JWT : ${JSON.stringify(decoded)}`);
 		user.data.roles = decoded.realm_access.roles;
 		user.data.role = this.getRoleFromJWT(decoded);
-		}
 		req.session.user = user;
+	},
+
+	authExpired: function(req, config, callback){
+		let current = Math.floor(Date.now() / 1000);
+		let jwtdecoded = this.decodeJWT(req.session.user.jwt);
+		try {
+			let expiration = parseInt(jwtdecoded.exp);
+			if(current > expiration){
+				console.log(`authExpired() - JWT: ${JSON.stringify(jwtdecoded)}`);
+				console.log(`authExpired() - Expiration: ${expiration}`);
+				console.log("authExpired() - Token Expired");
+				this.refreshAuth(req, config, callback);
+			}else{
+				console.log("authExpired() - Token OK");
+				callback();
+			}
+		} catch(e) {
+			callback({
+				status: 500,
+				data: {
+					message: 'Unable to parse accessToken',
+					error: e
+				}
+			});
+		}
+	},
+
+	decodeJWT: function(token){
+		return jwt.decode(token);
 	},
 
 	getProfileFromJWT: function(token){
 		let profile = {};
-		let simvaJwtToken = jwt.decode(token);
-		profile.provider = simvaJwtToken.iss
+		let simvaJwtToken = this.decodeJWT(token);
+		console.log(`getProfileFromJWT() : ${JSON.stringify(simvaJwtToken)}`);
+		profile.provider = simvaJwtToken.iss;
 		profile.id = simvaJwtToken.data.id;
 		profile.username = simvaJwtToken.data.username;
 		profile.email = simvaJwtToken.email;
-		profile.roles = [simvaJwtToken.data.role];
-		profile.role = simvaJwtToken.data.role;
-
+		profile.roles = simvaJwtToken.realm_access.roles;
+		profile.role = this.getRoleFromJWT(simvaJwtToken);
 		return profile;
 	},
 
 	getRoleFromJWT: function(decoded){
-		let role = 'student';
-
-		for (var i = decoded.realm_access.roles.length - 1; i >= 0; i--) {
-			if(decoded.realm_access.roles[i] === 'teacher' || decoded.realm_access.roles[i] === 'researcher'){
-				role = 'teacher';
-				break;
-			};
-		}
-
+		let role = 'norole';
+		if(decoded.realm_access.roles.includes('teacher') || decoded.realm_access.roles.includes('researcher')){
+			role = 'teacher';
+		} else if(decoded.realm_access.roles.includes('teaching-assistant') || decoded.realm_access.roles.includes('student')){
+			role = 'student';
+		};
 		return role;
+	},
+
+	refreshAuth: function(req, config, callback){
+		if(req.session.user && req.session.user.refreshToken){
+			console.log(`refreshAuth() - Refresh Token : ${req.session.user.refreshToken}`)
+			clientConfig= `${config.sso.clientId}:${config.sso.clientSecret}`
+			request.post({
+				url: `${config.sso.url}/realms/${config.sso.realm}/protocol/openid-connect/token`,
+				headers: {
+					'Authorization': `Basic ${Buffer.from(clientConfig).toString('base64')}`,
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				body: querystring.stringify({
+					'grant_type': 'refresh_token',
+					'refresh_token': req.session.user.refreshToken
+				})
+			}, function(error, response, body){
+				if(!error){
+					try {
+						console.log(`refreshAuth() - Body : ${response.body}`);
+						let b = JSON.parse(response.body);
+						let simvaToken = b.access_token;
+						console.log(`refreshAuth() - Access Token : ${simvaToken}`);
+						if(simvaToken == "undefined" || simvaToken == null) {
+							callback({
+								status: 500,
+								data: {
+									message: 'Token not active.',
+									error: b
+								}
+							});
+						} else {
+							callback(null, simvaToken);
+						}
+					} catch(e) {
+						console.log(e);
+						callback({
+							status: 500,
+							data: {
+								message: 'Unable to refresh accessToken',
+								error: e
+							}
+						});
+					}
+				}else{
+					callback({
+						status: 500,
+						data: {
+							message: 'Unable to refresh accessToken',
+							error: error
+						}
+					});
+				}
+		 	});
+		}else{
+			callback({
+				status: 401,
+				data: {
+					message: 'No user or refreshToken'
+				}
+			});
+		}
 	}
 }

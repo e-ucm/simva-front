@@ -20,7 +20,27 @@ var Utils = {
 			cache: false,
 			beforeSend: function (xhr) {
 				if(jwt){
-					xhr.setRequestHeader("Authorization", "Bearer " + jwt);
+					xhr.setRequestHeader("Authorization", `Bearer ${jwt}`);
+				}
+			},
+			success: function(data){
+				callback(null, data);
+			},
+			error: callback
+		});
+	},
+
+	patch: function(url, body, callback, jwt){
+		$.ajax({
+			type: 'PATCH',
+			url: url,
+			data: JSON.stringify(body),
+			contentType: 'application/json',
+			dataType: 'json',
+			cache: false,
+			beforeSend: function (xhr) {
+				if(jwt){
+					xhr.setRequestHeader("Authorization", `Bearer ${jwt}`);
 				}
 			},
 			success: function(data){
@@ -40,7 +60,7 @@ var Utils = {
 			cache: false,
 			beforeSend: function (xhr) {
 				if(jwt){
-					xhr.setRequestHeader("Authorization", "Bearer " + jwt);
+					xhr.setRequestHeader("Authorization", `Bearer ${jwt}`);
 				}
 			},
 			success: function(data){
@@ -60,7 +80,7 @@ var Utils = {
 			cache: false,
 			beforeSend: function (xhr) {
 				if(jwt){
-					xhr.setRequestHeader("Authorization", "Bearer " + jwt);
+					xhr.setRequestHeader("Authorization", `Bearer ${jwt}`);
 				}
 			},
 			success: function(data){
@@ -74,7 +94,7 @@ var Utils = {
 
 		var req = new XMLHttpRequest();
 		req.open("GET", url, true);
-		req.setRequestHeader('Authorization','Bearer ' + jwt);
+		req.setRequestHeader('Authorization',`Bearer ${jwt}`);
 		req.responseType = "blob";
 
 		req.onload = function (event) {
@@ -95,7 +115,7 @@ var Utils = {
 			cache: false,
 			beforeSend: function (xhr) {
 				if(jwt){
-					xhr.setRequestHeader("Authorization", "Bearer " + jwt);
+					xhr.setRequestHeader("Authorization", `Bearer ${jwt}`);
 				}
 			},
 			success: function(data){
@@ -107,7 +127,7 @@ var Utils = {
 
 	download: function(filename, text){
 		var element = document.createElement('a');
-		element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+		element.setAttribute('href', `data:text/plain;charset=utf-8, ${encodeURIComponent(text)}`);
 		element.setAttribute('download', filename);
 
 		element.style.display = 'none';
@@ -116,5 +136,15 @@ var Utils = {
 		element.click();
 
 		document.body.removeChild(element);
+	},
+
+	decodeJWT: function (token) {
+	    var base64Url = token.split('.')[1];
+	    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+	    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+	        return `%${('00' + c.charCodeAt(0).toString(16)).slice(-2)}`;
+	    }).join(''));
+
+	    return JSON.parse(jsonPayload);
 	}
 }

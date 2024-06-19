@@ -1,6 +1,6 @@
 <%# views/study_view.ejs %>
  
-<% extend('layout') %>
+<% extend('layout_with_menu') %>
 
 <!--<div id="roller" style="width: 100%; text-align: center; padding: 200px;">
 	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
@@ -31,7 +31,7 @@
 				
 			</div>
 		</div>
-
+		<% if(config.lti.enabled == 'true'){ %>
 		<div class="graybox lti_platforms default">
 			<h2>LTI Platforms</h2>
 			<p></p>
@@ -39,6 +39,7 @@
 			</table>
 			<input class="violet" type="button" value="Add Platform" onclick="toggleAddForm('add_platform')">
 		</div>
+		<% } %>
 	</div>
 	<div class="card">
 		<div class="top">
@@ -158,7 +159,7 @@
 		<div class="form">
 			<div class="tabs">
 				<span class="tab selected" onclick="changeTab(this, 'add_activity','new_activity_tab')">Add new activity</span>
-				<span class="tab" onclick="changeTab(this, 'add_activity','existing_activity_tab')">Select from existing</span>
+				<span class="tab" type="hidden" onclick="changeTab(this, 'add_activity','existing_activity_tab')">Select from existing</span>
 			</div>
 			<div id="new_activity_tab" class="subform selected">
 				<form id="new_activity_form">
@@ -176,14 +177,10 @@
 			<div id="existing_activity_tab" class="subform">
 				<form id="existing_activity_form">
 					<input type="hidden" name="test">
-					<input type="text" name="username" placeholder="Username" value="" required>
-					<input type="email" name="email" placeholder="email@example.com" value="" required>
-					<input type="password" name="password" placeholder="Password" required>
-					<div class="role_selector">
-						<input id="teacher_role" type="radio" name="role" value="teacher"><label for="teacher_role">Teacher</label>
-						<input id="student_role" type="radio" name="role" value="student" checked><label for="student_role">Student</label>
-					</div>
-					<input type="submit" value="Add Batch">
+					<input type="text" name="name" placeholder="Activity name" required>
+					<select name="type">
+					</select>
+					<input disabled type="submit" value="Add (Not enabled)">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 					<span class="error"></span>
 				</form>
@@ -216,11 +213,10 @@
 					PainterFactory.Painters[activitytypes[i].type].simpleName = activitytypes[i].name;
 					PainterFactory.Painters[activitytypes[i].type].description = activitytypes[i].description;
 
-					let row = '<option value="' + activitytypes[i].type + '">' + PainterFactory.Painters[activitytypes[i].type].simpleName + '</option>';
+					let row = `<option value="${activitytypes[i].type}">${PainterFactory.Painters[activitytypes[i].type].simpleName}</option>`;
 					$('#new_activity_form select[name="type"]').append(row);
 				}
 			}
-			reloadStudy();
 		})
 
 		Simva.getAllocatorTypes(function(error, allocatortypes){
@@ -229,7 +225,7 @@
 					AllocatorFactory.Painters[allocatortypes[i].type].simpleName = allocatortypes[i].name;
 					AllocatorFactory.Painters[allocatortypes[i].type].description = allocatortypes[i].description;
 
-					let row = '<div class="row"><input type="radio" name="type" id="allocator_' + allocatortypes[i].type + '" value="' + allocatortypes[i].type + '"><label for="allocator_' + allocatortypes[i].type + '"><span class="name">' + AllocatorFactory.Painters[allocatortypes[i].type].simpleName + '</span><span class="description">' + AllocatorFactory.Painters[allocatortypes[i].type].description + '</span></label></div>';
+					let row = `<div class="row"><input type="radio" name="type" id="allocator_${allocatortypes[i].type}" value="${allocatortypes[i].type}"><label for="allocator_${allocatortypes[i].type}"><span class="name">${AllocatorFactory.Painters[allocatortypes[i].type].simpleName}</span><span class="description">${AllocatorFactory.Painters[allocatortypes[i].type].description}</span></label></div>`;
 					$('#change_allocator_content').append(row);
 				}
 			}
@@ -309,12 +305,15 @@
 				}else{
 					toggleAddForm('add_platform');
 					reloadStudy();
+					Simva.updateStudy(study, function(error, result){
+						reloadStudy();
+					});
 				}
 			});
 
 			return false;
 		});
-
+		
 		$("#add_test_form").on('submit', function(event){
 			event.preventDefault();
 			let form = Utils.getFormData($("#add_test_form"));
@@ -350,6 +349,9 @@
 						}else{
 							toggleAddForm('add_activity');
 							reloadStudy();
+							Simva.updateStudy(study, function(error, result){
+								reloadStudy();
+							});
 						}
 					});
 				}
@@ -359,6 +361,13 @@
 		});
 
 		loadAddGroups();
+		Simva.getStudy("<%= study %>", function(error, study){
+			if(!error) {
+				Simva.updateStudy(study, function(error, result){
+					reloadStudy();
+				});
+			}
+		});
 	});
 
 	let downloadUAConfig = function(){
@@ -367,9 +376,10 @@
 			host: "<%= config.api.host %>",
 			protocol: "<%= config.api.protocol %>",
 			port: "<%= config.api.port %>",
-			url: "<%= config.api.url %>"
-		});
-
+			url: "<%= config.api.url %>",			
+			sso: "<%= config.sso.url %>/realms/<%= config.sso.realm %>/protocol/openid-connect", 
+    		client_id: "uadventure"
+		}, null, 2);
 
 		var filename = "simva.conf";
 
@@ -387,7 +397,7 @@
 	}
 
 	let toggleTest = function(id){
-		$('#test_' + id).find('.activities').toggleClass('collapsed');
+		$(`#test_${id}`).find('.activities').toggleClass('collapsed');
 	}
 
 	let toggleSubmit = function(form){
@@ -396,10 +406,10 @@
 	}
 
 	let changeTab = function(tab, form, subform){
-		$('#' + form + ' .tab').removeClass('selected');
-		$('#' + form + ' .subform').removeClass('selected');
+		$(`#${form} .tab`).removeClass('selected');
+		$(`#${form} .subform`).removeClass('selected');
 		$(tab).toggleClass('selected');
-		$('#' + subform).toggleClass('selected');
+		$(`#${subform}`).toggleClass('selected');
 	}
 
 	let reloadStudy = function(){
@@ -548,7 +558,7 @@
 	}
 
 	let toggleAddForm = function(id){
-		$('#' + id).toggleClass('shown');
+		$(`#${id}`).toggleClass('shown');
 	}
 
 	// Main Paint functions
@@ -561,7 +571,7 @@
 		paintAllocator(allocator, tests, groups, participants);
 
 		paintGroups(groups);
-
+	
 		paintPlatforms(platforms);
 
 		let fullyPaintTest = function(test){
@@ -630,7 +640,7 @@
 
 		AllocatorFactory.Painters[allocator.type].paintAllocator(allocator);
 
-		$('#allocator_' + allocator.type).prop('checked',true);
+		$(`#allocator_${allocator.type}`).prop('checked',true);
 	}
 
 	let changeAllocator = function(){
@@ -651,18 +661,18 @@
 	}
 
 	let paintTest = function(test){
-		$('#tests').append('<div id="test_' + test._id + '" class="test">'
-			+ '<div class="top"><h3>' + test.name + '</h3><input class="violet" type="button" value="Expand/Collapse" onclick="toggleTest(\'' + test._id + '\')">'
-			+ '<input class="green" type="button" value="Add activity" onclick="openActivityForm(\'' + test._id + '\')">'
-			+ '<input class="red" type="button" value="Delete" onclick="deleteTest(\'' + test._id + '\')"></div>'
-			+ '<div class="activities collapsed">' + roller + '</div>');
+		$('#tests').append(`<div id="test_${test._id}" class="test">
+			<div class="top"><h3>${test.name}</h3><input class="violet" type="button" value="Expand/Collapse" onclick="toggleTest('${test._id}')">
+			<input class="green" type="button" value="Add activity" onclick="openActivityForm('${test._id}')">
+			<input class="red" type="button" value="Delete" onclick="deleteTest('${test._id}')"></div>
+			<div class="activities collapsed">${roller}</div>`);
 	}
 
 	let paintTestActivities = function(test, activities, participants){
-		$('#test_' + test._id + ' .activities').empty();
+		$(`#test_${test._id} .activities`).empty();
 
 		if(activities.length === 0){
-			$('#test_' + test._id + ' .activities').text('There are no activities in this test. Add one using the button on the right.');
+			$(`#test_${test._id} .activities`).text('There are no activities in this test. Add one using the button on the right.');
 		}else{
 			for (var i = 0; i < activities.length; i++) {
 				switch(activities[i].type){
@@ -687,11 +697,11 @@
 
 
 	let ownerRow = function(owner){
-		let toret = '<tr><td>' + owner + '</td><td><input class="red" type="button" value="Remove"';
+		let toret = `<tr><td>${owner}</td><td><input class="red" type="button" value="Remove"`;
 		if(owner == '<%= user.data.username %>'){
 			toret += ' disabled="disabled"';
 		}else{
-			toret += ' onclick="removeOwner(\'' + owner + '\')"'
+			toret += ` onclick="removeOwner('${owner}')"`
 		}
 
 		toret += '></td></tr>';
@@ -699,8 +709,8 @@
 	}
 
 	let groupRow = function(group){
-		let toret = '<tr><td>' + group.name + '</td><td><input class="red" type="button" value="Remove"';
-		toret += ' onclick="removeGroup(\'' + group._id + '\')"';
+		let toret = `<tr><td>${group.name}</td><td><input class="red" type="button" value="Remove"';
+		toret += ' onclick="removeGroup('${group._id}')" `
 		if(group.link && group.link.type){
 			toret += ' disabled';
 		}
@@ -710,26 +720,25 @@
 	}
 
 	let platformRow = function(platform){
-		let toret = '<tr><td>' + platform.name + '</td><td><input class="red" type="button" value="Remove"';
-		toret += ' onclick="removePlatform(\'' + platform._id + '\')"';
-		toret += '></td></tr>';
-
+		let toret = `<tr><td>${platform.name}</td><td><input class="red" type="button" value="Remove"
+		onclick="removePlatform('${platform._id}')"
+		></td></tr>`;
 		return toret;
 	}
 
 	let addGroupRow = function(group){
-		return '<option value="' + group._id + '">' + group.name + '</option>';
+		return `<option value="${group._id}">${group.name}</option>`;
 	}
 
 	let allocationRow = function(allocation, tests){
-		let toret = '<tr><td>' + allocation.username + '</td><td><select name="test">';
+		let toret = `<tr><td>${allocation.username}</td><td><select name="test">`;
 
 		if(tests.length > 0){
 			for (var i = 0; i < tests.length; i++) {
 				if(allocation.test == tests[i]._id){
-					toret += '<option value="' + tests[i]._id + '">' + tests[i].name +'</option>';
+					toret += `<option value="${tests[i]._id}">${tests[i].name}</option>`;
 				}else{
-					toret += '<option value="' + tests[i]._id + '" selected>' + tests[i].name +'</option>';
+					toret += `<option value="${tests[i]._id}" selected>${tests[i].name}</option>`;
 				}
 			}
 		}else{

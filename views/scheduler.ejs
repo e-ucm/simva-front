@@ -16,6 +16,8 @@
 	<script type="text/javascript">
 		Simva.setJWT("<%= user.jwt %>");
 		Simva.setAPIURL("<%= config.api.url %>");
+		Simva.setSSOURL("<%= config.sso.url %>");
+		Simva.setSSOREALM("<%= config.sso.realm %>");
 		var roller = '<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>';
 
 		$(document).ready(function() {
@@ -58,7 +60,7 @@
 							$('#activity_content').hide(10, function(){
 								$('#activity_content').attr('src', 'about:blank');
 								paintCurrentActivity('Completed');
-								document.getElementById('activity_content').src = "data:text/html;charset=utf-8," + escape(completed);
+								document.getElementById('activity_content').src = `data:text/html;charset=utf-8,${escape(completed)}`;
 								setTimeout(function(){
 									$('#activity_content').show();
 									console.log('showing');
@@ -83,12 +85,21 @@
 							}
 							if(result.openable){
 								Simva.getActivityTarget(activity._id, function(error, result){
-									$('#activity_content').attr('src', result[username]);
+									if (error) {
+     									console.error("Error getting the URL of the activity target:", error);
+        								return;
+    								}
+									try {
+										$('#activity_content').attr('src', result[username]);
+									} catch (error) {
+										console.error("Error getting source:", error);
+										return;
+									}
 								});
 							}else{
 								$('#activity_content').hide(10, function(){
 									$('#activity_content').attr('src', 'about:blank');
-									document.getElementById('activity_content').src = "data:text/html;charset=utf-8," + escape(manual);
+									document.getElementById('activity_content').src = `data:text/html;charset=utf-8,${escape(manual)}`;
 									setTimeout(function(){
 										$('#activity_content').show();
 										console.log('showing');
@@ -96,7 +107,6 @@
 								});
 							}
 						});
-
 						paintCurrentActivity(activity.name);
 					}
 				}
