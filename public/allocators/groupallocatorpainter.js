@@ -61,9 +61,9 @@ var GroupAllocatorPainter = {
 	paintAllocator: function(allocator){
 		this.allocator = allocator;
 
-		let topaint = '<p class="subtitle italic">Type: <span id="allocator_type">' + allocator.type + '</span></p>'
-			+ '<p class="subtitle justified">' + this.description + '</p>'
-			+ '<table id="allocator_groups" class="allocations">';
+		let topaint = `<p class="subtitle italic">Type: <span id="allocator_type">${allocator.type}</span></p>
+			<p class="subtitle justified">${this.description}</p>
+			<table id="allocator_groups" class="allocations">`;
 
 		for (var i = 0; i < this.groups.length; i++) {
 			if(allocator.extra_data && allocator.extra_data.allocations && allocator.extra_data.allocations[this.groups[i]._id]){
@@ -79,16 +79,17 @@ var GroupAllocatorPainter = {
 	},
 
 	generateRow: function(allocation){
-		let topaint = '<tr><td>' + allocation.group.name + '</td>'
-			+ '<td><select id="allocation_' + allocation.group._id
-			+'" onchange="GroupAllocatorPainter.updateAllocation(\'' + allocation.group._id + '\')">';
+		let topaint = `<tr>
+			<td>${allocation.group.name}</td>
+			<td>
+				<select id="allocation_${allocation.group._id}" 
+					onchange="GroupAllocatorPainter.updateAllocation('${allocation.group._id}')"
+				>`;
 
 		for (var i = 0; i < this.tests.length; i++) {
-			topaint += '<option value="' + this.tests[i]._id + '" '
-				+ (this.tests[i]._id === allocation.test ? 'selected' : '') + '>'
-				+ this.tests[i].name + '</option>';
+			let selected=(this.tests[i]._id === allocation.test ? 'selected' : '')
+			topaint += `<option value="${this.tests[i]._id}" ${selected}>${this.tests[i].name}</option>`;
 		}
-
 		return topaint;
 	},
 
@@ -105,11 +106,11 @@ var GroupAllocatorPainter = {
 		}
 
 		previous = this.allocator.extra_data.allocations[group];
-		this.allocator.extra_data.allocations[group]  = $('#allocation_' + group).val();
+		this.allocator.extra_data.allocations[group]  = $(`#allocation_${group}`).val();
 		Simva.updateAllocator(this.study._id, this.allocator, function(error, result){
 			if(error){
 				tmp.allocator.extra_data.allocations[group] = previous;
-				$('#allocation_' + group).val(previous);
+				$(`#allocation_${group}`).val(previous);
 
 				$.toast({
 					heading: 'Error adding the allocation',

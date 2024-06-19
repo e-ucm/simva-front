@@ -65,13 +65,13 @@
 	}
 
 	let toCard = function(study){
-		return '<a class="stopable" href="/studies/' + study._id + '"><div class="studycard selectable card third">'
-			+ '<span class="button red delete" onclick="deleteStudy(\'' + study._id + '\')">X</span>'
-			+ '<h1>Study: ' + study.name + '</h1>'
-			+ '<p><strong>Groups:</strong> ' + study.groups.length + '</p>'
-			+ '<p><strong>Tests:</strong> ' + study.tests.length + '</p>'
-			+ '<p><strong>owners:</strong> ' + study.owners.length + '</p>'
-			+ '</div></a>';
+		return `<a class="stopable" href="/studies/${study._id}"><div class="studycard selectable card third">
+			<span class="button red delete" onclick="deleteStudy('${study._id}')">X</span>
+			<h1>Study: ${study.name}</h1>
+			<p><strong>Groups:</strong> ${study.groups.length}</p>
+			<p><strong>Tests:</strong> ${study.tests.length}</p>
+			<p><strong>owners:</strong> ${study.owners.length}</p>
+			</div></a>`;
 	}
 </script>
 <h1>Studies</h1>

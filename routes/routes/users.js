@@ -23,7 +23,7 @@ module.exports = function(auth, config){
     sslRequired: config.sso.sslRequired,
     scope: "openid profile email roles",
     authServerURL: config.sso.url,
-    callbackURL: config.simva.url + '/users/openid/return'
+    callbackURL: `${config.simva.url}/users/openid/return`
   }
 
   console.log('--- SSO CONFIG ---');
@@ -81,12 +81,13 @@ module.exports = function(auth, config){
   router.get('/logout', auth, function(req, res, next){
 
     if(req.session.user.refreshToken){
-      request.post({
-        url: config.sso.url + '/realms/' + config.sso.realm + '/protocol/openid-connect/logout',
-        headers: {
-          'Authorization': 'Basic ' + Buffer.from(config.sso.clientId + ':' + config.sso.clientSecret).toString('base64'),
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
+      clientConfig= `${config.sso.clientId}:${config.sso.clientSecret}`
+			request.post({
+				url: `${config.sso.url}/realms/${config.sso.realm}/protocol/openid-connect/logout`,
+				headers: {
+					'Authorization': `Basic ${Buffer.from(clientConfig).toString('base64')}`,
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
         body: querystring.stringify({
           'grant_type': 'refresh_token',
           'refresh_token': req.session.user.refreshToken

@@ -8,7 +8,7 @@ let querystring = require('querystring');
 module.exports = {
 	setUser: function(req, user){
 		let decoded = jwt.decode(user.jwt);
-		console.log("JWT : " + JSON.stringify(decoded));
+		console.log(`JWT : ${JSON.stringify(decoded)}`);
 		user.data.roles = decoded.realm_access.roles;
 		user.data.role = this.getRoleFromJWT(decoded);
 		req.session.user = user;
@@ -20,8 +20,8 @@ module.exports = {
 		try {
 			let expiration = parseInt(jwtdecoded.exp);
 			if(current > expiration){
-				console.log("authExpired() - JWT:" + JSON.stringify(jwtdecoded));
-				console.log("authExpired() - Expiration:" + expiration);
+				console.log(`authExpired() - JWT: ${JSON.stringify(jwtdecoded)}`);
+				console.log(`authExpired() - Expiration: ${expiration}`);
 				console.log("authExpired() - Token Expired");
 				this.refreshAuth(req, config, callback);
 			}else{
@@ -46,7 +46,7 @@ module.exports = {
 	getProfileFromJWT: function(token){
 		let profile = {};
 		let simvaJwtToken = this.decodeJWT(token);
-		console.log("getProfileFromJWT() : " + JSON.stringify(simvaJwtToken));
+		console.log(`getProfileFromJWT() : ${JSON.stringify(simvaJwtToken)}`);
 		profile.provider = simvaJwtToken.iss;
 		profile.id = simvaJwtToken.data.id;
 		profile.username = simvaJwtToken.data.username;
@@ -68,11 +68,12 @@ module.exports = {
 
 	refreshAuth: function(req, config, callback){
 		if(req.session.user && req.session.user.refreshToken){
-			console.log("refreshAuth() - Refresh Token : " + req.session.user.refreshToken)
+			console.log(`refreshAuth() - Refresh Token : ${req.session.user.refreshToken}`)
+			clientConfig= `${config.sso.clientId}:${config.sso.clientSecret}`
 			request.post({
-				url: config.sso.url + '/realms/' + config.sso.realm + '/protocol/openid-connect/token',
+				url: `${config.sso.url}/realms/${config.sso.realm}/protocol/openid-connect/token`,
 				headers: {
-					'Authorization': 'Basic ' + Buffer.from(config.sso.clientId + ':' + config.sso.clientSecret).toString('base64'),
+					'Authorization': `Basic ${Buffer.from(clientConfig).toString('base64')}`,
 					'Content-Type': 'application/x-www-form-urlencoded'
 				},
 				body: querystring.stringify({
@@ -82,10 +83,10 @@ module.exports = {
 			}, function(error, response, body){
 				if(!error){
 					try {
-						console.log("refreshAuth() - Body : " + response.body);
+						console.log(`refreshAuth() - Body : ${response.body}`);
 						let b = JSON.parse(response.body);
 						let simvaToken = b.access_token;
-						console.log("refreshAuth() - Access Token : " + simvaToken);
+						console.log(`refreshAuth() - Access Token : ${simvaToken}`);
 						if(simvaToken == "undefined" || simvaToken == null) {
 							callback({
 								status: 500,

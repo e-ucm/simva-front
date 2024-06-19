@@ -55,13 +55,13 @@ var DefaultAllocatorPainter = {
 				}
 			}
 
-			toret += '<option value="' + participants[i].username + '">' + participants[i].username  + '</option>';
+			toret += `<option value="${participants[i].username}">${participants[i].username}</option>`;
 		}
 
 		toret += '</select><p>Test: </p><select name="test">';
 
 		for (var i = 0; i < tests.length; i++) {
-			toret += '<option value="' + tests[i]._id + '">' + tests[i].name + '</option>';
+			toret += `<option value="${tests[i]._id}">${tests[i].name}</option>`;
 		}
 
 		toret += '</select><input type="button" value="Add Allocator" onclick="DefaultAllocatorPainter.addAllocation()">';
@@ -72,9 +72,9 @@ var DefaultAllocatorPainter = {
 	paintAllocator: function(allocator){
 		this.allocator = allocator;
 
-		let topaint = '<p class="subtitle italic">Type: <span id="allocator_type">' + allocator.type + '</span></p>'
-			+ '<p class="subtitle justified">' + this.description + '</p>'
-			+ '<table id="allocator_participants" class="allocations">';
+		let topaint = `<p class="subtitle italic">Type: <span id="allocator_type">${allocator.type}</span></p>
+			<p class="subtitle justified">${this.description}</p>
+			<table id="allocator_participants" class="allocations">`;
 
 		if(allocator.extra_data && allocator.extra_data.allocations){
 			let keys = Object.keys(allocator.extra_data.allocations);
@@ -84,21 +84,20 @@ var DefaultAllocatorPainter = {
 			}
 		}
 
-		topaint += '</table>'
-			+ '<input class="violet" type="button" value="Add Allocation" onclick="toggleAllocatorForm()">';
+		topaint += '</table><input class="violet" type="button" value="Add Allocation" onclick="toggleAllocatorForm()">';
 
 		$('#allocator_content').html(topaint);
 	},
 
 	generateRow: function(allocation){
-		let topaint = '<tr><td>' + allocation.username + '</td>'
-			+ '<td><select id="allocation_' + allocation.username
-			+'" onchange="DefaultAllocatorPainter.updateAllocation(\'' + allocation.username + '\')">';
+		let topaint = `<tr><td>${allocation.username}</td>
+			<td><select id="allocation_${allocation.username}"
+			onchange="DefaultAllocatorPainter.updateAllocation('${allocation.username}')">`;
 
 		for (var i = 0; i < this.tests.length; i++) {
-			topaint += '<option value="' + this.tests[i]._id + '" '
-				+ (this.tests[i]._id === allocation.test ? 'selected' : '') + '>'
-				+ this.tests[i].name + '</option>';
+			selected=(this.tests[i]._id === allocation.test ? 'selected' : '')
+			topaint += `<option value="${this.tests[i]._id}" ${selected}> 
+			${this.tests[i].name}</option>`;
 		}
 
 		return topaint;
@@ -109,11 +108,11 @@ var DefaultAllocatorPainter = {
 		let tmp = this;
 
 		if(this.allocator.extra_data && this.allocator.extra_data.allocations){
-			this.allocator.extra_data.allocations[participant]  = $('#allocation_' + participant).val();
+			this.allocator.extra_data.allocations[participant]  = $(`#allocation_${participant}`).val();
 			Simva.updateAllocator(this.study._id, this.allocator, function(error, result){
 				if(error){
 					tmp.allocator.extra_data.allocations[participant] = previous;
-					$('#allocation_' + participant).val(previous);
+					$(`#allocation_${participant}`).val(previous);
 
 					$.toast({
 						heading: 'Error adding the allocation',

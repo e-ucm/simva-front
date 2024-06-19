@@ -52,7 +52,7 @@ var jsonTree = (function() {
                     return 'object';
             }
             
-            throw new Error('Bad type: ' + utils.getClass(val));
+            throw new Error(`Bad type: ${utils.getClass(val)}`);
         },
         
         /**
@@ -176,7 +176,7 @@ var jsonTree = (function() {
         if (nodeType in Node.CONSTRUCTORS) {
             return new Node.CONSTRUCTORS[nodeType](label, val, isLast);
         } else {
-            throw new Error('Bad type: ' + utils.getClass(val));
+            throw new Error(`Bad type: ${utils.getClass(val)}`);
         }
     }
     
@@ -221,19 +221,13 @@ var jsonTree = (function() {
             el = document.createElement('li'),
             labelEl,
             template = function(label, val) {
-                var str = '\
-                    <span class="jsontree_label-wrapper">\
-                        <span class="jsontree_label">"' +
-                            label +
-                        '"</span> : \
-                    </span>\
-                    <span class="jsontree_value-wrapper">\
-                        <span class="jsontree_value jsontree_value_' + self.type + '">' +
-                            val +
-                        '</span>' +
-                        (!isLast ? ',' : '') + 
-                    '</span>';
-    
+                var str = `
+                    <span class="jsontree_label-wrapper">
+                        <span class="jsontree_label">"${label}"</span> :
+                    </span>
+                    <span class="jsontree_value-wrapper">
+                        <span class="jsontree_value jsontree_value_${self.type}">${val}</span>${(!isLast ? ',' : '')} 
+                    </span>`;
                 return str;
             };
             
@@ -315,9 +309,9 @@ var jsonTree = (function() {
             var currentPath;
 
             if (this.parent.type === 'array') {
-                currentPath = "[" + this.label + "]";
+                currentPath = `[${this.label}]`;
             } else {
-                currentPath = isInDotNotation ? "." + this.label : "['" + this.label + "']";
+                currentPath = isInDotNotation ? `.${this.label}`: `[${this.label}]`;
             }
 
             return this.parent.getJSONPath(isInDotNotation) + currentPath; 
@@ -380,7 +374,7 @@ var jsonTree = (function() {
     function NodeString(label, val, isLast) {
         this.type = "string";
     
-        _NodeSimple.call(this, label, '"' + val + '"', isLast);
+        _NodeSimple.call(this, label, `"${val}"`, isLast);
     }
     utils.inherits(NodeString,_NodeSimple);
     
@@ -442,24 +436,25 @@ var jsonTree = (function() {
             el = document.createElement('li'),
             template = function(label, sym) {
                 var comma = (!isLast) ? ',' : '',
-                    str = '\
-                        <div class="jsontree_value-wrapper">\
-                            <div class="jsontree_value jsontree_value_' + self.type + '">\
-                                <b>' + sym[0] + '</b>\
-                                <span class="jsontree_show-more">&hellip;</span>\
-                                <ul class="jsontree_child-nodes"></ul>\
-                                <b>' + sym[1] + '</b>' +
-                            '</div>' + comma +
-                        '</div>';
+                    str = `
+                        <div class="jsontree_value-wrapper">
+                            <div class="jsontree_value jsontree_value_${self.type}">
+                                <b>${sym[0]}</b>
+                                <span class="jsontree_show-more">&hellip;</span>
+                                <ul class="jsontree_child-nodes"></ul>
+                                <b>${sym[1]}</b>
+                            </div>${comma}
+                        </div>`;
     
                 if (label !== null) {
-                    str = '\
-                        <span class="jsontree_label-wrapper">\
-                            <span class="jsontree_label">' +
-                                '<span class="jsontree_expand-button"></span>' +
-                                '"' + label +
-                            '"</span> : \
-                        </span>' + str;
+                    str = `
+                        <span class="jsontree_label-wrapper">
+                            <span class="jsontree_label">
+                                <span class="jsontree_expand-button">
+                                </span>
+                                "${label}"
+                            </span> :
+                        </span>${str}`;
                 }
     
                 return str;

@@ -49,11 +49,11 @@
 	}
 
 	let toCard = function(group){
-		return '<a href="/groups/' + group._id + '"><div class="selectable card third">'
-			+ '<h1>Group: ' + group.name + '</h1>'
-			+ '<p><strong>Participants:</strong> ' + group.participants.length + '</p>'
-			+ '<p><strong>Owners:</strong> ' + group.owners.length + '</p>'
-			+ '</div></a>';
+		return `<a href="/groups/${group._id}"><div class="selectable card third">
+			<h1>Group: ${group.name}</h1>
+			<p><strong>Participants:</strong> ${group.participants.length}</p>
+			<p><strong>Owners:</strong> ${group.owners.length}</p>
+			</div></a>`;
 	}
 </script>
 <h1>Groups</h1>

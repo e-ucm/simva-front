@@ -11,8 +11,10 @@
 		$("#role_selection").on('submit', function(event){
 			event.preventDefault();
 			let form = Utils.getFormData($("#role_form"));
+			username = "<%= user.data.username %>"
+			console.log(username);
 			console.log(form);
-			Simva.setRole(form.role, function(error, result){
+			Simva.setRole(username, form.role, function(error, result){
 				if(error && error.responseJSON){
 					$("#error").text(error.responseJSON.message);
 				}else{

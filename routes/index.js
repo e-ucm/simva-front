@@ -10,7 +10,7 @@ let usertools = require('./lib/usertools');
 const MongoStore = require("connect-mongo")(session);
 const mongoose = require('mongoose');
 
-var isTest = (process.env.NODE_ENV === 'test');
+var isTest = (process.env.NODE_ENV !== 'production');
 mongoose.connect( !isTest ? config.mongo.url : config.mongo.test, {useNewUrlParser: true});
 mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
 mongoose.connection.once('open', function() {
@@ -56,16 +56,16 @@ var auth = function(level){
           for(var i = 0; i < level; i++){
             pre += '../';
           }
-          return res.redirect(pre + 'users/login'); 
+          return res.redirect(`${pre}users/login`); 
         } else if(result) {
           console.log("auth() - Refreshing token");
           let user = req.session.user;
-          console.log("auth() - User:" + JSON.stringify(user));
-          console.log("auth() - Access Token : " + result);
+          console.log(`auth() - User:${JSON.stringify(user)}`);
+          console.log(`auth() - Access Token : ${result}`);
           user.jwt = result;
           usertools.setUser(req, user);
           console.log("auth() - Refreshing token done");
-          console.log("auth() - User:" + JSON.stringify(user));
+          console.log(`auth() - User: ${JSON.stringify(user)}`);
           return next();
         } else {
           console.log("auth() - Token OK");
@@ -87,7 +87,7 @@ var auth = function(level){
       for(var i = 0; i < level; i++){
         pre += '../';
       }
-      return res.redirect(pre + 'users/login');
+      return res.redirect(`${pre}users/login`);
     }
   };
 };

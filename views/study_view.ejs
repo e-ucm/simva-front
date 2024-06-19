@@ -213,7 +213,7 @@
 					PainterFactory.Painters[activitytypes[i].type].simpleName = activitytypes[i].name;
 					PainterFactory.Painters[activitytypes[i].type].description = activitytypes[i].description;
 
-					let row = '<option value="' + activitytypes[i].type + '">' + PainterFactory.Painters[activitytypes[i].type].simpleName + '</option>';
+					let row = `<option value="${activitytypes[i].type}">${PainterFactory.Painters[activitytypes[i].type].simpleName}</option>`;
 					$('#new_activity_form select[name="type"]').append(row);
 				}
 			}
@@ -225,7 +225,7 @@
 					AllocatorFactory.Painters[allocatortypes[i].type].simpleName = allocatortypes[i].name;
 					AllocatorFactory.Painters[allocatortypes[i].type].description = allocatortypes[i].description;
 
-					let row = '<div class="row"><input type="radio" name="type" id="allocator_' + allocatortypes[i].type + '" value="' + allocatortypes[i].type + '"><label for="allocator_' + allocatortypes[i].type + '"><span class="name">' + AllocatorFactory.Painters[allocatortypes[i].type].simpleName + '</span><span class="description">' + AllocatorFactory.Painters[allocatortypes[i].type].description + '</span></label></div>';
+					let row = `<div class="row"><input type="radio" name="type" id="allocator_${allocatortypes[i].type}" value="${allocatortypes[i].type}"><label for="allocator_${allocatortypes[i].type}"><span class="name">${AllocatorFactory.Painters[allocatortypes[i].type].simpleName}</span><span class="description">${AllocatorFactory.Painters[allocatortypes[i].type].description}</span></label></div>`;
 					$('#change_allocator_content').append(row);
 				}
 			}
@@ -397,7 +397,7 @@
 	}
 
 	let toggleTest = function(id){
-		$('#test_' + id).find('.activities').toggleClass('collapsed');
+		$(`#test_${id}`).find('.activities').toggleClass('collapsed');
 	}
 
 	let toggleSubmit = function(form){
@@ -406,10 +406,10 @@
 	}
 
 	let changeTab = function(tab, form, subform){
-		$('#' + form + ' .tab').removeClass('selected');
-		$('#' + form + ' .subform').removeClass('selected');
+		$(`#${form} .tab`).removeClass('selected');
+		$(`#${form} .subform`).removeClass('selected');
 		$(tab).toggleClass('selected');
-		$('#' + subform).toggleClass('selected');
+		$(`#${subform}`).toggleClass('selected');
 	}
 
 	let reloadStudy = function(){
@@ -558,7 +558,7 @@
 	}
 
 	let toggleAddForm = function(id){
-		$('#' + id).toggleClass('shown');
+		$(`#${id}`).toggleClass('shown');
 	}
 
 	// Main Paint functions
@@ -640,7 +640,7 @@
 
 		AllocatorFactory.Painters[allocator.type].paintAllocator(allocator);
 
-		$('#allocator_' + allocator.type).prop('checked',true);
+		$(`#allocator_${allocator.type}`).prop('checked',true);
 	}
 
 	let changeAllocator = function(){
@@ -661,18 +661,18 @@
 	}
 
 	let paintTest = function(test){
-		$('#tests').append('<div id="test_' + test._id + '" class="test">'
-			+ '<div class="top"><h3>' + test.name + '</h3><input class="violet" type="button" value="Expand/Collapse" onclick="toggleTest(\'' + test._id + '\')">'
-			+ '<input class="green" type="button" value="Add activity" onclick="openActivityForm(\'' + test._id + '\')">'
-			+ '<input class="red" type="button" value="Delete" onclick="deleteTest(\'' + test._id + '\')"></div>'
-			+ '<div class="activities collapsed">' + roller + '</div>');
+		$('#tests').append(`<div id="test_${test._id}" class="test">
+			<div class="top"><h3>${test.name}</h3><input class="violet" type="button" value="Expand/Collapse" onclick="toggleTest('${test._id}')">
+			<input class="green" type="button" value="Add activity" onclick="openActivityForm('${test._id}')">
+			<input class="red" type="button" value="Delete" onclick="deleteTest('${test._id}')"></div>
+			<div class="activities collapsed">${roller}</div>`);
 	}
 
 	let paintTestActivities = function(test, activities, participants){
-		$('#test_' + test._id + ' .activities').empty();
+		$(`#test_${test._id} .activities`).empty();
 
 		if(activities.length === 0){
-			$('#test_' + test._id + ' .activities').text('There are no activities in this test. Add one using the button on the right.');
+			$(`#test_${test._id} .activities`).text('There are no activities in this test. Add one using the button on the right.');
 		}else{
 			for (var i = 0; i < activities.length; i++) {
 				switch(activities[i].type){
@@ -697,11 +697,11 @@
 
 
 	let ownerRow = function(owner){
-		let toret = '<tr><td>' + owner + '</td><td><input class="red" type="button" value="Remove"';
+		let toret = `<tr><td>${owner}</td><td><input class="red" type="button" value="Remove"`;
 		if(owner == '<%= user.data.username %>'){
 			toret += ' disabled="disabled"';
 		}else{
-			toret += ' onclick="removeOwner(\'' + owner + '\')"'
+			toret += ` onclick="removeOwner('${owner}')"`
 		}
 
 		toret += '></td></tr>';
@@ -709,8 +709,8 @@
 	}
 
 	let groupRow = function(group){
-		let toret = '<tr><td>' + group.name + '</td><td><input class="red" type="button" value="Remove"';
-		toret += ' onclick="removeGroup(\'' + group._id + '\')"';
+		let toret = `<tr><td>${group.name}</td><td><input class="red" type="button" value="Remove"';
+		toret += ' onclick="removeGroup('${group._id}')" `
 		if(group.link && group.link.type){
 			toret += ' disabled';
 		}
@@ -720,26 +720,25 @@
 	}
 
 	let platformRow = function(platform){
-		let toret = '<tr><td>' + platform.name + '</td><td><input class="red" type="button" value="Remove"';
-		toret += ' onclick="removePlatform(\'' + platform._id + '\')"';
-		toret += '></td></tr>';
-
+		let toret = `<tr><td>${platform.name}</td><td><input class="red" type="button" value="Remove"
+		onclick="removePlatform('${platform._id}')"
+		></td></tr>`;
 		return toret;
 	}
 
 	let addGroupRow = function(group){
-		return '<option value="' + group._id + '">' + group.name + '</option>';
+		return `<option value="${group._id}">${group.name}</option>`;
 	}
 
 	let allocationRow = function(allocation, tests){
-		let toret = '<tr><td>' + allocation.username + '</td><td><select name="test">';
+		let toret = `<tr><td>${allocation.username}</td><td><select name="test">`;
 
 		if(tests.length > 0){
 			for (var i = 0; i < tests.length; i++) {
 				if(allocation.test == tests[i]._id){
-					toret += '<option value="' + tests[i]._id + '">' + tests[i].name +'</option>';
+					toret += `<option value="${tests[i]._id}">${tests[i].name}</option>`;
 				}else{
-					toret += '<option value="' + tests[i]._id + '" selected>' + tests[i].name +'</option>';
+					toret += `<option value="${tests[i]._id}" selected>${tests[i].name}</option>`;
 				}
 			}
 		}else{

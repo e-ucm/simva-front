@@ -5,7 +5,7 @@
 <!--<div id="roller" style="width: 100%; text-align: center; padding: 200px;">
 	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 </div>-->
-<div>
+<div id="group_view">
 	<h1>Group: <span id="group_name"></span></h1>
 	<div class="left">
 		<div class="graybox owners">
@@ -92,8 +92,13 @@
 	</div>
 </div>
 
+<div id="pdf_printable">
+	<table id="pdf_printable_table">
+	</table>
+</div>
+
 <div class="floating_buttons">
-	<a unselectable="on" class="pdf" onclick="openPDF()">PDF</a>
+	<a unselectable="on" class="pdf" onclick="window.print();">PDF</a>
 </div>
 
 <script type="text/javascript">
@@ -210,7 +215,7 @@
 			let generateAndRegister = function(algorithm, length, callback){
 				let username = generateUsername(algorithm, length);
 
-				Simva.register(username, username + '@dummy.dum', username, 'student', function(error, result){
+				Simva.register(username, `${username}@dummy.dum`, username, 'student', function(error, result){
 					if(error && error.responseJSON){
 						generateAndRegister(algorithm, length, callback);
 					}else{
@@ -231,17 +236,6 @@
 		//$('#studies_list').html(roller);
 		reloadGroup();
 	});
-
-	let openPDF = async function(){
-		await Simva.getGroupPrintable(groupid, function(error, result){
-			var blob = new Blob([result], { type: 'application/pdf' });
-			console.log(blob);
-    		var link = document.createElement('a');
-    		link.href = window.URL.createObjectURL(blob);
-    		link.download = 'SimvaGroup_' + group.name.replace(' ', '-') + '.pdf';
-    		link.click();
-		});
-	}
 
 	let toggleSubmit = function(form){
 		$(form).find('input[type="submit"]').toggle();
@@ -300,51 +294,67 @@
 		for (var i = 0; i < group.owners.length; i++) {
 			$('#owners').append(ownerRow(group.owners[i]));
 		}
-
 		$('#participants').empty();
+		$('#pdf_printable_table').empty();
 		if(group.participants.length == 0){
 			$('#participants').append('<p>There are no participants in this group. Try adding some using the button on the right.</p>');
+			$('#pdf_printable_table').append(groupHeaderNoParticipantsPDF(group));
+			$('#pdf_printable_table').append('<p>There are no participants in this group. Try adding some using the button on the right.</p>');
 		}else{
 			$('#participants').append(participantHeader());
+			$('#pdf_printable_table').append(headerRowPDF(group));
 			for (var i = 0; i < participants.length; i++) {
 				$('#participants').append(participantRow(participants[i]));
+				$('#pdf_printable_table').append(participantRowPDF(participants[i], i+1));
 			}
 		}
 	}
 
 	let ownerRow = function(owner){
-		let toret = '<tr><td>' + owner + '</td><td><input class="red" type="button" value="Remove"';
+		let toret = `<tr><td>${owner}</td><td><input class="red" type="button" value="Remove"`;
 		if(owner == '<%= user.data.username %>'){
 			toret += ' disabled="disabled"';
 		}else{
-			toret += ' onclick="removeOwner(\'' + owner + '\')"'
+			toret += ` onclick="removeOwner('${owner}')"`
 		}
 
 		toret += '></td></tr>';
 		return toret;
 	}
 
+	let groupHeaderNoParticipantsPDF = function(groupname) {
+		return `<thead><tr><th colspan="6">Group: ${group.name}</th></tr></thead>`;
+	}
+
 	let participantHeader = function(){
-		return '<tr><th>Pic</th><th>Username</th><th>Email</th><th>Role</th><th></th></tr>';
+		return `<tr><th>Pic</th><th>Username</th><th>Email</th><th>Role</th><th></th></tr>`;
 	}
 
 	let participantRow = function(participant){
-		return '<tr><td><img src="/icon/user.png"></td>'
-			+ '<td>' + participant.username + '</td>'
-			+ '<td><a href="' + participant.email + '">' + participant.email + '</a></td>'
-			+ '<td>' + participant.role + '</td>'
-			+ '<td><input class="red" type="button" value="Remove" onclick="removeParticipant(\'' + participant.username + '\')"></td>';
+		return `<tr><td><img src="/icon/user.png"></td>
+			<td>${participant.username}</td>
+			<td><a href="${participant.email}">${participant.email}</a></td>
+			<td>${participant.role}</td>
+			<td><input class="red" type="button" value="Remove" onclick="removeParticipant('${participant.username}')"></td>`;
+	}
+
+	let headerRowPDF = function(group){
+		return `<thead><tr><th colspan="6">Group: ${group.name}</th></tr><tr><td width="5%">No.</td><td width="45%">Name</td><td width="40%" colspan="4">Code</td></tr></thead>`;
+	}
+
+	let participantRowPDF = function(participant, position){
+		return `<tr><td>${position}</td><td></td><td>${participant.username}</td><td>${participant.username}</td><td>${participant.username}</td><td>${participant.username}</td></tr>`;
 	}
 
 	let changeTab = function(tab, form, subform){
-		$('#' + form + ' .tab').removeClass('selected');
-		$('#' + form + ' .subform').removeClass('selected');
+		$(`#${form} .tab`).removeClass('selected');
+		$(`#${form} .subform`).removeClass('selected');
 		$(tab).toggleClass('selected');
-		$('#' + subform).toggleClass('selected');
+		$(`#${subform}`).toggleClass('selected');
 	}
 
 	let toggleAddForm = function(id){
-		$('#' + id).toggleClass('shown');
+		$(`#${id}`).toggleClass('shown');
 	}
 
 	let generateUsername = function(algorithm, length){
