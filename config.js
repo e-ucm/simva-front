@@ -34,7 +34,13 @@ config.sso.accountPath = process.env.SSO_ACCOUNT_PATH || '/account'
 config.sso.accountUrl = `${config.sso.url}/realms/${config.sso.realm}${config.sso.accountPath}`
 config.sso.userCanSelectRole=process.env.SSO_USER_CAN_SELECT_ROLE || "true"
 config.sso.administratorContact= process.env.SSO_ADMINISTRATOR_CONTACT || "contact@administrator.com"
-config.sso.allowedRoles = process.env.SSO_ALLOWED_ROLES || 'teacher,teaching-assistant,researcher,student'
+config.sso.studentAllowedRole = (process.env.SSO_STUDENT_ALLOWED_ROLE === "true") ? "student" : null
+config.sso.teachingAssistantAllowedRole = (process.env.SSO_TEACHING_ASSISTANT_ALLOWED_ROLE === "true") ? "teaching-assistant" :  null
+config.sso.teacherAllowedRole = (process.env.SSO_TEACHER_ALLOWED_ROLE === "true") ? "teacher" :  null
+config.sso.researcherAllowedRole = (process.env.SSO_RESEARCHER_ALLOWED_ROLE === "true") ? "researcher" :  null
+config.sso.allowedRoles = [config.sso.researcherAllowedRole, config.sso.teacherAllowedRole, config.sso.teachingAssistantAllowedRole, config.sso.studentAllowedRole ]
+	.filter(role => role !== null)
+	.join(',');
 
 config.api = {}
 config.api.host = process.env.SIMVA_API_HOST || 'simva-api.external.test'
