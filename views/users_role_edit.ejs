@@ -7,6 +7,25 @@
 <script type="text/javascript">
 	Simva.setAPIURL("<%= config.api.url %>");
 	Simva.setJWT("<%= user.jwt %>");
+	document.addEventListener('DOMContentLoaded', function() {
+		// Assuming the configuration is outputted to a script tag like this:
+		var allowedRoles = "<%= config.sso.allowedRoles %>";
+		// Convert the allowedRoles string to an array
+		var allowedRolesArray = allowedRoles.split(',');
+		// Get all role input elements
+		var roleInputs = document.querySelectorAll('.role_selector input[type="radio"]');
+		// Disable roles that are not in the allowedRolesArray
+		roleInputs.forEach(function(input) {
+		  	if (!allowedRolesArray.includes(input.value)) {
+				input.disabled = true;
+				// Find the parent div and hide it				
+				var parentDiv = input.parentElement;
+        		if (parentDiv) {
+          			parentDiv.classList.add('hidden');
+        		}
+		  	}
+		});
+	});
 	$(document).ready(function() {
 		$("#role_selection").on('submit', function(event){
 			event.preventDefault();
@@ -32,10 +51,22 @@
 	<form method="post" id="role_form">
 		<fieldset>
 			<div class="role_selector">
-				<input id="researcher_role" type="radio" name="role" value="researcher"><label for="researcher_role">Researcher</label>
-				<input id="teacher_role" type="radio" name="role" value="teacher"><label for="teacher_role">Teacher</label>
-				<input id="teaching_assistant_role" type="radio" name="role" value="teaching-assistant"><label for="teaching_assistant_role">Teaching Assistant</label>
-				<input id="student_role" type="radio" name="role" value="student" checked><label for="student_role">Student</label>
+				<div id="researcher_div">
+					<input id="researcher_role" type="radio" name="role" value="researcher">
+					<label for="researcher_role">Researcher</label>
+				</div>
+				<div id="teacher_div">
+					<input id="teacher_role" type="radio" name="role" value="teacher">
+					<label for="teacher_role">Teacher</label>
+				</div>
+				<div id="teaching_assistant_div">
+					<input id="teaching_assistant_role" type="radio" name="role" value="teaching-assistant">
+					<label for="teaching_assistant_role">Teaching Assistant</label>
+				</div>
+				<div id="student_div">
+					<input id="student_role" type="radio" name="role" value="student" checked>
+					<label for="student_role">Student</label>
+				</div>
 			</div>
 		</fieldset>
 		<input type="submit" value="Choose this Role" />

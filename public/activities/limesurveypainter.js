@@ -231,7 +231,7 @@ var LimeSurveyPainter = {
 				state =`<a onclick="LimeSurveyPainter.openResults('${activity._id}','${usernames[i]}')">${state}</a>`;
 			}
 
-			let completion = '<span>${state}</span>'
+			let completion = `<span>${state}</span>`
 			$(`#result_${activity._id}_${usernames[i]}`).removeClass();
 			$(`#result_${activity._id}_${usernames[i]}`).addClass(color);
 			$(`#result_${activity._id}_${usernames[i]}`).empty();
