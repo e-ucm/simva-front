@@ -37,7 +37,14 @@ app.use(bodyParser.json({limit: '1mb'}));
     })
   })
 );*/
-app.use(session({secret: 'simva app', cookie: {}}));
+app.use(session(
+  {
+    secret: 'simva app', 
+    cookie: {},
+    resave: false, // Set this to false
+    saveUninitialized: false, // Set this to false
+  }
+));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '/../public')));
 
