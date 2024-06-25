@@ -360,14 +360,39 @@
 			return false;
 		});
 
-		loadAddGroups();
-		Simva.getStudy("<%= study %>", function(error, study){
-			if(!error) {
-				Simva.updateStudy(study, function(error, result){
-					reloadStudy();
-				});
+		Simva.getAllocatorTypes(function(error, allocatortypes){
+			for (var i = 0; i < allocatortypes.length; i++) {
+				if(AllocatorFactory.Painters[allocatortypes[i].type]){
+					AllocatorFactory.Painters[allocatortypes[i].type].simpleName = allocatortypes[i].name;
+					AllocatorFactory.Painters[allocatortypes[i].type].description = allocatortypes[i].description;
+
+					let row = '<div class="row"><input type="radio" name="type" id="allocator_' + allocatortypes[i].type + '" value="' + allocatortypes[i].type + '"><label for="allocator_' + allocatortypes[i].type + '"><span class="name">' + AllocatorFactory.Painters[allocatortypes[i].type].simpleName + '</span><span class="description">' + AllocatorFactory.Painters[allocatortypes[i].type].description + '</span></label></div>';
+					$('#change_allocator_content').append(row);
+				}
 			}
-		});
+			
+			Simva.getActivityTypes(function(error, activitytypes){
+				for (var i = 0; i < activitytypes.length; i++) {
+					if(PainterFactory.Painters[activitytypes[i].type]){
+						PainterFactory.Painters[activitytypes[i].type].setUtils(activitytypes[i].utils);
+						PainterFactory.Painters[activitytypes[i].type].simpleName = activitytypes[i].name;
+						PainterFactory.Painters[activitytypes[i].type].description = activitytypes[i].description;
+
+						let row = '<option value="' + activitytypes[i].type + '">' + PainterFactory.Painters[activitytypes[i].type].simpleName + '</option>';
+						$('#new_activity_form select[name="type"]').append(row);
+					}
+				}
+				loadAddGroups();
+			
+				Simva.getStudy("<%= study %>", function(error, study){
+					if(!error) {
+						Simva.updateStudy(study, function(error, result){
+							reloadStudy();
+						});
+					}
+				});
+			});
+		})
 	});
 
 	let downloadUAConfig = function(){
