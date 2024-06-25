@@ -2,8 +2,7 @@ var jwt = require('jsonwebtoken');
 
 var passport = require('passport');
 
-let request = require('request');
-let querystring = require('querystring');
+let axios = require('axios');
 
 module.exports = {
 	setUser: function(req, user){
@@ -70,54 +69,52 @@ module.exports = {
 		if(req.session.user && req.session.user.refreshToken){
 			console.log(`refreshAuth() - Refresh Token : ${req.session.user.refreshToken}`)
 			clientConfig= `${config.sso.clientId}:${config.sso.clientSecret}`
-			request.post({
-				url: `${config.sso.url}/realms/${config.sso.realm}/protocol/openid-connect/token`,
+			const querystring = new URLSearchParams({
+				'grant_type': 'refresh_token',
+				'refresh_token': req.session.user.refreshToken
+			  });
+			axios.post(`${config.sso.url}/realms/${config.sso.realm}/protocol/openid-connect/token`, querystring, {
 				headers: {
-					'Authorization': `Basic ${Buffer.from(clientConfig).toString('base64')}`,
-					'Content-Type': 'application/x-www-form-urlencoded'
-				},
-				body: querystring.stringify({
-					'grant_type': 'refresh_token',
-					'refresh_token': req.session.user.refreshToken
-				})
-			}, function(error, response, body){
-				if(!error){
-					try {
-						console.log(`refreshAuth() - Body : ${response.body}`);
-						let b = JSON.parse(response.body);
-						let simvaToken = b.access_token;
-						console.log(`refreshAuth() - Access Token : ${simvaToken}`);
-						if(simvaToken == "undefined" || simvaToken == null) {
-							callback({
-								status: 500,
-								data: {
-									message: 'Token not active.',
-									error: b
-								}
-							});
-						} else {
-							callback(null, simvaToken);
-						}
-					} catch(e) {
-						console.log(e);
+				  'Authorization': `Basic ${Buffer.from(clientConfig).toString('base64')}`,
+				  'Content-Type': 'application/x-www-form-urlencoded'
+				}
+			}).then(response => {
+				try {
+					console.log(`refreshAuth() - Body : ${response.body}`);
+					let b = JSON.parse(response.body);
+					let simvaToken = b.access_token;
+					console.log(`refreshAuth() - Access Token : ${simvaToken}`);
+					if(simvaToken == "undefined" || simvaToken == null) {
 						callback({
 							status: 500,
 							data: {
-								message: 'Unable to refresh accessToken',
-								error: e
+								message: 'Token not active.',
+								error: b
 							}
 						});
+					} else {
+						callback(null, simvaToken);
 					}
-				}else{
+				} catch(e) {
+					console.log(e);
 					callback({
 						status: 500,
 						data: {
 							message: 'Unable to refresh accessToken',
-							error: error
+							error: e
 						}
 					});
 				}
-		 	});
+			})
+			.catch(error => {
+				callback({
+					status: 500,
+					data: {
+						message: 'Unable to refresh accessToken',
+						error: error
+					}
+				});
+			});
 		}else{
 			callback({
 				status: 401,
