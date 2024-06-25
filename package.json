@@ -20,7 +20,7 @@
     "connect-mongo": "3",
     "passport": "^0.6.0",
     "passport-keycloak-oauth2-oidc": "^1.0.3",
-    "request": "^2.88.2"
+    "axios": "^1.7.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"
