@@ -330,6 +330,4 @@ var LTIToolPainter = {
 	}
 }
 
-if(config.lti.enabled == 'true') {
-	PainterFactory.addPainter(LTIToolPainter);
-}
+//PainterFactory.addPainter(LTIToolPainter);

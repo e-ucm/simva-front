@@ -117,9 +117,7 @@ var GameplayActivityPainter = {
 		*/
 		activitybox += '<p>Trace Storage: '
 		if(activity.extra_data.config.trace_storage) {
-			activitybox += `<a href="${this.utils.minio_url}minio/${this.utils.minio_bucket}/${this.utils.topics_dir}/${this.utils.trace_topic}/_id=${activity._id}/" target="_blank">Folder</a>
-			/
-			<a href="${this.utils.minio_url}minio/${this.utils.minio_bucket}/${this.utils.users_dir}/${this.utils.user_folder}/${activity._id}/" target="_blank">Combined Data</a>
+			activitybox += `<a onclick="GameplayActivityPainter.getMinioData('${activity._id}')" target="_blank">Download Data</a>
 			<br>
 			XASU Config:
 			<a onclick="GameplayActivityPainter.downloadXasuConfig('${activity._id}')">
@@ -305,7 +303,7 @@ var GameplayActivityPainter = {
 		}
 
 	},
-
+	
 	openTraces: function(activity, user){
 		Simva.getActivityResultForUser(activity, user, function(error, result){
 			if(error){
@@ -342,6 +340,30 @@ var GameplayActivityPainter = {
 				let body = $('body', context);
 				body.html(content);
 				toggleAddForm('iframe_floating');
+			}
+		})
+	},
+
+	getMinioData: function(activity){
+		Simva.getMinioDataUrl(activity, function(error, result){
+			console.log("Callback triggered");
+			if(error){
+				console.log("Error:", error);  // Log the error object for better visibility
+				$.toast({
+					heading: 'Error loading the result',
+					text: error.message,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+			}else{
+				console.log("Result:", result);  // Log the entire result for debugging
+       			let url = result.url;
+
+       			// Open the generated URL in a new tab
+       			window.open(url, '_blank');
+
+       			// If you still want to show a message or update the UI in some way, you can do it here
 			}
 		})
 	},
