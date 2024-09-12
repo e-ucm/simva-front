@@ -218,12 +218,20 @@ var Simva = {
 		this.post(`${this.apiurl}/activities/${activity_id}/completion?user=${user}`, { status: status }, callback);
 	},
 
-	getActivityResultForUser(activity_id, student, callback){
+	getActivityResultForUser : function(activity_id, student, callback){
 		this.get(`${this.apiurl}/activities/${activity_id}/result?users=${student}`, callback);
+	},
+
+	getActivityResultWithTypeForUser : function(activity_id, type, student, callback){
+		this.get(`${this.apiurl}/activities/${activity_id}/result?users=${student}&type=${type}`, callback);
 	},
 
 	getActivityResult: function(activity_id, callback){
 		this.get(`${this.apiurl}/activities/${activity_id}/result`, callback);
+	},
+
+	getActivityResultWithType: function(activity_id, type, callback){
+		this.get(`${this.apiurl}/activities/${activity_id}/result?type=${type}`, callback);
 	},
 
 	getActivityHasResult: function(activity_id, callback){

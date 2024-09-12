@@ -57,7 +57,7 @@ var LimeSurveyPainter = {
 
 		return form;
 	},
-	downloadBackup: function(activity, user){
+	downloadBackup: function(activity, type, user){
 		var toastParams = {
 			heading: 'Error loading the result',
 			position: 'top-right',
@@ -65,13 +65,14 @@ var LimeSurveyPainter = {
 			stack: false
 		};
 		
-		Simva.getActivityResult(activity, function(error, result){
+		Simva.getActivityResultWithType(activity, type, function(error, result){
 			if(error){
 				toastParams.text = error.message;
 				$.toast(toastParams);
 			}else{
-				var filename = `${activity}.json`;
-				Utils.download(filename, JSON.stringify(result));
+				var filename = `${activity}_${type}.json`;
+				var stringifiedres = JSON.stringify(result, null, 2);
+				Utils.download(filename, stringifiedres);
 			}
 		});
 
@@ -154,8 +155,9 @@ var LimeSurveyPainter = {
 			<div class="top"><h4>${activity.name}</h4>
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
 			<p class="subtitle">${this.simpleName}</p>
-			<p>Survey ID: <a target="_blank" href="${this.utils.url}${activity.extra_data.surveyId}">${activity.extra_data.surveyId}</a>
-			<a onclick="LimeSurveyPainter.downloadBackup('${activity._id}')"> ⬇️</a></p>
+			<p>Survey ID: <a target="_blank" href="${this.utils.url}${activity.extra_data.surveyId}">${activity.extra_data.surveyId}</a></p>
+			<p><a onclick="LimeSurveyPainter.downloadBackup('${activity._id}', 'full')"> Full : ⬇️</a>
+			<a onclick="LimeSurveyPainter.downloadBackup('${activity._id}', 'code')"> Code : ⬇️</a></p>
 			<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>
 			<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>
 			${this.paintActivityParticipantsTable(activity, participants)}</div>`);
@@ -228,7 +230,7 @@ var LimeSurveyPainter = {
 					state = 'Started';
 				}
 
-				state =`<a onclick="LimeSurveyPainter.openResults('${activity._id}','${usernames[i]}')">${state}</a>`;
+				state =`<a onclick="LimeSurveyPainter.openResults('${activity._id}', 'full','${usernames[i]}')">${state}</a>`;
 			}
 
 			let completion = `<span>${state}</span>`
@@ -269,8 +271,8 @@ var LimeSurveyPainter = {
 		toggleAddForm('iframe_floating');
 	},
 
-	openResults: function(activity, user){
-		Simva.getActivityResultForUser(activity, user, function(error, result){
+	openResults: function(activity, type, user){
+		Simva.getActivityResultWithTypeForUser(activity, type, user, function(error, result){
 			if(error){
 				$.toast({
 					heading: 'Error loading the result',
@@ -280,10 +282,22 @@ var LimeSurveyPainter = {
 					stack: false
 				});
 			}else{
-				let content = `<div style="padding: 20px;">${JSON.stringify(result[user], null, 2)}</div>`;
+				let stringifyres=JSON.stringify(result[user], null, 2);
+
+				// Create a pre-formatted text element with styling
+				let content = `<pre style="padding: 20px; background-color: #f0f0f0; color: #333; font-family: monospace; white-space: pre-wrap; word-wrap: break-word;">${stringifyres}</pre>`;
+            
 				let context = $('#iframe_floating iframe')[0].contentWindow.document;
 				let body = $('body', context);
+				
+				// Set the content and ensure proper styling
 				body.html(content);
+				body.css({
+					'margin': '0',
+					'padding': '0',
+					'overflow': 'auto',
+					'height': '100vh'
+				});
 				toggleAddForm('iframe_floating');
 			}
 		})
