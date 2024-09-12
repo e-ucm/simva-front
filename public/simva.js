@@ -252,6 +252,10 @@ var Simva = {
 		this.get(`${this.apiurl}/activities/${activity_id}/openable`, callback);
 	},
 
+	getMinioDataUrl: function(activity_id, callback){
+		this.get(`${this.apiurl}/activities/${activity_id}/presignedurl`, callback);
+	},
+
 	deleteActivity: function(activity_id, callback){
 		this.delete(`${this.apiurl}/activities/${activity_id}`, callback);
 	},
