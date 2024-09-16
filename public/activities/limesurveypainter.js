@@ -150,12 +150,25 @@ var LimeSurveyPainter = {
 		});
 	},
 
+	generateTinyURL: function(activityId, surveyId) {
+		//Simva.getTinyUrl(activityId, function(error, result){
+		//});
+		let url=`${this.utils.url}${surveyId}`;
+		$.get(`https://tinyurl.com/api-create.php?url=${url}`, function(shorturl){
+			// Copy the text inside the text field
+			navigator.clipboard.writeText(shorturl);
+			// Alert Short URL
+			alert(shorturl);
+		});
+	},
+
 	paintActivity: function(activity, participants){
 		$(`#test_${activity.test} .activities`).append(`<div id="activity_${activity._id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
 			<p class="subtitle">${this.simpleName}</p>
 			<p>Survey ID: <a target="_blank" href="${this.utils.url}${activity.extra_data.surveyId}">${activity.extra_data.surveyId}</a></p>
+			<p><a onclick="LimeSurveyPainter.generateTinyURL('${activity._id}', ${activity.extra_data.surveyId})">Generate Tiny URL</a></p>
 			<p><a onclick="LimeSurveyPainter.downloadBackup('${activity._id}', 'full')"> Full : ⬇️</a>
 			<a onclick="LimeSurveyPainter.downloadBackup('${activity._id}', 'code')"> Code : ⬇️</a></p>
 			<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>
