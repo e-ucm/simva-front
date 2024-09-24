@@ -59,7 +59,7 @@ module.exports = {
 
 	getRoleFromJWT: function(decoded){
 		let role = 'norole';
-		if(userdata.realm_access.roles.includes('administrator')){
+		if(decoded.realm_access.roles.includes('administrator')){
 			role = 'admin';
 		} else if(decoded.realm_access.roles.includes('teacher') || decoded.realm_access.roles.includes('researcher')){
 			role = 'teacher';
