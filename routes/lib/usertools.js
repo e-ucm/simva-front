@@ -10,7 +10,9 @@ module.exports = {
 		console.log(`JWT : ${JSON.stringify(decoded)}`);
 		user.data.roles = decoded.realm_access.roles;
 		user.data.role = this.getRoleFromJWT(decoded);
+		console.log(`User Role : ${user.data.role}`);
 		req.session.user = user;
+		console.log(`User : ${user}`);
 	},
 
 	authExpired: function(req, config, callback){
