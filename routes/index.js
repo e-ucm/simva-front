@@ -112,9 +112,11 @@ router.get('/about', auth(0), function(req, res, next) {
 });
 
 router.get('/', auth(0), function(req, res, next) {
-  if(req.session.user.data.role == 'teacher'){
+  if(req.session.user.data.role == 'administrator') {
+    res.render('adminhome', { config: config, user: req.session.user });
+  } else if(req.session.user.data.role == 'teacher') {
     res.render('home', { config: config, user: req.session.user });
-  }else if(req.session.user.data.role == 'student'){
+  } else if(req.session.user.data.role == 'student') {
     res.render('studenthome', { config: config, user: req.session.user });
   } else {
     if(config.sso.userCanSelectRole == "true") {
