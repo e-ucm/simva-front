@@ -113,7 +113,7 @@ router.get('/about', auth(0), function(req, res, next) {
 
 router.get('/', auth(0), function(req, res, next) {
   console.log(req.session.user.data.role);
-  if(req.session.user.data.role == 'administrator') {
+  if(req.session.user.data.role == 'admin') {
     res.render('adminhome', { config: config, user: req.session.user });
   } else if(req.session.user.data.role == 'teacher') {
     res.render('home', { config: config, user: req.session.user });
