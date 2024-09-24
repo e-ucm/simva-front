@@ -64,6 +64,7 @@ module.exports = {
 		} else if(decoded.realm_access.roles.includes('teaching-assistant') || decoded.realm_access.roles.includes('student')){
 			role = 'student';
 		};
+		console.log(role);
 		return role;
 	},
 
