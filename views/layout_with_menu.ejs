@@ -49,6 +49,9 @@
 				<li><a href="/lti-platform/"><span><img src="/icon/survey.png"></span> <span>LTI Platform</span></a></li>
 			<% } %>
 	<% } %>
+	<% if(user.data.role === 'admin'){ %>
+		<li><a href="<%= config.sso.adminUrl%>"><span><img src="/icon/user.png"></span> <span>Admin SSO</span></a></li>
+	<% } %>
 			<li><a href="/about"><span><img src="/icon/info.png"></span> <span>About</span></a></li>
 		</ul>
 	</div>
