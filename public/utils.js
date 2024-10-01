@@ -9,8 +9,17 @@ var Utils = {
 
 	    return indexed_array;
 	},
+	
+	toggleAddForm : function(id){
+		$(`#${id}`).toggleClass('shown');
+	},
 
-	post: function(url, body, callback, jwt){
+	toggleSubmit : function(form){
+		$(form).find('input[type="submit"]').toggle();
+		$(form).find('.loader').toggle();
+	},
+
+	post: function(url, body, callback){
 		$.ajax({
 			type: 'POST',
 			url: url,
@@ -18,19 +27,16 @@ var Utils = {
 			contentType: 'application/json',
 			dataType: 'json',
 			cache: false,
-			beforeSend: function (xhr) {
-				if(jwt){
-					xhr.setRequestHeader("Authorization", `Bearer ${jwt}`);
-				}
-			},
 			success: function(data){
 				callback(null, data);
 			},
-			error: callback
+			error: function(error){
+				callback(error);
+			},
 		});
 	},
 
-	patch: function(url, body, callback, jwt){
+	patch: function(url, body, callback){
 		$.ajax({
 			type: 'PATCH',
 			url: url,
@@ -38,19 +44,16 @@ var Utils = {
 			contentType: 'application/json',
 			dataType: 'json',
 			cache: false,
-			beforeSend: function (xhr) {
-				if(jwt){
-					xhr.setRequestHeader("Authorization", `Bearer ${jwt}`);
-				}
-			},
 			success: function(data){
 				callback(null, data);
 			},
-			error: callback
+			error: function(error){
+				callback(error);
+			},
 		});
 	},
 
-	put: function(url, body, callback, jwt){
+	put: function(url, body, callback){
 		$.ajax({
 			type: 'PUT',
 			url: url,
@@ -58,19 +61,16 @@ var Utils = {
 			contentType: 'application/json',
 			dataType: 'json',
 			cache: false,
-			beforeSend: function (xhr) {
-				if(jwt){
-					xhr.setRequestHeader("Authorization", `Bearer ${jwt}`);
-				}
-			},
 			success: function(data){
 				callback(null, data);
 			},
-			error: callback
+			error: function(error){
+				callback(error);
+			},
 		});
 	},
 
-	get: function(url, callback, jwt){
+	get: function(url, callback){
 
 		$.ajax({
 			type: 'GET',
@@ -78,19 +78,16 @@ var Utils = {
 			contentType: 'application/json',
 			dataType: 'json',
 			cache: false,
-			beforeSend: function (xhr) {
-				if(jwt){
-					xhr.setRequestHeader("Authorization", `Bearer ${jwt}`);
-				}
-			},
 			success: function(data){
 				callback(null, data);
 			},
-			error: callback
+			error: function(error){
+				callback(error);
+			},
 		});
 	},
 
-	getPDF: function(url, callback, jwt){
+	getPDF: function(url, callback){
 
 		var req = new XMLHttpRequest();
 		req.open("GET", url, true);
@@ -105,23 +102,19 @@ var Utils = {
 		req.send();
 	},
 
-	delete: function(url, callback, jwt){
-
+	delete: function(url, callback){
 		$.ajax({
 			type: 'DELETE',
 			url: url,
 			contentType: 'application/json',
 			dataType: 'json',
 			cache: false,
-			beforeSend: function (xhr) {
-				if(jwt){
-					xhr.setRequestHeader("Authorization", `Bearer ${jwt}`);
-				}
-			},
 			success: function(data){
 				callback(null, data);
 			},
-			error: callback
+			error: function(error){
+				callback(error);
+			},
 		});
 	},
 

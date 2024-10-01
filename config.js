@@ -11,6 +11,7 @@ config.simva.host = process.env.SIMVA_HOST || 'simva.external.test'
 config.simva.protocol = process.env.SIMVA_PROTOCOL || 'https'
 let simvaPort = ((default_protocol_ports[config.simva.protocol] !== config.simva.port) ? `:${config.simva.port}` : '')
 config.simva.url = process.env.SIMVA_URL || `${config.simva.protocol}://${config.simva.host}${simvaPort}`;
+config.simva.cookieMaxAgeInMin=process.env.SIMVA_COOKIE_MAX_AGE_IN_MIN || 4*60
 
 config.mongo = {}
 config.mongo.host = process.env.MONGO_HOST || 'localhost:27017'
@@ -56,7 +57,27 @@ config.limesurvey.url =  `${config.limesurvey.protocol}://${config.limesurvey.ho
 config.limesurvey.adminUser =  process.env.LIMESURVEY_ADMIN_USER || 'admin'
 config.limesurvey.adminPassword = process.env.LIMESURVEY_ADMIN_PASSWORD || 'password'
 
+config.hmac = {}
+config.hmac.password = process.env.HMAC_PASSWORD || 'mypassword'
+config.hmac.salt = process.env.HMAC_SALT || 'mysalt'
+config.hmac.key = process.env.HMAC_KEY || 'mykey'
+config.hmac.hmacKey = null
+
 config.lti = {}
 config.lti.enabled = process.env.LTI_ENABLED || 'false'
+
+config.kafka = {}
+config.kafka.clientId= process.env.SIMVA_KAFKA_CLIENTID || 'my-client-id'
+config.kafka.brokers= [ process.env.SIMVA_KAFKA_BROKER ] || ['localhost:9092']
+config.kafka.groupId= process.env.SIMVA_KAFKA_GROUPID || 'my-group-id'
+config.kafka.topic= process.env.SIMVA_KAFKA_SIMVA_EVENTS_TOPIC || 'minio-events'
+
+config.shlink = {}
+config.shlink.apihost = process.env.SHLINK_SERVER_HOST || 'shlink.external.test'
+config.shlink.protocol = process.env.SHLINK_PROTOCOL || 'https'
+config.shlink.port = process.env.SHLINK_PORT || '443'
+config.shlink.apiurl =  `${config.shlink.protocol}://${config.shlink.apihost}:${config.shlink.port}`
+config.shlink.apikey = process.env.SHLINK_SERVER_API_KEY || 'myapikey'
+
 
 module.exports = config;

@@ -23,6 +23,19 @@ var ImsPackagePainter = {
 			 //<p><label for="imspackage_realtime">Realtime</label><input id="imspackage_realtime" type="checkbox" name="realtime"></p>`
 	},
 
+	getEditExtraForm: function () {
+		return `<div class="imspackage_activity"><p><label for="edit_imspackage_trace_storage">Trace Storage</label><input id="edit_imspackage_trace_storage" type="checkbox" name="trace_storage"></p>
+			 <p><label for="edit_imspackage_backup">Backup</label><input id="edit_imspackage_backup" type="checkbox" name="backup"></p>`;
+			 //<p><label for="imspackage_realtime">Realtime</label><input id="imspackage_realtime" type="checkbox" name="realtime"></p>`
+	},
+
+	updateInputEditExtraForm(activity) {
+		var imspackage_trace_storage = document.getElementById('edit_imspackage_trace_storage');
+		imspackage_trace_storage.checked = activity.extra_data.config.trace_storage;
+		var imspackage_backup = document.getElementById('edit_imspackage_backup');
+		imspackage_backup.checked = activity.extra_data.config.backup;
+	},
+
 	extractInformation: function(form, callback){
 		let activity = {};
 
@@ -41,46 +54,37 @@ var ImsPackagePainter = {
 
 		callback(null, activity);
 	},
+	
+	extractEditInformation: function(form, actualActivity, callback){
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+		let activity = {};
+
+		if(actualActivity.name !== formdata.name) {
+			activity.name = formdata.name;
+		}
+	
+		callback(null, activity);
+	},
 
 	fullyPaintActivity: function(activity){
 		this.paintActivity(activity, participants);
-		let tmp = this;
-
-		Simva.isActivityOpenable(activity._id, function(error, result){
-
-			activity.isOpenable = result.openable;
-			if(activity.isOpenable){
-				Simva.getActivityTarget(activity._id, function(error, result){
-					activity.tmp.result = result;
-					tmp.paintActivityTargets(activity, result);
-				});
-			}
-
-			tmp.updateParticipants(activity);
-			
-			setInterval(function(){
-				tmp.updateParticipants(activity);
-			}, 5000);
-		});
+		this.updateParticipants(activity);
 	},
 
 	updateParticipants: function(activity){
-		let tmp = this;
-		activity.tmp = {};
-
-		Simva.getActivityCompletion(activity._id, function(error, result){
-			tmp.paintActivityCompletion(activity, result);
-		});
-
-		Simva.getActivityResult(activity._id, function(error, result){
-			tmp.paintActivityResult(activity, result);
-		});
+		if(activity.data.openable){
+			PainterFactory.Painters["activity"].paintActivityTargets(activity, activity.data.target);
+		}
+		PainterFactory.Painters["activity"].paintActivityCompletion(activity, activity.data.completion, true);
+		PainterFactory.Painters["activity"].paintActivityResult(activity, activity.data.result, false, "No Backup", null, null, true, "See Backup", "imspackage");
 	},
 
 	paintActivity: function(activity, participants){
 		let activitybox = `<div id="activity_${activity._id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
+			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
+			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
 			<p class="subtitle">${this.simpleName}</p>`;
 
 		/*
@@ -117,12 +121,7 @@ var ImsPackagePainter = {
 			
 			toret += '<tr>';
 
-			if(activity.isOpenable || (activity.extra_data.game_uri && activity.extra_data.game_uri !== '') ){
-				toret += `<td><a id="${activity._id}_" ${participants[i].username}_target" 
-				class="targeturl" target="_blank" href="">${participants[i].username}</a></td>`;
-			}else{
-				toret += `<td>${participants[i].username}</td>`;
-			}
+			toret += `<td>${PainterFactory.Painters["activity"].paintUsernameOrToken(activity, participants[i])}</td>`;
 
 			toret += `<td id="completion_${activity._id}_${participants[i].username}">---</td>`;
 
@@ -246,16 +245,6 @@ var ImsPackagePainter = {
 		$(`#result_progress_${activity._id} partial`).text(partialprogress);
 	},
 
-	paintActivityTargets: function(activity, results){
-		let usernames = Object.keys(results);
-
-		let done = 0, partial = 0;
-		
-		for (var i = 0; i < usernames.length; i++) {
-			$(`#${activity._id}_${usernames[i]}_target`).attr('href', results[usernames[i]]);
-		}
-	},
-
 	downloadBackup: function(activity, user){
 		Simva.getActivityResultForUser(activity, user, function(error, result){
 			if(error){
@@ -310,7 +299,7 @@ var ImsPackagePainter = {
 				let context = $('#iframe_floating iframe')[0].contentWindow.document;
 				let body = $('body', context);
 				body.html(content);
-				toggleAddForm('iframe_floating');
+				Utils.toggleAddForm('iframe_floating');
 			}
 		})
 	},

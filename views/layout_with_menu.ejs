@@ -9,17 +9,31 @@
 	<link href="/toast/jquery.toast.css" rel="stylesheet" type="text/css">
 	<link href="/libs/jsonTree/jsonTree.css" rel="stylesheet" />
 	<script src="/libs/jsonTree/jsonTree.js"></script>
+	<script src="/libs/SSEClientManager.js"></script>
 	<script type="text/javascript" src="/jquery.js"></script>
 	<script type="text/javascript" src="/toast/jquery.toast.js"></script>
 	<script type="text/javascript" src="/utils.js"></script>
 	<script type="text/javascript" src="/simva.js"></script>
 	<script type="text/javascript">
-		Simva.setJWT("<%= user.jwt %>");
 		Simva.setAPIURL("<%= config.api.url %>");
 		Simva.setSSOURL("<%= config.sso.url %>");
 		Simva.setSSOREALM("<%= config.sso.realm %>");
 		var roller = '<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>';
 
+		
+		let getUserToken = function(){
+			Simva.getCurrentUser(function(error, result) {
+				if(!error) {
+					if(result.isToken && result.isToken == "true") {
+						document.getElementById('username').innerText = result.token;
+						document.getElementById('account_username').removeAttribute('href');
+					} else {
+						document.getElementById('username').innerText = result.username;
+					}
+				}
+			})
+		}
+		getUserToken();
 		$(document).ready(function() {
 			$(".floater").on('click', function(event){
 				if (event.target !== this)
@@ -33,7 +47,7 @@
 	<div class="header">
 		<div class="left"><span class="logo"><img src="/logo.png"></span> <span class="title">Simva - A Simple Validator</span></div>
 		<div class="right">
-			<span><a href="<%= config.sso.accountUrl%>"><img src="/icon/user.png"> <span><%= user.data.username %></span></a></span>
+			<span><a id="account_username" href="<%= config.sso.accountUrl%>"><img src="/icon/user.png"> <span id="username"></span></a></span>
 			<span><a class="logout" href="/users/logout"><img src="/icon/power.png"> <span>Logout</span></a></span>
 		</div>
 	</div>
@@ -45,6 +59,7 @@
 	<% if(user.data.role === 'teacher'){ %>
 			<li><a href="/activities/"><span><img src="/icon/survey.png"></span> <span>Activities</span></a></li>
 			<li><a href="/groups/"><span><img src="/icon/group.png"></span> <span>Groups</span></a></li>
+			<li><a href="/previous-groups/"><span><img src="/icon/group.png"></span> <span>Groups (Deprecated)</span></a></li>
 			<% if(config.lti.enabled == 'true'){ %>
 				<li><a href="/lti-platform/"><span><img src="/icon/survey.png"></span> <span>LTI Platform</span></a></li>
 			<% } %>

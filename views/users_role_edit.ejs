@@ -5,8 +5,6 @@
 <script type="text/javascript" src="/utils.js"></script>
 <script type="text/javascript" src="/simva.js"></script>
 <script type="text/javascript">
-	Simva.setAPIURL("<%= config.api.url %>");
-	Simva.setJWT("<%= user.jwt %>");
 	document.addEventListener('DOMContentLoaded', function() {
 		// Assuming the configuration is outputted to a script tag like this:
 		var allowedRoles = "<%= config.sso.allowedRoles %>";
@@ -31,13 +29,10 @@
 			event.preventDefault();
 			let form = Utils.getFormData($("#role_form"));
 			username = "<%= user.data.username %>"
-			console.log(username);
-			console.log(form);
 			Simva.setRole(username, form.role, function(error, result){
 				if(error && error.responseJSON){
 					$("#error").text(error.responseJSON.message);
 				}else{
-					console.log(result);
 					window.location.replace('/users/openid');
 				}
 			});

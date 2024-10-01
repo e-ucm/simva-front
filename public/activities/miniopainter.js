@@ -20,6 +20,13 @@ var ActivityPainter = {
 		return '';
 	},
 
+	getEditExtraForm: function () {
+		return this.getExtraForm();
+	},
+
+	updateInputEditExtraForm(activity) {
+	},
+
 	extractInformation: function(form, callback){
 		let activity = {};
 
@@ -32,33 +39,41 @@ var ActivityPainter = {
 		callback(null, activity);
 	},
 
+	extractEditInformation: function(form, actualActivity, callback){
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+		let activity = {};
+
+		if(actualActivity.name !== formdata.name) {
+			activity.name = formdata.name;
+		}
+	
+		callback(null, activity);
+	},
+	
 	fullyPaintActivity: function(activity){
 		this.paintActivity(activity, participants);
 		let tmp = this;
 
 		this.updateParticipants(activity);
-		setInterval(function(){
-			tmp.updateParticipants(activity);
-		}, 5000);
+		//setInterval(function(){
+		//	tmp.updateParticipants(activity);
+		//}, 5000);
 	},
 
 	updateParticipants: function(activity){
 		let tmp = this;
 		activity.tmp = {};
 
-		Simva.getActivityCompletion(activity._id, function(error, result){
-			tmp.paintActivityCompletion(activity, result);
-		});
-
-		Simva.hasActivityResult(activity._id, function(error, result){
-			tmp.paintActivityResult(activity, result);
-		});
+		tmp.paintActivityCompletion(activity, activity.data.completion);
+		tmp.paintActivityResult(activity, activity.data.hasresult);
 	},
 
 	paintActivity: function(activity, participants){
 		$(`#test_${activity.test} .activities`).append(`<div id="activity_${activity._id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
+			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
+			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
 			<p class="subtitle">${this.simpleName}</p>
 			<p>Minio: <a href="${this.utils.minio_url}${this.utils.minio_bucket}/${this.utils.topics_dir}/${this.utils.trace_topic}/_id=${activity._id}/
 			" target="_blank">Open minio</a></p>
@@ -75,7 +90,7 @@ var ActivityPainter = {
 				continue;
 			}
 			
-			toret += `<tr><td>${participants[i].username}</td>
+			toret += `<tr><td>${PainterFactory.Painters["activity"].paintUsernameOrToken(activity, participants[i])}</td>
 				<td id="completion_${activity._id}_${participants[i].username}">---</td>
 				<td id="result_${activity._id}_${participants[i].username}">---</td>`;
 		}
@@ -122,7 +137,7 @@ var ActivityPainter = {
 
 			if(status){
 				done++;
-				result = `<span><a onclick="ActivityPainter.openResults('${activity._id}','${usernames[i]}')">See Results</a></span>`;
+				result = `<span><a onclick="PainterFactory.Painters["activity"].openResults('${activity._id}','${usernames[i]}')">See Results</a></span>`;
 			}
 
 
@@ -162,7 +177,7 @@ var ActivityPainter = {
 				let context = $('#iframe_floating iframe')[0].contentWindow.document;
 				let body = $('body', context);
 				body.html(content);
-				toggleAddForm('iframe_floating');
+				Utils.toggleAddForm('iframe_floating');
 			}
 		})
 	}
