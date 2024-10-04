@@ -145,9 +145,8 @@ var GameplayActivityPainter = {
 
 	paintActivityParticipantsTable: function(activity, participants){
 		let toret = '<table><tr><th>User</th><th>Completed</th>';
-		if(activity.extra_data.config.realtime){
-			toret += '<th>Progress</th><th>Traces</th>';
-		}
+		toret += '<th>Progress</th>';
+		//toret += '<th>Traces</th>';
 		toret += '<th>Backup</th></tr>';
 
 		for (var i = 0; i < participants.length; i++) {
@@ -166,12 +165,8 @@ var GameplayActivityPainter = {
 
 			toret += `<td id="completion_${activity._id}_${participants[i].username}">---</td>`;
 
-			if(activity.extra_data.config.realtime){
-				toret += `<td id="progress_${activity._id}_${participants[i].username}" class="progress"><div class="partial"></div><div class="done"></div><span><done>0</done>%</span></td>
-						<td id="traces_${activity._id}_${participants[i].username}">---</td>`;
-			}else{
-				toret += ''
-			}
+			toret += `<td id="progress_${activity._id}_${participants[i].username}" class="progress"><div class="partial"></div><div class="done"></div><span><done>0</done>%</span></td>`
+			//toret += `<td id="traces_${activity._id}_${participants[i].username}">---</td>`;
 			
 			if(activity.extra_data.config.backup){
 				toret += `<td id="backup_${activity._id}_${participants[i].username}">---</td></tr>`;
@@ -218,7 +213,7 @@ var GameplayActivityPainter = {
 
 		for (var i = 0; i < usernames.length; i++) {
 			let status = results[usernames[i]];
-			let traces = '<span>No traces</span>';
+			//let traces = '<span>No traces</span>';
 			let backup = '<span><i>Disabled</i></span>';
 			if(activity.extra_data.config.backup){
 				backup = '<span>No backup</span>';
@@ -237,16 +232,15 @@ var GameplayActivityPainter = {
 					}
 					
 				}
-				/*
+				
 				tmpprogress = (tmpprogress * 1000) / 10;
 				$(`#progress_${activity._id}_${usernames[i]} .done`).css('width', `${tmpprogress}%` );
-				$(`#progress_${activity._id}_${usernames[i]} done`).text(tmpprogress);*/
+				$(`#progress_${activity._id}_${usernames[i]} done`).text(tmpprogress);
 			}
 
-
-			/*$(`traces_${activity._id}_${usernames[i]}`).addClass(status && status.realtime ? 'green' : 'red');
-			$(`#traces_${activity._id}_${usernames[i]}`).empty();
-			$(`#traces_${activity._id}_${usernames[i]}`).append(traces);*/
+			//$(`traces_${activity._id}_${usernames[i]}`).addClass(status && status.realtime ? 'green' : 'red');
+			//$(`#traces_${activity._id}_${usernames[i]}`).empty();
+			//$(`#traces_${activity._id}_${usernames[i]}`).append(traces);
 
 			$(`#backup_${activity._id}_${usernames[i]}`).addClass(status ? 'green' : 'red');
 			$(`#backup_${activity._id}_${usernames[i]}`).empty();
@@ -260,13 +254,12 @@ var GameplayActivityPainter = {
 		$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
 		$(`#result_progress_${activity._id} done`).text(progress);
 
-		/*
 		let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
 		if(isNaN(partialprogress)){
 			partialprogress = 0;
 		}
 		$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
-		$(`#result_progress_${activity._id} partial`).text(partialprogress);*/
+		$(`#result_progress_${activity._id} partial`).text(partialprogress);
 	},
 
 	paintActivityTargets: function(activity, results){
