@@ -140,7 +140,10 @@ var GameplayActivityPainter = {
 		activitybox += '</p>';		
 		activitybox += `<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>`
 		if(activity.extra_data.config.backup){
-			activitybox += `<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>`
+			activitybox += `<div id="result_backup_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <done>0</done> (<partial>0</partial>)%</span></div>`
+		}
+		if(activity.extra_data.config.trace_storage){
+			activitybox += `<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>GameProgress: <done>0</done> (<partial>0</partial>)%</span></div>`
 		}
 		activitybox += `${this.paintActivityParticipantsTable(activity, participants)}</div>`;
 
@@ -282,20 +285,20 @@ var GameplayActivityPainter = {
 			$(`#backup_${activity._id}_${usernames[i]}`).empty();
 			$(`#backup_${activity._id}_${usernames[i]}`).append(backup);
 		}
-		if(activity.extra_data.config.backup && ! activity.extra_data.config.trace_storage) {
+		if(activity.extra_data.config.backup) {
 			let progress = Math.round((done / usernames.length) * 1000) / 10; 
 			if(isNaN(progress)){
 				progress = 0;
 			}
-			$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
-			$(`#result_progress_${activity._id} done`).text(progress);
+			$(`#result_backup_progress_${activity._id} .done`).css('width', `${progress}%` );
+			$(`#result_backup_progress_${activity._id} done`).text(progress);
 
 			let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
 			if(isNaN(partialprogress)){
 				partialprogress = 0;
 			}
-			$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
-			$(`#result_progress_${activity._id} partial`).text(partialprogress);
+			$(`#result_backup_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
+			$(`#result_backup_progress_${activity._id} partial`).text(partialprogress);
 		}
 	},
 
