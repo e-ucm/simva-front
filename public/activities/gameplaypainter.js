@@ -70,6 +70,10 @@ var GameplayActivityPainter = {
 			tmp.paintActivityCompletion(activity, result);
 		});
 
+		Simva.getActivityProgress(activity._id, function(error, result){
+			tmp.paintActivityProgress(activity, result);
+		});
+
 		Simva.getActivityHasResult(activity._id, function(error, result){
 			tmp.paintActivityResult(activity, result);
 		});
@@ -206,6 +210,40 @@ var GameplayActivityPainter = {
 		$(`#completion_progress_${activity._id} done`).text(progress);
 	},
 
+	paintActivityProgress: function(activity, status){
+		let usernames = Object.keys(status);
+		let done = 0, partial = 0;
+
+		for (var i = 0; i < usernames.length; i++) {
+			if(status[usernames[i]] !== 0){
+				if(status[usernames[i]] == 1){
+					done++;
+				} else {
+					partial++;
+				}
+			}
+
+			let tmpprogress = status[usernames[i]]*100;
+			$(`#progress_${activity._id}_${usernames[i]} .done`).css('width', `${tmpprogress}%` );
+			$(`#progress_${activity._id}_${usernames[i]} done`).text(tmpprogress);
+		}
+		if(activity.extra_data.config.trace_storage) {
+			let progress = Math.round((done / usernames.length) * 1000) / 10; 
+			if(isNaN(progress)){
+				progress = 0;
+			}
+			$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
+			$(`#result_progress_${activity._id} done`).text(progress);
+
+			let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
+			if(isNaN(partialprogress)){
+				partialprogress = 0;
+			}
+			$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
+			$(`#result_progress_${activity._id} partial`).text(partialprogress);
+		}
+	},
+
 	paintActivityResult: function(activity, results){
 		let usernames = Object.keys(results);
 
@@ -234,8 +272,7 @@ var GameplayActivityPainter = {
 				}
 				
 				tmpprogress = (tmpprogress * 1000) / 10;
-				$(`#progress_${activity._id}_${usernames[i]} .done`).css('width', `${tmpprogress}%` );
-				$(`#progress_${activity._id}_${usernames[i]} done`).text(tmpprogress);
+				
 			}
 
 			//$(`traces_${activity._id}_${usernames[i]}`).addClass(status && status.realtime ? 'green' : 'red');
@@ -246,20 +283,21 @@ var GameplayActivityPainter = {
 			$(`#backup_${activity._id}_${usernames[i]}`).empty();
 			$(`#backup_${activity._id}_${usernames[i]}`).append(backup);
 		}
+		if(activity.extra_data.config.backup && ! activity.extra_data.config.trace_storage) {
+			let progress = Math.round((done / usernames.length) * 1000) / 10; 
+			if(isNaN(progress)){
+				progress = 0;
+			}
+			$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
+			$(`#result_progress_${activity._id} done`).text(progress);
 
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
-		if(isNaN(progress)){
-			progress = 0;
+			let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
+			if(isNaN(partialprogress)){
+				partialprogress = 0;
+			}
+			$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
+			$(`#result_progress_${activity._id} partial`).text(partialprogress);
 		}
-		$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
-		$(`#result_progress_${activity._id} done`).text(progress);
-
-		let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
-		if(isNaN(partialprogress)){
-			partialprogress = 0;
-		}
-		$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
-		$(`#result_progress_${activity._id} partial`).text(partialprogress);
 	},
 
 	paintActivityTargets: function(activity, results){
