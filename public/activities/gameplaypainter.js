@@ -216,10 +216,9 @@ var GameplayActivityPainter = {
 
 		for (var i = 0; i < usernames.length; i++) {
 			if(status[usernames[i]] !== 0){
+				partial++;
 				if(status[usernames[i]] == 1){
 					done++;
-				} else {
-					partial++;
 				}
 			}
 
