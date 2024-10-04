@@ -139,11 +139,11 @@ var GameplayActivityPainter = {
 		}
 		activitybox += '</p>';		
 		activitybox += `<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>`
-		if(activity.extra_data.config.backup){
-			activitybox += `<div id="result_backup_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <done>0</done> (<partial>0</partial>)%</span></div>`
-		}
 		if(activity.extra_data.config.trace_storage){
 			activitybox += `<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>GameProgress: <done>0</done> (<partial>0</partial>)%</span></div>`
+		}
+		if(activity.extra_data.config.backup){
+			activitybox += `<div id="result_backup_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>BackupResults: <done>0</done> (<partial>0</partial>)%</span></div>`
 		}
 		activitybox += `${this.paintActivityParticipantsTable(activity, participants)}</div>`;
 
