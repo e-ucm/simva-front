@@ -98,9 +98,9 @@ var LTIToolPainter = {
 		let tmp = this;
 
 		this.updateParticipants(activity);
-		setInterval(function(){
-			tmp.updateParticipants(activity);
-		}, 5000);
+		//setInterval(function(){
+		//	tmp.updateParticipants(activity);
+		//}, 5000);
 	},
 
 	updateParticipants: function(activity){

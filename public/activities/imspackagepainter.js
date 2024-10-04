@@ -58,9 +58,9 @@ var ImsPackagePainter = {
 
 			tmp.updateParticipants(activity);
 			
-			setInterval(function(){
-				tmp.updateParticipants(activity);
-			}, 5000);
+			//setInterval(function(){
+			//	tmp.updateParticipants(activity);
+			//}, 5000);
 		});
 	},
 
