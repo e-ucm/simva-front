@@ -215,7 +215,7 @@
 			let generateAndRegister = function(algorithm, length, callback){
 				let username = generateUsername(algorithm, length);
 
-				Simva.register(username, `${username}@dummy.dum`, username, 'student', function(error, result){
+				Simva.register(username, `${username}@example.com`, username, 'student', function(error, result){
 					if(error && error.responseJSON){
 						generateAndRegister(algorithm, length, callback);
 					}else{
