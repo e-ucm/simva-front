@@ -202,9 +202,33 @@
 <script type="text/javascript">
 	let studyid = "<%= study %>";
 	let study = null, participants = null, tests = null, allocator = null, groups = null, platforms = null;
-	let wsManager = new WebSocketManager('<%= config.api.wss_url %>');
+	//let wsManager = new WebSocketManager('<%= config.api.wss_url %>');
 	// Connect to the WebSocket
-	wsManager.connect();
+	//wsManager.connect();
+	
+	// Create an instance of SSEClientManager
+	const sseClient = new SSEClientManager('<%= config.api.url %>/events');
+
+	// Listen for general messages (default "message" event)
+	sseClient.on('message', (data) => {
+		console.log('New message from server:', data);
+		// Update UI or process data here
+	});
+
+	// Listen for connection open event
+	sseClient.on('open', () => {
+		console.log('Connection to SSE server established.');
+	});
+
+	// Handle custom event types from the server (if applicable)
+	// Example: You might send events like "activity_completed" from the server
+	sseClient.on('activity_completed', (data) => {
+		console.log('Activity completed:', data);
+	});
+
+	// Close the SSE connection when it's no longer needed
+	// sseClient.closeConnection();
+
 	$(document).ready(function() {
 		let painters = Object.keys(PainterFactory.Painters);
 
