@@ -201,7 +201,7 @@
 
 <script type="text/javascript">
 	let studyid = "<%= study %>";
-	let study = null, participants = null, tests = null, allocator = null, groups = null, platforms = null;
+	let study = null, participants = [], tests = [], allocator = null, groups = [], platforms = [];
 
 	$(document).ready(function() {
 		let painters = Object.keys(PainterFactory.Painters);
