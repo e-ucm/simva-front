@@ -13,12 +13,12 @@ class WebSocketManager {
         this.ws = new WebSocket(this.url);
 
         // Handle connection open
-        this.ws.on('open', () => {
+        this.ws.addEventListener('open', () => {
             console.log(`Connected to WebSocket server at ${this.url}`);
         });
 
         // Handle incoming messages
-        this.ws.on('message', (message) => {
+        this.ws.addEventListener('message', (message) => {
             console.log('Received message:', message);
 
             // Notify listeners of the new message
@@ -26,12 +26,12 @@ class WebSocketManager {
         });
 
         // Handle connection close
-        this.ws.on('close', () => {
+        this.ws.addEventListener('close', () => {
             console.log('Disconnected from WebSocket server');
         });
 
         // Handle errors
-        this.ws.on('error', (error) => {
+        this.ws.addEventListener('error', (error) => {
             console.error('WebSocket error:', error);
         });
     }
@@ -62,5 +62,3 @@ class WebSocketManager {
         }
     }
 }
-
-module.exports = WebSocketManager;
