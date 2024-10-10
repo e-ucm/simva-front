@@ -45,8 +45,10 @@ config.sso.allowedRoles = [config.sso.researcherAllowedRole, config.sso.teacherA
 config.api = {}
 config.api.host = process.env.SIMVA_API_HOST || 'simva-api.external.test'
 config.api.protocol = process.env.SIMVA_API_PROTOCOL || 'https'
+config.api.wss_protocol = process.env.SIMVA_API_PROTOCOL || 'wss'
 config.api.port = process.env.SIMVA_API_PORT || '443'
 config.api.url = `${config.api.protocol}://${config.api.host}:${config.api.port}`;
+config.api.wss_url = `${config.api.wss_protocol}://${config.api.host}:${config.api.port}`;
 
 config.limesurvey = {}
 config.limesurvey.host = process.env.LIMESURVEY_HOST || 'limesurvey.external.test'

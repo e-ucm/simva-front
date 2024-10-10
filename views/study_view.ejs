@@ -202,7 +202,9 @@
 <script type="text/javascript">
 	let studyid = "<%= study %>";
 	let study = null, participants = null, tests = null, allocator = null, groups = null, platforms = null;
-
+	let wsManager = new WebSocketManager('<%= config.api.wss_url %>');
+	// Connect to the WebSocket
+	wsManager.connect();
 	$(document).ready(function() {
 		let painters = Object.keys(PainterFactory.Painters);
 
@@ -750,6 +752,7 @@
 		return 
 	}
 </script>
+<script type="text/javascript" src="../public/wsConnection.js"></script>
 <script type="text/javascript" src="/activities/activitypainter.js"></script>
 <script type="text/javascript" src="/activities/limesurveypainter.js"></script>
 <script type="text/javascript" src="/activities/rageanalyticspainter.js"></script>
