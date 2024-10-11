@@ -34,6 +34,38 @@
 		let studyId = "<%= study %>";
 		let username = "<%= user.data.username %>";
 
+		// Create an instance of SSEClientManager
+		const sseClient = new SSEClientManager('<%= config.api.url %>/events');
+
+		// Listen for general messages (default "message" event)
+		sseClient.on('message', (data) => {
+			console.log('New message from server:', data);
+			// Update UI or process data here
+		});
+
+		// Listen for connection open event
+		sseClient.on('open', () => {
+			console.log('Connection to SSE server established.');
+		});
+
+		// Handle custom event types from the server (if applicable)
+		// Example: You might send events like "activity_initialized" from the server
+		sseClient.on('activity_initialized', (data) => {
+			console.log('Activity initialized:', data);
+		});
+
+		// Handle custom event types from the server (if applicable)
+		// Example: You might send events like "activity_initialized" from the server
+		sseClient.on('activity_progressed', (data) => {
+			console.log('Activity progressed:', data);
+		});
+
+		// Handle custom event types from the server (if applicable)
+		// Example: You might send events like "activity_completed" from the server
+		sseClient.on('activity_completed', (data) => {
+			console.log('Activity completed:', data);
+		});
+		
 		var manual = '<body style="background-color: black; color: white; font-family: sans-serif; text-align: center;"><h1>External Activity</h1><p>Ask or listen your teacher for what you have to do on this activity.</p><p>If you are allowed to complete the activity on your own, there should be a "complete activity" button above.</p></body>';
 
 		var completed = '<body style="background-color: black; color: white; font-family: sans-serif; text-align: center;"><h1>Study Completed!</h1><p>Congratulations, you have completed all the activities of the study.</p><p>Ask the teacher if there are more steps to continue.</p></body>';

@@ -221,6 +221,18 @@
 	});
 
 	// Handle custom event types from the server (if applicable)
+	// Example: You might send events like "activity_initialized" from the server
+	sseClient.on('activity_initialized', (data) => {
+		console.log('Activity initialized:', data);
+	});
+
+	// Handle custom event types from the server (if applicable)
+	// Example: You might send events like "activity_initialized" from the server
+	sseClient.on('activity_progressed', (data) => {
+		console.log('Activity progressed:', data);
+	});
+
+	// Handle custom event types from the server (if applicable)
 	// Example: You might send events like "activity_completed" from the server
 	sseClient.on('activity_completed', (data) => {
 		console.log('Activity completed:', data);
