@@ -1,6 +1,4 @@
 // wsConnection.js
-const WebSocket = require('ws');
-
 class WebSocketManager {
     constructor(url) {
         this.url = url;
