@@ -35,7 +35,7 @@
 		let username = "<%= user.data.username %>";
 
 		// Create an instance of SSEClientManager
-		const sseClient = new SSEClientManager('<%= config.api.url %>/studies/<%= study %>/events');
+		const sseClient = new SSEClientManager('<%= config.api.url %>/studies/<%= study %>/events', '<%= user.jwt %>');
 
 		// Listen for general messages (default "message" event)
 		sseClient.on('message', (data) => {

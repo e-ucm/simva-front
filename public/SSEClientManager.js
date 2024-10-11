@@ -1,6 +1,9 @@
 class SSEClientManager {
-    constructor(url) {
+    constructor(url, authToken) {
         this.url = url; // SSE server URL
+        if(authToken) {
+            this.url+= `?token=${authToken}`; 
+        }
         this.eventSource = null; // The EventSource instance
         this.listeners = {}; // Store custom event listeners
         this.reconnectInterval = 5000; // Time to wait before attempting to reconnect (in ms)
