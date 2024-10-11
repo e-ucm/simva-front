@@ -15,7 +15,11 @@ class SSEClientManager {
         // Handle standard message event
         this.eventSource.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            this.triggerEvent('message', data); // Trigger custom listeners for 'message'
+            if(data.type) {
+                this.triggerEvent(data.type, data); // Trigger custom listeners for other data.type
+            } else  {
+                this.triggerEvent("message", data); // Trigger custom listeners for 'message'
+            }
             console.log('Received message:', data);
         };
 
