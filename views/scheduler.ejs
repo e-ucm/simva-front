@@ -67,6 +67,8 @@
 		sseClient.triggerEvent('activity_completed');
 		sseClient.on('activity_completed', (data) => {
 			console.log('Activity completed:', data);
+			// Refresh the page
+			location.reload();
 		});
 
 		var manual = '<body style="background-color: black; color: white; font-family: sans-serif; text-align: center;"><h1>External Activity</h1><p>Ask or listen your teacher for what you have to do on this activity.</p><p>If you are allowed to complete the activity on your own, there should be a "complete activity" button above.</p></body>';
