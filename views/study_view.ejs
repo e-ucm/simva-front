@@ -220,26 +220,56 @@
 		console.log('Connection to SSE server established.');
 	});
 
-		// Handle custom event types from the server (if applicable)
-		// Example: You might send events like "activity_initialized" from the server
-		sseClient.triggerEvent('activity_initialized');
-		sseClient.on('activity_initialized', (data) => {
-			console.log('Activity initialized:', data);
-		});
+	// Handle custom event types from the server (if applicable)
+	// Example: You might send events like "activity_initialized" from the server
+	sseClient.triggerEvent('activity_initialized');
+	sseClient.on('activity_initialized', (data) => {
+		console.log('Activity initialized:', data);
+		updateActivityResult(data.activityId, data.username, 0);
+	});
 
-		// Handle custom event types from the server (if applicable)
-		// Example: You might send events like "activity_progressed" from the server
-		sseClient.triggerEvent('activity_progressed');
-		sseClient.on('activity_progressed', (data) => {
-			console.log('Activity progressed:', data);
-		});
+	// Handle custom event types from the server (if applicable)
+	// Example: You might send events like "activity_progressed" from the server
+	sseClient.triggerEvent('activity_progressed');
+	sseClient.on('activity_progressed', (data) => {
+		console.log('Activity progressed:', data);
+		updateActivityResult(data.activityId, data.username, data.progress);
+	});
 
-		// Handle custom event types from the server (if applicable)
-		// Example: You might send events like "activity_completed" from the server
-		sseClient.triggerEvent('activity_completed');
-		sseClient.on('activity_completed', (data) => {
-			console.log('Activity completed:', data);
-		});
+	// Handle custom event types from the server (if applicable)
+	// Example: You might send events like "activity_completed" from the server
+	sseClient.triggerEvent('activity_completed');
+	sseClient.on('activity_completed', (data) => {
+		console.log('Activity completed:', data);
+		updateActivityCompletion(data.activityId, data.username, data.completion);
+	});
+
+
+	updateActivityBackup = function(activityId, username, backup) {
+		//$(`#result_backup_progress_${activityId} .done`).css('width', `${progress}%` );
+		//$(`#result_backup_progress_${activityId} done`).text(progress);
+		$(`#backup_${activityId}_${username}`).addClass(backup ? 'green' : 'red');
+		$(`#backup_${activityId}_${username}`).empty();
+		$(`#backup_${activityId}_${username}`).append(backup);
+	},
+
+	updateActivityCompletion = function(activityId, username, completion) {
+		//$(`#completion_progress_${activityId} .done`).css('width', `${progress}%` );
+		//$(`#completion_progress_${activityId} done`).text(progress);
+		$(`#completion_${activityId}_${username}`).addClass('green');
+		$(`#completion_${activityId}_${username}`).empty();
+		$(`#completion_${activityId}_${username}`).append(completion);
+	},
+
+	updateActivityResult = function(activityId, username, result) {
+		//$(`#result_progress_${activityId} .done`).css('width', `${progress}%` );
+		//$(`#result_progress_${activityId} .partial`).css('width', `${partialprogress}%` );
+		//$(`#result_progress_${activityId} done`).text(progress);
+		//$(`#result_progress_${activityId} partial`).text(partialprogress);
+		$(`#result_${activityId}_${username}`).addClass('green');
+		$(`#result_${activityId}_${username}`).empty();
+		$(`#result_${activityId}_${username}`).append(result);	
+	},
 
 	// Close the SSE connection when it's no longer needed
 	// sseClient.closeConnection();
