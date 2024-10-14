@@ -199,7 +199,7 @@ var GameplayActivityPainter = {
 
 			let completion = `<span>${status[usernames[i]]}</span>`
 			$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
-			$(`#completion_${activity._id}_${ [i]}`).empty();
+			$(`#completion_${activity._id}_${usernames[i]}`).empty();
 			$(`#completion_${activity._id}_${usernames[i]}`).append(completion);
 		}
 
