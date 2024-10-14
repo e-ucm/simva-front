@@ -138,12 +138,12 @@ var GameplayActivityPainter = {
 			activitybox += '<i>Disabled</i>';
 		}
 		activitybox += '</p>';		
-		activitybox += `<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>`
+		activitybox += `<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>% [ <doneRes>0</doneRes>/<total>0</total> ]</span></div>`
 		if(activity.extra_data.config.trace_storage){
-			activitybox += `<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>GameProgress: <done>0</done> (<partial>0</partial>)%</span></div>`
+			activitybox += `<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>GameProgress: <done>0</done> (<partial>0</partial>)%  [ <doneRes>0</doneRes> ( <partialRes>0</partialRes> ) /<total>0</total> ]</span></div>`
 		}
 		if(activity.extra_data.config.backup){
-			activitybox += `<div id="result_backup_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>BackupResults: <done>0</done> (<partial>0</partial>)%</span></div>`
+			activitybox += `<div id="result_backup_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>BackupResults: <done>0</done> (<partial>0</partial>)% [ <doneRes>0</doneRes> ( <partialRes>0</partialRes> ) /<total>0</total> ]</span></div>`
 		}
 		activitybox += `${this.paintActivityParticipantsTable(activity, participants)}</div>`;
 
@@ -236,6 +236,7 @@ var GameplayActivityPainter = {
 			}
 			$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
 			$(`#result_progress_${activity._id} done`).text(progress);
+			$(`#result_progress_${activity._id} doneRes`).text(done);
 
 			let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
 			if(isNaN(partialprogress)){
@@ -243,6 +244,8 @@ var GameplayActivityPainter = {
 			}
 			$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
 			$(`#result_progress_${activity._id} partial`).text(partialprogress);
+			$(`#result_progress_${activity._id} partialRes`).text(partial);
+			$(`#result_progress_${activity._id} total`).text(total);
 		}
 	},
 
@@ -323,9 +326,12 @@ var GameplayActivityPainter = {
 		//$(`#result_progress_${activityId} .partial`).css('width', `${partialprogress}%` );
 		//$(`#result_progress_${activityId} done`).text(progress);
 		//$(`#result_progress_${activityId} partial`).text(partialprogress);
-		var progress=result*100;
-		$(`#progress_${activityId}_${username} .done`).css('width', `${progress}%` );
-		$(`#progress_${activityId}_${username} done`).text(progress);
+		var prevValue= $(`#progress_${activityId}_${username} done`).text;
+		if(! prevValue == 100) {
+			var progress=result*100;
+			$(`#progress_${activityId}_${username} .done`).css('width', `${progress}%` );
+			$(`#progress_${activityId}_${username} done`).text(progress);
+		}
 	},
 
 	paintActivityTargets: function(activity, results){
