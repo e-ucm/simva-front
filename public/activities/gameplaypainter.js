@@ -326,7 +326,7 @@ var GameplayActivityPainter = {
 		//$(`#result_progress_${activityId} .partial`).css('width', `${partialprogress}%` );
 		//$(`#result_progress_${activityId} done`).text(progress);
 		//$(`#result_progress_${activityId} partial`).text(partialprogress);
-		var prevValue= $(`#progress_${activityId}_${username} done`);
+		var prevValue= document.querySelector(`#progress_${activityId}_${username} done`).textContent;
 		if(! prevValue == 100) {
 			var progress=result*100;
 			$(`#progress_${activityId}_${username} .done`).css('width', `${progress}%` );
