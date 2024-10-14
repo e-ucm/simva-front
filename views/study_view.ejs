@@ -233,7 +233,7 @@
 	sseClient.triggerEvent('activity_progressed');
 	sseClient.on('activity_progressed', (data) => {
 		console.log('Activity progressed:', data);
-		updateActivityResult(data.activityId, data.username, data.progress);
+		updateActivityResult(data.activityId, data.username, data.val);
 	});
 
 	// Handle custom event types from the server (if applicable)
