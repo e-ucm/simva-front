@@ -199,7 +199,7 @@ var GameplayActivityPainter = {
 
 			let completion = `<span>${status[usernames[i]]}</span>`
 			$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
-			$(`#completion_${activity._id}_${usernames[i]}`).empty();
+			$(`#completion_${activity._id}_${ [i]}`).empty();
 			$(`#completion_${activity._id}_${usernames[i]}`).append(completion);
 		}
 
@@ -326,7 +326,7 @@ var GameplayActivityPainter = {
 		//$(`#result_progress_${activityId} .partial`).css('width', `${partialprogress}%` );
 		//$(`#result_progress_${activityId} done`).text(progress);
 		//$(`#result_progress_${activityId} partial`).text(partialprogress);
-		var prevValue= $(`#progress_${activityId}_${username} done`).text;
+		var prevValue= $(`#progress_${activityId}_${username} done`);
 		if(! prevValue == 100) {
 			var progress=result*100;
 			$(`#progress_${activityId}_${username} .done`).css('width', `${progress}%` );
