@@ -245,7 +245,7 @@ var GameplayActivityPainter = {
 			$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
 			$(`#result_progress_${activity._id} partial`).text(partialprogress);
 			$(`#result_progress_${activity._id} partialRes`).text(partial);
-			$(`#result_progress_${activity._id} total`).text(total);
+			$(`#result_progress_${activity._id} total`).text(usernames.length);
 		}
 	},
 
