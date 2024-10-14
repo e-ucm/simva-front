@@ -225,7 +225,7 @@
 	sseClient.triggerEvent('activity_initialized');
 	sseClient.on('activity_initialized', (data) => {
 		console.log('Activity initialized:', data);
-		updateActivityResult(data.activityId, data.username, 0);
+		PainterFactory.Painters["gameplay"].updateActivityResult(data.activityId, data.username, 0);
 	});
 
 	// Handle custom event types from the server (if applicable)
@@ -233,7 +233,7 @@
 	sseClient.triggerEvent('activity_progressed');
 	sseClient.on('activity_progressed', (data) => {
 		console.log('Activity progressed:', data);
-		updateActivityResult(data.activityId, data.username, data.val);
+		PainterFactory.Painters["gameplay"].updateActivityResult(data.activityId, data.username, data.val);
 	});
 
 	// Handle custom event types from the server (if applicable)
@@ -241,35 +241,9 @@
 	sseClient.triggerEvent('activity_completed');
 	sseClient.on('activity_completed', (data) => {
 		console.log('Activity completed:', data);
-		updateActivityCompletion(data.activityId, data.username, data.completion);
+		PainterFactory.Painters["gameplay"].updateActivityResult(data.activityId, data.username, 100);
+		PainterFactory.Painters["gameplay"].updateActivityCompletion(data.activityId, data.username, "true");
 	});
-
-
-	updateActivityBackup = function(activityId, username, backup) {
-		//$(`#result_backup_progress_${activityId} .done`).css('width', `${progress}%` );
-		//$(`#result_backup_progress_${activityId} done`).text(progress);
-		$(`#backup_${activityId}_${username}`).addClass(backup ? 'green' : 'red');
-		$(`#backup_${activityId}_${username}`).empty();
-		$(`#backup_${activityId}_${username}`).append(backup);
-	},
-
-	updateActivityCompletion = function(activityId, username, completion) {
-		//$(`#completion_progress_${activityId} .done`).css('width', `${progress}%` );
-		//$(`#completion_progress_${activityId} done`).text(progress);
-		$(`#completion_${activityId}_${username}`).addClass('green');
-		$(`#completion_${activityId}_${username}`).empty();
-		$(`#completion_${activityId}_${username}`).append(completion);
-	},
-
-	updateActivityResult = function(activityId, username, result) {
-		//$(`#result_progress_${activityId} .done`).css('width', `${progress}%` );
-		//$(`#result_progress_${activityId} .partial`).css('width', `${partialprogress}%` );
-		//$(`#result_progress_${activityId} done`).text(progress);
-		//$(`#result_progress_${activityId} partial`).text(partialprogress);
-		$(`#result_${activityId}_${username}`).addClass('green');
-		$(`#result_${activityId}_${username}`).empty();
-		$(`#result_${activityId}_${username}`).append(result);	
-	},
 
 	// Close the SSE connection when it's no longer needed
 	// sseClient.closeConnection();

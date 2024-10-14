@@ -302,6 +302,32 @@ var GameplayActivityPainter = {
 		}
 	},
 
+	updateActivityBackup: function(activityId, username, backup) {
+		//$(`#result_backup_progress_${activityId} .done`).css('width', `${progress}%` );
+		//$(`#result_backup_progress_${activityId} done`).text(progress);
+		$(`#backup_${activityId}_${username}`).addClass(backup ? 'green' : 'red');
+		$(`#backup_${activityId}_${username}`).empty();
+		$(`#backup_${activityId}_${username}`).append(backup);
+	},
+
+	updateActivityCompletion: function(activityId, username, completion) {
+		//$(`#completion_progress_${activityId} .done`).css('width', `${progress}%` );
+		//$(`#completion_progress_${activityId} done`).text(progress);
+		$(`#completion_${activityId}_${username}`).addClass('green');
+		$(`#completion_${activityId}_${username}`).empty();
+		$(`#completion_${activityId}_${username}`).append(completion);
+	},
+
+	updateActivityResult: function(activityId, username, result) {
+		//$(`#result_progress_${activityId} .done`).css('width', `${progress}%` );
+		//$(`#result_progress_${activityId} .partial`).css('width', `${partialprogress}%` );
+		//$(`#result_progress_${activityId} done`).text(progress);
+		//$(`#result_progress_${activityId} partial`).text(partialprogress);
+		$(`#result_${activityId}_${username}`).addClass('green');
+		$(`#result_${activityId}_${username}`).empty();
+		$(`#result_${activityId}_${username}`).append(result);	
+	},
+
 	paintActivityTargets: function(activity, results){
 		let usernames = Object.keys(results);
 
