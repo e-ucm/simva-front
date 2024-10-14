@@ -1,8 +1,25 @@
 class SSEClientManager {
-    constructor(url, authToken) {
+    constructor(url, mapParameters) {
         this.url = url; // SSE server URL
-        if(authToken) {
-            this.url+= `?token=${authToken}`; 
+        if(mapParameters) {
+            mapParameters.ts = (new Date()).toISOString();
+            console.log(mapParameters);
+            var map = new Map();
+            Object.entries(mapParameters)
+                .map(([key, value]) => map.set(key, value));
+            var toSign=Object.entries(mapParameters)
+                    .sort(([keyA], [keyB]) => keyA.localeCompare(keyB)) // Sort by keys
+                    .map(([key, value]) => `${key}=${value}`)
+                    .join('\n');
+            toSign=this.url + '\n' + toSign;
+            console.log(toSign);
+            const signature = "TODO";
+            const queryString = Object.entries(mapParameters)
+                .sort(([keyA], [keyB]) => keyA.localeCompare(keyB)) // Sort by keys
+                .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+                .join('&');
+            this.url = this.url + `?${queryString}&signature=${signature}`;
+            console.log(this.url);
         }
         this.eventSource = null; // The EventSource instance
         this.listeners = {}; // Store custom event listeners

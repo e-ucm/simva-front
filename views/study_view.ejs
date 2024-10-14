@@ -207,7 +207,8 @@
 	//wsManager.connect();
 	
 	// Create an instance of SSEClientManager
-	const sseClient = new SSEClientManager('<%= config.api.url %>/studies/<%= study %>/events', '<%= user.jwt %>');
+	var map = { study : studyId, token : "<%= user.jwt %>"};
+	const sseClient = new SSEClientManager('<%= config.api.url %>/studies/<%= study %>/events', map);
 
 	// Listen for general messages (default "message" event)
 	sseClient.on('message', (data) => {
