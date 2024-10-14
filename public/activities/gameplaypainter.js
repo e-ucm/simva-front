@@ -323,9 +323,9 @@ var GameplayActivityPainter = {
 		//$(`#result_progress_${activityId} .partial`).css('width', `${partialprogress}%` );
 		//$(`#result_progress_${activityId} done`).text(progress);
 		//$(`#result_progress_${activityId} partial`).text(partialprogress);
-		$(`#result_${activityId}_${username}`).addClass('green');
-		$(`#result_${activityId}_${username}`).empty();
-		$(`#result_${activityId}_${username}`).append(result);	
+		$(`#progress_${activityId}_${username}`).addClass('green');
+		$(`#progress_${activityId}_${username}`).empty();
+		$(`#progress_${activityId}_${username}`).append(result);	
 	},
 
 	paintActivityTargets: function(activity, results){
