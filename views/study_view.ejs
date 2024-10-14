@@ -225,7 +225,7 @@
 	sseClient.triggerEvent('activity_initialized');
 	sseClient.on('activity_initialized', (data) => {
 		console.log('Activity initialized:', data);
-		PainterFactory.Painters["gameplay"].updateActivityResult(data.activityId, data.username, 0);
+		PainterFactory.Painters["gameplay"].updateActivityResult(data.activityId, data.user, 0);
 	});
 
 	// Handle custom event types from the server (if applicable)
@@ -233,7 +233,7 @@
 	sseClient.triggerEvent('activity_progressed');
 	sseClient.on('activity_progressed', (data) => {
 		console.log('Activity progressed:', data);
-		PainterFactory.Painters["gameplay"].updateActivityResult(data.activityId, data.username, data.val);
+		PainterFactory.Painters["gameplay"].updateActivityResult(data.activityId, data.user, data.val);
 	});
 
 	// Handle custom event types from the server (if applicable)
@@ -241,8 +241,8 @@
 	sseClient.triggerEvent('activity_completed');
 	sseClient.on('activity_completed', (data) => {
 		console.log('Activity completed:', data);
-		PainterFactory.Painters["gameplay"].updateActivityResult(data.activityId, data.username, 100);
-		PainterFactory.Painters["gameplay"].updateActivityCompletion(data.activityId, data.username, "true");
+		PainterFactory.Painters["gameplay"].updateActivityResult(data.activityId, data.user, 100);
+		PainterFactory.Painters["gameplay"].updateActivityCompletion(data.activityId, data.user, "true");
 	});
 
 	// Close the SSE connection when it's no longer needed
