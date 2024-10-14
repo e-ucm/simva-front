@@ -318,14 +318,14 @@ var GameplayActivityPainter = {
 		$(`#completion_${activityId}_${username}`).append(completion);
 	},
 
-	updateActivityResult: function(activityId, username, result) {
+	updateActivityProgress: function(activityId, username, result) {
 		//$(`#result_progress_${activityId} .done`).css('width', `${progress}%` );
 		//$(`#result_progress_${activityId} .partial`).css('width', `${partialprogress}%` );
 		//$(`#result_progress_${activityId} done`).text(progress);
 		//$(`#result_progress_${activityId} partial`).text(partialprogress);
-		$(`#progress_${activityId}_${username}`).addClass('green');
-		$(`#progress_${activityId}_${username}`).empty();
-		$(`#progress_${activityId}_${username}`).append(result);	
+		var progress=result*100;
+		$(`#progress_${activityId}_${username} .done`).css('width', `${progress}%` );
+		$(`#progress_${activityId}_${username} done`).text(progress);
 	},
 
 	paintActivityTargets: function(activity, results){
