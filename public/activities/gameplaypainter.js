@@ -353,13 +353,13 @@ var GameplayActivityPainter = {
 				var newPartialProgress = (newPartialProgressRes/users) * 100;
 				$(`#result_progress_${activityId} partial`).text(newPartialProgress);
 				$(`#result_progress_${activityId} .partial`).css('width', `${newPartialProgress}%` );
-				if(result == 1) {
-					var newProgressRes = res + 1;
-					$(`#result_progress_${activityId} doneres`).text(newProgressRes);
-					var newProgress = (newProgressRes/ users) * 100;
-					$(`#result_progress_${activityId} done`).text(newProgress);
-					$(`#result_progress_${activityId} .done`).css('width', `${newProgress}%` );
-				}	
+			}
+			if(result == 1) {
+				var newProgressRes = res + 1;
+				$(`#result_progress_${activityId} doneres`).text(newProgressRes);
+				var newProgress = (newProgressRes/ users) * 100;
+				$(`#result_progress_${activityId} done`).text(newProgress);
+				$(`#result_progress_${activityId} .done`).css('width', `${newProgress}%` );
 			}
 		}
 	},
