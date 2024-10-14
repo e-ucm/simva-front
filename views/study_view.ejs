@@ -233,7 +233,7 @@
 	sseClient.triggerEvent('activity_progressed');
 	sseClient.on('activity_progressed', (data) => {
 		console.log('Activity progressed:', data);
-		PainterFactory.Painters["gameplay"].updateActivityResult(data.activityId, data.user, data.val);
+		PainterFactory.Painters["gameplay"].updateActivityResult(data.activityId, data.user, data.val*100);
 	});
 
 	// Handle custom event types from the server (if applicable)
