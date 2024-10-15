@@ -210,10 +210,9 @@ var ActivityPainter = {
 		var prevBackup= parseInt(document.querySelector(`#result_${activityId}_${username}`).textContent);
 		var span;
 		if(result){
-			done++;
-			span = `<span><a onclick="ActivityPainter.openResults('${activity._id}',
-			'${usernames[i]}')">See Results</a><a onclick="ActivityPainter.downloadResults('${activity._id}',
-			'${usernames[i]}')"> ⬇️</a></span>`;
+			span = `<span><a onclick="ActivityPainter.openResults('${activityId}',
+			'${username}')">See Results</a><a onclick="ActivityPainter.downloadResults('${activityId}',
+			'${username}')"> ⬇️</a></span>`;
 		} else {
 			span = `<span><a>No Results</a></span>`;
 		}

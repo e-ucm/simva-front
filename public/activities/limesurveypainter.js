@@ -251,15 +251,18 @@ var LimeSurveyPainter = {
 
 	updateActivityResult: function(activityId, username, result) {
 		PainterFactory.Painters["activity"].updateActivityResult(activityId, username,result);
-		let color = 'red';
-		let state = 'No Results';
-		if(result[username]){
-			if(result[username].submitdate){
+		let color;
+		let state;
+		if(result){
+			if(result == "Completed"){
 				color = 'green';
 				state = 'Completed';
-			}else{
+			}else if(result == "Started") {
 				color = 'yellow';
 				state = 'Started';
+			} else {
+				color = 'red';
+				state = 'No Results';
 			}
 
 			state =`<a onclick="LimeSurveyPainter.openResults('${activityId}', 'full','${username}')">${state}</a>`;

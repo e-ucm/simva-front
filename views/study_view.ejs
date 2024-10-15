@@ -229,6 +229,9 @@
 		if(data.activityType == "gameplay") {
 			PainterFactory.Painters[data.activityType].updateActivityProgress(data.activityId, data.user, 0);
 		}
+		if(data.activityType == "limesurvey") {
+			PainterFactory.Painters[data.activityType].updateActivityResult(data.activityId, data.user, "Started");
+		}
 	});
 
 	// Handle custom event types from the server (if applicable)
@@ -252,6 +255,10 @@
 		}
 		if(data.activityType == "manual") {
 			PainterFactory.Painters[data.activityType].updateActivityCompletion(data.activityId, data.user, data.status);
+		}
+		if(data.activityType == "limesurvey") {
+			PainterFactory.Painters[data.activityType].updateActivityCompletion(data.activityId, data.user, "true");
+			PainterFactory.Painters[data.activityType].updateActivityResult(data.activityId, data.user, "Completed");
 		}
 	});
 
