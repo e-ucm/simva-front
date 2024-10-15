@@ -64,8 +64,8 @@ var ActivityPainter = {
 			<p>Default Activity</p>
 			<p>Result:<a onclick="ActivityPainter.downloadResults('${activity._id}')"> ⬇️</a></p>
 			<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>% [ <doneres>0</doneres>/<total>0</total> ]</span></div>
-			<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)% [ <doneres>0</doneres> ( <partialres>0</partialres> ) /<total>0</total> ]</span></div>
-			<div id="progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Progress: <partial>0</partial>(<done>0</done>)% [ <doneres>0</doneres> ( <partialres>0</partialres> ) /<total>0</total> ]</span></div>
+			<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%  [ <partialres>0</partialres> (<doneres>0</doneres>) /<total>0</total> ]</span></div>
+			<div id="progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Progress:<partial>0</partial>(<done>0</done>)%  [ <partialres>0</partialres> (<doneres>0</doneres>) /<total>0</total> ]</span></div>
 			this.paintActivityParticipantsTable(activity, participants)</div>`);
 	},
 

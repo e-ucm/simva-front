@@ -171,8 +171,8 @@ var LimeSurveyPainter = {
 			<p><a onclick="LimeSurveyPainter.generateTinyURL('${activity._id}', ${activity.extra_data.surveyId})">Generate Tiny URL</a></p>
 			<p><a onclick="LimeSurveyPainter.downloadBackup('${activity._id}', 'full')"> Full : ⬇️</a>
 			<a onclick="LimeSurveyPainter.downloadBackup('${activity._id}', 'code')"> Code : ⬇️</a></p>
-			<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>
-			<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>
+			<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%  [ <doneres>0</doneres> /<total>0</total> ]</span></div>
+			<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%  [ <partialres>0</partialres> (<doneres>0</doneres>) /<total>0</total> ]</span></div>
 			${this.paintActivityParticipantsTable(activity, participants)}</div>`);
 	},
 
@@ -196,30 +196,11 @@ var LimeSurveyPainter = {
 	},
 
 	paintActivityCompletion: function(activity, status){
-		let usernames = Object.keys(status);
+		PainterFactory.Painters["activity"].paintActivityCompletion(activity, status);
+	},
 
-		let done = 0;
-
-		for (var i = 0; i < usernames.length; i++) {
-			if(status[usernames[i]]){
-				done++;
-			}
-
-			let completion = `<span>${status[usernames[i]]}</span>`
-			$(`#completion_${activity._id}_${usernames[i]}`).removeClass();
-			$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
-			$(`#completion_${activity._id}_${usernames[i]}`).empty();
-			$(`#completion_${activity._id}_${usernames[i]}`).append(completion);
-		}
-
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
-
-		if(isNaN(progress)){
-			progress = 0;
-		}
-
-		$(`#completion_progress_${activity._id} .done`).css('width', `${progress}%` );
-		$(`#completion_progress_${activity._id} done`).text(progress);
+	updateActivityCompletion: function(activityId, username, completion) {
+		PainterFactory.Painters["activity"].updateActivityCompletion(activityId, username,completion);
 	},
 
 	paintActivityResult: function(activity, results){
@@ -228,10 +209,8 @@ var LimeSurveyPainter = {
 		let done = 0, partial = 0;
 		
 		for (var i = 0; i < usernames.length; i++) {
-
 			let color = 'red';
 			let state = 'No Results';
-
 			if(results[usernames[i]]){
 				partial++;
 				if(results[usernames[i]].submitdate){
@@ -245,14 +224,12 @@ var LimeSurveyPainter = {
 
 				state =`<a onclick="LimeSurveyPainter.openResults('${activity._id}', 'full','${usernames[i]}')">${state}</a>`;
 			}
-
 			let completion = `<span>${state}</span>`
 			$(`#result_${activity._id}_${usernames[i]}`).removeClass();
 			$(`#result_${activity._id}_${usernames[i]}`).addClass(color);
 			$(`#result_${activity._id}_${usernames[i]}`).empty();
 			$(`#result_${activity._id}_${usernames[i]}`).append(completion);
 		}
-
 		let progress = Math.round((done / usernames.length) * 1000) / 10; 
 		let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
 
@@ -266,7 +243,32 @@ var LimeSurveyPainter = {
 		$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
 		$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
 		$(`#result_progress_${activity._id} done`).text(progress);
+		$(`#result_progress_${activity._id} doneres`).text(done);
 		$(`#result_progress_${activity._id} partial`).text(partialprogress);
+		$(`#result_progress_${activity._id} partialres`).text(partial);
+		$(`#result_progress_${activity._id} total`).text(usernames.length);
+	},
+
+	updateActivityResult: function(activityId, username, result) {
+		PainterFactory.Painters["activity"].updateActivityResult(activityId, username,result);
+		let color = 'red';
+		let state = 'No Results';
+		if(result[username]){
+			if(result[username].submitdate){
+				color = 'green';
+				state = 'Completed';
+			}else{
+				color = 'yellow';
+				state = 'Started';
+			}
+
+			state =`<a onclick="LimeSurveyPainter.openResults('${activityId}', 'full','${username}')">${state}</a>`;
+		}
+		let completion = `<span>${state}</span>`
+		$(`#result_${activityId}_${username}`).removeClass();
+		$(`#result_${activityId}_${username}`).addClass(color);
+		$(`#result_${activityId}_${username}`).empty();
+		$(`#result_${activityId}_${username}`).append(completion);
 	},
 
 	paintActivityTargets: function(activity, results){
