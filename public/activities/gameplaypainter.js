@@ -48,7 +48,6 @@ var GameplayActivityPainter = {
 		let tmp = this;
 
 		Simva.isActivityOpenable(activity._id, function(error, result){
-
 			activity.isOpenable = result.openable;
 			if(activity.isOpenable){
 				Simva.getActivityTarget(activity._id, function(error, result){
@@ -56,9 +55,7 @@ var GameplayActivityPainter = {
 					tmp.paintActivityTargets(activity, result);
 				});
 			}
-
 			tmp.updateParticipants(activity);
-			
 		});
 	},
 
@@ -108,7 +105,6 @@ var GameplayActivityPainter = {
 			<div class="top"><h4>${activity.name}</h4>
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
 			<p class="subtitle">${this.simpleName}</p>`;
-
 		
 		/*
 		activitybox += 'Realtime: ';
@@ -137,13 +133,13 @@ var GameplayActivityPainter = {
 		} else {
 			activitybox += '<i>Disabled</i>';
 		}
-		activitybox += '</p>';		
+		activitybox += '</p>';
 		activitybox += `<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>% [ <doneres>0</doneres>/<total>0</total> ]</span></div>`
 		if(activity.extra_data.config.trace_storage){
-			activitybox += `<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>GameProgress: <done>0</done> (<partial>0</partial>)%  [ <doneres>0</doneres> ( <partialres>0</partialres> ) /<total>0</total> ]</span></div>`
+			activitybox += `<div id="progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>GameProgress: <done>0</done> (<partial>0</partial>)%  [ <doneres>0</doneres> ( <partialres>0</partialres> ) /<total>0</total> ]</span></div>`
 		}
 		if(activity.extra_data.config.backup){
-			activitybox += `<div id="result_backup_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>BackupResults: <done>0</done> (<partial>0</partial>)% [ <doneres>0</doneres> ( <partialres>0</partialres> ) /<total>0</total> ]</span></div>`
+			activitybox += `<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>BackupResults: <done>0</done> (<partial>0</partial>)% [ <doneres>0</doneres> ( <partialres>0</partialres> ) /<total>0</total> ]</span></div>`
 		}
 		activitybox += `${this.paintActivityParticipantsTable(activity, participants)}</div>`;
 
@@ -151,8 +147,7 @@ var GameplayActivityPainter = {
 	},
 
 	paintActivityParticipantsTable: function(activity, participants){
-		let toret = '<table><tr><th>User</th><th>Completed</th>';
-		toret += '<th>Progress</th>';
+		let toret = '<table><tr><th>User</th><th>Completed</th><th>Progress</th>';
 		//toret += '<th>Traces</th>';
 		toret += '<th>Backup</th></tr>';
 
@@ -176,7 +171,7 @@ var GameplayActivityPainter = {
 			//toret += `<td id="traces_${activity._id}_${participants[i].username}">---</td>`;
 			
 			if(activity.extra_data.config.backup){
-				toret += `<td id="backup_${activity._id}_${participants[i].username}">---</td></tr>`;
+				toret += `<td id="result_${activity._id}_${participants[i].username}">---</td></tr>`;
 			}else{
 				toret += '<td><i>Disabled</i></td>';
 			}
@@ -188,180 +183,27 @@ var GameplayActivityPainter = {
 	},
 
 	paintActivityCompletion: function(activity, status){
-		let usernames = Object.keys(status);
-
-		let done = 0;
-
-		for (var i = 0; i < usernames.length; i++) {
-			if(status[usernames[i]]){
-				done++;
-			}
-
-			let completion = `<span>${status[usernames[i]]}</span>`
-			$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
-			$(`#completion_${activity._id}_${usernames[i]}`).empty();
-			$(`#completion_${activity._id}_${usernames[i]}`).append(completion);
-		}
-
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
-
-		if(isNaN(progress)){
-			progress = 0;
-		}
-
-		$(`#completion_progress_${activity._id} .done`).css('width', `${progress}%` );
-		$(`#completion_progress_${activity._id} done`).text(progress);
-		$(`#completion_progress_${activity._id} doneres`).text(done);
-		$(`#completion_progress_${activity._id} total`).text(usernames.length);
+		PainterFactory.Painters["activity"].paintActivityCompletion(activity, status);
 	},
 
 	paintActivityProgress: function(activity, status){
-		let usernames = Object.keys(status);
-		let done = 0, partial = 0;
-
-		for (var i = 0; i < usernames.length; i++) {
-			if(status[usernames[i]] !== 0){
-				partial++;
-				if(status[usernames[i]] == 1){
-					done++;
-				}
-			}
-
-			let tmpprogress = status[usernames[i]]*100;
-			$(`#progress_${activity._id}_${usernames[i]} .done`).css('width', `${tmpprogress}%` );
-			$(`#progress_${activity._id}_${usernames[i]} done`).text(tmpprogress);
-		}
-		if(activity.extra_data.config.trace_storage) {
-			let progress = Math.round((done / usernames.length) * 1000) / 10; 
-			if(isNaN(progress)){
-				progress = 0;
-			}
-			$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
-			$(`#result_progress_${activity._id} done`).text(progress);
-			$(`#result_progress_${activity._id} doneres`).text(done);
-
-			let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
-			if(isNaN(partialprogress)){
-				partialprogress = 0;
-			}
-			$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
-			$(`#result_progress_${activity._id} partial`).text(partialprogress);
-			$(`#result_progress_${activity._id} partialres`).text(partial);
-			$(`#result_progress_${activity._id} total`).text(usernames.length);
-		}
+		PainterFactory.Painters["activity"].paintActivityProgress(activity, status);
 	},
 
 	paintActivityResult: function(activity, results){
-		let usernames = Object.keys(results);
-
-		let done = 0, partial = 0;
-
-		for (var i = 0; i < usernames.length; i++) {
-			let status = results[usernames[i]];
-			//let traces = '<span>No traces</span>';
-			let backup = '<span><i>Disabled</i></span>';
-			if(activity.extra_data.config.backup){
-				backup = '<span>No backup</span>';
-			}
-
-			if(status){
-				done++;
-
-				let tmpprogress = 0; 
-				if(status){
-					if(activity.extra_data.config.backup && results[usernames[i]]){
-						backup = `<span >
-						<a onclick="GameplayActivityPainter.downloadBackup('${activity._id}',
-						'${usernames[i]}')">Download</a>
-						</span>`;
-					}
-					
-				}
-				
-				tmpprogress = (tmpprogress * 1000) / 10;
-				
-			}
-
-			//$(`traces_${activity._id}_${usernames[i]}`).addClass(status && status.realtime ? 'green' : 'red');
-			//$(`#traces_${activity._id}_${usernames[i]}`).empty();
-			//$(`#traces_${activity._id}_${usernames[i]}`).append(traces);
-
-			$(`#backup_${activity._id}_${usernames[i]}`).addClass(status ? 'green' : 'red');
-			$(`#backup_${activity._id}_${usernames[i]}`).empty();
-			$(`#backup_${activity._id}_${usernames[i]}`).append(backup);
-		}
-		if(activity.extra_data.config.backup) {
-			let progress = Math.round((done / usernames.length) * 1000) / 10; 
-			if(isNaN(progress)){
-				progress = 0;
-			}
-			$(`#result_backup_progress_${activity._id} .done`).css('width', `${progress}%` );
-			$(`#result_backup_progress_${activity._id} done`).text(progress);
-			$(`#result_backup_progress_${activity._id} doneres`).text(done);
-
-			let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
-			if(isNaN(partialprogress)){
-				partialprogress = 0;
-			}
-			$(`#result_backup_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
-			$(`#result_backup_progress_${activity._id} partial`).text(partialprogress);
-			$(`#result_backup_progress_${activity._id} partialres`).text(partial);
-			$(`#result_backup_progress_${activity._id} total`).text(usernames.length);
-		}
+		PainterFactory.Painters["activity"].paintActivityResult(activity, results);
 	},
 
-	updateActivityBackup: function(activityId, username, backup) {
-		var users = parseInt(document.querySelector(`#result_backup_progress_${activityId} total`).textContent);
-		var res= parseInt(document.querySelector(`#result_backup_progress_${activityId} doneres`).textContent);
-		//var previousCompletion= document.querySelector(`#result_backup_progress_${activityId}_${username}`).textContent;
-		//$(`#result_backup_progress_${activityId} .done`).css('width', `${progress}%` );
-		//$(`#result_backup_progress_${activityId} done`).text(progress);
-		$(`#backup_${activityId}_${username}`).addClass(backup ? 'green' : 'red');
-		$(`#backup_${activityId}_${username}`).empty();
-		$(`#backup_${activityId}_${username}`).append(backup);
+	updateActivityResult: function(activityId, username, backup) {
+		PainterFactory.Painters["activity"].updateActivityResult(activityId, username,backup);
 	},
 
 	updateActivityCompletion: function(activityId, username, completion) {
-		var users = parseInt(document.querySelector(`#completion_progress_${activityId} total`).textContent);
-		var res= parseInt(document.querySelector(`#completion_progress_${activityId} doneres`).textContent);
-		var previousCompletion= document.querySelector(`#completion_${activityId}_${username}`).textContent;
-		$(`#completion_${activityId}_${username}`).addClass(completion == 'false' ? 'red' : 'green');
-		$(`#completion_${activityId}_${username}`).empty();
-		$(`#completion_${activityId}_${username}`).append(completion);
-		if(previousCompletion == "false") {
-			var newRes = res + 1;
-			$(`#completion_progress_${activityId} doneRes`).text(newRes);
-			var progress = newRes / users * 100;
-			$(`#completion_progress_${activityId} .done`).css('width', `${progress}%` );
-			$(`#completion_progress_${activityId} done`).text(progress);
-		}
+		PainterFactory.Painters["activity"].updateActivityCompletion(activityId, username,completion);
 	},
 
 	updateActivityProgress: function(activityId, username, result) {
-		var prevValue= parseInt(document.querySelector(`#progress_${activityId}_${username} done`).textContent);
-		var users = parseInt(document.querySelector(`#result_progress_${activityId} total`).textContent);
-		var res= parseInt(document.querySelector(`#result_progress_${activityId} doneres`).textContent);
-		var partialres= parseInt(document.querySelector(`#result_progress_${activityId} partialres`).textContent);
-
-		if(prevValue !== 100) {
-			var progress=result*100;
-			$(`#progress_${activityId}_${username} .done`).css('width', `${progress}%` );
-			$(`#progress_${activityId}_${username} done`).text(progress);
-			if(prevValue == 0 && result !== 0) {
-				var newPartialProgressRes = partialres + 1;
-				$(`#result_progress_${activityId} partialres`).text(newPartialProgressRes);
-				var newPartialProgress = (newPartialProgressRes/users) * 100;
-				$(`#result_progress_${activityId} partial`).text(newPartialProgress);
-				$(`#result_progress_${activityId} .partial`).css('width', `${newPartialProgress}%` );
-			}
-			if(result == 1) {
-				var newProgressRes = res + 1;
-				$(`#result_progress_${activityId} doneres`).text(newProgressRes);
-				var newProgress = (newProgressRes/ users) * 100;
-				$(`#result_progress_${activityId} done`).text(newProgress);
-				$(`#result_progress_${activityId} .done`).css('width', `${newProgress}%` );
-			}
-		}
+		PainterFactory.Painters["activity"].updateActivityCompletion(activityId, username,result);
 	},
 
 	paintActivityTargets: function(activity, results){
@@ -373,6 +215,7 @@ var GameplayActivityPainter = {
 			$(`#${activity._id}_${usernames[i]}_target`).attr('href', results[usernames[i]]);
 		}
 	},
+	
 	downloadBackup: function(activity, user){
 		var toastParams = {
 			heading: 'Error loading the result',
@@ -396,7 +239,6 @@ var GameplayActivityPainter = {
 		{
 			Simva.downloadActivityResult(activity);
 		}
-
 	},
 	
 	openTraces: function(activity, user){
