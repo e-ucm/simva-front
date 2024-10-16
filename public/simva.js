@@ -188,6 +188,10 @@ var Simva = {
 		this.get(`${this.apiurl}/studies/${study_id}/tests`, callback);
 	},
 
+	getStudyTest: function(study_id,test_id, callback){
+		this.get(`${this.apiurl}/studies/${study_id}/tests/${test_id}`, callback);
+	},
+
 	getStudyGroups: function(study_id, callback){
 		this.get(`${this.apiurl}/studies/${study_id}/groups`, callback);
 	},

@@ -154,6 +154,24 @@
 	</div>
 </div>
 
+
+<div id="edit_test" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<div id="edit_test_tab" class="subform selected">
+				<h2>Edit Test</h2>
+				<form id="edit_test_form">
+					<input hidden type="text" id="edit_test_id" name="id">
+					<input type="text" name="name" id="edit_test_name" placeholder="Test name" required>
+					<input disabled type="submit" value="Edit (disabled)">
+					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+					<span class="error"></span>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="add_activity" class="new_element floating">
 	<div class="floater">
 		<div class="form">
@@ -653,6 +671,20 @@
 		});
 	}
 
+	let openEditTestForm = function(testId){
+		Simva.getStudyTest("<%= study %>", testId, function(error, result){
+			if(!error){
+				let test=result;
+				console.log(test);
+				var inputElement = document.getElementById('edit_test_name');
+				inputElement.value = test.name;
+				$('#edit_test').toggleClass('shown');
+				$('#edit_test input[name="test"]').val(test._id);
+			}
+		});
+	}
+
+
 	let toggleAddForm = function(id){
 		$(`#${id}`).toggleClass('shown');
 	}
@@ -760,6 +792,7 @@
 		$('#tests').append(`<div id="test_${test._id}" class="test">
 			<div class="top"><h3>${test.name}</h3><input class="violet" type="button" value="Expand/Collapse" onclick="toggleTest('${test._id}')">
 			<input class="green" type="button" value="Add activity" onclick="openActivityForm('${test._id}')">
+			<input class="yellow" type="button" value="Edit" onclick="openEditTestForm('${test._id}')">
 			<input class="red" type="button" value="Delete" onclick="deleteTest('${test._id}')"></div>
 			<div class="activities collapsed">${roller}</div>`);
 	}
