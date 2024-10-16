@@ -210,6 +210,10 @@ var Simva = {
 		this.post(`${this.apiurl}/studies/${study_id}/tests/${test_id}/activities`, activity, callback);
 	},
 
+	getActivity: function(activity_id, callback){
+		this.get(`${this.apiurl}/activities/${activity_id}`, callback);
+	},
+
 	getActivityProgress: function(activity_id, callback){
 		this.get(`${this.apiurl}/activities/${activity_id}/progress`, callback);
 	},

@@ -189,6 +189,24 @@
 	</div>
 </div>
 
+<div id="edit_activity" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<form id="edit_activity_form">
+				<input type="hidden" name="test">
+				<input id="edit_activity_name" type="text" name="name" placeholder="Activity name" required>
+				</select>
+				<fieldset id="edit_activity_extras">
+				</fieldset>
+				<input disabled type="submit" value="Edit (Not enabled)">
+				<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+				<span class="error"></span>
+			</form>
+		</div>
+	</div>
+</div>
+
+
 <div id="iframe_floating" class="new_element floating">
 	<div class="floater">
 		<iframe src=""></iframe>
@@ -617,6 +635,22 @@
 	let openActivityForm = function(test){
 		$('#add_activity').toggleClass('shown');
 		$('#add_activity input[name="test"]').val(test);
+	}
+
+	let openEditActivityForm = function(activity){
+		Simva.getActivity(activity, function(error, result){
+			if(!error){
+				let activity=result;
+				console.log(activity);
+				var inputElement = document.getElementById('edit_activity_name');
+				inputElement.value = activity.name;
+				$('#edit_activity_extras').empty();
+				$('#edit_activity_extras').append(PainterFactory.Painters[activity.type].getEditExtraForm());
+				PainterFactory.Painters[activity.type].updateInputEditExtraForm(activity);
+				$('#edit_activity').toggleClass('shown');
+				$('#edit_activity input[name="test"]').val(activity._id);
+			}
+		});
 	}
 
 	let toggleAddForm = function(id){

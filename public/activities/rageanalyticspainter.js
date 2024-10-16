@@ -20,6 +20,13 @@ var RageAnalyticsActivityPainter = {
 		return '';
 	},
 
+	getEditExtraForm: function () {
+		return this.getExtraForm();
+	},
+	
+	updateInputEditExtraForm(activity) {
+	},
+
 	extractInformation: function(form, callback){
 		let activity = {};
 

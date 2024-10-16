@@ -20,6 +20,13 @@ var RageMinioActivityPainter = {
 		return '';
 	},
 
+	getEditExtraForm: function () {
+		return this.getExtraForm();
+	},
+
+	updateInputEditExtraForm(activity) {
+	},
+
 	extractInformation: function(form, callback){
 		let activity = {};
 

@@ -57,6 +57,14 @@ var LimeSurveyPainter = {
 
 		return form;
 	},
+
+	getEditExtraForm: function () {
+		return "";
+	},
+
+	updateInputEditExtraForm(activity) {
+	},
+
 	downloadBackup: function(activity, type, user){
 		var toastParams = {
 			heading: 'Error loading the result',
@@ -165,6 +173,7 @@ var LimeSurveyPainter = {
 	paintActivity: function(activity, participants){
 		$(`#test_${activity.test} .activities`).append(`<div id="activity_${activity._id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
+			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
 			<p class="subtitle">${this.simpleName}</p>
 			<p>Survey ID: <a target="_blank" href="${this.utils.url}${activity.extra_data.surveyId}">${activity.extra_data.surveyId}</a></p>

@@ -23,6 +23,19 @@ var ManualActivityPainter = {
 			 <span class="info">URI can include tags: {username}, and {activityId}</p></div>`;
 	},
 
+	getEditExtraForm: function () {
+		return this.getExtraForm();
+	},
+
+	updateInputEditExtraForm(activity) {
+		var manual_user_managed = document.getElementById('manual_user_managed');
+		manual_user_managed.checked = activity.extra_data.user_managed;
+		var manual_uri = document.getElementById('manual_uri');
+		if(activity.extra_data.uri) {
+			manual_uri.value = activity.extra_data.uri;
+		}
+	},
+
 	extractInformation: function(form, callback){
 		let activity = {};
 
@@ -67,6 +80,7 @@ var ManualActivityPainter = {
 		let complete=activity.extra_data.user_managed ? 'can' : '<strong>can\'t<strong>'
 		$(`#test_${activity.test} .activities`).append(`<div id="activity_${activity._id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
+			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
 			<p class="subtitle">${this.simpleName}</p>
 			<p>Students ${complete} complete</p>

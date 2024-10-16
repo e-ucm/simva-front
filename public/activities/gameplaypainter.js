@@ -17,11 +17,25 @@ var GameplayActivityPainter = {
 	},
 
 	getExtraForm: function () {
-		return `<div class="gameplay_activity"><p><label for="gameplay_trace_storage">Trace Storage</label><input id="gameplay_trace_storage" type="checkbox" name="trace_storage"></p>
+		return `<div class="gameplay_activity"><p><label for="gameplay_trace_storage">Trace Storage</label><input id="gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
 			 <p><label for="gameplay_backup">Backup</label><input id="gameplay_backup" type="checkbox" name="backup" checked></p>
 			 <p><label for="gameplay_game_uri" style="width: 100%; text-align: center;">Game URI (optional)</label><input id="gameplay_game_uri" type="text" name="game_uri">
 			 <span class="info">Game URI can include tags: {simvaResultUri}, {simvaHomePage}, {username}, {authToken} and {activityId}</p></div>`;
 			 //<p><label for="gameplay_realtime">Realtime</label><input id="gameplay_realtime" type="checkbox" name="realtime"></p>
+	},
+
+	getEditExtraForm: function () {
+		return this.getExtraForm();
+	},
+
+	updateInputEditExtraForm(activity) {
+		var gameplay_trace_storage = document.getElementById('gameplay_trace_storage');
+		gameplay_trace_storage.checked = activity.extra_data.config.trace_storage;
+		var gameplay_backup = document.getElementById('gameplay_backup');
+		gameplay_backup.checked = activity.extra_data.config.backup;
+		var gameplay_game_uri = document.getElementById('gameplay_game_uri');
+		gameplay_game_uri.value = activity.extra_data.game_uri;
+
 	},
 
 	extractInformation: function(form, callback){
@@ -103,6 +117,7 @@ var GameplayActivityPainter = {
 	paintActivity: function(activity, participants){
 		let activitybox = `<div id="activity_${activity._id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
+			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
 			<p class="subtitle">${this.simpleName}</p>`;
 		

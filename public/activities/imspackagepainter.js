@@ -23,6 +23,19 @@ var ImsPackagePainter = {
 			 //<p><label for="imspackage_realtime">Realtime</label><input id="imspackage_realtime" type="checkbox" name="realtime"></p>`
 	},
 
+	getEditExtraForm: function () {
+		return `<div class="imspackage_activity"><p><label for="imspackage_trace_storage">Trace Storage</label><input id="imspackage_trace_storage" type="checkbox" name="trace_storage"></p>
+			 <p><label for="imspackage_backup">Backup</label><input id="imspackage_backup" type="checkbox" name="backup"></p>`;
+			 //<p><label for="imspackage_realtime">Realtime</label><input id="imspackage_realtime" type="checkbox" name="realtime"></p>`
+	},
+
+	updateInputEditExtraForm(activity) {
+		var imspackage_trace_storage = document.getElementById('imspackage_trace_storage');
+		imspackage_trace_storage.checked = activity.extra_data.config.trace_storage;
+		var imspackage_backup = document.getElementById('imspackage_backup');
+		imspackage_backup.checked = activity.extra_data.config.backup;
+	},
+
 	extractInformation: function(form, callback){
 		let activity = {};
 
@@ -80,6 +93,7 @@ var ImsPackagePainter = {
 	paintActivity: function(activity, participants){
 		let activitybox = `<div id="activity_${activity._id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
+			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
 			<p class="subtitle">${this.simpleName}</p>`;
 
