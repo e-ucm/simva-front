@@ -5,7 +5,7 @@
 <!--<div id="roller" style="width: 100%; text-align: center; padding: 200px;">
 	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 </div>-->
-<h1>Study: <span id="study_name"></span></h1>
+<h1>Study: <span id="study_name"></span></h1><input class="yellow" type="button" value="Edit Study Name" onclick="openEditStudyForm('<%= study %>')">
 <div id="study">
 	<div class="left">
 		<div class="graybox owners">
@@ -155,6 +155,23 @@
 </div>
 
 
+<div id="edit_study" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<div id="edit_study_tab" class="subform selected">
+				<h2>Edit Study</h2>
+				<form id="edit_study_form">
+					<input hidden type="text" id="edit_study_id" name="id">
+					<input type="text" name="name" id="edit_study_name" placeholder="Study name" required>
+					<input disabled type="submit" value="Edit (disabled)">
+					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+					<span class="error"></span>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="edit_test" class="new_element floating">
 	<div class="floater">
 		<div class="form">
@@ -235,12 +252,10 @@
 	<a unselectable="on" class="basic" onclick="downloadUAConfig()"><img src="/ua.png"></a>
 </div>
 
-<script type="text/javascript">
+<script type="text/javascript"> // type="module">
+	//import{ SSEClientManager } from "/libs/SSEClientManager.js";
 	let studyid = "<%= study %>";
 	let study = null, participants = null, tests = null, allocator = null, groups = null, platforms = null;
-	//let wsManager = new WebSocketManager('<%= config.api.wss_url %>');
-	// Connect to the WebSocket
-	//wsManager.connect();
 	
 	// Create an instance of SSEClientManager
 	var map = { study : studyid, token : "<%= user.jwt %>"};
@@ -680,6 +695,21 @@
 				inputElement.value = test.name;
 				$('#edit_test').toggleClass('shown');
 				$('#edit_test input[name="test"]').val(test._id);
+			}
+		});
+	}
+
+	let openEditStudyForm = function(testId){
+		Simva.getStudy("<%= study %>", function(error, result){
+			if(!error){
+				let study=result;
+				console.log(study);
+				var inputElement = document.getElementById('edit_study_id');
+				inputElement.value = study.id;
+				var inputElement = document.getElementById('edit_study_name');
+				inputElement.value = study.name;
+				$('#edit_study').toggleClass('shown');
+				$('#edit_study input[name="study"]').val(study._id);
 			}
 		});
 	}

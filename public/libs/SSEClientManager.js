@@ -1,26 +1,9 @@
+//import { generateData } from "./hMacKey/tokens.js";
+//export class SSEClientManager {
 class SSEClientManager {
-    constructor(url, mapParameters) {
+    constructor(url, mapParameters = {}) {
         this.url = url; // SSE server URL
-        if(mapParameters) {
-            mapParameters.ts = (new Date()).toISOString();
-            console.log(mapParameters);
-            var map = new Map();
-            Object.entries(mapParameters)
-                .map(([key, value]) => map.set(key, value));
-            var toSign=Object.entries(mapParameters)
-                    .sort(([keyA], [keyB]) => keyA.localeCompare(keyB)) // Sort by keys
-                    .map(([key, value]) => `${key}=${value}`)
-                    .join('\n');
-            toSign=this.url + '\n' + toSign;
-            console.log(toSign);
-            const signature = "TODO";
-            const queryString = Object.entries(mapParameters)
-                .sort(([keyA], [keyB]) => keyA.localeCompare(keyB)) // Sort by keys
-                .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-                .join('&');
-            this.url = this.url + `?${queryString}&signature=${signature}`;
-            console.log(this.url);
-        }
+        this.mapParameters = mapParameters;
         this.eventSource = null; // The EventSource instance
         this.listeners = {}; // Store custom event listeners
         this.reconnectInterval = 5000; // Time to wait before attempting to reconnect (in ms)
@@ -28,8 +11,33 @@ class SSEClientManager {
         this.init(); // Initialize connection
     }
 
+    async createUrl() {
+        if(this.mapParameters) {
+            this.mapParameters.ts = (new Date()).toISOString();
+            console.log(this.mapParameters);
+            var map = new Map();
+            Object.entries(this.mapParameters)
+                .map(([key, value]) => map.set(key, value));
+            var toSign=Object.entries(this.mapParameters)
+                    .sort(([keyA], [keyB]) => keyA.localeCompare(keyB)) // Sort by keys
+                    .map(([key, value]) => `${key}=${value}`)
+                    .join('\n');
+            toSign=this.url + '\n' + toSign;
+            console.log(toSign);
+            const signature = "TODO";
+            //const signature = await generateData("password", "token", 912792, toSign);
+            const queryString = Object.entries(this.mapParameters)
+                .sort(([keyA], [keyB]) => keyA.localeCompare(keyB)) // Sort by keys
+                .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+                .join('&');
+            this.url = this.url + `?${queryString}&signature=${signature}`;
+            console.log(this.url);
+        }
+    }
+
     // Initialize EventSource connection
-    init() {
+    async init() {
+        await this.createUrl();
         this.eventSource = new EventSource(this.url);
 
         // Handle standard message event
