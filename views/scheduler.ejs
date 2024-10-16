@@ -8,7 +8,7 @@
 	<link href="/css/loader.css" rel="stylesheet" type="text/css">
 	<link href="/toast/jquery.toast.css" rel="stylesheet" type="text/css">
 	<link href="/libs/jsonTree/jsonTree.css" rel="stylesheet" />
-	<script src="/libs/SSEClientManager.js">//type="module"</script>
+	<script src="/libs/SSEClientManager.js" type="module"></script>
 	<script src="/libs/jsonTree/jsonTree.js"></script>
 	<script type="text/javascript" src="/jquery.js"></script>
 	<script type="text/javascript" src="/toast/jquery.toast.js"></script>
@@ -29,15 +29,13 @@
 			});
 		});
 	</script>
-	<script type="text/javascript">// type="module">
-		//import{ SSEClientManager } from "/libs/SSEClientManager.js";
-		let studyId = "<%= study %>";
-		let username = "<%= user.data.username %>";
+	<script type="module">
+		import{ SSEClientManager } from "/libs/SSEClientManager.js";
 
 		// Create an instance of SSEClientManager
-		var map = { username : username , study : studyId, token : "<%= user.jwt %>"};
+		var map = { username : "<%= user.data.username %>", study : "<%= study %>", token : "<%= user.jwt %>"};
 		const sseClient = new SSEClientManager('<%= config.api.url %>/studies/<%= study %>/schedule/events', map);
-
+		
 		// Listen for general messages (default "message" event)
 		sseClient.on('message', (data) => {
 			console.log('New message from server:', data);
@@ -71,6 +69,11 @@
 			// Refresh the page
 			location.reload();
 		});
+	</script>
+	<script type="text/javascript">// type="module">
+		//
+		let studyId = "<%= study %>";
+		let username = "<%= user.data.username %>";
 
 		var manual = '<body style="background-color: black; color: white; font-family: sans-serif; text-align: center;"><h1>External Activity</h1><p>Ask or listen your teacher for what you have to do on this activity.</p><p>If you are allowed to complete the activity on your own, there should be a "complete activity" button above.</p></body>';
 

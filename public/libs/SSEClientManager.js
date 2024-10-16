@@ -1,6 +1,6 @@
-//import { generateData } from "./hMacKey/tokens.js";
-//export class SSEClientManager {
-class SSEClientManager {
+import { generateData } from "./hMacKey/tokens.js";
+
+export class SSEClientManager {
     constructor(url, mapParameters = {}) {
         this.url = url; // SSE server URL
         this.mapParameters = mapParameters;
@@ -24,8 +24,12 @@ class SSEClientManager {
                     .join('\n');
             toSign=this.url + '\n' + toSign;
             console.log(toSign);
-            const signature = "TODO";
-            //const signature = await generateData("password", "token", 912792, toSign);
+            var signature;
+            try {
+                signature = await generateData("password", "token", 912792, toSign);
+            } catch(e) {
+                signature = "TODO";
+            }
             const queryString = Object.entries(this.mapParameters)
                 .sort(([keyA], [keyB]) => keyA.localeCompare(keyB)) // Sort by keys
                 .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)

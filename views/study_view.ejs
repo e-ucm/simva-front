@@ -252,13 +252,10 @@
 	<a unselectable="on" class="basic" onclick="downloadUAConfig()"><img src="/ua.png"></a>
 </div>
 
-<script type="text/javascript"> // type="module">
-	//import{ SSEClientManager } from "/libs/SSEClientManager.js";
-	let studyid = "<%= study %>";
-	let study = null, participants = null, tests = null, allocator = null, groups = null, platforms = null;
-	
+<script type="module">
+	import{ SSEClientManager } from "/libs/SSEClientManager.js";
 	// Create an instance of SSEClientManager
-	var map = { study : studyid, token : "<%= user.jwt %>"};
+	var map = { study : "<%= study %>", token : "<%= user.jwt %>"};
 	const sseClient = new SSEClientManager('<%= config.api.url %>/studies/<%= study %>/events', map);
 
 	// Listen for general messages (default "message" event)
@@ -312,10 +309,13 @@
 			PainterFactory.Painters[data.activityType].updateActivityResult(data.activityId, data.user, "Completed");
 		}
 	});
-
 	// Close the SSE connection when it's no longer needed
 	// sseClient.closeConnection();
-
+</script>
+<script type="text/javascript">
+	let studyid = "<%= study %>";
+	let study = null, participants = null, tests = null, allocator = null, groups = null, platforms = null;
+	
 	$(document).ready(function() {
 		let painters = Object.keys(PainterFactory.Painters);
 
