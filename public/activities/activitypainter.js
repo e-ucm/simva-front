@@ -66,7 +66,7 @@ var ActivityPainter = {
 			<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>% [ <doneres>0</doneres>/<total>0</total> ]</span></div>
 			<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%  [ <partialres>0</partialres> (<doneres>0</doneres>) /<total>0</total> ]</span></div>
 			<div id="progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Progress:<partial>0</partial>(<done>0</done>)%  [ <partialres>0</partialres> (<doneres>0</doneres>) /<total>0</total> ]</span></div>
-			this.paintActivityParticipantsTable(activity, participants)</div>`);
+			${this.paintActivityParticipantsTable(activity, participants)}</div>`);
 	},
 
 	paintActivityParticipantsTable: function(activity, participants){
@@ -150,22 +150,42 @@ var ActivityPainter = {
 		$(`#progress_${activity._id} total`).text(usernames.length);
 	},
 
-	paintActivityResult: function(activity, results){
+	paintActivityResult: function(activity, results, defaultValue='No Results', partialValue=null, finalValue="See Results", painter="ActivityPainter"){
 		let usernames = Object.keys(results);
 
 		let done = 0, partial = 0;
 
 		for (var i = 0; i < usernames.length; i++) {
 			let status = results[usernames[i]];
-			let result = '<span>No results</span>'
-
+			let result = `<span>${defaultValue}</span>`
+			let color = 'red';
+			let state = defaultValue;
 			if(status){
-				done++;
-				result = `<span><a onclick="ActivityPainter.openResults('${activity._id}',
-				'${usernames[i]}')">See Results</a></span>`;
+				if(status == finalValue){
+					color = 'green';
+					state = finalValue;
+					done++;
+					partial++;
+				} else if(status == partialValue) {
+					color = 'yellow';
+					state = partialValue;
+					partial++;
+				} else {
+					color = 'red';
+					state = defaultValue;
+				}
+				if(state == defaultValue) {
+					result = `<span>${state}</span>`;
+				} else {
+					result = `<span>
+					<a onclick="${painter}.openResults('${activity._id}','${usernames[i]}')">${state}</a>
+					<a onclick="${painter}.downloadResults('${activity._id}','${usernames[i]}')">⬇️</a>
+					</span>`;
+				}
+				
 			}
-
-			$(`#result_${activity._id}_${usernames[i]}`).addClass(status ? 'green' : 'red');
+			$(`#result_${activity._id}_${usernames[i]}`).removeClass();
+			$(`#result_${activity._id}_${usernames[i]}`).addClass(color);
 			$(`#result_${activity._id}_${usernames[i]}`).empty();
 			$(`#result_${activity._id}_${usernames[i]}`).append(result);
 		}
@@ -204,31 +224,67 @@ var ActivityPainter = {
 		}
 	},
 
-	updateActivityResult: function(activityId, username, result) {
+	updateActivityResult: function(activityId, username, result, defaultValue='No Results', partialValue=null, finalValue="See Results", painter="ActivityPainter") {
 		var users = parseInt(document.querySelector(`#result_progress_${activityId} total`).textContent);
 		var res= parseInt(document.querySelector(`#result_progress_${activityId} doneres`).textContent);
-		var prevBackup= parseInt(document.querySelector(`#result_${activityId}_${username}`).textContent);
+		var partialRes= parseInt(document.querySelector(`#result_progress_${activityId} partialres`).textContent);
+		var prev= document.querySelector(`#result_${activityId}_${username}`).textContent;
 		var span;
+		var newRes, newPartialRes;
 		if(result){
-			span = `<span><a onclick="ActivityPainter.openResults('${activityId}',
-			'${username}')">See Results</a><a onclick="ActivityPainter.downloadResults('${activityId}',
-			'${username}')"> ⬇️</a></span>`;
+			if(result == finalValue){
+				color = 'green';
+				state = finalValue;
+				if(! prev.includes(finalValue)) {
+					newRes = res+1;
+				}
+			} else if(result == partialValue) {
+				color = 'yellow';
+				state = partialValue;
+				if(! prev.includes(partialValue)) {
+					newPartialRes = partialRes+1;
+				}
+			} else {
+				color = 'red';
+				state = defaultValue;
+				if(!prev.includes(defaultValue)) {
+					if(prev.includes(partialValue)) {
+						newPartialRes = partialRes-1;
+					}
+					if(prev.includes(finalValue)) {
+						newRes = res+1;
+					}
+				}
+			}
+			span = `<span>
+			<a onclick="${painter}.openResults('${activityId}','${username}')">${state}</a>
+			<a onclick="${painter}.downloadResults('${activityId}','${username}')"> ⬇️</a>
+			</span>`;
 		} else {
-			span = `<span><a>No Results</a></span>`;
+			span = `<span><a>${defaultValue}</a></span>`;
 		}
-		$(`#result_${activityId}_${username}`).addClass(result ? 'green' : 'red');
+		$(`#result_${activityId}_${username}`).removeClass();
+		$(`#result_${activityId}_${username}`).addClass(color);
 		$(`#result_${activityId}_${username}`).empty();
 		$(`#result_${activityId}_${username}`).append(span);
-		var newRes;
-		if(prevBackup == "No Backup") {
-			newRes = res + 1;
-		} else  {
-			newRes = res - 1;
+		if(finalValue) {
+			if(!newRes) {
+				newRes = res;
+			}
+			$(`#result_progress_${activityId} doneRes`).text(newRes);
+			var progress = newRes / users * 100;
+			$(`#result_progress_${activityId} .done`).css('width', `${progress}%` );
+			$(`#result_progress_${activityId} done`).text(progress);
 		}
-		$(`#result_progress_${activityId} doneRes`).text(newRes);
-		var progress = newRes / users * 100;
-		$(`#result_progress_${activityId} .done`).css('width', `${progress}%` );
-		$(`#result_progress_${activityId} done`).text(progress);
+		if(partialValue) {
+			if(!newPartialRes) {
+				newPartialRes = partialRes;
+			}
+			$(`#result_progress_${activityId} partialres`).text(newPartialRes);
+			var partialProgress = newPartialRes / users * 100;
+			$(`#result_progress_${activityId} .partial`).css('width', `${partialProgress}%` );
+			$(`#result_progress_${activityId} partial`).text(partialProgress);
+		}
 	}, 
 
 	updateActivityProgress: function(activityId, username, result) {

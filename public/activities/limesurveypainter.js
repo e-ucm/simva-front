@@ -205,73 +205,23 @@ var LimeSurveyPainter = {
 
 	paintActivityResult: function(activity, results){
 		let usernames = Object.keys(results);
-
-		let done = 0, partial = 0;
-		
+		let map= {};
 		for (var i = 0; i < usernames.length; i++) {
-			let color = 'red';
 			let state = 'No Results';
 			if(results[usernames[i]]){
-				partial++;
 				if(results[usernames[i]].submitdate){
-					color = 'green';
 					state = 'Completed';
-					done++;
 				}else{
-					color = 'yellow';
 					state = 'Started';
 				}
-
-				state =`<a onclick="LimeSurveyPainter.openResults('${activity._id}', 'full','${usernames[i]}')">${state}</a>`;
 			}
-			let completion = `<span>${state}</span>`
-			$(`#result_${activity._id}_${usernames[i]}`).removeClass();
-			$(`#result_${activity._id}_${usernames[i]}`).addClass(color);
-			$(`#result_${activity._id}_${usernames[i]}`).empty();
-			$(`#result_${activity._id}_${usernames[i]}`).append(completion);
+			map[usernames[i]] = state;
 		}
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
-		let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
-
-		if(isNaN(progress)){
-			progress = 0;
-		}
-		if(isNaN(partialprogress)){
-			partialprogress = 0;
-		}
-
-		$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
-		$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
-		$(`#result_progress_${activity._id} done`).text(progress);
-		$(`#result_progress_${activity._id} doneres`).text(done);
-		$(`#result_progress_${activity._id} partial`).text(partialprogress);
-		$(`#result_progress_${activity._id} partialres`).text(partial);
-		$(`#result_progress_${activity._id} total`).text(usernames.length);
+		PainterFactory.Painters["activity"].paintActivityResult(activity, map, "No Results", "Started", "Completed","LimeSurveyPainter");
 	},
 
 	updateActivityResult: function(activityId, username, result) {
-		PainterFactory.Painters["activity"].updateActivityResult(activityId, username,result);
-		let color;
-		let state;
-		if(result){
-			if(result == "Completed"){
-				color = 'green';
-				state = 'Completed';
-			}else if(result == "Started") {
-				color = 'yellow';
-				state = 'Started';
-			} else {
-				color = 'red';
-				state = 'No Results';
-			}
-
-			state =`<a onclick="LimeSurveyPainter.openResults('${activityId}', 'full','${username}')">${state}</a>`;
-		}
-		let completion = `<span>${state}</span>`
-		$(`#result_${activityId}_${username}`).removeClass();
-		$(`#result_${activityId}_${username}`).addClass(color);
-		$(`#result_${activityId}_${username}`).empty();
-		$(`#result_${activityId}_${username}`).append(completion);
+		PainterFactory.Painters["activity"].updateActivityResult(activityId, username,result, "No Results", "Started", "Completed","LimeSurveyPainter");
 	},
 
 	paintActivityTargets: function(activity, results){
@@ -289,7 +239,7 @@ var LimeSurveyPainter = {
 		toggleAddForm('iframe_floating');
 	},
 
-	openResults: function(activity, type, user){
+	openResults: function(activity, user, type){
 		Simva.getActivityResultWithTypeForUser(activity, type, user, function(error, result){
 			if(error){
 				$.toast({
@@ -317,6 +267,24 @@ var LimeSurveyPainter = {
 					'height': '100vh'
 				});
 				toggleAddForm('iframe_floating');
+			}
+		})
+	},
+
+	downloadResults: function(activity, user, type){
+		Simva.getActivityResultWithTypeForUser(activity, type, user, function(error, result){
+			if(error){
+				$.toast({
+					heading: 'Error loading the result',
+					text: error.message,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+			}else{
+				let stringifyres=JSON.stringify(result[user], null, 2);
+				var filename = `${activity}_${user}.json`;
+				Utils.download(filename, stringifyres);
 			}
 		})
 	}
