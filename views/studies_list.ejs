@@ -39,20 +39,14 @@
 			} else {
 				console.log("updated study name");
 				console.log(form.name);
-				//Simva.updateStudyName(form.study, form.name, function(error, result){
-				//	
-				//	if(error && error.responseJSON){
-				//		errorbox.text(error.responseJSON.message);
-				//	}else{
-				//		toggleAddForm('edit_study');
-				//		reloadStudy();
-				//		Simva.updateStudy(study, function(error, result){
-				//			reloadStudy();
-				//		});
-				//	}
-				//});
-				toggleSubmit(currentform);
-				toggleAddForm('edit_study');
+				Simva.getStudy(form.study, function(error, study){
+					study.name = form.name;
+					Simva.updateStudy(study, function(error, result){
+						toggleSubmit(currentform);
+						toggleAddForm('edit_study');
+						refreshStudies();
+					});
+				});
 			}
 			return false;
 		});

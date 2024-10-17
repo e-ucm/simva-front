@@ -495,15 +495,11 @@
 						console.log("Updated activity :");
 						console.log(updatedActivity);
 						//Simva.updateActivity(form.activity, updatedActivity, function(error, result){
-						//	
 						//	if(error && error.responseJSON){
 						//		errorbox.text(error.responseJSON.message);
 						//	}else{
 						//		toggleAddForm('edit_activity');
 						//		reloadStudy();
-						//		Simva.updateStudy(study, function(error, result){
-						//			reloadStudy();
-						//		});
 						//	}
 						//});
 						toggleSubmit(currentform);
@@ -523,20 +519,15 @@
 			if(form.name == form.testName) {
 				errorbox.text("No changes detected !");
 				toggleSubmit(currentform);
-				//toggleAddForm('edit_test');
 			} else {
 				console.log("updated test name");
 				console.log(form.name);
 				//Simva.updateTestName(form.test, form.name, function(error, result){
-				//	
 				//	if(error && error.responseJSON){
 				//		errorbox.text(error.responseJSON.message);
 				//	}else{
 				//		toggleAddForm('edit_test');
 				//		reloadStudy();
-				//		Simva.updateStudy(study, function(error, result){
-				//			reloadStudy();
-				//		});
 				//	}
 				//});
 				toggleSubmit(currentform);
@@ -554,27 +545,17 @@
 			if(form.name == form.studyName) {
 				errorbox.text("No changes detected !");
 				toggleSubmit(currentform);
-				//toggleAddForm('edit_study');
 			} else {
-				console.log("updated study name");
-				console.log(form.name);
-				//Simva.updateStudyName(form.study, form.name, function(error, result){
-				//	
-				//	if(error && error.responseJSON){
-				//		errorbox.text(error.responseJSON.message);
-				//	}else{
-				//		toggleAddForm('edit_study');
-				//		reloadStudy();
-				//		Simva.updateStudy(study, function(error, result){
-				//			reloadStudy();
-				//		});
-				//	}
-				//});
-				toggleSubmit(currentform);
-				toggleAddForm('edit_study');
+				study.name = form.name;
+				Simva.updateStudy(study, function(error, result){	
+					toggleSubmit(currentform);
+					toggleAddForm('edit_study');
+					reloadStudy();
+				});
 			}
 			return false;
 		});
+		
 		loadAddGroups();
 		Simva.getStudy("<%= study %>", function(error, study){
 			if(!error) {

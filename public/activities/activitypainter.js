@@ -245,7 +245,7 @@ var ActivityPainter = {
 		if(previousCompletion == "false") {
 			var newRes = res + 1;
 			$(`#completion_progress_${activityId} doneRes`).text(newRes);
-			var progress = newRes / users * 100;
+			var progress = Math.round((newRes / users) * 1000) / 10; 
 			$(`#completion_progress_${activityId} .done`).css('width', `${progress}%` );
 			$(`#completion_progress_${activityId} done`).text(progress);
 		}
@@ -299,7 +299,7 @@ var ActivityPainter = {
 				newRes = res;
 			}
 			$(`#result_progress_${activityId} doneRes`).text(newRes);
-			var progress = newRes / users * 100;
+			var progress = Math.round((newRes / users) * 1000) / 10; 
 			$(`#result_progress_${activityId} .done`).css('width', `${progress}%` );
 			$(`#result_progress_${activityId} done`).text(progress);
 		}
@@ -308,7 +308,7 @@ var ActivityPainter = {
 				newPartialRes = partialRes;
 			}
 			$(`#result_progress_${activityId} partialres`).text(newPartialRes);
-			var partialProgress = newPartialRes / users * 100;
+			var partialProgress = Math.round((newPartialRes / users) * 1000) / 10;
 			$(`#result_progress_${activityId} .partial`).css('width', `${partialProgress}%` );
 			$(`#result_progress_${activityId} partial`).text(partialProgress);
 		}

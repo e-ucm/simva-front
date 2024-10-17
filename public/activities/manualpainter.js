@@ -202,7 +202,7 @@ var ManualActivityPainter = {
 			}
 		}
 		$(`#completion_progress_${activityId} doneRes`).text(newRes);
-		var progress = newRes / users * 100;
+		var progress = Math.round((newRes / users) * 1000) / 10; 
 		$(`#completion_progress_${activityId} .done`).css('width', `${progress}%` );
 		$(`#completion_progress_${activityId} done`).text(progress);
 	},
