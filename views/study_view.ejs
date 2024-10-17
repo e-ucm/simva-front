@@ -477,6 +477,104 @@
 			return false;
 		});
 
+		$("#edit_activity_form").on('submit', function(event){
+			event.preventDefault();
+			let currentform = this;
+			let form = Utils.getFormData($("#edit_activity_form"));
+			toggleSubmit(currentform);
+			let errorbox = $(this).find('.error');
+			PainterFactory.Painters[form.type].extractEditInformation('#edit_activity_form', function(error, updatedActivity){
+				if(error){
+					errorbox.text(error);
+				}else{
+					if(Object.keys(updatedActivity).length == 0) {
+						errorbox.text("No changes detected !");
+						toggleSubmit(currentform);
+					} else {
+						updatedActivity.id= form.activity;
+						console.log("Updated activity :");
+						console.log(updatedActivity);
+						//Simva.updateActivity(form.activity, updatedActivity, function(error, result){
+						//	
+						//	if(error && error.responseJSON){
+						//		errorbox.text(error.responseJSON.message);
+						//	}else{
+						//		toggleAddForm('edit_activity');
+						//		reloadStudy();
+						//		Simva.updateStudy(study, function(error, result){
+						//			reloadStudy();
+						//		});
+						//	}
+						//});
+						toggleSubmit(currentform);
+						toggleAddForm('edit_activity');
+					}
+				}
+			});
+			return false;
+		});
+
+		$("#edit_test_form").on('submit', function(event){
+			event.preventDefault();
+			let currentform = this;
+			let form = Utils.getFormData($("#edit_test_form"));
+			toggleSubmit(currentform);
+			let errorbox = $(this).find('.error');
+			if(form.name == form.testName) {
+				errorbox.text("No changes detected !");
+				toggleSubmit(currentform);
+				//toggleAddForm('edit_test');
+			} else {
+				console.log("updated test name");
+				console.log(form.name);
+				//Simva.updateTestName(form.test, form.name, function(error, result){
+				//	
+				//	if(error && error.responseJSON){
+				//		errorbox.text(error.responseJSON.message);
+				//	}else{
+				//		toggleAddForm('edit_test');
+				//		reloadStudy();
+				//		Simva.updateStudy(study, function(error, result){
+				//			reloadStudy();
+				//		});
+				//	}
+				//});
+				toggleSubmit(currentform);
+				toggleAddForm('edit_test');
+			}
+			return false;
+		});
+
+		$("#edit_study_form").on('submit', function(event){
+			event.preventDefault();
+			let currentform = this;
+			let form = Utils.getFormData($("#edit_study_form"));
+			toggleSubmit(currentform);
+			let errorbox = $(this).find('.error');
+			if(form.name == form.studyName) {
+				errorbox.text("No changes detected !");
+				toggleSubmit(currentform);
+				//toggleAddForm('edit_study');
+			} else {
+				console.log("updated study name");
+				console.log(form.name);
+				//Simva.updateStudyName(form.study, form.name, function(error, result){
+				//	
+				//	if(error && error.responseJSON){
+				//		errorbox.text(error.responseJSON.message);
+				//	}else{
+				//		toggleAddForm('edit_study');
+				//		reloadStudy();
+				//		Simva.updateStudy(study, function(error, result){
+				//			reloadStudy();
+				//		});
+				//	}
+				//});
+				toggleSubmit(currentform);
+				toggleAddForm('edit_study');
+			}
+			return false;
+		});
 		loadAddGroups();
 		Simva.getStudy("<%= study %>", function(error, study){
 			if(!error) {
@@ -604,45 +702,50 @@
 	// Functionality
 
 	let removeGroup = function(group){
-		let toremove = -1;
-		for (var i = 0; i < study.groups.length; i++) {
-			if(study.groups[i] === group){
-				toremove = i;
-				break;
+		if(confirm("Are you sure do you want to delete this group?")){
+			let toremove = -1;
+			for (var i = 0; i < study.groups.length; i++) {
+				if(study.groups[i] === group){
+					toremove = i;
+					break;
+				}
 			}
+
+			study.groups.splice(i, 1);
+
+			Simva.updateStudy(study, function(error, result){
+				reloadStudy();
+			});
 		}
-
-		study.groups.splice(i, 1);
-
-		Simva.updateStudy(study, function(error, result){
-			reloadStudy();
-		});
 	}
 
 	let removePlatform = function(platform){
-		Simva.removePlatform(platform, function(error, result){
-			reloadStudy();
-		});
+		if(confirm("Are you sure do you want to delete this platform?")){
+			Simva.removePlatform(platform, function(error, result){
+				reloadStudy();
+			});
+		}
 	}
 
 	let removeOwner = function(owner){
-		let toremove = -1;
-		for (var i = 0; i < study.owners.length; i++) {
-			if(study.owners[i] === owner){
-				toremove = i;
-				break;
+		if(confirm("Are you sure do you want to delete this owner?")){
+			let toremove = -1;
+			for (var i = 0; i < study.owners.length; i++) {
+				if(study.owners[i] === owner){
+					toremove = i;
+					break;
+				}
 			}
+
+			study.owners.splice(i, 1);
+
+			Simva.updateStudy(study, function(error, result){
+				reloadStudy();
+			});
 		}
-
-		study.owners.splice(i, 1);
-
-		Simva.updateStudy(study, function(error, result){
-			reloadStudy();
-		});
 	}
 
 	let deleteTest = function(test){
-
 		if(confirm("Are you sure do you want to delete the test?\nAll the activities and data will be deleted too.")){
 			let toremove = -1;
 			for (var i = 0; i < study.tests.length; i++) {
@@ -661,8 +764,7 @@
 	}
 
 	let deleteActivity = function(activity){
-
-		if(confirm("Are you sure do you want to delete the test?\nAll the activities and data will be deleted too.")){
+		if(confirm("Are you sure do you want to delete the activity?\nAll the data of the activity will be deleted too.")){
 			Simva.deleteActivity(activity, function(error, result){
 				reloadStudy();
 			});
@@ -693,44 +795,6 @@
 		});
 	}
 
-	$("#edit_activity_form").on('submit', function(event){
-		event.preventDefault();
-		let currentform = this;
-		let form = Utils.getFormData($("#edit_activity_form"));
-		toggleSubmit(currentform);
-		let errorbox = $(this).find('.error');
-		PainterFactory.Painters[form.type].extractEditInformation('#edit_activity_form', function(error, updatedActivity){
-			if(error){
-				errorbox.text(error);
-			}else{
-				if(Object.keys(updatedActivity).length == 0) {
-					errorbox.text("No changes detected !");
-					toggleSubmit(currentform);
-				} else {
-					updatedActivity.id= form.activity;
-					console.log("Updated activity :");
-					console.log(updatedActivity);
-					//Simva.updateActivity(form.activity, updatedActivity, function(error, result){
-					//	
-					//	if(error && error.responseJSON){
-					//		errorbox.text(error.responseJSON.message);
-					//	}else{
-					//		toggleAddForm('edit_activity');
-					//		reloadStudy();
-					//		Simva.updateStudy(study, function(error, result){
-					//			reloadStudy();
-					//		});
-					//	}
-					//});
-					toggleSubmit(currentform);
-					toggleAddForm('edit_activity');
-				}
-			}
-		});
-		return false;
-	});
-
-
 	let openEditTestForm = function(testId){
 		Simva.getStudyTest("<%= study %>", testId, function(error, test){
 			if(!error){
@@ -745,37 +809,6 @@
 		});
 	}
 
-	$("#edit_test_form").on('submit', function(event){
-		event.preventDefault();
-		let currentform = this;
-		let form = Utils.getFormData($("#edit_test_form"));
-		toggleSubmit(currentform);
-		let errorbox = $(this).find('.error');
-		if(form.name == form.testName) {
-			errorbox.text("No changes detected !");
-			toggleSubmit(currentform);
-			//toggleAddForm('edit_test');
-		} else {
-			console.log("updated test name");
-			console.log(form.name);
-			//Simva.updateTestName(form.test, form.name, function(error, result){
-			//	
-			//	if(error && error.responseJSON){
-			//		errorbox.text(error.responseJSON.message);
-			//	}else{
-			//		toggleAddForm('edit_test');
-			//		reloadStudy();
-			//		Simva.updateStudy(study, function(error, result){
-			//			reloadStudy();
-			//		});
-			//	}
-			//});
-			toggleSubmit(currentform);
-			toggleAddForm('edit_test');
-		}
-		return false;
-	});
-
 	let openEditStudyForm = function(studyId){
 		Simva.getStudy(studyId, function(error, study){
 			if(!error){
@@ -788,37 +821,6 @@
 			}
 		});
 	}
-
-	$("#edit_study_form").on('submit', function(event){
-		event.preventDefault();
-		let currentform = this;
-		let form = Utils.getFormData($("#edit_study_form"));
-		toggleSubmit(currentform);
-		let errorbox = $(this).find('.error');
-		if(form.name == form.studyName) {
-			errorbox.text("No changes detected !");
-			toggleSubmit(currentform);
-			//toggleAddForm('edit_study');
-		} else {
-			console.log("updated study name");
-			console.log(form.name);
-			//Simva.updateStudyName(form.study, form.name, function(error, result){
-			//	
-			//	if(error && error.responseJSON){
-			//		errorbox.text(error.responseJSON.message);
-			//	}else{
-			//		toggleAddForm('edit_study');
-			//		reloadStudy();
-			//		Simva.updateStudy(study, function(error, result){
-			//			reloadStudy();
-			//		});
-			//	}
-			//});
-			toggleSubmit(currentform);
-			toggleAddForm('edit_study');
-		}
-		return false;
-	});
 
 	let toggleAddForm = function(id){
 		$(`#${id}`).toggleClass('shown');
@@ -973,8 +975,7 @@
 	}
 
 	let groupRow = function(group){
-		let toret = `<tr><td>${group.name}</td><td><input class="red" type="button" value="Remove"';
-		toret += ' onclick="removeGroup('${group._id}')" `
+		let toret = `<tr><td>${group.name}</td><td><input class="red" type="button" value="Remove" onclick="removeGroup('${group._id}')" `
 		if(group.link && group.link.type){
 			toret += ' disabled';
 		}
