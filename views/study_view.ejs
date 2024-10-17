@@ -491,19 +491,18 @@
 						errorbox.text("No changes detected !");
 						toggleSubmit(currentform);
 					} else {
-						updatedActivity.id= form.activity;
+						updatedActivity.id = form.activity;
 						console.log("Updated activity :");
 						console.log(updatedActivity);
-						//Simva.updateActivity(form.activity, updatedActivity, function(error, result){
-						//	if(error && error.responseJSON){
-						//		errorbox.text(error.responseJSON.message);
-						//	}else{
-						//		toggleAddForm('edit_activity');
-						//		reloadStudy();
-						//	}
-						//});
-						toggleSubmit(currentform);
-						toggleAddForm('edit_activity');
+						Simva.updateActivity(updatedActivity, function(error, result){
+							toggleSubmit(currentform);
+							if(error && error.responseJSON){
+								errorbox.text(error.responseJSON.message);
+							}else{
+								toggleAddForm('edit_activity');
+								reloadStudy();
+							}
+						});
 					}
 				}
 			});
@@ -521,17 +520,17 @@
 				toggleSubmit(currentform);
 			} else {
 				console.log("updated test name");
-				console.log(form.name);
-				//Simva.updateTestName(form.test, form.name, function(error, result){
-				//	if(error && error.responseJSON){
-				//		errorbox.text(error.responseJSON.message);
-				//	}else{
-				//		toggleAddForm('edit_test');
-				//		reloadStudy();
-				//	}
-				//});
-				toggleSubmit(currentform);
-				toggleAddForm('edit_test');
+				var test = { id : form.test , name : form.name};
+				console.log(test);
+				Simva.updateTest("<%= study %>", test, function(error, result){
+					toggleSubmit(currentform);
+					if(error && error.responseJSON){
+						errorbox.text(error.responseJSON.message);
+					}else{
+						toggleAddForm('edit_test');
+						reloadStudy();
+					}
+				});
 			}
 			return false;
 		});

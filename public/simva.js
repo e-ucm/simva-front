@@ -172,6 +172,14 @@ var Simva = {
 		this.put(`${this.apiurl}/studies/${study._id}`, study, callback);
 	},
 
+	updateTest: function(studyId, test, callback){
+		this.patch(`${this.apiurl}/studies/${studyId}/tests/${test.id}`, test, callback);
+	},
+
+	updateActivity: function(activity, callback){
+		this.patch(`${this.apiurl}/activities/${activity.id}`, activity, callback);
+	},
+
 	deleteStudy: function(study_id, callback){
 		this.delete(`${this.apiurl}/studies/${study_id}`, callback);
 	},
@@ -305,7 +313,6 @@ var Simva = {
 	getLtiPlatforms: function(study, callback){
 		let query = '';
 		if(study){
-			console.log(study);
 			query = '?searchString=' + encodeURI(`{"studyId":"${study}"}`);
 		}
 
