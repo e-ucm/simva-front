@@ -17,7 +17,7 @@ var GameplayActivityPainter = {
 	},
 
 	getExtraForm: function () {
-		return `<div class="gameplay_activity"><p><label for="gameplay_trace_storage">Trace Storage</label><input id="gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
+		return `<div class="gameplay_activity"><p><label for="gameplay_trace_storage">Trace Storage</label><input id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
 			 <p><label for="gameplay_backup">Backup</label><input id="gameplay_backup" type="checkbox" name="backup" checked></p>
 			 <p><label for="gameplay_game_uri" style="width: 100%; text-align: center;">Game URI (optional)</label><input id="gameplay_game_uri" type="text" name="game_uri">
 			 <span class="info">Game URI can include tags: {simvaResultUri}, {simvaHomePage}, {username}, {authToken} and {activityId}</p></div>`;
@@ -25,15 +25,19 @@ var GameplayActivityPainter = {
 	},
 
 	getEditExtraForm: function () {
-		return this.getExtraForm();
+		return `<div class="gameplay_activity"><p><label for="edit_gameplay_trace_storage">Trace Storage</label><input id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
+			 <p><label for="edit_gameplay_backup">Backup</label><input id="edit_gameplay_backup" type="checkbox" name="backup" checked></p>
+			 <p><label for="edit_gameplay_game_uri" style="width: 100%; text-align: center;">Game URI (optional)</label><input id="edit_gameplay_game_uri" type="text" name="game_uri">
+			 <span class="info">Game URI can include tags: {simvaResultUri}, {simvaHomePage}, {username}, {authToken} and {activityId}</p></div>`;
+			 //<p><label for="gameplay_realtime">Realtime</label><input id="gameplay_realtime" type="checkbox" name="realtime"></p>
 	},
 
 	updateInputEditExtraForm(activity) {
-		var gameplay_trace_storage = document.getElementById('gameplay_trace_storage');
+		var gameplay_trace_storage = document.getElementById('edit_gameplay_trace_storage');
 		gameplay_trace_storage.checked = activity.extra_data.config.trace_storage;
-		var gameplay_backup = document.getElementById('gameplay_backup');
+		var gameplay_backup = document.getElementById('edit_gameplay_backup');
 		gameplay_backup.checked = activity.extra_data.config.backup;
-		var gameplay_game_uri = document.getElementById('gameplay_game_uri');
+		var gameplay_game_uri = document.getElementById('edit_gameplay_game_uri');
 		gameplay_game_uri.value = activity.extra_data.game_uri;
 
 	},
@@ -55,6 +59,47 @@ var GameplayActivityPainter = {
 		}
 
 		callback(null, activity);
+	},
+
+	extractEditInformation: function(form, callback){
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+		Simva.getActivity(formdata.activity, function(error, actualActivity){
+			if(!error) {
+				let activity = {};
+
+				if(actualActivity.name !== formdata.name) {
+					activity.name = formdata.name;
+				}
+		
+				let trace_storage = formdata.trace_storage === 'on';
+				if(actualActivity.extra_data.config.trace_storage !== trace_storage) {
+					activity.trace_storage = trace_storage;
+				}
+				let realtime = formdata.realtime === 'on';
+				if(actualActivity.extra_data.config.realtime !== realtime) {
+					activity.realtime = realtime;
+				}
+				let backup = formdata.backup === 'on';
+				if(actualActivity.extra_data.config.backup !== backup) {
+					activity.backup = backup;
+				}
+				let game_uri=formdata.game_uri;
+				if(!(actualActivity.extra_data.game_uri == game_uri)) {
+					if(actualActivity.extra_data.game_uri) {
+						activity.game_uri = game_uri;
+					} else {
+						if(game_uri !== ''){
+							activity.game_uri = game_uri;
+						}
+					}
+				}
+		
+				callback(null, activity);
+			} else {
+				callback(error, null);
+			}
+		});
 	},
 
 	fullyPaintActivity: function(activity){

@@ -45,7 +45,7 @@ var LTIToolPainter = {
 	},
 	
 	getEditExtraForm: function () {
-		return this.getExtraForm();
+		return "";
 	},
 
 	updateInputEditExtraForm(activity) {
@@ -98,6 +98,24 @@ var LTIToolPainter = {
 				callback('Select a method first');
 				break;
 		}
+	},
+
+	extractEditInformation: function(form, callback){
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+		Simva.getActivity(formdata.activity, function(error, actualActivity){
+			if(!error) {
+				let activity = {};
+
+				if(actualActivity.name !== formdata.name) {
+					activity.name = formdata.name;
+				}
+		
+				callback(null, activity);
+			} else {
+				callback(error, null);
+			}
+		});
 	},
 
 	fullyPaintActivity: function(activity){

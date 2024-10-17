@@ -24,13 +24,15 @@ var ManualActivityPainter = {
 	},
 
 	getEditExtraForm: function () {
-		return this.getExtraForm();
+		return `<p><label for="edit_manual_user_managed">Allow students to complete?</label><input id="edit_manual_user_managed" type="checkbox" name="user_managed"></p>
+		<p><label for="edit_manual_uri" style="width: 100%; text-align: center;">URI (optional)</label><input id="edit_manual_uri" type="text" name="uri">
+		<span class="info">URI can include tags: {username}, and {activityId}</p></div>`;
 	},
 
 	updateInputEditExtraForm(activity) {
-		var manual_user_managed = document.getElementById('manual_user_managed');
+		var manual_user_managed = document.getElementById('edit_manual_user_managed');
 		manual_user_managed.checked = activity.extra_data.user_managed;
-		var manual_uri = document.getElementById('manual_uri');
+		var manual_uri = document.getElementById('edit_manual_uri');
 		if(activity.extra_data.uri) {
 			manual_uri.value = activity.extra_data.uri;
 		}
@@ -51,6 +53,39 @@ var ManualActivityPainter = {
 		}
 
 		callback(null, activity);
+	},
+
+	extractEditInformation: function(form, callback){
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+		Simva.getActivity(formdata.activity, function(error, actualActivity){
+			if(!error) {
+				let activity = {};
+
+				if(actualActivity.name !== formdata.name) {
+					activity.name = formdata.name;
+				}
+		
+				let user_managed = formdata.user_managed === 'on';
+				if(actualActivity.extra_data.user_managed !== user_managed) {
+					activity.user_managed = user_managed;
+				}
+				
+				if(!(actualActivity.extra_data.uri == formdata.uri)) {
+					if(actualActivity.extra_data.uri) {
+						activity.uri = formdata.uri;
+					} else {
+						if(formdata.uri !== ''){
+							activity.uri = formdata.uri;
+						}
+					}
+				}
+
+				callback(null, activity);
+			} else {
+				callback(error, null);
+			}
+		});
 	},
 
 	fullyPaintActivity: function(activity){

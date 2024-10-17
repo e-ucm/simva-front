@@ -161,11 +161,12 @@
 			<div id="edit_study_tab" class="subform selected">
 				<h2>Edit Study</h2>
 				<form id="edit_study_form">
-					<input hidden type="text" id="edit_study_id" name="id">
+					<input hidden type="text" name="study">
+					<input hidden type="text" name="studyName">
 					<input type="text" name="name" id="edit_study_name" placeholder="Study name" required>
-					<input disabled type="submit" value="Edit (disabled)">
+					<input type="submit" value="Edit">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<span class="error"></span>
+					<span class="error" id="edit_study_error"></span>
 				</form>
 			</div>
 		</div>
@@ -178,11 +179,12 @@
 			<div id="edit_test_tab" class="subform selected">
 				<h2>Edit Test</h2>
 				<form id="edit_test_form">
-					<input hidden type="text" id="edit_test_id" name="id">
+					<input hidden type="text" name="test">
+					<input hidden type="text" name="testName">
 					<input type="text" name="name" id="edit_test_name" placeholder="Test name" required>
-					<input disabled type="submit" value="Edit (disabled)">
+					<input type="submit" value="Edit">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<span class="error"></span>
+					<span class="error" id="edit_test_error"></span>
 				</form>
 			</div>
 		</div>
@@ -229,13 +231,15 @@
 		<div class="form">
 			<form id="edit_activity_form">
 				<input type="hidden" name="test">
+				<input type="hidden" name="activity">
+				<input id="edit_activity_type" type="hidden" name="type">
 				<input id="edit_activity_name" type="text" name="name" placeholder="Activity name" required>
 				</select>
 				<fieldset id="edit_activity_extras">
 				</fieldset>
-				<input disabled type="submit" value="Edit (Not enabled)">
+				<input type="submit" value="Edit">
 				<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-				<span class="error"></span>
+				<span class="error" id="edit_activity_error"></span>
 			</form>
 		</div>
 	</div>
@@ -670,50 +674,151 @@
 		$('#add_activity input[name="test"]').val(test);
 	}
 
-	let openEditActivityForm = function(activity){
-		Simva.getActivity(activity, function(error, result){
+	let openEditActivityForm = function(activityId){
+		Simva.getActivity(activityId, function(error, activity){
 			if(!error){
-				let activity=result;
-				console.log(activity);
+				document.getElementById("edit_activity_error").innerHTML = "";
 				var inputElement = document.getElementById('edit_activity_name');
 				inputElement.value = activity.name;
+				var inputElement = document.getElementById('edit_activity_type');
+				inputElement.value = activity.type;
 				$('#edit_activity_extras').empty();
 				$('#edit_activity_extras').append(PainterFactory.Painters[activity.type].getEditExtraForm());
 				PainterFactory.Painters[activity.type].updateInputEditExtraForm(activity);
 				$('#edit_activity').toggleClass('shown');
-				$('#edit_activity input[name="test"]').val(activity._id);
+				$('#edit_activity input[name="test"]').val(activity.test);
+				$('#edit_activity span[class="error"]').val("");
+				$('#edit_activity input[name="activity"]').val(activity._id);
 			}
 		});
 	}
 
+	$("#edit_activity_form").on('submit', function(event){
+		event.preventDefault();
+		let currentform = this;
+		let form = Utils.getFormData($("#edit_activity_form"));
+		toggleSubmit(currentform);
+		let errorbox = $(this).find('.error');
+		PainterFactory.Painters[form.type].extractEditInformation('#edit_activity_form', function(error, updatedActivity){
+			if(error){
+				errorbox.text(error);
+			}else{
+				if(Object.keys(updatedActivity).length == 0) {
+					errorbox.text("No changes detected !");
+					toggleSubmit(currentform);
+				} else {
+					updatedActivity.id= form.activity;
+					console.log("Updated activity :");
+					console.log(updatedActivity);
+					//Simva.updateActivity(form.activity, updatedActivity, function(error, result){
+					//	
+					//	if(error && error.responseJSON){
+					//		errorbox.text(error.responseJSON.message);
+					//	}else{
+					//		toggleAddForm('edit_activity');
+					//		reloadStudy();
+					//		Simva.updateStudy(study, function(error, result){
+					//			reloadStudy();
+					//		});
+					//	}
+					//});
+					toggleSubmit(currentform);
+					toggleAddForm('edit_activity');
+				}
+			}
+		});
+		return false;
+	});
+
+
 	let openEditTestForm = function(testId){
-		Simva.getStudyTest("<%= study %>", testId, function(error, result){
+		Simva.getStudyTest("<%= study %>", testId, function(error, test){
 			if(!error){
-				let test=result;
-				console.log(test);
+				document.getElementById("edit_test_error").innerHTML = "";
 				var inputElement = document.getElementById('edit_test_name');
 				inputElement.value = test.name;
 				$('#edit_test').toggleClass('shown');
 				$('#edit_test input[name="test"]').val(test._id);
+				$('#edit_test span[class="error"]').val("");
+				$('#edit_test input[name="testName"]').val(test.name);
 			}
 		});
 	}
 
-	let openEditStudyForm = function(testId){
-		Simva.getStudy("<%= study %>", function(error, result){
+	$("#edit_test_form").on('submit', function(event){
+		event.preventDefault();
+		let currentform = this;
+		let form = Utils.getFormData($("#edit_test_form"));
+		toggleSubmit(currentform);
+		let errorbox = $(this).find('.error');
+		if(form.name == form.testName) {
+			errorbox.text("No changes detected !");
+			toggleSubmit(currentform);
+			//toggleAddForm('edit_test');
+		} else {
+			console.log("updated test name");
+			console.log(form.name);
+			//Simva.updateTestName(form.test, form.name, function(error, result){
+			//	
+			//	if(error && error.responseJSON){
+			//		errorbox.text(error.responseJSON.message);
+			//	}else{
+			//		toggleAddForm('edit_test');
+			//		reloadStudy();
+			//		Simva.updateStudy(study, function(error, result){
+			//			reloadStudy();
+			//		});
+			//	}
+			//});
+			toggleSubmit(currentform);
+			toggleAddForm('edit_test');
+		}
+		return false;
+	});
+
+	let openEditStudyForm = function(studyId){
+		Simva.getStudy(studyId, function(error, study){
 			if(!error){
-				let study=result;
-				console.log(study);
-				var inputElement = document.getElementById('edit_study_id');
-				inputElement.value = study.id;
+				document.getElementById("edit_study_error").innerHTML = "";
 				var inputElement = document.getElementById('edit_study_name');
 				inputElement.value = study.name;
 				$('#edit_study').toggleClass('shown');
 				$('#edit_study input[name="study"]').val(study._id);
+				$('#edit_study input[name="studyName"]').val(study.name);
 			}
 		});
 	}
 
+	$("#edit_study_form").on('submit', function(event){
+		event.preventDefault();
+		let currentform = this;
+		let form = Utils.getFormData($("#edit_study_form"));
+		toggleSubmit(currentform);
+		let errorbox = $(this).find('.error');
+		if(form.name == form.studyName) {
+			errorbox.text("No changes detected !");
+			toggleSubmit(currentform);
+			//toggleAddForm('edit_study');
+		} else {
+			console.log("updated study name");
+			console.log(form.name);
+			//Simva.updateStudyName(form.study, form.name, function(error, result){
+			//	
+			//	if(error && error.responseJSON){
+			//		errorbox.text(error.responseJSON.message);
+			//	}else{
+			//		toggleAddForm('edit_study');
+			//		reloadStudy();
+			//		Simva.updateStudy(study, function(error, result){
+			//			reloadStudy();
+			//		});
+			//	}
+			//});
+			toggleSubmit(currentform);
+			toggleAddForm('edit_study');
+		}
+		return false;
+	});
 
 	let toggleAddForm = function(id){
 		$(`#${id}`).toggleClass('shown');
@@ -920,3 +1025,4 @@
 <script type="text/javascript" src="/activities/imspackagepainter.js"></script>
 <script type="text/javascript" src="/allocators/defaultallocatorpainter.js"></script>
 <script type="text/javascript" src="/allocators/groupallocatorpainter.js"></script>
+

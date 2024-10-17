@@ -24,15 +24,15 @@ var ImsPackagePainter = {
 	},
 
 	getEditExtraForm: function () {
-		return `<div class="imspackage_activity"><p><label for="imspackage_trace_storage">Trace Storage</label><input id="imspackage_trace_storage" type="checkbox" name="trace_storage"></p>
-			 <p><label for="imspackage_backup">Backup</label><input id="imspackage_backup" type="checkbox" name="backup"></p>`;
+		return `<div class="imspackage_activity"><p><label for="edit_imspackage_trace_storage">Trace Storage</label><input id="edit_imspackage_trace_storage" type="checkbox" name="trace_storage"></p>
+			 <p><label for="edit_imspackage_backup">Backup</label><input id="edit_imspackage_backup" type="checkbox" name="backup"></p>`;
 			 //<p><label for="imspackage_realtime">Realtime</label><input id="imspackage_realtime" type="checkbox" name="realtime"></p>`
 	},
 
 	updateInputEditExtraForm(activity) {
-		var imspackage_trace_storage = document.getElementById('imspackage_trace_storage');
+		var imspackage_trace_storage = document.getElementById('edit_imspackage_trace_storage');
 		imspackage_trace_storage.checked = activity.extra_data.config.trace_storage;
-		var imspackage_backup = document.getElementById('imspackage_backup');
+		var imspackage_backup = document.getElementById('edit_imspackage_backup');
 		imspackage_backup.checked = activity.extra_data.config.backup;
 	},
 
@@ -53,6 +53,24 @@ var ImsPackagePainter = {
 		}
 
 		callback(null, activity);
+	},
+	
+	extractEditInformation: function(form, callback){
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+		Simva.getActivity(formdata.activity, function(error, actualActivity){
+			if(!error) {
+				let activity = {};
+
+				if(actualActivity.name !== formdata.name) {
+					activity.name = formdata.name;
+				}
+		
+				callback(null, activity);
+			} else {
+				callback(error, null);
+			}
+		});
 	},
 
 	fullyPaintActivity: function(activity){

@@ -28,6 +28,25 @@ var ActivityPainter = {
 	updateInputEditExtraForm(activity) {
 	},
 
+	extractEditInformation: function(form, callback){
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+		Simva.getActivity(formdata.activity, function(error, actualActivity){
+			if(!error) {
+				let activity = {};
+
+				if(actualActivity.name !== formdata.name) {
+					activity.name = formdata.name;
+				}
+		
+				callback(null, activity);
+			} else {
+				callback(error, null);
+			}
+		});
+	},
+
+
 	extractInformation: function(form, callback){
 		let activity = {};
 

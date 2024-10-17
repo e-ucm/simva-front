@@ -39,6 +39,24 @@ var RageAnalyticsActivityPainter = {
 		callback(null, activity);
 	},
 
+	extractEditInformation: function(form, callback){
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+		Simva.getActivity(formdata.activity, function(error, actualActivity){
+			if(!error) {
+				let activity = {};
+
+				if(actualActivity.name !== formdata.name) {
+					activity.name = formdata.name;
+				}
+		
+				callback(null, activity);
+			} else {
+				callback(error, null);
+			}
+		});
+	},
+
 	fullyPaintActivity: function(activity){
 		this.paintActivity(activity, participants);
 		let tmp = this;
