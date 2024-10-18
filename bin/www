@@ -10,7 +10,7 @@ const config = require('../config');
 initHmacKey();
 
 async function initHmacKey() {
-  let { createHMACKey , exportKey } = require("../public/libs/hMacKey-require/crypto.js");
+  let { createHMACKey , exportKey } = require("../public/libs/hMacKey/crypto.js");
   console.log("Initialized hmacKey");
   config.hmac.hmacKey = (await createHMACKey(config.hmac.password
     //, {
@@ -19,16 +19,16 @@ async function initHmacKey() {
     //}
   )).key;
   const exportedKey = await exportKey(config.hmac.hmacKey, "jwk");
-  console.log(exportedKey);
-  // chunk is the Uint8Array object
-  require('fs').writeFile("/app/exportkey.key", JSON.stringify(exportedKey),
-    function (err) {
-        if (err) {
-          console.log(err);
-            console.error('Crap happens');
-        }
-    }
-  );
+
+  //require('fs').writeFile("/app/exportkey.key",`var config=${JSON.stringify(exportedKey)};
+  //module.exports = config;`,
+  //  function (err) {
+  //      if (err) {
+  //        console.log(err);
+  //          console.error('Crap happens');
+  //      }
+  //  }
+  //);
 }
 
 //XXX

@@ -256,8 +256,7 @@
 	<a unselectable="on" class="basic" onclick="downloadUAConfig()"><img src="/ua.png"></a>
 </div>
 
-<script type="module">
-	import{ SSEClientManager } from "/libs/SSEClientManager.js";
+<script type="text/javascript">
 	// Create an instance of SSEClientManager
 	var map = { };
 	const sseClient = new SSEClientManager('<%= config.api.url %>/studies/<%= study %>/events', map);

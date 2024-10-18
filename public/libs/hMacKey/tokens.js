@@ -1,4 +1,4 @@
-import { signMessage, verifyMessage } from "./crypto.js";
+const { signMessage, verifyMessage } = require("./crypto.js");
 
 const DEFAULT_REGISTRO_VIEWER_URL = 'http://localhost:3000/registro.html';
 
@@ -11,7 +11,7 @@ const DEFAULT_REGISTRO_VIEWER_URL = 'http://localhost:3000/registro.html';
  *
  * @returns {Promise<TokenData>}
  */
-export async function generateData(key, numeroToken, idStand, stand) {
+async function generateData(key, numeroToken, idStand, stand) {
     const buffer = new Uint8Array(8);
     crypto.getRandomValues(buffer);
 
@@ -56,7 +56,7 @@ export async function generateData(key, numeroToken, idStand, stand) {
  * @param {GeneratorOptions} options
  * @returns {Promise<TokenData[]>}
  */
-export async function generateTokens(options) {
+async function generateTokens(options) {
     const tokens = [];
     const limit = options.inicio + options.cuantos - 1;
     for(let idx = options.inicio; idx <= limit; idx++) {
@@ -73,7 +73,7 @@ export async function generateTokens(options) {
  * @param {TokenData[]} tokens
  * @returns {Promise<boolean[]>}
  */
-export async function verifyTokens(key, tokens) {
+async function verifyTokens(key, tokens) {
     const verifications = [];
     for(const token of tokens) {
         const verification = await verifyToken(key, token);
@@ -87,7 +87,7 @@ export async function verifyTokens(key, tokens) {
  * @param {TokenData} token
  * @returns {Promise<boolean>}
  */
-export async function verifyToken(key, token) {
+async function verifyToken(key, token) {
 
     const tokenValue = token.token;
     /** @type {{name: string; value: string}[]} */
@@ -107,3 +107,5 @@ export async function verifyToken(key, token) {
     const verification = await verifyMessage(unsignedData, token.signature, key);
     return verification;
 }
+
+module.exports = {verifyToken, verifyTokens, generateTokens, generateData};

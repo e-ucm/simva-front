@@ -1,4 +1,4 @@
-<%# views/layout.ejs %>
+<%# views/scheduler.ejs %>
 
 <!DOCTYPE html>
 <html>
@@ -9,7 +9,7 @@
 	<link href="/toast/jquery.toast.css" rel="stylesheet" type="text/css">
 	<link href="/libs/jsonTree/jsonTree.css" rel="stylesheet" />
 	<script src="/libs/jsonTree/jsonTree.js"></script>
-	<script type="module" src="/libs/SSEClientManager.js"></script>
+	<script src="/libs/SSEClientManager-bundle.js"></script>
 	<script type="text/javascript" src="/jquery.js"></script>
 	<script type="text/javascript" src="/toast/jquery.toast.js"></script>
 	<script type="text/javascript" src="/utils.js"></script>
@@ -29,9 +29,7 @@
 			});
 		});
 	</script>
-	<script type="module">
-		import{ SSEClientManager } from "/libs/SSEClientManager.js";
-
+	<script type="text/javascript">
 		// Create an instance of SSEClientManager
 		var map = { username : "<%= user.data.username %>" };
 		const sseClient = new SSEClientManager('<%= config.api.url %>/studies/<%= study %>/schedule/events', map);

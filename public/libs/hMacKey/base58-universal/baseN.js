@@ -41,7 +41,7 @@ const _reverseAlphabets = {};
  *
  * @returns {string} The baseN-encoded output string.
  */
-export function encode(input, alphabet, maxline) {
+function encode(input, alphabet, maxline) {
     if (!(input instanceof Uint8Array)) {
         throw new TypeError('"input" must be a Uint8Array.');
     }
@@ -101,7 +101,7 @@ export function encode(input, alphabet, maxline) {
  *
  * @returns {Uint8Array} The decoded bytes in a Uint8Array.
  */
-export function decode(input, alphabet) {
+function decode(input, alphabet) {
     if (typeof input !== 'string') {
         throw new TypeError('"input" must be a string.');
     }
@@ -153,3 +153,5 @@ export function decode(input, alphabet) {
 
     return new Uint8Array(bytes.reverse());
 }
+
+module.exports = { encode, decode };

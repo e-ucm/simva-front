@@ -1,6 +1,7 @@
-import { signMessage, createHMACKey, importKey } from "./hMacKey/crypto.js";
+var { signMessage, createHMACKey, importKey } = require("./hMacKey/crypto.js");
+var { config } = require("../../config.js");
 
-export class SSEClientManager {
+class SSEClientManager {
     constructor(url, mapParameters = {}) {
         this.url = url; // SSE server URL
         this.mapParameters = mapParameters;
@@ -24,20 +25,12 @@ export class SSEClientManager {
         var signature;
         try {
             let hmacKey=null;
-            //console.log(config.hmac);
-            fetch("/app/exportkey.key")
-                .then((text) => {
-                    console.log(text);
-                    obj = JSON.parse(text);
-                    hmacKey=importKey(obj, "jwk");
-                })
-                .catch((e) => console.error(e));
-            //const hmacKey = (await createHMACKey("password"//config.hmac.password
-            //    //, {
-            //    //  encodedSalt: config.hmac.salt,
-            //    //  encodedKey: config.hmac.key
-            //    //}
-            //)).key;
+            hmacKey = (await createHMACKey(//config.hmac.password
+                //, {
+                //  encodedSalt: config.hmac.salt,
+                //  encodedKey: config.hmac.key
+                //}
+            )).key;
             signature = await signMessage(toSign, hmacKey);
         } catch(e) {
             console.log(e);
@@ -130,3 +123,7 @@ export class SSEClientManager {
         return this.isConnected;
     }
 }
+
+module.exports = SSEClientManager;
+// Expose to the global scope
+window.SSEClientManager = SSEClientManager;
