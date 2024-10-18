@@ -1,4 +1,4 @@
-import { decode, encode } from './base58-universal/index.js';
+const { decode, encode } = require('./base58-universal/index.js');
 
 /**
  * 
@@ -17,7 +17,7 @@ function getMessageEncoding(message) {
  * 
  * @returns {Promise<string>}
  */
-export async function signMessage(message, key) {
+async function signMessage(message, key) {
     const encoded = getMessageEncoding(message);
     const signature = await crypto.subtle.sign(
         "HMAC",
@@ -37,7 +37,7 @@ export async function signMessage(message, key) {
  * 
  * @returns {Promise<boolean>}
  */
-export async function verifyMessage(message, signature, key) {
+async function verifyMessage(message, signature, key) {
     const decodedSignature = decode(signature);
     const encoded = getMessageEncoding(message);
     const result = await crypto.subtle.verify(
@@ -59,7 +59,7 @@ const ALGORITHM = {
 /**
  * @returns {Promise<CryptoKey>}
  */
-export async function generateRandomHMACKey() {
+async function generateRandomHMACKey() {
     const key = await crypto.subtle.generateKey(
         ALGORITHM,
         true,
@@ -69,12 +69,11 @@ export async function generateRandomHMACKey() {
 }
 
 /**
-/**
  * @param {string} textKey
  *
  * @returns {Promise<CryptoKey>}
  */
-export async function importKey(textKey, format) {
+async function importKey(textKey, format) {
     const encoded = getMessageEncoding(textKey);
 
     const key = await crypto.subtle.importKey(
@@ -93,16 +92,17 @@ export async function importKey(textKey, format) {
  *
  * @returns {Promise<string>} textKey
  */
-export async function exportKey(key, format) {
+async function exportKey(key, format) {
     const textKey = await crypto.subtle.exportKey(format, key);
     return textKey;
 }
+
 /**
  * 
  * @param {Uint8Array | string} password 
  * @returns {Promise<CryptoKey>}
  */
-export async function getKeyMaterial(password) {
+async function getKeyMaterial(password) {
     let encodedPassword;
 
     if (typeof password === 'string') {
@@ -128,7 +128,7 @@ export async function getKeyMaterial(password) {
  * @param {Uint8Array} salt 
  * @returns 
  */
-export async function getWrapKey(keyMaterial, salt) {
+async function getWrapKey(keyMaterial, salt) {
     return crypto.subtle.deriveKey(
         {
             name: "PBKDF2",
@@ -151,7 +151,7 @@ export async function getWrapKey(keyMaterial, salt) {
  * 
  * @returns {Promise<string>}
  */
-export async function wrapCryptoKey(keyToWrap, keyMaterial, salt) {
+async function wrapCryptoKey(keyToWrap, keyMaterial, salt) {
     const wrappingKey = await getWrapKey(keyMaterial, salt);
 
     const wrappedKey = await crypto.subtle.wrapKey("raw", keyToWrap, wrappingKey, "AES-KW");
@@ -165,7 +165,7 @@ export async function wrapCryptoKey(keyToWrap, keyMaterial, salt) {
  * 
  * @returns {Uint8Array} 
  */
-export function generateSalt(size = 16) {
+function generateSalt(size = 16) {
     return crypto.getRandomValues(new Uint8Array(size));
 }
 
@@ -191,7 +191,7 @@ window.crypto.subtle
  * @param {Uint8Array} salt
  * @returns {Promise<CryptoKey>}
  */
-export async function unwrapHmacKey(wrappedKey, keyMaterial, salt) {
+async function unwrapHmacKey(wrappedKey, keyMaterial, salt) {
     const unwrappingKey = await getWrapKey(keyMaterial, salt);
 
     const unwrappedKey = await crypto.subtle.unwrapKey(
@@ -207,7 +207,7 @@ export async function unwrapHmacKey(wrappedKey, keyMaterial, salt) {
 }
 
 
-export const DEFAULT_PASSWORD='12345';
+const DEFAULT_PASSWORD='12345';
 
 /**
  * @param {string} [encodedPassword]
@@ -215,7 +215,7 @@ export const DEFAULT_PASSWORD='12345';
  *
  * @returns {Promise<CreateHMACKey>}
  */
-export async function createHMACKey(encodedPassword = DEFAULT_PASSWORD, hmacKey) {
+async function createHMACKey(encodedPassword = DEFAULT_PASSWORD, hmacKey) {
     let encodedSalt = '';
     let encodedKey = '';
     if (hmacKey) {
@@ -259,3 +259,5 @@ export async function createHMACKey(encodedPassword = DEFAULT_PASSWORD, hmacKey)
         encodedPassword
     };
 }
+
+module.exports = {createHMACKey, importKey,  exportKey, signMessage, verifyMessage };

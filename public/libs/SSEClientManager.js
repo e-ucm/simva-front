@@ -1,4 +1,4 @@
-import { signMessage, createHMACKey } from "./hMacKey/crypto.js";
+import { signMessage, createHMACKey, importKey } from "./hMacKey/crypto.js";
 
 export class SSEClientManager {
     constructor(url, mapParameters = {}) {
@@ -23,12 +23,21 @@ export class SSEClientManager {
         toSign=this.url + '\n' + toSign;
         var signature;
         try {
-            const hmacKey = (await createHMACKey("password"//config.hmac.password
-                //, {
-                //  encodedSalt: config.hmac.salt,
-                //  encodedKey: config.hmac.key
-                //}
-            )).key;
+            let hmacKey=null;
+            //console.log(config.hmac);
+            fetch("/app/exportkey.key")
+                .then((text) => {
+                    console.log(text);
+                    obj = JSON.parse(text);
+                    hmacKey=importKey(obj, "jwk");
+                })
+                .catch((e) => console.error(e));
+            //const hmacKey = (await createHMACKey("password"//config.hmac.password
+            //    //, {
+            //    //  encodedSalt: config.hmac.salt,
+            //    //  encodedKey: config.hmac.key
+            //    //}
+            //)).key;
             signature = await signMessage(toSign, hmacKey);
         } catch(e) {
             console.log(e);

@@ -7,6 +7,29 @@ const app = require('../routes');
 const http = require('http');
 const config = require('../config');
 
+initHmacKey();
+
+async function initHmacKey() {
+  let { createHMACKey , exportKey } = require("../public/libs/hMacKey-require/crypto.js");
+  console.log("Initialized hmacKey");
+  config.hmac.hmacKey = (await createHMACKey(config.hmac.password
+    //, {
+    //  encodedSalt: config.hmac.salt,
+    //  encodedKey: config.hmac.key
+    //}
+  )).key;
+  const exportedKey = await exportKey(config.hmac.hmacKey, "jwk");
+  console.log(exportedKey);
+  // chunk is the Uint8Array object
+  require('fs').writeFile("/app/exportkey.key", JSON.stringify(exportedKey),
+    function (err) {
+        if (err) {
+          console.log(err);
+            console.error('Crap happens');
+        }
+    }
+  );
+}
 
 //XXX
 //require('https').globalAgent.options.ca = require('ssl-root-cas/latest').create();
