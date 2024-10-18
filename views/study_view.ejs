@@ -259,7 +259,7 @@
 <script type="module">
 	import{ SSEClientManager } from "/libs/SSEClientManager.js";
 	// Create an instance of SSEClientManager
-	var map = { study : "<%= study %>", token : "<%= user.jwt %>"};
+	var map = { };
 	const sseClient = new SSEClientManager('<%= config.api.url %>/studies/<%= study %>/events', map);
 
 	// Listen for general messages (default "message" event)

@@ -1,4 +1,4 @@
-import { generateData } from "./hMacKey/tokens.js";
+import { signMessage, createHMACKey } from "./hMacKey/crypto.js";
 
 export class SSEClientManager {
     constructor(url, mapParameters = {}) {
@@ -12,31 +12,33 @@ export class SSEClientManager {
     }
 
     async createUrl() {
-        if(this.mapParameters) {
-            this.mapParameters.ts = (new Date()).toISOString();
-            console.log(this.mapParameters);
-            var map = new Map();
-            Object.entries(this.mapParameters)
-                .map(([key, value]) => map.set(key, value));
-            var toSign=Object.entries(this.mapParameters)
-                    .sort(([keyA], [keyB]) => keyA.localeCompare(keyB)) // Sort by keys
-                    .map(([key, value]) => `${key}=${value}`)
-                    .join('\n');
-            toSign=this.url + '\n' + toSign;
-            console.log(toSign);
-            var signature;
-            try {
-                signature = await generateData("password", "token", 912792, toSign);
-            } catch(e) {
-                signature = "TODO";
-            }
-            const queryString = Object.entries(this.mapParameters)
+        this.mapParameters.ts = (new Date()).toISOString();
+        var map = new Map();
+        Object.entries(this.mapParameters)
+            .map(([key, value]) => map.set(key, value));
+        var toSign=Object.entries(this.mapParameters)
                 .sort(([keyA], [keyB]) => keyA.localeCompare(keyB)) // Sort by keys
-                .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-                .join('&');
-            this.url = this.url + `?${queryString}&signature=${signature}`;
-            console.log(this.url);
+                .map(([key, value]) => `${key}=${value}`)
+                .join('\n');
+        toSign=this.url + '\n' + toSign;
+        var signature;
+        try {
+            const hmacKey = (await createHMACKey("password"//config.hmac.password
+                //, {
+                //  encodedSalt: config.hmac.salt,
+                //  encodedKey: config.hmac.key
+                //}
+            )).key;
+            signature = await signMessage(toSign, hmacKey);
+        } catch(e) {
+            console.log(e);
+            signature = "TODO";
         }
+        const queryString = Object.entries(this.mapParameters)
+            .sort(([keyA], [keyB]) => keyA.localeCompare(keyB)) // Sort by keys
+            .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+            .join('&');
+        this.url = this.url + `?${queryString}&signature=${signature}`;
     }
 
     // Initialize EventSource connection

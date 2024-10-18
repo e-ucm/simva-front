@@ -61,4 +61,9 @@ config.limesurvey.adminPassword = process.env.LIMESURVEY_ADMIN_PASSWORD || 'pass
 config.lti = {}
 config.lti.enabled = process.env.LTI_ENABLED || 'false'
 
+config.hmac = {}
+config.hmac.password = process.env.HMAC_PASSWORD || 'password'
+config.hmac.salt = process.env.HMAC_SALT || 'mysalt'
+config.hmac.key = process.env.HMAC_KEY || 'mykey'
+
 module.exports = config;
