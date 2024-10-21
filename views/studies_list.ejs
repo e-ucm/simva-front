@@ -40,7 +40,7 @@
 					let raw = reader.result;
 					raw = raw.substr(raw.indexOf(',') + 1);
 					var newStudy = raw;
-					Simva.importStudyConfig(newStudy, function(error, result) {
+					Simva.importStudyConfig({file : newStudy}, function(error, result) {
 						toggleSubmit(currentform);
 						if(!error) {
 							toggleAddForm('new_study');
