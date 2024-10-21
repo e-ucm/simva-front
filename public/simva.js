@@ -196,6 +196,14 @@ var Simva = {
 		this.get(`${this.apiurl}/studies/${study_id}/tests`, callback);
 	},
 
+	exportStudyConfig: function(study_id, callback){
+		this.get(`${this.apiurl}/studies/${study_id}/export`, callback);
+	},
+
+	importStudyConfig: function(newStudy, callback){
+		this.post(`${this.apiurl}/studies/import`, newStudy, callback);
+	},
+
 	getStudyTest: function(study_id,test_id, callback){
 		this.get(`${this.apiurl}/studies/${study_id}/tests/${test_id}`, callback);
 	},

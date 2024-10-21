@@ -6,6 +6,7 @@
 	$(document).ready(function() {
 		$("#new_study_form").on('submit', function(event){
 			event.preventDefault();
+			let currentform = this;
 			let form = Utils.getFormData($("#new_study_form"));
 			toggleSubmit(currentform);
 			Simva.addStudy(form.name, function(error, result){
@@ -26,6 +27,43 @@
 
 			return false;
 		});
+
+		$("#import_study_form").on('submit', function(event){
+			event.preventDefault();
+			let currentform = this;
+			let form = Utils.getFormData($("#import_study_form"));
+			toggleSubmit(currentform);
+			if($("#import_study_form").find('input[name="exportJson"]').get(0).files[0]){
+				var reader = new FileReader();
+				var input = event.target;
+				reader.onload = function(){
+					let raw = reader.result;
+					raw = raw.substr(raw.indexOf(',') + 1);
+					var newStudy = raw;
+					Simva.importStudyConfig(newStudy, function(error, result) {
+						toggleSubmit(currentform);
+						if(!error) {
+							toggleAddForm('new_study');
+							$('#studies_list').html(roller);
+							Simva.getStudies(function(error, result){
+								if(!error){
+									paintStudies(result);
+								}
+							});
+						} else {
+							$("#error").text(error);
+						}
+					});
+				};
+				reader.readAsDataURL($("#import_study_form").find('input[name="exportJson"]').get(0).files[0]);
+			}else{
+				$("#error").text('Select the file to upload first.');
+				toggleSubmit(currentform);
+			}
+
+			return false;
+		});
+
 
 		$("#edit_study_form").on('submit', function(event){
 			event.preventDefault();
@@ -119,6 +157,13 @@
 			<p><strong>owners:</strong> ${study.owners.length}</p>
 			</div></a>`;
 	}
+
+	let changeTab = function(tab, form, subform){
+		$(`#${form} .tab`).removeClass('selected');
+		$(`#${form} .subform`).removeClass('selected');
+		$(tab).toggleClass('selected');
+		$(`#${subform}`).toggleClass('selected');
+	}
 </script>
 <h1>Studies</h1>
 <div id="studies_list">
@@ -130,10 +175,23 @@
 	<div class="floater">
 		<div class="form">
 			<h1>Add new</h1>
-			<form id="new_study_form">
-				<input type="text" name="name" placeholder="Study name">
-				<input type="submit" value="Submit">
-			</form>
+			<div class="tabs">
+				<span class="tab selected" onclick="changeTab(this, 'new_study','new_study_tab')">Add new Study</span>
+				<span class="tab" onclick="changeTab(this, 'new_study','import_study_tab')">Import from existing</span>
+			</div>
+			<div id="new_study_tab" class="subform selected">
+				<form id="new_study_form">
+					<input type="text" name="name" placeholder="Study name">
+					<input type="submit" value="Submit">
+				</form>
+			</div>
+			<div hidden id="import_study_tab" class="subform">
+				<form id="import_study_form">
+					<p>Select Exported study file</p>
+					<input type="file" name="exportJson">
+					<input type="submit" value="Submit">
+				</form>
+			</div>
 		</div>	
 	</div>
 </div>

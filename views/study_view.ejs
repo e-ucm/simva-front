@@ -253,8 +253,10 @@
 </div>
 
 <div class="floating_buttons">
+	<a unselectable="on" class="basic" onclick="downloadStudyConfig()">JSON</a>
 	<a unselectable="on" class="basic" onclick="downloadUAConfig()"><img src="/ua.png"></a>
 </div>
+
 
 <script type="text/javascript">
 	// Create an instance of SSEClientManager
@@ -577,11 +579,19 @@
 
 		var filename = "simva.conf";
 
-		var blob = new Blob([content], {
-		 type: "text/plain;charset=utf-8"
-		});
-
 		Utils.download(filename, content);
+	}
+
+	let downloadStudyConfig = function() {
+		Simva.exportStudyConfig(study._id, function(error, result) {
+			if(!error){
+				var studyExport = result;
+				var content = JSON.stringify(studyExport, null, 2);
+				var filename = `simva-${study.name}-export.json`;
+
+				Utils.download(filename, content);
+			}
+		})
 	}
 
 	let toggleAllocatorForm = function(){
