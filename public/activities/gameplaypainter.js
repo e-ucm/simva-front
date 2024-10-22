@@ -263,7 +263,7 @@ var GameplayActivityPainter = {
 	},
 
 	updateActivityProgress: function(activityId, username, result) {
-		PainterFactory.Painters["activity"].updateActivityCompletion(activityId, username,result);
+		PainterFactory.Painters["activity"].updateActivityProgress(activityId, username,result);
 	},
 
 	paintActivityTargets: function(activity, results){
