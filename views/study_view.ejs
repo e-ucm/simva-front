@@ -40,6 +40,17 @@
 			<input class="violet" type="button" value="Add Platform" onclick="Utils.toggleAddForm('add_platform')">
 		</div>
 		<% } %>
+
+		<div class="graybox groups">
+			<h2>Instances</h2>
+			<p></p>
+			<table id="instances">
+			</table>
+			<input class="violet" type="button" value="Create New Instance" onclick="toggleAddForm('add_instance')">
+			<input class="green" type="button" value="Set As Template" id="setinstanceastemplate" onclick="setAsTemplate()">
+
+		</div>
+
 	</div>
 	<div class="card">
 		<div class="top">
@@ -58,6 +69,22 @@
 				<form id="add_group_form">
 					<select id="group_select" name="group">
 					</select>
+					<input type="submit" value="Add">
+					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+					<span class="error"></span>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="add_instance" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<div id="add_instance_tab" class="subform selected">
+				<h2>Add instance</h2>
+				<form id="add_instance_form">
+					<input type="text" name="name" placeholder="Instance name">
 					<input type="submit" value="Add">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 					<span class="error"></span>
@@ -320,6 +347,7 @@
 <script type="text/javascript">
 	let studyid = "<%= study %>";
 	let study = null, participants = null, tests = null, allocator = null, groups = null, platforms = null;
+	let instances = [{id: "tekssowo", name :"base", template: true}, {id: "tekssowosss", name :"Instance", template: false}], actualInstance="tekssowo";
 	
 	$(document).ready(function() {
 		let painters = Object.keys(PainterFactory.Painters);
@@ -446,6 +474,16 @@
 				}
 			});
 
+			return false;
+		});
+
+		$("#add_instance_form").on('submit', function(event){
+			event.preventDefault();
+			let form = Utils.getFormData($("#add_instance_form"));
+			let errorbox = $(this).find('.error');
+			instances.push({id: Math.random(), name : form.name, template : false });
+			toggleAddForm('add_instance');
+			reloadStudy();
 			return false;
 		});
 
@@ -622,7 +660,7 @@
 					done++
 
 					if(done === tocomplete){
-						paintStudy(study, participants, tests, allocator, groups, platforms);
+						paintStudy(study, participants, tests, allocator, groups, platforms, instances, actualInstance);
 					}
 				}
 
@@ -684,6 +722,33 @@
 	}
 
 	// Functionality
+	let accessInstance = function(instance){
+		actualInstance = instance;
+		reloadStudy();
+	}
+
+	let setAsTemplate = function() {
+		// Find the instance with the new actual ID
+		let actual = instances.find(obj => obj.id === actualInstance);
+		// Mark the new actualInstance as template
+		actual.template = true;
+
+		// Find the previous template (assuming only one object is marked as template)
+		const previousTemplate = instances.find(obj => obj.template === true && obj.id !== actualInstance.id);
+		// If a previous template is found, set its template property to false
+		if (previousTemplate) {
+			previousTemplate.template = false;
+		}
+		reloadStudy();
+	}
+
+	
+	let removeInstance = function(instanceId) {
+		if(confirm("Are you sure do you want to delete this instance?")){
+			instances = instances.filter(obj => obj.id !== instanceId);
+			reloadStudy();
+		}
+	}
 
 	let removeGroup = function(group){
 		if(confirm("Are you sure do you want to delete this group?")){
@@ -809,7 +874,7 @@
 
 	// Main Paint functions
 
-	let paintStudy = function(study, participants, tests, allocator, groups, platforms){
+	let paintStudy = function(study, participants, tests, allocator, groups, platforms, instances, actualInstance){
 		$('#study_name').text(study.name);
 
 		paintOwners(study.owners);
@@ -819,6 +884,8 @@
 		paintGroups(groups);
 	
 		paintPlatforms(platforms);
+
+		paintInstances(instances, actualInstance);
 
 		let fullyPaintTest = function(test){
 			paintTest(test);
@@ -863,6 +930,28 @@
 		}else{
 			for (var i = 0; i < groups.length; i++) {
 				$('#groups').append(groupRow(groups[i]));
+			}
+		}
+	}
+
+	let paintInstances = function(instances, actualInstance) {
+		$('#instances').html('');
+		if(instances.length == 0){
+			$('#instances').append('<p>There are no instances yet.</p>');
+		}else{
+			let instance = instances.find(obj => obj.id === actualInstance);
+			try {
+				if(instance.template == true) {
+				// JavaScript to disable the button
+				document.getElementById('setinstanceastemplate').disabled = true;
+				} else {
+					document.getElementById('setinstanceastemplate').disabled = false;
+				}
+			} catch(e) {
+				console.log(e);
+			}
+			for (var i = 0; i < instances.length; i++) {
+				$('#instances').append(instanceRow(instances[i], actualInstance));
 			}
 		}
 	}
@@ -951,6 +1040,21 @@
 			toret += ` onclick="removeOwner('${owner}')"`
 		}
 
+		toret += '></td></tr>';
+		return toret;
+	}
+
+	let instanceRow = function(instance, actual) {
+		let toret;
+		if(actual == instance.id) {
+			toret = `<tr><td>${instance.name}</td><td>`
+		} else {
+			toret = `<tr><td><input class="blue" type="button" value=${instance.name} onclick="accessInstance('${instance.id}')"></td><td>`
+		}
+		toret+=`<input class="red" type="button" value="Remove" onclick="removeInstance('${instance.id}')" `
+		if(instance.template || actual == instance.id){
+			toret += ' disabled';
+		}
 		toret += '></td></tr>';
 		return toret;
 	}
