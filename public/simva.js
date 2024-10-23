@@ -164,6 +164,11 @@ var Simva = {
 		this.post(`${this.apiurl}/studies/${study_id}/tests`, body, callback);
 	},
 
+	addInstanceToStudy: function(study_id, name, callback){
+		let body = { name: name };
+		this.post(`${this.apiurl}/studies/${study_id}/instances`, body, callback);
+	},
+
 	getStudy: function(study_id, callback){
 		this.get(`${this.apiurl}/studies/${study_id}`, callback);
 	},
@@ -174,6 +179,10 @@ var Simva = {
 
 	updateTest: function(studyId, test, callback){
 		this.patch(`${this.apiurl}/studies/${studyId}/tests/${test.id}`, test, callback);
+	},
+
+	updateInstance: function(studyId, instance, callback){
+		this.patch(`${this.apiurl}/studies/${studyId}/instances/${instance.id}`, instance, callback);
 	},
 
 	updateActivity: function(activity, callback){
@@ -196,6 +205,10 @@ var Simva = {
 		this.get(`${this.apiurl}/studies/${study_id}/tests`, callback);
 	},
 
+	getStudyInstances: function(study_id, callback){
+		this.get(`${this.apiurl}/studies/${study_id}/instances`, callback);
+	},
+
 	exportStudyConfig: function(study_id, callback){
 		this.get(`${this.apiurl}/studies/${study_id}/export`, callback);
 	},
@@ -206,6 +219,10 @@ var Simva = {
 
 	getStudyTest: function(study_id,test_id, callback){
 		this.get(`${this.apiurl}/studies/${study_id}/tests/${test_id}`, callback);
+	},
+
+	getInstance: function(study_id,instance_id, callback){
+		this.get(`${this.apiurl}/studies/${study_id}/instances/${instance_id}`, callback);
 	},
 
 	getStudyGroups: function(study_id, callback){
@@ -294,6 +311,10 @@ var Simva = {
 
 	deleteActivity: function(activity_id, callback){
 		this.delete(`${this.apiurl}/activities/${activity_id}`, callback);
+	},
+
+	deleteInstance: function(study_id,instance_id, callback){
+		this.delete(`${this.apiurl}/studies/${study_id}/instances/${instance_id}`, callback);
 	},
 
 	getActivityTypes: function(callback){
