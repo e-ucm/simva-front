@@ -72,7 +72,7 @@ module.exports = config;
 }).call(this)}).call(this,require('_process'))
 },{"_process":6}],2:[function(require,module,exports){
 var { signMessage, createHMACKey, importKey } = require("./hMacKey/crypto.js");
-var { config } = require("../../config.js");
+var config = require("../../config.js");
 
 class SSEClientManager {
     constructor(url, mapParameters = {}) {
@@ -86,6 +86,9 @@ class SSEClientManager {
     }
 
     async createUrl() {
+        const buffer = new Uint8Array(8);
+        crypto.getRandomValues(buffer);
+
         this.mapParameters.ts = (new Date()).toISOString();
         var map = new Map();
         Object.entries(this.mapParameters)
@@ -97,14 +100,11 @@ class SSEClientManager {
         toSign=this.url + '\n' + toSign;
         var signature;
         try {
-            let hmacKey=null;
-            hmacKey = (await createHMACKey(//config.hmac.password
-                //, {
-                //  encodedSalt: config.hmac.salt,
-                //  encodedKey: config.hmac.key
-                //}
-            )).key;
-            signature = await signMessage(toSign, hmacKey);
+            if(config.hmac.hmacKey == null) {
+                console.log("initializing hmackey");
+                config.hmac.hmacKey = (await createHMACKey(config.hmac.password)).key;
+            }
+            signature = await signMessage(toSign, config.hmac.hmacKey);
         } catch(e) {
             console.log(e);
             signature = "TODO";
