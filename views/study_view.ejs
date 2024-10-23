@@ -481,7 +481,7 @@
 			event.preventDefault();
 			let form = Utils.getFormData($("#add_instance_form"));
 			let errorbox = $(this).find('.error');
-			instances.push({id: Math.random(), name : form.name, template : false });
+			instances.push({id: Math.random().toString(), name : form.name, template : false });
 			toggleAddForm('add_instance');
 			reloadStudy();
 			return false;
