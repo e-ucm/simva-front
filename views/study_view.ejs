@@ -191,6 +191,24 @@
 	</div>
 </div>
 
+<div id="duplicate_test" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<div id="duplicate_test_tab" class="subform selected">
+				<h2>Duplicate Test</h2>
+				<form id="duplicate_test_form">
+					<input hidden type="text" name="test">
+					<input hidden type="text" name="testName">
+					<input type="text" name="name" id="duplicate_test_name" placeholder="Test name" required>
+					<input type="submit" value="Duplicate">
+					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+					<span class="error" id="duplicate_test_error"></span>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="add_activity" class="new_element floating">
 	<div class="floater">
 		<div class="form">
@@ -442,6 +460,24 @@
 					errorbox.text(error.responseJSON.message);
 				}else{
 					Utils.toggleAddForm('add_test');
+					reloadStudy();
+				}
+			});
+
+			return false;
+		});
+
+		$("#duplicate_test_form").on('submit', function(event){
+			event.preventDefault();
+			let form = Utils.getFormData($("#duplicate_test_form"));
+			let errorbox = $(this).find('.error');
+
+			Simva.duplicateTestFromStudy(studyid, form.name, form.test, function(error, result){
+				if(error && error.responseJSON){
+					errorbox.text(error.responseJSON.message);
+				}else{
+					console.log(result);
+					Utils.toggleAddForm('duplicate_test');
 					reloadStudy();
 				}
 			});
@@ -747,6 +783,14 @@
 		}
 	}
 
+	let duplicateTest = function(testid){
+		Simva.getStudyTest("<%= study %>", testid, function(error, test){
+			if(!error) {
+
+			}
+		});
+	}
+
 	let deleteActivity = function(activity){
 		if(confirm("Are you sure do you want to delete the activity?\nAll the data of the activity will be deleted too.")){
 			Simva.deleteActivity(activity, function(error, result){
@@ -775,6 +819,20 @@
 				$('#edit_activity input[name="test"]').val(activity.test);
 				$('#edit_activity span[class="error"]').val("");
 				$('#edit_activity input[name="activity"]').val(activity._id);
+			}
+		});
+	}
+
+	let openEditDuplicateForm = function(testId){
+		Simva.getStudyTest("<%= study %>", testId, function(error, test){
+			if(!error){
+				document.getElementById("duplicate_test_error").innerHTML = "";
+				var inputElement = document.getElementById('duplicate_test_name');
+				inputElement.value = test.name;
+				$('#duplicate_test').toggleClass('shown');
+				$('#duplicate_test input[name="test"]').val(test._id);
+				$('#duplicate_test span[class="error"]').val("");
+				$('#duplicate_test input[name="testName"]').val(test.name);
 			}
 		});
 	}
@@ -911,7 +969,8 @@
 			<div class="top"><h3>${test.name}</h3><input class="violet" type="button" value="Expand/Collapse" onclick="toggleTest('${test._id}')">
 			<input class="green" type="button" value="Add activity" onclick="openActivityForm('${test._id}')">
 			<input class="yellow" type="button" value="Edit" onclick="openEditTestForm('${test._id}')">
-			<input class="red" type="button" value="Delete" onclick="deleteTest('${test._id}')"></div>
+			<input class="red" type="button" value="Delete" onclick="deleteTest('${test._id}')">
+			<input class="orange" type="button" value="Duplicate" onclick="openEditDuplicateForm('${test._id}')"></div>
 			<div class="activities collapsed">${roller}</div>`);
 	}
 

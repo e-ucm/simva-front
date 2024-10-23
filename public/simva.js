@@ -164,6 +164,11 @@ var Simva = {
 		this.post(`${this.apiurl}/studies/${study_id}/tests`, body, callback);
 	},
 
+	duplicateTestFromStudy: function(study_id, name, testId, callback){
+		let body = { name: name, from : testId };
+		this.post(`${this.apiurl}/studies/${study_id}/tests`, body, callback);
+	},
+
 	getStudy: function(study_id, callback){
 		this.get(`${this.apiurl}/studies/${study_id}`, callback);
 	},
