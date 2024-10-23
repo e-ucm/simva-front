@@ -204,7 +204,7 @@ var RageAnalyticsActivityPainter = {
 				let context = $('#iframe_floating iframe')[0].contentWindow.document;
 				let body = $('body', context);
 				body.html(content);
-				toggleAddForm('iframe_floating');
+				Utils.toggleAddForm('iframe_floating');
 			}
 		})
 	},
@@ -212,7 +212,7 @@ var RageAnalyticsActivityPainter = {
 	openDashboard: function(activityId){
 		console.log(`${this.utils.dashboard_url}${activityId}${this.utils.dashboard_query}`);
 		$('#iframe_floating iframe').prop('src', `${this.utils.dashboard_url}${activityId}${this.utils.dashboard_query}`);
-		toggleAddForm('iframe_floating');
+		Utils.toggleAddForm('iframe_floating');
 	},
 }
 

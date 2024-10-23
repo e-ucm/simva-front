@@ -6,20 +6,20 @@
 	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 </div>-->
 <div id="group_view">
-	<h1>Group: <span id="group_name"></span></h1>
+	<h1>Group: <span id="group_name"></span></h1><input class="yellow" type="button" value="Edit Group Name" onclick="openEditGroupForm('<%= group %>')">
 	<div class="left">
 		<div class="graybox owners">
 			<h2>Owners</h2>
 			<p></p>
 			<table id="owners">
 			</table>
-			<input class="violet" type="button" value="Add owner"  onclick="toggleAddForm('add_owner')">
+			<input class="violet" type="button" value="Add owner"  onclick="Utils.toggleAddForm('add_owner')">
 		</div>
 	</div>
 	<div class="card" id="study">
 		<div class="top">
 			<h2>Participants</h2>
-			<input class="violet" type="button" value="Add Participants" onclick="toggleAddForm('add_participant')">
+			<input class="violet" type="button" value="Add Participants" onclick="Utils.toggleAddForm('add_participant')">
 		</div>
 		
 		<div class="participants" id="participants_list">
@@ -36,6 +36,24 @@
 						<input type="text" name="name" placeholder="Owner username" required>
 						<input type="submit" value="Add">
 						<span class="error"></span>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="edit_group" class="new_element floating">
+		<div class="floater">
+			<div class="form">
+				<div id="edit_group_tab" class="subform selected">
+					<h2>Edit Group</h2>
+					<form id="edit_group_form">
+						<input hidden type="text" name="group">
+						<input hidden type="text" name="groupName">
+						<input type="text" name="name" id="edit_group_name" placeholder="Group name" required>
+						<input type="submit" value="Edit">
+						<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+						<span class="error" id="edit_group_error"></span>
 					</form>
 				</div>
 			</div>
@@ -126,10 +144,39 @@
 				if(error && error.responseJSON){
 					errorbox.text(error.responseJSON.message);
 				}else{
-					toggleAddForm('add_owner');
+					Utils.toggleAddForm('add_owner');
 				}
 			});
 
+			return false;
+		});
+
+		$("#edit_group_form").on('submit', function(event){
+			event.preventDefault();
+			let currentform = this;
+			let form = Utils.getFormData($("#edit_group_form"));
+			Utils.toggleSubmit(currentform);
+			let errorbox = $(this).find('.error');
+			if(form.name == form.groupName) {
+				errorbox.text("No changes detected !");
+				Utils.toggleSubmit(currentform);
+			} else {
+				console.log("updated group name");
+				console.log(form.name);
+				Simva.getGroup(form.group, function(error, group){
+					if(!error){
+						group.name = form.name;
+						Simva.updateGroup(group, function(error, result){
+							if(!error){
+								Utils.toggleSubmit(currentform);
+								Utils.toggleAddForm('edit_group');
+								reloadGroup();
+							}
+						});
+					}
+					
+				});
+			}
 			return false;
 		});
 
@@ -153,7 +200,7 @@
 				if(error && error.responseJSON){
 					errorbox.text(error.responseJSON.message);
 				}else{
-					toggleAddForm('add_participant');
+					Utils.toggleAddForm('add_participant');
 				}
 			});
 
@@ -177,7 +224,7 @@
 						if(error && error.responseJSON){
 							errorbox.text(error.responseJSON.message);
 						}else{
-							toggleAddForm('add_participant');
+							Utils.toggleAddForm('add_participant');
 						}
 					});
 				}
@@ -189,7 +236,7 @@
 		$("#batch_participant_form").on('submit', function(event){
 			event.preventDefault();
 			let currentform = this;
-			toggleSubmit(currentform);
+			Utils.toggleSubmit(currentform);
 			let form = Utils.getFormData($("#batch_participant_form"));
 			let errorbox = $(this).find('.error');
 
@@ -200,13 +247,13 @@
 				if(generated.length == form.amount){
 					group.participants = group.participants.concat(generated);
 					Simva.updateGroup(group, function(error, result){
-						toggleSubmit(currentform);
+						Utils.toggleSubmit(currentform);
 						reloadGroup();
 
 						if(error && error.responseJSON){
 							errorbox.text(error.responseJSON.message);
 						}else{
-							toggleAddForm('add_participant');
+							Utils.toggleAddForm('add_participant');
 						}
 					});
 				}
@@ -237,9 +284,16 @@
 		reloadGroup();
 	});
 
-	let toggleSubmit = function(form){
-		$(form).find('input[type="submit"]').toggle();
-		$(form).find('.loader').toggle();
+	let openEditGroupForm = function(groupId){
+		Simva.getGroup(groupId, function(error, group) {
+			document.getElementById("edit_group_error").innerHTML = "";
+			var inputElement = document.getElementById('edit_group_name');
+			inputElement.value = group.name;
+			$('#edit_group input[name="group"]').val(group._id);
+			$('#edit_group span[class="error"]').val("");
+			$('#edit_group input[name="groupName"]').val(group.name);
+			Utils.toggleAddForm('edit_group');
+		});
 	}
 
 	let reloadGroup = function(){
@@ -352,11 +406,7 @@
 		$(tab).toggleClass('selected');
 		$(`#${subform}`).toggleClass('selected');
 	}
-
-	let toggleAddForm = function(id){
-		$(`#${id}`).toggleClass('shown');
-	}
-
+	
 	let generateUsername = function(algorithm, length){
 		switch (algorithm) {
 			case 'alphanumeric':

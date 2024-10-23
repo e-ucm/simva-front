@@ -13,7 +13,7 @@
 			<p></p>
 			<table id="owners">
 			</table>
-			<input class="violet" type="button" value="Add owner" onclick="toggleAddForm('add_owner')">
+			<input class="violet" type="button" value="Add owner" onclick="Utils.toggleAddForm('add_owner')">
 		</div>
 
 		<div class="graybox groups">
@@ -21,12 +21,12 @@
 			<p></p>
 			<table id="groups">
 			</table>
-			<input class="violet" type="button" value="Add Group" onclick="toggleAddForm('add_group')">
+			<input class="violet" type="button" value="Add Group" onclick="Utils.toggleAddForm('add_group')">
 		</div>
 
 		<div class="graybox allocator default">
 			<h2>Allocator</h2> 
-			<span class="edit"><img src="/icon/gear.png" onclick="toggleAddForm('change_allocator')"></span>
+			<span class="edit"><img src="/icon/gear.png" onclick="Utils.toggleAddForm('change_allocator')"></span>
 			<div id="allocator_content">
 				
 			</div>
@@ -37,7 +37,7 @@
 			<p></p>
 			<table id="lti_platforms">
 			</table>
-			<input class="violet" type="button" value="Add Platform" onclick="toggleAddForm('add_platform')">
+			<input class="violet" type="button" value="Add Platform" onclick="Utils.toggleAddForm('add_platform')">
 		</div>
 		<% } %>
 
@@ -53,7 +53,7 @@
 	<div class="card">
 		<div class="top">
 			<h2>Tests</h2>
-			<input class="violet" type="button" value="Add Test" onclick="toggleAddForm('add_test')">
+			<input class="violet" type="button" value="Add Test" onclick="Utils.toggleAddForm('add_test')">
 		</div>
 		<div id="tests" class="tests">
 		</div>
@@ -67,6 +67,22 @@
 				<form id="add_group_form">
 					<select id="group_select" name="group">
 					</select>
+					<input type="submit" value="Add">
+					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+					<span class="error"></span>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="add_instance" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<div id="add_instance_tab" class="subform selected">
+				<h2>Add instance</h2>
+				<form id="add_instance_form">
+					<input type="text" name="name" placeholder="Instance name">
 					<input type="submit" value="Add">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 					<span class="error"></span>
@@ -416,7 +432,7 @@
 					errorbox.text(error.responseJSON.message);
 				}else{
 					reloadStudy();
-					toggleAddForm('add_owner');
+					Utils.toggleAddForm('add_owner');
 				}
 			});
 
@@ -436,7 +452,7 @@
 					if(error && error.responseJSON){
 						errorbox.text(error.responseJSON.message);
 					}else{
-						toggleAddForm('add_group');
+						Utils.toggleAddForm('add_group');
 						reloadStudy();
 					}
 				});
@@ -464,7 +480,7 @@
 				if(error && error.responseJSON){
 					errorbox.text(error.responseJSON.message);
 				}else{
-					toggleAddForm('add_platform');
+					Utils.toggleAddForm('add_platform');
 					reloadStudy();
 					Simva.updateStudy(study, function(error, result){
 						reloadStudy();
@@ -484,7 +500,7 @@
 				if(error && error.responseJSON){
 					errorbox.text(error.responseJSON.message);
 				}else{
-					toggleAddForm('add_test');
+					Utils.toggleAddForm('add_test');
 					reloadStudy();
 				}
 			});
@@ -514,7 +530,7 @@
 			event.preventDefault();
 			let currentform = this;
 			let form = Utils.getFormData($("#new_activity_form"));
-			toggleSubmit(currentform);
+			Utils.toggleSubmit(currentform);
 			let errorbox = $(this).find('.error');
 
 			PainterFactory.Painters[form.type].extractInformation('#new_activity_form', function(error, activity){
@@ -522,11 +538,11 @@
 					errorbox.text(error);
 				}else{
 					Simva.addActivityToTest(studyid, form.test, activity, function(error, result){
-						toggleSubmit(currentform);
+						Utils.toggleSubmit(currentform);
 						if(error && error.responseJSON){
 							errorbox.text(error.responseJSON.message);
 						}else{
-							toggleAddForm('add_activity');
+							Utils.toggleAddForm('add_activity');
 							reloadStudy();
 							Simva.updateStudy(study, function(error, result){
 								reloadStudy();
@@ -543,7 +559,7 @@
 			event.preventDefault();
 			let currentform = this;
 			let form = Utils.getFormData($("#edit_activity_form"));
-			toggleSubmit(currentform);
+			Utils.toggleSubmit(currentform);
 			let errorbox = $(this).find('.error');
 			PainterFactory.Painters[form.type].extractEditInformation('#edit_activity_form', function(error, updatedActivity){
 				if(error){
@@ -551,17 +567,17 @@
 				}else{
 					if(Object.keys(updatedActivity).length == 0) {
 						errorbox.text("No changes detected !");
-						toggleSubmit(currentform);
+						Utils.toggleSubmit(currentform);
 					} else {
 						updatedActivity.id = form.activity;
 						console.log("Updated activity :");
 						console.log(updatedActivity);
 						Simva.updateActivity(updatedActivity, function(error, result){
-							toggleSubmit(currentform);
+							Utils.toggleSubmit(currentform);
 							if(error && error.responseJSON){
 								errorbox.text(error.responseJSON.message);
 							}else{
-								toggleAddForm('edit_activity');
+								Utils.toggleAddForm('edit_activity');
 								reloadStudy();
 							}
 						});
@@ -606,21 +622,21 @@
 			event.preventDefault();
 			let currentform = this;
 			let form = Utils.getFormData($("#edit_test_form"));
-			toggleSubmit(currentform);
+			Utils.toggleSubmit(currentform);
 			let errorbox = $(this).find('.error');
 			if(form.name == form.testName) {
 				errorbox.text("No changes detected !");
-				toggleSubmit(currentform);
+				Utils.toggleSubmit(currentform);
 			} else {
 				console.log("updated test name");
 				var test = { id : form.test , name : form.name};
 				console.log(test);
 				Simva.updateTest("<%= study %>", test, function(error, result){
-					toggleSubmit(currentform);
+					Utils.toggleSubmit(currentform);
 					if(error && error.responseJSON){
 						errorbox.text(error.responseJSON.message);
 					}else{
-						toggleAddForm('edit_test');
+						Utils.toggleAddForm('edit_test');
 						reloadStudy();
 					}
 				});
@@ -632,16 +648,16 @@
 			event.preventDefault();
 			let currentform = this;
 			let form = Utils.getFormData($("#edit_study_form"));
-			toggleSubmit(currentform);
+			Utils.toggleSubmit(currentform);
 			let errorbox = $(this).find('.error');
 			if(form.name == form.studyName) {
 				errorbox.text("No changes detected !");
-				toggleSubmit(currentform);
+				Utils.toggleSubmit(currentform);
 			} else {
 				study.name = form.name;
 				Simva.updateStudy(study, function(error, result){	
-					toggleSubmit(currentform);
-					toggleAddForm('edit_study');
+					Utils.toggleSubmit(currentform);
+					Utils.toggleAddForm('edit_study');
 					reloadStudy();
 				});
 			}
@@ -696,11 +712,6 @@
 		$(`#test_${id}`).find('.activities').toggleClass('collapsed');
 	}
 
-	let toggleSubmit = function(form){
-		$(form).find('input[type="submit"]').toggle();
-		$(form).find('.loader').toggle();
-	}
-
 	let changeTab = function(tab, form, subform){
 		$(`#${form} .tab`).removeClass('selected');
 		$(`#${form} .subform`).removeClass('selected');
@@ -719,6 +730,7 @@
 					done++
 
 					if(done === tocomplete){
+						paintStudy(study, participants, tests, allocator, groups, platforms, instances, actualInstance);
 						paintStudy(study, participants, tests, allocator, groups, platforms, instances, actualInstance);
 					}
 				}
@@ -959,12 +971,10 @@
 		});
 	}
 
-	let toggleAddForm = function(id){
-		$(`#${id}`).toggleClass('shown');
-	}
 
 	// Main Paint functions
 
+	let paintStudy = function(study, participants, tests, allocator, groups, platforms, instances, actualInstance){
 	let paintStudy = function(study, participants, tests, allocator, groups, platforms, instances, actualInstance){
 		$('#study_name').text(study.name);
 
@@ -975,6 +985,8 @@
 		paintGroups(groups);
 	
 		paintPlatforms(platforms);
+
+		paintInstances(instances, actualInstance);
 
 		paintInstances(instances, actualInstance);
 
@@ -1066,12 +1078,12 @@
 				if(error){
 					$('#change_allocator_form .error').val(error.message);
 				}else{
-					toggleAddForm('change_allocator');
+					Utils.toggleAddForm('change_allocator');
 					reloadStudy();
 				}
 			});
 		}else{
-			toggleAddForm('change_allocator');
+			Utils.toggleAddForm('change_allocator');
 		}
 	}
 

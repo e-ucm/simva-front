@@ -12,7 +12,7 @@
 				if(error && error.responseJSON){
 					$("#error").text(error.responseJSON.message);
 				}else{
-					toggleAddForm();
+					Utils.toggleAddForm('new_study');
 					$('#studies_list').html(roller);
 					Simva.getStudies(function(error, result){
 						if(!error){
@@ -32,10 +32,6 @@
 			}
 		});
 	});
-
-	let toggleAddForm = function(){
-		$('#new_study').toggleClass('shown');
-	}
 
 	let paintStudies = function(studies){
 		$('#studies_list').text('');

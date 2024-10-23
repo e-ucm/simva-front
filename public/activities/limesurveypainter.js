@@ -264,7 +264,7 @@ var LimeSurveyPainter = {
 
 	openLimesurvey: function(){
 		$('#iframe_floating iframe').prop('src', `${this.limesurveyurl}/admin/survey/sa/newsurvey`);
-		toggleAddForm('iframe_floating');
+		Utils.toggleAddForm('iframe_floating');
 	},
 
 	openResults: function(activity, user, type){
@@ -294,7 +294,7 @@ var LimeSurveyPainter = {
 					'overflow': 'auto',
 					'height': '100vh'
 				});
-				toggleAddForm('iframe_floating');
+				Utils.toggleAddForm('iframe_floating');
 			}
 		})
 	},

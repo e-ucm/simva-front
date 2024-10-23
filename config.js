@@ -45,10 +45,8 @@ config.sso.allowedRoles = [config.sso.researcherAllowedRole, config.sso.teacherA
 config.api = {}
 config.api.host = process.env.SIMVA_API_HOST || 'simva-api.external.test'
 config.api.protocol = process.env.SIMVA_API_PROTOCOL || 'https'
-config.api.wss_protocol = process.env.SIMVA_API_PROTOCOL || 'wss'
 config.api.port = process.env.SIMVA_API_PORT || '443'
 config.api.url = `${config.api.protocol}://${config.api.host}:${config.api.port}`;
-config.api.wss_url = `${config.api.wss_protocol}://${config.api.host}:${config.api.port}/update`;
 
 config.limesurvey = {}
 config.limesurvey.host = process.env.LIMESURVEY_HOST || 'limesurvey.external.test'
@@ -60,10 +58,5 @@ config.limesurvey.adminPassword = process.env.LIMESURVEY_ADMIN_PASSWORD || 'pass
 
 config.lti = {}
 config.lti.enabled = process.env.LTI_ENABLED || 'false'
-
-config.hmac = {}
-config.hmac.password = process.env.HMAC_PASSWORD || 'password'
-config.hmac.salt = process.env.HMAC_SALT || 'mysalt'
-config.hmac.key = process.env.HMAC_KEY || 'mykey'
 
 module.exports = config;
