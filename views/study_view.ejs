@@ -15,6 +15,14 @@
 			</table>
 			<input class="violet" type="button" value="Add owner" onclick="Utils.toggleAddForm('add_owner')">
 		</div>
+		
+		<div class="graybox groups">
+			<h2>Instances</h2>
+			<p></p>
+			<table id="instances">
+			</table>
+			<input class="violet" type="button" value="Create New Instance" onclick="Utils.toggleAddForm('add_instance')">
+		</div>
 
 		<div class="graybox groups">
 			<h2>Groups</h2>
@@ -40,14 +48,6 @@
 			<input class="violet" type="button" value="Add Platform" onclick="Utils.toggleAddForm('add_platform')">
 		</div>
 		<% } %>
-
-		<div class="graybox groups">
-			<h2>Instances</h2>
-			<p></p>
-			<table id="instances">
-			</table>
-			<input class="violet" type="button" value="Create New Instance" onclick="toggleAddForm('add_instance')">
-		</div>
 
 	</div>
 	<div class="card">
@@ -517,12 +517,12 @@
 			} else {
 				Simva.addInstanceToStudy(studyid, form.name,  function(error, instance) {
 					if(!error) {
-						toggleAddForm('add_instance');
+						Utils.toggleAddForm('add_instance');
 						reloadStudy();
 					}
 				});
 			}
-			toggleSubmit(currentform);
+			Utils.toggleSubmit(currentform);
 			return false;
 		});
 
@@ -591,15 +591,15 @@
 			event.preventDefault();			
 			let currentform = this;
 			let form = Utils.getFormData($("#edit_instance_form"));
-			toggleSubmit(currentform);
+			Utils.toggleSubmit(currentform);
 			let errorbox = $(this).find('.error');
 			if(form.name == form.instanceName) {
 				errorbox.text("No changes detected !");
-				toggleSubmit(currentform);
+				Utils.toggleSubmit(currentform);
 			} else {
 				if(form.name.indexOf(' ') >= 0){
 					errorbox.text("contains spaces");
-					toggleSubmit(currentform);
+					Utils.toggleSubmit(currentform);
 				} else {
 					console.log("updated instance name");
 					console.log(form.name);
@@ -609,7 +609,7 @@
 					}
 					Simva.updateInstance(studyid, instance, function(error, result) {
 						if(!error) {
-							toggleAddForm('edit_instance');
+							Utils.toggleAddForm('edit_instance');
 							reloadStudy();
 						}
 					});
@@ -808,22 +808,6 @@
 		actualInstance = instance;
 		reloadStudy();
 	}
-
-	let setAsTemplate = function() {
-		// Find the instance with the new actual ID
-		let actual = instances.find(obj => obj._id === actualInstance);
-		// Mark the new actualInstance as template
-		actual.template = true;
-
-		// Find the previous template (assuming only one object is marked as template)
-		const previousTemplate = instances.find(obj => obj.template === true && obj._id !== actualInstance._id);
-		// If a previous template is found, set its template property to false
-		if (previousTemplate) {
-			previousTemplate.template = false;
-		}
-		reloadStudy();
-	}
-
 	
 	let removeInstance = function(instanceId) {
 		if(confirm("Are you sure do you want to delete this instance?")){
@@ -973,8 +957,6 @@
 
 
 	// Main Paint functions
-
-	let paintStudy = function(study, participants, tests, allocator, groups, platforms, instances, actualInstance){
 	let paintStudy = function(study, participants, tests, allocator, groups, platforms, instances, actualInstance){
 		$('#study_name').text(study.name);
 
