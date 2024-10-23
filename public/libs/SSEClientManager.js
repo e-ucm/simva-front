@@ -1,5 +1,5 @@
 var { signMessage, createHMACKey, importKey } = require("./hMacKey/crypto.js");
-var config = require("../../config.js");
+var configHMac = require("../../hmacKeyConfig.js");
 
 class SSEClientManager {
     constructor(url, mapParameters = {}) {
@@ -27,11 +27,11 @@ class SSEClientManager {
         toSign=this.url + '\n' + toSign;
         var signature;
         try {
-            if(config.hmac.hmacKey == null) {
+            if(configHMac.hmac.hmacKey == null) {
                 console.log("initializing hmackey");
-                config.hmac.hmacKey = (await createHMACKey(config.hmac.password)).key;
+                configHMac.hmac.hmacKey = (await createHMACKey(configHMac.hmac.password)).key;
             }
-            signature = await signMessage(toSign, config.hmac.hmacKey);
+            signature = await signMessage(toSign, configHMac.hmac.hmacKey);
         } catch(e) {
             console.log(e);
             signature = "TODO";

@@ -1,78 +1,18 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 (function (process){(function (){
-let config = {}
+var config = {};
+config.hmac = {};
+config.hmac.password = process.env.HMAC_PASSWORD || 'password';
+config.hmac.salt = process.env.HMAC_SALT || 'mysalt';
+config.hmac.key = process.env.HMAC_KEY || 'mykey';
+config.hmac.hmacKeyConfig = null;
 
-let default_protocol_ports = {
-	"http": 80,
-	"https": 443
-};
-
-config.simva = {}
-config.simva.port  = parseInt(process.env.SIMVA_PORT || 3050);
-config.simva.host = process.env.SIMVA_HOST || 'simva.external.test'
-config.simva.protocol = process.env.SIMVA_PROTOCOL || 'https'
-let simvaPort = ((default_protocol_ports[config.simva.protocol] !== config.simva.port) ? `:${config.simva.port}` : '')
-config.simva.url = process.env.SIMVA_URL || `${config.simva.protocol}://${config.simva.host}${simvaPort}`;
-
-config.mongo = {}
-config.mongo.host = process.env.MONGO_HOST || 'localhost:27017'
-config.mongo.db = process.env.MONGO_DB || '/simva-front'
-config.mongo.url = `mongodb://${config.mongo.host}${config.mongo.db}`
-config.mongo.test = config.mongo.url
-
-config.sso = {}
-config.sso.host = process.env.SSO_HOST || 'sso.external.test'
-config.sso.protocol = process.env.SSO_PROTOCOL || 'https'
-config.sso.port = process.env.SSO_PORT || '443'
-config.sso.url = `${config.sso.protocol}://${config.sso.host}:${config.sso.port}`
-
-config.sso.realm = process.env.SSO_REALM || 'simva'
-config.sso.clientId = process.env.SSO_CLIENT_ID || 'simva'
-config.sso.clientSecret = process.env.SSO_CLIENT_SECRET || 'th1s_1s_th3_s3cr3t'
-config.sso.sslRequired = process.env.SSO_SSL_REQUIRED || 'external'
-config.sso.publicClient = process.env.SSO_PUBLIC_CLIENT || 'false'
-
-config.sso.accountPath = process.env.SSO_ACCOUNT_PATH || '/account'
-config.sso.accountUrl = `${config.sso.url}/realms/${config.sso.realm}${config.sso.accountPath}?referrer=${config.sso.clientId}&referrer_uri=${config.simva.url}`
-config.sso.userCanSelectRole=process.env.SSO_USER_CAN_SELECT_ROLE || "true"
-config.sso.administratorContact= process.env.SSO_ADMINISTRATOR_CONTACT || "contact@administrator.com"
-config.sso.studentAllowedRole = (process.env.SSO_STUDENT_ALLOWED_ROLE === "true") ? "student" : null
-config.sso.teachingAssistantAllowedRole = (process.env.SSO_TEACHING_ASSISTANT_ALLOWED_ROLE === "true") ? "teaching-assistant" :  null
-config.sso.teacherAllowedRole = (process.env.SSO_TEACHER_ALLOWED_ROLE === "true") ? "teacher" :  null
-config.sso.researcherAllowedRole = (process.env.SSO_RESEARCHER_ALLOWED_ROLE === "true") ? "researcher" :  null
-config.sso.allowedRoles = [config.sso.researcherAllowedRole, config.sso.teacherAllowedRole, config.sso.teachingAssistantAllowedRole, config.sso.studentAllowedRole ]
-	.filter(role => role !== null)
-	.join(',');
-
-config.api = {}
-config.api.host = process.env.SIMVA_API_HOST || 'simva-api.external.test'
-config.api.protocol = process.env.SIMVA_API_PROTOCOL || 'https'
-config.api.wss_protocol = process.env.SIMVA_API_PROTOCOL || 'wss'
-config.api.port = process.env.SIMVA_API_PORT || '443'
-config.api.url = `${config.api.protocol}://${config.api.host}:${config.api.port}`;
-config.api.wss_url = `${config.api.wss_protocol}://${config.api.host}:${config.api.port}/update`;
-
-config.limesurvey = {}
-config.limesurvey.host = process.env.LIMESURVEY_HOST || 'limesurvey.external.test'
-config.limesurvey.protocol = process.env.LIMESURVEY_PROTOCOL || 'https'
-config.limesurvey.port = process.env.LIMESURVEY_PORT || '443'
-config.limesurvey.url =  `${config.limesurvey.protocol}://${config.limesurvey.host}:${config.limesurvey.port}`
-config.limesurvey.adminUser =  process.env.LIMESURVEY_ADMIN_USER || 'admin'
-config.limesurvey.adminPassword = process.env.LIMESURVEY_ADMIN_PASSWORD || 'password'
-
-config.lti = {}
-config.lti.enabled = process.env.LTI_ENABLED || 'false'
-
-config.hmac = {}
-config.hmac.password = process.env.HMAC_PASSWORD || 'password'
-config.hmac.salt = process.env.HMAC_SALT || 'mysalt'
-config.hmac.key = process.env.HMAC_KEY || 'mykey'
-
+//export { config };
 module.exports = config;
 }).call(this)}).call(this,require('_process'))
 },{"_process":6}],2:[function(require,module,exports){
 var { signMessage, createHMACKey, importKey } = require("./hMacKey/crypto.js");
-var config = require("../../config.js");
+var configHMac = require("../../hmacKeyConfig.js");
 
 class SSEClientManager {
     constructor(url, mapParameters = {}) {
@@ -100,11 +40,11 @@ class SSEClientManager {
         toSign=this.url + '\n' + toSign;
         var signature;
         try {
-            if(config.hmac.hmacKey == null) {
+            if(configHMac.hmac.hmacKey == null) {
                 console.log("initializing hmackey");
-                config.hmac.hmacKey = (await createHMACKey(config.hmac.password)).key;
+                configHMac.hmac.hmacKey = (await createHMACKey(configHMac.hmac.password)).key;
             }
-            signature = await signMessage(toSign, config.hmac.hmacKey);
+            signature = await signMessage(toSign, configHMac.hmac.hmacKey);
         } catch(e) {
             console.log(e);
             signature = "TODO";
@@ -200,7 +140,7 @@ class SSEClientManager {
 module.exports = SSEClientManager;
 // Expose to the global scope
 window.SSEClientManager = SSEClientManager;
-},{"../../config.js":1,"./hMacKey/crypto.js":5}],3:[function(require,module,exports){
+},{"../../hmacKeyConfig.js":1,"./hMacKey/crypto.js":5}],3:[function(require,module,exports){
 /**
  * Base-N/Base-X encoding/decoding functions.
  *
