@@ -499,9 +499,14 @@
 			event.preventDefault();
 			let form = Utils.getFormData($("#add_instance_form"));
 			let errorbox = $(this).find('.error');
-			instances.push({id: Math.random().toString(), name : form.name, template : false });
-			toggleAddForm('add_instance');
-			reloadStudy();
+			if(form.name.indexOf(' ') >= 0){
+				errorbox.text("contains spaces");
+			} else {
+				instances.push({id: Math.random().toString(), name : form.name, template : false });
+				toggleAddForm('add_instance');
+				reloadStudy();
+			}
+			toggleSubmit(currentform);
 			return false;
 		});
 
@@ -576,13 +581,17 @@
 				errorbox.text("No changes detected !");
 				toggleSubmit(currentform);
 			} else {
-				console.log("updated instance name");
-				console.log(form.name);
-				let instance = instances.find(obj => obj.id == form.instance);
-				instance.name = form.name;
-				toggleSubmit(currentform);
-				toggleAddForm('edit_instance');
-				reloadStudy();
+				if(form.name.indexOf(' ') >= 0){
+					errorbox.text("contains spaces");
+					toggleSubmit(currentform);
+				} else {
+					console.log("updated instance name");
+					console.log(form.name);
+					let instance = instances.find(obj => obj.id == form.instance);
+					instance.name = form.name;
+					toggleAddForm('edit_instance');
+					reloadStudy();
+				}
 			}
 			return false;
 		});
