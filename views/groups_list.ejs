@@ -12,7 +12,7 @@
 				if(error && error.responseJSON){
 					$("#error").text(error.responseJSON.message);
 				}else{
-					toggleAddForm();
+					Utils.toggleAddForm('new_group');
 					$('#groups_list').html(roller);
 					Simva.getGroups(function(error, result){
 						if(!error){
@@ -25,6 +25,39 @@
 			return false;
 		});
 
+		$("#edit_group_form").on('submit', function(event){
+			event.preventDefault();
+			let currentform = this;
+			let form = Utils.getFormData($("#edit_group_form"));
+			Utils.toggleSubmit(currentform);
+			let errorbox = $(this).find('.error');
+			if(form.name == form.groupName) {
+				errorbox.text("No changes detected !");
+				Utils.toggleSubmit(currentform);
+			} else {
+				console.log("updated group name");
+				console.log(form.name);
+				Simva.getGroup(form.group, function(error, group){
+					if(!error){
+						group.name = form.name;
+						Simva.updateGroup(group, function(error, result){
+							if(!error){
+								Utils.toggleSubmit(currentform);
+								Utils.toggleAddForm('edit_group');
+								Simva.getGroups(function(error, result){
+									if(!error){
+										paintGroups(result);
+									}
+								});
+							}
+						});
+					}
+					
+				});
+			}
+			return false;
+		});
+
 		$('#groups_list').html(roller);
 		Simva.getGroups(function(error, result){
 			if(!error){
@@ -33,9 +66,7 @@
 		});
 	});
 
-	let toggleAddForm = function(){
-		$('#new_group').toggleClass('shown');
-	}
+
 
 	let paintGroups = function(studies){
 		$('#groups_list').text('');
@@ -48,8 +79,20 @@
 		}
 	}
 
+	let openEditGroupForm = function(groupId, groupName){
+		event.preventDefault();
+		event.stopPropagation();
+		document.getElementById("edit_group_error").innerHTML = "";
+		var inputElement = document.getElementById('edit_group_name');
+		inputElement.value = groupName;
+		$('#edit_group input[name="group"]').val(groupId);
+		$('#edit_group span[class="error"]').val("");
+		$('#edit_group input[name="groupName"]').val(groupName);
+		Utils.toggleAddForm('edit_group');
+	}
+
 	let toCard = function(group){
-		return `<a href="/groups/${group._id}"><div class="selectable card third">
+		return `<a href="/groups/${group._id}"><div class="selectable card third"><input class="yellow" type="button" value="Edit Group Name" onclick="openEditGroupForm('${group._id}','${group.name}')">
 			<h1>Group: ${group.name}</h1>
 			<p><strong>Participants:</strong> ${group.participants.length}</p>
 			<p><strong>Owners:</strong> ${group.owners.length}</p>
@@ -73,6 +116,23 @@
 		</div>		
 	</div>
 </div>
+<div id="edit_group" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<div id="edit_group_tab" class="subform selected">
+				<h2>Edit Group</h2>
+				<form id="edit_group_form">
+					<input hidden type="text" name="group">
+					<input hidden type="text" name="groupName">
+					<input type="text" name="name" id="edit_group_name" placeholder="Group name" required>
+					<input type="submit" value="Edit">
+					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+					<span class="error" id="edit_group_error"></span>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 <div class="floating_buttons">
-	<a unselectable="on" class="basic" onclick="toggleAddForm()">+</a>
+	<a unselectable="on" class="basic" onclick="Utils.toggleAddForm('new_group')">+</a>
 </div>

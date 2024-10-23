@@ -13,13 +13,13 @@
 			<p></p>
 			<table id="owners">
 			</table>
-			<input class="violet" type="button" value="Add owner"  onclick="toggleAddForm('add_owner')">
+			<input class="violet" type="button" value="Add owner"  onclick="Utils.toggleAddForm('add_owner')">
 		</div>
 	</div>
 	<div class="card" id="study">
 		<div class="top">
 			<h2>Participants</h2>
-			<input class="violet" type="button" value="Add Participants" onclick="toggleAddForm('add_participant')">
+			<input class="violet" type="button" value="Add Participants" onclick="Utils.toggleAddForm('add_participant')">
 		</div>
 		
 		<div class="participants" id="participants_list">
@@ -126,7 +126,7 @@
 				if(error && error.responseJSON){
 					errorbox.text(error.responseJSON.message);
 				}else{
-					toggleAddForm('add_owner');
+					Utils.toggleAddForm('add_owner');
 				}
 			});
 
@@ -153,7 +153,7 @@
 				if(error && error.responseJSON){
 					errorbox.text(error.responseJSON.message);
 				}else{
-					toggleAddForm('add_participant');
+					Utils.toggleAddForm('add_participant');
 				}
 			});
 
@@ -177,7 +177,7 @@
 						if(error && error.responseJSON){
 							errorbox.text(error.responseJSON.message);
 						}else{
-							toggleAddForm('add_participant');
+							Utils.toggleAddForm('add_participant');
 						}
 					});
 				}
@@ -189,7 +189,7 @@
 		$("#batch_participant_form").on('submit', function(event){
 			event.preventDefault();
 			let currentform = this;
-			toggleSubmit(currentform);
+			Utils.toggleSubmit(currentform);
 			let form = Utils.getFormData($("#batch_participant_form"));
 			let errorbox = $(this).find('.error');
 
@@ -200,13 +200,13 @@
 				if(generated.length == form.amount){
 					group.participants = group.participants.concat(generated);
 					Simva.updateGroup(group, function(error, result){
-						toggleSubmit(currentform);
+						Utils.toggleSubmit(currentform);
 						reloadGroup();
 
 						if(error && error.responseJSON){
 							errorbox.text(error.responseJSON.message);
 						}else{
-							toggleAddForm('add_participant');
+							Utils.toggleAddForm('add_participant');
 						}
 					});
 				}
@@ -236,11 +236,6 @@
 		//$('#studies_list').html(roller);
 		reloadGroup();
 	});
-
-	let toggleSubmit = function(form){
-		$(form).find('input[type="submit"]').toggle();
-		$(form).find('.loader').toggle();
-	}
 
 	let reloadGroup = function(){
 		Simva.getGroup(groupid, function(error, result){
@@ -352,11 +347,7 @@
 		$(tab).toggleClass('selected');
 		$(`#${subform}`).toggleClass('selected');
 	}
-
-	let toggleAddForm = function(id){
-		$(`#${id}`).toggleClass('shown');
-	}
-
+	
 	let generateUsername = function(algorithm, length){
 		switch (algorithm) {
 			case 'alphanumeric':

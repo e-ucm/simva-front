@@ -188,7 +188,7 @@ var ActivityPainter = {
 				let context = $('#iframe_floating iframe')[0].contentWindow.document;
 				let body = $('body', context);
 				body.html(content);
-				toggleAddForm('iframe_floating');
+				Utils.toggleAddForm('iframe_floating');
 			}
 		})
 	}
