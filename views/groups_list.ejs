@@ -92,7 +92,8 @@
 	}
 
 	let toCard = function(group){
-		return `<a href="/groups/${group._id}"><div class="selectable card third"><input class="yellow" type="button" value="Edit Group Name" onclick="openEditGroupForm('${group._id}','${group.name}')">
+		return `<a href="/groups/${group._id}"><div class="selectable card third">
+			<input class="yellow" type="button" value="🖍️" onclick="openEditGroupForm('${group._id}','${group.name}')">
 			<h1>Group: ${group.name}</h1>
 			<p><strong>Participants:</strong> ${group.participants.length}</p>
 			<p><strong>Owners:</strong> ${group.owners.length}</p>
