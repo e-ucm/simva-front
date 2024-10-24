@@ -91,9 +91,27 @@
 		Utils.toggleAddForm('edit_group');
 	}
 
+
+	let deleteGroup = function(group){
+		event.preventDefault();
+		event.stopPropagation();
+		if(confirm("Are you sure do you want to delete the group?\nGroup will be removed to all the tests, activities and data.")){
+			Simva.deleteGroup(group, function(error, result){
+				if(!error){
+					Simva.getGroups(function(error, result){
+						if(!error){
+							paintGroups(result);
+						}
+					});
+				}
+			});
+		}
+	}
+
 	let toCard = function(group){
 		return `<a href="/groups/${group._id}"><div class="selectable card third">
 			<input class="yellow" type="button" value="🖍️" onclick="openEditGroupForm('${group._id}','${group.name}')">
+			<input class="red" type="button" value="X" onclick="deleteGroup('${group._id}')">
 			<h1>Group: ${group.name}</h1>
 			<p><strong>Participants:</strong> ${group.participants.length}</p>
 			<p><strong>Owners:</strong> ${group.owners.length}</p>

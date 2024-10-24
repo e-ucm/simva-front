@@ -144,6 +144,10 @@ var Simva = {
 		this.get(`${this.apiurl}/groups/${group_id}`, callback);
 	},
 
+	deleteGroup: function(group_id, callback){
+		this.delete(`${this.apiurl}/groups/${group_id}`, callback);
+	},
+
 	getGroupParticipants: function(group_id, callback){
 		this.get(`${this.apiurl}/groups/${group_id}/participants`, callback);
 	},
