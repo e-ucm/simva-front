@@ -20,6 +20,13 @@ var RageMinioActivityPainter = {
 		return '';
 	},
 
+	getEditExtraForm: function () {
+		return this.getExtraForm();
+	},
+
+	updateInputEditExtraForm(activity) {
+	},
+
 	extractInformation: function(form, callback){
 		let activity = {};
 
@@ -32,6 +39,24 @@ var RageMinioActivityPainter = {
 		callback(null, activity);
 	},
 
+	extractEditInformation: function(form, callback){
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+		Simva.getActivity(formdata.activity, function(error, actualActivity){
+			if(!error) {
+				let activity = {};
+
+				if(actualActivity.name !== formdata.name) {
+					activity.name = formdata.name;
+				}
+		
+				callback(null, activity);
+			} else {
+				callback(error, null);
+			}
+		});
+	},
+	
 	fullyPaintActivity: function(activity){
 		this.paintActivity(activity, participants);
 		let tmp = this;
@@ -233,7 +258,7 @@ var RageMinioActivityPainter = {
 				let context = $('#iframe_floating iframe')[0].contentWindow.document;
 				let body = $('body', context);
 				body.html(content);
-				toggleAddForm('iframe_floating');
+				Utils.toggleAddForm('iframe_floating');
 			}
 		})
 	},

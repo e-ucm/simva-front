@@ -7,7 +7,6 @@ const app = require('../routes');
 const http = require('http');
 const config = require('../config');
 
-
 //XXX
 //require('https').globalAgent.options.ca = require('ssl-root-cas/latest').create();
 

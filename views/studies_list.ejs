@@ -6,13 +6,16 @@
 	$(document).ready(function() {
 		$("#new_study_form").on('submit', function(event){
 			event.preventDefault();
+			let currentform = this;
 			let form = Utils.getFormData($("#new_study_form"));
-
+			Utils.toggleSubmit(currentform);
 			Simva.addStudy(form.name, function(error, result){
 				if(error && error.responseJSON){
+					Utils.toggleSubmit(currentform);
 					$("#error").text(error.responseJSON.message);
 				}else{
-					toggleAddForm();
+					Utils.toggleSubmit(currentform);
+					Utils.toggleAddForm('new_study');
 					$('#studies_list').html(roller);
 					Simva.getStudies(function(error, result){
 						if(!error){
@@ -22,6 +25,67 @@
 				}
 			});
 
+			return false;
+		});
+
+		$("#import_study_form").on('submit', function(event){
+			event.preventDefault();
+			let currentform = this;
+			let form = Utils.getFormData($("#import_study_form"));
+			Utils.toggleSubmit(currentform);
+			if($("#import_study_form").find('input[name="exportJson"]').get(0).files[0]){
+				var reader = new FileReader();
+				var input = event.target;
+				reader.onload = function(){
+					let raw = reader.result;
+					raw = raw.substr(raw.indexOf(',') + 1);
+					var newStudy = raw;
+					Simva.importStudyConfig({file : newStudy}, function(error, result) {
+						Utils.toggleSubmit(currentform);
+						if(!error) {
+							Utils.toggleAddForm('new_study');
+							$('#studies_list').html(roller);
+							Simva.getStudies(function(error, result){
+								if(!error){
+									paintStudies(result);
+								}
+							});
+						} else {
+							$("#error").text(error);
+						}
+					});
+				};
+				reader.readAsDataURL($("#import_study_form").find('input[name="exportJson"]').get(0).files[0]);
+			}else{
+				$("#error").text('Select the file to upload first.');
+				Utils.toggleSubmit(currentform);
+			}
+
+			return false;
+		});
+
+
+		$("#edit_study_form").on('submit', function(event){
+			event.preventDefault();
+			let currentform = this;
+			let form = Utils.getFormData($("#edit_study_form"));
+			Utils.toggleSubmit(currentform);
+			let errorbox = $(this).find('.error');
+			if(form.name == form.studyName) {
+				errorbox.text("No changes detected !");
+				Utils.toggleSubmit(currentform);
+			} else {
+				console.log("updated study name");
+				console.log(form.name);
+				Simva.getStudy(form.study, function(error, study){
+					study.name = form.name;
+					Simva.updateStudy(study, function(error, result){
+						Utils.toggleSubmit(currentform);
+						Utils.toggleAddForm('edit_study');
+						refreshStudies();
+					});
+				});
+			}
 			return false;
 		});
 
@@ -35,10 +99,6 @@
 				paintStudies(result);
 			}
 		});
-	}
-
-	let toggleAddForm = function(){
-		$('#new_study').toggleClass('shown');
 	}
 
 	let paintStudies = function(studies){
@@ -57,21 +117,43 @@
 	let deleteStudy = function(study){
 		event.preventDefault();
 		event.stopPropagation();
-		Simva.deleteStudy(study, function(error, result){
-			if(!error){
-				refreshStudies();
-			}
-		});
+		if(confirm("Are you sure do you want to delete the study?\nAll the tests, activities and data will be deleted too.")){
+			Simva.deleteStudy(study, function(error, result){
+				if(!error){
+					refreshStudies();
+				}
+			});
+		}
 	}
 
+	let openEditStudyForm = function(studyId, studyName){
+		event.preventDefault();
+		event.stopPropagation();
+		document.getElementById("edit_study_error").innerHTML = "";
+		var inputElement = document.getElementById('edit_study_name');
+		inputElement.value = studyName;
+		$('#edit_study').toggleClass('shown');
+		$('#edit_study input[name="study"]').val(studyId);
+		$('#edit_study span[class="error"]').val("");
+		$('#edit_study input[name="studyName"]').val(studyName);
+	}
+	
 	let toCard = function(study){
 		return `<a class="stopable" href="/studies/${study._id}"><div class="studycard selectable card third">
+			<span class="button yellow" onclick="openEditStudyForm('${study._id}', '${study.name}')">🖍️</span>
 			<span class="button red delete" onclick="deleteStudy('${study._id}')">X</span>
 			<h1>Study: ${study.name}</h1>
 			<p><strong>Groups:</strong> ${study.groups.length}</p>
 			<p><strong>Tests:</strong> ${study.tests.length}</p>
 			<p><strong>owners:</strong> ${study.owners.length}</p>
 			</div></a>`;
+	}
+
+	let changeTab = function(tab, form, subform){
+		$(`#${form} .tab`).removeClass('selected');
+		$(`#${form} .subform`).removeClass('selected');
+		$(tab).toggleClass('selected');
+		$(`#${subform}`).toggleClass('selected');
 	}
 </script>
 <h1>Studies</h1>
@@ -84,13 +166,43 @@
 	<div class="floater">
 		<div class="form">
 			<h1>Add new</h1>
-			<form id="new_study_form">
-				<input type="text" name="name" placeholder="Study name">
-				<input type="submit" value="Submit">
-			</form>
+			<div class="tabs">
+				<span class="tab selected" onclick="changeTab(this, 'new_study','new_study_tab')">Add new Study</span>
+				<span class="tab" onclick="changeTab(this, 'new_study','import_study_tab')">Import from existing</span>
+			</div>
+			<div id="new_study_tab" class="subform selected">
+				<form id="new_study_form">
+					<input type="text" name="name" placeholder="Study name">
+					<input type="submit" value="Submit">
+				</form>
+			</div>
+			<div hidden id="import_study_tab" class="subform">
+				<form id="import_study_form">
+					<p>Select Exported study file</p>
+					<input type="file" name="exportJson">
+					<input type="submit" value="Submit">
+				</form>
+			</div>
 		</div>	
 	</div>
 </div>
+<div id="edit_study" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<div id="edit_study_tab" class="subform selected">
+				<h2>Edit Study</h2>
+				<form id="edit_study_form">
+					<input hidden type="text" id="study_id" name="study"  placeholder="Study id" required>
+					<input hidden type="text" id="study_name" name="studyName"  placeholder="Study name" required>
+					<input type="text" name="name" id="edit_study_name" placeholder="Study name" required>
+					<input type="submit" value="Edit">
+					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+					<span class="error" id="edit_study_error"></span>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 <div class="floating_buttons">
-	<a unselectable="on" class="basic" onclick="toggleAddForm()">+</a>
+	<a unselectable="on" class="basic" onclick="Utils.toggleAddForm('new_study')">+</a>
 </div>

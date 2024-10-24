@@ -9,6 +9,15 @@ var Utils = {
 
 	    return indexed_array;
 	},
+	
+	toggleAddForm : function(id){
+		$(`#${id}`).toggleClass('shown');
+	},
+
+	toggleSubmit : function(form){
+		$(form).find('input[type="submit"]').toggle();
+		$(form).find('.loader').toggle();
+	},
 
 	post: function(url, body, callback, jwt){
 		$.ajax({

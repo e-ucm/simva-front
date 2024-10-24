@@ -164,12 +164,29 @@ var Simva = {
 		this.post(`${this.apiurl}/studies/${study_id}/tests`, body, callback);
 	},
 
+	getEventsPresignedUrl: function(study_id, callback){
+		this.get(`${this.apiurl}/studies/${study_id}/events/getPresignedUrl`, callback);
+	},
+
+	duplicateTestFromStudy: function(study_id, name, testId, callback){
+		let body = { name: name, from : testId };
+		this.post(`${this.apiurl}/studies/${study_id}/tests`, body, callback);
+	},
+
 	getStudy: function(study_id, callback){
 		this.get(`${this.apiurl}/studies/${study_id}`, callback);
 	},
 
 	updateStudy: function(study, callback){
 		this.put(`${this.apiurl}/studies/${study._id}`, study, callback);
+	},
+
+	updateTest: function(studyId, test, callback){
+		this.patch(`${this.apiurl}/studies/${studyId}/tests/${test.id}`, test, callback);
+	},
+
+	updateActivity: function(activity, callback){
+		this.patch(`${this.apiurl}/activities/${activity.id}`, activity, callback);
 	},
 
 	deleteStudy: function(study_id, callback){
@@ -188,6 +205,18 @@ var Simva = {
 		this.get(`${this.apiurl}/studies/${study_id}/tests`, callback);
 	},
 
+	exportStudyConfig: function(study_id, callback){
+		this.get(`${this.apiurl}/studies/${study_id}/export`, callback);
+	},
+
+	importStudyConfig: function(newStudy, callback){
+		this.post(`${this.apiurl}/studies/import`, newStudy, callback);
+	},
+
+	getStudyTest: function(study_id,test_id, callback){
+		this.get(`${this.apiurl}/studies/${study_id}/tests/${test_id}`, callback);
+	},
+
 	getStudyGroups: function(study_id, callback){
 		this.get(`${this.apiurl}/studies/${study_id}/groups`, callback);
 	},
@@ -204,10 +233,23 @@ var Simva = {
 		this.get(`${this.apiurl}/studies/${study_id}/schedule`, callback);
 	},
 
+	
+	getScheduleEventsPresignedUrl: function(study_id, callback){
+		this.get(`${this.apiurl}/studies/${study_id}/schedule/events/getPresignedUrl`, callback);
+	},
+
 	// Activities
 
 	addActivityToTest: function(study_id, test_id, activity, callback){
 		this.post(`${this.apiurl}/studies/${study_id}/tests/${test_id}/activities`, activity, callback);
+	},
+
+	getActivity: function(activity_id, callback){
+		this.get(`${this.apiurl}/activities/${activity_id}`, callback);
+	},
+
+	setSurveyOwner: function(activity_id, callback){
+		this.patch(`${this.apiurl}/activities/${activity_id}/surveyowner`, {}, callback);
 	},
 
 	getActivityProgress: function(activity_id, callback){
@@ -297,7 +339,6 @@ var Simva = {
 	getLtiPlatforms: function(study, callback){
 		let query = '';
 		if(study){
-			console.log(study);
 			query = '?searchString=' + encodeURI(`{"studyId":"${study}"}`);
 		}
 

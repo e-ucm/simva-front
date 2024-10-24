@@ -20,6 +20,13 @@ var RageAnalyticsActivityPainter = {
 		return '';
 	},
 
+	getEditExtraForm: function () {
+		return this.getExtraForm();
+	},
+	
+	updateInputEditExtraForm(activity) {
+	},
+
 	extractInformation: function(form, callback){
 		let activity = {};
 
@@ -30,6 +37,24 @@ var RageAnalyticsActivityPainter = {
 		activity.type = this.supportedType;
 
 		callback(null, activity);
+	},
+
+	extractEditInformation: function(form, callback){
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+		Simva.getActivity(formdata.activity, function(error, actualActivity){
+			if(!error) {
+				let activity = {};
+
+				if(actualActivity.name !== formdata.name) {
+					activity.name = formdata.name;
+				}
+		
+				callback(null, activity);
+			} else {
+				callback(error, null);
+			}
+		});
 	},
 
 	fullyPaintActivity: function(activity){
@@ -179,7 +204,7 @@ var RageAnalyticsActivityPainter = {
 				let context = $('#iframe_floating iframe')[0].contentWindow.document;
 				let body = $('body', context);
 				body.html(content);
-				toggleAddForm('iframe_floating');
+				Utils.toggleAddForm('iframe_floating');
 			}
 		})
 	},
@@ -187,7 +212,7 @@ var RageAnalyticsActivityPainter = {
 	openDashboard: function(activityId){
 		console.log(`${this.utils.dashboard_url}${activityId}${this.utils.dashboard_query}`);
 		$('#iframe_floating iframe').prop('src', `${this.utils.dashboard_url}${activityId}${this.utils.dashboard_query}`);
-		toggleAddForm('iframe_floating');
+		Utils.toggleAddForm('iframe_floating');
 	},
 }
 

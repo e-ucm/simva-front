@@ -23,6 +23,21 @@ var ManualActivityPainter = {
 			 <span class="info">URI can include tags: {username}, and {activityId}</p></div>`;
 	},
 
+	getEditExtraForm: function () {
+		return `<p><label for="edit_manual_user_managed">Allow students to complete?</label><input id="edit_manual_user_managed" type="checkbox" name="user_managed"></p>
+		<p><label for="edit_manual_uri" style="width: 100%; text-align: center;">URI (optional)</label><input id="edit_manual_uri" type="text" name="uri">
+		<span class="info">URI can include tags: {username}, and {activityId}</p></div>`;
+	},
+
+	updateInputEditExtraForm(activity) {
+		var manual_user_managed = document.getElementById('edit_manual_user_managed');
+		manual_user_managed.checked = activity.extra_data.user_managed;
+		var manual_uri = document.getElementById('edit_manual_uri');
+		if(activity.extra_data.uri) {
+			manual_uri.value = activity.extra_data.uri;
+		}
+	},
+
 	extractInformation: function(form, callback){
 		let activity = {};
 
@@ -38,6 +53,39 @@ var ManualActivityPainter = {
 		}
 
 		callback(null, activity);
+	},
+
+	extractEditInformation: function(form, callback){
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+		Simva.getActivity(formdata.activity, function(error, actualActivity){
+			if(!error) {
+				let activity = {};
+
+				if(actualActivity.name !== formdata.name) {
+					activity.name = formdata.name;
+				}
+		
+				let user_managed = formdata.user_managed === 'on';
+				if(actualActivity.extra_data.user_managed !== user_managed) {
+					activity.user_managed = user_managed;
+				}
+				
+				if(!(actualActivity.extra_data.uri == formdata.uri)) {
+					if(actualActivity.extra_data.uri) {
+						activity.uri = formdata.uri;
+					} else {
+						if(formdata.uri !== ''){
+							activity.uri = formdata.uri;
+						}
+					}
+				}
+
+				callback(null, activity);
+			} else {
+				callback(error, null);
+			}
+		});
 	},
 
 	fullyPaintActivity: function(activity){
@@ -67,11 +115,12 @@ var ManualActivityPainter = {
 		let complete=activity.extra_data.user_managed ? 'can' : '<strong>can\'t<strong>'
 		$(`#test_${activity.test} .activities`).append(`<div id="activity_${activity._id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
+			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
 			<p class="subtitle">${this.simpleName}</p>
 			<p>Students ${complete} complete</p>
-			<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>
-			<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>
+			<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>% [ <doneres>0</doneres> /<total>0</total> ]</span></div>
+			<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%  [ <partialres>0</partialres> (<doneres>0</doneres>) /<total>0</total> ]</span></div>
 			${this.paintActivityParticipantsTable(activity, participants)}</div>`);
 	},
 
@@ -124,41 +173,38 @@ var ManualActivityPainter = {
 
 		$(`#completion_progress_${activity._id} .done`).css('width', `${progress}%` );
 		$(`#completion_progress_${activity._id} done`).text(progress);
+		$(`#completion_progress_${activity._id} doneres`).text(done);
+		$(`#completion_progress_${activity._id} total`).text(usernames.length);
 	},
 
 	paintActivityResult: function(activity, results){
-		let usernames = Object.keys(results);
+		PainterFactory.Painters["activity"].paintActivityResult(activity, results);
+	},
 
-		let done = 0, partial = 0;
-
-		for (var i = 0; i < usernames.length; i++) {
-			let status = results[usernames[i]];
-			let result = '<span>No results</span>'
-
-			if(status){
-				done++;
-				result = `<span><a onclick="ActivityPainter.openResults('${activity._id}','${usernames[i]}')">See Results</a></span>`;
+	updateActivityCompletion: function(activityId, username, completion) {
+		var users = parseInt(document.querySelector(`#completion_progress_${activityId} total`).textContent);
+		var res= parseInt(document.querySelector(`#completion_progress_${activityId} doneres`).textContent);
+		var previous= $(`#completion_${activityId}_${username}`).find('input[type="checkbox"]').prop('checked');
+		var newRes;
+		if(completion) {
+			$(`#completion_${activityId}_${username}`).addClass('green');
+			$(`#completion_${activityId}_${username}`).removeClass('red');
+			newRes=res+1;
+			if(! previous) {
+				$(`#completion_${activityId}_${username}`).find('input[type="checkbox"]').prop('checked', true);
 			}
-
-			$(`#result_${activity._id}_${usernames[i]}`).addClass(status ? 'green' : 'red');
-			$(`#result_${activity._id}_${usernames[i]}`).empty();
-			$(`#result_${activity._id}_${usernames[i]}`).append(result);
+		} else {
+			$(`#completion_${activityId}_${username}`).removeClass('green');
+			$(`#completion_${activityId}_${username}`).addClass('red');
+			newRes=res-1;
+			if(previous) {
+				$(`#completion_${activityId}_${username}`).find('input[type="checkbox"]').prop('checked', false);
+			}
 		}
-
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
-		let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
-
-		if(isNaN(progress)){
-			progress = 0;
-		}
-		if(isNaN(partialprogress)){
-			partialprogress = 0;
-		}
-
-		$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
-		$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
-		$(`#result_progress_${activity._id} done`).text(progress);
-		$(`#result_progress_${activity._id} partial`).text(partialprogress);
+		$(`#completion_progress_${activityId} doneRes`).text(newRes);
+		var progress = Math.round((newRes / users) * 1000) / 10; 
+		$(`#completion_progress_${activityId} .done`).css('width', `${progress}%` );
+		$(`#completion_progress_${activityId} done`).text(progress);
 	},
 
 	openResults: function(activity, user){
@@ -176,7 +222,7 @@ var ManualActivityPainter = {
 				let context = $('#iframe_floating iframe')[0].contentWindow.document;
 				let body = $('body', context);
 				body.html(content);
-				toggleAddForm('iframe_floating');
+				Utils.toggleAddForm('iframe_floating');
 			}
 		})
 	},

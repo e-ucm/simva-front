@@ -1,4 +1,4 @@
-<%# views/layout.ejs %>
+<%# views/scheduler.ejs %>
 
 <!DOCTYPE html>
 <html>
@@ -9,6 +9,7 @@
 	<link href="/toast/jquery.toast.css" rel="stylesheet" type="text/css">
 	<link href="/libs/jsonTree/jsonTree.css" rel="stylesheet" />
 	<script src="/libs/jsonTree/jsonTree.js"></script>
+	<script src="/libs/SSEClientManager.js"></script>
 	<script type="text/javascript" src="/jquery.js"></script>
 	<script type="text/javascript" src="/toast/jquery.toast.js"></script>
 	<script type="text/javascript" src="/utils.js"></script>
@@ -29,6 +30,49 @@
 		});
 	</script>
 	<script type="text/javascript">
+		Simva.getScheduleEventsPresignedUrl('<%= study %>', function(error, result){
+			if(!error) {
+				const presignedUrl = result.url;
+				const sseClient = new SSEClientManager(presignedUrl);
+				
+				// Listen for general messages (default "message" event)
+				sseClient.on('message', (data) => {
+					console.log('New message from server:', data);
+					// Update UI or process data here
+				});
+
+				// Listen for connection open event
+				sseClient.on('open', () => {
+					console.log('Connection to SSE server established.');
+				});
+
+				// Handle custom event types from the server (if applicable)
+				// Example: You might send events like "activity_initialized" from the server
+				sseClient.triggerEvent('activity_initialized');
+				sseClient.on('activity_initialized', (data) => {
+					console.log('Activity initialized:', data);
+				});
+
+				// Handle custom event types from the server (if applicable)
+				// Example: You might send events like "activity_progressed" from the server
+				sseClient.triggerEvent('activity_progressed');
+				sseClient.on('activity_progressed', (data) => {
+					console.log('Activity progressed:', data);
+				});
+
+				// Handle custom event types from the server (if applicable)
+				// Example: You might send events like "activity_completed" from the server
+				sseClient.triggerEvent('activity_completed');
+				sseClient.on('activity_completed', (data) => {
+					console.log('Activity completed:', data);
+					// Refresh the page
+					location.reload();
+				});
+			}
+		});
+	</script>
+	<script type="text/javascript">
+		//
 		let studyId = "<%= study %>";
 		let username = "<%= user.data.username %>";
 
@@ -61,10 +105,8 @@
 								$('#activity_content').attr('src', 'about:blank');
 								paintCurrentActivity('Completed');
 								document.getElementById('activity_content').src = `data:text/html;charset=utf-8,${escape(completed)}`;
-								setTimeout(function(){
-									$('#activity_content').show();
-									console.log('showing');
-								}, 50);
+								$('#activity_content').show();
+								console.log('showing');
 							});
 						}
 						return;
@@ -100,10 +142,8 @@
 								$('#activity_content').hide(10, function(){
 									$('#activity_content').attr('src', 'about:blank');
 									document.getElementById('activity_content').src = `data:text/html;charset=utf-8,${escape(manual)}`;
-									setTimeout(function(){
-										$('#activity_content').show();
-										console.log('showing');
-									}, 50);
+									$('#activity_content').show();
+									console.log('showing');
 								});
 							}
 						});

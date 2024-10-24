@@ -17,11 +17,29 @@ var GameplayActivityPainter = {
 	},
 
 	getExtraForm: function () {
-		return `<div class="gameplay_activity"><p><label for="gameplay_trace_storage">Trace Storage</label><input id="gameplay_trace_storage" type="checkbox" name="trace_storage"></p>
+		return `<div class="gameplay_activity"><p><label for="gameplay_trace_storage">Trace Storage</label><input id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
 			 <p><label for="gameplay_backup">Backup</label><input id="gameplay_backup" type="checkbox" name="backup" checked></p>
 			 <p><label for="gameplay_game_uri" style="width: 100%; text-align: center;">Game URI (optional)</label><input id="gameplay_game_uri" type="text" name="game_uri">
 			 <span class="info">Game URI can include tags: {simvaResultUri}, {simvaHomePage}, {username}, {authToken} and {activityId}</p></div>`;
 			 //<p><label for="gameplay_realtime">Realtime</label><input id="gameplay_realtime" type="checkbox" name="realtime"></p>
+	},
+
+	getEditExtraForm: function () {
+		return `<div class="gameplay_activity"><p><label for="edit_gameplay_trace_storage">Trace Storage</label><input id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
+			 <p><label for="edit_gameplay_backup">Backup</label><input id="edit_gameplay_backup" type="checkbox" name="backup" checked></p>
+			 <p><label for="edit_gameplay_game_uri" style="width: 100%; text-align: center;">Game URI (optional)</label><input id="edit_gameplay_game_uri" type="text" name="game_uri">
+			 <span class="info">Game URI can include tags: {simvaResultUri}, {simvaHomePage}, {username}, {authToken} and {activityId}</p></div>`;
+			 //<p><label for="gameplay_realtime">Realtime</label><input id="gameplay_realtime" type="checkbox" name="realtime"></p>
+	},
+
+	updateInputEditExtraForm(activity) {
+		var gameplay_trace_storage = document.getElementById('edit_gameplay_trace_storage');
+		gameplay_trace_storage.checked = activity.extra_data.config.trace_storage;
+		var gameplay_backup = document.getElementById('edit_gameplay_backup');
+		gameplay_backup.checked = activity.extra_data.config.backup;
+		var gameplay_game_uri = document.getElementById('edit_gameplay_game_uri');
+		gameplay_game_uri.value = activity.extra_data.game_uri;
+
 	},
 
 	extractInformation: function(form, callback){
@@ -43,12 +61,52 @@ var GameplayActivityPainter = {
 		callback(null, activity);
 	},
 
+	extractEditInformation: function(form, callback){
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+		Simva.getActivity(formdata.activity, function(error, actualActivity){
+			if(!error) {
+				let activity = {};
+
+				if(actualActivity.name !== formdata.name) {
+					activity.name = formdata.name;
+				}
+		
+				let trace_storage = formdata.trace_storage === 'on';
+				if(actualActivity.extra_data.config.trace_storage !== trace_storage) {
+					activity.trace_storage = trace_storage;
+				}
+				let realtime = formdata.realtime === 'on';
+				if(actualActivity.extra_data.config.realtime !== realtime) {
+					activity.realtime = realtime;
+				}
+				let backup = formdata.backup === 'on';
+				if(actualActivity.extra_data.config.backup !== backup) {
+					activity.backup = backup;
+				}
+				let game_uri=formdata.game_uri;
+				if(!(actualActivity.extra_data.game_uri == game_uri)) {
+					if(actualActivity.extra_data.game_uri) {
+						activity.game_uri = game_uri;
+					} else {
+						if(game_uri !== ''){
+							activity.game_uri = game_uri;
+						}
+					}
+				}
+		
+				callback(null, activity);
+			} else {
+				callback(error, null);
+			}
+		});
+	},
+
 	fullyPaintActivity: function(activity){
 		this.paintActivity(activity, participants);
 		let tmp = this;
 
 		Simva.isActivityOpenable(activity._id, function(error, result){
-
 			activity.isOpenable = result.openable;
 			if(activity.isOpenable){
 				Simva.getActivityTarget(activity._id, function(error, result){
@@ -56,9 +114,7 @@ var GameplayActivityPainter = {
 					tmp.paintActivityTargets(activity, result);
 				});
 			}
-
 			tmp.updateParticipants(activity);
-			
 		});
 	},
 
@@ -106,9 +162,9 @@ var GameplayActivityPainter = {
 	paintActivity: function(activity, participants){
 		let activitybox = `<div id="activity_${activity._id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
+			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
 			<p class="subtitle">${this.simpleName}</p>`;
-
 		
 		/*
 		activitybox += 'Realtime: ';
@@ -137,13 +193,13 @@ var GameplayActivityPainter = {
 		} else {
 			activitybox += '<i>Disabled</i>';
 		}
-		activitybox += '</p>';		
-		activitybox += `<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>`
+		activitybox += '</p>';
+		activitybox += `<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>% [ <doneres>0</doneres>/<total>0</total> ]</span></div>`
 		if(activity.extra_data.config.trace_storage){
-			activitybox += `<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>GameProgress: <done>0</done> (<partial>0</partial>)%</span></div>`
+			activitybox += `<div id="progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>GameProgress:  <partial>0</partial>(<done>0</done>)%  [ <partialres>0</partialres> (<doneres>0</doneres>) /<total>0</total> ]</span></div>`
 		}
 		if(activity.extra_data.config.backup){
-			activitybox += `<div id="result_backup_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>BackupResults: <done>0</done> (<partial>0</partial>)%</span></div>`
+			activitybox += `<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>BackupResults:  <partial>0</partial>(<done>0</done>)%  [ <partialres>0</partialres> (<doneres>0</doneres>) /<total>0</total> ]</span></div>`
 		}
 		activitybox += `${this.paintActivityParticipantsTable(activity, participants)}</div>`;
 
@@ -151,8 +207,7 @@ var GameplayActivityPainter = {
 	},
 
 	paintActivityParticipantsTable: function(activity, participants){
-		let toret = '<table><tr><th>User</th><th>Completed</th>';
-		toret += '<th>Progress</th>';
+		let toret = '<table><tr><th>User</th><th>Completed</th><th>Progress</th>';
 		//toret += '<th>Traces</th>';
 		toret += '<th>Backup</th></tr>';
 
@@ -176,7 +231,7 @@ var GameplayActivityPainter = {
 			//toret += `<td id="traces_${activity._id}_${participants[i].username}">---</td>`;
 			
 			if(activity.extra_data.config.backup){
-				toret += `<td id="backup_${activity._id}_${participants[i].username}">---</td></tr>`;
+				toret += `<td id="result_${activity._id}_${participants[i].username}">---</td></tr>`;
 			}else{
 				toret += '<td><i>Disabled</i></td>';
 			}
@@ -188,118 +243,27 @@ var GameplayActivityPainter = {
 	},
 
 	paintActivityCompletion: function(activity, status){
-		let usernames = Object.keys(status);
-
-		let done = 0;
-
-		for (var i = 0; i < usernames.length; i++) {
-			if(status[usernames[i]]){
-				done++;
-			}
-
-			let completion = `<span>${status[usernames[i]]}</span>`
-			$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
-			$(`#completion_${activity._id}_${usernames[i]}`).empty();
-			$(`#completion_${activity._id}_${usernames[i]}`).append(completion);
-		}
-
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
-
-		if(isNaN(progress)){
-			progress = 0;
-		}
-
-		$(`#completion_progress_${activity._id} .done`).css('width', `${progress}%` );
-		$(`#completion_progress_${activity._id} done`).text(progress);
+		PainterFactory.Painters["activity"].paintActivityCompletion(activity, status);
 	},
 
 	paintActivityProgress: function(activity, status){
-		let usernames = Object.keys(status);
-		let done = 0, partial = 0;
-
-		for (var i = 0; i < usernames.length; i++) {
-			if(status[usernames[i]] !== 0){
-				partial++;
-				if(status[usernames[i]] == 1){
-					done++;
-				}
-			}
-
-			let tmpprogress = status[usernames[i]]*100;
-			$(`#progress_${activity._id}_${usernames[i]} .done`).css('width', `${tmpprogress}%` );
-			$(`#progress_${activity._id}_${usernames[i]} done`).text(tmpprogress);
-		}
-		if(activity.extra_data.config.trace_storage) {
-			let progress = Math.round((done / usernames.length) * 1000) / 10; 
-			if(isNaN(progress)){
-				progress = 0;
-			}
-			$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
-			$(`#result_progress_${activity._id} done`).text(progress);
-
-			let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
-			if(isNaN(partialprogress)){
-				partialprogress = 0;
-			}
-			$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
-			$(`#result_progress_${activity._id} partial`).text(partialprogress);
-		}
+		PainterFactory.Painters["activity"].paintActivityProgress(activity, status);
 	},
 
 	paintActivityResult: function(activity, results){
-		let usernames = Object.keys(results);
+		PainterFactory.Painters["activity"].paintActivityResult(activity, results);
+	},
 
-		let done = 0, partial = 0;
+	updateActivityResult: function(activityId, username, backup) {
+		PainterFactory.Painters["activity"].updateActivityResult(activityId, username,backup);
+	},
 
-		for (var i = 0; i < usernames.length; i++) {
-			let status = results[usernames[i]];
-			//let traces = '<span>No traces</span>';
-			let backup = '<span><i>Disabled</i></span>';
-			if(activity.extra_data.config.backup){
-				backup = '<span>No backup</span>';
-			}
+	updateActivityCompletion: function(activityId, username, completion) {
+		PainterFactory.Painters["activity"].updateActivityCompletion(activityId, username,completion);
+	},
 
-			if(status){
-				done++;
-
-				let tmpprogress = 0; 
-				if(status){
-					if(activity.extra_data.config.backup && results[usernames[i]]){
-						backup = `<span >
-						<a onclick="GameplayActivityPainter.downloadBackup('${activity._id}',
-						'${usernames[i]}')">Download</a>
-						</span>`;
-					}
-					
-				}
-				
-				tmpprogress = (tmpprogress * 1000) / 10;
-				
-			}
-
-			//$(`traces_${activity._id}_${usernames[i]}`).addClass(status && status.realtime ? 'green' : 'red');
-			//$(`#traces_${activity._id}_${usernames[i]}`).empty();
-			//$(`#traces_${activity._id}_${usernames[i]}`).append(traces);
-
-			$(`#backup_${activity._id}_${usernames[i]}`).addClass(status ? 'green' : 'red');
-			$(`#backup_${activity._id}_${usernames[i]}`).empty();
-			$(`#backup_${activity._id}_${usernames[i]}`).append(backup);
-		}
-		if(activity.extra_data.config.backup) {
-			let progress = Math.round((done / usernames.length) * 1000) / 10; 
-			if(isNaN(progress)){
-				progress = 0;
-			}
-			$(`#result_backup_progress_${activity._id} .done`).css('width', `${progress}%` );
-			$(`#result_backup_progress_${activity._id} done`).text(progress);
-
-			let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
-			if(isNaN(partialprogress)){
-				partialprogress = 0;
-			}
-			$(`#result_backup_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
-			$(`#result_backup_progress_${activity._id} partial`).text(partialprogress);
-		}
+	updateActivityProgress: function(activityId, username, result) {
+		PainterFactory.Painters["activity"].updateActivityProgress(activityId, username,result);
 	},
 
 	paintActivityTargets: function(activity, results){
@@ -311,6 +275,7 @@ var GameplayActivityPainter = {
 			$(`#${activity._id}_${usernames[i]}_target`).attr('href', results[usernames[i]]);
 		}
 	},
+	
 	downloadBackup: function(activity, user){
 		var toastParams = {
 			heading: 'Error loading the result',
@@ -334,7 +299,6 @@ var GameplayActivityPainter = {
 		{
 			Simva.downloadActivityResult(activity);
 		}
-
 	},
 	
 	openTraces: function(activity, user){
@@ -372,7 +336,7 @@ var GameplayActivityPainter = {
 				let context = $('#iframe_floating iframe')[0].contentWindow.document;
 				let body = $('body', context);
 				body.html(content);
-				toggleAddForm('iframe_floating');
+				Utils.toggleAddForm('iframe_floating');
 			}
 		})
 	},

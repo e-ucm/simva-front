@@ -5,7 +5,7 @@
 <!--<div id="roller" style="width: 100%; text-align: center; padding: 200px;">
 	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 </div>-->
-<h1>Study: <span id="study_name"></span></h1>
+<h1>Study: <span id="study_name"></span></h1><input class="yellow" type="button" value="Edit Study Name" onclick="openEditStudyForm('<%= study %>')">
 <div id="study">
 	<div class="left">
 		<div class="graybox owners">
@@ -13,7 +13,7 @@
 			<p></p>
 			<table id="owners">
 			</table>
-			<input class="violet" type="button" value="Add owner" onclick="toggleAddForm('add_owner')">
+			<input class="violet" type="button" value="Add owner" onclick="Utils.toggleAddForm('add_owner')">
 		</div>
 
 		<div class="graybox groups">
@@ -21,12 +21,12 @@
 			<p></p>
 			<table id="groups">
 			</table>
-			<input class="violet" type="button" value="Add Group" onclick="toggleAddForm('add_group')">
+			<input class="violet" type="button" value="Add Group" onclick="Utils.toggleAddForm('add_group')">
 		</div>
 
 		<div class="graybox allocator default">
 			<h2>Allocator</h2> 
-			<span class="edit"><img src="/icon/gear.png" onclick="toggleAddForm('change_allocator')"></span>
+			<span class="edit"><img src="/icon/gear.png" onclick="Utils.toggleAddForm('change_allocator')"></span>
 			<div id="allocator_content">
 				
 			</div>
@@ -37,14 +37,14 @@
 			<p></p>
 			<table id="lti_platforms">
 			</table>
-			<input class="violet" type="button" value="Add Platform" onclick="toggleAddForm('add_platform')">
+			<input class="violet" type="button" value="Add Platform" onclick="Utils.toggleAddForm('add_platform')">
 		</div>
 		<% } %>
 	</div>
 	<div class="card">
 		<div class="top">
 			<h2>Tests</h2>
-			<input class="violet" type="button" value="Add Test" onclick="toggleAddForm('add_test')">
+			<input class="violet" type="button" value="Add Test" onclick="Utils.toggleAddForm('add_test')">
 		</div>
 		<div id="tests" class="tests">
 		</div>
@@ -154,6 +154,61 @@
 	</div>
 </div>
 
+
+<div id="edit_study" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<div id="edit_study_tab" class="subform selected">
+				<h2>Edit Study</h2>
+				<form id="edit_study_form">
+					<input hidden type="text" name="study">
+					<input hidden type="text" name="studyName">
+					<input type="text" name="name" id="edit_study_name" placeholder="Study name" required>
+					<input type="submit" value="Edit">
+					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+					<span class="error" id="edit_study_error"></span>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="edit_test" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<div id="edit_test_tab" class="subform selected">
+				<h2>Edit Test</h2>
+				<form id="edit_test_form">
+					<input hidden type="text" name="test">
+					<input hidden type="text" name="testName">
+					<input type="text" name="name" id="edit_test_name" placeholder="Test name" required>
+					<input type="submit" value="Edit">
+					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+					<span class="error" id="edit_test_error"></span>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="duplicate_test" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<div id="duplicate_test_tab" class="subform selected">
+				<h2>Duplicate Test</h2>
+				<form id="duplicate_test_form">
+					<input hidden type="text" name="test">
+					<input hidden type="text" name="testName">
+					<input type="text" name="name" id="duplicate_test_name" placeholder="Test name" required>
+					<input type="submit" value="Duplicate">
+					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+					<span class="error" id="duplicate_test_error"></span>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="add_activity" class="new_element floating">
 	<div class="floater">
 		<div class="form">
@@ -189,6 +244,26 @@
 	</div>
 </div>
 
+<div id="edit_activity" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<form id="edit_activity_form">
+				<input type="hidden" name="test">
+				<input type="hidden" name="activity">
+				<input id="edit_activity_type" type="hidden" name="type">
+				<input id="edit_activity_name" type="text" name="name" placeholder="Activity name" required>
+				</select>
+				<fieldset id="edit_activity_extras">
+				</fieldset>
+				<input type="submit" value="Edit">
+				<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+				<span class="error" id="edit_activity_error"></span>
+			</form>
+		</div>
+	</div>
+</div>
+
+
 <div id="iframe_floating" class="new_element floating">
 	<div class="floater">
 		<iframe src=""></iframe>
@@ -196,13 +271,79 @@
 </div>
 
 <div class="floating_buttons">
+	<a unselectable="on" class="basic" onclick="downloadStudyConfig()"><img src="/config.jpg"></a>
 	<a unselectable="on" class="basic" onclick="downloadUAConfig()"><img src="/ua.png"></a>
 </div>
 
+
+<script type="text/javascript">
+	// Create an instance of SSEClientManager
+	Simva.getEventsPresignedUrl('<%= study %>', function(error, result){
+		if(!error) {
+			const presignedUrl = result.url;
+			const sseClient = new SSEClientManager(presignedUrl);
+
+			// Listen for general messages (default "message" event)
+			sseClient.on('message', (data) => {
+				console.log('New message from server:', data);
+				// Update UI or process data here
+			});
+
+			// Listen for connection open event
+			sseClient.on('open', () => {
+				console.log('Connection to SSE server established.');
+			});
+
+			// Handle custom event types from the server (if applicable)
+			// Example: You might send events like "activity_initialized" from the server
+			sseClient.triggerEvent('activity_initialized');
+			sseClient.on('activity_initialized', (data) => {
+				//console.log('Activity initialized:', data);
+				if(data.activityType == "gameplay") {
+					PainterFactory.Painters[data.activityType].updateActivityProgress(data.activityId, data.user, 0);
+				}
+				if(data.activityType == "limesurvey") {
+					PainterFactory.Painters[data.activityType].updateActivityResult(data.activityId, data.user, "Started");
+				}
+			});
+
+			// Handle custom event types from the server (if applicable)
+			// Example: You might send events like "activity_progressed" from the server
+			sseClient.triggerEvent('activity_progressed');
+			sseClient.on('activity_progressed', (data) => {
+				//console.log('Activity progressed:', data);
+				if(data.activityType == "gameplay") {
+					PainterFactory.Painters[data.activityType].updateActivityProgress(data.activityId, data.user, data.val);
+				}
+			});
+
+			// Handle custom event types from the server (if applicable)
+			// Example: You might send events like "activity_completed" from the server
+			sseClient.triggerEvent('activity_completed');
+			sseClient.on('activity_completed', (data) => {
+				//console.log('Activity completed:', data);
+				if(data.activityType == "gameplay") {
+					PainterFactory.Painters[data.activityType].updateActivityProgress(data.activityId, data.user, 1);
+					PainterFactory.Painters[data.activityType].updateActivityCompletion(data.activityId, data.user, "true");
+				}
+				if(data.activityType == "manual") {
+					PainterFactory.Painters[data.activityType].updateActivityCompletion(data.activityId, data.user, data.status);
+				}
+				if(data.activityType == "limesurvey") {
+					PainterFactory.Painters[data.activityType].updateActivityCompletion(data.activityId, data.user, "true");
+					PainterFactory.Painters[data.activityType].updateActivityResult(data.activityId, data.user, "Completed");
+				}
+			});
+			// Close the SSE connection when it's no longer needed
+			// sseClient.closeConnection();
+		}
+	});
+	
+</script>
 <script type="text/javascript">
 	let studyid = "<%= study %>";
 	let study = null, participants = null, tests = null, allocator = null, groups = null, platforms = null;
-
+	
 	$(document).ready(function() {
 		let painters = Object.keys(PainterFactory.Painters);
 
@@ -255,7 +396,7 @@
 					errorbox.text(error.responseJSON.message);
 				}else{
 					reloadStudy();
-					toggleAddForm('add_owner');
+					Utils.toggleAddForm('add_owner');
 				}
 			});
 
@@ -275,7 +416,7 @@
 					if(error && error.responseJSON){
 						errorbox.text(error.responseJSON.message);
 					}else{
-						toggleAddForm('add_group');
+						Utils.toggleAddForm('add_group');
 						reloadStudy();
 					}
 				});
@@ -303,7 +444,7 @@
 				if(error && error.responseJSON){
 					errorbox.text(error.responseJSON.message);
 				}else{
-					toggleAddForm('add_platform');
+					Utils.toggleAddForm('add_platform');
 					reloadStudy();
 					Simva.updateStudy(study, function(error, result){
 						reloadStudy();
@@ -323,7 +464,25 @@
 				if(error && error.responseJSON){
 					errorbox.text(error.responseJSON.message);
 				}else{
-					toggleAddForm('add_test');
+					Utils.toggleAddForm('add_test');
+					reloadStudy();
+				}
+			});
+
+			return false;
+		});
+
+		$("#duplicate_test_form").on('submit', function(event){
+			event.preventDefault();
+			let form = Utils.getFormData($("#duplicate_test_form"));
+			let errorbox = $(this).find('.error');
+
+			Simva.duplicateTestFromStudy(studyid, form.name, form.test, function(error, result){
+				if(error && error.responseJSON){
+					errorbox.text(error.responseJSON.message);
+				}else{
+					console.log(result);
+					Utils.toggleAddForm('duplicate_test');
 					reloadStudy();
 				}
 			});
@@ -335,7 +494,7 @@
 			event.preventDefault();
 			let currentform = this;
 			let form = Utils.getFormData($("#new_activity_form"));
-			toggleSubmit(currentform);
+			Utils.toggleSubmit(currentform);
 			let errorbox = $(this).find('.error');
 
 			PainterFactory.Painters[form.type].extractInformation('#new_activity_form', function(error, activity){
@@ -343,11 +502,11 @@
 					errorbox.text(error);
 				}else{
 					Simva.addActivityToTest(studyid, form.test, activity, function(error, result){
-						toggleSubmit(currentform);
+						Utils.toggleSubmit(currentform);
 						if(error && error.responseJSON){
 							errorbox.text(error.responseJSON.message);
 						}else{
-							toggleAddForm('add_activity');
+							Utils.toggleAddForm('add_activity');
 							reloadStudy();
 							Simva.updateStudy(study, function(error, result){
 								reloadStudy();
@@ -360,6 +519,84 @@
 			return false;
 		});
 
+		$("#edit_activity_form").on('submit', function(event){
+			event.preventDefault();
+			let currentform = this;
+			let form = Utils.getFormData($("#edit_activity_form"));
+			Utils.toggleSubmit(currentform);
+			let errorbox = $(this).find('.error');
+			PainterFactory.Painters[form.type].extractEditInformation('#edit_activity_form', function(error, updatedActivity){
+				if(error){
+					errorbox.text(error);
+				}else{
+					if(Object.keys(updatedActivity).length == 0) {
+						errorbox.text("No changes detected !");
+						Utils.toggleSubmit(currentform);
+					} else {
+						updatedActivity.id = form.activity;
+						console.log("Updated activity :");
+						console.log(updatedActivity);
+						Simva.updateActivity(updatedActivity, function(error, result){
+							Utils.toggleSubmit(currentform);
+							if(error && error.responseJSON){
+								errorbox.text(error.responseJSON.message);
+							}else{
+								Utils.toggleAddForm('edit_activity');
+								reloadStudy();
+							}
+						});
+					}
+				}
+			});
+			return false;
+		});
+
+		$("#edit_test_form").on('submit', function(event){
+			event.preventDefault();
+			let currentform = this;
+			let form = Utils.getFormData($("#edit_test_form"));
+			Utils.toggleSubmit(currentform);
+			let errorbox = $(this).find('.error');
+			if(form.name == form.testName) {
+				errorbox.text("No changes detected !");
+				Utils.toggleSubmit(currentform);
+			} else {
+				console.log("updated test name");
+				var test = { id : form.test , name : form.name};
+				console.log(test);
+				Simva.updateTest("<%= study %>", test, function(error, result){
+					Utils.toggleSubmit(currentform);
+					if(error && error.responseJSON){
+						errorbox.text(error.responseJSON.message);
+					}else{
+						Utils.toggleAddForm('edit_test');
+						reloadStudy();
+					}
+				});
+			}
+			return false;
+		});
+
+		$("#edit_study_form").on('submit', function(event){
+			event.preventDefault();
+			let currentform = this;
+			let form = Utils.getFormData($("#edit_study_form"));
+			Utils.toggleSubmit(currentform);
+			let errorbox = $(this).find('.error');
+			if(form.name == form.studyName) {
+				errorbox.text("No changes detected !");
+				Utils.toggleSubmit(currentform);
+			} else {
+				study.name = form.name;
+				Simva.updateStudy(study, function(error, result){	
+					Utils.toggleSubmit(currentform);
+					Utils.toggleAddForm('edit_study');
+					reloadStudy();
+				});
+			}
+			return false;
+		});
+		
 		loadAddGroups();
 		Simva.getStudy("<%= study %>", function(error, study){
 			if(!error) {
@@ -383,11 +620,19 @@
 
 		var filename = "simva.conf";
 
-		var blob = new Blob([content], {
-		 type: "text/plain;charset=utf-8"
-		});
-
 		Utils.download(filename, content);
+	}
+
+	let downloadStudyConfig = function() {
+		Simva.exportStudyConfig(study._id, function(error, result) {
+			if(!error){
+				var studyExport = result;
+				var content = JSON.stringify(studyExport, null, 2);
+				var filename = `simva-${study.name}-export.json`;
+
+				Utils.download(filename, content);
+			}
+		})
 	}
 
 	let toggleAllocatorForm = function(){
@@ -398,11 +643,6 @@
 
 	let toggleTest = function(id){
 		$(`#test_${id}`).find('.activities').toggleClass('collapsed');
-	}
-
-	let toggleSubmit = function(form){
-		$(form).find('input[type="submit"]').toggle();
-		$(form).find('.loader').toggle();
 	}
 
 	let changeTab = function(tab, form, subform){
@@ -487,45 +727,50 @@
 	// Functionality
 
 	let removeGroup = function(group){
-		let toremove = -1;
-		for (var i = 0; i < study.groups.length; i++) {
-			if(study.groups[i] === group){
-				toremove = i;
-				break;
+		if(confirm("Are you sure do you want to delete this group?")){
+			let toremove = -1;
+			for (var i = 0; i < study.groups.length; i++) {
+				if(study.groups[i] === group){
+					toremove = i;
+					break;
+				}
 			}
+
+			study.groups.splice(i, 1);
+
+			Simva.updateStudy(study, function(error, result){
+				reloadStudy();
+			});
 		}
-
-		study.groups.splice(i, 1);
-
-		Simva.updateStudy(study, function(error, result){
-			reloadStudy();
-		});
 	}
 
 	let removePlatform = function(platform){
-		Simva.removePlatform(platform, function(error, result){
-			reloadStudy();
-		});
+		if(confirm("Are you sure do you want to delete this platform?")){
+			Simva.removePlatform(platform, function(error, result){
+				reloadStudy();
+			});
+		}
 	}
 
 	let removeOwner = function(owner){
-		let toremove = -1;
-		for (var i = 0; i < study.owners.length; i++) {
-			if(study.owners[i] === owner){
-				toremove = i;
-				break;
+		if(confirm("Are you sure do you want to delete this owner?")){
+			let toremove = -1;
+			for (var i = 0; i < study.owners.length; i++) {
+				if(study.owners[i] === owner){
+					toremove = i;
+					break;
+				}
 			}
+
+			study.owners.splice(i, 1);
+
+			Simva.updateStudy(study, function(error, result){
+				reloadStudy();
+			});
 		}
-
-		study.owners.splice(i, 1);
-
-		Simva.updateStudy(study, function(error, result){
-			reloadStudy();
-		});
 	}
 
 	let deleteTest = function(test){
-
 		if(confirm("Are you sure do you want to delete the test?\nAll the activities and data will be deleted too.")){
 			let toremove = -1;
 			for (var i = 0; i < study.tests.length; i++) {
@@ -543,9 +788,16 @@
 		}
 	}
 
-	let deleteActivity = function(activity){
+	let duplicateTest = function(testid){
+		Simva.getStudyTest("<%= study %>", testid, function(error, test){
+			if(!error) {
 
-		if(confirm("Are you sure do you want to delete the test?\nAll the activities and data will be deleted too.")){
+			}
+		});
+	}
+
+	let deleteActivity = function(activity){
+		if(confirm("Are you sure do you want to delete the activity?\nAll the data of the activity will be deleted too.")){
 			Simva.deleteActivity(activity, function(error, result){
 				reloadStudy();
 			});
@@ -557,9 +809,66 @@
 		$('#add_activity input[name="test"]').val(test);
 	}
 
-	let toggleAddForm = function(id){
-		$(`#${id}`).toggleClass('shown');
+	let openEditActivityForm = function(activityId){
+		Simva.getActivity(activityId, function(error, activity){
+			if(!error){
+				document.getElementById("edit_activity_error").innerHTML = "";
+				var inputElement = document.getElementById('edit_activity_name');
+				inputElement.value = activity.name;
+				var inputElement = document.getElementById('edit_activity_type');
+				inputElement.value = activity.type;
+				$('#edit_activity_extras').empty();
+				$('#edit_activity_extras').append(PainterFactory.Painters[activity.type].getEditExtraForm());
+				PainterFactory.Painters[activity.type].updateInputEditExtraForm(activity);
+				$('#edit_activity').toggleClass('shown');
+				$('#edit_activity input[name="test"]').val(activity.test);
+				$('#edit_activity span[class="error"]').val("");
+				$('#edit_activity input[name="activity"]').val(activity._id);
+			}
+		});
 	}
+
+	let openEditDuplicateForm = function(testId){
+		Simva.getStudyTest("<%= study %>", testId, function(error, test){
+			if(!error){
+				document.getElementById("duplicate_test_error").innerHTML = "";
+				var inputElement = document.getElementById('duplicate_test_name');
+				inputElement.value = test.name;
+				$('#duplicate_test').toggleClass('shown');
+				$('#duplicate_test input[name="test"]').val(test._id);
+				$('#duplicate_test span[class="error"]').val("");
+				$('#duplicate_test input[name="testName"]').val(test.name);
+			}
+		});
+	}
+
+	let openEditTestForm = function(testId){
+		Simva.getStudyTest("<%= study %>", testId, function(error, test){
+			if(!error){
+				document.getElementById("edit_test_error").innerHTML = "";
+				var inputElement = document.getElementById('edit_test_name');
+				inputElement.value = test.name;
+				$('#edit_test').toggleClass('shown');
+				$('#edit_test input[name="test"]').val(test._id);
+				$('#edit_test span[class="error"]').val("");
+				$('#edit_test input[name="testName"]').val(test.name);
+			}
+		});
+	}
+
+	let openEditStudyForm = function(studyId){
+		Simva.getStudy(studyId, function(error, study){
+			if(!error){
+				document.getElementById("edit_study_error").innerHTML = "";
+				var inputElement = document.getElementById('edit_study_name');
+				inputElement.value = study.name;
+				$('#edit_study').toggleClass('shown');
+				$('#edit_study input[name="study"]').val(study._id);
+				$('#edit_study input[name="studyName"]').val(study.name);
+			}
+		});
+	}
+
 
 	// Main Paint functions
 
@@ -651,12 +960,12 @@
 				if(error){
 					$('#change_allocator_form .error').val(error.message);
 				}else{
-					toggleAddForm('change_allocator');
+					Utils.toggleAddForm('change_allocator');
 					reloadStudy();
 				}
 			});
 		}else{
-			toggleAddForm('change_allocator');
+			Utils.toggleAddForm('change_allocator');
 		}
 	}
 
@@ -664,7 +973,9 @@
 		$('#tests').append(`<div id="test_${test._id}" class="test">
 			<div class="top"><h3>${test.name}</h3><input class="violet" type="button" value="Expand/Collapse" onclick="toggleTest('${test._id}')">
 			<input class="green" type="button" value="Add activity" onclick="openActivityForm('${test._id}')">
-			<input class="red" type="button" value="Delete" onclick="deleteTest('${test._id}')"></div>
+			<input class="yellow" type="button" value="Edit" onclick="openEditTestForm('${test._id}')">
+			<input class="red" type="button" value="Delete" onclick="deleteTest('${test._id}')">
+			<input class="orange" type="button" value="Duplicate" onclick="openEditDuplicateForm('${test._id}')"></div>
 			<div class="activities collapsed">${roller}</div>`);
 	}
 
@@ -709,8 +1020,7 @@
 	}
 
 	let groupRow = function(group){
-		let toret = `<tr><td>${group.name}</td><td><input class="red" type="button" value="Remove"';
-		toret += ' onclick="removeGroup('${group._id}')" `
+		let toret = `<tr><td>${group.name}</td><td><input class="red" type="button" value="Remove" onclick="removeGroup('${group._id}')" `
 		if(group.link && group.link.type){
 			toret += ' disabled';
 		}
@@ -761,3 +1071,4 @@
 <script type="text/javascript" src="/activities/imspackagepainter.js"></script>
 <script type="text/javascript" src="/allocators/defaultallocatorpainter.js"></script>
 <script type="text/javascript" src="/allocators/groupallocatorpainter.js"></script>
+

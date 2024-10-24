@@ -20,6 +20,13 @@ var ActivityPainter = {
 		return '';
 	},
 
+	getEditExtraForm: function () {
+		return this.getExtraForm();
+	},
+
+	updateInputEditExtraForm(activity) {
+	},
+
 	extractInformation: function(form, callback){
 		let activity = {};
 
@@ -32,6 +39,24 @@ var ActivityPainter = {
 		callback(null, activity);
 	},
 
+	extractEditInformation: function(form, callback){
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+		Simva.getActivity(formdata.activity, function(error, actualActivity){
+			if(!error) {
+				let activity = {};
+
+				if(actualActivity.name !== formdata.name) {
+					activity.name = formdata.name;
+				}
+		
+				callback(null, activity);
+			} else {
+				callback(error, null);
+			}
+		});
+	},
+	
 	fullyPaintActivity: function(activity){
 		this.paintActivity(activity, participants);
 		let tmp = this;
@@ -58,6 +83,7 @@ var ActivityPainter = {
 	paintActivity: function(activity, participants){
 		$(`#test_${activity.test} .activities`).append(`<div id="activity_${activity._id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
+			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
 			<p class="subtitle">${this.simpleName}</p>
 			<p>Minio: <a href="${this.utils.minio_url}${this.utils.minio_bucket}/${this.utils.topics_dir}/${this.utils.trace_topic}/_id=${activity._id}/
@@ -162,7 +188,7 @@ var ActivityPainter = {
 				let context = $('#iframe_floating iframe')[0].contentWindow.document;
 				let body = $('body', context);
 				body.html(content);
-				toggleAddForm('iframe_floating');
+				Utils.toggleAddForm('iframe_floating');
 			}
 		})
 	}
