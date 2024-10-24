@@ -161,7 +161,11 @@ var LimeSurveyPainter = {
 				if(actualActivity.name !== formdata.name) {
 					activity.name = formdata.name;
 				}
-		
+
+				if(actualActivity.extra_data.surveyid !== formdata.existingid) {
+					activity.copysurvey = formdata.existingid;
+				}
+
 				callback(null, activity);
 			} else {
 				callback(error, null);
