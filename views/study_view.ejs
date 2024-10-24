@@ -278,62 +278,67 @@
 
 <script type="text/javascript">
 	// Create an instance of SSEClientManager
-	var map = { };
-	const sseClient = new SSEClientManager('<%= config.api.url %>/studies/<%= study %>/events', map);
+	Simva.getEventsPresignedUrl('<%= study %>', function(error, result){
+		if(!error) {
+			const presignedUrl = result.url;
+			const sseClient = new SSEClientManager(presignedUrl);
 
-	// Listen for general messages (default "message" event)
-	sseClient.on('message', (data) => {
-		console.log('New message from server:', data);
-		// Update UI or process data here
-	});
+			// Listen for general messages (default "message" event)
+			sseClient.on('message', (data) => {
+				console.log('New message from server:', data);
+				// Update UI or process data here
+			});
 
-	// Listen for connection open event
-	sseClient.on('open', () => {
-		console.log('Connection to SSE server established.');
-	});
+			// Listen for connection open event
+			sseClient.on('open', () => {
+				console.log('Connection to SSE server established.');
+			});
 
-	// Handle custom event types from the server (if applicable)
-	// Example: You might send events like "activity_initialized" from the server
-	sseClient.triggerEvent('activity_initialized');
-	sseClient.on('activity_initialized', (data) => {
-		//console.log('Activity initialized:', data);
-		if(data.activityType == "gameplay") {
-			PainterFactory.Painters[data.activityType].updateActivityProgress(data.activityId, data.user, 0);
-		}
-		if(data.activityType == "limesurvey") {
-			PainterFactory.Painters[data.activityType].updateActivityResult(data.activityId, data.user, "Started");
-		}
-	});
+			// Handle custom event types from the server (if applicable)
+			// Example: You might send events like "activity_initialized" from the server
+			sseClient.triggerEvent('activity_initialized');
+			sseClient.on('activity_initialized', (data) => {
+				//console.log('Activity initialized:', data);
+				if(data.activityType == "gameplay") {
+					PainterFactory.Painters[data.activityType].updateActivityProgress(data.activityId, data.user, 0);
+				}
+				if(data.activityType == "limesurvey") {
+					PainterFactory.Painters[data.activityType].updateActivityResult(data.activityId, data.user, "Started");
+				}
+			});
 
-	// Handle custom event types from the server (if applicable)
-	// Example: You might send events like "activity_progressed" from the server
-	sseClient.triggerEvent('activity_progressed');
-	sseClient.on('activity_progressed', (data) => {
-		//console.log('Activity progressed:', data);
-		if(data.activityType == "gameplay") {
-			PainterFactory.Painters[data.activityType].updateActivityProgress(data.activityId, data.user, data.val);
-		}
-	});
+			// Handle custom event types from the server (if applicable)
+			// Example: You might send events like "activity_progressed" from the server
+			sseClient.triggerEvent('activity_progressed');
+			sseClient.on('activity_progressed', (data) => {
+				//console.log('Activity progressed:', data);
+				if(data.activityType == "gameplay") {
+					PainterFactory.Painters[data.activityType].updateActivityProgress(data.activityId, data.user, data.val);
+				}
+			});
 
-	// Handle custom event types from the server (if applicable)
-	// Example: You might send events like "activity_completed" from the server
-	sseClient.triggerEvent('activity_completed');
-	sseClient.on('activity_completed', (data) => {
-		//console.log('Activity completed:', data);
-		if(data.activityType == "gameplay") {
-			PainterFactory.Painters[data.activityType].updateActivityProgress(data.activityId, data.user, 1);
-			PainterFactory.Painters[data.activityType].updateActivityCompletion(data.activityId, data.user, "true");
-		}
-		if(data.activityType == "manual") {
-			PainterFactory.Painters[data.activityType].updateActivityCompletion(data.activityId, data.user, data.status);
-		}
-		if(data.activityType == "limesurvey") {
-			PainterFactory.Painters[data.activityType].updateActivityCompletion(data.activityId, data.user, "true");
-			PainterFactory.Painters[data.activityType].updateActivityResult(data.activityId, data.user, "Completed");
+			// Handle custom event types from the server (if applicable)
+			// Example: You might send events like "activity_completed" from the server
+			sseClient.triggerEvent('activity_completed');
+			sseClient.on('activity_completed', (data) => {
+				//console.log('Activity completed:', data);
+				if(data.activityType == "gameplay") {
+					PainterFactory.Painters[data.activityType].updateActivityProgress(data.activityId, data.user, 1);
+					PainterFactory.Painters[data.activityType].updateActivityCompletion(data.activityId, data.user, "true");
+				}
+				if(data.activityType == "manual") {
+					PainterFactory.Painters[data.activityType].updateActivityCompletion(data.activityId, data.user, data.status);
+				}
+				if(data.activityType == "limesurvey") {
+					PainterFactory.Painters[data.activityType].updateActivityCompletion(data.activityId, data.user, "true");
+					PainterFactory.Painters[data.activityType].updateActivityResult(data.activityId, data.user, "Completed");
+				}
+			});
+			// Close the SSE connection when it's no longer needed
+			// sseClient.closeConnection();
 		}
 	});
-	// Close the SSE connection when it's no longer needed
-	// sseClient.closeConnection();
+	
 </script>
 <script type="text/javascript">
 	let studyid = "<%= study %>";

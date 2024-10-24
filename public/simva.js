@@ -164,6 +164,10 @@ var Simva = {
 		this.post(`${this.apiurl}/studies/${study_id}/tests`, body, callback);
 	},
 
+	getEventsPresignedUrl: function(study_id, callback){
+		this.get(`${this.apiurl}/studies/${study_id}/events/getPresignedUrl`, callback);
+	},
+
 	duplicateTestFromStudy: function(study_id, name, testId, callback){
 		let body = { name: name, from : testId };
 		this.post(`${this.apiurl}/studies/${study_id}/tests`, body, callback);
@@ -227,6 +231,11 @@ var Simva = {
 
 	getStudySchedule: function(study_id, callback){
 		this.get(`${this.apiurl}/studies/${study_id}/schedule`, callback);
+	},
+
+	
+	getScheduleEventsPresignedUrl: function(study_id, callback){
+		this.get(`${this.apiurl}/studies/${study_id}/schedule/events/getPresignedUrl`, callback);
 	},
 
 	// Activities

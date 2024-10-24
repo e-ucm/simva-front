@@ -1,1 +1,0 @@
-https://github.com/digitalbazaar/base58-universal

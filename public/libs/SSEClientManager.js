@@ -1,6 +1,3 @@
-var { signMessage, createHMACKey, importKey } = require("./hMacKey/crypto.js");
-var configHMac = require("../../hmacKeyConfig.js");
-
 class SSEClientManager {
     constructor(url, mapParameters = {}) {
         this.url = url; // SSE server URL
@@ -12,40 +9,8 @@ class SSEClientManager {
         this.init(); // Initialize connection
     }
 
-    async createUrl() {
-        const buffer = new Uint8Array(8);
-        crypto.getRandomValues(buffer);
-
-        this.mapParameters.ts = (new Date()).toISOString();
-        var map = new Map();
-        Object.entries(this.mapParameters)
-            .map(([key, value]) => map.set(key, value));
-        var toSign=Object.entries(this.mapParameters)
-                .sort(([keyA], [keyB]) => keyA.localeCompare(keyB)) // Sort by keys
-                .map(([key, value]) => `${key}=${value}`)
-                .join('\n');
-        toSign=this.url + '\n' + toSign;
-        var signature;
-        try {
-            if(configHMac.hmac.hmacKey == null) {
-                console.log("initializing hmackey");
-                configHMac.hmac.hmacKey = (await createHMACKey(configHMac.hmac.password)).key;
-            }
-            signature = await signMessage(toSign, configHMac.hmac.hmacKey);
-        } catch(e) {
-            console.log(e);
-            signature = "TODO";
-        }
-        const queryString = Object.entries(this.mapParameters)
-            .sort(([keyA], [keyB]) => keyA.localeCompare(keyB)) // Sort by keys
-            .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-            .join('&');
-        this.url = this.url + `?${queryString}&signature=${signature}`;
-    }
-
     // Initialize EventSource connection
-    async init() {
-        await this.createUrl();
+    init() {
         this.eventSource = new EventSource(this.url);
 
         // Handle standard message event
@@ -124,6 +89,6 @@ class SSEClientManager {
     }
 }
 
-module.exports = SSEClientManager;
+//module.exports = SSEClientManager;
 // Expose to the global scope
 window.SSEClientManager = SSEClientManager;
