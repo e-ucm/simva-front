@@ -37,9 +37,8 @@ var LimeSurveyPainter = {
 		if(this.utils.surveys.length > 0){
 			form += '<select name="existingid">';
 			for (var i = 0; i < this.utils.surveys.length; i++) {
-				form += `<option value="${this.utils.surveys[i].sid}">${this.utils.surveys[i].surveyls_title}</option>`;
+				form += `<option value="${this.utils.surveys[i].sid}">${this.utils.surveys[i].surveyls_title} - ${this.utils.surveys[i].sid}</option>`;
 			}
-
 			form += '</select>';
 		}else{
 			form += '<p>You don\'t have surveys.</p>'
@@ -48,7 +47,7 @@ var LimeSurveyPainter = {
 		form += `</div>
 			<div id="limesurvey_bynew" class="subform">
 				<p>Click to open LimeSurvey</p>
-				<p><a class="button green" onclick="LimeSurveyPainter.openLimesurvey()">LimeSurvey</a></p>
+				<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">LimeSurvey</a></p>
 			</div>
 			<div id="limesurvey_byupload" class="subform">
 				<p>Select LLS file</p>
@@ -59,10 +58,33 @@ var LimeSurveyPainter = {
 	},
 
 	getEditExtraForm: function () {
-		return "";
+		let form;
+		if(this.utils.surveys.length > 1){
+			form += '<select name="existingid" id="existing_survey_list"></select>';
+		} else  {
+			form += '<p>You don\'t have any other surveys.</p>'
+		}
+		return form;
 	},
 
 	updateInputEditExtraForm(activity) {
+		// Step 1: Get the select element
+		var selectElement = document.getElementById('existing_survey_list');
+		// Step 2: Loop through the data and create options
+		this.utils.surveys.forEach(function(survey) {
+			// Step 3: Create a new option element
+			var option = document.createElement('option');
+			
+			// Step 4: Set the value and text of the option
+			option.value = survey.sid;
+			option.text = `${survey.surveyls_title} - ${survey.sid}`;
+
+			// Step 5: Append the option to the select element
+			selectElement.appendChild(option);
+		});
+
+		// Set a specific option as selected
+		selectElement.value=activity.extra_data.surveyId;
 	},
 
 	downloadBackup: function(activity, type, user){
@@ -196,6 +218,7 @@ var LimeSurveyPainter = {
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
 			<p class="subtitle">${this.simpleName}</p>
 			<p>Survey ID: <a target="_blank" href="${this.utils.url}${activity.extra_data.surveyId}">${activity.extra_data.surveyId}</a></p>
+			<p>Edit Survey: <a class="button green" onclick="LimeSurveyPainter.openEditLimesurvey(${activity.extra_data.surveyId})">LimeSurvey</a></p>
 			<p><a onclick="LimeSurveyPainter.generateTinyURL('${activity._id}', ${activity.extra_data.surveyId})">Generate Tiny URL</a></p>
 			<p><a onclick="LimeSurveyPainter.downloadBackup('${activity._id}', 'full')"> Full : ⬇️</a>
 			<a onclick="LimeSurveyPainter.downloadBackup('${activity._id}', 'code')"> Code : ⬇️</a></p>
@@ -262,8 +285,13 @@ var LimeSurveyPainter = {
 		}
 	},
 
-	openLimesurvey: function(){
-		$('#iframe_floating iframe').prop('src', `${this.limesurveyurl}/admin/survey/sa/newsurvey`);
+	openNewLimesurvey: function(){
+		$('#iframe_floating iframe').prop('src', `${this.limesurveyurl}admin/survey/sa/newsurvey`);
+		Utils.toggleAddForm('iframe_floating');
+	},
+
+	openEditLimesurvey: function(surveyid){
+		$('#iframe_floating iframe').prop('src', `${this.limesurveyurl}admin/survey/sa/view/surveyid/${surveyid}`);
 		Utils.toggleAddForm('iframe_floating');
 	},
 
