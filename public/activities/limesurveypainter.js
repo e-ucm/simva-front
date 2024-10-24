@@ -58,7 +58,7 @@ var LimeSurveyPainter = {
 	},
 
 	getEditExtraForm: function () {
-		let form;
+		let form="Survey";
 		if(this.utils.surveys.length > 1){
 			form += '<select name="existingid" id="existing_survey_list"></select>';
 		} else  {
@@ -218,7 +218,7 @@ var LimeSurveyPainter = {
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
 			<p class="subtitle">${this.simpleName}</p>
 			<p>Survey ID: <a target="_blank" href="${this.utils.url}${activity.extra_data.surveyId}">${activity.extra_data.surveyId}</a></p>
-			<p>Edit Survey: <a class="button green" onclick="LimeSurveyPainter.openEditLimesurvey(${activity.extra_data.surveyId})">LimeSurvey</a></p>
+			<p><a class="button green" onclick="LimeSurveyPainter.openEditLimesurvey('${activity.id}', '${activity.extra_data.surveyId}')">Edit Survey</a></p>
 			<p><a onclick="LimeSurveyPainter.generateTinyURL('${activity._id}', ${activity.extra_data.surveyId})">Generate Tiny URL</a></p>
 			<p><a onclick="LimeSurveyPainter.downloadBackup('${activity._id}', 'full')"> Full : ⬇️</a>
 			<a onclick="LimeSurveyPainter.downloadBackup('${activity._id}', 'code')"> Code : ⬇️</a></p>
@@ -290,9 +290,15 @@ var LimeSurveyPainter = {
 		Utils.toggleAddForm('iframe_floating');
 	},
 
-	openEditLimesurvey: function(surveyid){
+	openEditLimesurvey: function(activityId, surveyid){
 		$('#iframe_floating iframe').prop('src', `${this.limesurveyurl}admin/survey/sa/view/surveyid/${surveyid}`);
-		Utils.toggleAddForm('iframe_floating');
+		Simva.setSurveyOwner(activityId, function(error, result){
+			if(!error) {
+				let currentSrc = $('#iframe_floating iframe').prop('src');
+				$('#iframe_floating iframe').prop('src', `${currentSrc}`);
+				Utils.toggleAddForm('iframe_floating');
+			}
+		});
 	},
 
 	openResults: function(activity, user, type){
