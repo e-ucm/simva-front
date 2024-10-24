@@ -59,10 +59,19 @@ var LimeSurveyPainter = {
 	},
 
 	getEditExtraForm: function () {
-		return "";
+		return `<input hidden  id="edit_survey_prev_name" name="prevsurveyname" placeholder="Survey Name">
+		<input type="name" id="edit_survey_name" name="surveyname" placeholder="Survey Name">`;
 	},
 
 	updateInputEditExtraForm(activity) {
+		Simva.getSurveyProperties(activity.id, function(error, result) {
+			if(!error) {
+				var edit_survey_name = document.getElementById('edit_survey_name');
+				edit_survey_name.value = result;
+				var edit_survey_prev_name = document.getElementById('edit_survey_prev_name');
+				edit_survey_prev_name.value = result;
+			}
+		});
 	},
 
 	downloadBackup: function(activity, type, user){

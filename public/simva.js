@@ -248,6 +248,14 @@ var Simva = {
 		this.get(`${this.apiurl}/activities/${activity_id}`, callback);
 	},
 
+	getSurveyProperties: function(activity_id, callback){
+		this.get(`${this.apiurl}/activities/${activity_id}/surveyproperties`, callback);
+	},
+
+	updateSurveyProperties: function(activity_id, body, callback){
+		this.patch(`${this.apiurl}/activities/${activity_id}/surveyproperties`, body, callback);
+	},
+
 	getActivityProgress: function(activity_id, callback){
 		this.get(`${this.apiurl}/activities/${activity_id}/progress`, callback);
 	},
