@@ -71,17 +71,23 @@ var LimeSurveyPainter = {
 		// Step 1: Get the select element
 		var selectElement = document.getElementById('existing_survey_list');
 		// Step 2: Loop through the data and create options
-		this.utils.surveys.forEach(function(survey) {
-			// Step 3: Create a new option element
-			var option = document.createElement('option');
-			
-			// Step 4: Set the value and text of the option
-			option.value = survey.sid;
-			option.text = `${survey.surveyls_title} - ${survey.sid}`;
-
-			// Step 5: Append the option to the select element
-			selectElement.appendChild(option);
+		Simva.getSurveyList(activity._id, function(error, result) {
+			if(!error) {
+				this.utils = result;
+				this.utils.surveys.forEach(function(survey) {
+					// Step 3: Create a new option element
+					var option = document.createElement('option');
+					
+					// Step 4: Set the value and text of the option
+					option.value = survey.sid;
+					option.text = `${survey.surveyls_title} - ${survey.sid}`;
+		
+					// Step 5: Append the option to the select element
+					selectElement.appendChild(option);
+				});
+			}
 		});
+
 
 		// Set a specific option as selected
 		selectElement.value=activity.extra_data.surveyId;
