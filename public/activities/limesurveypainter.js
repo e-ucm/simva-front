@@ -85,12 +85,13 @@ var LimeSurveyPainter = {
 					// Step 5: Append the option to the select element
 					selectElement.appendChild(option);
 				});
+				
+				// Set a specific option as selected
+				selectElement.value=activity.extra_data.surveyId;
 			}
 		});
 
 
-		// Set a specific option as selected
-		selectElement.value=activity.extra_data.surveyId;
 	},
 
 	downloadBackup: function(activity, type, user){

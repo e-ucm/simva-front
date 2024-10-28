@@ -820,10 +820,10 @@
 				$('#edit_activity_extras').empty();
 				$('#edit_activity_extras').append(PainterFactory.Painters[activity.type].getEditExtraForm());
 				PainterFactory.Painters[activity.type].updateInputEditExtraForm(activity);
-				$('#edit_activity').toggleClass('shown');
 				$('#edit_activity input[name="test"]').val(activity.test);
 				$('#edit_activity span[class="error"]').val("");
 				$('#edit_activity input[name="activity"]').val(activity._id);
+				$('#edit_activity').toggleClass('shown');
 			}
 		});
 	}
