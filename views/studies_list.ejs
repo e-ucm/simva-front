@@ -114,11 +114,11 @@
 		}
 	}
 
-	let deleteStudy = function(study){
+	let deleteStudy = function(studyid, studyname){
 		event.preventDefault();
 		event.stopPropagation();
-		if(confirm("Are you sure do you want to delete the study?\nAll the tests, activities and data will be deleted too.")){
-			Simva.deleteStudy(study, function(error, result){
+		if(confirm(`Are you sure do you want to delete the study '${studyname}'?\nAll the tests, activities and data will be deleted too.`)){
+			Simva.deleteStudy(studyid, function(error, result){
 				if(!error){
 					refreshStudies();
 				}
@@ -141,7 +141,7 @@
 	let toCard = function(study){
 		return `<a class="stopable" href="/studies/${study._id}"><div class="studycard selectable card third">
 			<span class="button yellow" onclick="openEditStudyForm('${study._id}', '${study.name}')">🖍️</span>
-			<span class="button red delete" onclick="deleteStudy('${study._id}')">X</span>
+			<span class="button red delete" onclick="deleteStudy('${study._id}', '${study.name}')">X</span>
 			<h1>Study: ${study.name}</h1>
 			<p><strong>Groups:</strong> ${study.groups.length}</p>
 			<p><strong>Tests:</strong> ${study.tests.length}</p>

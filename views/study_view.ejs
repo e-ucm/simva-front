@@ -726,11 +726,11 @@
 
 	// Functionality
 
-	let removeGroup = function(group){
-		if(confirm("Are you sure do you want to delete this group?")){
+	let deleteGroup = function(groupid, groupname){
+		if(confirm(`Are you sure do you want to delete the group '${groupname}' from study '${study.name}'?`)){
 			let toremove = -1;
 			for (var i = 0; i < study.groups.length; i++) {
-				if(study.groups[i] === group){
+				if(study.groups[i] === groupid){
 					toremove = i;
 					break;
 				}
@@ -744,16 +744,16 @@
 		}
 	}
 
-	let removePlatform = function(platform){
-		if(confirm("Are you sure do you want to delete this platform?")){
+	let deletePlatform = function(platform){
+		if(confirm("Are you sure do you want to delete this platform from study '${study.name}'")){
 			Simva.removePlatform(platform, function(error, result){
 				reloadStudy();
 			});
 		}
 	}
 
-	let removeOwner = function(owner){
-		if(confirm("Are you sure do you want to delete this owner?")){
+	let deleteOwner = function(owner){
+		if(confirm(`Are you sure do you want to delete the owner '${owner}' from study '${study.name}'?`)){
 			let toremove = -1;
 			for (var i = 0; i < study.owners.length; i++) {
 				if(study.owners[i] === owner){
@@ -770,11 +770,11 @@
 		}
 	}
 
-	let deleteTest = function(test){
-		if(confirm("Are you sure do you want to delete the test?\nAll the activities and data will be deleted too.")){
+	let deleteTest = function(testid, testName) {
+		if(confirm(`Are you sure do you want to delete the test '${testName}' from study '${study.name}'?\nAll the activities and data will be deleted too.`)){
 			let toremove = -1;
 			for (var i = 0; i < study.tests.length; i++) {
-				if(study.tests[i] === test){
+				if(study.tests[i] === testid){
 					toremove = i;
 					break;
 				}
@@ -796,12 +796,16 @@
 		});
 	}
 
-	let deleteActivity = function(activity){
-		if(confirm("Are you sure do you want to delete the activity?\nAll the data of the activity will be deleted too.")){
-			Simva.deleteActivity(activity, function(error, result){
-				reloadStudy();
-			});
-		}
+	let deleteActivity = function(activityid, activityname, testid){
+		Simva.getStudyTest(studyid, testid, function(error, test){
+			if(!error) {
+				if(confirm(`Are you sure do you want to delete the activity '${activityname}' of test '${test.name}' from study '${study.name}'?\nAll the data of the activity will be deleted too.`)){
+					Simva.deleteActivity(activityid, function(error, result){
+						reloadStudy();
+					});
+				}
+			}
+		});
 	}
 
 	let openActivityForm = function(test){
@@ -974,7 +978,7 @@
 			<div class="top"><h3>${test.name}</h3><input class="violet" type="button" value="Expand/Collapse" onclick="toggleTest('${test._id}')">
 			<input class="green" type="button" value="Add activity" onclick="openActivityForm('${test._id}')">
 			<input class="yellow" type="button" value="Edit" onclick="openEditTestForm('${test._id}')">
-			<input class="red" type="button" value="Delete" onclick="deleteTest('${test._id}')">
+			<input class="red" type="button" value="Delete" onclick="deleteTest('${test._id}', '${test.name}')">
 			<input class="orange" type="button" value="Duplicate" onclick="openEditDuplicateForm('${test._id}')"></div>
 			<div class="activities collapsed">${roller}</div>`);
 	}
@@ -1012,7 +1016,7 @@
 		if(owner == '<%= user.data.username %>'){
 			toret += ' disabled="disabled"';
 		}else{
-			toret += ` onclick="removeOwner('${owner}')"`
+			toret += ` onclick="deleteOwner('${owner}')"`
 		}
 
 		toret += '></td></tr>';
@@ -1020,7 +1024,7 @@
 	}
 
 	let groupRow = function(group){
-		let toret = `<tr><td>${group.name}</td><td><input class="red" type="button" value="Remove" onclick="removeGroup('${group._id}')" `
+		let toret = `<tr><td>${group.name}</td><td><input class="red" type="button" value="Remove" onclick="deleteGroup('${group._id}', '${group.name}')" `
 		if(group.link && group.link.type){
 			toret += ' disabled';
 		}

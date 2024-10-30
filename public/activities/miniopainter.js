@@ -84,7 +84,7 @@ var ActivityPainter = {
 		$(`#test_${activity.test} .activities`).append(`<div id="activity_${activity._id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
 			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
+			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
 			<p class="subtitle">${this.simpleName}</p>
 			<p>Minio: <a href="${this.utils.minio_url}${this.utils.minio_bucket}/${this.utils.topics_dir}/${this.utils.trace_topic}/_id=${activity._id}/
 			" target="_blank">Open minio</a></p>

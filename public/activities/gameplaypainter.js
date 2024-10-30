@@ -163,7 +163,7 @@ var GameplayActivityPainter = {
 		let activitybox = `<div id="activity_${activity._id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
 			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
+			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
 			<p class="subtitle">${this.simpleName}</p>`;
 		
 		/*
@@ -196,10 +196,10 @@ var GameplayActivityPainter = {
 		activitybox += '</p>';
 		activitybox += `<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>% [ <doneres>0</doneres>/<total>0</total> ]</span></div>`
 		if(activity.extra_data.config.trace_storage){
-			activitybox += `<div id="progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>GameProgress:  <partial>0</partial>(<done>0</done>)%  [ <partialres>0</partialres> (<doneres>0</doneres>) /<total>0</total> ]</span></div>`
+			activitybox += `<div id="progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>GameProgress:  <done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>`
 		}
 		if(activity.extra_data.config.backup){
-			activitybox += `<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>BackupResults:  <partial>0</partial>(<done>0</done>)%  [ <partialres>0</partialres> (<doneres>0</doneres>) /<total>0</total> ]</span></div>`
+			activitybox += `<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>BackupResults:  <done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>`
 		}
 		activitybox += `${this.paintActivityParticipantsTable(activity, participants)}</div>`;
 

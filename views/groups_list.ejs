@@ -92,11 +92,11 @@
 	}
 
 
-	let deleteGroup = function(group){
+	let deleteGroup = function(groupid, groupname){
 		event.preventDefault();
 		event.stopPropagation();
-		if(confirm("Are you sure do you want to delete the group?\nGroup will be removed to all the tests, activities and data.")){
-			Simva.deleteGroup(group, function(error, result){
+		if(confirm(`Are you sure do you want to delete the group '${groupname}'?\nGroup will be removed to all the studies, tests and activities.`)){
+			Simva.deleteGroup(groupid, function(error, result){
 				if(!error){
 					Simva.getGroups(function(error, result){
 						if(!error){
@@ -111,7 +111,7 @@
 	let toCard = function(group){
 		return `<a href="/groups/${group._id}"><div class="selectable card third">
 			<input class="yellow" type="button" value="🖍️" onclick="openEditGroupForm('${group._id}','${group.name}')">
-			<input class="red" type="button" value="X" onclick="deleteGroup('${group._id}')">
+			<input class="red" type="button" value="X" onclick="deleteGroup('${group._id}', '${group.name}')">
 			<h1>Group: ${group.name}</h1>
 			<p><strong>Participants:</strong> ${group.participants.length}</p>
 			<p><strong>Owners:</strong> ${group.owners.length}</p>

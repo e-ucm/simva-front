@@ -86,13 +86,13 @@ var ActivityPainter = {
 		$(`#test_${activity.test} .activities`).append(`<div id="activity_${activity._id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
 			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
+			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
 			<p class="subtitle">${this.simpleName}</p>
 			<p>Default Activity</p>
 			<p>Result:<a onclick="ActivityPainter.downloadResults('${activity._id}')"> ⬇️</a></p>
 			<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>% [ <doneres>0</doneres>/<total>0</total> ]</span></div>
-			<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%  [ <partialres>0</partialres> (<doneres>0</doneres>) /<total>0</total> ]</span></div>
-			<div id="progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Progress:<partial>0</partial>(<done>0</done>)%  [ <partialres>0</partialres> (<doneres>0</doneres>) /<total>0</total> ]</span></div>
+			<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>
+			<div id="progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Progress:<done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>
 			${this.paintActivityParticipantsTable(activity, participants)}</div>`);
 	},
 

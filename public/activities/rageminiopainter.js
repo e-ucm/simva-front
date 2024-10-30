@@ -83,7 +83,7 @@ var RageMinioActivityPainter = {
 	paintActivity: function(activity, participants){
 		$(`#test_${activity.test} .activities`).append(`<div id="activity_${activity._id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
+			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
 			<p class="subtitle">${this.simpleName}</p>
 			<p>Analytics: <a href="${this.utils.dashboard_url}${activity.extra_data.analytics.activity._id}${this.utils.dashboard_query}" target="_blank">Dashboard</a> - 
 			Minio: <a href="${this.utils.minio_url}${this.utils.minio_bucket}/${this.utils.topics_dir}/${this.utils.trace_topic}/_id=${activity._id}/" 

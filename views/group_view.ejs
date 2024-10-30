@@ -310,35 +310,39 @@
 	}
 
 	let removeParticipant = function(participant){
-		let toremove = -1;
-		for (var i = 0; i < group.participants.length; i++) {
-			if(group.participants[i] === participant){
-				toremove = i;
-				break;
+		if(confirm(`Are you sure do you want to delete the participant '${participant}' of group '${group.name}'?`)){
+			let toremove = -1;
+			for (var i = 0; i < group.participants.length; i++) {
+				if(group.participants[i] === participant){
+					toremove = i;
+					break;
+				}
 			}
+
+			group.participants.splice(i, 1);
+
+			Simva.updateGroup(group, function(error, result){
+				reloadGroup();
+			});
 		}
-
-		group.participants.splice(i, 1);
-
-		Simva.updateGroup(group, function(error, result){
-			reloadGroup();
-		});
 	}
 
-	let removeOwner = function(owner){
-		let toremove = -1;
-		for (var i = 0; i < group.owners.length; i++) {
-			if(group.owners[i] === owner){
-				toremove = i;
-				break;
+	let deleteOwner = function(owner){
+		if(confirm(`Are you sure do you want to delete the owner '${owner}' of group '${group.name}'?`)){
+			let toremove = -1;
+			for (var i = 0; i < group.owners.length; i++) {
+				if(group.owners[i] === owner){
+					toremove = i;
+					break;
+				}
 			}
+
+			group.owners.splice(i, 1);
+
+			Simva.updateGroup(group, function(error, result){
+				reloadGroup();
+			});
 		}
-
-		group.owners.splice(i, 1);
-
-		Simva.updateGroup(group, function(error, result){
-			reloadGroup();
-		});
 	}
 
 	let paintGroup = function(group, participants){
@@ -369,7 +373,7 @@
 		if(owner == '<%= user.data.username %>'){
 			toret += ' disabled="disabled"';
 		}else{
-			toret += ` onclick="removeOwner('${owner}')"`
+			toret += ` onclick="deleteOwner('${owner}')"`
 		}
 
 		toret += '></td></tr>';
