@@ -9,6 +9,12 @@
 <div id="study">
 	<div class="left">
 		<div class="graybox owners">
+			<table id="active">
+			</table>
+			<input class="violet" type="button" id="activation" value="" onclick="setActive()">
+		</div>
+
+		<div class="graybox owners">
 			<h2>Owners</h2>
 			<p></p>
 			<table id="owners">
@@ -298,7 +304,6 @@
 			// Example: You might send events like "activity_initialized" from the server
 			sseClient.triggerEvent('activity_initialized');
 			sseClient.on('activity_initialized', (data) => {
-				//console.log('Activity initialized:', data);
 				if(data.activityType == "gameplay") {
 					PainterFactory.Painters[data.activityType].updateActivityProgress(data.activityId, data.user, 0);
 				}
@@ -311,7 +316,6 @@
 			// Example: You might send events like "activity_progressed" from the server
 			sseClient.triggerEvent('activity_progressed');
 			sseClient.on('activity_progressed', (data) => {
-				//console.log('Activity progressed:', data);
 				if(data.activityType == "gameplay") {
 					PainterFactory.Painters[data.activityType].updateActivityProgress(data.activityId, data.user, data.val);
 				}
@@ -321,7 +325,6 @@
 			// Example: You might send events like "activity_completed" from the server
 			sseClient.triggerEvent('activity_completed');
 			sseClient.on('activity_completed', (data) => {
-				//console.log('Activity completed:', data);
 				if(data.activityType == "gameplay") {
 					PainterFactory.Painters[data.activityType].updateActivityProgress(data.activityId, data.user, 1);
 					PainterFactory.Painters[data.activityType].updateActivityCompletion(data.activityId, data.user, "true");
@@ -881,6 +884,8 @@
 
 		paintOwners(study.owners);
 
+		paintActive(study.active);
+
 		paintAllocator(allocator, tests, groups, participants);
 
 		paintGroups(groups);
@@ -914,6 +919,34 @@
 				$('#group_select').append(addGroupRow(groups[i]));
 			}
 		}
+	}
+
+	let paintActive = function(active){
+		$('#active').html('');
+		if(active == null || active == "true") {
+			$('#active').append('<h2>Active</h2>');
+			document.getElementById("activation").value="Achivate"
+		} else {
+			$('#active').append('<h2>Archived</h2>');
+			document.getElementById("activation").value="Activate"
+		}
+	}
+
+	let setActive = function(){
+		Simva.getStudy(studyid, function(error, study){
+			if(!error) {
+				if(study.active == null || study.active == "true") { 
+					study.active = false;
+				} else {
+					study.active = true;
+				}
+				Simva.updateStudy(study, function(error, result){
+					if(!error) {
+						reloadStudy();
+					}
+				})
+			}
+		});
 	}
 
 	let paintOwners = function(owners){
