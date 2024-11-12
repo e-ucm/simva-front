@@ -251,7 +251,7 @@ var GameplayActivityPainter = {
 	},
 
 	paintActivityResult: function(activity, results){
-		PainterFactory.Painters["activity"].paintActivityResult(activity, results);
+		PainterFactory.Painters["activity"].paintActivityResult(activity, results, false, "No Backup", null, null, true, "See Backup");
 	},
 
 	updateActivityResult: function(activityId, username, backup) {

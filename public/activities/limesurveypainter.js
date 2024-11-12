@@ -279,7 +279,7 @@ var LimeSurveyPainter = {
 			}
 			map[usernames[i]] = state;
 		}
-		PainterFactory.Painters["activity"].paintActivityResult(activity, map, "No Results", "Started", "Started", "Completed","Completed","LimeSurveyPainter");
+		PainterFactory.Painters["activity"].paintActivityResult(activity, map, "No Results", "No Results", "Started", "Started", "Completed","Completed","LimeSurveyPainter");
 	},
 
 	updateActivityResult: function(activityId, username, result) {

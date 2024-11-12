@@ -177,16 +177,16 @@ var ActivityPainter = {
 		$(`#progress_${activity._id} total`).text(usernames.length);
 	},
 
-	paintActivityResult: function(activity, results, displayDefaultValue='No Results', partialValue=null,displayPartialValue=null, finalValue="true", displayFinalValue="See Results",painter="ActivityPainter"){
+	paintActivityResult: function(activity, results, defaultValue='No Results', displayDefaultValue='No Results', partialValue=null,displayPartialValue=null, finalValue="true", displayFinalValue="See Results",painter="ActivityPainter"){
 		let usernames = Object.keys(results);
 
 		let done = 0, partial = 0;
 
 		for (var i = 0; i < usernames.length; i++) {
 			let status = results[usernames[i]];
-			let result = `<span>${displayDefaultValue}</span>`
+			let result= `<span>${displayDefaultValue}</span>`;
 			let color = 'red';
-			let state = displayDefaultValue;
+			let state = defaultValue;
 			if(status){
 				if(status == finalValue){
 					color = 'green';
@@ -199,10 +199,10 @@ var ActivityPainter = {
 					partial++;
 				} else {
 					color = 'red';
-					state = displayDefaultValue;
+					state = defaultValue;
 				}
-				if(state == displayDefaultValue) {
-					result = `<span>${state}</span>`;
+				if(state == defaultValue) {
+					result = `<span>${displayDefaultValue}</span>`;
 				} else {
 					result = `<span>
 					<a onclick="${painter}.openResults('${activity._id}','${usernames[i]}')">${state}</a>
@@ -251,7 +251,7 @@ var ActivityPainter = {
 		}
 	},
 
-	updateActivityResult: function(activityId, username, result, defaultValue='No Results', partialValue=null,displayPartialValue=null, finalValue="true", displayFinalValue="See Results" painter="ActivityPainter") {
+	updateActivityResult: function(activityId, username, result, defaultValue='No Results', partialValue=null,displayPartialValue=null, finalValue="true", displayFinalValue="See Results", painter="ActivityPainter") {
 		var users = parseInt(document.querySelector(`#result_progress_${activityId} total`).textContent);
 		var res= parseInt(document.querySelector(`#result_progress_${activityId} doneres`).textContent);
 		var partialRes= parseInt(document.querySelector(`#result_progress_${activityId} partialres`).textContent);

@@ -207,26 +207,6 @@ var ManualActivityPainter = {
 		$(`#completion_progress_${activityId} done`).text(progress);
 	},
 
-	openResults: function(activity, user){
-		Simva.getActivityResultForUser(activity, user, function(error, result){
-			if(error){
-				$.toast({
-					heading: 'Error loading the result',
-					text: error.message,
-					position: 'top-right',
-					icon: 'error',
-					stack: false
-				});
-			}else{
-				let content = `<div style="padding: 20px;">${result[user]}</div>`;
-				let context = $('#iframe_floating iframe')[0].contentWindow.document;
-				let body = $('body', context);
-				body.html(content);
-				Utils.toggleAddForm('iframe_floating');
-			}
-		})
-	},
-
 	toggleCompletion: function(checkbox, activityId, username){
 		let status = $(checkbox).is(":checked");
 
