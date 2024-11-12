@@ -10,3 +10,40 @@
 	<p>Use the Studies tab to create an study where a set of activities can be set up for an evaluation to be performed.</p>
 	<p>To manage Users and Groups, use the Groups tab where groups of users and users themselves can be created in order to allow them to participate in the studies.</p>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        // Fetch studies and check if there is a study to redirect to
+        Simva.getStudies(function(error, studies) {
+            if (!error && studies.length > 0) {
+				let redirect = null;
+				let studiesProcessed = 0;
+
+				for (let i = 0; i < studies.length; i++) {
+					let studyId = studies[i]._id;
+
+					Simva.getStudySchedule(studyId, function(error, result) {
+						studiesProcessed++;
+
+						if (!error && result.next !== null && redirect === null) {
+							// Set redirect if no other study with a schedule has been found
+							redirect = `/scheduler/${studyId}`;
+						}
+
+						// After all studies are processed, decide on redirection
+						if (studiesProcessed === studies.length) {
+							// If no study with `result.next` was found, use the last study's ID
+							if (redirect === null && studies.length > 0) {
+								redirect = `/scheduler/${studies[studies.length - 1]._id}`;
+							}
+							// Redirect to the determined URL
+							if (redirect) {
+								window.location.href = redirect;
+							}
+						}
+					});
+				}
+			}
+        });
+    });
+</script>

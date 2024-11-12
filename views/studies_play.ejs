@@ -4,27 +4,6 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		$("#new_study_form").on('submit', function(event){
-			event.preventDefault();
-			let form = Utils.getFormData($("#new_study_form"));
-
-			Simva.addStudy(form.name, function(error, result){
-				if(error && error.responseJSON){
-					$("#error").text(error.responseJSON.message);
-				}else{
-					Utils.toggleAddForm('new_study');
-					$('#studies_list').html(roller);
-					Simva.getStudies(function(error, result){
-						if(!error){
-							paintStudies(result);
-						}
-					});
-				}
-			});
-
-			return false;
-		});
-
 		$('#studies_list').html(roller);
 		Simva.getStudies(function(error, result){
 			if(!error){
@@ -40,7 +19,7 @@
 				$('#studies_list').append(toCard(studies[i]));
 			}
 		}else{
-			$('#studies_list').text('You have no studies yet. Create one using the bottom right (+) button.');
+			$('#studies_list').text('You have no studies yet to participate.');
 		}
 	}
 
