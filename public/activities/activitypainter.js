@@ -251,7 +251,7 @@ var ActivityPainter = {
 		}
 	},
 
-	updateActivityResult: function(activityId, username, result, defaultValue='No Results', partialValue=null,displayPartialValue=null, finalValue="true", displayFinalValue="See Results", painter="ActivityPainter") {
+	updateActivityResult: function(activityId, username, result, defaultValue='No Results', displayDefaultValue='No Results', partialValue=null,displayPartialValue=null, finalValue="true", displayFinalValue="See Results", painter="ActivityPainter") {
 		var users = parseInt(document.querySelector(`#result_progress_${activityId} total`).textContent);
 		var res= parseInt(document.querySelector(`#result_progress_${activityId} doneres`).textContent);
 		var partialRes= parseInt(document.querySelector(`#result_progress_${activityId} partialres`).textContent);
@@ -273,12 +273,12 @@ var ActivityPainter = {
 				}
 			} else {
 				color = 'red';
-				state = defaultValue;
-				if(!prev.includes(defaultValue)) {
-					if(prev.includes(partialValue)) {
+				state = displayDefaultValue;
+				if(!prev.includes(displayDefaultValue)) {
+					if(prev.includes(displayPartialValue)) {
 						newPartialRes = partialRes-1;
 					}
-					if(prev.includes(finalValue)) {
+					if(prev.includes(displayFinalValue)) {
 						newRes = res+1;
 					}
 				}
@@ -288,7 +288,7 @@ var ActivityPainter = {
 			<a onclick="${painter}.downloadResults('${activityId}','${username}')"> ⬇️</a>
 			</span>`;
 		} else {
-			span = `<span><a>${defaultValue}</a></span>`;
+			span = `<span><a>${displayDefaultValue}</a></span>`;
 		}
 		$(`#result_${activityId}_${username}`).removeClass();
 		$(`#result_${activityId}_${username}`).addClass(color);
