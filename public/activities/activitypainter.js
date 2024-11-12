@@ -177,31 +177,31 @@ var ActivityPainter = {
 		$(`#progress_${activity._id} total`).text(usernames.length);
 	},
 
-	paintActivityResult: function(activity, results, defaultValue='No Results', partialValue=null, finalValue="See Results", painter="ActivityPainter"){
+	paintActivityResult: function(activity, results, displayDefaultValue='No Results', partialValue=null,displayPartialValue=null, finalValue="true", displayFinalValue="See Results",painter="ActivityPainter"){
 		let usernames = Object.keys(results);
 
 		let done = 0, partial = 0;
 
 		for (var i = 0; i < usernames.length; i++) {
 			let status = results[usernames[i]];
-			let result = `<span>${defaultValue}</span>`
+			let result = `<span>${displayDefaultValue}</span>`
 			let color = 'red';
-			let state = defaultValue;
+			let state = displayDefaultValue;
 			if(status){
 				if(status == finalValue){
 					color = 'green';
-					state = finalValue;
+					state = displayFinalValue;
 					done++;
 					partial++;
 				} else if(status == partialValue) {
 					color = 'yellow';
-					state = partialValue;
+					state = displayPartialValue;
 					partial++;
 				} else {
 					color = 'red';
-					state = defaultValue;
+					state = displayDefaultValue;
 				}
-				if(state == defaultValue) {
+				if(state == displayDefaultValue) {
 					result = `<span>${state}</span>`;
 				} else {
 					result = `<span>
@@ -251,7 +251,7 @@ var ActivityPainter = {
 		}
 	},
 
-	updateActivityResult: function(activityId, username, result, defaultValue='No Results', partialValue=null, finalValue="See Results", painter="ActivityPainter") {
+	updateActivityResult: function(activityId, username, result, defaultValue='No Results', partialValue=null,displayPartialValue=null, finalValue="true", displayFinalValue="See Results" painter="ActivityPainter") {
 		var users = parseInt(document.querySelector(`#result_progress_${activityId} total`).textContent);
 		var res= parseInt(document.querySelector(`#result_progress_${activityId} doneres`).textContent);
 		var partialRes= parseInt(document.querySelector(`#result_progress_${activityId} partialres`).textContent);
@@ -261,13 +261,13 @@ var ActivityPainter = {
 		if(result){
 			if(result == finalValue){
 				color = 'green';
-				state = finalValue;
+				state = displayFinalValue;
 				if(! prev.includes(finalValue)) {
 					newRes = res+1;
 				}
 			} else if(result == partialValue) {
 				color = 'yellow';
-				state = partialValue;
+				state = displayPartialValue;
 				if(! prev.includes(partialValue)) {
 					newPartialRes = partialRes+1;
 				}
