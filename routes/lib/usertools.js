@@ -81,6 +81,14 @@ module.exports = {
 			}).then(response => {
 				try {
 					console.log(`refreshAuth() - Body : ${response.body}`);
+					if(response.body == "undefined" || response.body == null) {
+						callback({
+							status: 500,
+							data: {
+								message: 'refresh_token response undefined.'
+							}
+						});
+					}
 					let b = JSON.parse(response.body);
 					let simvaToken = b.access_token;
 					console.log(`refreshAuth() - Access Token : ${simvaToken}`);

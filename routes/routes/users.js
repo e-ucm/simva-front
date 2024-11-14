@@ -73,7 +73,9 @@ module.exports = function(auth, config){
       }
       usertools.setUser(req, user);
       console.log(user);
-      res.redirect('/');
+      const intendedUrl = req.session.intendedUrl || '/';
+      delete req.session.intendedUrl;
+      res.redirect(intendedUrl);
     })(req, res, next);
   });
 

@@ -6,6 +6,7 @@
 	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 </div>-->
 <h1>Study: <span id="study_name"></span></h1><input class="yellow" type="button" value="Edit Study Name" onclick="openEditStudyForm('<%= study %>')">
+<input class="blue" type="button" value="Generate Scheduler Tiny URL" onclick="generateTinyURL()">
 <div id="study">
 	<div class="left">
 		<div class="graybox owners">
@@ -625,7 +626,15 @@
 
 		Utils.download(filename, content);
 	}
-
+	generateTinyURL = function() {
+		let url=`<%= config.simva.url %>/scheduler/${studyid}`;
+		$.get(`https://tinyurl.com/api-create.php?url=${url}`, function(shorturl){
+			// Copy the text inside the text field
+			navigator.clipboard.writeText(shorturl);
+			// Alert Short URL
+			alert(shorturl);
+		});
+	}
 	let downloadStudyConfig = function() {
 		Simva.exportStudyConfig(study._id, function(error, result) {
 			if(!error){

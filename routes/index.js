@@ -55,15 +55,16 @@ app.set('view engine', 'ejs');
 
 var auth = function(level){
   return function(req, res, next) {
+    //console.log(req.originalUrl);
     if (req.session && req.session.user){
       usertools.authExpired(req, config, function(error, result){
         if(error){
-          //res.status(error.status).send(error.data);
           var pre = '/';
           for(var i = 0; i < level; i++){
             pre += '../';
           }
-          return res.redirect(`${pre}users/login`); 
+          req.session.intendedUrl=`${req.originalUrl}`;
+          return res.redirect(`${pre}users/openid`); 
         } else if(result) {
           console.log("auth() - Refreshing token");
           let user = req.session.user;
@@ -94,7 +95,12 @@ var auth = function(level){
       for(var i = 0; i < level; i++){
         pre += '../';
       }
-      return res.redirect(`${pre}users/login`);
+      if(req.originalUrl == '/' || req.originalUrl == '') {
+        return res.redirect(`${pre}users/login`);
+      } else {
+        req.session.intendedUrl=`${req.originalUrl}`;
+        return res.redirect(`${pre}users/openid`);
+      }
     }
   };
 };
