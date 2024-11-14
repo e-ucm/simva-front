@@ -74,7 +74,7 @@ var ActivityPainter = {
 		activity.tmp = {};
 
 		Simva.getActivityCompletion(activity._id, function(error, result){
-			tmp.paintActivityCompletion(activity, result);
+			tmp.paintActivityCompletion(activity, result, true);
 		});
 
 		Simva.hasActivityResult(activity._id, function(error, result){
@@ -93,10 +93,10 @@ var ActivityPainter = {
 			<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>% [ <doneres>0</doneres>/<total>0</total> ]</span></div>
 			<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>
 			<div id="progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Progress:<done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>
-			${this.paintActivityParticipantsTable(activity, participants)}</div>`);
+			${this.paintActivityParticipantsTable(activity, participants, true)}</div>`);
 	},
 
-	paintActivityParticipantsTable: function(activity, participants){
+	paintActivityParticipantsTable: function(activity, participants, checkbox=false){
 		let toret = '<table><tr><th>User</th><th>Completed</th><th>Result</th></tr>';
 
 		for (var i = 0; i < participants.length; i++) {
@@ -105,8 +105,8 @@ var ActivityPainter = {
 			}
 			
 			toret += `<tr><td>${participants[i].username}</td>
-				<td id="completion_${activity._id}_${participants[i].username}">---</td>
-				<td id="result_${activity._id}_${participants[i].username}">---</td>`;
+				${this.paintCompletionRow(activity._id,participants[i].username, checkbox)}
+				${this.paintResultRow(activity._id,participants[i].username)}</tr>`;
 		}
 
 		toret += '</table>';
@@ -114,7 +114,21 @@ var ActivityPainter = {
 		return toret;
 	},
 
-	paintActivityCompletion: function(activity, status){
+	paintCompletionRow(activity, participant, checkbox=false) {
+		if(checkbox) {
+			return `<td id="completion_${activity}_${participant}">
+				<input type="checkbox" onchange="PainterFactory.Painters['activity'].toggleCompletion(this, '${activity}', '${participant}')">
+			</td>`;
+		} else {
+			return `<td id="completion_${activity}_${participant}">---</td>`;
+		}
+	},
+
+	paintResultRow(activity, participant) {
+		return `<td id="result_${activity}_${participant}">---</td>`;
+	},
+
+	paintActivityCompletion: function(activity, status, checkbox=false){
 		let usernames = Object.keys(status);
 
 		let done = 0;
@@ -123,11 +137,22 @@ var ActivityPainter = {
 			if(status[usernames[i]]){
 				done++;
 			}
-
-			let completion = `<span>${status[usernames[i]]}</span>`
-			$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
-			$(`#completion_${activity._id}_${usernames[i]}`).empty();
-			$(`#completion_${activity._id}_${usernames[i]}`).append(completion);
+			if(checkbox) {
+				if(status[usernames[i]]){
+					$(`#completion_${activity._id}_${usernames[i]}`).addClass('green');
+					$(`#completion_${activity._id}_${usernames[i]}`).removeClass('red');
+				}else{
+					$(`#completion_${activity._id}_${usernames[i]}`).removeClass('green');
+					$(`#completion_${activity._id}_${usernames[i]}`).addClass('red');
+				}
+	
+				$(`#completion_${activity._id}_${usernames[i]}`).find('input[type="checkbox"]').prop('checked', status[usernames[i]]);
+			} else {
+				let completion = `<span>${status[usernames[i]]}</span>`
+				$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
+				$(`#completion_${activity._id}_${usernames[i]}`).empty();
+				$(`#completion_${activity._id}_${usernames[i]}`).append(completion);
+			}
 		}
 
 		let progress = Math.round((done / usernames.length) * 1000) / 10; 
@@ -235,20 +260,40 @@ var ActivityPainter = {
 		$(`#result_progress_${activity._id} total`).text(usernames.length);
 	},
 
-	updateActivityCompletion: function(activityId, username, completion) {
+	updateActivityCompletion: function(activityId, username, completion, checkbox=false) {
 		var users = parseInt(document.querySelector(`#completion_progress_${activityId} total`).textContent);
 		var res= parseInt(document.querySelector(`#completion_progress_${activityId} doneres`).textContent);
-		var previousCompletion= document.querySelector(`#completion_${activityId}_${username}`).textContent;
-		$(`#completion_${activityId}_${username}`).addClass(completion == 'false' ? 'red' : 'green');
-		$(`#completion_${activityId}_${username}`).empty();
-		$(`#completion_${activityId}_${username}`).append(completion);
-		if(previousCompletion == "false") {
-			var newRes = res + 1;
-			$(`#completion_progress_${activityId} doneRes`).text(newRes);
-			var progress = Math.round((newRes / users) * 1000) / 10; 
-			$(`#completion_progress_${activityId} .done`).css('width', `${progress}%` );
-			$(`#completion_progress_${activityId} done`).text(progress);
+		var newRes;
+		if(checkbox) {
+			var previous= $(`#completion_${activityId}_${username}`).find('input[type="checkbox"]').prop('checked');
+			if(completion) {
+				$(`#completion_${activityId}_${username}`).addClass('green');
+				$(`#completion_${activityId}_${username}`).removeClass('red');
+				newRes=res+1;
+				if(! previous) {
+					$(`#completion_${activityId}_${username}`).find('input[type="checkbox"]').prop('checked', true);
+				}
+			} else {
+				$(`#completion_${activityId}_${username}`).removeClass('green');
+				$(`#completion_${activityId}_${username}`).addClass('red');
+				newRes=res-1;
+				if(previous) {
+					$(`#completion_${activityId}_${username}`).find('input[type="checkbox"]').prop('checked', false);
+				}
+			}
+		} else {
+			var previousCompletion= document.querySelector(`#completion_${activityId}_${username}`).textContent;
+			$(`#completion_${activityId}_${username}`).addClass(completion == 'false' ? 'red' : 'green');
+			$(`#completion_${activityId}_${username}`).empty();
+			$(`#completion_${activityId}_${username}`).append(completion);
+			if(previousCompletion == "false") {
+				newRes = res + 1;
+			}
 		}
+		$(`#completion_progress_${activityId} doneRes`).text(newRes);
+		var progress = Math.round((newRes / users) * 1000) / 10; 
+		$(`#completion_progress_${activityId} .done`).css('width', `${progress}%` );
+		$(`#completion_progress_${activityId} done`).text(progress);
 	},
 
 	updateActivityResult: function(activityId, username, result, defaultValue='No Results', displayDefaultValue='No Results', partialValue=null,displayPartialValue=null, finalValue="true", displayFinalValue="See Results", painter="ActivityPainter") {
@@ -380,6 +425,22 @@ var ActivityPainter = {
 		} else {
 			Simva.downloadActivityResult(activity);
 		}
+	},
+
+	toggleCompletion: function(checkbox, activityId, username){
+		let status = $(checkbox).is(":checked");
+
+		if(status){
+			$(`#completion_${activityId}_${username}`).addClass('green');
+			$(`#completion_${activityId}_${username}`).removeClass('red');
+		}else{
+			$(`#completion_${activityId}_${username}`).removeClass('green');
+			$(`#completion_${activityId}_${username}`).addClass('red');
+		}
+
+		Simva.setActivityCompletion(activityId, username, status, function(){
+			console.log('saved');
+		});
 	}
 }
 

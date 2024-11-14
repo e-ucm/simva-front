@@ -225,13 +225,12 @@ var GameplayActivityPainter = {
 				toret += `<td>${participants[i].username}</td>`;
 			}
 
-			toret += `<td id="completion_${activity._id}_${participants[i].username}">---</td>`;
+			toret += `${PainterFactory.Painters["activity"].paintCompletionRow(activity._id,participants[i].username, true)}`;
 
 			toret += `<td id="progress_${activity._id}_${participants[i].username}" class="progress"><div class="partial"></div><div class="done"></div><span><done>0</done>%</span></td>`
-			//toret += `<td id="traces_${activity._id}_${participants[i].username}">---</td>`;
-			
+
 			if(activity.extra_data.config.backup){
-				toret += `<td id="result_${activity._id}_${participants[i].username}">---</td></tr>`;
+				toret += `${PainterFactory.Painters["activity"].paintResultRow(activity._id,participants[i].username)}`;
 			}else{
 				toret += '<td><i>Disabled</i></td>';
 			}
@@ -241,9 +240,9 @@ var GameplayActivityPainter = {
 
 		return toret;
 	},
-
+	
 	paintActivityCompletion: function(activity, status){
-		PainterFactory.Painters["activity"].paintActivityCompletion(activity, status);
+		PainterFactory.Painters["activity"].paintActivityCompletion(activity, status, true);
 	},
 
 	paintActivityProgress: function(activity, status){
@@ -259,7 +258,7 @@ var GameplayActivityPainter = {
 	},
 
 	updateActivityCompletion: function(activityId, username, completion) {
-		PainterFactory.Painters["activity"].updateActivityCompletion(activityId, username,completion);
+		PainterFactory.Painters["activity"].updateActivityCompletion(activityId, username, completion, true);
 	},
 
 	updateActivityProgress: function(activityId, username, result) {

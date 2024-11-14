@@ -262,7 +262,7 @@ var LimeSurveyPainter = {
 	},
 
 	updateActivityCompletion: function(activityId, username, completion) {
-		PainterFactory.Painters["activity"].updateActivityCompletion(activityId, username,completion);
+		PainterFactory.Painters["activity"].updateActivityCompletion(activityId, username, completion);
 	},
 
 	paintActivityResult: function(activity, results){

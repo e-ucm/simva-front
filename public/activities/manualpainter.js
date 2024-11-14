@@ -133,10 +133,8 @@ var ManualActivityPainter = {
 			}
 			
 			toret += `<tr><td>${participants[i].username}</td>
-				<td id="completion_${activity._id}_${participants[i].username}">
-					<input type="checkbox" onchange="ManualActivityPainter.toggleCompletion(this, '${activity._id}', '${participants[i].username}')">
-				</td>
-				<td id="result_${activity._id}_${participants[i].username}">---</td>`;
+				${PainterFactory.Painters['activity'].paintCompletionRow(activity._id,participants[i].username, true)}
+				${PainterFactory.Painters['activity'].paintResultRow(activity._id,participants[i].username)}</tr>`;
 		}
 
 		toret += '</table>';
@@ -145,36 +143,7 @@ var ManualActivityPainter = {
 	},
 
 	paintActivityCompletion: function(activity, status){
-		let usernames = Object.keys(status);
-
-		let done = 0;
-
-		for (var i = 0; i < usernames.length; i++) {
-			if(status[usernames[i]]){
-				done++;
-			}
-
-			if(status[usernames[i]]){
-				$(`#completion_${activity._id}_${usernames[i]}`).addClass('green');
-				$(`#completion_${activity._id}_${usernames[i]}`).removeClass('red');
-			}else{
-				$(`#completion_${activity._id}_${usernames[i]}`).removeClass('green');
-				$(`#completion_${activity._id}_${usernames[i]}`).addClass('red');
-			}
-
-			$(`#completion_${activity._id}_${usernames[i]}`).find('input[type="checkbox"]').prop('checked', status[usernames[i]]);
-		}
-
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
-
-		if(isNaN(progress)){
-			progress = 0;
-		}
-
-		$(`#completion_progress_${activity._id} .done`).css('width', `${progress}%` );
-		$(`#completion_progress_${activity._id} done`).text(progress);
-		$(`#completion_progress_${activity._id} doneres`).text(done);
-		$(`#completion_progress_${activity._id} total`).text(usernames.length);
+		PainterFactory.Painters["activity"].paintActivityCompletion(activity, status, true);
 	},
 
 	paintActivityResult: function(activity, results){
@@ -182,45 +151,7 @@ var ManualActivityPainter = {
 	},
 
 	updateActivityCompletion: function(activityId, username, completion) {
-		var users = parseInt(document.querySelector(`#completion_progress_${activityId} total`).textContent);
-		var res= parseInt(document.querySelector(`#completion_progress_${activityId} doneres`).textContent);
-		var previous= $(`#completion_${activityId}_${username}`).find('input[type="checkbox"]').prop('checked');
-		var newRes;
-		if(completion) {
-			$(`#completion_${activityId}_${username}`).addClass('green');
-			$(`#completion_${activityId}_${username}`).removeClass('red');
-			newRes=res+1;
-			if(! previous) {
-				$(`#completion_${activityId}_${username}`).find('input[type="checkbox"]').prop('checked', true);
-			}
-		} else {
-			$(`#completion_${activityId}_${username}`).removeClass('green');
-			$(`#completion_${activityId}_${username}`).addClass('red');
-			newRes=res-1;
-			if(previous) {
-				$(`#completion_${activityId}_${username}`).find('input[type="checkbox"]').prop('checked', false);
-			}
-		}
-		$(`#completion_progress_${activityId} doneRes`).text(newRes);
-		var progress = Math.round((newRes / users) * 1000) / 10; 
-		$(`#completion_progress_${activityId} .done`).css('width', `${progress}%` );
-		$(`#completion_progress_${activityId} done`).text(progress);
-	},
-
-	toggleCompletion: function(checkbox, activityId, username){
-		let status = $(checkbox).is(":checked");
-
-		if(status){
-			$(`#completion_${activityId}_${username}`).addClass('green');
-			$(`#completion_${activityId}_${username}`).removeClass('red');
-		}else{
-			$(`#completion_${activityId}_${username}`).removeClass('green');
-			$(`#completion_${activityId}_${username}`).addClass('red');
-		}
-
-		Simva.setActivityCompletion(activityId, username, status, function(){
-			console.log('saved');
-		});
+		PainterFactory.Painters["activity"].updateActivityCompletion(activityId, username, completion, true);
 	}
 }
 
