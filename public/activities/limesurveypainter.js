@@ -283,7 +283,7 @@ var LimeSurveyPainter = {
 	},
 
 	updateActivityResult: function(activityId, username, result) {
-		PainterFactory.Painters["activity"].updateActivityResult(activityId, username,result, "No Results", "Started", "Started", "Completed","Completed","LimeSurveyPainter");
+		PainterFactory.Painters["activity"].updateActivityResult(activityId, username,result, "No Results","No Results", "Started", "Started", "Completed","Completed","LimeSurveyPainter");
 	},
 
 	paintActivityTargets: function(activity, results){
