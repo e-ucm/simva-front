@@ -327,7 +327,6 @@
 			sseClient.triggerEvent('activity_completed');
 			sseClient.on('activity_completed', (data) => {
 				if(data.activityType == "gameplay") {
-					PainterFactory.Painters[data.activityType].updateActivityProgress(data.activityId, data.user, 1);
 					PainterFactory.Painters[data.activityType].updateActivityCompletion(data.activityId, data.user, "true");
 				}
 				if(data.activityType == "manual") {
