@@ -64,7 +64,13 @@ var auth = function(level){
             pre += '../';
           }
           req.session.intendedUrl=`${req.originalUrl}`;
-          return res.redirect(`${pre}users/openid`); 
+          if(req.session.intendedUrl.toLowerCase().includes("scheduler")) {
+            //console.log("Auth openid openidscheduler");
+            return res.redirect(`${pre}users/openidscheduler`); 
+          } else {
+            //console.log("Auth openid");
+            return res.redirect(`${pre}users/openid`); 
+          }
         } else if(result) {
           console.log("auth() - Refreshing token");
           let user = req.session.user;
@@ -99,7 +105,13 @@ var auth = function(level){
         return res.redirect(`${pre}users/login`);
       } else {
         req.session.intendedUrl=`${req.originalUrl}`;
-        return res.redirect(`${pre}users/openid`);
+        if(req.session.intendedUrl.toLowerCase().includes("scheduler")) {
+          //console.log("Auth openid openidscheduler");
+          return res.redirect(`${pre}users/openidscheduler`); 
+        } else {
+          //console.log("Auth openid");
+          return res.redirect(`${pre}users/openid`); 
+        }
       }
     }
   };
