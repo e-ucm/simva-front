@@ -85,7 +85,14 @@ module.exports = function(auth, config){
 
   router.get('/openid', passport.authenticate('openid'));
 
-  router.get('/openidscheduler', passport.authenticate('openid-token'));
+  router.get('/openidscheduler', (req, res, next) => {
+    console.log(req.query);
+    const options = {
+      state: req.query.study,
+    };
+    passport.authenticate('openid-token', options)(req, res, next);
+  }
+);
 
   router.get('/openid/return', function (req, res, next) {
     passport.authenticate('openid', { failureRedirect: '/users/login' }, function(err, user) {

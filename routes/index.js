@@ -65,8 +65,20 @@ var auth = function(level){
           }
           req.session.intendedUrl=`${req.originalUrl}`;
           if(req.session.intendedUrl.toLowerCase().includes("scheduler")) {
+            console.log("scheduler");
             //console.log("Auth openid openidscheduler");
-            return res.redirect(`${pre}users/openidscheduler`); 
+            const keyword = "scheduler/";
+            // Find the index of the keyword
+            const index = req.session.intendedUrl.indexOf(keyword);
+            var result;
+            if (index !== -1) {
+              // Extract everything after "scheduler/"
+              result = req.session.intendedUrl.substring(index + keyword.length);
+            } else {
+              result=""
+            }
+            console.log(result);
+            return res.redirect(`${pre}users/openidscheduler?study=${result}`);
           } else {
             //console.log("Auth openid");
             return res.redirect(`${pre}users/openid`); 
@@ -106,8 +118,20 @@ var auth = function(level){
       } else {
         req.session.intendedUrl=`${req.originalUrl}`;
         if(req.session.intendedUrl.toLowerCase().includes("scheduler")) {
+          console.log("scheduler");
           //console.log("Auth openid openidscheduler");
-          return res.redirect(`${pre}users/openidscheduler`); 
+          const keyword = "scheduler/";
+          // Find the index of the keyword
+          const index = req.session.intendedUrl.indexOf(keyword);
+          var result;
+          if (index !== -1) {
+            // Extract everything after "scheduler/"
+            result = req.session.intendedUrl.substring(index + keyword.length);
+          } else {
+            result=""
+          }
+          console.log(result);
+          return res.redirect(`${pre}users/openidscheduler?study=${result}`);
         } else {
           //console.log("Auth openid");
           return res.redirect(`${pre}users/openid`); 
