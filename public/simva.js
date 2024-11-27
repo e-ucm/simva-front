@@ -116,8 +116,8 @@ var Simva = {
 
 	// USER
 
-	register: function(username, email, password, role, callback){
-		let body = { username: username, email: email, password: password, role: role };
+	register: function(groupid, username, email, password, role, isToken, callback){
+		let body = { groupid : groupid , username: username, email: email, password: password, role: role , isToken : isToken };
 		Utils.post(`${this.apiurl}/users/`, body, callback);
 	},
 

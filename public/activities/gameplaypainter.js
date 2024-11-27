@@ -135,7 +135,7 @@ var GameplayActivityPainter = {
 		});
 	},
 	
-	downloadXasuConfig: function(activityId){
+	downloadXasuConfig: function(activityId, studyId){
 		var content = JSON.stringify({
 			online: true,
 			simva :true,
@@ -146,7 +146,9 @@ var GameplayActivityPainter = {
        			auth_endpoint : `${Simva.ssoUrl}/realms/${Simva.ssoRealm}/protocol/openid-connect/auth`, 
         		token_endpoint : `${Simva.ssoUrl}/realms/${Simva.ssoRealm}/protocol/openid-connect/token`,
         		client_id : "simva-plugin",
-        		code_challenge_method : "S256"
+        		code_challenge_method : "S256",
+				token:"",
+    			state: studyId
 			}
 		}, null, 2);
 
@@ -180,7 +182,7 @@ var GameplayActivityPainter = {
 			activitybox += `<a onclick="GameplayActivityPainter.getMinioData('${activity._id}')" target="_blank">Download Data</a>
 			<br>
 			XASU Config:
-			<a onclick="GameplayActivityPainter.downloadXasuConfig('${activity._id}')">
+			<a onclick="GameplayActivityPainter.downloadXasuConfig('${activity._id}','${activity.study}')">
 				<img src="/ua.png"  width="20" height="20">
 			</a>`;
 		} else {

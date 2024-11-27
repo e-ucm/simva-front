@@ -212,7 +212,7 @@
 			let form = Utils.getFormData($("#new_participant_form"));
 			let errorbox = $(this).find('.error');
 
-			Simva.register(form.username, form.email, form.password, form.role, function(error, result){
+			Simva.register(groupid, form.username.toLowerCase(), form.email, form.password, form.role, false, function(error, result){
 				if(error && error.responseJSON){
 					errorbox.text(error.responseJSON.message);
 				}else{
@@ -260,9 +260,9 @@
 			}
 
 			let generateAndRegister = function(algorithm, length, callback){
-				let username = generateUsername(algorithm, length);
+				let username = generateUsername(algorithm, length).toLowerCase();
 
-				Simva.register(username, `${username}@example.com`, username, 'student', function(error, result){
+				Simva.register(groupid, username, `${groupid}_${username}@example.com`, username, 'student', true, function(error, result){
 					if(error && error.responseJSON){
 						generateAndRegister(algorithm, length, callback);
 					}else{
