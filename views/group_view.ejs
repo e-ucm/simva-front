@@ -84,12 +84,17 @@
 							<input id="teacher_role" type="radio" name="role" value="teacher"><label for="teacher_role">Teacher</label>
 							<input id="student_role" type="radio" name="role" value="student" checked><label for="student_role">Student</label>
 						</div>
-						<input type="submit" value="Add Batch">
+						<input type="submit" value="Add">
 						<span class="error"></span>
 					</form>
 				</div>
 				<div id="batch_participant_tab" class="subform">
 					<form id="batch_participant_form">
+						<p>Use new token generation with groupid in username ?</p>
+						<select name="useNewGeneration">
+							<option value="false">False</option>
+							<option value="true">True</option>
+						</select>
 						<p>How many?</p>
 						<input type="number" step="1" min='1' max="100" name="amount" value="1">
 						<p>Participants will be added with random usernames created using: </p>
@@ -212,7 +217,7 @@
 			let form = Utils.getFormData($("#new_participant_form"));
 			let errorbox = $(this).find('.error');
 
-			Simva.register(groupid, form.username.toLowerCase(), form.email, form.password, form.role, false, function(error, result){
+			Simva.register(groupid, form.username.toLowerCase(), form.email, form.password, form.role, false, false, function(error, result){
 				if(error && error.responseJSON){
 					errorbox.text(error.responseJSON.message);
 				}else{
@@ -262,7 +267,7 @@
 			let generateAndRegister = function(algorithm, length, callback){
 				let username = generateUsername(algorithm, length).toLowerCase();
 
-				Simva.register(groupid, username, `${groupid}_${username}@example.com`, username, 'student', true, function(error, result){
+				Simva.register(groupid, username, `${groupid}_${username}@example.com`, username, 'student', true, form.useNewGeneration, function(error, result){
 					if(error && error.responseJSON){
 						generateAndRegister(algorithm, length, callback);
 					}else{

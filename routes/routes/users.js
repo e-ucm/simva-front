@@ -14,10 +14,15 @@ module.exports = function(auth, config){
   // Using Keycloak openID
   var KeyCloakStrategy = require('passport-keycloak-oauth2-oidc').Strategy;
 
-  class CustomKeyCloakStrategy extends KeyCloakStrategy {
+  class SimvaKeyCloakStrategy extends KeyCloakStrategy {
     authorizationParams(options) {
       const params = super.authorizationParams(options);
-      params.token = ''; // Add your custom parameter
+      if ('simva_user_token' in options) {
+        params.simva_user_token = options.simva_user_token;
+       }
+      if ('login_hint' in options) {
+        params.login_hint = options.login_hint;
+       }
       return params;
     }
   }
@@ -37,20 +42,7 @@ module.exports = function(auth, config){
   console.log(keycloakConfig);
   console.log('------------------');
 
-  passport.use('openid', new KeyCloakStrategy(
-    keycloakConfig,
-    function(accessToken, refreshToken, profile, done) {
-      let user = {};
-
-      user.data = profile;
-      user.jwt = accessToken;
-      user.refreshToken = refreshToken;
-
-      done(null, user);
-    })
-  );
-
-  passport.use('openid-token', new CustomKeyCloakStrategy(
+  passport.use('openid', new SimvaKeyCloakStrategy(
     keycloakConfig,
     function(accessToken, refreshToken, profile, done) {
       let user = {};
@@ -86,11 +78,11 @@ module.exports = function(auth, config){
   router.get('/openid', passport.authenticate('openid'));
 
   router.get('/openidscheduler', (req, res, next) => {
-    console.log(req.query);
     const options = {
-      state: req.query.study,
+      login_hint : req.query.study,
+      simva_user_token: true
     };
-    passport.authenticate('openid-token', options)(req, res, next);
+    passport.authenticate('openid', options)(req, res, next);
   }
 );
 
