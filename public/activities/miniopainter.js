@@ -101,7 +101,7 @@ var ActivityPainter = {
 				continue;
 			}
 			
-			toret += `<tr><td>${participants[i].username}</td>
+			toret += `<tr><td>${PainterFactory.Painters["activity"].getUsernameOrToken(participants[i])}</td>
 				<td id="completion_${activity._id}_${participants[i].username}">---</td>
 				<td id="result_${activity._id}_${participants[i].username}">---</td>`;
 		}

@@ -101,7 +101,7 @@ var RageMinioActivityPainter = {
 				continue;
 			}
 			
-			toret += `<tr><td>${participants[i].username}</td>
+			toret += `<tr><td>${PainterFactory.Painters["activity"].getUsernameOrToken(participants[i])}</td>
 				<td id="completion_${activity._id}_${participants[i].username}">---</td>
 				<td id="progress_${activity._id}_${participants[i].username}" class="progress"><div class="partial"></div><div class="done"></div><span><done>0</done>%</span></td>
 				<td id="traces_${activity._id}_${participants[i].username}">---</td>

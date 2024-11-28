@@ -147,8 +147,8 @@ var GameplayActivityPainter = {
         		token_endpoint : `${Simva.ssoUrl}/realms/${Simva.ssoRealm}/protocol/openid-connect/token`,
         		client_id : "simva-plugin",
         		code_challenge_method : "S256",
-				token:"",
-    			state: studyId
+				simva_user_token:"true",
+    			login_hint: studyId
 			}
 		}, null, 2);
 
@@ -222,9 +222,9 @@ var GameplayActivityPainter = {
 
 			if(activity.isOpenable || (activity.extra_data.game_uri && activity.extra_data.game_uri !== '') ){
 				toret += `<td><a id="${activity._id}_" ${participants[i].username}_target"class="targeturl" target="_blank" href="">
-				${participants[i].username}</a></td>`;
+				${PainterFactory.Painters["activity"].getUsernameOrToken(participants[i])}</a></td>`;
 			}else{
-				toret += `<td>${participants[i].username}</td>`;
+				toret += `<td>${PainterFactory.Painters["activity"].getUsernameOrToken(participants[i])}</td>`;
 			}
 
 			toret += `${PainterFactory.Painters["activity"].paintCompletionRow(activity._id,participants[i].username, true)}`;

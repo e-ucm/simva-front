@@ -177,7 +177,7 @@ var LTIToolPainter = {
 			}
 			
 			toret += `<tr><td><a id="${activity._id}_${participants[i].username}_target"class="targeturl" 
-			target="_blank" href="">${participants[i].username}</a></td>
+			target="_blank" href="">${PainterFactory.Painters["activity"].getUsernameOrToken(participants[i])}</a></td>
 			<td id="completion_${activity._id}_${participants[i].username}">---</td>
 			<td id="result_${activity._id}_${participants[i].username}">---</td>`;
 		}

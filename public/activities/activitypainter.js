@@ -17,6 +17,14 @@ var ActivityPainter = {
 		this.utils = utils;
 	},
 
+	getUsernameOrToken : function (user) {
+		if(user.isToken) {
+			return user.token;
+		} else {
+			return user.username;
+		}
+	},
+
 	getExtraForm: function () {
 		return '';
 	},
@@ -104,7 +112,7 @@ var ActivityPainter = {
 				continue;
 			}
 			
-			toret += `<tr><td>${participants[i].username}</td>
+			toret += `<tr><td>${this.getUsernameOrToken(participants[i])}</td>
 				${this.paintCompletionRow(activity._id,participants[i].username, checkbox)}
 				${this.paintResultRow(activity._id,participants[i].username)}</tr>`;
 		}

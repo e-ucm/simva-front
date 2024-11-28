@@ -151,9 +151,9 @@ var ImsPackagePainter = {
 
 			if(activity.isOpenable || (activity.extra_data.game_uri && activity.extra_data.game_uri !== '') ){
 				toret += `<td><a id="${activity._id}_" ${participants[i].username}_target" 
-				class="targeturl" target="_blank" href="">${participants[i].username}</a></td>`;
+				class="targeturl" target="_blank" href="">${PainterFactory.Painters["activity"].getUsernameOrToken(participants[i])}</a></td>`;
 			}else{
-				toret += `<td>${participants[i].username}</td>`;
+				toret += `<td>${PainterFactory.Painters["activity"].getUsernameOrToken(participants[i])}</td>`;
 			}
 
 			toret += `<td id="completion_${activity._id}_${participants[i].username}">---</td>`;
