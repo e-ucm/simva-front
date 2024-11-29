@@ -90,11 +90,6 @@
 				</div>
 				<div id="batch_participant_tab" class="subform">
 					<form id="batch_participant_form">
-						<p>Use new token generation with groupid in username ?</p>
-						<select name="useNewGeneration">
-							<option value="false">False</option>
-							<option value="true">True</option>
-						</select>
 						<p>How many?</p>
 						<input type="number" step="1" min='1' max="100" name="amount" value="1">
 						<p>Participants will be added with random usernames created using: </p>
@@ -267,7 +262,7 @@
 			let generateAndRegister = function(algorithm, length, callback){
 				let username = generateUsername(algorithm, length).toLowerCase();
 
-				Simva.register(groupid, username, `${groupid}_${username}@example.com`, username, 'student', true, form.useNewGeneration, function(error, result){
+				Simva.register(groupid, username, `${username}@example.com`, username, 'student', true, true, function(error, result){
 					if(error && error.responseJSON){
 						generateAndRegister(algorithm, length, callback);
 					}else{

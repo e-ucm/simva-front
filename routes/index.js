@@ -146,6 +146,7 @@ app.use('/', router);
 app.use('/users', require('./routes/users.js')(auth(1), config));
 app.use('/studies', require('./routes/studies.js')(auth(1), config));
 app.use('/groups', require('./routes/groups.js')(auth(1), config));
+app.use('/previous-groups', require('./routes/previous-groups.js')(auth(1), config));
 app.use('/activities', require('./routes/activities.js')(auth(1), config));
 app.use('/scheduler', require('./routes/scheduler.js')(auth(1), config));
 

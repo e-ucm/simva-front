@@ -117,7 +117,15 @@ var Simva = {
 	// USER
 
 	register: function(groupid, username, email, password, role, isToken, useNewGeneration, callback){
-		let body = { groupid : groupid , username: username, email: email, password: password, role: role , isToken : isToken , useNewGeneration : useNewGeneration };
+		let body = {
+			groupid : groupid,
+			username: username,
+			email: email,
+			password: password,
+			role: role,
+			isToken : isToken,
+			useNewGeneration : useNewGeneration
+		};
 		Utils.post(`${this.apiurl}/users/`, body, callback);
 	},
 
@@ -131,8 +139,13 @@ var Simva = {
 		this.get(`${this.apiurl}/groups`, callback);
 	},
 
-	addGroup: function(name, callback){
-		let body = { name: name };
+	addGroup: function(name, newversion, callback){
+		let body = { name: name	 };
+		if(newversion) {
+			body.version = 1;
+		} else {
+			body.version = 0;
+		}
 		this.post(`${this.apiurl}/groups`, body, callback);
 	},
 

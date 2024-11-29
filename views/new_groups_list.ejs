@@ -8,7 +8,7 @@
 			event.preventDefault();
 			let form = Utils.getFormData($("#new_group_form"));
 
-			Simva.addGroup(form.name, function(error, result){
+			Simva.addGroup(form.name, true, function(error, result){
 				if(error && error.responseJSON){
 					$("#error").text(error.responseJSON.message);
 				}else{
@@ -68,11 +68,13 @@
 
 
 
-	let paintGroups = function(studies){
+	let paintGroups = function(groups){
 		$('#groups_list').text('');
-		if(studies.length > 0){
-			for (var i = 0; i < studies.length; i++) {
-				$('#groups_list').append(toCard(studies[i]));
+		if(groups.length > 0){
+			for (var i = 0; i < groups.length; i++) {
+				if(groups[i].version == 1) {
+					$('#groups_list').append(toCard(groups[i]));
+				}
 			}
 		}else{
 			$('#groups_list').text('You have ot groups yet. Create one using the bottom right (+) button.');

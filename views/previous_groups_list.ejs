@@ -1,0 +1,159 @@
+<%# views/groups_list.ejs %>
+ 
+<% extend('layout_with_menu') %>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("#new_group_form").on('submit', function(event){
+			event.preventDefault();
+			let form = Utils.getFormData($("#new_group_form"));
+
+			Simva.addGroup(form.name, false, function(error, result){
+				if(error && error.responseJSON){
+					$("#error").text(error.responseJSON.message);
+				}else{
+					Utils.toggleAddForm('new_group');
+					$('#groups_list').html(roller);
+					Simva.getGroups(function(error, result){
+						if(!error){
+							paintGroups(result);
+						}
+					});
+				}
+			});
+
+			return false;
+		});
+
+		$("#edit_group_form").on('submit', function(event){
+			event.preventDefault();
+			let currentform = this;
+			let form = Utils.getFormData($("#edit_group_form"));
+			Utils.toggleSubmit(currentform);
+			let errorbox = $(this).find('.error');
+			if(form.name == form.groupName) {
+				errorbox.text("No changes detected !");
+				Utils.toggleSubmit(currentform);
+			} else {
+				console.log("updated group name");
+				console.log(form.name);
+				Simva.getGroup(form.group, function(error, group){
+					if(!error){
+						group.name = form.name;
+						Simva.updateGroup(group, function(error, result){
+							if(!error){
+								Utils.toggleSubmit(currentform);
+								Utils.toggleAddForm('edit_group');
+								Simva.getGroups(function(error, result){
+									if(!error){
+										paintGroups(result);
+									}
+								});
+							}
+						});
+					}
+					
+				});
+			}
+			return false;
+		});
+
+		$('#groups_list').html(roller);
+		Simva.getGroups(function(error, result){
+			if(!error){
+				paintGroups(result);
+			}
+		});
+	});
+
+
+
+	let paintGroups = function(groups){
+		$('#groups_list').text('');
+		if(groups.length > 0){
+			for (var i = 0; i < groups.length; i++) {
+				if(groups[i].version != 1) {
+					$('#groups_list').append(toCard(groups[i]));
+				}
+			}
+		}else{
+			$('#groups_list').text('You have ot groups yet. Create one using the bottom right (+) button.');
+		}
+	}
+
+	let openEditGroupForm = function(groupId, groupName){
+		event.preventDefault();
+		event.stopPropagation();
+		document.getElementById("edit_group_error").innerHTML = "";
+		var inputElement = document.getElementById('edit_group_name');
+		inputElement.value = groupName;
+		$('#edit_group input[name="group"]').val(groupId);
+		$('#edit_group span[class="error"]').val("");
+		$('#edit_group input[name="groupName"]').val(groupName);
+		Utils.toggleAddForm('edit_group');
+	}
+
+
+	let deleteGroup = function(groupid, groupname){
+		event.preventDefault();
+		event.stopPropagation();
+		if(confirm(`Are you sure do you want to delete the group '${groupname}'?\nGroup will be removed to all the studies, tests and activities.`)){
+			Simva.deleteGroup(groupid, function(error, result){
+				if(!error){
+					Simva.getGroups(function(error, result){
+						if(!error){
+							paintGroups(result);
+						}
+					});
+				}
+			});
+		}
+	}
+
+	let toCard = function(group){
+		return `<a href="/previous-groups/${group._id}"><div class="selectable card third">
+			<input class="yellow" type="button" value="🖍️" onclick="openEditGroupForm('${group._id}','${group.name}')">
+			<input class="red" type="button" value="X" onclick="deleteGroup('${group._id}', '${group.name}')">
+			<h1>Group: ${group.name}</h1>
+			<p><strong>Participants:</strong> ${group.participants.length}</p>
+			<p><strong>Owners:</strong> ${group.owners.length}</p>
+			</div></a>`;
+	}
+</script>
+<h1>Groups (deprecated) - This tab has been deprecated. Please prefer use the new group page version.</h1>
+<div id="groups_list">
+	<div style="width: 100%; text-align: center; padding: 200px;">
+		<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+	</div>
+</div>
+<div id="new_group" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<h1>Add new</h1>
+			<form id="new_group_form">
+				<input type="text" name="name" placeholder="Group name">
+				<input type="submit" value="Submit">
+			</form>
+		</div>		
+	</div>
+</div>
+<div id="edit_group" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<div id="edit_group_tab" class="subform selected">
+				<h2>Edit Group</h2>
+				<form id="edit_group_form">
+					<input hidden type="text" name="group">
+					<input hidden type="text" name="groupName">
+					<input type="text" name="name" id="edit_group_name" placeholder="Group name" required>
+					<input type="submit" value="Edit">
+					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+					<span class="error" id="edit_group_error"></span>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="floating_buttons">
+	<a unselectable="on" class="basic" onclick="Utils.toggleAddForm('new_group')">+</a>
+</div>
