@@ -262,7 +262,7 @@
 			let generateAndRegister = function(algorithm, length, callback){
 				let username = generateUsername(algorithm, length).toLowerCase();
 
-				Simva.register(groupid, username, `${username}@example.com`, username, 'student', true, true, function(error, result){
+				Simva.register(groupid, username, `${username}@example.com`, username, 'student', true, false, function(error, result){
 					if(error && error.responseJSON){
 						generateAndRegister(algorithm, length, callback);
 					}else{

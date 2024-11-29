@@ -387,12 +387,14 @@
 	}
 
 	let participantHeader = function(){
-		return `<tr><th>Pic</th><th>Username</th><th>Email</th><th>Role</th><th></th></tr>`;
+		return `<tr><th>Pic</th><th>Username</th><th>IsToken</th><th>Token</th><th>Email</th><th>Role</th><th></th></tr>`;
 	}
 
 	let participantRow = function(participant){
 		return `<tr><td><img src="/icon/user.png"></td>
 			<td>${participant.username}</td>
+			<td>${participant.isToken}</td>
+			<td>${participant.token}</td>
 			<td><a href="${participant.email}">${participant.email}</a></td>
 			<td>${participant.role}</td>
 			<td><input class="red" type="button" value="Remove" onclick="removeParticipant('${participant.username}')"></td>`;
