@@ -30,46 +30,48 @@
 		});
 	</script>
 	<script type="text/javascript">
-		Simva.getScheduleEventsPresignedUrl('<%= study %>', function(error, result){
-			if(!error) {
-				const presignedUrl = result.url;
-				const sseClient = new SSEClientManager(presignedUrl);
-				
-				// Listen for general messages (default "message" event)
-				sseClient.on('message', (data) => {
-					console.log('New message from server:', data);
-					// Update UI or process data here
-				});
+		if(false) {
+			Simva.getScheduleEventsPresignedUrl('<%= study %>', function(error, result){
+				if(!error) {
+					const presignedUrl = result.url;
+					const sseClient = new SSEClientManager(presignedUrl);
+					
+					// Listen for general messages (default "message" event)
+					sseClient.on('message', (data) => {
+						console.log('New message from server:', data);
+						// Update UI or process data here
+					});
 
-				// Listen for connection open event
-				sseClient.on('open', () => {
-					console.log('Connection to SSE server established.');
-				});
+					// Listen for connection open event
+					sseClient.on('open', () => {
+						console.log('Connection to SSE server established.');
+					});
 
-				// Handle custom event types from the server (if applicable)
-				// Example: You might send events like "activity_initialized" from the server
-				sseClient.triggerEvent('activity_initialized');
-				sseClient.on('activity_initialized', (data) => {
-					console.log('Activity initialized:', data);
-				});
+					// Handle custom event types from the server (if applicable)
+					// Example: You might send events like "activity_initialized" from the server
+					sseClient.triggerEvent('activity_initialized');
+					sseClient.on('activity_initialized', (data) => {
+						console.log('Activity initialized:', data);
+					});
 
-				// Handle custom event types from the server (if applicable)
-				// Example: You might send events like "activity_progressed" from the server
-				sseClient.triggerEvent('activity_progressed');
-				sseClient.on('activity_progressed', (data) => {
-					console.log('Activity progressed:', data);
-				});
+					// Handle custom event types from the server (if applicable)
+					// Example: You might send events like "activity_progressed" from the server
+					sseClient.triggerEvent('activity_progressed');
+					sseClient.on('activity_progressed', (data) => {
+						console.log('Activity progressed:', data);
+					});
 
-				// Handle custom event types from the server (if applicable)
-				// Example: You might send events like "activity_completed" from the server
-				sseClient.triggerEvent('activity_completed');
-				sseClient.on('activity_completed', (data) => {
-					console.log('Activity completed:', data);
-					// Refresh the page
-					location.reload();
-				});
-			}
-		});
+					// Handle custom event types from the server (if applicable)
+					// Example: You might send events like "activity_completed" from the server
+					sseClient.triggerEvent('activity_completed');
+					sseClient.on('activity_completed', (data) => {
+						console.log('Activity completed:', data);
+						// Refresh the page
+						location.reload();
+					});
+				}
+			});
+		}
 	</script>
 	<script type="text/javascript">
 		//
