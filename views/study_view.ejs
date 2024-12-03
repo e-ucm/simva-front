@@ -538,8 +538,6 @@
 						Utils.toggleSubmit(currentform);
 					} else {
 						updatedActivity.id = form.activity;
-						console.log("Updated activity :");
-						console.log(updatedActivity);
 						Simva.updateActivity(updatedActivity, function(error, result){
 							Utils.toggleSubmit(currentform);
 							if(error && error.responseJSON){
@@ -565,9 +563,7 @@
 				errorbox.text("No changes detected !");
 				Utils.toggleSubmit(currentform);
 			} else {
-				console.log("updated test name");
 				var test = { id : form.test , name : form.name};
-				console.log(test);
 				Simva.updateTest("<%= study %>", test, function(error, result){
 					Utils.toggleSubmit(currentform);
 					if(error && error.responseJSON){

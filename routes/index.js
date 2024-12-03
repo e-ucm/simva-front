@@ -55,7 +55,6 @@ app.set('view engine', 'ejs');
 
 var auth = function(level){
   return function(req, res, next) {
-    //console.log(req.originalUrl);
     if (req.session && req.session.user){
       usertools.authExpired(req, config, function(error, result){
         if(error){
@@ -66,7 +65,6 @@ var auth = function(level){
           req.session.intendedUrl=`${req.originalUrl}`;
           if(req.session.intendedUrl.toLowerCase().includes("scheduler")) {
             console.log("scheduler");
-            //console.log("Auth openid openidscheduler");
             const keyword = "scheduler/";
             // Find the index of the keyword
             const index = req.session.intendedUrl.indexOf(keyword);
@@ -77,10 +75,8 @@ var auth = function(level){
             } else {
               result=""
             }
-            console.log(result);
             return res.redirect(`${pre}users/openidscheduler?study=${result}`);
           } else {
-            //console.log("Auth openid");
             return res.redirect(`${pre}users/openid`); 
           }
         } else if(result) {
@@ -119,7 +115,6 @@ var auth = function(level){
         req.session.intendedUrl=`${req.originalUrl}`;
         if(req.session.intendedUrl.toLowerCase().includes("scheduler")) {
           console.log("scheduler");
-          //console.log("Auth openid openidscheduler");
           const keyword = "scheduler/";
           // Find the index of the keyword
           const index = req.session.intendedUrl.indexOf(keyword);
@@ -130,10 +125,8 @@ var auth = function(level){
           } else {
             result=""
           }
-          console.log(result);
           return res.redirect(`${pre}users/openidscheduler?study=${result}`);
         } else {
-          //console.log("Auth openid");
           return res.redirect(`${pre}users/openid`); 
         }
       }
@@ -171,7 +164,6 @@ router.get('/', auth(0), function(req, res, next) {
 // catch 404
 app.use((req, res, next) => {
   console.log(`Error 404 on ${req.url}.`);
-  console.log(req.url);
   res.status(404).send({ message: 'Not found' });
 });
 

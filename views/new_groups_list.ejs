@@ -35,8 +35,6 @@
 				errorbox.text("No changes detected !");
 				Utils.toggleSubmit(currentform);
 			} else {
-				console.log("updated group name");
-				console.log(form.name);
 				Simva.getGroup(form.group, function(error, group){
 					if(!error){
 						group.name = form.name;

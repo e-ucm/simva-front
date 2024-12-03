@@ -344,9 +344,7 @@ var GameplayActivityPainter = {
 
 	getMinioData: function(activity){
 		Simva.getMinioDataUrl(activity, function(error, result){
-			console.log("Callback triggered");
 			if(error){
-				console.log("Error:", error);  // Log the error object for better visibility
 				$.toast({
 					heading: 'Error loading the result',
 					text: error.message,
@@ -355,7 +353,6 @@ var GameplayActivityPainter = {
 					stack: false
 				});
 			}else{
-				console.log("Result:", result);  // Log the entire result for debugging
        			let url = result.url;
 
        			// Open the generated URL in a new tab

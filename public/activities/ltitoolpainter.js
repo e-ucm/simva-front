@@ -68,8 +68,6 @@ var LTIToolPainter = {
 				form += '<p>No tools available. Create a new one.</p>'
 			}
 
-			console.log(form);
-
 			$('#ltitool_byexisting').html(form);
 
 			callback();

@@ -137,9 +137,6 @@ var GroupAllocatorPainter = {
 		let participant = $('#edit_allocator_content select[name="username"]').val();
 		let test = $('#edit_allocator_content select[name="test"]').val();
 
-		console.log(participant);
-		console.log(test);
-
 		if(!this.allocator.extra_data){
 			this.allocator.extra_data = {};
 		}

@@ -75,8 +75,6 @@
 				errorbox.text("No changes detected !");
 				Utils.toggleSubmit(currentform);
 			} else {
-				console.log("updated study name");
-				console.log(form.name);
 				Simva.getStudy(form.study, function(error, study){
 					study.name = form.name;
 					Simva.updateStudy(study, function(error, result){

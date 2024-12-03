@@ -210,7 +210,6 @@ var RageAnalyticsActivityPainter = {
 	},
 
 	openDashboard: function(activityId){
-		console.log(`${this.utils.dashboard_url}${activityId}${this.utils.dashboard_query}`);
 		$('#iframe_floating iframe').prop('src', `${this.utils.dashboard_url}${activityId}${this.utils.dashboard_query}`);
 		Utils.toggleAddForm('iframe_floating');
 	},
