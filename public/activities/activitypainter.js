@@ -97,7 +97,7 @@ var ActivityPainter = {
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
 			<p class="subtitle">${this.simpleName}</p>
 			<p>Default Activity</p>
-			<p>Result:<a onclick="ActivityPainter.downloadResults('${activity._id}')"> ⬇️</a></p>
+			<p>Result:<a onclick="PainterFactory.Painters["activity"].downloadResults('${activity._id}')"> ⬇️</a></p>
 			<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>% [ <doneres>0</doneres>/<total>0</total> ]</span></div>
 			<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>
 			<div id="progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Progress:<done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>
@@ -210,7 +210,7 @@ var ActivityPainter = {
 		$(`#progress_${activity._id} total`).text(usernames.length);
 	},
 
-	paintActivityResult: function(activity, results, defaultValue='No Results', displayDefaultValue='No Results', partialValue=null,displayPartialValue=null, finalValue="true", displayFinalValue="See Results",painter="ActivityPainter"){
+	paintActivityResult: function(activity, results, defaultValue='No Results', displayDefaultValue='No Results', partialValue=null,displayPartialValue=null, finalValue="true", displayFinalValue="See Results",painter="PainterFactory.Painters['activity']"){
 		let usernames = Object.keys(results);
 
 		let done = 0, partial = 0;
@@ -304,7 +304,7 @@ var ActivityPainter = {
 		$(`#completion_progress_${activityId} done`).text(progress);
 	},
 
-	updateActivityResult: function(activityId, username, result, defaultValue='No Results', displayDefaultValue='No Results', partialValue=null,displayPartialValue=null, finalValue="true", displayFinalValue="See Results", painter="ActivityPainter") {
+	updateActivityResult: function(activityId, username, result, defaultValue='No Results', displayDefaultValue='No Results', partialValue=null,displayPartialValue=null, finalValue="true", displayFinalValue="See Results", painter="PainterFactory.Painters['activity']") {
 		var users = parseInt(document.querySelector(`#result_progress_${activityId} total`).textContent);
 		var res= parseInt(document.querySelector(`#result_progress_${activityId} doneres`).textContent);
 		var partialRes= parseInt(document.querySelector(`#result_progress_${activityId} partialres`).textContent);
@@ -405,10 +405,24 @@ var ActivityPainter = {
 					stack: false
 				});
 			} else {
-				let content = `<div style="padding: 20px;">${result[user]}</div>`;
+				// Extract and sanitize the string
+				const stringifyres = result[user]
+					.replace(/</g, "&lt;")
+					.replace(/>/g, "&gt;");
+				// Create a pre-formatted text element with styling
+				let content = `<pre style="padding: 20px; background-color: #f0f0f0; color: #333; font-family: monospace; white-space: pre-wrap; word-wrap: break-word;">${stringifyres}</pre>`;
+            
 				let context = $('#iframe_floating iframe')[0].contentWindow.document;
 				let body = $('body', context);
+				
+				// Set the content and ensure proper styling
 				body.html(content);
+				body.css({
+					'margin': '0',
+					'padding': '0',
+					'overflow': 'auto',
+					'height': '100vh'
+				});
 				Utils.toggleAddForm('iframe_floating');
 			}
 		});

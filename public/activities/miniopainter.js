@@ -148,7 +148,7 @@ var ActivityPainter = {
 
 			if(status){
 				done++;
-				result = `<span><a onclick="ActivityPainter.openResults('${activity._id}','${usernames[i]}')">See Results</a></span>`;
+				result = `<span><a onclick="PainterFactory.Painters["activity"].openResults('${activity._id}','${usernames[i]}')">See Results</a></span>`;
 			}
 
 

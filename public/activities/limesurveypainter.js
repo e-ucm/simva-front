@@ -356,7 +356,7 @@ var LimeSurveyPainter = {
 				});
 			}else{
 				let stringifyres=JSON.stringify(result[user], null, 2);
-				var filename = `${activity}_${user}.json`;
+				var filename = `${activity}_${user}_${type}.json`;
 				Utils.download(filename, stringifyres);
 			}
 		})
