@@ -20,25 +20,18 @@ class SSEClientsListManager {
         logger.info("}");
     }
 
-    async getClientList(id, participant, type) {
-        // If id is an ObjectID, convert it to a string
-        var activityId = (id && typeof id.toHexString === 'function') ? id.toHexString() : id;
+    async getClientList(message) {
         let clientsToSend = [];
         for (let [clientId, clientData] of this.clients) {
             let client = clientData; // Parse the stored client data
-            let activities = await StudyManager.getActivitiesInStudy(client.id);
-            let activitiesId = [];
-            for(var i =0; i < activities.length; i++) {
-                activitiesId.push(activities[i].id);
-            }
             if (client.userRole === 'teacher') {
-                // Check if the client's study includes the activityId
-                if (activitiesId.includes(activityId)) {
+                // Check if the client's study includes the studyId
+                if (client.id == message.studyId) {
                     clientsToSend.push(clientId); // Add to the list if conditions are met
                 }
             } else if (client.userRole === 'student') {
-                if(client.user == participant) {
-                    if (activitiesId.includes(activityId)) {
+                if(client.user == message.participant) {
+                    if (client.id == message.studyId) {
                         clientsToSend.push(clientId); // Add to the list if conditions are met
                     }
                 }

@@ -34,8 +34,9 @@ module.exports = function(auth, config){
 
   async function processMessage(message) {
     // Broadcast the message to client list
-    var clients=await sseSimvaClientManager.getClientList(message.id);
-    sseManager.sendMessageToClientList(clients, message);
+    var msg = JSON.parse(message.value);
+    var clients=await sseClientsListManager.getClientList(msg);
+    sseManager.sendMessageToClientList(clients, msg);
   }
 
   /**

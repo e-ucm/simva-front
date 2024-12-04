@@ -262,7 +262,10 @@ var LimeSurveyPainter = {
 	},
 
 	updateActivityCompletion: function(activityId, username, completion) {
-		PainterFactory.Painters["activity"].updateActivityCompletion(activityId, username, completion);
+		try {
+			PainterFactory.Painters["activity"].updateActivityCompletion(activityId, username, completion);
+		} catch(e) {
+		}
 	},
 
 	paintActivityResult: function(activity, results){
@@ -283,7 +286,10 @@ var LimeSurveyPainter = {
 	},
 
 	updateActivityResult: function(activityId, username, result) {
-		PainterFactory.Painters["activity"].updateActivityResult(activityId, username,result, "No Results","No Results", "Started", "Started", "Completed","Completed","LimeSurveyPainter");
+		try {
+			PainterFactory.Painters["activity"].updateActivityResult(activityId, username,result, "No Results","No Results", "Started", "Started", "Completed","Completed","LimeSurveyPainter");
+		} catch(e) {
+		}
 	},
 
 	paintActivityTargets: function(activity, results){

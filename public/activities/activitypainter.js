@@ -305,10 +305,10 @@ var ActivityPainter = {
 	},
 
 	updateActivityResult: function(activityId, username, result, defaultValue='No Results', displayDefaultValue='No Results', partialValue=null,displayPartialValue=null, finalValue="true", displayFinalValue="See Results", painter="PainterFactory.Painters['activity']") {
-		var users = parseInt(document.querySelector(`#result_progress_${activityId} total`).textContent);
-		var res= parseInt(document.querySelector(`#result_progress_${activityId} doneres`).textContent);
-		var partialRes= parseInt(document.querySelector(`#result_progress_${activityId} partialres`).textContent);
-		var prev= document.querySelector(`#result_${activityId}_${username}`).textContent;
+		var users=parseInt(document.querySelector(`#result_progress_${activityId} total`).textContent);
+		var res=parseInt(document.querySelector(`#result_progress_${activityId} doneres`).textContent);
+		var partialRes=parseInt(document.querySelector(`#result_progress_${activityId} partialres`).textContent);
+		var prev=document.querySelector(`#result_${activityId}_${username}`).textContent;
 		var span;
 		var newRes, newPartialRes;
 		if(result){
