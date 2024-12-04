@@ -6,8 +6,11 @@ module.exports = function(auth, config){
   const { validateUrl, createUrl } = require("../lib/hMacKey/tokens.js");
   const sseManager = require('../lib/sseManager');  // Import SSE Manager
   const sseClientsListManager = require('../lib/sseClientsListManager');
+  const KafkaClient = require("../lib/kafka");
 
   initHmacKey();
+  kafka = new KafkaClient(config.kafka);
+  startKafkaConsumer();
   async function initHmacKey() {
     config.hmac.hmacKey = (await createHMACKey(config.hmac.password
       //, {
@@ -16,6 +19,23 @@ module.exports = function(auth, config){
       //}
     )).key;
     logger.info("Initialized hmacKey");
+  }
+
+  // Method to start consuming messages using KafkaClient
+  async function startKafkaConsumer() {
+    try {
+        logger.info('Starting Kafka consumption...');
+        // Start Kafka consumption and pass the processMessage as a callback
+        await kafka.consumeLatestMessages(processMessage);
+    } catch (error) {
+        console.error('Error starting consumption:', error);
+    }
+  }
+
+  async function processMessage(message) {
+    // Broadcast the message to client list
+    var clients=await sseSimvaClientManager.getClientList(message.id);
+    sseManager.sendMessageToClientList(clients, message);
   }
 
   /**

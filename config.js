@@ -65,4 +65,10 @@ config.hmac.hmacKey = null
 config.lti = {}
 config.lti.enabled = process.env.LTI_ENABLED || 'false'
 
+config.kafka = {}
+config.kafka.clientId= process.env.SIMVA_KAFKA_CLIENTID || 'my-client-id'
+config.kafka.brokers= [ process.env.SIMVA_KAFKA_BROKER ] || ['localhost:9092']
+config.kafka.groupId= process.env.SIMVA_KAFKA_GROUPID || 'my-group-id'
+config.kafka.topic= process.env.SIMVA_KAFKA_SIMVA_EVENTS_TOPIC || 'minio-events'
+
 module.exports = config;
