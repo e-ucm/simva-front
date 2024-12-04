@@ -182,7 +182,7 @@ var Simva = {
 	},
 
 	getEventsPresignedUrl: function(study_id, callback){
-		this.get(`${this.apiurl}/studies/${study_id}/events/getPresignedUrl`, callback);
+		this.get(`/studies/${study_id}/events/getPresignedUrl`, callback);
 	},
 
 	duplicateTestFromStudy: function(study_id, name, testId, callback){
@@ -252,7 +252,7 @@ var Simva = {
 
 	
 	getScheduleEventsPresignedUrl: function(study_id, callback){
-		this.get(`${this.apiurl}/studies/${study_id}/schedule/events/getPresignedUrl`, callback);
+		this.get(`/studies/${study_id}/schedule/events/getPresignedUrl`, callback);
 	},
 
 	// Activities

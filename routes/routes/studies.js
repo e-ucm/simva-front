@@ -4,6 +4,8 @@ module.exports = function(auth, config){
   const logger = require('../../logger');
   const { createHMACKey } = require("../lib/hMacKey/crypto.js");
   const { validateUrl, createUrl } = require("../lib/hMacKey/tokens.js");
+  const sseManager = require('../lib/sseManager');  // Import SSE Manager
+  const sseClientsListManager = require('../lib/sseClientsListManager');
 
   initHmacKey();
   async function initHmacKey() {
@@ -31,7 +33,7 @@ module.exports = function(auth, config){
       return res.status(401).json({ message: 'No timestamp provided' });
     }
 
-    const url = config.api.url + req.baseUrl + req.path;
+    const url = config.simva.url + req.baseUrl + req.path;
     const query = req.query;
     try {
       if(await validateUrl(url, query, config.hmac.hmacKey)) {
@@ -44,7 +46,9 @@ module.exports = function(auth, config){
             userRole: "student",
             clientId: clientId
         };
-        await studies.getStudyEvents(options);
+        logger.info(JSON.stringify(options));
+        sseClientsListManager.addActivityAndUserToMap(options.id,options.user, options.userRole, options.clientId);
+        sseClientsListManager.displayClients();
       } else {
           res.status(401).send({ message: 'Signature not valid' });
       }
@@ -60,12 +64,11 @@ module.exports = function(auth, config){
   router.get('/:studyid/schedule/events/getPresignedUrl', async (req, res, next) => {
     const options = {
       id: req.params['studyid'],
-      user: req.session.user,
-      username : req.user.data.username
+      username: req.session.user.data.username
     };
 
     try {
-        const url = `${config.api.url}/studies/${options.id}/schedule/events`;
+        const url = `${config.simva.url}/studies/${options.id}/schedule/events`;
         const params={ username: options.username };
         const result = await createUrl(url, params, config.hmac.hmacKey);
         res.status(200).send(result.data);
@@ -89,7 +92,7 @@ module.exports = function(auth, config){
       return res.status(401).json({ message: 'No timestamp provided' });
     }
 
-    const url = config.api.url + req.baseUrl + req.path;
+    const url = config.simva.url + req.baseUrl + req.path;
     const query = req.query;
     try {
       if(await validateUrl(url, query, config.hmac.hmacKey)) {
@@ -99,7 +102,8 @@ module.exports = function(auth, config){
             userRole: "teacher",
             clientId: clientId
         };
-        await studies.getStudyEvents(options);
+        sseClientsListManager.addActivityAndUserToMap(options.id,options.user, options.userRole, options.clientId);
+        sseClientsListManager.displayClients();
       } else {
         res.status(401).send({ message: 'Signature not valid' });
       }
@@ -115,12 +119,11 @@ module.exports = function(auth, config){
   router.get('/:studyid/events/getPresignedUrl', async (req, res, next) => {
     const options = {
       id: req.params['studyid'],
-      user: req.session.user,
-      username : req.user.data.username
+      username: req.session.user.data.username
     };
 
     try {
-        const url = `${config.api.url}/studies/${options.id}/events`;
+        const url = `${config.simva.url}/studies/${options.id}/events`;
         params={};
         const result = await createUrl(url, params, config.hmac.hmacKey);
         res.status(200).send(result.data);
