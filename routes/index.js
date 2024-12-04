@@ -5,7 +5,7 @@ const session = require('express-session');
 const bodyParser = require('body-parser');
 const config = require('../config');
 let usertools = require('./lib/usertools');
-
+const logger = require('../logger');
 
 const MongoStore = require("connect-mongo")(session);
 const mongoose = require('mongoose');
@@ -14,7 +14,7 @@ var isTest = (process.env.NODE_ENV !== 'production');
 mongoose.connect( !isTest ? config.mongo.url : config.mongo.test, {useNewUrlParser: true});
 mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
 mongoose.connection.once('open', function() {
-  console.log('connected');
+  logger.info('connected');
 });
 
 const app = express();
@@ -64,7 +64,7 @@ var auth = function(level){
           }
           req.session.intendedUrl=`${req.originalUrl}`;
           if(req.session.intendedUrl.toLowerCase().includes("scheduler")) {
-            console.log("scheduler");
+            logger.info("scheduler");
             const keyword = "scheduler/";
             // Find the index of the keyword
             const index = req.session.intendedUrl.indexOf(keyword);
@@ -80,29 +80,29 @@ var auth = function(level){
             return res.redirect(`${pre}users/openid`); 
           }
         } else if(result) {
-          console.log("auth() - Refreshing token");
+          logger.info("auth() - Refreshing token");
           let user = req.session.user;
-          console.log(`auth() - User:${JSON.stringify(user)}`);
-          console.log(`auth() - Access Token : ${result}`);
+          logger.info(`auth() - User:${JSON.stringify(user)}`);
+          logger.info(`auth() - Access Token : ${result}`);
           user.jwt = result;
           usertools.setUser(req, user);
-          console.log("auth() - Refreshing token done");
-          console.log(`auth() - User: ${JSON.stringify(user)}`);
+          logger.info("auth() - Refreshing token done");
+          logger.info(`auth() - User: ${JSON.stringify(user)}`);
           return next();
         } else {
-          console.log("auth() - Token OK");
+          logger.info("auth() - Token OK");
           return next();
         }
       });
     }else if(req.query.jwt){
-      console.log("auth() - New token");
+      logger.info("auth() - New token");
       let user = {};
       let simvaToken = req.query.jwt;
       let profile = usertools.getProfileFromJWT(simvaToken);
       user.data = profile;
       user.jwt = simvaToken;
       usertools.setUser(req, user);
-      console.log("auth() - New token done");
+      logger.info("auth() - New token done");
       return next();
     }else{
       var pre = '';
@@ -114,7 +114,7 @@ var auth = function(level){
       } else {
         req.session.intendedUrl=`${req.originalUrl}`;
         if(req.session.intendedUrl.toLowerCase().includes("scheduler")) {
-          console.log("scheduler");
+          logger.info("scheduler");
           const keyword = "scheduler/";
           // Find the index of the keyword
           const index = req.session.intendedUrl.indexOf(keyword);
@@ -163,16 +163,16 @@ router.get('/', auth(0), function(req, res, next) {
 
 // catch 404
 app.use((req, res, next) => {
-  console.log(`Error 404 on ${req.url}.`);
+  logger.info(`Error 404 on ${req.url}.`);
   res.status(404).send({ message: 'Not found' });
 });
 
 // catch errors
 app.use((err, req, res, next) => {
-  console.log(err);
+  logger.info(err);
   const status = err.status || 500;
   const msg = err.error || err.message;
-  console.log(`Error ${status} (${msg}) on ${req.method} ${req.url} with payload ${req.body}.`);
+  logger.info(`Error ${status} (${msg}) on ${req.method} ${req.url} with payload ${req.body}.`);
   res.status(status).send({ message: msg });
 });
 

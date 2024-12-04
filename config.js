@@ -56,6 +56,12 @@ config.limesurvey.url =  `${config.limesurvey.protocol}://${config.limesurvey.ho
 config.limesurvey.adminUser =  process.env.LIMESURVEY_ADMIN_USER || 'admin'
 config.limesurvey.adminPassword = process.env.LIMESURVEY_ADMIN_PASSWORD || 'password'
 
+config.hmac = {}
+config.hmac.password = process.env.HMAC_PASSWORD || 'mypassword'
+config.hmac.salt = process.env.HMAC_SALT || 'mysalt'
+config.hmac.key = process.env.HMAC_KEY || 'mykey'
+config.hmac.hmacKey = null
+
 config.lti = {}
 config.lti.enabled = process.env.LTI_ENABLED || 'false'
 
