@@ -134,6 +134,10 @@ var Simva = {
 		this.patch(`${this.apiurl}/users/${username}`, body, callback);
 	},
 
+	getCurrentUser: function(callback){
+		this.get(`${this.apiurl}/users/me`, callback);
+	},
+
 	// GROUPS
 	getGroups: function(callback){
 		this.get(`${this.apiurl}/groups`, callback);
