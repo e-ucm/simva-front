@@ -9,6 +9,7 @@ class SSEClientsListManager {
 
     addActivityAndUserToMap(id, user, userRole, clientId) {
         var obj = { user : user, userRole : userRole, id : id};
+        obj.lastTime= Date.now();
         this.clients.set(clientId, obj);
     }
 
@@ -20,7 +21,22 @@ class SSEClientsListManager {
         logger.info("}");
     }
 
-    async getClientList(message) {
+    getTimeSuperiorTo5MinClientList() {
+        let clientsToSend = [];
+        for (let [clientId, clientData] of this.clients) {
+            let client = clientData; // Parse the stored client data
+            let fiveMinutesLater = new Date(client.lastTime).getTime() + 5 * 60 * 1000; // Add 5 minutes in milliseconds
+
+            if (fiveMinutesLater <= Date.now()) { // Check if 5 minutes have passed
+                clientsToSend.push(clientId);
+                client.lastTime= Date.now();
+                this.clients.set(clientId, client);
+            }
+        }
+        return clientsToSend;
+    }
+
+    getClientList(message) {
         let clientsToSend = [];
         for (let [clientId, clientData] of this.clients) {
             let client = clientData; // Parse the stored client data
@@ -28,11 +44,15 @@ class SSEClientsListManager {
                 // Check if the client's study includes the studyId
                 if (client.id == message.studyId) {
                     clientsToSend.push(clientId); // Add to the list if conditions are met
+                    client.lastTime= Date.now();
+                    this.clients.set(clientId, client);
                 }
             } else if (client.userRole === 'student') {
                 if(client.user == message.participant) {
                     if (client.id == message.studyId) {
                         clientsToSend.push(clientId); // Add to the list if conditions are met
+                        client.lastTime= Date.now();
+                        this.clients.set(clientId, client);
                     }
                 }
             } else {

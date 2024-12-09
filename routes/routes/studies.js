@@ -35,8 +35,10 @@ module.exports = function(auth, config){
   async function processMessage(message) {
     // Broadcast the message to client list
     var msg = JSON.parse(message.value);
-    var clients=await sseClientsListManager.getClientList(msg);
+    var clients=sseClientsListManager.getClientList(msg);
     sseManager.sendMessageToClientList(clients, msg);
+    var clientsNotReaded=sseClientsListManager.getTimeSuperiorTo5MinClientList();
+    sseManager.sendMessageToClientList(clientsNotReaded, {message:'ping',type:'ping'});
   }
 
   /**
@@ -70,6 +72,7 @@ module.exports = function(auth, config){
         logger.info(JSON.stringify(options));
         sseClientsListManager.addActivityAndUserToMap(options.id,options.user, options.userRole, options.clientId);
         sseClientsListManager.displayClients();
+        sseManager.sendMessageToClientList([clientId], {message:'ping',type:'ping'});
       } else {
           res.status(401).send({ message: 'Signature not valid' });
       }
@@ -125,6 +128,7 @@ module.exports = function(auth, config){
         };
         sseClientsListManager.addActivityAndUserToMap(options.id,options.user, options.userRole, options.clientId);
         sseClientsListManager.displayClients();
+        sseManager.sendMessageToClientList([clientId], {message:'ping',type:'ping'});
       } else {
         res.status(401).send({ message: 'Signature not valid' });
       }
