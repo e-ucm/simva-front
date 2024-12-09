@@ -3,7 +3,7 @@ module.exports = function(auth, config){
   router = express.Router();
   const logger = require('../../logger');
   const { createHMACKey } = require("../lib/hMacKey/crypto.js");
-  const { validateUrl, createUrl } = require("../lib/hMacKey/tokens.js");
+  const { createUrl } = require("../lib/hMacKey/tokens.js");
   const sseManager = require('../lib/sseManager');  // Import SSE Manager
   const sseClientsListManager = require('../lib/sseClientsListManager');
   const KafkaClient = require("../lib/kafka");
@@ -21,65 +21,28 @@ module.exports = function(auth, config){
     logger.info("Initialized hmacKey");
   }
 
-  // Method to start consuming messages using KafkaClient
-  async function startKafkaConsumer() {
-    try {
-        logger.info('Starting Kafka consumption...');
-        // Start Kafka consumption and pass the processMessage as a callback
-        await kafka.consumeLatestMessages(processMessage);
-    } catch (error) {
-        console.error('Error starting consumption:', error);
-    }
-  }
-
-  async function processMessage(message) {
-    // Broadcast the message to client list
-    var msg = JSON.parse(message.value);
-    var clients=sseClientsListManager.getClientList(msg);
-    sseManager.sendMessageToClientList(clients, msg);
-    var clientsNotReaded=sseClientsListManager.getTimeSuperiorTo5MinClientList();
-    sseManager.sendMessageToClientList(clientsNotReaded, {message:'ping',type:'ping'});
-  }
-
-  /**
-   * To send Server Side Event to Client
-   * 
-   */
-  router.get('/:studyid/schedule/events', async (req, res, next) => {
-    // Extract the token from the query parameters
-    const ts = req.query.ts;
-    const signature = req.query.signature;
-    if (!signature) {
-      return res.status(401).json({ message: 'No signature provided' });
-    }
-    if (!ts) {
-      return res.status(401).json({ message: 'No timestamp provided' });
+    // Method to start consuming messages using KafkaClient
+    async function startKafkaConsumer() {
+        try {
+            logger.info('Starting Kafka consumption...');
+            // Start Kafka consumption and pass the processMessage as a callback
+            await kafka.consumeLatestMessages(processMessage);
+        } catch (error) {
+            console.error('Error starting consumption:', error);
+        }
     }
 
-    const url = config.simva.url + req.baseUrl + req.path;
-    const query = req.query;
-    try {
-      if(await validateUrl(url, query, config.hmac.hmacKey)) {
-        let user = req.query.username;
-        logger.info(user);
-        var clientId = sseManager.addClient(req, res);
-        const options = {
-            id: req.params['studyid'],
-            user: user,
-            userRole: "student",
-            clientId: clientId
-        };
-        logger.info(JSON.stringify(options));
-        sseClientsListManager.addActivityAndUserToMap(options.id,options.user, options.userRole, options.clientId);
-        sseClientsListManager.displayClients();
-        sseManager.sendMessageToClientList([clientId], {message:'ping',type:'ping'});
-      } else {
-          res.status(401).send({ message: 'Signature not valid' });
-      }
-    } catch (err) {
-        next(err);
+    async function processMessage(message) {
+        // Broadcast the message to client list
+        var msg = JSON.parse(message.value);
+        var clients=sseClientsListManager.getClientList(msg);
+        logger.info(JSON.stringify(clients));
+        sseManager.sendMessageToClientList(clients, msg);
+        var clientsNotReaded=sseClientsListManager.getTimeSuperiorTo5MinClientList();
+        logger.info(JSON.stringify(clientsNotReaded));
+        sseManager.sendMessageToClientList(clientsNotReaded, {message:'ping',type:'ping'});
     }
-  });
+  
 
   /**
    * To get presigned url for schedule events
@@ -87,53 +50,17 @@ module.exports = function(auth, config){
    */
   router.get('/:studyid/schedule/events/getPresignedUrl', async (req, res, next) => {
     const options = {
-      id: req.params['studyid'],
-      username: req.session.user.data.username
+      studyId: req.params['studyid'],
+      username: req.session.user.data.username,
+      userRole : "student"
     };
 
     try {
-        const url = `${config.simva.url}/studies/${options.id}/schedule/events`;
-        const params={ username: options.username };
-        const result = await createUrl(url, params, config.hmac.hmacKey);
+        const url = `${config.simva.url}/events`;
+        const result = await createUrl(url, options, config.hmac.hmacKey);
         res.status(200).send(result.data);
     } catch (err) {
         next(err);
-    }
-  });
-
-  /**
-   * To send Server Side Event to Client
-   * 
-   */
-  router.get('/:studyid/events', async (req, res, next) => {
-    // Extract the token from the query parameters
-    const ts = req.query.ts;
-    const signature = req.query.signature; 
-    if (!signature) {
-      return res.status(401).json({ message: 'No signature provided' });
-    }
-    if (!ts) {
-      return res.status(401).json({ message: 'No timestamp provided' });
-    }
-
-    const url = config.simva.url + req.baseUrl + req.path;
-    const query = req.query;
-    try {
-      if(await validateUrl(url, query, config.hmac.hmacKey)) {
-        var clientId= sseManager.addClient(req, res);
-        const options = {
-            id: req.params['studyid'],
-            userRole: "teacher",
-            clientId: clientId
-        };
-        sseClientsListManager.addActivityAndUserToMap(options.id,options.user, options.userRole, options.clientId);
-        sseClientsListManager.displayClients();
-        sseManager.sendMessageToClientList([clientId], {message:'ping',type:'ping'});
-      } else {
-        res.status(401).send({ message: 'Signature not valid' });
-      }
-    } catch (err) {
-      next(err);
     }
   });
 
@@ -143,14 +70,15 @@ module.exports = function(auth, config){
    */
   router.get('/:studyid/events/getPresignedUrl', async (req, res, next) => {
     const options = {
-      id: req.params['studyid'],
-      username: req.session.user.data.username
+      studyId: req.params['studyid'],
+      username: req.session.user.data.username,
+      userRole : "teacher"
     };
 
     try {
-        const url = `${config.simva.url}/studies/${options.id}/events`;
+        const url = `${config.simva.url}/events`;
         params={};
-        const result = await createUrl(url, params, config.hmac.hmacKey);
+        const result = await createUrl(url, options, config.hmac.hmacKey);
         res.status(200).send(result.data);
     } catch (err) {
         next(err);

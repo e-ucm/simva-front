@@ -48,7 +48,7 @@ class SSEClientsListManager {
                     this.clients.set(clientId, client);
                 }
             } else if (client.userRole === 'student') {
-                if(client.user == message.participant) {
+                if(client.user == message.user) {
                     if (client.id == message.studyId) {
                         clientsToSend.push(clientId); // Add to the list if conditions are met
                         client.lastTime= Date.now();
