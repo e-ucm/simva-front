@@ -36,7 +36,7 @@ module.exports = function(auth, config){
 
     // Schedule a task to run every 3 minutes
     cron.schedule('*/3 * * * *', () => {
-        logger.info('SSE Ping task is running every 3 minutes at ' + new Date());
+        logger.debug('SSE Ping task is running every 3 minutes at ' + new Date());
         var clientsNotReaded=sseClientsListManager.getTimeSuperiorToXMinClientList(5);
         logger.debug(JSON.stringify(clientsNotReaded));
         sseManager.sendMessageToClientList(clientsNotReaded, {message:'ping',type:'ping'});

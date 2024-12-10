@@ -24,7 +24,7 @@ module.exports = function(auth, config){
             let studyid = req.query.studyId;
             let user = req.query.username;
             let userRole = req.query.userRole;
-            logger.info(user);
+            logger.debug(user);
             var clientId = sseManager.addClient(req, res);
             const options = {
                 id: studyid,
@@ -32,7 +32,7 @@ module.exports = function(auth, config){
                 userRole: userRole,
                 clientId: clientId
             };
-            logger.info(JSON.stringify(options));
+            logger.debug(JSON.stringify(options));
             sseClientsListManager.addActivityAndUserToMap(options.id,options.user, options.userRole, options.clientId);
             sseClientsListManager.displayClients();
             sseManager.sendMessageToClientList([clientId], {message:'ping',type:'ping'});

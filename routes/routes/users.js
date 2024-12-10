@@ -18,9 +18,9 @@ module.exports = function(auth, config){
 
   // Schedule a task to run every 5 minutes
   cron.schedule('*/4 * * * *', () => {
-      logger.info('User refresh task is running every 4 minutes at ' + new Date());
+      logger.debug('User refresh task is running every 4 minutes at ' + new Date());
       var clientsToRefresh=userClientsListManager.getRefreshClientList();
-      logger.info(JSON.stringify(clientsToRefresh));
+      logger.debug(JSON.stringify(clientsToRefresh));
       userClientsListManager.refreshAuth(clientsToRefresh);
   });
 

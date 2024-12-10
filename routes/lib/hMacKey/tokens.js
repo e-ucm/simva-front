@@ -3,14 +3,14 @@ const logger = require('../../../logger.js');
 
 async function validateUrl(url, query, hmacKey) {
   const signature = query.signature;
-  logger.info(signature);
+  logger.debug(signature);
   var toSign=Object.entries(query)
           .filter(([key, value])=> key !== "signature")
           .sort(([keyA], [keyB]) => keyA.localeCompare(keyB)) // Sort by keys
           .map(([key, value]) => `${key}=${value}`)
           .join('\n');
   toSign= url + '\n' + toSign;
-  logger.info(toSign);
+  logger.debug(toSign);
   try {
     if(await verifyMessage(toSign, signature, hmacKey)) {
       logger.info("Valid signature !");

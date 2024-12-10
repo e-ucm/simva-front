@@ -12,7 +12,7 @@ var logger = require("../../logger.js");
 class KafkaClient {
     constructor({ clientId, brokers, groupId, topic }) {
         logger.info("KAFKA CONFIG:");
-        logger.info(clientId + " + "+ brokers + " + " +groupId + " + "+ topic + " + ");
+        logger.info("Client Id : " + clientId + " | Brokers : "+ brokers + " | groupId : " + groupId + "  | topic : "+ topic + " + ");
         this.clientId = clientId;
         this.brokers = brokers;
         this.groupId = groupId;

@@ -20,11 +20,11 @@ class UserClientsListManager {
     }
 
     displayClients() {
-        logger.info("{");
+        logger.debug("{");
         for (let [clientId, clientData] of this.clients) {
-            logger.info("   " + clientId + ":" + JSON.stringify(clientData, null, 2)+ ",");
+            logger.debug("   " + clientId + ":" + JSON.stringify(clientData, null, 2)+ ",");
         }
-        logger.info("}");
+        logger.debug("}");
     }
 
     refreshAuth(clientIds) {

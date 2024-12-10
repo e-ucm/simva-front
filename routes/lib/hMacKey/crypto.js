@@ -171,7 +171,7 @@ window.crypto.subtle
     ["encrypt", "decrypt"],
   )
   .then((secretKey) => wrapCryptoKey(secretKey))
-  .then((wrappedKey) => logger.info(wrappedKey));
+  .then((wrappedKey) => logger.debug(wrappedKey));
   */
 
 /**

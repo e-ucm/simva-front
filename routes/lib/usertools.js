@@ -73,7 +73,7 @@ module.exports = {
 
 	refreshAuth: function(session, config, callback){
 		if(session.user && session.user.refreshToken){
-			logger.info(`refreshAuth() - Refresh Token : ${session.user.refreshToken}`)
+			logger.debug(`refreshAuth() - Refresh Token : ${session.user.refreshToken}`)
 			clientConfig= `${config.sso.clientId}:${config.sso.clientSecret}`
 			const querystring = new URLSearchParams({
 				'grant_type': 'refresh_token',
@@ -86,11 +86,10 @@ module.exports = {
 				}
 			}).then(response => {
 				try {
-					logger.info(`refreshAuth() - Body : ${response.data}`);
 					let simvaToken = response.data.access_token;
 					let simvaRefreshToken = response.data.refresh_token;
-					logger.info(`refreshAuth() - Access Token : ${simvaToken}`);
-					logger.info(`refreshAuth() - Refresh Token : ${simvaRefreshToken}`);
+					logger.debug(`refreshAuth() - Access Token : ${simvaToken}`);
+					logger.debug(`refreshAuth() - Refresh Token : ${simvaRefreshToken}`);
 					if(simvaToken == "undefined" || simvaToken == null) {
 						callback({
 							status: 500,
