@@ -20,11 +20,11 @@ class SSEClientsListManager {
         logger.info("}");
     }
 
-    getTimeSuperiorTo5MinClientList() {
+    getTimeSuperiorToXMinClientList(minutes) {
         let clientsToSend = [];
         for (let [clientId, clientData] of this.clients) {
             let client = clientData; // Parse the stored client data
-            let fiveMinutesLater = new Date(client.lastTime).getTime() + 5 * 60 * 1000; // Add 5 minutes in milliseconds
+            let fiveMinutesLater = new Date(client.lastTime).getTime() + minutes * 60 * 1000; // Add 5 minutes in milliseconds
 
             if (fiveMinutesLater <= Date.now()) { // Check if 5 minutes have passed
                 clientsToSend.push(clientId);
