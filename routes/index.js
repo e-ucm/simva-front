@@ -12,7 +12,7 @@ const mongoose = require('mongoose');
 
 var isTest = (process.env.NODE_ENV !== 'production');
 mongoose.connect( !isTest ? config.mongo.url : config.mongo.test, {useNewUrlParser: true});
-mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
+mongoose.connection.on('error', logger.error.bind(logger, 'connection error:'));
 mongoose.connection.once('open', function() {
   logger.info('connected');
 });
@@ -56,7 +56,7 @@ app.set('view engine', 'ejs');
 var auth = function(level){
   return function(req, res, next) {
     if (req.session && req.session.user){
-      usertools.authExpired(req, config, function(error, result){
+      usertools.authExpired(req.session, config, function(error, result){
         if(error){
           var pre = '/';
           for(var i = 0; i < level; i++){
@@ -82,12 +82,13 @@ var auth = function(level){
         } else if(result) {
           logger.info("auth() - Refreshing token");
           let user = req.session.user;
-          logger.info(`auth() - User:${JSON.stringify(user)}`);
-          logger.info(`auth() - Access Token : ${result}`);
-          user.jwt = result;
+          logger.debug(`auth() - User:${JSON.stringify(user, null, 2)}`);
+          logger.info(`auth() - Access Token : ${result.access_token}`);
+          user.jwt = result.access_token;
+          user.refreshToken = result.refresh_token;
           usertools.setUser(req, user);
           logger.info("auth() - Refreshing token done");
-          logger.info(`auth() - User: ${JSON.stringify(user)}`);
+          logger.debug(`auth() - User: ${JSON.stringify(user, null, 2)}`);
           return next();
         } else {
           logger.info("auth() - Token OK");

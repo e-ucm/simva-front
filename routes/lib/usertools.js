@@ -15,16 +15,20 @@ module.exports = {
 		req.session.user = user;
 	},
 
-	authExpired: function(req, config, callback){
+	setClientSession: function(req, clientId){
+		req.session.clientId = clientId;
+	},
+
+	authExpired: function(session, config, callback){
 		let current = Math.floor(Date.now() / 1000);
-		let jwtdecoded = this.decodeJWT(req.session.user.jwt);
+		let jwtdecoded = this.decodeJWT(session.user.jwt);
 		try {
 			let expiration = parseInt(jwtdecoded.exp);
 			if(current > expiration){
 				logger.info(`authExpired() - JWT: ${JSON.stringify(jwtdecoded)}`);
 				logger.info(`authExpired() - Expiration: ${expiration}`);
 				logger.info("authExpired() - Token Expired");
-				this.refreshAuth(req, config, callback);
+				this.refreshAuth(session, config, callback);
 			}else{
 				logger.info("authExpired() - Token OK");
 				callback();
@@ -67,13 +71,13 @@ module.exports = {
 		return role;
 	},
 
-	refreshAuth: function(req, config, callback){
-		if(req.session.user && req.session.user.refreshToken){
-			logger.info(`refreshAuth() - Refresh Token : ${req.session.user.refreshToken}`)
+	refreshAuth: function(session, config, callback){
+		if(session.user && session.user.refreshToken){
+			logger.info(`refreshAuth() - Refresh Token : ${session.user.refreshToken}`)
 			clientConfig= `${config.sso.clientId}:${config.sso.clientSecret}`
 			const querystring = new URLSearchParams({
 				'grant_type': 'refresh_token',
-				'refresh_token': req.session.user.refreshToken
+				'refresh_token': session.user.refreshToken
 			  });
 			axios.post(`${config.sso.url}/realms/${config.sso.realm}/protocol/openid-connect/token`, querystring, {
 				headers: {
@@ -82,10 +86,11 @@ module.exports = {
 				}
 			}).then(response => {
 				try {
-					logger.info(`refreshAuth() - Body : ${response.body}`);
-					let b = JSON.parse(response.body);
-					let simvaToken = b.access_token;
+					logger.info(`refreshAuth() - Body : ${response.data}`);
+					let simvaToken = response.data.access_token;
+					let simvaRefreshToken = response.data.refresh_token;
 					logger.info(`refreshAuth() - Access Token : ${simvaToken}`);
+					logger.info(`refreshAuth() - Refresh Token : ${simvaRefreshToken}`);
 					if(simvaToken == "undefined" || simvaToken == null) {
 						callback({
 							status: 500,
@@ -95,7 +100,7 @@ module.exports = {
 							}
 						});
 					} else {
-						callback(null, simvaToken);
+						callback(null, response.data);
 					}
 				} catch(e) {
 					logger.info(e);

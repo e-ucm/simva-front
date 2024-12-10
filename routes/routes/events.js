@@ -6,7 +6,7 @@ module.exports = function(auth, config){
     const sseManager = require('../lib/sseManager');  // Import SSE Manager
     const sseClientsListManager = require('../lib/sseClientsListManager');
 
-    router.get('/', auth, async function(req, res, next) {
+    router.get('/', async function(req, res, next) {
         // Extract the token from the query parameters
         const ts = req.query.ts;
         const signature = req.query.signature;

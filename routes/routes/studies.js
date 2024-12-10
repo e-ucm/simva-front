@@ -34,11 +34,11 @@ module.exports = function(auth, config){
 
     const cron = require('node-cron');
 
-    // Schedule a task to run every 2 minutes
+    // Schedule a task to run every 3 minutes
     cron.schedule('*/3 * * * *', () => {
         logger.info('SSE Ping task is running every 3 minutes at ' + new Date());
-        var clientsNotReaded=sseClientsListManager.getTimeSuperiorTo5MinClientList();
-        logger.info(JSON.stringify(clientsNotReaded));
+        var clientsNotReaded=sseClientsListManager.getTimeSuperiorToXMinClientList(5);
+        logger.debug(JSON.stringify(clientsNotReaded));
         sseManager.sendMessageToClientList(clientsNotReaded, {message:'ping',type:'ping'});
     });
 
@@ -46,10 +46,10 @@ module.exports = function(auth, config){
         // Broadcast the message to client list
         var msg = JSON.parse(message.value);
         var clients=sseClientsListManager.getClientList(msg);
-        logger.info(JSON.stringify(clients));
+        logger.debug(JSON.stringify(clients));
         sseManager.sendMessageToClientList(clients, msg);
-        var clientsNotReaded=sseClientsListManager.getTimeSuperiorTo5MinClientList();
-        logger.info(JSON.stringify(clientsNotReaded));
+        var clientsNotReaded=sseClientsListManager.getTimeSuperiorToXMinClientList(5);
+        logger.debug(JSON.stringify(clientsNotReaded));
         sseManager.sendMessageToClientList(clientsNotReaded, {message:'ping',type:'ping'});
     }
   

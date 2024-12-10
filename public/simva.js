@@ -43,8 +43,7 @@ var Simva = {
 	refreshAuth: function(callback){
 		Utils.get('/users/refresh_auth', function(error, result){
 			if(!error){
-				let body = JSON.parse(result);
-				Simva.setJWT(body.access_token);
+				Simva.setJWT(result.access_token);
 				callback(null);
 			}else{
 				callback(error);
