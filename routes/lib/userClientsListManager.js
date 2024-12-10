@@ -31,27 +31,27 @@ class UserClientsListManager {
         for(let i=0; i < clientIds.length; i++) {
             var clientId = clientIds[i];
             var clientData = this.clients.get(clientId);
-            usertools.refreshAuth(clientData.session, config, function(error, result) {
+            usertools.refreshAuth(clientData.session, config, (error, result) => {
                 if(!error) {
                     logger.debug(result);
                     clientData.session.user.jwt = result.access_token;
-                    clientData.jwtdecoded = usertools.decodeJWT(session.user.jwt);
+                    clientData.jwtdecoded = usertools.decodeJWT(result.access_token);
                     clientData.session.user.refreshToken = result.refresh_token;
+                    this.clients.set(clientId, clientData);
                 } else {
                     logger.debug(error);
                 }
             });
-            this.clients.set(clientId, clientData);
         }
     }
 
-    getRefreshClientList(minutes) {
+    getRefreshClientList() {
         let clientsToSend = [];
         for (let [clientId, clientData] of this.clients) {
             let client = clientData; // Parse the stored client data
-            let expirationTimeSubxMin = clientData.jwtdecoded.exp + minutes * 60; // substract x minutes in milliseconds
-
-            if (expirationTimeSubxMin > Date.now()) { // Check if practicly expired
+            let expirationTimeSubxMin = clientData.jwtdecoded.exp; // substract x minutes in milliseconds
+            let now = Date.now() / 1000;
+            if (now > expirationTimeSubxMin) { // Check if practicly expired
                 clientsToSend.push(clientId);
                 this.clients.set(clientId, client);
             }
