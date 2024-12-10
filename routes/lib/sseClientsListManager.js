@@ -1,5 +1,4 @@
 const logger = require("../../logger");
-var StudyManager = require("./studyManager"); 
 
 // sseManager.js
 class SSEClientsListManager {

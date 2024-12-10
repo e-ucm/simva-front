@@ -54,7 +54,7 @@ class SSEManager {
             msg+=`data: ${JSON.stringify(message)}\n\n`
             client.write(msg);
         } else {
-            console.error(`Cannot send message. Client ${clientId} is not connected.`);
+            logger.error(`Cannot send message. Client ${clientId} is not connected.`);
         }
     }
 

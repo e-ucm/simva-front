@@ -28,9 +28,19 @@ module.exports = function(auth, config){
             // Start Kafka consumption and pass the processMessage as a callback
             await kafka.consumeLatestMessages(processMessage);
         } catch (error) {
-            console.error('Error starting consumption:', error);
+          logger.error('Error starting consumption: ' + error);
         }
     }
+
+    const cron = require('node-cron');
+
+    // Schedule a task to run every 2 minutes
+    cron.schedule('*/3 * * * *', () => {
+        logger.info('SSE Ping task is running every 3 minutes at ' + new Date());
+        var clientsNotReaded=sseClientsListManager.getTimeSuperiorTo5MinClientList();
+        logger.info(JSON.stringify(clientsNotReaded));
+        sseManager.sendMessageToClientList(clientsNotReaded, {message:'ping',type:'ping'});
+    });
 
     async function processMessage(message) {
         // Broadcast the message to client list
@@ -52,7 +62,7 @@ module.exports = function(auth, config){
     const options = {
       studyId: req.params['studyid'],
       username: req.session.user.data.username,
-      userRole : "student"
+      userRole:"student"
     };
 
     try {
@@ -72,7 +82,7 @@ module.exports = function(auth, config){
     const options = {
       studyId: req.params['studyid'],
       username: req.session.user.data.username,
-      userRole : "teacher"
+      userRole:"teacher"
     };
 
     try {
