@@ -46,8 +46,8 @@ class UserClientsListManager {
     }
     
     removeSession(sessionId) {
-        this.sessions.delete(sessionId);
         this.sessionClients.delete(sessionId);
+        this.sessions.delete(sessionId);
         this.displayClients();
         this.displaySessions();
     }
@@ -64,11 +64,14 @@ class UserClientsListManager {
     }
     
     removeClient(sessionId, clientId) {
-        var clients = this.sessionClients.get(sessionId).filter(item => item !== clientId);
-        if(clients.length == 0) {
-            this.sessionClients.delete(sessionId);
-        } else {
-            this.sessionClients.set(sessionId, clients);
+        var clients = this.sessionClients.get(sessionId);
+        if(clients) {
+            var clientsFiltered = clients.filter(item => item !== clientId);
+            if(clientsFiltered.length == 0) {
+                this.sessionClients.delete(sessionId);
+            } else {
+                this.sessionClients.set(sessionId, clientsFiltered);
+            }
         }
         this.displayClients();
     }
