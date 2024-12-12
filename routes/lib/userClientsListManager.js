@@ -36,7 +36,10 @@ class UserClientsListManager {
             let expirationTimeSubxMin = sessionData.jwtdecoded.exp; // substract x minutes in milliseconds
             let now = Date.now() / 1000;
             if (now > expirationTimeSubxMin) { // Check if practicly expired
-                clientsToSend.push(this.sessionClients.get(sessionId));
+                var clients = this.sessionClients.get(sessionId);
+                for(let i = 0; i < clients.length; i++) {
+                    clientsToSend.push(clients[i]);
+                }
             }
         }
         return clientsToSend;
@@ -50,7 +53,23 @@ class UserClientsListManager {
     }
 
     addClient(sessionId, clientId) {
-        this.sessionClients.set(sessionId, clientId);
+        var clients = this.sessionClients.get(sessionId);
+        if(clients) {
+            clients.push(clientId);
+            this.sessionClients.set(sessionId, clients);
+        } else {
+            this.sessionClients.set(sessionId, [ clientId ]);
+        }
+        this.displayClients();
+    }
+    
+    removeClient(sessionId, clientId) {
+        var clients = this.sessionClients.get(sessionId).filter(item => item !== clientId);
+        if(clients.length == 0) {
+            this.sessionClients.delete(sessionId);
+        } else {
+            this.sessionClients.set(sessionId, clients);
+        }
         this.displayClients();
     }
 

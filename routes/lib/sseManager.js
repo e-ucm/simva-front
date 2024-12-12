@@ -1,5 +1,6 @@
 const logger = require('../../logger');
-var sseClientManager = require('./sseClientsListManager');
+const sseClientManager = require('./sseClientsListManager');
+const userClientsListManager = require('./userClientsListManager');
 
 // sseManager.js
 class SSEManager {
@@ -26,6 +27,7 @@ class SSEManager {
             logger.info(`Client disconnected: ${clientId}`);
             this.clients.delete(clientId);
             sseClientManager.removeClient(clientId);
+            userClientsListManager.removeClient(req.query.sessionID, clientId);
         });
 
         return clientId;  // Return client ID for reference
