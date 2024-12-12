@@ -6,6 +6,7 @@ module.exports = function(auth, config){
   const { createUrl } = require("../lib/hMacKey/tokens.js");
   const sseManager = require('../lib/sseManager');  // Import SSE Manager
   const sseClientsListManager = require('../lib/sseClientsListManager');
+  const userClientsListManager = require('../lib/userClientsListManager');
   const KafkaClient = require("../lib/kafka");
 
   initHmacKey();
@@ -35,22 +36,23 @@ module.exports = function(auth, config){
     const cron = require('node-cron');
 
     // Schedule a task to run every 3 minutes
-    cron.schedule('*/3 * * * *', () => {
-        logger.debug('SSE Ping task is running every 3 minutes at ' + new Date());
-        var clientsNotReaded=sseClientsListManager.getTimeSuperiorToXMinClientList(5);
-        logger.debug(JSON.stringify(clientsNotReaded));
-        sseManager.sendMessageToClientList(clientsNotReaded, {message:'ping',type:'ping'});
+    cron.schedule('*/2 * * * *', () => {
+        logger.info('SSE Ping task is running every 2 minutes at ' + new Date());
+        var clientsWithoutAction=sseClientsListManager.getTimeSuperiorToXMinClientList(5);
+        logger.debug(JSON.stringify(clientsWithoutAction));
+        var clientsToRefresh=userClientsListManager.getRefreshClientList();
+        logger.debug(JSON.stringify(clientsToRefresh));
+        const joinedList = [...new Set([...clientsWithoutAction, ...clientsToRefresh])];
+        logger.info(JSON.stringify(joinedList));
+        sseManager.sendMessageToClientList(joinedList, {message:'ping',type:'ping'});
     });
 
     async function processMessage(message) {
         // Broadcast the message to client list
         var msg = JSON.parse(message.value);
         var clients=sseClientsListManager.getClientList(msg);
-        logger.debug(JSON.stringify(clients));
+        logger.info(JSON.stringify(clients));
         sseManager.sendMessageToClientList(clients, msg);
-        var clientsNotReaded=sseClientsListManager.getTimeSuperiorToXMinClientList(5);
-        logger.debug(JSON.stringify(clientsNotReaded));
-        sseManager.sendMessageToClientList(clientsNotReaded, {message:'ping',type:'ping'});
     }
   
 
@@ -62,7 +64,8 @@ module.exports = function(auth, config){
     const options = {
       studyId: req.params['studyid'],
       username: req.session.user.data.username,
-      userRole:"student"
+      userRole:"student",
+      sessionID: req.session.id
     };
 
     try {
@@ -82,7 +85,8 @@ module.exports = function(auth, config){
     const options = {
       studyId: req.params['studyid'],
       username: req.session.user.data.username,
-      userRole:"teacher"
+      userRole:"teacher",
+      sessionID: req.session.id
     };
 
     try {

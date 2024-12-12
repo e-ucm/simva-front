@@ -6,7 +6,7 @@ let axios = require('axios');
 const logger = require('../../logger');
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
-let userClientsListManager = require('../lib/userClientsListManager');
+const userClientsListManager = require('../lib/userClientsListManager');
 let usertools = require('../lib/usertools');
 const cron = require('node-cron');
 
@@ -15,14 +15,6 @@ module.exports = function(auth, config){
   // Passport configuration
   // Using Keycloak openID
   var KeyCloakStrategy = require('passport-keycloak-oauth2-oidc').Strategy;
-
-  // Schedule a task to run every 5 minutes
-  cron.schedule('*/4 * * * *', () => {
-      logger.debug('User refresh task is running every 4 minutes at ' + new Date());
-      var clientsToRefresh=userClientsListManager.getRefreshClientList();
-      logger.debug(JSON.stringify(clientsToRefresh));
-      userClientsListManager.refreshAuth(clientsToRefresh);
-  });
 
   class SimvaKeyCloakStrategy extends KeyCloakStrategy {
     authorizationParams(options) {
@@ -105,12 +97,10 @@ module.exports = function(auth, config){
       }
       usertools.setUser(req, user);
       logger.debug(user);
-      var clientId = userClientsListManager.addUser(req.session);
-      usertools.setClientSession(req, clientId);
-      logger.debug(req.session);
-      userClientsListManager.displayClients();
       const intendedUrl = req.session.intendedUrl || '/';
       delete req.session.intendedUrl;
+      userClientsListManager.addUserSession(req.session);
+      logger.debug(req.session);
       res.redirect(intendedUrl);
     })(req, res, next);
   });
@@ -129,8 +119,7 @@ module.exports = function(auth, config){
           }
       })
       .then(response => {
-        userClientsListManager.removeClient(req.session.clientId);
-        req.session.clientId = null;
+        userClientsListManager.removeClient(req.session.id);
         req.session.user = null;
         res.redirect('login');
       })
@@ -138,8 +127,7 @@ module.exports = function(auth, config){
         res.redirect('/');
       })
     }else{
-      userClientsListManager.removeClient(req.session.clientId);
-      req.session.clientId = null;
+      userClientsListManager.removeClient(req.session.id);
       req.session.user = null;
       res.redirect('login');
     }
@@ -148,6 +136,9 @@ module.exports = function(auth, config){
   router.get('/refresh_auth', auth, function (req, res, next) {
     usertools.refreshAuth(req.session, config, function(error, result){
       if(!error){
+        userClientsListManager.refreshAuth(req.session.id, result.access_token, result.refresh_token);
+        req.session.user.jwt = result.access_token;
+        req.session.refreshToken = result.refresh_token;
         res.send(result);
       }else{
         res.status(error.status).send(error.data);

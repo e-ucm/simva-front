@@ -10,6 +10,7 @@ class SSEClientsListManager {
         var obj = { user : user, userRole : userRole, id : id};
         obj.lastTime= Date.now();
         this.clients.set(clientId, obj);
+        this.displayClients();
     }
 
     displayClients() {

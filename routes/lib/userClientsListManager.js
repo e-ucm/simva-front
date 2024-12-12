@@ -4,64 +4,62 @@ let usertools = require('./usertools');
 
 class UserClientsListManager {
     constructor() {
-        this.clients = new Map();
+        this.sessionClients = new Map();
+        this.sessions = new Map();
     }
 
-    addUser(session) {
-        var cliendId = this.generateClientId();
+    addUserSession(session) {
         var obj = { session: session , jwtdecoded : usertools.decodeJWT(session.user.jwt)};
-        this.clients.set(cliendId, obj);
-        return cliendId;
+        this.sessions.set(session.id, obj);
+        this.displaySessions();
     }
 
-    // Generate a unique client ID
-    generateClientId() {
-        return Math.random().toString(36).substr(2, 9);
-    }
-
-    displayClients() {
-        logger.debug("{");
-        for (let [clientId, clientData] of this.clients) {
-            logger.debug("   " + clientId + ":" + JSON.stringify(clientData, null, 2)+ ",");
+    displaySessions() {
+        logger.info("Sessions : {");
+        for (let [sessionId, sessionData] of this.sessions) {
+            logger.info("   " + sessionId + ":" + JSON.stringify(sessionData, null)+ ",");
         }
-        logger.debug("}");
+        logger.info("}");
     }
 
-    refreshAuth(clientIds) {
-        for(let i=0; i < clientIds.length; i++) {
-            var clientId = clientIds[i];
-            var clientData = this.clients.get(clientId);
-            usertools.refreshAuth(clientData.session, config, (error, result) => {
-                if(!error) {
-                    logger.debug(result);
-                    clientData.session.user.jwt = result.access_token;
-                    clientData.jwtdecoded = usertools.decodeJWT(result.access_token);
-                    clientData.session.user.refreshToken = result.refresh_token;
-                    this.clients.set(clientId, clientData);
-                } else {
-                    logger.debug(error);
-                }
-            });
-        }
+    refreshAuth(sessionId, access_token, refresh_token) {
+        var clientData = this.sessions.get(sessionId);
+        clientData.session.user.jwt = access_token;
+        clientData.jwtdecoded = usertools.decodeJWT(access_token);
+        clientData.session.user.refreshToken = refresh_token;
+        this.sessions.set(sessionId, clientData);
     }
 
     getRefreshClientList() {
         let clientsToSend = [];
-        for (let [clientId, clientData] of this.clients) {
-            let client = clientData; // Parse the stored client data
-            let expirationTimeSubxMin = clientData.jwtdecoded.exp; // substract x minutes in milliseconds
+        for (let [sessionId, sessionData] of this.sessions) {
+            let expirationTimeSubxMin = sessionData.jwtdecoded.exp; // substract x minutes in milliseconds
             let now = Date.now() / 1000;
             if (now > expirationTimeSubxMin) { // Check if practicly expired
-                clientsToSend.push(clientId);
-                this.clients.set(clientId, client);
+                clientsToSend.push(this.sessionClients.get(sessionId));
             }
         }
         return clientsToSend;
     }
-
-    removeClient(clientId) {
-        this.clients.delete(clientId);
+    
+    removeSession(sessionId) {
+        this.sessions.delete(sessionId);
+        this.sessionClients.delete(sessionId);
         this.displayClients();
+        this.displaySessions();
+    }
+
+    addClient(sessionId, clientId) {
+        this.sessionClients.set(sessionId, clientId);
+        this.displayClients();
+    }
+
+    displayClients() {
+        logger.info("Clients : {");
+        for (let [sessionId, clientId] of this.sessionClients) {
+            logger.info("   " + sessionId + ":" + clientId+ ",");
+        }
+        logger.info("}");
     }
 }
 
