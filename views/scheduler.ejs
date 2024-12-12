@@ -69,6 +69,18 @@
 						// Refresh the page
 						location.reload();
 					});
+
+					sseClient.triggerEvent('ping');
+					sseClient.on('ping', (data) => {
+						console.log('ping:', data);
+						Simva.checkAndUpdateAuth((error, result) => {
+							if(!error) {
+								console.log("token refreshed !");
+							} else {
+								console.log("error :", error);
+							}
+						});
+					});
 				}
 			});
 		}

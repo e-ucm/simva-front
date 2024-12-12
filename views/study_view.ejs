@@ -338,6 +338,18 @@
 						PainterFactory.Painters[data.activityType].updateActivityResult(data.activityId, data.user, "Completed");
 					}
 				});
+
+				sseClient.triggerEvent('ping');
+				sseClient.on('ping', (data) => {
+					console.log('ping:', data);
+					Simva.checkAndUpdateAuth((error, result) => {
+						if(!error) {
+							console.log("token refreshed !");
+						} else {
+							console.log("error :", error);
+						}
+					});
+				});
 				// Close the SSE connection when it's no longer needed
 				// sseClient.closeConnection();
 			}
