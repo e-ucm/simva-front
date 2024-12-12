@@ -106,6 +106,7 @@ module.exports = function(auth, config){
   });
 
   router.get('/logout', auth, function(req, res, next){
+    let sessionId = req.session.id;
     if(req.session.user.refreshToken){
       clientConfig= `${config.sso.clientId}:${config.sso.clientSecret}`
       const querystring = new URLSearchParams({
@@ -119,7 +120,7 @@ module.exports = function(auth, config){
           }
       })
       .then(response => {
-        userClientsListManager.removeClient(req.session.id);
+        userClientsListManager.removeSession(sessionId);
         req.session.user = null;
         res.redirect('login');
       })
@@ -127,7 +128,7 @@ module.exports = function(auth, config){
         res.redirect('/');
       })
     }else{
-      userClientsListManager.removeClient(req.session.id);
+      userClientsListManager.removeSession(sessionId);
       req.session.user = null;
       res.redirect('login');
     }
