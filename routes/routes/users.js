@@ -4,6 +4,7 @@ var passport = require('passport');
 
 let axios = require('axios');
 const logger = require('../../logger');
+const Simva = require('../lib/simva');
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 const userClientsListManager = require('../lib/userClientsListManager');
@@ -63,7 +64,7 @@ module.exports = function(auth, config){
   router.get('/', auth, function(req, res, next) {
     res.redirect('../');
   });
-  
+
   router.get('/login', function(req, res, next) {
       res.render('users_login', { config: config });
   });

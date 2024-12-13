@@ -22,6 +22,10 @@ class UserClientsListManager {
         logger.info("}");
     }
 
+    getJWT(sessionId) {
+        return this.sessions.get(sessionId).session.user.jwt;
+    }
+
     refreshAuth(sessionId, access_token, refresh_token) {
         var clientData = this.sessions.get(sessionId);
         clientData.session.user.jwt = access_token;
