@@ -184,7 +184,7 @@ var Simva = {
 		this.post(`${this.apiurl}/studies/${study_id}/tests`, body, callback);
 	},
 
-	getEventsPresignedUrl: function(study_id, callback){
+	getStudyEventsPresignedUrl: function(study_id, callback){
 		this.get(`/studies/${study_id}/events/getPresignedUrl`, callback);
 	},
 
@@ -257,6 +257,11 @@ var Simva = {
 	getScheduleEventsPresignedUrl: function(study_id, callback){
 		this.get(`/studies/${study_id}/schedule/events/getPresignedUrl`, callback);
 	},
+
+	getEventsPresignedUrl: function(callback){
+		this.get(`/events/getPresignedUrl`, callback);
+	},
+
 
 	// Activities
 

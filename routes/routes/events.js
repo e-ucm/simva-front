@@ -57,8 +57,8 @@ module.exports = function(auth, config){
                 };
                 logger.debug(JSON.stringify(options));
                 sseClientsListManager.addActivityAndUserToMap(options.id,options.user, options.userRole, options.clientId);
-                sseManager.sendMessageToClientList([clientId], {message:'ping',type:'ping'});
             }
+            sseManager.sendMessageToClientList([clientId], {message:'ping',type:'ping'});
         } else {
             res.status(401).send({ message: 'Signature not valid' });
         }
