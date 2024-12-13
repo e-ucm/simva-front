@@ -26,11 +26,13 @@ class SSEClientManager {
 
         // Handle errors and reconnection
         this.eventSource.onerror = (event) => {
-            console.error('SSE Error:', event);
             if (this.eventSource.readyState === EventSource.CLOSED) {
                 console.log('Connection closed. Attempting to reconnect...');
                 this.isConnected = false;
                 this.reconnect();
+            } else {
+                console.error('SSE Error:', JSON.stringify(event, null, 2));
+                this.closeConnection();
             }
         };
 
