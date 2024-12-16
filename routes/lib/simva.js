@@ -13,29 +13,42 @@ class Simva {
 		this.ssoRealm = config.sso.ssoRealm;	
 	}
 
+	getJWT(sessionId) {
+		return userClientsListManager.getJWT(sessionId);	
+	}
+
 	// REQUEST
 	post(url, body, sessionId, callback){
-		Utils.post(url, body, callback, userClientsListManager.getJWT(sessionId));
+		Utils.post(url, body, callback, this.getJWT(sessionId));
 	}
 
 	patch(url, body, sessionId, callback){
-		Utils.patch(url, body, callback, userClientsListManager.getJWT(sessionId));
+		Utils.patch(url, body, callback, this.getJWT(sessionId));
 	}
 
 	put(url, body, sessionId, callback){
-		Utils.put(url, body, callback, userClientsListManager.getJWT(sessionId));
+		Utils.put(url, body, callback, this.getJWT(sessionId));
 	}
 
 	get(url, sessionId, callback){
-		Utils.get(url, callback, userClientsListManager.getJWT(sessionId));
+		Utils.get(url, callback, this.getJWT(sessionId));
 	}
 
 	delete(url, sessionId, callback){
-		Utils.delete(url, callback, userClientsListManager.getJWT(sessionId));
+		Utils.delete(url, callback, this.getJWT(sessionId));
 	}
 
 	// USER
-	register(body, sessionId, callback){
+	register(groupid, username, email, password, role, isToken, useNewGeneration, sessionId, callback){
+		let body = {
+			groupid : groupid,
+			username: username,
+			email: email,
+			password: password,
+			role: role,
+			isToken : isToken,
+			useNewGeneration : useNewGeneration
+		};
 		this.post(`${this.apiurl}/users`, body, sessionId, callback);
 	}
 
@@ -128,6 +141,14 @@ class Simva {
 		this.get(`${this.apiurl}/studies/${study_id}/tests`, sessionId, callback);
 	}
 
+	exportStudyConfig(study_id, sessionId, callback){
+		this.get(`${this.apiurl}/studies/${study_id}/export`, sessionId, callback);
+	}
+
+	importStudyConfig(newStudy, sessionId, callback){
+		this.post(`${this.apiurl}/studies/import`, newStudy, sessionId, callback);
+	}
+
 	getStudyTest(study_id,test_id, sessionId, callback){
 		this.get(`${this.apiurl}/studies/${study_id}/tests/${test_id}`, sessionId, callback);
 	}
@@ -204,7 +225,7 @@ class Simva {
 	}
 	
 	downloadActivityResult(activity_id, sessionId, callback) {
-		this.get(`${this.apiurl}/activities/${activity_id}/result?token=${userClientsListManager.getJWT(sessionId)}`, sessionId, callback);
+		this.get(`${this.apiurl}/activities/${activity_id}/result?token=${this.getJWT(sessionId)}`, sessionId, callback);
 	}
 
 	hasActivityResult(activity_id, sessionId, callback){
