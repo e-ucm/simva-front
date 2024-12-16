@@ -223,10 +223,6 @@ class Simva {
 	getActivityHasResult(activity_id, sessionId, callback){
 		this.get(`${this.apiurl}/activities/${activity_id}/hasresult`, sessionId, callback);
 	}
-	
-	downloadActivityResult(activity_id, sessionId, callback) {
-		this.get(`${this.apiurl}/activities/${activity_id}/result?token=${this.getJWT(sessionId)}`, sessionId, callback);
-	}
 
 	hasActivityResult(activity_id, sessionId, callback){
 		this.get(`${this.apiurl}/activities/${activity_id}/hasresult`, sessionId, callback);

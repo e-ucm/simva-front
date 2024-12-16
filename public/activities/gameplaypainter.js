@@ -298,7 +298,14 @@ var GameplayActivityPainter = {
 		} 
 		else 
 		{
-			Simva.downloadActivityResult(activity);
+			Simva.getActivityResult(activity, (error, result) => {
+				if(error) {
+					toastParams.text = error.message;
+					$.toast(toastParams);
+				} else {
+					Utils.download(`activity_result_${activity}.json`, JSON.stringify(result, null, 2));
+				}
+			});
 		}
 	},
 	

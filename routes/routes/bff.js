@@ -387,7 +387,7 @@ module.exports = function(auth, config){
         });
     });
 
-    router.post('/activities/:activityid/result', async (req, res, next) => {
+    router.get('/activities/:activityid/result', async (req, res, next) => {
         if(req.query.type) {
             if(req.query.users) {
                 Simva.getActivityResultWithTypeForUser(req.params["activityid"], req.query.type, req.query.users, req.session.id, (error, result) => {
@@ -409,14 +409,6 @@ module.exports = function(auth, config){
         } else {
             if(req.query.users) {
                 Simva.getActivityResultForUser(req.params["activityid"], req.query.users, req.session.id, (error, result) => {
-                    if(error) {
-                        next(error);
-                    } else {
-                        res.status(200).send(result);
-                    }
-                });
-            } else if(req.query.token) {
-                Simva.downloadActivityResult(req.params["activityid"], req.session.id, (error, result) => {
                     if(error) {
                         next(error);
                     } else {
