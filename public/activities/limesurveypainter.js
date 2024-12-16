@@ -211,15 +211,21 @@ var LimeSurveyPainter = {
 	},
 
 	generateTinyURL: function(activityId, surveyId) {
-		//Simva.getTinyUrl(activityId, function(error, result){
-		//});
 		let url=`${this.utils.url}${surveyId}`;
-		$.get(`https://tinyurl.com/api-create.php?url=${url}`, function(shorturl){
-			// Copy the text inside the text field
-			navigator.clipboard.writeText(shorturl);
-			// Alert Short URL
-			alert(shorturl);
+		Simva.generateShlinkURL(url, "survey", `${activityId}_${surveyId}`, null, (error, shorturl) => {
+			if(!error) {
+				// Copy the text inside the text field
+				navigator.clipboard.writeText(shorturl);
+				// Alert Short URL
+				alert(shorturl);
+			}			
 		});
+		//$.get(`https://tinyurl.com/api-create.php?url=${url}`, function(shorturl){
+		//	// Copy the text inside the text field
+		//	navigator.clipboard.writeText(shorturl);
+		//	// Alert Short URL
+		//	alert(shorturl);
+		//});
 	},
 
 	paintActivity: function(activity, participants){

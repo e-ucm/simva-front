@@ -6,11 +6,17 @@ class Simva {
 	apiurl;
 	ssoUrl;
 	ssoRealm;
+	shlinkapikey;
+	shlinkapidomain;
+	shlinkapiurl;
 
 	constructor() {
 		this.apiurl= config.api.url;
 		this.ssoUrl = config.sso.ssoUrl;
 		this.ssoRealm = config.sso.ssoRealm;	
+		this.shlinkapikey = config.shlink.apikey;
+		this.shlinkapidomain = config.shlink.apihost;
+		this.shlinkapiurl = config.shlink.apiurl;
 	}
 
 	getJWT(sessionId) {
@@ -36,6 +42,30 @@ class Simva {
 
 	delete(url, sessionId, callback){
 		Utils.delete(url, callback, this.getJWT(sessionId));
+	}
+
+	//SHLINK URL
+	generateURL(url, tag, title, customSlug, callback){
+		let body = {
+			"longUrl": url,
+			"tags": [
+			  tag
+			],
+			//"validSince": "string",
+			//"validUntil": "string",
+			//"maxvisits": 0,
+			"title": title,
+			"crawlable": false,
+			"forwardQuery": true,
+			"findIfExists": true,
+			"domain": `${this.shlinkapidomain}`,
+			//"shortCodeLength": 0
+		}
+		if(customSlug) {
+			body.customSlug = customSlug;
+		}
+
+		Utils.post(`${this.shlinkapiurl}/rest/v3/short-urls`, body, callback, null, this.shlinkapikey);
 	}
 
 	// USER

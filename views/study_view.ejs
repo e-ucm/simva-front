@@ -638,12 +638,20 @@
 	}
 	generateTinyURL = function() {
 		let url=`<%= config.simva.url %>/scheduler/${studyid}`;
-		$.get(`https://tinyurl.com/api-create.php?url=${url}`, function(shorturl){
-			// Copy the text inside the text field
-			navigator.clipboard.writeText(shorturl);
-			// Alert Short URL
-			alert(shorturl);
+		Simva.generateShlinkURL(url, "study", `scheduler_${studyid}`, null, (error, shorturl) => {
+			if(!error) {
+				// Copy the text inside the text field
+				navigator.clipboard.writeText(shorturl);
+				// Alert Short URL
+				alert(shorturl);
+			}
 		});
+		//$.get(`https://tinyurl.com/api-create.php?url=${url}`, function(shorturl){
+		//	// Copy the text inside the text field
+		//	navigator.clipboard.writeText(shorturl);
+		//	// Alert Short URL
+		//	alert(shorturl);
+		//});
 	}
 	let downloadStudyConfig = function() {
 		Simva.exportStudyConfig(study._id, function(error, result) {

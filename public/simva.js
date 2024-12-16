@@ -113,6 +113,19 @@ var Simva = {
 		})
 	},
 
+
+	//SHLINK URL
+	generateShlinkURL(url, tag, title, customSlug, callback){
+		let body = {
+			url: url,
+			tag: tag,
+			title: title,
+			customSlug: customSlug
+		}
+	
+		Utils.post(`/bff/shlink`, body, callback);
+	},
+
 	// USER
 
 	register: function(groupid, username, email, password, role, isToken, useNewGeneration, callback){

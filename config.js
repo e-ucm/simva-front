@@ -71,4 +71,12 @@ config.kafka.brokers= [ process.env.SIMVA_KAFKA_BROKER ] || ['localhost:9092']
 config.kafka.groupId= process.env.SIMVA_KAFKA_GROUPID || 'my-group-id'
 config.kafka.topic= process.env.SIMVA_KAFKA_SIMVA_EVENTS_TOPIC || 'minio-events'
 
+config.shlink = {}
+config.shlink.apihost = process.env.SHLINK_SERVER_HOST || 'shlink.external.test'
+config.shlink.protocol = process.env.SHLINK_PROTOCOL || 'https'
+config.shlink.port = process.env.SHLINK_PORT || '443'
+config.shlink.apiurl =  `${config.shlink.protocol}://${config.shlink.apihost}:${config.shlink.port}`
+config.shlink.apikey = process.env.SHLINK_SERVER_API_KEY || 'myapikey'
+
+
 module.exports = config;

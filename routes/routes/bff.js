@@ -8,6 +8,20 @@ module.exports = function(auth, config){
     * USERS
     * 
     */
+    router.post('/shlink', async (req, res, next) => {
+        Simva.generateURL(req.body.url, req.body.tag, req.body.title, req.body.customSlug, (error, result) => {
+            if(error) {
+                next(error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+    
+    /**
+    * USERS
+    * 
+    */
     router.post('/users', async (req, res, next) => {
         Simva.register(req.body.groupid, req.body.username, req.body.email, req.body.password, req.body.role, req.body.isToken, req.body.useNewGeneration, req.session.id, (error, result) => {
             if(error) {
