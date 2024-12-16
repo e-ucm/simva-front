@@ -638,12 +638,13 @@
 	}
 	generateTinyURL = function() {
 		let url=`<%= config.simva.url %>/scheduler/${studyid}`;
-		Simva.generateShlinkURL(url, "study", `scheduler_${studyid}`, null, (error, shorturl) => {
+		Simva.generateShlinkURL(url, "study", `scheduler_${studyid}`, null, (error, result) => {
 			if(!error) {
+				let shortUrl=result.shortUrl;
 				// Copy the text inside the text field
-				navigator.clipboard.writeText(shorturl);
+				navigator.clipboard.writeText(shortUrl);
 				// Alert Short URL
-				alert(shorturl);
+				alert(shortUrl);
 			}
 		});
 		//$.get(`https://tinyurl.com/api-create.php?url=${url}`, function(shorturl){

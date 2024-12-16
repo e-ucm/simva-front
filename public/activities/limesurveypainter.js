@@ -212,12 +212,13 @@ var LimeSurveyPainter = {
 
 	generateTinyURL: function(activityId, surveyId) {
 		let url=`${this.utils.url}${surveyId}`;
-		Simva.generateShlinkURL(url, "survey", `${activityId}_${surveyId}`, null, (error, shorturl) => {
+		Simva.generateShlinkURL(url, "survey", `${activityId}_${surveyId}`, null, (error, result) => {
 			if(!error) {
+				let shortUrl=result.shortUrl;
 				// Copy the text inside the text field
-				navigator.clipboard.writeText(shorturl);
+				navigator.clipboard.writeText(shortUrl);
 				// Alert Short URL
-				alert(shorturl);
+				alert(shortUrl);
 			}			
 		});
 		//$.get(`https://tinyurl.com/api-create.php?url=${url}`, function(shorturl){
