@@ -212,7 +212,7 @@ var LimeSurveyPainter = {
 
 	generateTinyURL: function(activityId, surveyId) {
 		let url=`${this.utils.url}${surveyId}`;
-		Simva.generateShlinkURL(url, "survey", `${activityId}_${surveyId}`, null, (error, result) => {
+		Simva.generateShlinkURL(url, "survey", `survey_${surveyId}`, null, (error, result) => {
 			if(!error) {
 				let shortUrl=result.shortUrl;
 				// Copy the text inside the text field
