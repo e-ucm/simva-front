@@ -12,6 +12,7 @@ config.simva.protocol = process.env.SIMVA_PROTOCOL || 'https'
 let simvaPort = ((default_protocol_ports[config.simva.protocol] !== config.simva.port) ? `:${config.simva.port}` : '')
 config.simva.url = process.env.SIMVA_URL || `${config.simva.protocol}://${config.simva.host}${simvaPort}`;
 config.simva.cookieMaxAgeInMin=process.env.SIMVA_COOKIE_MAX_AGE_IN_MIN || 4*60
+config.simva.profiling = process.env.ENABLE_DEBUG_PROFILING == "true" ? true : false
 
 config.mongo = {}
 config.mongo.host = process.env.MONGO_HOST || 'localhost:27017'
