@@ -15,32 +15,3 @@ if(process.env.NODE_ENV == "development" && config.simva.profiling) {
   }
   profiling();
 }
-
-/*
-import {
-  Worker,
-  isMainThread,
-  parentPort,
-} from 'node:worker_threads';
-
-if (isMainThread) {
-  const worker = new Worker(__filename);
-
-  worker.once('message', (filename) => {
-    logger.info(`worker heapdump: ${filename}`);
-    // Now get a heapdump for the main thread.
-    logger.info(`main thread heapdump: ${v8.writeHeapSnapshot(`${profilingFolder}/Heap.${now().toISOString()}.heapsnapshot`)}`);
-  });
-
-  // Tell the worker to create a heapdump.
-  worker.postMessage('heapdump');
-} else {
-  parentPort.once('message', (message) => {
-    if (message === 'heapdump') {
-      // Generate a heapdump for the worker
-      // and return the filename to the parent.
-      parentPort.postMessage(v8.writeHeapSnapshot(`${profilingFolder}/Heap.${now().toISOString()}.heapsnapshot`));
-    }
-  });
-}
-*/
