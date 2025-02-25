@@ -1,3 +1,4 @@
+const ms = require("ms");
 let config = {}
 
 let default_protocol_ports = {
@@ -13,6 +14,8 @@ let simvaPort = ((default_protocol_ports[config.simva.protocol] !== config.simva
 config.simva.url = process.env.SIMVA_URL || `${config.simva.protocol}://${config.simva.host}${simvaPort}`;
 config.simva.cookieMaxAgeInMin=process.env.SIMVA_COOKIE_MAX_AGE_IN_MIN || 4*60
 config.simva.profiling = process.env.ENABLE_DEBUG_PROFILING == undefined ? "false" : (process.env.ENABLE_DEBUG_PROFILING == "true")
+config.simva.ping_task = process.env.PING_TASK !== undefined ? ms(process.env.PING_TASK) : ms("3min")
+config.simva.auth_expired_task = process.env.AUTH_EXPIRED_TASK !== undefined ? ms(process.env.AUTH_EXPIRED_TASK) : ms("30min")
 
 config.mongo = {}
 config.mongo.host = process.env.MONGO_HOST || 'localhost:27017'

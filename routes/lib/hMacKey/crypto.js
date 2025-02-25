@@ -1,5 +1,3 @@
-const { decode, encode } = require('./base58-universal/index.js');
-
 /**
  * 
  * @param {string} message 
@@ -18,6 +16,7 @@ function getMessageEncoding(message) {
  * @returns {Promise<string>}
  */
 async function signMessage(message, key) {
+    const base58Universal = await import('base58-universal');
     const encoded = getMessageEncoding(message);
     const signature = await crypto.subtle.sign(
         "HMAC",
@@ -25,7 +24,7 @@ async function signMessage(message, key) {
         encoded
     );
 
-    const value = encode(new Uint8Array(signature));
+    const value = base58Universal.encode(new Uint8Array(signature));
     return value;
 }
 
@@ -38,7 +37,8 @@ async function signMessage(message, key) {
  * @returns {Promise<boolean>}
  */
 async function verifyMessage(message, signature, key) {
-    const decodedSignature = decode(signature);
+    const base58Universal = await import('base58-universal');
+    const decodedSignature = base58Universal.decode(signature);
     const encoded = getMessageEncoding(message);
     const result = await crypto.subtle.verify(
         "HMAC",
@@ -142,10 +142,11 @@ async function getWrapKey(keyMaterial, salt) {
  * @returns {Promise<string>}
  */
 async function wrapCryptoKey(keyToWrap, keyMaterial, salt) {
+    const base58Universal = await import('base58-universal');
     const wrappingKey = await getWrapKey(keyMaterial, salt);
 
     const wrappedKey = await crypto.subtle.wrapKey("raw", keyToWrap, wrappingKey, "AES-KW");
-    const encodedWrappedKey = encode(new Uint8Array(wrappedKey));
+    const encodedWrappedKey = base58Universal.encode(new Uint8Array(wrappedKey));
     return encodedWrappedKey;
 }
 
@@ -206,6 +207,7 @@ const DEFAULT_PASSWORD='12345';
  * @returns {Promise<CreateHMACKey>}
  */
 async function createHMACKey(encodedPassword = DEFAULT_PASSWORD, hmacKey) {
+    const base58Universal = await import('base58-universal');
     let encodedSalt = '';
     let encodedKey = '';
     if (hmacKey) {
@@ -215,25 +217,25 @@ async function createHMACKey(encodedPassword = DEFAULT_PASSWORD, hmacKey) {
 
     let salt;
     if (encodedSalt && encodedSalt.length > 0) {
-        salt = decode(encodedSalt);
+        salt = base58Universal.decode(encodedSalt);
     } else {
         salt = generateSalt();
-        encodedSalt = encode(salt)
+        encodedSalt = base58Universal.encode(salt)
     }
 
     let keyMaterial;
     if (encodedPassword && encodedPassword.length > 0) {
-        const password = decode(encodedPassword);
+        const password = base58Universal.decode(encodedPassword);
         keyMaterial = await getKeyMaterial(password);
     } else {
         const password = generateSalt();
-        encodedPassword = encode(password);
+        encodedPassword = base58Universal.encode(password);
         keyMaterial = await getKeyMaterial(password);
     }
 
     let key;
     if (encodedKey && encodedKey.length > 0) {
-        const keyBytes = decode(encodedKey);
+        const keyBytes = base58Universal.decode(encodedKey);
         key = await unwrapHmacKey(keyBytes, keyMaterial, salt);
     } else {
         key = await generateRandomHMACKey();

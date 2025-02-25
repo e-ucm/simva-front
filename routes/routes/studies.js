@@ -10,6 +10,7 @@ module.exports = function(auth, config){
   const sseClientsListManager = require('../lib/sseClientsListManager');
   const userClientsListManager = require('../lib/userClientsListManager');
   const KafkaClient = require("../lib/kafka");
+  const { convertTimeToCron } = require("../lib/date.js");
 
   initHmacKey();
   kafka = new KafkaClient(config.kafka);
@@ -37,16 +38,17 @@ module.exports = function(auth, config){
 
     const cron = require('node-cron');
 
-    // Schedule a task to run every 3 minutes
-    cron.schedule('*/3 * * * *', async () => {
-        logger.info('SSE Ping task is running every 3 minutes at ' + new Date());
+    // Schedule a task to run every x minutes
+    cron.schedule(convertTimeToCron(config.simva.ping_task/(1000*60)), async () => {
+        logger.info('SSE Ping task is running at ' + new Date());
         var clientsWithoutAction=sseClientsListManager.getTimeSuperiorToXMinClientList(5);
         logger.debug(JSON.stringify(clientsWithoutAction));
         sseManager.sendMessageToClientList(clientsWithoutAction, {message:'ping',type:'ping'});
     });
     
-    cron.schedule('*/30 * * * *', async () => {
-      logger.info('SSE auth expired task is running every 30 minutes at ' + new Date())
+    // Schedule a task to run every x minutes
+    cron.schedule(convertTimeToCron(config.simva.auth_expired_task/(1000*60)), async () => {
+      logger.info('SSE auth expired task is running at ' + new Date())
       var sessionsToRefresh=await usertools.getRefreshSessionsList();
       var clientsToRefresh=userClientsListManager.getRefreshClientList(sessionsToRefresh);
       logger.debug(JSON.stringify(clientsToRefresh));
