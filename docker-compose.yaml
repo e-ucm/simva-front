@@ -10,28 +10,76 @@ networks:
 
 services:
   mongodb:
-    image: mongo:4.0
+    image: mongo:4.2.8
     volumes:
       - mongo_data:/data/db
     hostname: mongo.simva.dev.test
 
-  simva-api:
-    image: node:8
-    command: bash -c "cd /app && npm start"
+  simva-front:
+    build: ./
+    command: [ "npm", "run", "dev" ]
     stdin_open: true
     tty: true
     environment:
-      MONGO_HOST: mongo.simva.dev.test
-      MONGO_DB: /simva
-      LIMESURVEY_HOST: limesurvey-dev.external.test
+      LOG_LEVEL: debug
+      LOG_FOLDER: /home/node/logs
+      #LOG/DEBUG
+      DEBUG: true
+      #NODES
+      NODE_ENV: development
+      NODE_EXTRA_CA_CERTS: /home/node/app/DemoCA.crt
+      #SIMVA
+      SIMVA_PORT: 3050
+      SIMVA_HOST:  simva.external.test
+      SIMVA_PROTOCOL: https
+      SIMVA_URL: https://simva.external.test/
+      #MONGO DB
+      MONGO_HOST: simva-mongo.dev.test
+      MONGO_DB: /simva-front
+      #SSO KEYCLOAK
+      SSO_HOST: sso.external.test
+      SSO_PROTOCOL: https
+      SSO_PORT: 443
+      SSO_ACCOUNT_PATH: /account
+      SSO_USER_CAN_SELECT_ROLE: true
+      SSO_ADMINISTRATOR_CONTACT: contact@administrator.com
+      SSO_STUDENT_ALLOWED_ROLE: true
+      SSO_TEACHING_ASSISTANT_ALLOWED_ROLE: true
+      SSO_TEACHER_ALLOWED_ROLE: true
+      SSO_RESEARCHER_ALLOWED_ROLE: true
+      SSO_REALM: simva
+      SSO_CLIENT_ID: simva
+      SSO_CLIENT_SECRET: secret
+      SSO_SSL_REQUIRED: external
+      SSO_PUBLIC_CLIENT: false
+      #SIMVA API
+      SIMVA_API_HOST: simva-api.external.test
+      SIMVA_API_PORT: 443
+      SIMVA_API_PROTOCOL: https
+      #LIMESURVEY
+      LIMESURVEY_HOST: "https://limesurvey-dev.external.test/"
+      LIMESURVEY_PROTOCOL: https
+      LIMESURVEY_PORT: 443
       LIMESURVEY_ADMIN_USER: admin
-      LIMESURVEY_ADMIN_PASSWORD: password
-      NODE_EXTRA_CA_CERTS: /app/DemoCA.crt
+      LIMESURVEY_ADMIN_PASSWORD: secret
+      #LTI 
+      LTI_ENABLED: false
+      #KAFKA
+      SIMVA_KAFKA_CLIENTID: simva_events
+      SIMVA_KAFKA_BROKER: "kafka1.dev.test:9092"
+      SIMVA_KAFKA_GROUPID: simva_events
+      SIMVA_KAFKA_SIMVA_EVENTS_TOPIC: simva_events_topic
+      #SHLINK
+      SHLINK_SERVER_HOST: shlink.external.test
+      SHLINK_PORT: 443
+      SHLINK_PROTOCOL: https
+      SHLINK_SERVER_API_KEY: password
     volumes:
-      - ./:/app     
+      - ./:/home/node/app
+      - /home/node/app/node_modules #exclude node_modules 
     depends_on:
       - mongodb
-    hostname: simva-api.dev.test
+    hostname: simva.dev.test
     dns:
       - 172.31.0.53
     networks:
@@ -40,4 +88,4 @@ services:
     labels:
       traefik.enable: true
       traefik.port: 3000
-      traefik.frontend.rule: "Host:simva-api.external.test"
+      traefik.frontend.rule: "Host:simva.external.test"
