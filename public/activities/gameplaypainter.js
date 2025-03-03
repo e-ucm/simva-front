@@ -17,11 +17,29 @@ var GameplayActivityPainter = {
 	},
 
 	getExtraForm: function () {
-		return `<div class="gameplay_activity"><p><label for="gameplay_trace_storage">Trace Storage</label><input id="gameplay_trace_storage" type="checkbox" name="trace_storage"></p>
+		return `<div class="gameplay_activity"><p><label for="gameplay_trace_storage">Trace Storage</label><input id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
 			 <p><label for="gameplay_backup">Backup</label><input id="gameplay_backup" type="checkbox" name="backup" checked></p>
 			 <p><label for="gameplay_game_uri" style="width: 100%; text-align: center;">Game URI (optional)</label><input id="gameplay_game_uri" type="text" name="game_uri">
-			 <span class="info">Game URI can include tags: {authToken}, {username}, and {activityId}</p></div>`;
+			 <span class="info">Game URI can include tags: {simvaResultUri}, {simvaHomePage}, {username}, {authToken}, {token_endpoint}, {userToken}, {studyId} and {activityId}</p></div>`;
 			 //<p><label for="gameplay_realtime">Realtime</label><input id="gameplay_realtime" type="checkbox" name="realtime"></p>
+	},
+
+	getEditExtraForm: function () {
+		return `<div class="gameplay_activity"><p><label for="edit_gameplay_trace_storage">Trace Storage</label><input id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
+			 <p><label for="edit_gameplay_backup">Backup</label><input id="edit_gameplay_backup" type="checkbox" name="backup" checked></p>
+			 <p><label for="edit_gameplay_game_uri" style="width: 100%; text-align: center;">Game URI (optional)</label><input id="edit_gameplay_game_uri" type="text" name="game_uri">
+			 <span class="info">Game URI can include tags: {simvaResultUri}, {simvaHomePage}, {username}, {authToken}, {token_endpoint}, {userToken}, {studyId} and {activityId}</p></div>`;
+			 //<p><label for="gameplay_realtime">Realtime</label><input id="gameplay_realtime" type="checkbox" name="realtime"></p>
+	},
+
+	updateInputEditExtraForm(activity) {
+		var gameplay_trace_storage = document.getElementById('edit_gameplay_trace_storage');
+		gameplay_trace_storage.checked = activity.extra_data.config.trace_storage;
+		var gameplay_backup = document.getElementById('edit_gameplay_backup');
+		gameplay_backup.checked = activity.extra_data.config.backup;
+		var gameplay_game_uri = document.getElementById('edit_gameplay_game_uri');
+		gameplay_game_uri.value = activity.extra_data.game_uri;
+
 	},
 
 	extractInformation: function(form, callback){
@@ -43,39 +61,56 @@ var GameplayActivityPainter = {
 		callback(null, activity);
 	},
 
+	extractEditInformation: function(form, actualActivity, callback){
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+		let activity = {};
+
+		if(actualActivity.name !== formdata.name) {
+			activity.name = formdata.name;
+		}
+	
+		let trace_storage = formdata.trace_storage === 'on';
+		if(actualActivity.extra_data.config.trace_storage !== trace_storage) {
+			activity.trace_storage = trace_storage;
+		}
+		let realtime = formdata.realtime === 'on';
+		if(actualActivity.extra_data.config.realtime !== realtime) {
+			activity.realtime = realtime;
+		}
+		let backup = formdata.backup === 'on';
+		if(actualActivity.extra_data.config.backup !== backup) {
+			activity.backup = backup;
+		}
+		let game_uri=formdata.game_uri;
+		if(!(actualActivity.extra_data.game_uri == game_uri)) {
+			if(actualActivity.extra_data.game_uri) {
+				activity.game_uri = game_uri;
+			} else {
+				if(game_uri !== ''){
+					activity.game_uri = game_uri;
+				}
+			}
+		}
+	
+		callback(null, activity);
+	},
+
 	fullyPaintActivity: function(activity){
 		this.paintActivity(activity, participants);
-		let tmp = this;
-
-		Simva.isActivityOpenable(activity._id, function(error, result){
-
-			activity.isOpenable = result.openable;
-			if(activity.isOpenable){
-				Simva.getActivityTarget(activity._id, function(error, result){
-					activity.tmp.result = result;
-					tmp.paintActivityTargets(activity, result);
-				});
-			}
-
-			tmp.updateParticipants(activity);
-			
-		});
+		this.updateParticipants(activity);
 	},
 
 	updateParticipants: function(activity){
-		let tmp = this;
-		activity.tmp = {};
-
-		Simva.getActivityCompletion(activity._id, function(error, result){
-			tmp.paintActivityCompletion(activity, result);
-		});
-
-		Simva.getActivityHasResult(activity._id, function(error, result){
-			tmp.paintActivityResult(activity, result);
-		});
+		if(activity.data.openable){
+			PainterFactory.Painters["activity"].paintActivityTargets(activity, activity.data.target);
+		}
+		PainterFactory.Painters["activity"].paintActivityCompletion(activity, activity.data.completion, true);
+		PainterFactory.Painters["activity"].paintActivityProgress(activity, activity.data.progress);
+		PainterFactory.Painters["activity"].paintActivityResult(activity, activity.data.hasresult, false, "No Backup", null, null, true, "See Backup");
 	},
 	
-	downloadXasuConfig: function(activityId){
+	downloadXasuConfig: function(activityId, studyId){
 		var content = JSON.stringify({
 			online: true,
 			simva :true,
@@ -86,7 +121,9 @@ var GameplayActivityPainter = {
        			auth_endpoint : `${Simva.ssoUrl}/realms/${Simva.ssoRealm}/protocol/openid-connect/auth`, 
         		token_endpoint : `${Simva.ssoUrl}/realms/${Simva.ssoRealm}/protocol/openid-connect/token`,
         		client_id : "simva-plugin",
-        		code_challenge_method : "S256"
+        		code_challenge_method : "S256",
+				simva_user_token:"true",
+    			login_hint: studyId
 			}
 		}, null, 2);
 
@@ -102,9 +139,9 @@ var GameplayActivityPainter = {
 	paintActivity: function(activity, participants){
 		let activitybox = `<div id="activity_${activity._id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
+			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
+			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
 			<p class="subtitle">${this.simpleName}</p>`;
-
 		
 		/*
 		activitybox += 'Realtime: ';
@@ -120,7 +157,7 @@ var GameplayActivityPainter = {
 			activitybox += `<a onclick="GameplayActivityPainter.getMinioData('${activity._id}')" target="_blank">Download Data</a>
 			<br>
 			XASU Config:
-			<a onclick="GameplayActivityPainter.downloadXasuConfig('${activity._id}')">
+			<a onclick="GameplayActivityPainter.downloadXasuConfig('${activity._id}','${activity.study}')">
 				<img src="/ua.png"  width="20" height="20">
 			</a>`;
 		} else {
@@ -133,10 +170,13 @@ var GameplayActivityPainter = {
 		} else {
 			activitybox += '<i>Disabled</i>';
 		}
-		activitybox += '</p>';		
-		activitybox += `<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>`
+		activitybox += '</p>';
+		activitybox += `<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>% [ <doneres>0</doneres>/<total>0</total> ]</span></div>`
+		if(activity.extra_data.config.trace_storage){
+			activitybox += `<div id="progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>GameProgress:  <done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>`
+		}
 		if(activity.extra_data.config.backup){
-			activitybox += `<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>`
+			activitybox += `<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>BackupResults:  <done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>`
 		}
 		activitybox += `${this.paintActivityParticipantsTable(activity, participants)}</div>`;
 
@@ -144,10 +184,8 @@ var GameplayActivityPainter = {
 	},
 
 	paintActivityParticipantsTable: function(activity, participants){
-		let toret = '<table><tr><th>User</th><th>Completed</th>';
-		if(activity.extra_data.config.realtime){
-			toret += '<th>Progress</th><th>Traces</th>';
-		}
+		let toret = '<table><tr><th>User</th><th>Completed</th><th>Progress</th>';
+		//toret += '<th>Traces</th>';
 		toret += '<th>Backup</th></tr>';
 
 		for (var i = 0; i < participants.length; i++) {
@@ -156,25 +194,14 @@ var GameplayActivityPainter = {
 			}
 
 			toret += '<tr>';
+			toret += `<td>${PainterFactory.Painters["activity"].paintUsernameOrToken(activity, participants[i], (activity.extra_data.game_uri && activity.extra_data.game_uri !== ''))}</td>`;
 
-			if(activity.isOpenable || (activity.extra_data.game_uri && activity.extra_data.game_uri !== '') ){
-				toret += `<td><a id="${activity._id}_" ${participants[i].username}_target"class="targeturl" target="_blank" href="">
-				${participants[i].username}</a></td>`;
-			}else{
-				toret += `<td>${participants[i].username}</td>`;
-			}
+			toret += `${PainterFactory.Painters["activity"].paintCompletionRow(activity._id,participants[i].username, true)}`;
 
-			toret += `<td id="completion_${activity._id}_${participants[i].username}">---</td>`;
+			toret += `<td id="progress_${activity._id}_${participants[i].username}" class="progress"><div class="partial"></div><div class="done"></div><span><done>0</done>%</span></td>`
 
-			if(activity.extra_data.config.realtime){
-				toret += `<td id="progress_${activity._id}_${participants[i].username}" class="progress"><div class="partial"></div><div class="done"></div><span><done>0</done>%</span></td>
-						<td id="traces_${activity._id}_${participants[i].username}">---</td>`;
-			}else{
-				toret += ''
-			}
-			
 			if(activity.extra_data.config.backup){
-				toret += `<td id="backup_${activity._id}_${participants[i].username}">---</td></tr>`;
+				toret += `${PainterFactory.Painters["activity"].paintResultRow(activity._id,participants[i].username)}`;
 			}else{
 				toret += '<td><i>Disabled</i></td>';
 			}
@@ -185,99 +212,18 @@ var GameplayActivityPainter = {
 		return toret;
 	},
 
-	paintActivityCompletion: function(activity, status){
-		let usernames = Object.keys(status);
-
-		let done = 0;
-
-		for (var i = 0; i < usernames.length; i++) {
-			if(status[usernames[i]]){
-				done++;
-			}
-
-			let completion = `<span>${status[usernames[i]]}</span>`
-			$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
-			$(`#completion_${activity._id}_${usernames[i]}`).empty();
-			$(`#completion_${activity._id}_${usernames[i]}`).append(completion);
-		}
-
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
-
-		if(isNaN(progress)){
-			progress = 0;
-		}
-
-		$(`#completion_progress_${activity._id} .done`).css('width', `${progress}%` );
-		$(`#completion_progress_${activity._id} done`).text(progress);
+	updateActivityResult: function(activityId, username, backup) {
+		PainterFactory.Painters["activity"].updateActivityResult(activityId, username,backup);
 	},
 
-	paintActivityResult: function(activity, results){
-		let usernames = Object.keys(results);
-
-		let done = 0, partial = 0;
-
-		for (var i = 0; i < usernames.length; i++) {
-			let status = results[usernames[i]];
-			let traces = '<span>No traces</span>';
-			let backup = '<span><i>Disabled</i></span>';
-			if(activity.extra_data.config.backup){
-				backup = '<span>No backup</span>';
-			}
-
-			if(status){
-				done++;
-
-				let tmpprogress = 0; 
-				if(status){
-					if(activity.extra_data.config.backup && results[usernames[i]]){
-						backup = `<span >
-						<a onclick="GameplayActivityPainter.downloadBackup('${activity._id}',
-						'${usernames[i]}')">Download</a>
-						</span>`;
-					}
-					
-				}
-				/*
-				tmpprogress = (tmpprogress * 1000) / 10;
-				$(`#progress_${activity._id}_${usernames[i]} .done`).css('width', `${tmpprogress}%` );
-				$(`#progress_${activity._id}_${usernames[i]} done`).text(tmpprogress);*/
-			}
-
-
-			/*$(`traces_${activity._id}_${usernames[i]}`).addClass(status && status.realtime ? 'green' : 'red');
-			$(`#traces_${activity._id}_${usernames[i]}`).empty();
-			$(`#traces_${activity._id}_${usernames[i]}`).append(traces);*/
-
-			$(`#backup_${activity._id}_${usernames[i]}`).addClass(status ? 'green' : 'red');
-			$(`#backup_${activity._id}_${usernames[i]}`).empty();
-			$(`#backup_${activity._id}_${usernames[i]}`).append(backup);
-		}
-
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
-		if(isNaN(progress)){
-			progress = 0;
-		}
-		$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
-		$(`#result_progress_${activity._id} done`).text(progress);
-
-		/*
-		let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
-		if(isNaN(partialprogress)){
-			partialprogress = 0;
-		}
-		$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
-		$(`#result_progress_${activity._id} partial`).text(partialprogress);*/
+	updateActivityCompletion: function(activityId, username, completion) {
+		PainterFactory.Painters["activity"].updateActivityCompletion(activityId, username, completion, true);
 	},
 
-	paintActivityTargets: function(activity, results){
-		let usernames = Object.keys(results);
-
-		let done = 0, partial = 0;
-		
-		for (var i = 0; i < usernames.length; i++) {
-			$(`#${activity._id}_${usernames[i]}_target`).attr('href', results[usernames[i]]);
-		}
+	updateActivityProgress: function(activityId, username, result) {
+		PainterFactory.Painters["activity"].updateActivityProgress(activityId, username,result);
 	},
+	
 	downloadBackup: function(activity, user){
 		var toastParams = {
 			heading: 'Error loading the result',
@@ -299,9 +245,15 @@ var GameplayActivityPainter = {
 		} 
 		else 
 		{
-			Simva.downloadActivityResult(activity);
+			Simva.getActivityResult(activity, (error, result) => {
+				if(error) {
+					toastParams.text = error.message;
+					$.toast(toastParams);
+				} else {
+					Utils.download(`activity_result_${activity}.json`, JSON.stringify(result, null, 2));
+				}
+			});
 		}
-
 	},
 	
 	openTraces: function(activity, user){
@@ -339,16 +291,14 @@ var GameplayActivityPainter = {
 				let context = $('#iframe_floating iframe')[0].contentWindow.document;
 				let body = $('body', context);
 				body.html(content);
-				toggleAddForm('iframe_floating');
+				Utils.toggleAddForm('iframe_floating');
 			}
 		})
 	},
 
 	getMinioData: function(activity){
 		Simva.getMinioDataUrl(activity, function(error, result){
-			console.log("Callback triggered");
 			if(error){
-				console.log("Error:", error);  // Log the error object for better visibility
 				$.toast({
 					heading: 'Error loading the result',
 					text: error.message,
@@ -357,7 +307,6 @@ var GameplayActivityPainter = {
 					stack: false
 				});
 			}else{
-				console.log("Result:", result);  // Log the entire result for debugging
        			let url = result.url;
 
        			// Open the generated URL in a new tab

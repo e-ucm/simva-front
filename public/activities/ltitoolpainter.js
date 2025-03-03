@@ -43,6 +43,13 @@ var LTIToolPainter = {
 
 		return form;
 	},
+	
+	getEditExtraForm: function () {
+		return "";
+	},
+
+	updateInputEditExtraForm(activity) {
+	},
 
 	loadToolList: function(callback){
 		Simva.getLtiTools(function(error, result){
@@ -60,8 +67,6 @@ var LTIToolPainter = {
 			}else{
 				form += '<p>No tools available. Create a new one.</p>'
 			}
-
-			console.log(form);
 
 			$('#ltitool_byexisting').html(form);
 
@@ -93,34 +98,28 @@ var LTIToolPainter = {
 		}
 	},
 
+	extractEditInformation: function(form, actualActivity, callback){
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+		let activity = {};
+
+		if(actualActivity.name !== formdata.name) {
+			activity.name = formdata.name;
+		}
+		callback(null, activity);
+	},
+
 	fullyPaintActivity: function(activity){
 		this.paintActivity(activity, participants);
-		let tmp = this;
-
 		this.updateParticipants(activity);
-		setInterval(function(){
-			tmp.updateParticipants(activity);
-		}, 5000);
 	},
 
 	updateParticipants: function(activity){
-		let tmp = this;
-		activity.tmp = {};
-
-		Simva.getActivityCompletion(activity._id, function(error, result){
-			activity.tmp.completion = result;
-			tmp.paintActivityCompletion(activity, result);
-		});
-
-		Simva.getActivityResult(activity._id, function(error, result){
-			activity.tmp.result = result;
-			tmp.paintActivityResult(activity, result);
-		});
-
-		Simva.getActivityTarget(activity._id, function(error, result){
-			activity.tmp.result = result;
-			tmp.paintActivityTargets(activity, result);
-		});
+		PainterFactory.Painters["activity"].paintActivityCompletion(activity, activity.data.completion, true);
+		PainterFactory.Painters["activity"].paintActivityResult(activity, activity.data.result);
+		if(activity.data.openable){
+			PainterFactory.Painters["activity"].paintActivityTargets(activity, activity.data.target);
+		}
 	},
 
 	paintActivity: function(activity, participants){
@@ -134,7 +133,8 @@ var LTIToolPainter = {
 
 		$(`#test_${activity.test} .activities`).append(`<div id="activity_${activity._id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
+			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
+			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
 			<p class="subtitle">${this.simpleName}</p>
 			<p>Tool ClientID: ${tool.client_id}</p>
 			<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>
@@ -149,10 +149,8 @@ var LTIToolPainter = {
 			if(!AllocatorFactory.Painters[allocator.type].isAllocatedToActivity(participants[i].username, activity)){
 				continue;
 			}
-			
-			toret += `<tr><td><a id="${activity._id}_${participants[i].username}_target"class="targeturl" 
-			target="_blank" href="">${participants[i].username}</a></td>
-			<td id="completion_${activity._id}_${participants[i].username}">---</td>
+			toret += `<tr><td>${PainterFactory.Painters["activity"].paintUsernameOrToken(activity, participants[i])}</td>`;
+			toret += `<td id="completion_${activity._id}_${participants[i].username}">---</td>
 			<td id="result_${activity._id}_${participants[i].username}">---</td>`;
 		}
 
@@ -235,16 +233,6 @@ var LTIToolPainter = {
 		$(`#result_progress_${activity._id} partial`).text(partialprogress);
 	},
 
-	paintActivityTargets: function(activity, results){
-		let usernames = Object.keys(results);
-
-		let done = 0, partial = 0;
-		
-		for (var i = 0; i < usernames.length; i++) {
-			$(`#${activity._id}_${usernames[i]}_target`).attr('href', results[usernames[i]]);
-		}
-	},
-
 	openResults: function(activity, user){
 		Simva.getActivityResultForUser(activity, user, function(error, result){
 			if(error){
@@ -260,7 +248,7 @@ var LTIToolPainter = {
 				let context = $('#iframe_floating iframe')[0].contentWindow.document;
 				let body = $('body', context);
 				body.html(content);
-				toggleAddForm('iframe_floating');
+				Utils.toggleAddForm('iframe_floating');
 			}
 		})
 	},

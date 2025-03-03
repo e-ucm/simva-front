@@ -20,6 +20,13 @@ var RageAnalyticsActivityPainter = {
 		return '';
 	},
 
+	getEditExtraForm: function () {
+		return this.getExtraForm();
+	},
+	
+	updateInputEditExtraForm(activity) {
+	},
+
 	extractInformation: function(form, callback){
 		let activity = {};
 
@@ -32,33 +39,40 @@ var RageAnalyticsActivityPainter = {
 		callback(null, activity);
 	},
 
+	extractEditInformation: function(form, actualActivity, callback){
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+		let activity = {};
+
+		if(actualActivity.name !== formdata.name) {
+			activity.name = formdata.name;
+		}
+	
+		callback(null, activity);
+	},
+
 	fullyPaintActivity: function(activity){
 		this.paintActivity(activity, participants);
 		let tmp = this;
 
 		this.updateParticipants(activity);
-		setInterval(function(){
-			tmp.updateParticipants(activity);
-		}, 5000);
+		//setInterval(function(){
+		//	tmp.updateParticipants(activity);
+		//}, 5000);
 	},
 
 	updateParticipants: function(activity){
 		let tmp = this;
 		activity.tmp = {};
 
-		Simva.getActivityCompletion(activity._id, function(error, result){
-			tmp.paintActivityCompletion(activity, result);
-		});
-
-		Simva.getActivityResult(activity._id, function(error, result){
-			tmp.paintActivityResult(activity, result);
-		});
+		tmp.paintActivityCompletion(activity, activity.data.completion);
+		tmp.paintActivityResult(activity, activity.data.result);
 	},
 
 	paintActivity: function(activity, participants){
 		$(`#test_${activity.test} .activities`).append(`<div id="activity_${activity._id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
+			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
 			<p class="subtitle">${this.simpleName}</p>
 			<p><a onclick="RageAnalyticsActivityPainter.openDashboard('${activity.extra_data.activity._id}')">Dashboard Link</a></p>
 			<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>
@@ -74,7 +88,7 @@ var RageAnalyticsActivityPainter = {
 				continue;
 			}
 			
-			toret += `<tr><td>${participants[i].username}</td>
+			toret += `<tr><td>${PainterFactory.Painters["activity"].paintUsernameOrToken(activity, participants[i])}</td>
 				<td id="completion_${activity._id}_${participants[i].username}">---</td>
 				<td id="progress_${activity._id}_${participants[i].username}" class="progress"><div class="partial"></div><div class="done"></div><span><done>0</done>%</span></td>
 				<td id="result_${activity._id}_${participants[i].username}">---</td>`;
@@ -179,15 +193,14 @@ var RageAnalyticsActivityPainter = {
 				let context = $('#iframe_floating iframe')[0].contentWindow.document;
 				let body = $('body', context);
 				body.html(content);
-				toggleAddForm('iframe_floating');
+				Utils.toggleAddForm('iframe_floating');
 			}
 		})
 	},
 
 	openDashboard: function(activityId){
-		console.log(`${this.utils.dashboard_url}${activityId}${this.utils.dashboard_query}`);
 		$('#iframe_floating iframe').prop('src', `${this.utils.dashboard_url}${activityId}${this.utils.dashboard_query}`);
-		toggleAddForm('iframe_floating');
+		Utils.toggleAddForm('iframe_floating');
 	},
 }
 

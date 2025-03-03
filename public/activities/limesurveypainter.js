@@ -37,9 +37,8 @@ var LimeSurveyPainter = {
 		if(this.utils.surveys.length > 0){
 			form += '<select name="existingid">';
 			for (var i = 0; i < this.utils.surveys.length; i++) {
-				form += `<option value="${this.utils.surveys[i].sid}">${this.utils.surveys[i].surveyls_title}</option>`;
+				form += `<option value="${this.utils.surveys[i].sid}">${this.utils.surveys[i].surveyls_title} - ${this.utils.surveys[i].sid}</option>`;
 			}
-
 			form += '</select>';
 		}else{
 			form += '<p>You don\'t have surveys.</p>'
@@ -48,7 +47,7 @@ var LimeSurveyPainter = {
 		form += `</div>
 			<div id="limesurvey_bynew" class="subform">
 				<p>Click to open LimeSurvey</p>
-				<p><a class="button green" onclick="LimeSurveyPainter.openLimesurvey()">LimeSurvey</a></p>
+				<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">LimeSurvey</a></p>
 			</div>
 			<div id="limesurvey_byupload" class="subform">
 				<p>Select LLS file</p>
@@ -57,6 +56,67 @@ var LimeSurveyPainter = {
 
 		return form;
 	},
+
+	getEditExtraForm: function () {
+		let form="Survey";
+		if(this.utils.surveys.length > 1){
+			form += '<select name="existingid" id="existing_survey_list"></select>';
+		} else  {
+			form += '<p>You don\'t have any other surveys.</p>'
+		}
+		form+="Survey Language";
+		form += '<select name="language" id="language_list"></select>';
+		return form;
+	},
+
+	updateInputEditExtraForm(activity) {
+		Simva.setSurveyOwner(activity._id, (error, result) => {
+			// Step 1: Get the select element
+			var languageSelectElement = document.getElementById('language_list');
+			// Step 2: Loop through the data and create options
+			if(activity.data.languages.list.length > 0){
+				activity.data.languages.list.forEach((language) => {
+					// Step 3: Create a new option element
+					var option = document.createElement('option');
+					
+					// Step 4: Set the value and text of the option
+					option.value = language;
+					option.text = language;
+		
+					// Step 5: Append the option to the select element
+					languageSelectElement.appendChild(option);
+				});
+				
+				// Set a specific option as selected
+				if(activity.extra_data.language) {
+					languageSelectElement.value=activity.extra_data.language;
+				}
+			}
+			// Step 2: Loop through the data and create options
+			Simva.getSurveyList(activity._id, (error, result) => {
+				if(!error) {
+					// Step 1: Get the select element
+					var selectElement = document.getElementById('existing_survey_list');
+					this.utils = result;
+					this.utils.surveys.forEach((survey) => {
+						// Step 3: Create a new option element
+						var option = document.createElement('option');
+						
+						// Step 4: Set the value and text of the option
+						option.value = survey.sid;
+						option.text = `${survey.surveyls_title} - ${survey.sid}`;
+			
+						// Step 5: Append the option to the select element
+						selectElement.appendChild(option);
+					});
+
+					// Set a specific option as selected
+					selectElement.value=activity.extra_data.surveyId;
+				}
+			});
+		});
+	},
+
 	downloadBackup: function(activity, type, user){
 		var toastParams = {
 			heading: 'Error loading the result',
@@ -77,6 +137,7 @@ var LimeSurveyPainter = {
 		});
 
 	},
+
 	extractInformation: function(form, callback){
 		let activity = {};
 
@@ -120,59 +181,86 @@ var LimeSurveyPainter = {
 		}
 	},
 
+	extractEditInformation: function(form, actualActivity, callback){
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+		let activity = {};
+
+		if(actualActivity.name !== formdata.name) {
+			activity.name = formdata.name;
+		}
+		let actualSurveyid=actualActivity.extra_data.surveyId;
+		if(typeof(actualSurveyid) == "string") {
+			actualSurveyid=Number(actualSurveyid);
+		}
+		let surveyid=formdata.existingid;
+		if(typeof(surveyid) == "string") {
+			surveyid=Number(surveyid);
+		}
+		if(actualSurveyid !== surveyid) {
+			activity.copysurvey = surveyid;
+		}
+
+		if(actualActivity.extra_data.language !== formdata.language) {
+			activity.language = formdata.language;
+		}
+
+		callback(null, activity);
+	},
+
 	fullyPaintActivity: function(activity){
 		this.paintActivity(activity, participants);
-		let tmp = this;
-
 		this.updateParticipants(activity);
-		/*setInterval(function(){
-			tmp.updateParticipants(activity);
-		}, 5000);*/
 	},
 
 	updateParticipants: function(activity){
-		let tmp = this;
-		activity.tmp = {};
-
-		Simva.getActivityCompletion(activity._id, function(error, result){
-			activity.tmp.completion = result;
-			tmp.paintActivityCompletion(activity, result);
-		});
-
-		Simva.getActivityResult(activity._id, function(error, result){
-			activity.tmp.result = result;
-			tmp.paintActivityResult(activity, result);
-		});
-
-		Simva.getActivityTarget(activity._id, function(error, result){
-			activity.tmp.result = result;
-			tmp.paintActivityTargets(activity, result);
-		});
+		if(activity.data.openable){
+			PainterFactory.Painters["activity"].paintActivityTargets(activity, activity.data.target);
+		}
+		PainterFactory.Painters["activity"].paintActivityCompletion(activity, activity.data.completion, false);
+		let usernames = Object.keys(activity.data.result);
+		let map= {};
+		for (var i = 0; i < usernames.length; i++) {
+			let state = 'No Results';
+			if(activity.data.result[usernames[i]]){
+				if(activity.data.result[usernames[i]].submitdate){
+					state = 'Completed';
+				}else{
+					state = 'Started';
+				}
+			}
+			map[usernames[i]] = state;
+		}
+		PainterFactory.Painters["activity"].paintActivityResult(activity, map, "No Results", "No Results", "Started", "Started", "Completed","Completed","LimeSurveyPainter");
 	},
 
 	generateTinyURL: function(activityId, surveyId) {
-		//Simva.getTinyUrl(activityId, function(error, result){
-		//});
 		let url=`${this.utils.url}${surveyId}`;
-		$.get(`https://tinyurl.com/api-create.php?url=${url}`, function(shorturl){
-			// Copy the text inside the text field
-			navigator.clipboard.writeText(shorturl);
-			// Alert Short URL
-			alert(shorturl);
+		Simva.generateShlinkURL(url, "survey", `survey_${surveyId}`, null, (error, result) => {
+			if(!error) {
+				let shortUrl=result.shortUrl;
+				// Copy the text inside the text field
+				navigator.clipboard.writeText(shortUrl);
+				// Alert Short URL
+				alert(shortUrl);
+			}			
 		});
 	},
 
 	paintActivity: function(activity, participants){
 		$(`#test_${activity.test} .activities`).append(`<div id="activity_${activity._id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
+			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
+			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
 			<p class="subtitle">${this.simpleName}</p>
 			<p>Survey ID: <a target="_blank" href="${this.utils.url}${activity.extra_data.surveyId}">${activity.extra_data.surveyId}</a></p>
+			<p>Survey Language: ${activity.extra_data.language}</p>
+			<p><a class="button green" onclick="LimeSurveyPainter.openEditLimesurvey('${activity.id}', '${activity.extra_data.surveyId}')">Edit Survey</a></p>
 			<p><a onclick="LimeSurveyPainter.generateTinyURL('${activity._id}', ${activity.extra_data.surveyId})">Generate Tiny URL</a></p>
 			<p><a onclick="LimeSurveyPainter.downloadBackup('${activity._id}', 'full')"> Full : ⬇️</a>
 			<a onclick="LimeSurveyPainter.downloadBackup('${activity._id}', 'code')"> Code : ⬇️</a></p>
-			<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>
-			<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>
+			<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%  [ <doneres>0</doneres> /<total>0</total> ]</span></div>
+			<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>
 			${this.paintActivityParticipantsTable(activity, participants)}</div>`);
 	},
 
@@ -183,10 +271,8 @@ var LimeSurveyPainter = {
 			if(!AllocatorFactory.Painters[allocator.type].isAllocatedToActivity(participants[i].username, activity)){
 				continue;
 			}
-			
-			toret += `<tr><td><a id="${activity._id}_${participants[i].username}_target" class="targeturl" target="_blank" 
-			href="">${participants[i].username}</a></td>
-				<td id="completion_${activity._id}_${participants[i].username}">---</td>
+			toret += `<tr><td>${PainterFactory.Painters["activity"].paintUsernameOrToken(activity, participants[i], true)}</td>`;
+			toret += `<td id="completion_${activity._id}_${participants[i].username}">---</td>
 				<td id="result_${activity._id}_${participants[i].username}">---</td>`;
 		}
 
@@ -195,96 +281,37 @@ var LimeSurveyPainter = {
 		return toret;
 	},
 
-	paintActivityCompletion: function(activity, status){
-		let usernames = Object.keys(status);
+	updateActivityCompletion: function(activityId, username, completion) {
+		try {
+			PainterFactory.Painters["activity"].updateActivityCompletion(activityId, username, completion);
+		} catch(e) {
+		}
+	},
 
-		let done = 0;
+	updateActivityResult: function(activityId, username, result) {
+		try {
+			PainterFactory.Painters["activity"].updateActivityResult(activityId, username,result, "No Results","No Results", "Started", "Started", "Completed","Completed","LimeSurveyPainter");
+		} catch(e) {
+		}
+	},
 
-		for (var i = 0; i < usernames.length; i++) {
-			if(status[usernames[i]]){
-				done++;
+	openNewLimesurvey: function(){
+		$('#iframe_floating iframe').prop('src', `${this.limesurveyurl}admin/survey/sa/newsurvey`);
+		Utils.toggleAddForm('iframe_floating');
+	},
+
+	openEditLimesurvey: function(activityId, surveyid){
+		$('#iframe_floating iframe').prop('src', `${this.limesurveyurl}admin/survey/sa/view/surveyid/${surveyid}`);
+		Simva.setSurveyOwner(activityId, function(error, result){
+			if(!error) {
+				let currentSrc = $('#iframe_floating iframe').prop('src');
+				$('#iframe_floating iframe').prop('src', `${currentSrc}`);
+				Utils.toggleAddForm('iframe_floating');
 			}
-
-			let completion = `<span>${status[usernames[i]]}</span>`
-			$(`#completion_${activity._id}_${usernames[i]}`).removeClass();
-			$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
-			$(`#completion_${activity._id}_${usernames[i]}`).empty();
-			$(`#completion_${activity._id}_${usernames[i]}`).append(completion);
-		}
-
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
-
-		if(isNaN(progress)){
-			progress = 0;
-		}
-
-		$(`#completion_progress_${activity._id} .done`).css('width', `${progress}%` );
-		$(`#completion_progress_${activity._id} done`).text(progress);
+		});
 	},
 
-	paintActivityResult: function(activity, results){
-		let usernames = Object.keys(results);
-
-		let done = 0, partial = 0;
-		
-		for (var i = 0; i < usernames.length; i++) {
-
-			let color = 'red';
-			let state = 'No Results';
-
-			if(results[usernames[i]]){
-				partial++;
-				if(results[usernames[i]].submitdate){
-					color = 'green';
-					state = 'Completed';
-					done++;
-				}else{
-					color = 'yellow';
-					state = 'Started';
-				}
-
-				state =`<a onclick="LimeSurveyPainter.openResults('${activity._id}', 'full','${usernames[i]}')">${state}</a>`;
-			}
-
-			let completion = `<span>${state}</span>`
-			$(`#result_${activity._id}_${usernames[i]}`).removeClass();
-			$(`#result_${activity._id}_${usernames[i]}`).addClass(color);
-			$(`#result_${activity._id}_${usernames[i]}`).empty();
-			$(`#result_${activity._id}_${usernames[i]}`).append(completion);
-		}
-
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
-		let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
-
-		if(isNaN(progress)){
-			progress = 0;
-		}
-		if(isNaN(partialprogress)){
-			partialprogress = 0;
-		}
-
-		$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
-		$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
-		$(`#result_progress_${activity._id} done`).text(progress);
-		$(`#result_progress_${activity._id} partial`).text(partialprogress);
-	},
-
-	paintActivityTargets: function(activity, results){
-		let usernames = Object.keys(results);
-
-		let done = 0, partial = 0;
-		
-		for (var i = 0; i < usernames.length; i++) {
-			$(`#${activity._id}_${usernames[i]}_target`).attr('href', results[usernames[i]]);
-		}
-	},
-
-	openLimesurvey: function(){
-		$('#iframe_floating iframe').prop('src', `${this.limesurveyurl}/admin/survey/sa/newsurvey`);
-		toggleAddForm('iframe_floating');
-	},
-
-	openResults: function(activity, type, user){
+	openResults: function(activity, user, type){
 		Simva.getActivityResultWithTypeForUser(activity, type, user, function(error, result){
 			if(error){
 				$.toast({
@@ -311,7 +338,25 @@ var LimeSurveyPainter = {
 					'overflow': 'auto',
 					'height': '100vh'
 				});
-				toggleAddForm('iframe_floating');
+				Utils.toggleAddForm('iframe_floating');
+			}
+		})
+	},
+
+	downloadResults: function(activity, user, type){
+		Simva.getActivityResultWithTypeForUser(activity, type, user, function(error, result){
+			if(error){
+				$.toast({
+					heading: 'Error loading the result',
+					text: error.message,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+			}else{
+				let stringifyres=JSON.stringify(result[user], null, 2);
+				var filename = `${activity}_${user}_${type}.json`;
+				Utils.download(filename, stringifyres);
 			}
 		})
 	}

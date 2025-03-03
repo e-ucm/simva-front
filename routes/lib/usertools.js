@@ -4,28 +4,134 @@ var passport = require('passport');
 
 let axios = require('axios');
 
-module.exports = {
-	setUser: function(req, user){
-		let decoded = jwt.decode(user.jwt);
-		console.log(`JWT : ${JSON.stringify(decoded)}`);
-		user.data.roles = decoded.realm_access.roles;
-		user.data.role = this.getRoleFromJWT(decoded);
-		req.session.user = user;
-	},
+const logger = require('../../logger');
+const config = require('../../config');
+const userClientsListManager = require("./userClientsListManager");
 
-	authExpired: function(req, config, callback){
-		let current = Math.floor(Date.now() / 1000);
-		let jwtdecoded = this.decodeJWT(req.session.user.jwt);
+
+class UserTools {
+    constructor() {
+    }
+
+	redirectOpenId(level, req, res) {
+		var pre = '/';
+		for(var i = 0; i < level; i++){
+		  pre += '../';
+		}
+		req.session.intendedUrl=`${req.originalUrl}`;
+		if(req.session.intendedUrl.toLowerCase().includes("scheduler")) {
+		  logger.info("scheduler");
+		  const keyword = "scheduler/";
+		  // Find the index of the keyword
+		  const index = req.session.intendedUrl.indexOf(keyword);
+		  var result;
+		  if (index !== -1) {
+			// Extract everything after "scheduler/"
+			result = req.session.intendedUrl.substring(index + keyword.length);
+		  } else {
+			result=""
+		  }
+		  return res.redirect(`${pre}users/openidscheduler?study=${result}`);
+		} else {
+		  return res.redirect(`${pre}users/openid`); 
+		}
+	}
+
+	auth(level){
+		var tmp=this;
+		return function(req, res, next) {
+		  let simvaToken = userClientsListManager.getJWT(req.session.id);
+		  if (req.session && req.session.user && req.session.user.jwt){
+			tmp.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(req.session.id), (error, result) => {
+				if(error) {
+					tmp.redirectOpenId(level, req, res);
+				} else {
+					logger.debug("auth() - Token OK");
+					return next();
+				}
+			});
+		  } else if(simvaToken){
+			logger.info("auth() - New token");
+			let session = req.session;
+			let profile = tmp.getProfileFromJWT(simvaToken);
+			session.user.data = profile;
+			session.user.jwt = simvaToken;
+			userClientsListManager.addClient(session);
+			req.session.user.jwt = true;
+			logger.info("auth() - New token done");
+			return next();
+		  }else{
+			tmp.redirectOpenId(level, req, res);
+		  }
+		};
+	}
+
+	async getRefreshSessionsList() {
+        let sessionsToSend = [];
+        for (let [sessionId, sessionData] of userClientsListManager.sessions) {
+            let ok = await this.isAuthExpiredPromise(sessionData.session);
+            if(ok) {
+                sessionsToSend.push(ok);
+            }
+        }
+        return sessionsToSend;
+    }
+
+    async isAuthExpiredPromise(session) {
+        return new Promise((resolve, reject) => {
+            this.isAuthExpired(session, (error, result) => {
+                if(error) {
+                    reject(error);
+                } else {
+                    if(result.type == "expired") {
+                        resolve(session.id);
+                    }
+                }
+            });
+        });
+    }
+
+    authExpiredAndRefreshAuthWithCallback(session, callback) {
+        this.authExpired(session, config, (error, result) => {
+            if(error) {
+                logger.info(JSON.stringify(error));
+				if(session && session.id) {
+             	   userClientsListManager.removeSession(session.id);
+				}
+                callback(error);
+            } else {
+                if(result) {
+                    logger.info(JSON.stringify(result));
+                    userClientsListManager.refreshAuth(session.id, result.access_token, result.refresh_token);
+                    logger.info("Auth Refreshed");
+                    callback(null, {message:"Auth Refreshed"});
+                } else {
+                    callback(null, {message:"Auth OK"});
+                }
+            }
+        });
+    }
+
+	setUser(req, user){
+		let decoded = jwt.decode(user.jwt);
+		logger.info(`JWT : ${JSON.stringify(decoded)}`);
+		req.session.user.data.roles = decoded.realm_access.roles;
+		req.session.user.data.role = this.getRoleFromJWT(decoded);
+	}
+
+	isAuthExpired(session, callback){
 		try {
+			let current = Math.floor(Date.now() / 1000);
+			let jwtdecoded = this.decodeJWT(session.user.jwt);
 			let expiration = parseInt(jwtdecoded.exp);
 			if(current > expiration){
-				console.log(`authExpired() - JWT: ${JSON.stringify(jwtdecoded)}`);
-				console.log(`authExpired() - Expiration: ${expiration}`);
-				console.log("authExpired() - Token Expired");
-				this.refreshAuth(req, config, callback);
+				logger.info(`authExpired() - JWT: ${JSON.stringify(jwtdecoded)}`);
+				logger.info(`authExpired() - Expiration: ${expiration}`);
+				logger.info("authExpired() - Token Expired");
+				callback(null, {type:"expired"});
 			}else{
-				console.log("authExpired() - Token OK");
-				callback();
+				logger.debug("authExpired() - Token OK");
+				callback(null, {type:"ok"});
 			}
 		} catch(e) {
 			callback({
@@ -36,16 +142,30 @@ module.exports = {
 				}
 			});
 		}
-	},
+	}
 
-	decodeJWT: function(token){
+	authExpired(session, config, callback) {
+		this.isAuthExpired(session, (error, result) => {
+			if(error) {
+				callback(error);
+			} else {
+				if(result.type == "expired") {
+					this.refreshAuth(session, config, callback);
+				} else {
+					callback();
+				}
+			}
+		});
+	}
+
+	decodeJWT(token){
 		return jwt.decode(token);
-	},
+	}
 
-	getProfileFromJWT: function(token){
+	getProfileFromJWT(token){
 		let profile = {};
 		let simvaJwtToken = this.decodeJWT(token);
-		console.log(`getProfileFromJWT() : ${JSON.stringify(simvaJwtToken)}`);
+		logger.info(`getProfileFromJWT() : ${JSON.stringify(simvaJwtToken)}`);
 		profile.provider = simvaJwtToken.iss;
 		profile.id = simvaJwtToken.data.id;
 		profile.username = simvaJwtToken.data.username;
@@ -53,9 +173,9 @@ module.exports = {
 		profile.roles = simvaJwtToken.realm_access.roles;
 		profile.role = this.getRoleFromJWT(simvaJwtToken);
 		return profile;
-	},
+	}
 
-	getRoleFromJWT: function(decoded){
+	getRoleFromJWT(decoded){
 		let role = 'norole';
 		if(decoded.realm_access.roles.includes('teacher') || decoded.realm_access.roles.includes('researcher')){
 			role = 'teacher';
@@ -63,15 +183,15 @@ module.exports = {
 			role = 'student';
 		};
 		return role;
-	},
+	}
 
-	refreshAuth: function(req, config, callback){
-		if(req.session.user && req.session.user.refreshToken){
-			console.log(`refreshAuth() - Refresh Token : ${req.session.user.refreshToken}`)
-			clientConfig= `${config.sso.clientId}:${config.sso.clientSecret}`
+	refreshAuth(session, config, callback){
+		if(session.user && session.user.refreshToken){
+			logger.info(`refreshAuth() - Refresh Token : ${session.user.refreshToken}`);
+			const clientConfig= `${config.sso.clientId}:${config.sso.clientSecret}`;
 			const querystring = new URLSearchParams({
 				'grant_type': 'refresh_token',
-				'refresh_token': req.session.user.refreshToken
+				'refresh_token': session.user.refreshToken
 			  });
 			axios.post(`${config.sso.url}/realms/${config.sso.realm}/protocol/openid-connect/token`, querystring, {
 				headers: {
@@ -80,10 +200,10 @@ module.exports = {
 				}
 			}).then(response => {
 				try {
-					console.log(`refreshAuth() - Body : ${response.body}`);
-					let b = JSON.parse(response.body);
-					let simvaToken = b.access_token;
-					console.log(`refreshAuth() - Access Token : ${simvaToken}`);
+					let simvaToken = response.data.access_token;
+					let simvaRefreshToken = response.data.refresh_token;
+					logger.debug(`refreshAuth() - Access Token : ${simvaToken}`);
+					logger.debug(`refreshAuth() - Refresh Token : ${simvaRefreshToken}`);
 					if(simvaToken == "undefined" || simvaToken == null) {
 						callback({
 							status: 500,
@@ -93,10 +213,10 @@ module.exports = {
 							}
 						});
 					} else {
-						callback(null, simvaToken);
+						callback(null, response.data);
 					}
 				} catch(e) {
-					console.log(e);
+					logger.info(e);
 					callback({
 						status: 500,
 						data: {
@@ -125,3 +245,5 @@ module.exports = {
 		}
 	}
 }
+
+module.exports = new UserTools();
