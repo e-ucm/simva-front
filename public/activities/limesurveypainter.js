@@ -294,12 +294,12 @@ var LimeSurveyPainter = {
 	},
 
 	openNewLimesurvey: function(){
-		$('#iframe_floating iframe').prop('src', `${this.limesurveyurl}admin/survey/sa/newsurvey`);
+		$('#iframe_floating iframe').prop('src', `${this.limesurveyurl}surveyAdministration/newSurvey`);
 		Utils.toggleAddForm('iframe_floating');
 	},
 
 	openEditLimesurvey: function(activityId, surveyid){
-		$('#iframe_floating iframe').prop('src', `${this.limesurveyurl}admin/survey/sa/view/surveyid/${surveyid}`);
+		$('#iframe_floating iframe').prop('src', `${this.limesurveyurl}/surveyAdministration/view?surveyid=${surveyid}`);
 		Simva.setSurveyOwner(activityId, function(error, result){
 			if(!error) {
 				let currentSrc = $('#iframe_floating iframe').prop('src');
