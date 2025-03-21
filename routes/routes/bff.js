@@ -65,6 +65,17 @@ module.exports = function(auth, config){
         });
     });
     
+      
+    router.get('/users/islimesurveyadmin', auth, async (req, res, next) => {
+        Simva.islimesurveyadmin(req.session.id, (error, result) => {
+            if(error) {
+                next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+    
     /**
     * GROUPS
     * 

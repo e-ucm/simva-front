@@ -16,10 +16,10 @@ var ImsPackagePainter = {
 		this.utils = utils;
 	},
 
-	getExtraForm: function () {
-		return `<div class="imspackage_activity"><p><label for="imspackage_trace_storage">Trace Storage</label><input id="imspackage_trace_storage" type="checkbox" name="trace_storage"></p>
+	getExtraForm: function (callback) {
+		callback(null, `<div class="imspackage_activity"><p><label for="imspackage_trace_storage">Trace Storage</label><input id="imspackage_trace_storage" type="checkbox" name="trace_storage"></p>
 			 <p><label for="imspackage_backup">Backup</label><input id="imspackage_backup" type="checkbox" name="backup"></p>
-			 <p><label for="imspackage_package" style="width: 100%; text-align: center;">Package</label><input id="imspackage_package" type="file" name="imspackage">`;
+			 <p><label for="imspackage_package" style="width: 100%; text-align: center;">Package</label><input id="imspackage_package" type="file" name="imspackage">`);
 			 //<p><label for="imspackage_realtime">Realtime</label><input id="imspackage_realtime" type="checkbox" name="realtime"></p>`
 	},
 

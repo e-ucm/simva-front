@@ -17,10 +17,10 @@ var ManualActivityPainter = {
 		this.utils = utils;
 	},
 
-	getExtraForm: function () {
-		return `<p><label for="manual_user_managed">Allow students to complete?</label><input id="manual_user_managed" type="checkbox" name="user_managed"></p>
+	getExtraForm: function (callback) {
+		callback(null, `<p><label for="manual_user_managed">Allow students to complete?</label><input id="manual_user_managed" type="checkbox" name="user_managed"></p>
 			 <p><label for="manual_uri" style="width: 100%; text-align: center;">URI (optional)</label><input id="manual_uri" type="text" name="uri">
-			 <span class="info">URI can include tags: {username}, and {activityId}</p></div>`;
+			 <span class="info">URI can include tags: {username}, and {activityId}</p></div>`);
 	},
 
 	getEditExtraForm: function () {

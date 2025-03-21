@@ -145,6 +145,10 @@ class Simva {
 		this.get(`${this.apiurl}/users/me`, sessionId, callback);
 	}
 
+	islimesurveyadmin(sessionId, callback){
+		this.get(`${this.apiurl}/users/islimesurveyadmin`, sessionId, callback);
+	}
+
 	// GROUPS
 	getGroups(sessionId, callback){
 		this.get(`${this.apiurl}/groups`, sessionId, callback);

@@ -41,7 +41,7 @@ var LTIToolPainter = {
 		this.loadToolList(function(){});
 
 
-		return form;
+		callback(null, form);
 	},
 	
 	getEditExtraForm: function () {
