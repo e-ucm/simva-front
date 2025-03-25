@@ -740,10 +740,9 @@
 	let downloadUAConfig = function(){
 		var content = JSON.stringify({
 			study: study._id,
-			host: "<%= config.api.host %>",
+			host: "<%= config.api.data_host %>",
 			protocol: "<%= config.api.protocol %>",
 			port: "<%= config.api.port %>",
-			url: "<%= config.api.url %>",			
 			sso: "<%= config.sso.url %>/realms/<%= config.sso.realm %>/protocol/openid-connect", 
     		client_id: "uadventure"
 		}, null, 2);

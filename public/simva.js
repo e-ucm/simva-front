@@ -1,6 +1,7 @@
 
 var Simva = {
-	apiurl: null,
+	apiUrl: null,
+	dataUrl: null,
 	jwt: null,
 	expiration: null,
 	ssoUrl:null,
@@ -15,7 +16,11 @@ var Simva = {
 	},
 
 	setAPIURL: function(apiUrl){
-		this.apiurl = apiUrl;
+		this.apiUrl = apiUrl;
+	},
+
+	setDataURL: function(dataUrl){
+		this.dataUrl = dataUrl;
 	},
 
 	login: function(username, password, callback){

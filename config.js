@@ -52,6 +52,8 @@ config.api.host = process.env.SIMVA_API_HOST || 'simva-api.external.test'
 config.api.protocol = process.env.SIMVA_API_PROTOCOL || 'https'
 config.api.port = process.env.SIMVA_API_PORT || '443'
 config.api.url = `${config.api.protocol}://${config.api.host}:${config.api.port}`;
+config.api.data_host = process.env.SIMVA_DATA_API_HOST || 'simva-api.external.test'
+config.api.data_url = `${config.api.protocol}://${config.api.data_host}:${config.api.port}`;
 
 config.limesurvey = {}
 config.limesurvey.host = process.env.LIMESURVEY_HOST || 'limesurvey.external.test'
