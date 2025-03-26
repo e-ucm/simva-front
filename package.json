@@ -3,9 +3,13 @@
   "description": "Simva, AKA Simple Validator, AKA SurveyManager is the evolution of a tool created to integrate and ease the task of validating serious games using pre-post surveys as a control point. This version allows to create more complex studies with more variety of activities and different allocations.",
   "version": "1.0.0",
   "scripts": {
-    "start": "node bin/www",
-    "dev": "nodemon --inspect=0.0.0.0:9229 bin/www",
-    "dev:profiling": "nodemon --inspect=0.0.0.0:9229 --prof bin/www"
+    "start": "node bin/www $NODE_ARGS",
+    "dev": "nodemon --inspect=0.0.0.0:9229 bin/www $NODE_ARGS",
+    "dev:profiling": "nodemon --inspect=0.0.0.0:9229 --prof bin/www $NODE_ARGS",
+    "dev:clinic:doctor": "clinic doctor $CLINIC_ARGS -- node bin/www $NODE_ARGS",
+    "dev:clinic:bubbleprof": "clinic bubbleprof $CLINIC_ARGS -- node bin/www $NODE_ARGS",
+    "dev:clinic:flame": "clinic flame $CLINIC_ARGS -- node bin/www $NODE_ARGS",
+    "dev:clinic:heapprofiler": "clinic heapprofiler $CLINIC_ARGS -- node bin/www $NODE_ARGS"
   },
   "dependencies": {
     "axios": "^1.7.4",
