@@ -238,7 +238,7 @@
 			let form = Utils.getFormData($("#batch_participant_form"));
 			let errorbox = $(this).find('.error');
 
-			Simva.generateAndRegister(groupid, form.algorithm, form.length, form.amount, true, (error, generated) => {
+			Simva.generateAndRegister(groupid, form.algorithm, form.length, form.amount, false, (error, generated) => {
 				if(!error) { 
 					group.participants = group.participants.concat(generated);
 					Simva.updateGroup(group, function(error, result){
