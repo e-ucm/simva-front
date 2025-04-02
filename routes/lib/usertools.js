@@ -244,6 +244,35 @@ class UserTools {
 			});
 		}
 	}
+
+	generateUsername(algorithm, length) {
+		switch (algorithm) {
+		  case 'alphanumeric':
+			return this.randomString(length, 'a#');
+			break;
+		  case 'base58':
+			return this.randomString(length, 'b*');
+			break;
+		  case 'letters':
+		  default: 
+			return this.randomString(length, 'a');
+			break;
+		}
+	  }
+	  
+	  randomString(length, chars) {
+			var mask = '';
+			if (chars.indexOf('b') > -1) mask += 'abcdefghijkmnopqrstuvwxyz';
+			if (chars.indexOf('B') > -1) mask += 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+			if (chars.indexOf('a') > -1) mask += 'abcdefghijklmnopqrstuvwxyz';
+			if (chars.indexOf('A') > -1) mask += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+			if (chars.indexOf('*') > -1) mask += '123456789';
+			if (chars.indexOf('#') > -1) mask += '0123456789';
+			if (chars.indexOf('!') > -1) mask += '~`!@#$%^&*()_+-={}[]:";\'<>?,./|\\';
+			var result = '';
+			for (var i = length; i > 0; i--) result += mask[Math.floor(Math.random() * mask.length)];
+			return result;
+	  }
 }
 
 module.exports = new UserTools();

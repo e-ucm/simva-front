@@ -58,6 +58,17 @@ var Simva = {
 		Utils.post(`/bff/users`, body, callback);
 	},
 
+	// USER
+	generateAndRegister: function(groupid, algorithm, length, batchLength, useNewGeneration, callback){
+		let body = {
+			algorithm: algorithm,
+			length: Number(length),
+			batchLength: Number(batchLength),
+			useNewGeneration : useNewGeneration
+		};
+		Utils.post(`/bff/groups/${groupid}/users`, body, callback);
+	},
+
 	setRole: function(username, role, callback){
 		let body = { username: username, role: role };
 		Utils.patch(`/bff/users/${username}`, body, callback);

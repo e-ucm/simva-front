@@ -238,16 +238,12 @@
 			let form = Utils.getFormData($("#batch_participant_form"));
 			let errorbox = $(this).find('.error');
 
-			let generated = [];
-			let completed = function(username){
-				generated.push(username);
-
-				if(generated.length == form.amount){
+			Simva.generateAndRegister(groupid, form.algorithm, form.length, form.amount, true, (error, generated) => {
+				if(!error) { 
 					group.participants = group.participants.concat(generated);
 					Simva.updateGroup(group, function(error, result){
 						Utils.toggleSubmit(currentform);
 						reloadGroup();
-
 						if(error && error.responseJSON){
 							errorbox.text(error.responseJSON.message);
 						}else{
@@ -255,28 +251,9 @@
 						}
 					});
 				}
-			}
-
-			let generateAndRegister = function(algorithm, length, callback){
-				let username = generateUsername(algorithm, length).toLowerCase();
-
-				Simva.register(groupid, username, `${groupid}_${username}@example.com`, username, 'student', true, true, function(error, result){
-					if(error && error.responseJSON){
-						generateAndRegister(algorithm, length, callback);
-					}else{
-						callback(result.username);
-					}
-				});
-			}
-
-			for (var i = 0; i < form.amount; i++) {
-				generateAndRegister(form.algorithm, form.length, completed);
-			}
-
+			});
 			return false;
 		});
-
-		//$('#studies_list').html(roller);
 		reloadGroup();
 	});
 
@@ -410,34 +387,5 @@
 		$(`#${form} .subform`).removeClass('selected');
 		$(tab).toggleClass('selected');
 		$(`#${subform}`).toggleClass('selected');
-	}
-	
-	let generateUsername = function(algorithm, length){
-		switch (algorithm) {
-			case 'alphanumeric':
-				return randomString(length, 'a#');
-				break;
-			case 'base58':
-				return randomString(length, 'b*');
-				break;
-			case 'letters':
-			default: 
-				return randomString(length, 'a');
-				break;
-		}
-	}
-
-	let randomString = function(length, chars) {
-		var mask = '';
-		if (chars.indexOf('b') > -1) mask += 'abcdefghijkmnopqrstuvwxyz';
-		if (chars.indexOf('B') > -1) mask += 'ABCDEFGHJKLMNPQRSTUVWXYZ';
-		if (chars.indexOf('a') > -1) mask += 'abcdefghijklmnopqrstuvwxyz';
-		if (chars.indexOf('A') > -1) mask += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-		if (chars.indexOf('*') > -1) mask += '123456789';
-		if (chars.indexOf('#') > -1) mask += '0123456789';
-		if (chars.indexOf('!') > -1) mask += '~`!@#$%^&*()_+-={}[]:";\'<>?,./|\\';
-		var result = '';
-		for (var i = length; i > 0; i--) result += mask[Math.floor(Math.random() * mask.length)];
-		return result;
 	}
 </script>
