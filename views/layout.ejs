@@ -22,7 +22,7 @@
 		let getUserToken = function(){
 			Simva.getCurrentUser(function(error, result) {
 				if(!error) {
-					if(result.isToken && result.isToken == "true") {
+					if(result.token) {
 						document.getElementById('username').innerText = result.token;
 						document.getElementById('account_username').removeAttribute('href');
 					} else {

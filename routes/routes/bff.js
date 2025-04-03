@@ -91,7 +91,11 @@ module.exports = function(auth, config){
             if(error) {
                 next(error.response.data);
             } else {
-                res.status(200).send(result);
+                let name={username : result.username};
+                if(result.isToken == 'true') {
+                    name={token : result.token};
+                }
+                res.status(200).send(name);
             }
         });
     });

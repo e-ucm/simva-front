@@ -111,7 +111,7 @@
 		let getUserToken = function(){
 			Simva.getCurrentUser(function(error, result) {
 				if(!error) {
-					if(result.isToken && result.isToken == "true") {
+					if(result.token) {
 						document.getElementById('username').innerText = result.token;
 					} else {
 						document.getElementById('username').innerText = result.username;
