@@ -5,7 +5,6 @@ var passport = require('passport');
 let axios = require('axios');
 const logger = require('../../logger');
 const Simva = require('../lib/simva');
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 const userClientsListManager = require('../lib/userClientsListManager');
 let usertools = require('../lib/usertools');
