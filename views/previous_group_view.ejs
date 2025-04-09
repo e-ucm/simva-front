@@ -135,6 +135,9 @@
 				 await new Promise(resolve => setTimeout(resolve, 1000));
 			}
 			window.print();
+			// Optional: Remove /print from the URL
+			const newPath = url.pathname.replace(/\/print$/, '');
+    		window.history.replaceState({}, '', newPath);
 		}
 	});
 
