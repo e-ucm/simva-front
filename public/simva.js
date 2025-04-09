@@ -5,6 +5,7 @@ var Simva = {
 	expiration: null,
 	ssoUrl:null,
 	ssoRealm:null,
+	url:null,
 
 	setSSOURL: function(ssoUrl){
 		this.ssoUrl = ssoUrl;
@@ -16,6 +17,10 @@ var Simva = {
 
 	setAPIURL: function(apiUrl){
 		this.apiurl = apiUrl;
+	},
+
+	setURL: function(url){
+		this.url = url;
 	},
 
 	login: function(username, password, callback){
