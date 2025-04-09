@@ -122,6 +122,21 @@
 <script type="text/javascript">
 	let group = {};
 	let groupid = "<%= group %>";
+	let loaded=false;
+
+	window.addEventListener('DOMContentLoaded', async() => {
+		const url = new URL(window.location.href);
+		
+		// Check if URL ends with /print
+		if (url.pathname.endsWith('/print')) {
+			// Trigger the print dialog
+			while(!loaded) {
+				 // Wait for 1 second (1000 milliseconds)
+				 await new Promise(resolve => setTimeout(resolve, 1000));
+			}
+			window.print();
+		}
+	});
 
 	$(document).ready(function() {
 		$("#existing_owner_form").on('submit', function(event){
@@ -277,6 +292,7 @@
 				group=mygroup;
 				paintGroup(group, group.completeParticipants);
 				delete group.completeParticipants;
+				loaded=true;
 			} else {
 				window.location.href="/groups";
 			}

@@ -11,5 +11,9 @@ module.exports = function(auth, config){
     res.render('previous_group_view', { config: config, user: req.session.user, group: req.params['groupid'] });
   });
 
+  router.get('/:groupid/print', auth, function(req, res, next) {
+    res.render('new_group_view', { config: config, user: req.session.user, group: req.params['groupid'] });
+  });
+  
   return router;
 }
