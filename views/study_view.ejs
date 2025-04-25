@@ -437,7 +437,12 @@
 
 		$('#new_activity_form select[name="type"]').on('change', function(event){
 			$('#new_activity_extras').empty();
-			$('#new_activity_extras').append(PainterFactory.Painters[$(this).val()].getExtraForm());
+			PainterFactory.Painters[$(this).val()].getExtraForm((error, result) => {
+				console.log(result);
+				if(!error) {
+					$('#new_activity_extras').append(result);
+				}
+			});
 		});
 
 		$("#existing_owner_form").on('submit', function(event){

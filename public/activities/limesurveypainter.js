@@ -16,45 +16,54 @@ var LimeSurveyPainter = {
 	utils: {},
 	setUtils: function(utils){
 		this.utils = utils;
-
 		this.limesurveyurl = this.utils.url;
-		console.log(utils);
 	},
 
-	getExtraForm: function () {
-		let form = `<div class="tabs">
-			<span class="tab selected" method="byid" onclick="changeTab(this, 'new_activity_extras','limesurvey_byid')">Survey ID</span>
-			<span class="tab" method="byexisting" onclick="changeTab(this,'new_activity_extras','limesurvey_byexisting')">Existing Survey</span>
-			<span class="tab" method="bynew" onclick="changeTab(this, 'new_activity_extras','limesurvey_bynew')">New Survey</span>
-			<span class="tab" method="byupload" onclick="changeTab(this, 'new_activity_extras','limesurvey_byupload')">Upload LSS</span>
-			</div>
-			<div id="limesurvey_byid" class="subform selected">
-			<p>Survey ID:</p>
-			<input type="number" name="surveyid" placeholder="Survey ID">
-			</div>
-			<div id="limesurvey_byexisting" class="subform">`;
-
-		if(this.utils.surveys.length > 0){
-			form += '<select name="existingid">';
-			for (var i = 0; i < this.utils.surveys.length; i++) {
-				form += `<option value="${this.utils.surveys[i].sid}">${this.utils.surveys[i].surveyls_title} - ${this.utils.surveys[i].sid}</option>`;
-			}
-			form += '</select>';
-		}else{
-			form += '<p>You don\'t have surveys.</p>'
-		}
-
-		form += `</div>
-			<div id="limesurvey_bynew" class="subform">
-				<p>Click to open LimeSurvey</p>
-				<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">LimeSurvey</a></p>
-			</div>
-			<div id="limesurvey_byupload" class="subform">
-				<p>Select LLS file</p>
-				<input type="file" name="lss" placeholder="Activity name">
-			</div>`
-
-		return form;
+	getExtraForm: function (callback) {
+		let form = '';
+		Simva.islimesurveyadmin((error, result) => {
+			if(!error) {
+				console.log(result);
+				if(result.isLimesurveyUserAdmin == false) {
+					form+=`<p>Click to open LimeSurvey</p>
+						<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">LimeSurvey</a></p>`
+				} else {
+					form += `<div class="tabs">
+					<span class="tab selected" method="byid" onclick="changeTab(this, 'new_activity_extras','limesurvey_byid')">Survey ID</span>
+					<span class="tab" method="byexisting" onclick="changeTab(this,'new_activity_extras','limesurvey_byexisting')">Existing Survey</span>
+					<span class="tab" method="bynew" onclick="changeTab(this, 'new_activity_extras','limesurvey_bynew')">New Survey</span>
+					<span class="tab" method="byupload" onclick="changeTab(this, 'new_activity_extras','limesurvey_byupload')">Upload LSS</span>
+					</div>
+					<div id="limesurvey_byid" class="subform selected">
+					<p>Survey ID:</p>
+					<input type="number" name="surveyid" placeholder="Survey ID">
+					</div>
+					<div id="limesurvey_byexisting" class="subform">`;
+					if(this.utils.surveys.length > 0){
+						form += '<select name="existingid">';
+						for (var i = 0; i < this.utils.surveys.length; i++) {
+							form += `<option value="${this.utils.surveys[i].sid}">${this.utils.surveys[i].surveyls_title} - ${this.utils.surveys[i].sid}</option>`;
+						}
+						form += '</select>';
+					}else{
+						form += '<p>You don\'t have surveys.</p>'
+					}
+					form += `</div>
+					<div id="limesurvey_bynew" class="subform">
+						<p>Click to open LimeSurvey</p>
+						<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">LimeSurvey</a></p>
+					</div>
+					<div id="limesurvey_byupload" class="subform">
+						<p>Select LLS file</p>
+						<input type="file" name="lss" placeholder="Activity name">
+					</div>`
+				}
+			} else {
+				form+=`<p>Click to open LimeSurvey</p>
+					<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">LimeSurvey</a></p>`
+			};
+			callback(null, form);
+		});	
 	},
 
 	getEditExtraForm: function () {
@@ -296,18 +305,16 @@ var LimeSurveyPainter = {
 	},
 
 	openNewLimesurvey: function(){
-		$('#iframe_floating iframe').prop('src', `${this.limesurveyurl}admin/survey/sa/newsurvey`);
+		$('#iframe_floating iframe').prop('src', `${this.limesurveyurl}surveyAdministration/newSurvey`);
 		Utils.toggleAddForm('iframe_floating');
 	},
 
 	openEditLimesurvey: function(activityId, surveyid){
-		$('#iframe_floating iframe').prop('src', `${this.limesurveyurl}admin/survey/sa/view/surveyid/${surveyid}`);
+		$('#iframe_floating iframe').prop('src', `${this.limesurveyurl}/surveyAdministration/view?surveyid=${surveyid}`);
 		Simva.setSurveyOwner(activityId, function(error, result){
-			if(!error) {
-				let currentSrc = $('#iframe_floating iframe').prop('src');
-				$('#iframe_floating iframe').prop('src', `${currentSrc}`);
-				Utils.toggleAddForm('iframe_floating');
-			}
+			let currentSrc = $('#iframe_floating iframe').prop('src');
+			$('#iframe_floating iframe').prop('src', `${currentSrc}`);
+			Utils.toggleAddForm('iframe_floating');
 		});
 	},
 

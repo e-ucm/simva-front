@@ -67,6 +67,10 @@ var Simva = {
 		Utils.get(`/bff/users/me`, callback);
 	},
 
+	islimesurveyadmin: function(callback){
+		Utils.get(`/bff/users/islimesurveyadmin`, callback);
+	},
+
 	// GROUPS
 	getGroups: function(callback){
 		Utils.get(`/bff/groups`, callback);

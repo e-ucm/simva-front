@@ -25,8 +25,8 @@ var ActivityPainter = {
 		}
 	},
 
-	getExtraForm: function () {
-		return '';
+	getExtraForm: function (callback) {
+		callback(null, '');
 	},
 
 	getEditExtraForm: function () {

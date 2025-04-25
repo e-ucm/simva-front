@@ -16,12 +16,12 @@ var RageMinioActivityPainter = {
 		this.utils = utils;
 	},
 
-	getExtraForm: function () {
-		return '';
+	getExtraForm: function (callback) {
+		callback(null,'');
 	},
 
 	getEditExtraForm: function () {
-		return this.getExtraForm();
+		return "";
 	},
 
 	updateInputEditExtraForm(activity) {
