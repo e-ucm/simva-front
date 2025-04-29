@@ -17,6 +17,8 @@ var LimeSurveyPainter = {
 	setUtils: function(utils){
 		this.utils = utils;
 		this.limesurveyurl = this.utils.url;
+		this.editlimesurveyurl=this.utils.editurl;
+		this.newlimesurveyurl=this.utils.newurl;
 	},
 
 	getExtraForm: function (callback) {
@@ -305,12 +307,12 @@ var LimeSurveyPainter = {
 	},
 
 	openNewLimesurvey: function(){
-		$('#iframe_floating iframe').prop('src', `${this.limesurveyurl}surveyAdministration/newSurvey`);
+		$('#iframe_floating iframe').prop('src', `${this.newlimesurveyurl}`);
 		Utils.toggleAddForm('iframe_floating');
 	},
 
 	openEditLimesurvey: function(activityId, surveyid){
-		$('#iframe_floating iframe').prop('src', `${this.limesurveyurl}/surveyAdministration/view?surveyid=${surveyid}`);
+		$('#iframe_floating iframe').prop('src', `${this.editlimesurveyurl}${surveyid}`);
 		Simva.setSurveyOwner(activityId, function(error, result){
 			let currentSrc = $('#iframe_floating iframe').prop('src');
 			$('#iframe_floating iframe').prop('src', `${currentSrc}`);
