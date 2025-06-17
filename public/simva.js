@@ -6,7 +6,8 @@ var Simva = {
 	ssoUrl:null,
 	ssoRealm:null,
 	url:null,
-
+	tmonUrl:null,
+	
 	setSSOURL: function(ssoUrl){
 		this.ssoUrl = ssoUrl;
 	},
@@ -21,6 +22,10 @@ var Simva = {
 
 	setURL: function(url){
 		this.url = url;
+	},
+
+	setTMonURL: function(tmonUrl){
+		this.tmonUrl = tmonUrl;
 	},
 
 	login: function(username, password, callback){
