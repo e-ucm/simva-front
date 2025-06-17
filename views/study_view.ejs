@@ -356,6 +356,9 @@
 					if(data.activityType == "gameplay") {
 						PainterFactory.Painters[data.activityType].updateActivityProgress(data.activityId, data.user, data.val);
 					}
+					if(data.activityType == "limesurvey") {
+						PainterFactory.Painters[data.activityType].updateActivityProgress(data.activityId, data.user, data.val);
+					}
 				});
 
 				// Handle custom event types from the server (if applicable)

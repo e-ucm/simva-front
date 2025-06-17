@@ -10,6 +10,18 @@ module.exports = {
         study.allgroups = await groupcontroler.getGroups(sessionid);
         study.completeGroups = await this.getStudyGroups(studyid, sessionid);
         study.completeAllocator = await this.getStudyAllocator(studyid, sessionid);
+        let participants={}
+        for(let i=0; i<study.participants.length;i++) {
+            let user=study.participants[i];
+            let username=user.username;
+            let userDisplay=username;
+            if(user.isToken) {
+                userDisplay=user.token;
+            }
+            participants[username]=userDisplay;
+        }
+        study.completeAllocator.data={};
+        study.completeAllocator.data.displayparticipants=participants;
         study.completeTests=[];
         for(let i=0;i<study.tests.length;i++) {
             study.completeTests.push(await testcontroler.getCompleteTest(studyid, study.tests[i], sessionid));

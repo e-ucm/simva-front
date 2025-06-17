@@ -551,10 +551,26 @@ var ActivityPainter = {
 		})
 	},
 
+	getMinioData: function(activity){
+		Simva.getMinioDataUrl(activity, function(error, result){
+			if(error){
+				$.toast({
+					heading: 'Error loading the result',
+					text: error.message,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+			}else{
+				console.info("OK");
+			}
+		})
+	},
+
 	paintActivityButtonCompletion: function(activity) {
 		return `<input class="red" type="button" value="${this.commun.completed_all_unset}" onclick="PainterFactory.Painters['activity'].setCompletionForAllParticipant('${activity}', false)">
 		<input class="green" type="button" value="${this.commun.completed_all_set}" onclick="PainterFactory.Painters['activity'].setCompletionForAllParticipant('${activity}', true)">`;
 	},
-}
+};
 
 PainterFactory.addPainter(ActivityPainter);

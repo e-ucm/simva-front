@@ -278,21 +278,18 @@ var LimeSurveyPainter = {
 			${PainterFactory.Painters["activity"].paintActivityParticipantsTable(activity, participants, false)}</div>`);
 	},
 
-	paintActivityParticipantsTable: function(activity, participants){
-		let toret = '<table><tr><th>User</th><th>Completed</th><th>Result</th></tr>';
-
-		for (var i = 0; i < participants.length; i++) {
-			if(!AllocatorFactory.Painters[allocator.type].isAllocatedToActivity(participants[i].username, activity)){
-				continue;
-			}
-			toret += `<tr><td>${PainterFactory.Painters["activity"].paintUsernameOrToken(activity, participants[i], true)}</td>`;
-			toret += `<td id="completion_${activity._id}_${participants[i].username}">---</td>
-				<td id="result_${activity._id}_${participants[i].username}">---</td>`;
+	paintActivityProgress: function(activityId, username, progress) {
+		try {
+			PainterFactory.Painters["activity"].paintActivityProgress(activityId, username, progress);
+		} catch(e) {
 		}
+	},
 
-		toret += '</table>';
-
-		return toret;
+	updateActivityProgress: function(activityId, username, progress) {
+		try {
+			PainterFactory.Painters["activity"].updateActivityProgress(activityId, username, progress);
+		} catch(e) {
+		}
 	},
 
 	updateActivityCompletion: function(activityId, username, completion) {

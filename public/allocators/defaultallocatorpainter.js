@@ -62,7 +62,7 @@ var DefaultAllocatorPainter = {
 				}
 			}
 
-			toret += `<option value="${participants[i].username}">${participants[i].username}</option>`;
+			toret += `<option value="${participants[i].username}">${allocator.data.displayparticipants[participants[i].username]}</option>`;
 		}
 
 		toret += `</select><p>${this.test_title}: </p><select name="test">`;
@@ -87,7 +87,7 @@ var DefaultAllocatorPainter = {
 			let keys = Object.keys(allocator.extra_data.allocations);
 
 			for (var i = 0; i < keys.length; i++) {
-				topaint += this.generateRow({username: keys[i], test: allocator.extra_data.allocations[keys[i]]});
+				topaint += this.generateRow({username: keys[i], displayUser : allocator.data.displayparticipants[keys[i]], test: allocator.extra_data.allocations[keys[i]]});
 			}
 		}
 
@@ -97,7 +97,7 @@ var DefaultAllocatorPainter = {
 	},
 
 	generateRow: function(allocation){
-		let topaint = `<tr><td>${allocation.username}</td>
+		let topaint = `<tr><td>${allocation.displayUser}</td>
 			<td><select id="allocation_${allocation.username}"
 			onchange="DefaultAllocatorPainter.updateAllocation('${allocation.username}')">`;
 
