@@ -155,7 +155,11 @@ var GameplayActivityPainter = {
 		*/
 		activitybox += '<p>Trace Storage: '
 		if(activity.extra_data.config.trace_storage) {
-			activitybox += `<a onclick="GameplayActivityPainter.getMinioData('${activity._id}')" target="_blank">Download Data</a>
+			activitybox += `<a onclick="PainterFactory.Painters['activity'].getMinioData('${activity._id}')" target="_blank">Download Data</a>
+			<br>
+			<a onclick="PainterFactory.Painters['activity'].getTMonUrl('${activity._id}','${activity.test}','${activity.study}')">
+				Open TMon Dashboard
+			</a>
 			<br>
 			XASU Config:
 			<a onclick="GameplayActivityPainter.downloadXasuConfig('${activity._id}','${activity.study}')">
@@ -286,27 +290,6 @@ var GameplayActivityPainter = {
 				let body = $('body', context);
 				body.html(content);
 				Utils.toggleAddForm('iframe_floating');
-			}
-		})
-	},
-
-	getMinioData: function(activity){
-		Simva.getMinioDataUrl(activity, function(error, result){
-			if(error){
-				$.toast({
-					heading: 'Error loading the result',
-					text: error.message,
-					position: 'top-right',
-					icon: 'error',
-					stack: false
-				});
-			}else{
-       			let url = result.url;
-
-       			// Open the generated URL in a new tab
-       			window.open(url, '_blank');
-
-       			// If you still want to show a message or update the UI in some way, you can do it here
 			}
 		})
 	},
