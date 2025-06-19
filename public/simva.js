@@ -260,8 +260,12 @@ var Simva = {
 		Utils.get(`/bff/activities/${activity_id}/openable`, callback);
 	},
 
-	getMinioDataUrl: function(activity_id, callback){
-		Utils.get(`/bff/activities/${activity_id}/presignedurl`, callback);
+	getMinioDataUrl: function(activity_id, as_array, callback){
+		let as_array_query="";
+		if(as_array) {
+			as_array_query= "?as_array=true";
+		}
+		Utils.get(`/bff/activities/${activity_id}/presignedurl${as_array_query}`, callback);
 	},
 
 	deleteActivity: function(activity_id, callback){

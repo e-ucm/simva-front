@@ -6,7 +6,8 @@ module.exports = function(auth, config){
     const studycontroler = require('../lib/studycontroler');
     const groupcontroler = require('../lib/groupcontroler');
     const testscontroler = require('../lib/testscontroler');
-    
+    const axios = require('axios');
+
     /**
     * USERS
     * 
@@ -516,7 +517,30 @@ module.exports = function(auth, config){
             if(error) {
                 next(error.response.data);
             } else {
-                res.status(200).send(result);
+                let url = result.url;
+                logger.info(url);
+                // Fetch the file from the pre-signed URL
+                axios.get(url, { responseType: 'arraybuffer' }) // Use 'arraybuffer' for binary data
+                    .then(response => {
+                        // Modify the file content. This example assumes it's a text file.
+                        // For binary files, you might need to handle it differently.
+                        let fileContent = Buffer.from(response.data, 'binary').toString(); // Assuming text file
+                        let result={};
+                        if(req.query.as_array) {
+                            let array=fileContent.split('\n');
+                            if (array[array.length - 1].trim() === '') {
+                               array.pop();
+                            }
+                            array = array.map(line => JSON.parse(line));
+                            result.data=JSON.stringify(array, null, 2);
+                        } else {
+                            result.data=fileContent;
+                        }
+                        res.status(200).send(result);
+                    })
+                    .catch(fetchError => {
+                        next(fetchError.response.data);
+                    });
             }
         });
     });
