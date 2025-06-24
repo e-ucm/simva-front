@@ -89,5 +89,6 @@ config.tmon.host = process.env.TMON_HOST || 'tmon.simva.external.test'
 config.tmon.protocol = process.env.TMON_PROTOCOL || 'https'
 let tmonPort = ((default_protocol_ports[config.tmon.protocol] !== config.tmon.port) ? `:${config.tmon.port}` : '')
 config.tmon.url = process.env.TMON_URL || `${config.tmon.protocol}://${config.tmon.host}${tmonPort}`;
+config.tmon.file = process.env.TMON_MINIO_TRACES_FILE || "traces.json"
 
 module.exports = config;

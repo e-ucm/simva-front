@@ -545,7 +545,7 @@ var ActivityPainter = {
 	},
 	
 	getTMonUrl: function(activityId, testId, studyId) {
-		let url = `${Simva.tmonUrl}/${studyId}/${testId}/${activityId}`;
+		let url = `${Simva.tmonUrl}/${studyId}/${testId}/${activityId}/${Simva.TMonFile}/dashboard/`;
 		// Open the generated URL in a new tab
        	window.open(url, '_blank'); 
 	}
