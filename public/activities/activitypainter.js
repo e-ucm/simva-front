@@ -96,16 +96,42 @@ var ActivityPainter = {
 			${this.paintActivityParticipantsTable(activity, participants, true)}</div>`);
 	},
 
-	paintActivityParticipantsTable: function(activity, participants, checkbox=false){
-		let toret = '<table><tr><th>User</th><th>Completed</th><th>Result</th></tr>';
+	paintActivityParticipantsTable: function(activity, participants, checkbox=false, progress=true, result=true){
+		let toret = `<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>% [ <doneres>0</doneres>/<total>0</total> ]</span></div>`;
+		if(checkbox) {
+			toret += this.paintActivityButtonCompletion(activity._id);
+		}
+		if(progress) {
+			toret += `<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>`;
+		}
+		if(result) {
+			toret += `<div id="progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Progress:<done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>`;
+		}
+		
+		toret += '<table><tr><th>User</th><th>Completed</th>';
+		if(progress) {
+			toret += '<th>Progress</th>';
+		}
+		if(result) {
+			toret += '<th>Result</th>';
+		}
+		toret += '</tr>';
 
 		for (var i = 0; i < participants.length; i++) {
 			if(!AllocatorFactory.Painters[allocator.type].isAllocatedToActivity(participants[i].username, activity)){
 				continue;
 			}
 			toret += `<tr><td>${this.paintUsernameOrToken(activity, participants[i])}</td>`;
-			toret += `${this.paintCompletionRow(activity._id,participants[i].username, checkbox)}
-				${this.paintResultRow(activity._id,participants[i].username)}</tr>`;
+			
+			toret += `${this.paintCompletionRow(activity._id,participants[i].username, checkbox)}`;
+			if(progress) {
+				toret += `${this.paintProgressRow(activity._id,participants[i].username)}`
+			}
+			if(result){
+				toret += `${this.paintResultRow(activity._id,participants[i].username)}`;
+			}else{
+				toret += '<td><i>Disabled</i></td>';
+			}
 		}
 
 		toret += '</table>';
@@ -135,6 +161,10 @@ var ActivityPainter = {
 		} else {
 			return `<td id="completion_${activity}_${participant}">---</td>`;
 		}
+	},
+
+	paintProgressRow(activity, participant) {
+		return `<td id="progress_${activity}_${participant}" class="progress"><div class="partial"></div><div class="done"></div><span><done>0</done>%</span></td>`;
 	},
 
 	paintResultRow(activity, participant) {
@@ -491,7 +521,28 @@ var ActivityPainter = {
 		Simva.setActivityCompletion(activityId, username, status, function(){
 			console.log('saved');
 		});
-	}
+	},
+
+	setCompletionForAllParticipant(activityid, status) {
+		Simva.setMultiActivityCompletion(activityid, status, function(error, result){
+			if(error){
+				$.toast({
+					heading: 'Error setting completion',
+					text: error.message,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+			}else{
+				console.info("OK");
+			}
+		})
+	},
+
+	paintActivityButtonCompletion: function(activity) {
+		return `<input class="red" type="button" value="Unset Completion" onclick="PainterFactory.Painters['activity'].setCompletionForAllParticipant('${activity}', false)">
+		<input class="green" type="button" value="Set Completion" onclick="PainterFactory.Painters['activity'].setCompletionForAllParticipant('${activity}', true)">`;
+	},
 }
 
 PainterFactory.addPainter(ActivityPainter);

@@ -171,14 +171,7 @@ var GameplayActivityPainter = {
 			activitybox += '<i>Disabled</i>';
 		}
 		activitybox += '</p>';
-		activitybox += `<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>% [ <doneres>0</doneres>/<total>0</total> ]</span></div>`
-		if(activity.extra_data.config.trace_storage){
-			activitybox += `<div id="progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>GameProgress:  <done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>`
-		}
-		if(activity.extra_data.config.backup){
-			activitybox += `<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>BackupResults:  <done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>`
-		}
-		activitybox += `${this.paintActivityParticipantsTable(activity, participants)}</div>`;
+		activitybox += `${PainterFactory.Painters["activity"].paintActivityParticipantsTable(activity, participants)}</div>`;
 
 		$(`#test_${activity.test} .activities`).append(activitybox);
 	},

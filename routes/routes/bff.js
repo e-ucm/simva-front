@@ -440,6 +440,16 @@ module.exports = function(auth, config){
         });
     });
 
+    router.post('/activities/:activityid/multicompletion', auth, async (req, res, next) => {
+        Simva.setMultiActivityCompletion(req.params["activityid"], req.body.status, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
     router.get('/activities/:activityid/result', auth, async (req, res, next) => {
         if(req.query.type) {
             if(req.query.users) {
