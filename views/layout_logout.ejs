@@ -1,0 +1,44 @@
+<%# views/layout_with_menu.ejs %>
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Simva - A Simple Validator</title>
+	<link href="/css/style.css" rel="stylesheet" type="text/css">
+	<link href="/css/loader.css" rel="stylesheet" type="text/css">
+	<link href="/toast/jquery.toast.css" rel="stylesheet" type="text/css">
+	<link href="/libs/jsonTree/jsonTree.css" rel="stylesheet" />
+	<script src="/libs/jsonTree/jsonTree.js"></script>
+	<script type="text/javascript" src="/jquery.js"></script>
+	<script type="text/javascript" src="/toast/jquery.toast.js"></script>
+	<script type="text/javascript" src="/utils.js"></script>
+	<script type="text/javascript">
+		var roller = '<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>';
+		$(document).ready(function() {
+			$(".floater").on('click', function(event){
+				if (event.target !== this)
+    				return;
+				$(this).parent().toggleClass('shown');
+			});
+		});
+	</script>
+</head>
+<body>
+	<div class="header">
+		<div class="left"><span class="logo"><img src="/logo.png"></span> <span class="title">Simva - A Simple Validator</span></div>
+		<div class="right">
+			<span><a class="about" href="/about-page"><span><img src="/icon/info.png"></span> <span>About</span></a></span>
+			<span><a href="https://e-ucm.es/"> <span>e-UCM Research</span></a></span>
+			<span><a href=""> <span>GDPR</span></a></span>
+			<span><a href=""> <span>FAQ</span></a></span>
+			<span><a href=""> <span>Contact</span></a></span>
+			<span><a class="login" href="/users/login"><img src="/icon/power.png"> <span>Login</span></a></span>
+		</div>
+	</div>
+	
+	<div class="header_content">
+		<%- content %>
+	</div>
+</body>
+</html>
+

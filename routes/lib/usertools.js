@@ -33,7 +33,7 @@ class UserTools {
 		  }
 		  return res.redirect(`${pre}users/openidscheduler?study=${result}`);
 		} else {
-		  return res.redirect(`${pre}users/openid`); 
+		  return res.redirect(`${pre}users/login`); 
 		}
 	}
 
