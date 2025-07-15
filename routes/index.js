@@ -46,6 +46,14 @@ router.get('/about', usertools.auth(0), function(req, res, next) {
   res.render('about', { config: config, user: req.session.user });
 });
 
+router.get('/about-page', function(req, res, next) {
+  res.render('logout_about', { config: config });
+});
+
+router.get('/e-ucm', function(req, res, next) {
+  res.render('logout_e_ucm', { config: config });
+});
+
 router.get('/', usertools.auth(0), function(req, res, next) {
   if(req.session.user.data.role == 'teacher'){
     res.render('home', { config: config, user: req.session.user });

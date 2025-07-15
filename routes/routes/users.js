@@ -90,10 +90,10 @@ module.exports = function(auth, config){
 );
 
   router.get('/openid/return', function (req, res, next) {
-    passport.authenticate('openid', { failureRedirect: '/users/login' }, function(err, user) {
+    passport.authenticate('openid', { failureRedirect: '/users/openid' }, function(err, user) {
       logger.info('/openid/return: USER');
       if(err){
-        return res.redirect('../login');
+        return res.redirect('../openid');
       }
       req.session.user={};
       req.session.user.data = user.data;
