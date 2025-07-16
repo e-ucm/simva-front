@@ -22,8 +22,8 @@ class UserTools {
 	}
 
 	redirectOpenId(level, req, res) {
-		var pre=preTabs(level);
-		if(req.session.intendedUrl.toLowerCase().includes("scheduler")) {
+		var pre=this.preTabs(level);
+		if(req.session.intendedUrl && req.session.intendedUrl.toLowerCase().includes("scheduler")) {
 		  logger.info("scheduler");
 		  const keyword = "scheduler/";
 		  // Find the index of the keyword
@@ -42,14 +42,14 @@ class UserTools {
 	}
 
 	auth(level){
-		var pre=preTabs(level);
+		var pre=this.preTabs(level);
 		var tmp=this;
 		return function(req, res, next) {
 		  let simvaToken = userClientsListManager.getJWT(req.session.id);
-		  req.session.intendedUrl=`${req.originalUrl}`;
 		  if (req.session && req.session.user && req.session.user.jwt){
 			tmp.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(req.session.id), (error, result) => {
 				if(error) {
+					req.session.intendedUrl=`${req.originalUrl}`;
 					res.redirect(`${pre}users/login`); 
 				} else {
 					logger.debug("auth() - Token OK");
@@ -67,6 +67,7 @@ class UserTools {
 			logger.info("auth() - New token done");
 			return next();
 		  }else{
+			req.session.intendedUrl=`${req.originalUrl}`;
 			res.redirect(`${pre}users/login`);
 		  }
 		};
