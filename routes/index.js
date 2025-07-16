@@ -8,7 +8,6 @@ let usertools = require('./lib/usertools');
 const logger = require('../logger');
 const profiling = require('../profiling');
 
-
 const app = express();
 
 app.use(bodyParser.json({limit: '1mb'}));
@@ -31,6 +30,12 @@ app.engine('ejs', require('express-ejs-extend'));
 app.set('views', path.join(__dirname, '/../views'));
 app.set('view engine', 'ejs');
 
+const i18next = require('./routes/i18n.js');
+const middleware = require('i18next-http-middleware');
+const { setLanguage } = require('../middleware/setLanguageMiddleware.js');
+app.use(setLanguage);
+app.use(middleware.handle(i18next));
+
 router = express.Router();
 app.use('/', router);
 app.use('/users', require('./routes/users.js')(usertools.auth(1), config));
@@ -43,14 +48,40 @@ app.use('/activities', require('./routes/activities.js')(usertools.auth(1), conf
 app.use('/scheduler', require('./routes/scheduler.js')(usertools.auth(1), config));
 
 router.get('/about', usertools.auth(0), function(req, res, next) {
-  res.render('about', { config: config, user: req.session.user });
+  res.render('about', { 
+    config: config, 
+    user: req.session.user,
+    t : req.t
+   });
+});
+
+router.get('/about-page', function(req, res, next) {
+  res.render('logout_about', { 
+    config: config,
+    t : req.t
+  });
+});
+
+router.get('/e-ucm', function(req, res, next) {
+  res.render('logout_e_ucm', { 
+    config: config,
+    t : req.t 
+  });
 });
 
 router.get('/', usertools.auth(0), function(req, res, next) {
   if(req.session.user.data.role == 'teacher'){
-    res.render('home', { config: config, user: req.session.user });
+    res.render('home', { 
+      config: config, 
+      user: req.session.user,
+      t : req.t
+     });
   }else if(req.session.user.data.role == 'student'){
-    res.render('studenthome', { config: config, user: req.session.user });
+    res.render('studenthome', { 
+      config: config, 
+      user: req.session.user,
+      t : req.t
+     });
   } else {
     if(config.sso.userCanSelectRole == "true") {
       return res.redirect('/users/role_selection');

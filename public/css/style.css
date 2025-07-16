@@ -357,3 +357,30 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .menu li span:first-child { width: 60px; }
 .menu li img { width: 50px; height: auto; }
  */
+
+#language-dropdown {
+  position: absolute; /* Make it absolute */
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  padding: 10px;
+  display: none; /* hide the dropdown initially */
+  top:0;
+  z-index: 1000; /* Set the z-index to bring it on top */
+}
+
+#language-dropdown ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#language-dropdown li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+#language-dropdown img {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+}

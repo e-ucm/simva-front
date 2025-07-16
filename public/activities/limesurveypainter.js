@@ -11,8 +11,10 @@ var LimeSurveyPainter = {
 	limesurveyurl: 'https://limesurvey-dev.external.test/',
 
 	supportedType: 'limesurvey',
-	simpleName: 'LimeSurvey activity',
-
+	simple_name: 'LimeSurvey activity',
+	commun : {},
+	communSpecific : {},
+	specific : {},
 	utils: {},
 	setUtils: function(utils){
 		this.utils = utils;
@@ -27,18 +29,18 @@ var LimeSurveyPainter = {
 			if(!error) {
 				console.log(result);
 				if(result.isLimesurveyUserAdmin == false) {
-					form+=`<p>Click to open LimeSurvey</p>
-						<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">LimeSurvey</a></p>`
+					form+=`<p>${this.specific.new_message}</p>
+						<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">${this.specific.title}</a></p>`
 				} else {
 					form += `<div class="tabs">
-					<span class="tab selected" method="byid" onclick="changeTab(this, 'new_activity_extras','limesurvey_byid')">Survey ID</span>
-					<span class="tab" method="byexisting" onclick="changeTab(this,'new_activity_extras','limesurvey_byexisting')">Existing Survey</span>
-					<span class="tab" method="bynew" onclick="changeTab(this, 'new_activity_extras','limesurvey_bynew')">New Survey</span>
-					<span class="tab" method="byupload" onclick="changeTab(this, 'new_activity_extras','limesurvey_byupload')">Upload LSS</span>
+					<span class="tab selected" method="byid" onclick="changeTab(this, 'new_activity_extras','limesurvey_byid')">${this.specific.surveyid_title}</span>
+					<span class="tab" method="byexisting" onclick="changeTab(this,'new_activity_extras','limesurvey_byexisting')">${this.specific.existing_title}</span>
+					<span class="tab" method="bynew" onclick="changeTab(this, 'new_activity_extras','limesurvey_bynew')">${this.specific.new_title}</span>
+					<span class="tab" method="byupload" onclick="changeTab(this, 'new_activity_extras','limesurvey_byupload')">${this.specific.upload_title}</span>
 					</div>
 					<div id="limesurvey_byid" class="subform selected">
-					<p>Survey ID:</p>
-					<input type="number" name="surveyid" placeholder="Survey ID">
+					<p>${this.specific.surveyid_title}:</p>
+					<input type="number" name="surveyid" placeholder="${this.specific.surveyid_placeholder}">
 					</div>
 					<div id="limesurvey_byexisting" class="subform">`;
 					if(this.utils.surveys.length > 0){
@@ -48,34 +50,34 @@ var LimeSurveyPainter = {
 						}
 						form += '</select>';
 					}else{
-						form += '<p>You don\'t have surveys.</p>'
+						form += `<p>${this.specific.existing_zero_message}</p>`;
 					}
 					form += `</div>
 					<div id="limesurvey_bynew" class="subform">
-						<p>Click to open LimeSurvey</p>
-						<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">LimeSurvey</a></p>
+						<p>${this.specific.new_message}</p>
+						<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">${this.specific.title}</a></p>
 					</div>
 					<div id="limesurvey_byupload" class="subform">
-						<p>Select LLS file</p>
+						<p>${this.specific.upload_message}</p>
 						<input type="file" name="lss" placeholder="Activity name">
 					</div>`
 				}
 			} else {
-				form+=`<p>Click to open LimeSurvey</p>
-					<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">LimeSurvey</a></p>`
+				form+=`<p>${this.specific.new_message}</p>
+					<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">${this.specific.title}</a></p>`
 			};
 			callback(null, form);
 		});	
 	},
 
 	getEditExtraForm: function () {
-		let form="Survey";
+		let form=`${this.specific.survey_title}`;
 		if(this.utils.surveys.length > 1){
 			form += '<select name="existingid" id="existing_survey_list"></select>';
 		} else  {
-			form += '<p>You don\'t have any other surveys.</p>'
+			form += '<p>${this.specific.survey.only_one.message}You don\'t have any other surveys.</p>'
 		}
-		form+="Survey Language";
+		form+=`${this.specific.language_title}`;
 		form += '<select name="language" id="language_list"></select>';
 		return form;
 	},
@@ -130,7 +132,7 @@ var LimeSurveyPainter = {
 
 	downloadBackup: function(activity, type, user){
 		var toastParams = {
-			heading: 'Error loading the result',
+			heading: this.commun.result_error_downloading,
 			position: 'top-right',
 			icon: 'error',
 			stack: false
@@ -141,7 +143,7 @@ var LimeSurveyPainter = {
 				toastParams.text = error.message;
 				$.toast(toastParams);
 			}else{
-				var filename = `${activity}_${type}.json`;
+				var filename = `${this.communSpecific.result_file_prefix}_${activity}_${type}.json`;
 				var stringifiedres = JSON.stringify(result, null, 2);
 				Utils.download(filename, stringifiedres);
 			}
@@ -169,7 +171,7 @@ var LimeSurveyPainter = {
 				callback(null, activity);
 				break;
 			case 'bynew':
-				callback('After creating new, you have to select from existing.');
+				callback(this.specific.new_after_message);
 				break;
 			case 'byupload':
 				if($(form).find('input[name="lss"]').get(0).files[0]){
@@ -183,11 +185,11 @@ var LimeSurveyPainter = {
 					};
 					reader.readAsDataURL($(form).find('input[name="lss"]').get(0).files[0]);
 				}else{
-					callback('Select the file to upload first.');
+					callback(this.specific.upload_error);
 				}
 				break;
 			default:
-				callback('Select a method first');
+				callback(this.specific.no_method);
 				break;
 		}
 	},
@@ -232,17 +234,18 @@ var LimeSurveyPainter = {
 		let usernames = Object.keys(activity.data.result);
 		let map= {};
 		for (var i = 0; i < usernames.length; i++) {
-			let state = 'No Results';
+			let state = this.communSpecific.result_zero;
 			if(activity.data.result[usernames[i]]){
 				if(activity.data.result[usernames[i]].submitdate){
-					state = 'Completed';
+					state = this.communSpecific.result_view_final;
 				}else{
-					state = 'Started';
+					state = this.communSpecific.result_view_partial;
 				}
 			}
 			map[usernames[i]] = state;
 		}
-		PainterFactory.Painters["activity"].paintActivityResult(activity, map, "No Results", "No Results", "Started", "Started", "Completed","Completed","LimeSurveyPainter");
+		PainterFactory.Painters["activity"].paintActivityResult(activity, map, "No Results", this.communSpecific.result_zero, "Started", this.communSpecific.result_view_partial_value, "Completed",this.communSpecific.result_view_final_value,"LimeSurveyPainter");
+		PainterFactory.Painters["activity"].paintActivityProgress(activity, activity.data.progress);
 	},
 
 	generateTinyURL: function(activityId, surveyId) {
@@ -263,14 +266,16 @@ var LimeSurveyPainter = {
 			<div class="top"><h4>${activity.name}</h4>
 			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
-			<p class="subtitle">${this.simpleName}</p>
-			<p>Survey ID: <a target="_blank" href="${this.utils.url}${activity.extra_data.surveyId}">${activity.extra_data.surveyId}</a></p>
-			<p>Survey Language: ${activity.extra_data.language}</p>
-			<p><a class="button green" onclick="LimeSurveyPainter.openEditLimesurvey('${activity.id}', '${activity.extra_data.surveyId}')">Edit Survey</a></p>
-			<p><a onclick="LimeSurveyPainter.generateTinyURL('${activity._id}', ${activity.extra_data.surveyId})">Generate Tiny URL</a></p>
-			<p><a onclick="LimeSurveyPainter.downloadBackup('${activity._id}', 'full')"> Full : ⬇️</a>
-			<a onclick="LimeSurveyPainter.downloadBackup('${activity._id}', 'code')"> Code : ⬇️</a></p>
-			${PainterFactory.Painters["activity"].paintActivityParticipantsTable(activity, participants)}</div>`);
+			<p class="subtitle">${this.simple_name}</p>
+			<p>${this.specific.survey_title}: <a target="_blank" href="${this.utils.url}${activity.extra_data.surveyId}">${activity.extra_data.surveyId}</a></p>
+			<p>${this.specific.language_title}: ${activity.extra_data.language}</p>
+			<p><a class="button green" onclick="LimeSurveyPainter.openEditLimesurvey('${activity.id}', '${activity.extra_data.surveyId}')">${this.specific.edit_title}</a></p>
+			<p><a onclick="LimeSurveyPainter.generateTinyURL('${activity._id}', ${activity.extra_data.surveyId})">${this.specific.short_url_title}</a></p>
+			<p><a onclick="LimeSurveyPainter.downloadBackup('${activity._id}', 'full')"> ${this.specific.backup_full_title} : ⬇️</a>
+			<a onclick="LimeSurveyPainter.downloadBackup('${activity._id}', 'code')"> ${this.specific.backup_code_title} : ⬇️</a></p>
+			${this.commun.storage_title} : 
+			<p>${this.commun.storage_file_title} <a onclick="PainterFactory.Painters['activity'].getMinioData('${activity._id}')" target="_blank">${this.commun.storage_file_one_per_line_title}</a></p>
+			${PainterFactory.Painters["activity"].paintActivityParticipantsTable(activity, participants, false)}</div>`);
 	},
 
 	paintActivityParticipantsTable: function(activity, participants){
@@ -299,7 +304,7 @@ var LimeSurveyPainter = {
 
 	updateActivityResult: function(activityId, username, result) {
 		try {
-			PainterFactory.Painters["activity"].updateActivityResult(activityId, username,result, "No Results","No Results", "Started", "Started", "Completed","Completed","LimeSurveyPainter");
+			PainterFactory.Painters["activity"].updateActivityResult(activityId, username,result, "No Results", this.communSpecific.result_zero, "Started", this.communSpecific.result_view_partial_value, "Completed",this.communSpecific.result_view_final_value, "LimeSurveyPainter");
 		} catch(e) {
 		}
 	},
@@ -322,7 +327,7 @@ var LimeSurveyPainter = {
 		Simva.getActivityResultWithTypeForUser(activity, type, user, function(error, result){
 			if(error){
 				$.toast({
-					heading: 'Error loading the result',
+					heading: this.commun.result_error_loading,
 					text: error.message,
 					position: 'top-right',
 					icon: 'error',
@@ -354,7 +359,7 @@ var LimeSurveyPainter = {
 		Simva.getActivityResultWithTypeForUser(activity, type, user, function(error, result){
 			if(error){
 				$.toast({
-					heading: 'Error loading the result',
+					heading: this.commun.result_error_downloading,
 					text: error.message,
 					position: 'top-right',
 					icon: 'error',
@@ -362,7 +367,7 @@ var LimeSurveyPainter = {
 				});
 			}else{
 				let stringifyres=JSON.stringify(result[user], null, 2);
-				var filename = `${activity}_${user}_${type}.json`;
+				var filename = `${this.communSpecific.result_file_prefix}_${activity}_${user}_${type}.json`;
 				Utils.download(filename, stringifyres);
 			}
 		})

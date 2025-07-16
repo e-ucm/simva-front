@@ -4,10 +4,9 @@
 
 <div id="role_selection" class="content">
 	<div class="floater">
-		
 		<img src="/logo_text.png" alt="logo" />
-		<h1>Contact Administrator</h1>
-		<p>Welcome user!</p>
-		<p>Please contact your SIMVA administrator at <%= config.sso.administratorContact%> to atribute a new role.</p>
+		<h1><%= t("contactadmin.title", { ns : "roles" }) %></h1>
+		<p><%- t('welcome.user.text', { username: user.data.username }) %>
+		<p><%- t('contactadmin.message', { ns : "roles", email: config.sso.administratorContact }).replace(/\n/g, '<br><br>') %></p>
 	</div>
 </div>
