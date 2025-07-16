@@ -91,7 +91,7 @@ module.exports = function(auth, config){
   router.get('/openid', (req, res, next) => {
     const options = {
       hideLocaleDropdown : true,
-      ui_locales : "en"
+      ui_locales : req.session.language?req.session.language:"en"
     };
     passport.authenticate('openid', options)(req, res, next);
   });
@@ -101,7 +101,7 @@ module.exports = function(auth, config){
       login_hint : req.query.study,
       simva_user_token: true,
       hideLocaleDropdown : true,
-      ui_locales : "en"
+      ui_locales : req.session.language?req.session.language:"en"
     };
     passport.authenticate('openid', options)(req, res, next);
   }
