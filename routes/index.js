@@ -38,6 +38,7 @@ app.use('/bff', require('./routes/bff.js')(usertools.auth(1), config));
 app.use('/events', require('./routes/events.js')(usertools.auth(1), config));
 app.use('/studies', require('./routes/studies.js')(usertools.auth(1), config));
 app.use('/groups', require('./routes/groups.js')(usertools.auth(1), config));
+app.use('/languages', require('./routes/languages.js')(usertools.auth(1), config));
 app.use('/previous-groups', require('./routes/previous-groups.js')(usertools.auth(1), config));
 app.use('/activities', require('./routes/activities.js')(usertools.auth(1), config));
 app.use('/scheduler', require('./routes/scheduler.js')(usertools.auth(1), config));

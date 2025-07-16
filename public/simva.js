@@ -32,6 +32,15 @@ var Simva = {
 		Utils.get(`/users/refresh_auth`, callback);
 	},
 
+	getLanguage: function(callback){
+		Utils.get(`/languages`, callback);
+	},
+
+	updateLanguage: function(languageid, callback){
+		Utils.post(`/languages/${languageid}`, {}, callback);
+	},
+
+
 	//SHLINK URL
 	generateShlinkURL(url, tag, title, customSlug, length, callback){
 		let body = {
