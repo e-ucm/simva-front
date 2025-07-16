@@ -77,6 +77,10 @@ module.exports = function(auth, config){
     res.render('users_contact_admin', { config: config, user: req.session.user , error : req.query.error });
   });
 
+  router.get('/ssoconnect', (req, res, next) => {
+    usertools.redirectOpenId(1, req, res);
+  });
+
   router.get('/openid', passport.authenticate('openid'));
 
   router.get('/openidscheduler', (req, res, next) => {

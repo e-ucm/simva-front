@@ -13,12 +13,16 @@ class UserTools {
     constructor() {
     }
 
-	redirectOpenId(level, req, res) {
+	preTabs(level) {
 		var pre = '/';
 		for(var i = 0; i < level; i++){
 		  pre += '../';
 		}
-		req.session.intendedUrl=`${req.originalUrl}`;
+		return pre;
+	}
+
+	redirectOpenId(level, req, res) {
+		var pre=preTabs(level);
 		if(req.session.intendedUrl.toLowerCase().includes("scheduler")) {
 		  logger.info("scheduler");
 		  const keyword = "scheduler/";
@@ -33,18 +37,20 @@ class UserTools {
 		  }
 		  return res.redirect(`${pre}users/openidscheduler?study=${result}`);
 		} else {
-		  return res.redirect(`${pre}users/login`); 
+		  return res.redirect(`${pre}users/openid`); 
 		}
 	}
 
 	auth(level){
+		var pre=preTabs(level);
 		var tmp=this;
 		return function(req, res, next) {
 		  let simvaToken = userClientsListManager.getJWT(req.session.id);
+		  req.session.intendedUrl=`${req.originalUrl}`;
 		  if (req.session && req.session.user && req.session.user.jwt){
 			tmp.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(req.session.id), (error, result) => {
 				if(error) {
-					tmp.redirectOpenId(level, req, res);
+					res.redirect(`${pre}users/login`); 
 				} else {
 					logger.debug("auth() - Token OK");
 					return next();
@@ -61,7 +67,7 @@ class UserTools {
 			logger.info("auth() - New token done");
 			return next();
 		  }else{
-			tmp.redirectOpenId(level, req, res);
+			res.redirect(`${pre}users/login`);
 		  }
 		};
 	}
