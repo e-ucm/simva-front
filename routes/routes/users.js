@@ -25,7 +25,13 @@ module.exports = function(auth, config){
        }
       if ('login_hint' in options) {
         params.login_hint = options.login_hint;
-       }
+      }
+      if ('hideLocaleDropdown' in options) {
+        params.hideLocaleDropdown = options.hideLocaleDropdown;
+      }
+      if ('ui_locales' in options) {
+        params.ui_locales = options.ui_locales;
+      }
       return params;
     }
   }
@@ -82,12 +88,20 @@ module.exports = function(auth, config){
     usertools.redirectOpenId(1, req, res);
   });
 
-  router.get('/openid', passport.authenticate('openid'));
+  router.get('/openid', (req, res, next) => {
+    const options = {
+      hideLocaleDropdown : true,
+      ui_locales : "en"
+    };
+    passport.authenticate('openid', options)(req, res, next);
+  });
 
   router.get('/openidscheduler', (req, res, next) => {
     const options = {
       login_hint : req.query.study,
-      simva_user_token: true
+      simva_user_token: true,
+      hideLocaleDropdown : true,
+      ui_locales : "en"
     };
     passport.authenticate('openid', options)(req, res, next);
   }
