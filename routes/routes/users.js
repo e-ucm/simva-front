@@ -71,7 +71,16 @@ module.exports = function(auth, config){
   });
 
   router.get('/login', function(req, res, next) {
-      res.render('users_login', { config: config });
+      res.render('users_login', { 
+        config: config, 
+        title : req.t('title'), 
+        contact : req.t('contactButton'), 
+        login : req.t('loginButton'), 
+        QA : req.t('QAButton'), 
+        GDPR : req.t('GDPRButton'), 
+        eUCMResearch : req.t('eUCMResearchButton'),
+        about : req.t('aboutButton'), 
+      });
   });
 
   router.get('/role_selection', auth, function(req, res, next) {
@@ -90,7 +99,7 @@ module.exports = function(auth, config){
   router.get('/openid', (req, res, next) => {
     const options = {
       hideLocaleDropdown : true,
-      ui_locales : req.session.language?req.session.language:"en"
+      ui_locales : req.cookies.i18next?req.cookies.i18next:"en"
     };
     passport.authenticate('openid', options)(req, res, next);
   });
@@ -100,7 +109,7 @@ module.exports = function(auth, config){
       login_hint : req.query.study,
       simva_user_token: true,
       hideLocaleDropdown : true,
-      ui_locales : req.session.language?req.session.language:"en"
+      ui_locales : req.cookies.i18next?req.cookies.i18next:"en"
     };
     passport.authenticate('openid', options)(req, res, next);
   }
