@@ -33,11 +33,11 @@ var Simva = {
 	},
 
 	getLanguage: function(callback){
-		Utils.get(`/languages`, callback);
+		Utils.get(`/bff/languages`, callback);
 	},
 
 	updateLanguage: function(languageid, callback){
-		Utils.post(`/languages/${languageid}`, {}, callback);
+		Utils.get(`/bff/languages/${languageid}`, callback);
 	},
 
 
