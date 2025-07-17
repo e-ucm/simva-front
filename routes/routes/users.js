@@ -10,6 +10,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 const userClientsListManager = require('../lib/userClientsListManager');
 let usertools = require('../lib/usertools');
 const cron = require('node-cron');
+const translations = require('../lib/translations');
 
 module.exports = function(auth, config){
 
@@ -74,13 +75,7 @@ module.exports = function(auth, config){
   router.get('/login', function(req, res, next) {
       res.render('users_login', { 
         config: config, 
-        title : req.t('title'), 
-        contact : req.t('contactButton'), 
-        login : req.t('loginButton'), 
-        QA : req.t('QAButton'), 
-        GDPR : req.t('GDPRButton'), 
-        eUCMResearch : req.t('eUCMResearchButton'),
-        about : req.t('aboutButton'), 
+        translations : translations.getLogoutTranslations(req),
       });
   });
 
