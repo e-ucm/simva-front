@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Simva - A Simple Validator</title>
+	<title><%= translations.title %></title>
 	<link href="/css/style.css" rel="stylesheet" type="text/css">
 	<link href="/css/loader.css" rel="stylesheet" type="text/css">
 	<link href="/toast/jquery.toast.css" rel="stylesheet" type="text/css">
@@ -110,17 +110,17 @@
 </head>
 <body>
 	<div class="header" id="logout_header">
-		<div class="left"><span class="logo"><img src="/logo.png"></span> <span class="title"><%= title %></span></div>
+		<div class="left"><span class="logo"><img src="/logo.png"></span> <span class="title"><%= translations.title %></span></div>
 		<div class="right">
 			<span><!-- Create a container element for the dropdown -->
 			<div id="language-dropdown" style="display: flex; flex-wrap: wrap;"></div>
 			<button id="lang-btn"><img id="current-lang" alt="Select Language"></button></span>
-			<span></span><a class="about" href="/about-page"><span><img src="/icon/info.png"></span> <span><%= about %></span></a></span>
-			<span><a href="https://e-ucm.es/"> <span><%= eUCMResearch %></span></a></span>
-			<span><a href=""> <span><%= GDPR %></span></a></span>
-			<span><a href=""> <span><%= QA %></span></a></span>
-			<span><a href=""> <span><%= contact %></span></a></span>
-			<span><a class="login" href="/users/login"><img src="/icon/power.png"> <span><%= login %></span></a></span>
+			<span></span><a class="about" href="/about-page"><span><img src="/icon/info.png"></span> <span><%= translations.about %></span></a></span>
+			<span><a href="https://e-ucm.es/"> <span><%= translations.eUCMResearch %></span></a></span>
+			<span><a href=""> <span><%= translations.GDPR %></span></a></span>
+			<span><a href=""> <span><%= translations.QA %></span></a></span>
+			<span><a href=""> <span><%= translations.contact %></span></a></span>
+			<span><a class="login" href="/users/login"><img src="/icon/power.png"> <span><%= translations.login %></span></a></span>
 		</div>
 	</div>
 	
