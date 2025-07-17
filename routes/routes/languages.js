@@ -1,11 +1,11 @@
 module.exports = function(auth, config){
   const defaultLanguage="en";
   const languages = [
-		{ name: 'English', code : 'en', flag: 'https://flagpedia.net/data/flags/w1160/us.webp' },
-		{ name: 'Spanish', code : 'es', flag: 'https://flagpedia.net/data/flags/w1160/es.webp' },
-		{ name: 'French', code : 'fr', flag: 'https://flagpedia.net/data/flags/w1160/fr.webp' },
-    { name: 'Portuguese (Brasil)', code : 'pt-BR', flag: 'https://flagpedia.net/data/flags/w1160/br.webp' },
-		// ...
+		{ name: 'English', code : 'en', flag: 'us' },
+		{ name: 'Spanish', code : 'es', flag: 'es' },
+		{ name: 'French', code : 'fr', flag: 'fr' },
+    { name: 'Portuguese (Brasil)', code : 'pt-BR', flag: 'br' },
+		// ... https://flagpedia.net/data/flags/w1160/${flagCode}.webp // https://flaglog.com/codes/official-ratio-120px/${flagCode}.png
 	];
 
   var express = require('express'),
@@ -16,10 +16,7 @@ module.exports = function(auth, config){
   });
 
   router.get('/', function(req, res, next) {
-    if(req.session && !req.session.language) {
-      req.session.language=defaultLanguage;
-    } 
-    res.status(200).send({ current : req.session.language, languages : languages, flagTemplateUrl : 'https://flaglog.com/codes/official-ratio-120px/${langCode}.png', replaceVariable : '${langCode}' });
+    res.status(200).send({ current : req.session.language, default: defaultLanguage, languages : languages, flagTemplateUrl : 'https://flagpedia.net/data/flags/w1160/${flagCode}.webp', replaceVariable : '${flagCode}' });
   });
   return router;
 }
