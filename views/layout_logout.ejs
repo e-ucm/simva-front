@@ -33,14 +33,40 @@
 					if(error) {
 						console.log(error.message);
 					} else {
+						let updateLanguage;
 						const urlTemplate = result.flagTemplateUrl;
-						//const currentflagUrl = urlTemplate.replace(result.replaceVariable, result.current);
+						if(!result.current) {
+							const preferedLangs = navigator.languages;
+							const preferedLang = navigator.language;
+							console.log(`The Preferred languages are: ${preferedLangs} (${preferedLang})`);
+							preferedLangs.forEach((lang) => {
+								if(!updateLanguage) {
+									if(result.languages.find(language => language.code === lang)) {
+										updateLanguage=lang;
+									}	
+								}
+							});
+							if(!updateLanguage) {
+								updateLanguage=result.default;
+							}
+							if(updateLanguage) {
+								Simva.updateLanguage(updateLanguage, function(error, result) {
+									if(error) {
+										console.log(error.message);
+									} else {
+										console.log(result);
+										window.location.reload();
+									}
+								});
+							}
+						}
 						const currentlanguage = result.languages.find(language => language.code === result.current);
-						current.src=currentlanguage.flag;
+						const currentflagUrl = urlTemplate.replace(result.replaceVariable, currentlanguage.flag);
+						current.src=currentflagUrl;
 						current.alt=result.current;
 						var dropdownHTML = '<div>';
 						result.languages.forEach((lang) => {
-							dropdownHTML += `<button id="${lang.code}"><img src="${lang.flag}" id="${lang.code}" alt="${lang.name}"></button>`;
+							dropdownHTML += `<button id="${lang.code}"><img src="${urlTemplate.replace(result.replaceVariable, lang.flag)}" id="${lang.code}" alt="${lang.name}"></button>`;
 						});
 						dropdownHTML += '</div>';
 						dropdown.innerHTML = dropdownHTML;
