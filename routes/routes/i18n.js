@@ -2,14 +2,14 @@ const i18next = require('i18next');
 const Backend = require('i18next-fs-backend');
 const middleware = require('i18next-http-middleware');
 const path = require('path');
+const config = require('../../config.js');
 
 i18next
   .use(Backend)                     // Connects the file system 
   .use(middleware.LanguageDetector) // Enables automatic language detection
   .init({
-    debug: true,
+    debug: config.i18n.debug,
     fallbackLng: 'en', // Default language
-    preload: ['en', 'fr'], // Preload supported languages
     backend: {
       loadPath: path.join(process.cwd(), 'locales', '{{lng}}', '{{ns}}.json'), // Path to translation files
     },
