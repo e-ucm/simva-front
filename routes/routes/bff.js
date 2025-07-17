@@ -5,11 +5,10 @@ module.exports = function(auth, config){
     router = express.Router();
     const defaultLanguage="en";
     const languages = [
-        { name: 'English', code : 'en', flag: 'us' },
-        { name: 'Spanish', code : 'es', flag: 'es' },
-        { name: 'French', code : 'fr', flag: 'fr' },
-        { name: 'Portuguese (Brasil)', code : 'pt-BR', flag: 'br' },
-        // ... https://flagpedia.net/data/flags/w1160/${flagCode}.webp // https://flaglog.com/codes/official-ratio-120px/${flagCode}.png
+        { name: 'English', code : 'en' },
+        { name: 'Spanish', code : 'es' },
+        { name: 'French', code : 'fr' },
+        { name: 'Portuguese (Brasil)', code : 'pt-BR' }
     ];
     const logger = require('../../logger');
     const Simva = require('../lib/simva');
@@ -17,8 +16,7 @@ module.exports = function(auth, config){
     const groupcontroler = require('../lib/groupcontroler');
     const testscontroler = require('../lib/testscontroler');
     const axios = require('axios');
-
-
+    
     router.get('/languages/:lng', function(req, res, next) {
         const lng = req.params["lng"];  // Get the new language from query parameters
         res.cookie('i18next', lng, { maxAge: 900000, httpOnly: true });  // Set the new language in a cookie
@@ -26,7 +24,7 @@ module.exports = function(auth, config){
     });
 
     router.get('/languages/', function(req, res, next) {
-        res.status(200).send({ current : req.cookies.i18next, default: defaultLanguage, languages : languages, flagTemplateUrl : 'https://flagpedia.net/data/flags/w1160/${flagCode}.webp', replaceVariable : '${flagCode}' });
+        res.status(200).send({ current : req.cookies.i18next, default: defaultLanguage, languages : languages });
     });
 
     /**
