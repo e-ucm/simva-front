@@ -31,6 +31,12 @@ app.engine('ejs', require('express-ejs-extend'));
 app.set('views', path.join(__dirname, '/../views'));
 app.set('view engine', 'ejs');
 
+const i18next = require('./routes/i18n.js');
+const middleware = require('i18next-http-middleware');
+const { setLanguage } = require('../middleware/setLanguageMiddleware.js');
+app.use(setLanguage);
+app.use(middleware.handle(i18next));
+
 router = express.Router();
 app.use('/', router);
 app.use('/users', require('./routes/users.js')(usertools.auth(1), config));

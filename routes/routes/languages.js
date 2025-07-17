@@ -8,15 +8,16 @@ module.exports = function(auth, config){
 		// ... https://flagpedia.net/data/flags/w1160/${flagCode}.webp // https://flaglog.com/codes/official-ratio-120px/${flagCode}.png
 	];
 
-  var express = require('express'),
+  var express = require('express');
   router = express.Router();
-  router.post('/:languageid', function(req, res, next) {
-    req.session.language=req.params["languageid"];
-    res.status(200).send({ message : "Language updated in session" });
+  router.post('/:lng', function(req, res, next) {
+    const lng = req.params["lng"];  // Get the new language from query parameters
+    res.cookie('i18next', lng, { maxAge: 900000, httpOnly: true });  // Set the new language in a cookie
+    res.status(200).send({ message : "Language updated" });
   });
 
   router.get('/', function(req, res, next) {
-    res.status(200).send({ current : req.session.language, default: defaultLanguage, languages : languages, flagTemplateUrl : 'https://flagpedia.net/data/flags/w1160/${flagCode}.webp', replaceVariable : '${flagCode}' });
+    res.status(200).send({ current : req.cookies.i18next, default: defaultLanguage, languages : languages, flagTemplateUrl : 'https://flagpedia.net/data/flags/w1160/${flagCode}.webp', replaceVariable : '${flagCode}' });
   });
   return router;
 }

@@ -1,0 +1,10 @@
+{
+    "loginButton":"Se Connecter",
+    "title": "SIMVA - Un SIMple VAlidateur",
+    "contactButton": "Contact",
+    "QAButton": "FAQ",
+    "GDPRButton": "GDPR",
+    "eUCMResearchButton": "Groupe de Recherche e-UCM",
+    "aboutButton": "A Propos",
+    "logout":"Se deconnecter"
+}
