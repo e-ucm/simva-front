@@ -55,7 +55,7 @@ router.get('/about', usertools.auth(0), function(req, res, next) {
 router.get('/about-page', function(req, res, next) {
   res.render('logout_about', { 
     config: config,
-    translations : translations.getLogoutTranslations(req),
+    t : function(value) { return req.t(value); },
   });
 });
 
