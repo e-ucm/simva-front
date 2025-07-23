@@ -7,7 +7,6 @@ const config = require('../config');
 let usertools = require('./lib/usertools');
 const logger = require('../logger');
 const profiling = require('../profiling');
-const translations = require('./lib/translations');
 
 const app = express();
 
@@ -55,7 +54,7 @@ router.get('/about', usertools.auth(0), function(req, res, next) {
 router.get('/about-page', function(req, res, next) {
   res.render('logout_about', { 
     config: config,
-    t : function(value) { return req.t(value); },
+    t : function(value) { return req.t(value); }
   });
 });
 
