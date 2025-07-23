@@ -9,7 +9,6 @@ const Simva = require('../lib/simva');
 const userClientsListManager = require('../lib/userClientsListManager');
 let usertools = require('../lib/usertools');
 const cron = require('node-cron');
-const translations = require('../lib/translations');
 
 module.exports = function(auth, config){
 
@@ -74,7 +73,7 @@ module.exports = function(auth, config){
   router.get('/login', function(req, res, next) {
       res.render('users_login', { 
         config: config, 
-        t : function(value) { return req.t(value); },
+        t : function(value) { return req.t(value); }
       });
   });
 
