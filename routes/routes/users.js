@@ -75,7 +75,7 @@ module.exports = function(auth, config){
   router.get('/login', function(req, res, next) {
       res.render('users_login', { 
         config: config, 
-        translations : translations.getLogoutTranslations(req),
+        t : function(value) { return req.t(value); },
       });
   });
 

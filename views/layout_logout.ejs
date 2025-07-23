@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title><%= translations.title %></title>
+	<title><%= t('title') %></title>
 	<link href="/css/style.css" rel="stylesheet" type="text/css">
 	<link href="/css/loader.css" rel="stylesheet" type="text/css">
 	<link href="/toast/jquery.toast.css" rel="stylesheet" type="text/css">
@@ -21,7 +21,7 @@
     				return;
 				$(this).parent().toggleClass('shown');
 			});
-
+			var currentlanguageCode;
 			// Get the container element and the button
 			const dropdown = document.getElementById('language-dropdown');
 			const langBtn = document.getElementById('lang-btn');
@@ -40,6 +40,7 @@
 
 			// Function to render the dropdown
 			function renderDropdown() {
+				const currentUrl = window.location.href;
 				Simva.getLanguage(function(error, result) {
 					if(error) {
 						console.log(error.message);
@@ -59,19 +60,24 @@
 							if(!updateLanguage) {
 								updateLanguage=result.default;
 							}
-							if(updateLanguage) {
+							if(!currentUrl.includes("lng=") && updateLanguage) {
 								Simva.updateLanguage(updateLanguage, function(error, result) {
 									if(error) {
 										console.log(error.message);
 									} else {
 										console.log(result);
-										window.location.reload();
+										if(currentUrl.includes("?")) {
+											window.location.href=`${currentUrl}&lng=${updateLanguage}`;
+										} else {
+											window.location.href=`${currentUrl}?lng=${updateLanguage}`;
+										}
 									}
 								});
 								return;
 							}
 						}
 						const currentlanguage = result.languages.find(language => language.code === result.current);
+						currentlanguageCode=currentlanguage.code;
 						langBtn.innerHTML=getFlagEmoji(currentlanguage.code) + " " + currentlanguage.name;
 						var dropdownHTML = '<div>';
 						result.languages.forEach((lang) => {
@@ -94,6 +100,7 @@
 			// Hide the dropdown when an item is clicked or outside the dropdown is clicked
 			dropdown.addEventListener('click', (event) => {
 				if (event.target.tagName === 'BUTTON') {
+					const currentUrl = window.location.href;
 					const selectedLang = event.target.id;
 					// Do something with the selected language (e.g., update a variable or make an API call)
 					console.log(selectedLang);
@@ -103,7 +110,12 @@
 						} else {
 							console.log(result);
 							dropdown.style.display = 'none';
-							window.location.reload();
+							if(currentUrl.includes("?")) {
+								window.location.href=currentUrl.replace(`lng=${currentlanguageCode}`,`lng=${selectedLang}`)
+							} else {
+								window.location.href=`${currentUrl}?lng=${selectedLang}`;
+							}
+							//window.location.reload();
 						}
 					});
 				} else if (event.target === dropdown) {
@@ -124,15 +136,15 @@
 				<div id="language-dropdown" style="display: flex; flex-wrap: wrap;"></div>
 				<button id="lang-btn"></button>
 			</span>
-			<span class="logo"><img src="/logo.png"></span> <span class="title"><%= translations.title %></span>
+			<span class="logo"><img src="/logo.png"></span> <span class="title"><%= t('title') %></span>
 		</div>
 		<div class="right">
-			<span></span><a class="about" href="/about-page"><span><img src="/icon/info.png"></span> <span><%= translations.about %></span></a></span>
-			<span><a href="https://e-ucm.es/"> <span><%= translations.eUCMResearch %></span></a></span>
-			<span><a> <span><%= translations.GDPR %></span></a></span>
-			<span><a> <span><%= translations.QA %></span></a></span>
-			<span><a> <span><%= translations.contact %></span></a></span>
-			<span><a class="login" href="/users/login"><img src="/icon/power.png"> <span><%= translations.login %></span></a></span>
+			<span></span><a class="about" href="/about-page"><span><img src="/icon/info.png"></span> <span><%= t('aboutButton') %></span></a></span>
+			<span><a href="https://e-ucm.es/"> <span><%= t('eUCMResearchButton') %></span></a></span>
+			<span><a> <span><%= t('GDPRButton') %></span></a></span>
+			<span><a> <span><%= t('QAButton') %></span></a></span>
+			<span><a> <span><%= t('contactButton') %></span></a></span>
+			<span><a class="login" href="/users/login"><img src="/icon/power.png"> <span><%= t('loginButton') %></span></a></span>
 		</div>
 	</div>
 	
