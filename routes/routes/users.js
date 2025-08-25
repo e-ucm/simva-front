@@ -73,17 +73,26 @@ module.exports = function(auth, config){
   router.get('/login', function(req, res, next) {
       res.render('users_login', { 
         config: config, 
-        t : function(value) { return req.t(value); }
+        t : req.t
       });
   });
 
   router.get('/role_selection', auth, function(req, res, next) {
-    res.render('users_role_edit', { config: config, user: req.session.user });
+    res.render('users_role_edit', { 
+      config: config, 
+      user: req.session.user, 
+      t : req.t
+    });
   });
 
   
   router.get('/contact_admin', auth, function(req, res, next) {
-    res.render('users_contact_admin', { config: config, user: req.session.user , error : req.query.error });
+    res.render('users_contact_admin', { 
+      config: config, 
+      user: req.session.user, 
+      error : req.query.error,
+      t : req.t
+     });
   });
 
   router.get('/ssoconnect', (req, res, next) => {
