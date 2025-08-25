@@ -3,6 +3,6 @@
 <% extend('layout_logout') %>
 
 <div class="header_content">
-	<h1><%= t('aboutTitle') %></h1>
-	<p><%- t('aboutText').replace(/\n/g, '</p><p>') %> %></p>
+	<h1><%= t('title', { ns : 'about'}) %></h1>
+	<p><%- t('text', { ns : 'about'}).replace(/\n/g, '</p><p>') %> %></p>
 </div>

@@ -1,8 +1,9 @@
 {
-    "roleSelectionTitle":"Simva Role Selection",
+    "selectionTitle":"Simva Role Selection",
     "admin": "Administrator",
     "researcher": "Researcher",
     "teacher": "Teacher",
     "teachingAssistant": "Teaching Assistant",
-    "student":"Student"
+    "student":"Student",
+    "chooseButton":"Choose this Role"
 }

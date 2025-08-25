@@ -1,0 +1,6 @@
+{ 
+    "title": "Groups",
+    "deprecatedTitle": "Groups (Deprecated)",
+    "confirm.removeOwner" : "Are you sure do you want to delete the owner '{{owner}}' of group '{{group}}' ?",
+    "confirm.removeParticipant" : "Are you sure do you want to delete the participant '{{participant}}' of group '{{group}}' ?"
+}

@@ -3,6 +3,6 @@
 <% extend('layout_with_menu_and_sse') %>
 
 <div class="card">
-	<h1><%= t('activitiesTitle') %></h1>
-	<p><%- t('activitiesText').replace(/\n/g, '</p><p>') %> %></p>
+	<h1><%= t('title', { ns : 'activities'}) %></h1>
+	<p><%- t('text', { ns : 'activities'}).replace(/\n/g, '</p><p>') %> %></p>
 </div>
