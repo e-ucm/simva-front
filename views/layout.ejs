@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Simva - A Simple Validator</title>
+	<title><%= t('title') %></title>
 	<link href="/css/style.css" rel="stylesheet" type="text/css">
 	<link href="/css/loader.css" rel="stylesheet" type="text/css">
 	<link href="/toast/jquery.toast.css" rel="stylesheet" type="text/css">
@@ -40,14 +40,132 @@
 				$(this).parent().toggleClass('shown');
 			});
 		});
+		$(document).ready(function() {
+			$(".floater").on('click', function(event){
+				if (event.target !== this)
+    				return;
+				$(this).parent().toggleClass('shown');
+			});
+			var currentlanguageCode;
+			// Get the container element and the button
+			const dropdown = document.getElementById('language-dropdown');
+			const langBtn = document.getElementById('lang-btn');
+			//const current = document.getElementById('current-lang');
+
+			function getFlagEmoji(languageCode) {
+				// Extract the country code (e.g., "BR" from "pt-BR")
+				const countryCode = languageCode.split('-')[1] || languageCode;
+				// Ensure the country code is uppercase
+				const codePoints = countryCode
+					.toUpperCase()
+					.split('')
+					.map(char => 127397 + char.charCodeAt(0)); // Offset for regional indicator symbols
+				return String.fromCodePoint(...codePoints);
+			}
+
+			// Function to render the dropdown
+			function renderDropdown() {
+				const currentUrl = window.location.href;
+				Simva.getLanguage(function(error, result) {
+					if(error) {
+						console.log(error.message);
+					} else {
+						let updateLanguage;
+						const urlTemplate = result.flagTemplateUrl;
+						if(!result.current) {
+							const preferedLangs = navigator.languages;
+							console.log(`The Preferred languages are: ${preferedLangs}.`);
+							preferedLangs.forEach((lang) => {
+								if(!updateLanguage) {
+									if(result.languages.find(language => language.code === lang)) {
+										updateLanguage=lang;
+									}	
+								}
+							});
+							if(!updateLanguage) {
+								updateLanguage=result.default;
+							}
+							if(!currentUrl.includes("lng=") && updateLanguage) {
+								Simva.updateLanguage(updateLanguage, function(error, result) {
+									if(error) {
+										console.log(error.message);
+									} else {
+										console.log(result);
+										if(currentUrl.includes("?")) {
+											window.location.href=`${currentUrl}&lng=${updateLanguage}`;
+										} else {
+											window.location.href=`${currentUrl}?lng=${updateLanguage}`;
+										}
+									}
+								});
+								return;
+							}
+						}
+						const currentlanguage = result.languages.find(language => language.code === result.current);
+						currentlanguageCode=currentlanguage.code;
+						langBtn.innerHTML=getFlagEmoji(currentlanguage.code) + " " + currentlanguage.name;
+						var dropdownHTML = '<div>';
+						result.languages.forEach((lang) => {
+							dropdownHTML += `<button id="${lang.code}">${getFlagEmoji(lang.code)} ${lang.name}</button>`;
+						});
+						dropdownHTML += '</div>';
+						dropdown.innerHTML = dropdownHTML;
+						dropdown.style.display = 'none';
+					}
+				})
+			}
+
+			// Add event listener to the button
+			langBtn.addEventListener('click', () => {
+				// Show the dropdown when the button is clicked
+				dropdown.style.display = 'block';
+				dropdown.style.top = '0'; // Position it on top of other elements
+			});
+
+			// Hide the dropdown when an item is clicked or outside the dropdown is clicked
+			dropdown.addEventListener('click', (event) => {
+				if (event.target.tagName === 'BUTTON') {
+					const currentUrl = window.location.href;
+					const selectedLang = event.target.id;
+					// Do something with the selected language (e.g., update a variable or make an API call)
+					console.log(selectedLang);
+					Simva.updateLanguage(selectedLang, function(error, result) {
+						if(error) {
+							console.log(error.message);
+						} else {
+							console.log(result);
+							dropdown.style.display = 'none';
+							if(currentUrl.includes("?")) {
+								window.location.href=currentUrl.replace(`lng=${currentlanguageCode}`,`lng=${selectedLang}`)
+							} else {
+								window.location.href=`${currentUrl}?lng=${selectedLang}`;
+							}
+							//window.location.reload();
+						}
+					});
+				} else if (event.target === dropdown) {
+					dropdown.style.display = 'none';
+				}
+			});
+
+			// Initial render of the dropdown
+			renderDropdown();
+		});
 	</script>
 </head>
 <body>
 	<div class="header">
-		<div class="left"><span class="logo"><img src="/logo.png"></span> <span class="title">Simva - A Simple Validator</span></div>
+		<div class="left">
+			<span>
+				<!-- Create a container element for the dropdown -->
+				<div id="language-dropdown" style="display: flex; flex-wrap: wrap;"></div>
+				<button id="lang-btn"></button>
+			</span>
+			<span class="logo"><img src="/logo.png"></span> <span class="title"><%= t('title') %></span>
+		</div>
 		<div class="right">
 			<span><a id="account_username" href="<%= config.sso.accountUrl%>"><img src="/icon/user.png"> <span id="username"></span></a></span>
-			<span><a class="logout" href="/users/logout"><img src="/icon/power.png"> <span>Logout</span></a></span>
+			<span><a class="logout" href="/users/logout"><img src="/icon/power.png"> <span><%= t('logoutTitle') %></span></a></span>
 		</div>
 	</div>
 	

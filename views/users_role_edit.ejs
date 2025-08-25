@@ -42,25 +42,25 @@
 </script>
 <div id="role_selection" class="content">
 	<img id="logo" src="/logo_text.png" alt="logo" />
-	<title>Simva Role Selection</title>
+	<title><%= t('roleSelectionTitle') %></title>
 	<form method="post" id="role_form">
 		<fieldset>
 			<div class="role_selector">
 				<div id="researcher_div">
 					<input id="researcher_role" type="radio" name="role" value="researcher">
-					<label for="researcher_role">Researcher</label>
+					<label for="researcher_role"><%= t('rechearcher') %></label>
 				</div>
 				<div id="teacher_div">
 					<input id="teacher_role" type="radio" name="role" value="teacher">
-					<label for="teacher_role">Teacher</label>
+					<label for="teacher_role"><%= t('teacher') %></label>
 				</div>
 				<div id="teaching_assistant_div">
 					<input id="teaching_assistant_role" type="radio" name="role" value="teaching-assistant">
-					<label for="teaching_assistant_role">Teaching Assistant</label>
+					<label for="teaching_assistant_role"><%= t('teachingAssistant') %></label>
 				</div>
 				<div id="student_div">
 					<input id="student_role" type="radio" name="role" value="student" checked>
-					<label for="student_role">Student</label>
+					<label for="student_role"><%= t('student') %></label>
 				</div>
 			</div>
 		</fieldset>
