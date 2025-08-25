@@ -1,0 +1,8 @@
+{
+    "roleSelectionTitle":"Simva Role Selection",
+    "admin": "Administrator",
+    "researcher": "Researcher",
+    "teacher": "Teacher",
+    "teachingAssistant": "Teaching Assistant",
+    "student":"Student"
+}

@@ -1,10 +1,10 @@
 {
-    "loginButton":"Iniciar sesión",
+    "loginTitle":"Iniciar sesión",
     "title": "SIMVA - Un SIMple VAlidador",
-    "contactButton": "Contacto",
-    "QAButton": "Preguntas",
-    "GDPRButton": "RGPD",
-    "eUCMResearchButton": "Equipo de Investigacion e-UCM",
-    "aboutButton": "Acerca de",
-    "logoutButton":"Cerrar sesión"
+    "contactTitle": "Contacto",
+    "QATitle": "Preguntas",
+    "GDPRTitle": "RGPD",
+    "eUCMResearchTitle": "Equipo de Investigacion e-UCM",
+    "aboutTitle": "Acerca de",
+    "logoutTitle":"Cerrar sesión"
 }
