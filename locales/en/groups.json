@@ -1,6 +1,7 @@
 { 
     "title": "Groups",
     "deprecatedTitle": "Groups (Deprecated)",
+    "deprecatedMessage": "This tab has been deprecated. Please prefer use the new group page version.",
     "confirm.removeOwner" : "Are you sure do you want to delete the owner '{{owner}}' of group '{{group}}' ?",
     "confirm.removeParticipant" : "Are you sure do you want to delete the participant '{{participant}}' of group '{{group}}' ?"
 }
