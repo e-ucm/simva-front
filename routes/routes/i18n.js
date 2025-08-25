@@ -13,6 +13,7 @@ i18next
     backend: {
       loadPath: path.join(process.cwd(), 'locales', '{{lng}}', '{{ns}}.json'), // Path to translation files
     },
+    interpolation: { prefix: '{{', suffix: '}}', escapeValue: false },
     detection: {
       order: ['querystring', 'cookie'], // Priority: URL query string first, then cookies
       caches: ['cookie'],               // Cache detected language in cookies

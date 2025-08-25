@@ -4,11 +4,20 @@ module.exports = function(auth, config){
     router = express.Router();
 
   router.get('/', auth, function(req, res, next) {
-    res.render('previous_groups_list', { config: config, user: req.session.user });
+    res.render('previous_groups_list', { 
+      config: config, 
+      user: req.session.user,
+      t : req.t
+    });
   });
 
   router.get('/:groupid', auth, function(req, res, next) {
-    res.render('previous_group_view', { config: config, user: req.session.user, group: req.params['groupid'] });
+    res.render('previous_group_view', { 
+      config: config, 
+      user: req.session.user, 
+      group: req.params['groupid'],
+      t : req.t
+    });
   });
 
   return router;
