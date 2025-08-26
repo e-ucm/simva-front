@@ -6,20 +6,20 @@
 	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 </div>-->
 <div id="group_view">
-	<h1>Group: <span id="group_name"></span></h1><input class="yellow" type="button" value="Edit Group Name" onclick="openEditGroupForm('<%= group %>')">
+	<h1><%= t('singleTitle' , { ns : 'groups' }) %>: <span id="group_name"></span></h1><input class="yellow" type="button" value="<%= t('name.edit.title', { ns : 'groups' }) %>" onclick="openEditGroupForm('<%= group %>')">
 	<div class="left">
 		<div class="graybox owners">
-			<h2>Owners</h2>
+			<h2><%= t('owners.title' , { ns : 'groups' }) %></h2>
 			<p></p>
 			<table id="owners">
 			</table>
-			<input class="violet" type="button" value="Add owner"  onclick="Utils.toggleAddForm('add_owner')">
+			<input class="violet" type="button" value="<%= t('owners.add.title' , { ns : 'groups' }) %>"  onclick="Utils.toggleAddForm('add_owner')">
 		</div>
 	</div>
 	<div class="card" id="study">
 		<div class="top">
-			<h2>Participants</h2>
-			<input class="violet" type="button" value="Add Participants" onclick="Utils.toggleAddForm('add_participant')">
+			<h2><%= t('participants.title' , { ns : 'groups' }) %></h2>
+			<input class="violet" type="button" value="<%= t('participants.add.title' , { ns : 'groups' }) %>" onclick="Utils.toggleAddForm('add_participant')">
 		</div>
 		
 		<div class="participants" id="participants_list">
@@ -31,10 +31,10 @@
 		<div class="floater">
 			<div class="form">
 				<div id="existing_owner_tab" class="subform selected">
-					<h2>Add owner</h2>
+					<h2><%= t('owners.add.title' , { ns : 'groups' }) %></h2>
 					<form id="existing_owner_form">
-						<input type="text" name="name" placeholder="Owner username" required>
-						<input type="submit" value="Add">
+						<input type="text" name="name" placeholder="<%= t('owners.add.username.placeholder' , { ns : 'groups' }) %>" required>
+						<input type="submit" value="<%= t('owners.add.title' , { ns : 'groups' }) %>">
 						<span class="error"></span>
 					</form>
 				</div>
@@ -46,12 +46,12 @@
 		<div class="floater">
 			<div class="form">
 				<div id="edit_group_tab" class="subform selected">
-					<h2>Edit Group</h2>
+					<h2><%= t('name.edit.title' , { ns : 'groups' }) %></h2>
 					<form id="edit_group_form">
 						<input hidden type="text" name="group">
 						<input hidden type="text" name="groupName">
-						<input type="text" name="name" id="edit_group_name" placeholder="Group name" required>
-						<input type="submit" value="Edit">
+						<input type="text" name="name" id="edit_group_name" placeholder="<%= t('name.edit.placeholder' , { ns : 'groups' }) %>" required>
+						<input type="submit" value="<%= t('name.edit.title' , { ns : 'groups' }) %>">
 						<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 						<span class="error" id="edit_group_error"></span>
 					</form>
@@ -64,43 +64,43 @@
 		<div class="floater">
 			<div class="form">
 				<div class="tabs">
-					<span class="tab selected" onclick="changeTab(this, 'add_participant','existing_participant_tab')">Add existing</span>
-					<span class="tab" onclick="changeTab(this, 'add_participant','new_participant_tab')">Add new</span>
-					<span class="tab" onclick="changeTab(this, 'add_participant','batch_participant_tab')">Add batch</span>
+					<span class="tab selected" onclick="changeTab(this, 'add_participant','existing_participant_tab')"><%= t('participants.add.existing.title' , { ns : 'groups' }) %></span>
+					<span class="tab" onclick="changeTab(this, 'add_participant','new_participant_tab')"><%= t('participants.add.new.title' , { ns : 'groups' }) %></span>
+					<span class="tab" onclick="changeTab(this, 'add_participant','batch_participant_tab')"><%= t('participants.add.batch.title' , { ns : 'groups' }) %></span>
 				</div>
 				<div id="existing_participant_tab" class="subform selected">
 					<form id="existing_participant_form">
-						<input type="text" name="name" placeholder="Participant username" required>
-						<input type="submit" value="Add">
+						<input type="text" name="name" placeholder="<%= t('participants.add.username.placeholder', { ns : 'groups' }) %>" required>
+						<input type="submit" value="<%= t('participants.add.existing.title' , { ns : 'groups' }) %>">
 						<span class="error"></span>
 					</form>
 				</div>
 				<div id="new_participant_tab" class="subform">
 					<form id="new_participant_form">
-						<input type="text" name="username" placeholder="Username" value="" required>
-						<input type="email" name="email" placeholder="email@example.com" value="" required>
-						<input type="password" name="password" placeholder="Password" required>
+						<input type="text" name="username" placeholder="<%= t('participants.add.username.placeholder', { ns : 'groups' }) %>" value="" required>
+						<input type="email" name="email" placeholder="<%= t('participants.add.email.placeholder', { ns : 'groups' }) %>" value="" required>
+						<input type="password" name="password" placeholder="<%= t('participants.add.password.placeholder', { ns : 'groups' }) %>" required>
 						<div class="role_selector">
-							<input id="teacher_role" type="radio" name="role" value="teacher"><label for="teacher_role">Teacher</label>
-							<input id="student_role" type="radio" name="role" value="student" checked><label for="student_role">Student</label>
+							<input id="teacher_role" type="radio" name="role" value="teacher"><label for="teacher_role"><%= t('teacher' , { ns : 'roles' }) %></label>
+							<input id="student_role" type="radio" name="role" value="student" checked><label for="student_role"><%= t('student' , { ns : 'roles' }) %></label>
 						</div>
-						<input type="submit" value="Add">
+						<input type="submit" value="<%= t('participants.add.new.title' , { ns : 'groups' }) %>">
 						<span class="error"></span>
 					</form>
 				</div>
 				<div id="batch_participant_tab" class="subform">
 					<form id="batch_participant_form">
-						<p>How many?</p>
+						<p><%= t('participants.add.batch.numberTitle' , { ns : 'groups' }) %></p>
 						<input type="number" step="1" min='1' max="100" name="amount" value="1">
-						<p>Participants will be added with random usernames created using: </p>
+						<p><%= t('participants.add.batch.algorithFormat' , { ns : 'groups' }) %></p>
 						<select name="algorithm">
-							<option value="letters">Only letters</option>
-							<option value="alphanumeric">Letters and numbers</option>
-							<option value="base58">Simplified alphanumeric (Base58)</option>
+							<option value="letters"><%= t('participants.add.batch.algorithFormat.letters' , { ns : 'groups' }) %></option>
+							<option value="alphanumeric"><%= t('participants.add.batch.algorithFormat.alphanumeric' , { ns : 'groups' }) %></option>
+							<option value="base58"><%= t('participants.add.batch.algorithFormat.base58' , { ns : 'groups' }) %></option>
 						</select>
-						<p>And a length of: </p>
+						<p><%= t('participants.add.batch.lengthTitle' , { ns : 'groups' }) %></p>
 						<input type="number" step="1" min='4' max="10" name="length" value="4">
-						<input type="submit" value="Add batch">
+						<input type="submit" value="<%= t('participants.add.batch.title' , { ns : 'groups' }) %>">
 						<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 						<span class="error"></span>
 					</form>
@@ -176,7 +176,7 @@
 			Utils.toggleSubmit(currentform);
 			let errorbox = $(this).find('.error');
 			if(form.name == form.groupName) {
-				errorbox.text("No changes detected !");
+				errorbox.text("<%= t('name.edit.nochange', { ns : 'groups' }) %>");
 				Utils.toggleSubmit(currentform);
 			} else {
 				Simva.getGroup(form.group, function(error, group){
@@ -190,7 +190,6 @@
 							}
 						});
 					}
-					
 				});
 			}
 			return false;
@@ -203,7 +202,7 @@
 
 			for (var i = 0; i < group.participants.length; i++) {
 				if(group.participants[i] == form.name){
-					errorbox.text('The participant is already in the group.');
+					errorbox.text(`t("participants.errormessage.alreadyInGroup", { ns : "groups", group : "${group.name}", participant : "${form.name}" }) %>`); 
 					return false;
 				}
 			}
@@ -290,9 +289,9 @@
 	}
 
 	let reloadGroup = function(){
-		Simva.getGroup(groupid, function(error, mygroup){
+		Simva.getGroup(groupid, function(error, result){
 			if(!error){
-				group=mygroup;
+				group=result;
 				paintGroup(group, group.completeParticipants);
 				delete group.completeParticipants;
 				loaded=true;
@@ -303,7 +302,7 @@
 	}
 
 	let removeParticipant = function(participant){
-		if(confirm(`Are you sure do you want to delete the participant '${participant}' of group '${group.name}'?`)){
+		if(confirm(`<%- t('participants.remove.confirm', { ns: 'groups',  participant : '${participant}', group : '${group.name}' }) %>`)){
 			let toremove = -1;
 			for (var i = 0; i < group.participants.length; i++) {
 				if(group.participants[i] === participant){
@@ -321,7 +320,7 @@
 	}
 
 	let deleteOwner = function(owner){
-		if(confirm(`Are you sure do you want to delete the owner '${owner}' of group '${group.name}'?`)){
+		if(confirm(`<%- t('owners.remove.confirm', { ns: 'groups', owner : '${owner}', group : '${group.name}' }) %>`)){
 			let toremove = -1;
 			for (var i = 0; i < group.owners.length; i++) {
 				if(group.owners[i] === owner){
@@ -348,9 +347,9 @@
 		$('#participants').empty();
 		$('#pdf_printable_table').empty();
 		if(group.participants.length == 0){
-			$('#participants').append('<p>There are no participants in this group. Try adding some using the button on the right.</p>');
+			$('#participants').append('<p><%= t("participants.errormessage.zeroInGroup.title", { ns : "groups" }) %><%= t("participants.errormessage.zeroInGroup.message", { ns : "groups" }) %></p>');
 			$('#pdf_printable_table').append(groupHeaderNoParticipantsPDF(group));
-			$('#pdf_printable_table').append('<p>There are no participants in this group. Try adding some using the button on the right.</p>');
+			$('#pdf_printable_table').append('<p><%= t("participants.errormessage.zeroInGroup.title", { ns : "groups" }) %></p>');
 		}else{
 			$('#participants').append(participantHeader());
 			$('#pdf_printable_table').append(headerRowPDF(group));
@@ -362,7 +361,7 @@
 	}
 
 	let ownerRow = function(owner){
-		let toret = `<tr><td>${owner}</td><td><input class="red" type="button" value="Remove"`;
+		let toret = `<tr><td>${owner}</td><td><input class="red" type="button" value="<%= t("owners.remove.title", { ns : "groups" }) %>"`;
 		if(owner == '<%= user.data.username %>'){
 			toret += ' disabled="disabled"';
 		}else{
@@ -374,11 +373,11 @@
 	}
 
 	let groupHeaderNoParticipantsPDF = function(groupname) {
-		return `<thead><tr><th colspan="6">Group: ${group.name}</th></tr></thead>`;
+		return `<thead><tr><th colspan="6"><%= t("singleTitle", { ns : "groups" }) %>: ${group.name}</th></tr></thead>`;
 	}
 
 	let participantHeader = function(){
-		return `<tr><th>Pic</th><th>Username</th><th>Email</th><th>Role</th><th></th></tr>`;
+		return `<tr><th></th><th><%= t("participants.username.title", { ns : "groups" }) %></th><th><%= t("participants.email.title", { ns : "groups" }) %></th><th><%= t("participants.role.title", { ns : "groups" }) %></th><th></th></tr>`;
 	}
 
 	let participantRow = function(participant){
@@ -386,11 +385,11 @@
 			<td>${participant.username}</td>
 			<td><a href="${participant.email}">${participant.email}</a></td>
 			<td>${participant.role}</td>
-			<td><input class="red" type="button" value="Remove" onclick="removeParticipant('${participant.username}')"></td>`;
+			<td><input class="red" type="button" value="<%= t("participants.remove.title", { ns : "groups" }) %>" onclick="removeParticipant('${participant.username}')"></td>`;
 	}
 
 	let headerRowPDF = function(group){
-		return `<thead><tr><th colspan="6">Group: ${group.name}</th></tr><tr><td width="5%">No.</td><td width="45%">Name</td><td width="40%" colspan="4">Code</td></tr></thead>`;
+		return `<thead><tr><th colspan="6"><%= t("singleTitle", { ns : "groups" }) %>: ${group.name}</th></tr><tr><td width="5%"><%= t("participants.pdf.no.title", { ns : "groups" }) %></td><td width="45%"><%= t("participants.pdf.name.title", { ns : "groups" }) %></td><td width="40%" colspan="4"><%= t("participants.pdf.code.title", { ns : "groups" }) %></td></tr></thead>`;
 	}
 
 	let participantRowPDF = function(participant, position){
