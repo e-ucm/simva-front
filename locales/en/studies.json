@@ -1,5 +1,8 @@
 { 
     "title": "Studies",
+    "single.title": "Study",
+    "scheduler.nostudy.title":"You have no studies yet to participate.",
+    "scheduler.title":"Click here to start or continue your session in the study.",
     "scheduler.current": "Current Activity :",
     "scheduler.refresh": "Refresh Page to Continue Study",
     "scheduler.complete": "Complete Activity",
