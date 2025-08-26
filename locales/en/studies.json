@@ -1,10 +1,24 @@
 { 
-    "title": "Studies",
-    "single.title": "Study",
-    "scheduler.nostudy.title":"You have no studies yet to participate.",
-    "scheduler.title":"Click here to start or continue your session in the study.",
-    "scheduler.current": "Current Activity :",
-    "scheduler.refresh": "Refresh Page to Continue Study",
-    "scheduler.complete": "Complete Activity",
-    "scheduler.exit": "Exit study"
+    "title" : "Studies",
+    "single.title" : "Study",
+    "remove.confirm": "Are you sure do you want to delete the study '{{study}}'?\nAll the tests, activities and data will be deleted too.",
+    "zero.message.title" : "You have no studies yet. Create one using the bottom right (+) button.",
+    "new.title": "Add new study",
+    "new.submit": "Submit",
+    "new.upload.title": "Import from existing",
+    "new.upload.message": "Select Exported study file",
+    "new.upload.errorMessage" : "Select the file to upload first.",
+    "name.edit.title" : "Edit Study Name",
+    "name.placeholder":"Study name",
+    "name.edit.nochange" : "No changes detected in new study name !",
+    "tests.title":"Tests",
+
+    "owners.title":"Owners",
+
+    "scheduler.nostudy.title" : "You have no studies yet to participate.",
+    "scheduler.title" : "Click here to start or continue your session in the study.",
+    "scheduler.current" : "Current Activity :",
+    "scheduler.refresh" : "Refresh Page to Continue Study",
+    "scheduler.complete" : "Complete Activity",
+    "scheduler.exit" : "Exit study"
 }
