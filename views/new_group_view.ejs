@@ -6,7 +6,7 @@
 	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 </div>-->
 <div id="group_view">
-	<h1><%= t('singleTitle' , { ns : 'groups' }) %>: <span id="group_name"></span></h1><input class="yellow" type="button" value="<%= t('name.edit.title', { ns : 'groups' }) %>" onclick="openEditGroupForm('<%= group %>')">
+	<h1><%= t('single.title' , { ns : 'groups' }) %>: <span id="group_name"></span></h1><input class="yellow" type="button" value="<%= t('name.edit.title', { ns : 'groups' }) %>" onclick="openEditGroupForm('<%= group %>')">
 	<div class="left">
 		<div class="graybox owners">
 			<h2><%= t('owners.title' , { ns : 'groups' }) %></h2>
@@ -90,7 +90,7 @@
 				</div>
 				<div id="batch_participant_tab" class="subform">
 					<form id="batch_participant_form">
-						<p><%= t('participants.add.batch.numberTitle' , { ns : 'groups' }) %></p>
+						<p><%= t('participants.add.batch.number.title' , { ns : 'groups' }) %></p>
 						<input type="number" step="1" min='1' max="100" name="amount" value="1">
 						<p><%= t('participants.add.batch.algorithFormat' , { ns : 'groups' }) %></p>
 						<select name="algorithm">
@@ -98,7 +98,7 @@
 							<option value="alphanumeric"><%= t('participants.add.batch.algorithFormat.alphanumeric' , { ns : 'groups' }) %></option>
 							<option value="base58"><%= t('participants.add.batch.algorithFormat.base58' , { ns : 'groups' }) %></option>
 						</select>
-						<p><%= t('participants.add.batch.lengthTitle' , { ns : 'groups' }) %></p>
+						<p><%= t('participants.add.batch.length.title' , { ns : 'groups' }) %></p>
 						<input type="number" step="1" min='4' max="10" name="length" value="4">
 						<input type="submit" value="<%= t('participants.add.batch.title' , { ns : 'groups' }) %>">
 						<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
@@ -373,7 +373,7 @@
 	}
 
 	let groupHeaderNoParticipantsPDF = function(groupname) {
-		return `<thead><tr><th colspan="6"><%= t("singleTitle", { ns : "groups" }) %>: ${group.name}</th></tr></thead>`;
+		return `<thead><tr><th colspan="6"><%= t("single.title", { ns : "groups" }) %>: ${group.name}</th></tr></thead>`;
 	}
 
 	let participantHeader = function(){
@@ -391,7 +391,7 @@
 	}
 
 	let headerRowPDF = function(group){
-		return `<thead><tr><th colspan="6"><%= t("singleTitle", { ns : "groups" }) %>: ${group.name}</th></tr><tr><td width="5%"><%= t("participants.pdf.no.title", { ns : "groups" }) %></td><td width="45%"><%= t("participants.pdf.name.title", { ns : "groups" }) %></td><td width="40%" colspan="4"><%= t("participants.pdf.code.title", { ns : "groups" }) %></td></tr></thead>`;
+		return `<thead><tr><th colspan="6"><%= t("single.title", { ns : "groups" }) %>: ${group.name}</th></tr><tr><td width="5%"><%= t("participants.pdf.no.title", { ns : "groups" }) %></td><td width="45%"><%= t("participants.pdf.name.title", { ns : "groups" }) %></td><td width="40%" colspan="4"><%= t("participants.pdf.code.title", { ns : "groups" }) %></td></tr></thead>`;
 	}
 
 	let participantRowPDF = function(participant, position){
