@@ -5,7 +5,7 @@
     "zero.message.title": "You have 0 groups yet. Create one using the bottom right (+) button.",
     "remove.confirm": "Are you sure do you want to delete the group '{{group}}'?\nGroup will be removed to all the studies, tests and activities.",
     "single.title":"Group",
-    "new.title": "Add new",
+    "new.title": "Add new group",
     "name.placeholder": "Group name",
     "name.edit.title": "Edit Group Name",
     "name.edit.nochange":"No changes detected in new group name !",
