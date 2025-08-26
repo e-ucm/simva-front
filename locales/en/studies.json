@@ -1,3 +1,7 @@
 { 
-    "title": "Studies"
+    "title": "Studies",
+    "scheduler.current": "Current Activity :",
+    "scheduler.refresh": "Refresh Page to Continue Study",
+    "scheduler.complete": "Complete Activity",
+    "scheduler.exit": "Exit study"
 }
