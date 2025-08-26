@@ -141,7 +141,7 @@
 			<span class="button yellow" onclick="openEditStudyForm('${study._id}', '${study.name}')">🖍️</span>
 			<span class="button red delete" onclick="deleteStudy('${study._id}', '${study.name}')">X</span>
 			<h1><%- t('single.title', { ns : 'studies' }) %>: ${study.name}</h1>
-			<p><strong><%- t('title', { ns : 'groups' }) %>:</strong> ${study.groups.length}</p>
+			<p><strong><%- t('groups.title', { ns : 'studies' }) %>:</strong> ${study.groups.length}</p>
 			<p><strong><%- t('tests.title', { ns : 'studies' }) %>:</strong> ${study.tests.length}</p>
 			<p><strong><%- t('owners.title', { ns : 'studies' }) %>:</strong> ${study.owners.length}</p>
 			</div></a>`;
