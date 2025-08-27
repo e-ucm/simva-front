@@ -554,6 +554,57 @@ module.exports = function(auth, config){
             if(error) {
                 next(error.response.data);
             } else {
+                commun={};
+                commun['completed_title'] = req.t(`completed.title`, { ns : 'activities' } );
+                commun['completed_error'] = req.t(`completed.error.message`, { ns : 'activities' } );
+                commun['completed_all_set'] = req.t(`completed.all.set`, { ns : 'activities' } );
+                commun['completed_all_unset'] = req.t(`completed.all.unset`, { ns : 'activities' } );
+
+                commun['result_title'] = req.t(`result.title`, { ns : 'activities' } );
+                commun['result_disabled'] = req.t(`result.disabled`, { ns : 'activities' } );
+                commun['result_zero'] = req.t(`result.zero`, { ns : 'activities' } );
+                commun['result_view_partial_value'] = req.t(`result.view.partial`, { ns : 'activities' } );
+                commun['result_view_final_value'] = req.t(`result.view.final`, { ns : 'activities' } );
+                commun['result_error_loading'] = req.t(`result.error.loading`, { ns : 'activities' } );
+                commun['result_error_downloading'] = req.t(`result.error.downloading`, { ns : 'activities' } );
+                commun['result_file_prefix'] = req.t(`result.file.prefix`, { ns : 'activities' } );
+
+                commun['storage_title'] = req.t(`storage.title`, { ns : 'activities' } );
+                commun['storage_file_suffix_array'] = req.t(`storage.file.suffix.array`, { ns : 'activities' } );
+                commun['storage_file_suffix_one_per_line'] = req.t(`storage.file.suffix.one_per_line`, { ns : 'activities' } );
+                commun['storage_error_loading'] = req.t(`storage.error.loading`, { ns : 'activities' } );
+                
+                commun['progress_title'] = req.t(`progress.title`, { ns : 'activities' } );
+                commun['user_title'] = req.t(`user.title`, { ns : 'activities' } );
+
+                result.forEach(element => {
+                    element['description'] = req.t(`${element.type}.description`, { ns : 'activities' } );
+                    element['name'] = req.t(`${element.type}.name`, { ns : 'activities' } );
+                    element['commun']=commun;
+                    //switch(element.type){
+					//	case 'rageminio':
+					//	case 'miniokafka':
+					//	case 'rageanalytics':
+					//		break;
+					//	case 'limesurvey':
+//
+					//		break;
+					//	case 'gameplay':
+					//		
+                    //        break;
+					//	case 'activity':
+					//		
+                    //        break;
+					//	case 'manual':
+					//		break;
+					//	case 'ltitool':
+					//		break;
+					//	case 'imspackage':
+					//		break;
+					//	default:
+					//		break; 
+                    //}          
+                });
                 res.status(200).send(result);
             }
         });
@@ -567,7 +618,6 @@ module.exports = function(auth, config){
                 result.forEach(element => {
                     element['description'] = req.t(`allocator.${element.type}.description`, { ns : 'studies' } );
                     element['name'] = req.t(`allocator.${element.type}.title`, { ns : 'studies' } );
-                    element['type_t'] = req.t(`allocator.${element.type}.type`, { ns : 'studies' } );
                     element['type_t'] = req.t(`allocator.${element.type}.type`, { ns : 'studies' } );
                     element['type_title'] = req.t(`allocator.type.title`, { ns : 'studies' } );
                     element['test_title'] = req.t(`allocator.tests.title`, { ns : 'studies' } );
