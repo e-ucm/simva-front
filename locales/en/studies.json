@@ -39,7 +39,7 @@
     "allocator.default.type":"Default",
     "allocator.default.title":"Basic Allocator",
     "allocator.default.description":"This allocator allows you to manually assign the participants to the tests one by one. (If not assigned, it will get the first one).",
-    "allocator.group.type":"group",
+    "allocator.group.type":"Group",
     "allocator.group.title":"Group Allocator",
     "allocator.group.description":"This allocator allows you to select to which test branch is each group assigned.",
     "allocator.type.title":"Type",

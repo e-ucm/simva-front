@@ -9,9 +9,16 @@ if(!AllocatorFactory){
 
 var DefaultAllocatorPainter = {
 	supportedType: 'default',
-	simpleName: 'Default Allocator',
-	description: 'This allocator automatically assigns upcoming participants to the first test available.',
-
+	type_translated: "group.type",
+	simple_name: "default.title",
+	description: "default.description",
+	add_title: "allocator.add.title",
+	add_message : "add.message",
+	add_error : "add.error",
+	type_title: "type.title",
+	participant_title: "participant.title",
+	test_title: "test.title",
+	
 	tests: [],
 	groups: [],
 	participants: [],
@@ -35,7 +42,7 @@ var DefaultAllocatorPainter = {
 	},
 
 	getFormTitle: function(){
-		return 'Add Allocation';
+		return this.add_title;
 	},
 
 	isAllocatedToActivity: function(student, activity){
@@ -47,7 +54,7 @@ var DefaultAllocatorPainter = {
 	},
 
 	getFormContent: function(){
-		let toret = '<p>Participant: </p><select name="username">';
+		let toret = `<p>${this.participant_title}: </p><select name="username">`;
 		for (var i = 0; i < participants.length; i++) {
 			if(allocator.extra_data && allocator.extra_data.allocations){
 				if(allocator.extra_data.allocations[participants[i].username]){
@@ -58,13 +65,13 @@ var DefaultAllocatorPainter = {
 			toret += `<option value="${participants[i].username}">${participants[i].username}</option>`;
 		}
 
-		toret += '</select><p>Test: </p><select name="test">';
+		toret += `</select><p>${this.test_title}: </p><select name="test">`;
 
 		for (var i = 0; i < tests.length; i++) {
 			toret += `<option value="${tests[i]._id}">${tests[i].name}</option>`;
 		}
 
-		toret += '</select><input type="button" value="Add Allocator" onclick="DefaultAllocatorPainter.addAllocation()">';
+		toret += `</select><input type="button" value="${this.add_title}" onclick="DefaultAllocatorPainter.addAllocation()">`;
 
 		return toret;
 	},
@@ -72,7 +79,7 @@ var DefaultAllocatorPainter = {
 	paintAllocator: function(allocator){
 		this.allocator = allocator;
 
-		let topaint = `<p class="subtitle italic">Type: <span id="allocator_type">${allocator.type}</span></p>
+		let topaint = `<p class="subtitle italic">${this.type_title}: <span id="allocator_type">${this.type_translated}</span></p>
 			<p class="subtitle justified">${this.description}</p>
 			<table id="allocator_participants" class="allocations">`;
 
@@ -115,7 +122,7 @@ var DefaultAllocatorPainter = {
 					$(`#allocation_${participant}`).val(previous);
 
 					$.toast({
-						heading: 'Error adding the allocation',
+						heading: tmp.add_error,
 						text: error.message,
 						position: 'top-right',
 						icon: 'error',
@@ -123,7 +130,7 @@ var DefaultAllocatorPainter = {
 					});
 				}else{
 					$.toast({
-						heading: 'Allocator updated',
+						heading: tmp.add_message,
 						position: 'top-right',
 						icon: 'success',
 						stack: false
@@ -154,7 +161,7 @@ var DefaultAllocatorPainter = {
 			if(error){
 				delete tmp.allocator.extra_data.allocations[participant];
 				$.toast({
-					heading: 'Error adding the allocation',
+					heading: tmp.add_error,
 					text: error.message,
 					position: 'top-right',
 					icon: 'error',
@@ -162,7 +169,7 @@ var DefaultAllocatorPainter = {
 				});
 			}else{
 				$.toast({
-					heading: 'Allocator updated',
+					heading: tmp.add_message,
 					position: 'top-right',
 					icon: 'success',
 					stack: false
