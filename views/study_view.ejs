@@ -415,31 +415,54 @@
 			for (var i = 0; i < activitytypes.length; i++) {
 				if(PainterFactory.Painters[activitytypes[i].type]){
 					PainterFactory.Painters[activitytypes[i].type].setUtils(activitytypes[i].utils);
-					PainterFactory.Painters[activitytypes[i].type].simpleName = activitytypes[i].name;
+					PainterFactory.Painters[activitytypes[i].type].simple_name = activitytypes[i].name;
 					PainterFactory.Painters[activitytypes[i].type].description = activitytypes[i].description;
-
-					let row = `<option value="${activitytypes[i].type}">${PainterFactory.Painters[activitytypes[i].type].simpleName}</option>`;
+					PainterFactory.Painters[activitytypes[i].type].commun = activitytypes[i].commun;
+					//switch(activitytypes[i].type){
+					//	case 'rageminio':
+					//		break;
+					//	case 'miniokafka':
+					//		break;
+					//	case 'rageanalytics':
+					//		break;
+					//	case 'limesurvey':
+					//		break;
+					//	case 'gameplay':
+					//		break;
+					//	case 'activity':
+					//		break;
+					//	case 'manual':
+					//		break;
+					//	case 'ltitool':
+					//		break;
+					//	case 'imspackage':
+					//		break;
+					//	default:
+					//		break;
+					//}
+					let row = `<option value="${activitytypes[i].type}">${PainterFactory.Painters[activitytypes[i].type].simple_name}</option>`;
 					$('#new_activity_form select[name="type"]').append(row);
 				}
 			}
-		})
 
-		Simva.getAllocatorTypes(function(error, allocatortypes){
-			for (var i = 0; i < allocatortypes.length; i++) {
-				if(AllocatorFactory.Painters[allocatortypes[i].type]){
-					AllocatorFactory.Painters[allocatortypes[i].type].simple_name = allocatortypes[i].name;
-					AllocatorFactory.Painters[allocatortypes[i].type].description = allocatortypes[i].description;
-					AllocatorFactory.Painters[allocatortypes[i].type].type_translated = allocatortypes[i].type_t;
-					AllocatorFactory.Painters[allocatortypes[i].type].add_message = allocatortypes[i].add_message;
-					AllocatorFactory.Painters[allocatortypes[i].type].add_error = allocatortypes[i].add_error;
-					AllocatorFactory.Painters[allocatortypes[i].type].type_title = allocatortypes[i].type_title;
-					AllocatorFactory.Painters[allocatortypes[i].type].participant_title = allocatortypes[i].participant_title;
-					AllocatorFactory.Painters[allocatortypes[i].type].test_title = allocatortypes[i].test_title;
-					AllocatorFactory.Painters[allocatortypes[i].type].add_title = allocatortypes[i].add_title;
-					let row = `<div class="row"><input type="radio" name="type" id="allocator_${allocatortypes[i].type}" value="${allocatortypes[i].type}"><label for="allocator_${allocatortypes[i].type}"><span class="name">${AllocatorFactory.Painters[allocatortypes[i].type].simple_name}</span><span class="description">${AllocatorFactory.Painters[allocatortypes[i].type].description}</span></label></div>`;
-					$('#change_allocator_content').append(row);
+			Simva.getAllocatorTypes(function(error, allocatortypes){
+				for (var i = 0; i < allocatortypes.length; i++) {
+					if(AllocatorFactory.Painters[allocatortypes[i].type]){
+						AllocatorFactory.Painters[allocatortypes[i].type].simple_name = allocatortypes[i].name;
+						AllocatorFactory.Painters[allocatortypes[i].type].description = allocatortypes[i].description;
+						AllocatorFactory.Painters[allocatortypes[i].type].type_translated = allocatortypes[i].type_t;
+						AllocatorFactory.Painters[allocatortypes[i].type].add_message = allocatortypes[i].add_message;
+						AllocatorFactory.Painters[allocatortypes[i].type].add_error = allocatortypes[i].add_error;
+						AllocatorFactory.Painters[allocatortypes[i].type].type_title = allocatortypes[i].type_title;
+						AllocatorFactory.Painters[allocatortypes[i].type].participant_title = allocatortypes[i].participant_title;
+						AllocatorFactory.Painters[allocatortypes[i].type].test_title = allocatortypes[i].test_title;
+						AllocatorFactory.Painters[allocatortypes[i].type].add_title = allocatortypes[i].add_title;
+						let row = `<div class="row"><input type="radio" name="type" id="allocator_${allocatortypes[i].type}" value="${allocatortypes[i].type}"><label for="allocator_${allocatortypes[i].type}"><span class="name">${AllocatorFactory.Painters[allocatortypes[i].type].simple_name}</span><span class="description">${AllocatorFactory.Painters[allocatortypes[i].type].description}</span></label></div>`;
+						$('#change_allocator_content').append(row);
+					}
 				}
-			}
+				reloadStudy();
+			});
 		})
 
 		$('#new_activity_form select[name="type"]').on('change', function(event){
@@ -712,9 +735,6 @@
 			});
 			return false;
 		});
-		
-		//loadAddGroups();
-		reloadStudy();
 	});
 
 	copyShortURL = function(){
