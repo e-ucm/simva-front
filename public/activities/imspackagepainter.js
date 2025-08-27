@@ -9,7 +9,7 @@ if(!PainterFactory){
 
 var ImsPackagePainter = {
 	supportedType: 'imspackage',
-	simpleName: 'Ims Package activity',
+	simple_name: 'Ims Package activity',
 
 	utils: {},
 	setUtils: function(utils){
@@ -85,7 +85,7 @@ var ImsPackagePainter = {
 			<div class="top"><h4>${activity.name}</h4>
 			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
-			<p class="subtitle">${this.simpleName}</p>`;
+			<p class="subtitle">${this.simple_name}</p>`;
 
 		/*
 		activitybox += '<p>Realtime: ';

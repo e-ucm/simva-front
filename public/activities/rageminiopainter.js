@@ -9,7 +9,7 @@ if(!PainterFactory){
 
 var RageMinioActivityPainter = {
 	supportedType: 'rageminio',
-	simpleName: 'RAGE Analytics + Minio activity',
+	simple_name: 'RAGE Analytics + Minio activity',
 
 	utils: {},
 	setUtils: function(utils){
@@ -74,7 +74,7 @@ var RageMinioActivityPainter = {
 		$(`#test_${activity.test} .activities`).append(`<div id="activity_${activity._id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
-			<p class="subtitle">${this.simpleName}</p>
+			<p class="subtitle">${this.simple_name}</p>
 			<p>Analytics: <a href="${this.utils.dashboard_url}${activity.extra_data.analytics.activity._id}${this.utils.dashboard_query}" target="_blank">Dashboard</a> - 
 			Minio: <a href="${this.utils.minio_url}${this.utils.minio_bucket}/${this.utils.topics_dir}/${this.utils.trace_topic}/_id=${activity._id}/" 
 			target="_blank">Folder</a></p>

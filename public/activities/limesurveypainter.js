@@ -11,7 +11,7 @@ var LimeSurveyPainter = {
 	limesurveyurl: 'https://limesurvey-dev.external.test/',
 
 	supportedType: 'limesurvey',
-	simpleName: 'LimeSurvey activity',
+	simple_name: 'LimeSurvey activity',
 
 	utils: {},
 	setUtils: function(utils){
@@ -263,7 +263,7 @@ var LimeSurveyPainter = {
 			<div class="top"><h4>${activity.name}</h4>
 			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
-			<p class="subtitle">${this.simpleName}</p>
+			<p class="subtitle">${this.simple_name}</p>
 			<p>Survey ID: <a target="_blank" href="${this.utils.url}${activity.extra_data.surveyId}">${activity.extra_data.surveyId}</a></p>
 			<p>Survey Language: ${activity.extra_data.language}</p>
 			<p><a class="button green" onclick="LimeSurveyPainter.openEditLimesurvey('${activity.id}', '${activity.extra_data.surveyId}')">Edit Survey</a></p>

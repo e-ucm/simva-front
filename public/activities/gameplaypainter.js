@@ -9,7 +9,7 @@ if(!PainterFactory){
 
 var GameplayActivityPainter = {
 	supportedType: 'gameplay',
-	simpleName: 'Gameplay activity',
+	simple_name: 'Gameplay activity',
 
 	utils: {},
 	setUtils: function(utils){
@@ -142,18 +142,8 @@ var GameplayActivityPainter = {
 			<div class="top"><h4>${activity.name}</h4>
 			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
-			<p class="subtitle">${this.simpleName}</p>`;
-		
-		/*
-		activitybox += 'Realtime: ';
-		if(activity.extra_data.config.realtime){
-			activitybox += `<a href="${this.utils.dashboard_url}${activity.extra_data.analytics.activity._id}${this.utils.dashboard_query}" target="_blank">Dashboard</a>`;
-		}else{
-			activitybox += '<i>Disabled</i>';
-		}
-		activitybox += '<br>'
-		*/
-		activitybox += '<p>Trace Storage: '
+			<p class="subtitle">${this.simple_name}</p>`;
+		activitybox += '<br>Trace Storage:'
 		if(activity.extra_data.config.trace_storage) {
 			activitybox += `<a onclick="GameplayActivityPainter.getMinioData('${activity._id}')" target="_blank">Download Data</a>
 			<br>
