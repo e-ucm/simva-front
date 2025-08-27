@@ -444,6 +444,7 @@
 					$('#new_activity_form select[name="type"]').append(row);
 				}
 			}
+			$('#new_activity_extras').append(`${PainterFactory.Painters["activity"].description}\n`);
 
 			Simva.getAllocatorTypes(function(error, allocatortypes){
 				for (var i = 0; i < allocatortypes.length; i++) {
@@ -467,6 +468,7 @@
 
 		$('#new_activity_form select[name="type"]').on('change', function(event){
 			$('#new_activity_extras').empty();
+			$('#new_activity_extras').append(`${PainterFactory.Painters[$(this).val()].description}\n`);
 			PainterFactory.Painters[$(this).val()].getExtraForm((error, result) => {
 				console.log(result);
 				if(!error) {
@@ -943,6 +945,7 @@
 		var inputElement = document.getElementById('edit_activity_type');
 		inputElement.value = activity.type;
 		$('#edit_activity_extras').empty();
+		$('#edit_activity_extras').append(`${PainterFactory.Painters[activity.type].description}\n`);
 		$('#edit_activity_extras').append(PainterFactory.Painters[activity.type].getEditExtraForm());
 		PainterFactory.Painters[activity.type].updateInputEditExtraForm(activity);
 		$('#edit_activity input[name="test"]').val(activity.test);
