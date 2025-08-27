@@ -564,6 +564,18 @@ module.exports = function(auth, config){
             if(error) {
                 next(error.response.data);
             } else {
+                result.forEach(element => {
+                    element['description'] = req.t(`allocator.${element.type}.description`, { ns : 'studies' } );
+                    element['name'] = req.t(`allocator.${element.type}.title`, { ns : 'studies' } );
+                    element['type_t'] = req.t(`allocator.${element.type}.type`, { ns : 'studies' } );
+                    element['type_t'] = req.t(`allocator.${element.type}.type`, { ns : 'studies' } );
+                    element['type_title'] = req.t(`allocator.type.title`, { ns : 'studies' } );
+                    element['test_title'] = req.t(`allocator.tests.title`, { ns : 'studies' } );
+                    element['participant_title'] = req.t(`allocator.participants.title`, { ns : 'studies' } );
+                    element['add_error'] = req.t(`allocator.add.error`, { ns : 'studies' } );
+                    element['add_message'] = req.t(`allocator.add.message`, { ns : 'studies' } );
+                    element['add_title'] = req.t(`allocator.add.title`, { ns : 'studies' } );
+                });
                 res.status(200).send(result);
             }
         });
