@@ -235,7 +235,7 @@ var GameplayActivityPainter = {
 					toastParams.text = error.message;
 					$.toast(toastParams);
 				}else{
-					var filename = `${this.communSpecific.result_file}_${activity}_${user}.json`;
+					var filename = `${this.communSpecific.result_file_prefix}_${activity}_${user}.json`;
 					Utils.download(filename, result[user]);
 				}
 			});
@@ -247,7 +247,7 @@ var GameplayActivityPainter = {
 					toastParams.text = error.message;
 					$.toast(toastParams);
 				} else {
-					Utils.download(`${this.communSpecific.result_file}_${activity}.json`, JSON.stringify(result, null, 2));
+					Utils.download(`${this.communSpecific.result_file_prefix}_${activity}.json`, JSON.stringify(result, null, 2));
 				}
 			});
 		}

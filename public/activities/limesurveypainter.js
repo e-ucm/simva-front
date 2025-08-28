@@ -143,7 +143,7 @@ var LimeSurveyPainter = {
 				toastParams.text = error.message;
 				$.toast(toastParams);
 			}else{
-				var filename = `${this.communSpecific.result_file}_${activity}_${type}.json`;
+				var filename = `${this.communSpecific.result_file_prefix}_${activity}_${type}.json`;
 				var stringifiedres = JSON.stringify(result, null, 2);
 				Utils.download(filename, stringifiedres);
 			}
@@ -367,7 +367,7 @@ var LimeSurveyPainter = {
 				});
 			}else{
 				let stringifyres=JSON.stringify(result[user], null, 2);
-				var filename = `${this.communSpecific.result_file}_${activity}_${user}_${type}.json`;
+				var filename = `${this.communSpecific.result_file_prefix}_${activity}_${user}_${type}.json`;
 				Utils.download(filename, stringifyres);
 			}
 		})
