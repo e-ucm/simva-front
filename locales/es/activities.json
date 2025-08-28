@@ -1,0 +1,45 @@
+{ 
+    "title": "Actividades",
+    "text": "Activities view is temporally disabled.\nThis tab is designed to create \"template activities\" for them later to be copied into tests.\nThese \"template activities\" help the creation of multiple test cases similar with small modifications.\nIt will be available in a future version.",
+    
+    "activity.name": "Actividad por defecto",
+    "activity.description": "Una actividad básica con estado de finalización y un lugar para guardar los resultados.",
+    
+    "limesurvey.name": "Actividad de Limesurvey",
+    "limesurvey.description": "Una actividad basada en encuestas que utiliza LimeSurvey como servicio.",
+
+    "gameplay.name": "Actividad de juego",
+    "gameplay.description": "Una actividad de procesador xAPI que utiliza Minio.",
+    
+    "manual.name": "Actividad manual",
+    "manual.description": "Una actividad que no se comunica con Simva y debe gestionarse manualmente.",
+    
+    "ltitool.name": "Actividad con Herramienta LTI",
+    "ltitool.description": "Una actividad que permite al usuario incluir una herramienta LTI como recurso.",
+    
+    "imspackage.name": "Actividad con Paquete IMS",
+    "imspackage.description": "Una actividad de juego que permite al usuario cargar un paquete IMS como juego.",
+
+    "completed.title":"Completado",
+    "completed.error.message":"Error al establecer la finalización",
+    "completed.all.unset": "Desconfigurar Finalización",
+    "completed.all.set": "Configurar Finalización",
+
+    "progress.title":"Progreso",
+    "user.title":"Usuario",
+
+    "result.title":"Resultado",
+    "result.disabled":"Desactivado",
+    "result.zero": "Sin resultados",
+    "result.view.partial": null,
+    "result.view.final": "Ver resultado",
+    "result.error.loading": "Error al cargar el resultado",
+    "result.error.downloading": "Error al descargar el resultado",
+    "result.file.prefix":"resultado_actividad",
+    
+    "storage.title":"Almacenamiento",
+    "storage.error.downloading": "Error al descargar los datos del almacenamiento",
+    "storage.file.suffix.array":"traces_data_en_matriz",
+    "storage.file.suffix.one_per_line":"traces_data_una_por_linea"
+
+}
