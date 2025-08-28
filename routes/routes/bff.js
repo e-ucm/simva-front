@@ -625,7 +625,6 @@ module.exports = function(auth, config){
                             communSpecific['result_zero'] = req.t(`${element.type}.result.zero`, { ns : 'activities' } );
                             communSpecific['result_view_partial_value'] = req.t(`${element.type}.result.view.partial`, { ns : 'activities' } );
                             communSpecific['result_view_final_value'] = req.t(`${element.type}.result.view.final`, { ns : 'activities' } );
-                            communSpecific['result_file'] = req.t(`${element.type}.result.file`, { ns : 'activities' } );
                             communSpecific['storage_title'] = req.t(`${element.type}.storage.title`, { ns : 'activities' } );
                             communSpecific['storage_file_suffix_array'] = req.t(`${element.type}.storage.file.array.suffix`, { ns : 'activities' } );
                             communSpecific['storage_file_suffix_one_per_line'] = req.t(`${element.type}.storage.file.one_per_line.suffix`, { ns : 'activities' } );

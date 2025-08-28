@@ -187,7 +187,7 @@ var ImsPackagePainter = {
 					stack: false
 				});
 			}else{
-				var filename = `${this.communSpecific.result_file}_${activity}_${user}.csv`;
+				var filename = `${this.communSpecific.result_file_prefix}_${activity}_${user}.csv`;
 
 				Utils.download(filename, result[user].backup);
 			}
