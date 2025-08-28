@@ -10,7 +10,9 @@ if(!PainterFactory){
 var ActivityPainter = {
 	supportedType: 'miniokafka',
 	simple_name: 'Minio Kafka Activity',
-
+	commun : {},
+	communSpecific : {},
+	specific : {},
 	utils: {},
 	setUtils: function(utils){
 		this.utils = utils;

@@ -11,22 +11,24 @@ var ManualActivityPainter = {
 	supportedType: 'manual',
 	simple_name: 'Manual activity',
 	description: '',
-
+	commun : {},
+	communSpecific : {},
+	specific : {},
 	utils: {},
 	setUtils: function(utils){
 		this.utils = utils;
 	},
 
 	getExtraForm: function (callback) {
-		callback(null, `<p><label for="manual_user_managed">Allow students to complete?</label><input id="manual_user_managed" type="checkbox" name="user_managed"></p>
-			 <p><label for="manual_uri" style="width: 100%; text-align: center;">URI (optional)</label><input id="manual_uri" type="text" name="uri">
-			 <span class="info">URI can include tags: {username}, and {activityId}</p></div>`);
+		callback(null, `<p><label for="manual_user_managed">${this.specific.student_complete_title}</label><input id="manual_user_managed" type="checkbox" name="user_managed"></p>
+			 <p><label for="manual_uri" style="width: 100%; text-align: center;">${this.specific.uri_title}</label><input id="manual_uri" type="text" name="uri">
+			 <span class="info">${this.specific.uri_explication}</p></div>`);
 	},
 
 	getEditExtraForm: function () {
-		return `<p><label for="edit_manual_user_managed">Allow students to complete?</label><input id="edit_manual_user_managed" type="checkbox" name="user_managed"></p>
-		<p><label for="edit_manual_uri" style="width: 100%; text-align: center;">URI (optional)</label><input id="edit_manual_uri" type="text" name="uri">
-		<span class="info">URI can include tags: {username}, and {activityId}</p></div>`;
+		return `<p><label for="edit_manual_user_managed">${this.specific.student_complete_title}</label><input id="edit_manual_user_managed" type="checkbox" name="user_managed"></p>
+		<p><label for="edit_manual_uri" style="width: 100%; text-align: center;">${this.specific.uri_title}</label><input id="edit_manual_uri" type="text" name="uri">
+		<span class="info">${this.specific.uri_explication}</p></div>`;
 	},
 
 	updateInputEditExtraForm(activity) {
@@ -96,33 +98,20 @@ var ManualActivityPainter = {
 	},
 
 	paintActivity: function(activity, participants){
-		let complete=activity.extra_data.user_managed ? 'can' : '<strong>can\'t<strong>'
+		let complete=activity.extra_data.user_managed ? this.specific.student_complete_ok : this.specific.student_complete_nok;
 		$(`#test_${activity.test} .activities`).append(`<div id="activity_${activity._id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
 			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
 			<p class="subtitle">${this.simple_name}</p>
-			<p>Students ${complete} complete</p>
-			<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>% [ <doneres>0</doneres> /<total>0</total> ]</span></div>
-			<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>
-			${this.paintActivityParticipantsTable(activity, participants)}</div>`);
-	},
-
-	paintActivityParticipantsTable: function(activity, participants){
-		let toret = '<table><tr><th>User</th><th>Completed</th><th>Result</th></tr>';
-
-		for (var i = 0; i < participants.length; i++) {
-			if(!AllocatorFactory.Painters[allocator.type].isAllocatedToActivity(participants[i].username, activity)){
-				continue;
-			}
-			toret += `<tr><td>${PainterFactory.Painters["activity"].paintUsernameOrToken(activity, participants[i])}</td>
-				${PainterFactory.Painters['activity'].paintCompletionRow(activity._id,participants[i].username, true)}
-				${PainterFactory.Painters['activity'].paintResultRow(activity._id,participants[i].username)}</tr>`;
-		}
-
-		toret += '</table>';
-
-		return toret;
+			<p><strong>${complete}<strong></p>
+			<p>${this.commun.storage_file_title} <a onclick="PainterFactory.Painters['activity'].getMinioData('${activity._id}')" target="_blank">${this.commun.storage_file_one_per_line_title}</a></p>
+			<br>
+			<a onclick="PainterFactory.Painters['activity'].getTMonUrl('${activity._id}','${activity.test}','${activity.study}')">
+				${this.commun.tmon_title}
+			</a>
+			<br>
+			${PainterFactory.Painters["activity"].paintActivityParticipantsTable(activity, participants, true, false, true)}</div>`);
 	},
 
 	updateActivityCompletion: function(activityId, username, completion) {
