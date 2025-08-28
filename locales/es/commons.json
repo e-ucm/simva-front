@@ -1,0 +1,15 @@
+{
+    "title": "SIMVA - Un SIMple VAlidador",
+    "login.title":"Inicio de sesión",
+    "logout.title":"Cierre de sesión",
+    "home.title": "Inicio",
+    "welcome.user.text": "Bienvenido {{username}}!\n",
+    "welcome.teacher.text": "Esta es la vista principal de Simva.\nYou can go to Activities to create survey activities, gameplay activities, and other types of custom activities required to build an study.\nUse the Studies tab to create an study where a set of activities can be set up for an evaluation to be performed.\nTo manage Users and Groups, use the Groups tab where groups of users and users themselves can be created in order to allow them to participate in the studies.\nTo get more information visit:",
+    "welcome.student.text": "Esta es la vista principal de Simva.\nYou can go to Activities to create survey activities, gameplay activities, and other types of custom activities required to build an study.\nUse the Studies tab to create an study where a set of activities can be set up for an evaluation to be performed.\nTo manage Users and Groups, use the Groups tab where groups of users and users themselves can be created in order to allow them to participate in the studies.",
+    "contact.title": "Contacto",
+    "QA.title": "Preguntas",
+    "GDPR.title": "GDPR", 
+    "github.title" : "GitHub", 
+    "eUCMResearch.title": "Equipo de Investigación e-UCM",
+    "moreprojects.title" : "Más proyectos"
+}
