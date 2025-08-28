@@ -10,7 +10,9 @@ if(!PainterFactory){
 var RageAnalyticsActivityPainter = {
 	supportedType: 'rageanalytics',
 	simple_name: 'RAGE Analytics activity',
-
+	commun : {},
+	communSpecific : {},
+	specific : {},
 	utils: {},
 	setUtils: function(utils){
 		this.utils = utils;

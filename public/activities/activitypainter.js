@@ -12,6 +12,8 @@ var ActivityPainter = {
 	simple_name: 'activity.type',
 	description: 'activity.description',
 	commun : {},
+	communSpecific : {},
+	specific : {},
 	utils: {},
 	setUtils: function(utils){
 		this.utils = utils;
@@ -88,7 +90,7 @@ var ActivityPainter = {
 			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
 			<p class="subtitle">${this.simple_name}</p>
-			<p>${this.commun.result_title}:<a onclick="PainterFactory.Painters["activity"].downloadResults('${activity._id}')"> ⬇️</a></p>
+			<p>${this.communSpecific.result_title}:<a onclick="PainterFactory.Painters["activity"].downloadResults('${activity._id}')"> ⬇️</a></p>
 			${this.paintActivityParticipantsTable(activity, participants, true)}</div>`);
 	},
 
@@ -162,7 +164,7 @@ var ActivityPainter = {
 		return `<td id="result_${activity}_${participant}">---</td>`;
 	},
 
-	paintActivityCompletion: function(activity, status, checkbox=false){
+	paintActivityCompletion: function(activity, status, checkbox=false, completed_on=this.commun.completed_on, completed_off=this.commun.completed_off){
 		let usernames = Object.keys(status);
 
 		let done = 0;
@@ -182,8 +184,14 @@ var ActivityPainter = {
 	
 				$(`#completion_${activity._id}_${usernames[i]}`).find('input[type="checkbox"]').prop('checked', status[usernames[i]]);
 			} else {
-				let completion = `<span>${status[usernames[i]]}</span>`
-				$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
+				let completion = "";
+				if(status[usernames[i]]==true) {
+					completion=`<span>${completed_on}</span>`;
+				} else {
+					completion=`<span>${completed_off}</span>`;
+				}
+				
+			 	$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
 				$(`#completion_${activity._id}_${usernames[i]}`).empty();
 				$(`#completion_${activity._id}_${usernames[i]}`).append(completion);
 			}
@@ -236,7 +244,7 @@ var ActivityPainter = {
 		$(`#progress_${activity._id} total`).text(usernames.length);
 	},
 
-	paintActivityResult: function(activity, results, defaultValue=this.commun.result_zero, displayDefaultValue=this.commun.result_zero, partialValue=null,displayPartialValue=this.commun.result_view_partial_value, finalValue="true", displayFinalValue=this.commun.result_view_final_value,painter="PainterFactory.Painters['activity']"){
+	paintActivityResult: function(activity, results, defaultValue=true, displayDefaultValue=this.communSpecific.result_zero, partialValue=null,displayPartialValue=this.communSpecific.result_view_partial_value, finalValue="true", displayFinalValue=this.communSpecific.result_view_final_value,painter="PainterFactory.Painters['activity']"){
 		let usernames = Object.keys(results);
 
 		let done = 0, partial = 0;
@@ -330,7 +338,7 @@ var ActivityPainter = {
 		$(`#completion_progress_${activityId} done`).text(progress);
 	},
 
-	updateActivityResult: function(activityId, username, result, defaultValue=this.commun.result_zero, displayDefaultValue=this.commun.result_disabled, partialValue=null,displayPartialValue=null, finalValue="true", displayFinalValue=this.commun.result_view_final_value, painter="PainterFactory.Painters['activity']") {
+	updateActivityResult: function(activityId, username, result, defaultValue=this.communSpecific.result_zero, displayDefaultValue=this.commun.result_disabled, partialValue=null,displayPartialValue=null, finalValue="true", displayFinalValue=this.communSpecific.result_view_final_value, painter="PainterFactory.Painters['activity']") {
 		var users=parseInt(document.querySelector(`#result_progress_${activityId} total`).textContent);
 		var res=parseInt(document.querySelector(`#result_progress_${activityId} doneres`).textContent);
 		var partialRes=parseInt(document.querySelector(`#result_progress_${activityId} partialres`).textContent);
@@ -482,7 +490,7 @@ var ActivityPainter = {
 						stack: false
 					});
 				} else {
-					var filename = `${this.commun.result_file_prefix}_${activity}_${user}.json`;
+					var filename = `${this.communSpecific.result_file}_${activity}_${user}.json`;
 					Utils.download(filename, result[user]);
 				}
 			});
@@ -492,7 +500,7 @@ var ActivityPainter = {
 					toastParams.text = error.message;
 					$.toast(toastParams);
 				} else {
-					Utils.download(`${this.commun.result_file_prefix}_${activity}.json`, JSON.stringify(result, null, 2));
+					Utils.download(`${this.communSpecific.result_file}_${activity}.json`, JSON.stringify(result, null, 2));
 				}
 			});
 		}
@@ -514,7 +522,7 @@ var ActivityPainter = {
 		});
 	},
 
-	getMinioData: function(activity, as_array=false){
+	getMinioData: function(activity, as_array=false, storage_file_suffix_array=this.communSpecific.storage_file_suffix_array, storage_file_suffix_one_per_line=this.communSpecific.storage_file_suffix_one_per_line){
 		Simva.getMinioDataUrl(activity, as_array, function(error, result){
 			if(error){
 				$.toast({
@@ -527,9 +535,9 @@ var ActivityPainter = {
 			}else{
 				let filename=activity;
 				if(as_array) {
-					filename=`${activity}_${this.commun.storage_file_suffix_array}.json`;
+					filename=`${activity}_${storage_file_suffix_array}.json`;
 				} else {
-					filename=`${activity}_${this.commun.storage_file_suffix_one_per_line}.txt`;
+					filename=`${activity}_${storage_file_suffix_one_per_line}.txt`;
 				}
        			Utils.download(`${filename}`,`${result.data}`);
 			}

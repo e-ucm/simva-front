@@ -10,26 +10,28 @@ if(!PainterFactory){
 var GameplayActivityPainter = {
 	supportedType: 'gameplay',
 	simple_name: 'Gameplay activity',
-
+	commun : {},
+	communSpecific : {},
+	specific : {},
 	utils: {},
 	setUtils: function(utils){
 		this.utils = utils;
 	},
 
 	getExtraForm: function (callback) {
-		callback(null, `<div class="gameplay_activity"><p><label for="gameplay_trace_storage">Trace Storage</label><input id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
-			 <p><label for="gameplay_backup">Backup</label><input id="gameplay_backup" type="checkbox" name="backup" checked></p>
-			 <p><label for="gameplay_game_uri" style="width: 100%; text-align: center;">Game URI (optional)</label><input id="gameplay_game_uri" type="text" name="game_uri">
-			 <span class="info">Game URI can include tags: {simvaResultUri}, {simvaHomePage}, {username}, {authToken}, {token_endpoint}, {userToken}, {studyId} and {activityId}</p></div>`);
-			 //<p><label for="gameplay_realtime">Realtime</label><input id="gameplay_realtime" type="checkbox" name="realtime"></p>
+		callback(null, `<div class="gameplay_activity"><p><label for="gameplay_trace_storage">${this.commun.storage_title}</label><input id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
+			 <p><label for="gameplay_backup">${this.communSpecific.result_title}</label><input id="gameplay_backup" type="checkbox" name="backup" checked></p>
+			 <p><label for="gameplay_scorm_xAPI">${this.specific.xapi_by_game_title}</label><input id="gameplay_scorm_xAPI" type="checkbox" name="scorm_xapi"></p>
+			 <p><label for="gameplay_game_uri" style="width: 100%; text-align: center;">${this.specific.game_uri_title}</label><input id="gameplay_game_uri" type="text" name="game_uri">
+			 <span><p>${this.specific.game_uri_explication}</p></div>`);
 	},
 
 	getEditExtraForm: function () {
-		return `<div class="gameplay_activity"><p><label for="edit_gameplay_trace_storage">Trace Storage</label><input id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
-			 <p><label for="edit_gameplay_backup">Backup</label><input id="edit_gameplay_backup" type="checkbox" name="backup" checked></p>
-			 <p><label for="edit_gameplay_game_uri" style="width: 100%; text-align: center;">Game URI (optional)</label><input id="edit_gameplay_game_uri" type="text" name="game_uri">
-			 <span class="info">Game URI can include tags: {simvaResultUri}, {simvaHomePage}, {username}, {authToken}, {token_endpoint}, {userToken}, {studyId} and {activityId}</p></div>`;
-			 //<p><label for="gameplay_realtime">Realtime</label><input id="gameplay_realtime" type="checkbox" name="realtime"></p>
+		return `<div class="gameplay_activity"><p><label for="edit_gameplay_trace_storage">${this.commun.storage_title}</label><input id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
+			 <p><label for="edit_gameplay_backup">${this.communSpecific.result_title}</label><input id="edit_gameplay_backup" type="checkbox" name="backup" checked></p>
+			 <p><label for="edit_gameplay_scorm_xAPI">${this.specific.xapi_by_game_title}</label><input id="edit_gameplay_scorm_xAPI" type="checkbox" name="scorm_xapi" checked></p>
+			 <p><label for="edit_gameplay_game_uri" style="width: 100%; text-align: center;">${this.specific.game_uri_title}</label><input id="edit_gameplay_game_uri" type="text" name="game_uri">
+			 <span class="info"><p>${this.specific.game_uri_explication}</p></div>`;
 	},
 
 	updateInputEditExtraForm(activity) {
@@ -142,23 +144,28 @@ var GameplayActivityPainter = {
 			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
 			<p class="subtitle">${this.simple_name}</p>`;
-		activitybox += '<br>Trace Storage:'
+		activitybox += `<br>${this.commun.storage_title}:`;
 		if(activity.extra_data.config.trace_storage) {
-			activitybox += `<a onclick="GameplayActivityPainter.getMinioData('${activity._id}')" target="_blank">Download Data</a>
+			activitybox += `<a onclick="PainterFactory.Painters['activity'].getMinioData('${activity._id}')" target="_blank">${this.commun.storage_file_title} ${this.commun.storage_file_one_per_line_title}</a>
 			<br>
-			XASU Config:
+			<br>
+			<a onclick="PainterFactory.Painters['activity'].getTMonUrl('${activity._id}','${activity.test}','${activity.study}')">
+				${this.commun.tmon_title}
+			</a>
+			<br>
+			${this.specific.xasu_title}:
 			<a onclick="GameplayActivityPainter.downloadXasuConfig('${activity._id}','${activity.study}')">
 				<img src="/ua.png"  width="20" height="20">
 			</a>`;
 		} else {
-			activitybox += '<i>Disabled</i>';
+			activitybox += `<i>${this.commun.result_disabled}</i>`;
 		}
 		activitybox +='<br>'
-		activitybox += 'Backup: '
+		activitybox += `${this.communSpecific.result_title}:`
 		if(activity.extra_data.config.backup){
 			activitybox += `<a onclick="GameplayActivityPainter.downloadBackup('${activity._id}')"> ⬇️</a>` 
 		} else {
-			activitybox += '<i>Disabled</i>';
+			activitybox += `<i>${this.commun.result_disabled}</i>`;
 		}
 		activitybox += '</p>';
 		activitybox += `<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>% [ <doneres>0</doneres>/<total>0</total> ]</span></div>`
@@ -216,7 +223,7 @@ var GameplayActivityPainter = {
 	
 	downloadBackup: function(activity, user){
 		var toastParams = {
-			heading: 'Error loading the result',
+			heading: this.commun.result_error_downloading,
 			position: 'top-right',
 			icon: 'error',
 			stack: false
@@ -228,7 +235,7 @@ var GameplayActivityPainter = {
 					toastParams.text = error.message;
 					$.toast(toastParams);
 				}else{
-					var filename = `${activity}_${user}.json`;
+					var filename = `${this.communSpecific.result_file}_${activity}_${user}.json`;
 					Utils.download(filename, result[user]);
 				}
 			});
@@ -240,7 +247,7 @@ var GameplayActivityPainter = {
 					toastParams.text = error.message;
 					$.toast(toastParams);
 				} else {
-					Utils.download(`activity_result_${activity}.json`, JSON.stringify(result, null, 2));
+					Utils.download(`${this.communSpecific.result_file}_${activity}.json`, JSON.stringify(result, null, 2));
 				}
 			});
 		}
@@ -282,27 +289,6 @@ var GameplayActivityPainter = {
 				let body = $('body', context);
 				body.html(content);
 				Utils.toggleAddForm('iframe_floating');
-			}
-		})
-	},
-
-	getMinioData: function(activity){
-		Simva.getMinioDataUrl(activity, function(error, result){
-			if(error){
-				$.toast({
-					heading: 'Error loading the result',
-					text: error.message,
-					position: 'top-right',
-					icon: 'error',
-					stack: false
-				});
-			}else{
-       			let url = result.url;
-
-       			// Open the generated URL in a new tab
-       			window.open(url, '_blank');
-
-       			// If you still want to show a message or update the UI in some way, you can do it here
 			}
 		})
 	},

@@ -11,7 +11,9 @@ var LTIToolPainter = {
 
 	supportedType: 'ltitool',
 	simple_name: 'LTI tool activity',
-
+	commun : {},
+	communSpecific : {},
+	specific : {},
 	utils: {},
 	tools: [],
 

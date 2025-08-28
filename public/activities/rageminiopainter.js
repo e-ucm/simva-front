@@ -10,7 +10,9 @@ if(!PainterFactory){
 var RageMinioActivityPainter = {
 	supportedType: 'rageminio',
 	simple_name: 'RAGE Analytics + Minio activity',
-
+	commun : {},
+	communSpecific : {},
+	specific : {},
 	utils: {},
 	setUtils: function(utils){
 		this.utils = utils;
@@ -205,7 +207,7 @@ var RageMinioActivityPainter = {
 					stack: false
 				});
 			}else{
-				var filename = `${activity}_${user}.csv`;
+				var filename = `${this.communSpecific.result_file}_${activity}_${user}.csv`;
 
 				Utils.download(filename, result[user].minio);
 			}
