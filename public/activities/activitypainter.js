@@ -244,7 +244,7 @@ var ActivityPainter = {
 		$(`#progress_${activity._id} total`).text(usernames.length);
 	},
 
-	paintActivityResult: function(activity, results, defaultValue=true, displayDefaultValue=this.communSpecific.result_zero, partialValue=null,displayPartialValue=this.communSpecific.result_view_partial_value, finalValue="true", displayFinalValue=this.communSpecific.result_view_final_value,painter="PainterFactory.Painters['activity']"){
+	paintActivityResult: function(activity, results, defaultValue="true", displayDefaultValue=this.communSpecific.result_zero, partialValue=null,displayPartialValue=this.communSpecific.result_view_partial_value, finalValue="true", displayFinalValue=this.communSpecific.result_view_final_value,painter="PainterFactory.Painters['activity']"){
 		let usernames = Object.keys(results);
 
 		let done = 0, partial = 0;
@@ -276,7 +276,6 @@ var ActivityPainter = {
 					<a onclick="${painter}.downloadResults('${activity._id}','${usernames[i]}')">⬇️</a>
 					</span>`;
 				}
-				
 			}
 			$(`#result_${activity._id}_${usernames[i]}`).removeClass();
 			$(`#result_${activity._id}_${usernames[i]}`).addClass(color);
