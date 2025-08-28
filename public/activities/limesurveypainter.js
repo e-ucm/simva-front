@@ -244,7 +244,8 @@ var LimeSurveyPainter = {
 			}
 			map[usernames[i]] = state;
 		}
-		PainterFactory.Painters["activity"].paintActivityResult(activity, map, "No Results", "No Results", "Started", "Started", "Completed","Completed","LimeSurveyPainter");
+		PainterFactory.Painters["activity"].paintActivityResult(activity, map, "No Results", this.communSpecific.result_zero, "Started", this.communSpecific.result_view_partial_value, "Completed",this.communSpecific.result_view_final_value,"LimeSurveyPainter");
+		PainterFactory.Painters["activity"].paintActivityProgress(activity, activity.data.progress);
 	},
 
 	generateTinyURL: function(activityId, surveyId) {
@@ -266,7 +267,7 @@ var LimeSurveyPainter = {
 			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
 			<p class="subtitle">${this.simple_name}</p>
-			<p>${this.specific.survey}: <a target="_blank" href="${this.utils.url}${activity.extra_data.surveyId}">${activity.extra_data.surveyId}</a></p>
+			<p>${this.specific.survey_title}: <a target="_blank" href="${this.utils.url}${activity.extra_data.surveyId}">${activity.extra_data.surveyId}</a></p>
 			<p>${this.specific.language_title}: ${activity.extra_data.language}</p>
 			<p><a class="button green" onclick="LimeSurveyPainter.openEditLimesurvey('${activity.id}', '${activity.extra_data.surveyId}')">${this.specific.edit_title}</a></p>
 			<p><a onclick="LimeSurveyPainter.generateTinyURL('${activity._id}', ${activity.extra_data.surveyId})">${this.specific.short_url_title}</a></p>
@@ -303,7 +304,7 @@ var LimeSurveyPainter = {
 
 	updateActivityResult: function(activityId, username, result) {
 		try {
-			PainterFactory.Painters["activity"].updateActivityResult(activityId, username,result, this.communSpecific.result_zero,this.communSpecific.result_zero, this.communSpecific.result_view_partial, this.communSpecific.result_view_partial, this.communSpecific.result_view_final, this.communSpecific.result_view_partial, this.communSpecific.result_view_final,"LimeSurveyPainter");
+			PainterFactory.Painters["activity"].updateActivityResult(activityId, username,result, "No Results", this.communSpecific.result_zero, "Started", this.communSpecific.result_view_partial_value, "Completed",this.communSpecific.result_view_final_value, "LimeSurveyPainter");
 		} catch(e) {
 		}
 	},

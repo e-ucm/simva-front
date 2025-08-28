@@ -1,7 +1,7 @@
 { 
     "title": "Groups",
     "deprecated.title": "Groups (Deprecated)",
-    "deprecatedMessage": "This tab has been deprecated. Please prefer use the new group page version.",
+    "deprecated.message": "This tab has been deprecated. Please prefer use the new group page version.",
     "zero.message.title": "You have 0 groups yet. Create one using the bottom right (+) button.",
     "remove.confirm": "Are you sure do you want to delete the group '{{group}}'?\nGroup will be removed to all the studies, tests and activities.",
     "single.title":"Group",

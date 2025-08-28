@@ -109,7 +109,7 @@ var GameplayActivityPainter = {
 		}
 		PainterFactory.Painters["activity"].paintActivityCompletion(activity, activity.data.completion, true);
 		PainterFactory.Painters["activity"].paintActivityProgress(activity, activity.data.progress);
-		PainterFactory.Painters["activity"].paintActivityResult(activity, activity.data.hasresult, false, "No Backup", null, null, true, "See Backup");
+		PainterFactory.Painters["activity"].paintActivityResult(activity, activity.data.hasresult, false, this.communSpecific.result_zero, null,this.communSpecific.result_view_partial_value, true, this.communSpecific.result_view_final_value);
 	},
 	
 	downloadXasuConfig: function(activityId, studyId){
@@ -210,7 +210,7 @@ var GameplayActivityPainter = {
 	},
 
 	updateActivityResult: function(activityId, username, backup) {
-		PainterFactory.Painters["activity"].updateActivityResult(activityId, username,backup);
+		PainterFactory.Painters["activity"].updateActivityResult(activityId, username,backup, true, this.communSpecific.result_zero, null,this.communSpecific.result_view_partial_value, "true", this.communSpecific.result_view_final_value,"PainterFactory.Painters['activity']");
 	},
 
 	updateActivityCompletion: function(activityId, username, completion) {

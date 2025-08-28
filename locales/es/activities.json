@@ -94,8 +94,8 @@
 
     "completed.title":"Completado",
     "completed.error.message":"Error al establecer la finalización",
-    "completed.all.unset": "Desconfigurar Finalización",
-    "completed.all.set": "Configurar Finalización",
+    "completed.all.unset": "Completar a ningúno",
+    "completed.all.set": "Completar a todos",
     "completed.on": "Verdadero",
     "completed.off": "Falso",
 
