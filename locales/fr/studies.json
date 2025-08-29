@@ -28,7 +28,7 @@
     "groups.add.title":"Ajouter un groupe",
     "groups.error.already_in": "Le groupe participe déjà à l'étude.",
     "groups.delete.title":"Supprimer",
-    "groups.delete.confirm": "Êtes-vous sûr de vouloir supprimer le groupe '{{groupname}}' de l'étude '{{study}}'?",
+    "groups.delete.confirm": "Êtes-vous sûr de vouloir supprimer le groupe '{{group}}' de l'étude '{{study}}'?",
     "groups.zero_existing.message": "Vous n'avez pas de groupe. Allez dans l'onglet groupes pour en créer un.",
     "groups.zero.message": "Vous n'avez pas de groupe. Allez dans l'onglet groupes pour en créer un.",
 
@@ -89,7 +89,7 @@
     "scheduler.shlink.custom_slug.placeholder":"Slug personnalisé",
 
     "scheduler.shlink.delete.title":"Supprimer l'URL du lien du planificateur",
-    "scheduler.shlink.delete.confirm":"Êtes-vous sûr de vouloir supprimer le lien court ? '{{shortCode}}' de l'étude '{{study}}'?",
+    "scheduler.shlink.delete.confirm":"Êtes-vous sûr de vouloir supprimer le lien court '{{shortCode}}' de l'étude '{{study}}'?",
     
     "scheduler.nostudy.title" : "Vous n'avez pas encore d'études à participer.",
     "scheduler.title" : "Cliquez ici pour commencer ou poursuivre votre session dans l'étude.",
