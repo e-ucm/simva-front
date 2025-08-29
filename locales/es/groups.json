@@ -26,7 +26,7 @@
     "participants.add.title": "Añadir participantes",
     "participants.add.existing.title": "Añadir existente",
     "participants.add.new.title": "Añadir nuevo",
-    "participants.add.batch.title": "Añadir lote",
+    "participants.add.batch.title": "Añadir lote de código",
     "participants.add.batch.number.title": "¿Cuántos?",
     "participants.add.batch.algorithFormat": "Los participantes se añadirán con nombres de usuario aleatorios creados con:",
     "participants.add.batch.algorithFormat.letters": "Sólo letras",
