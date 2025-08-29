@@ -28,7 +28,7 @@
     "groups.add.title":"Añadir grupo",
     "groups.error.already_in": "El grupo ya está en el estudio.",
     "groups.delete.title":"Borrar",
-    "groups.delete.confirm": "¿Está seguro de que desea eliminar el grupo '{{groupname}}' del estudio '{{study}}'?",
+    "groups.delete.confirm": "¿Está seguro de que desea eliminar el grupo '{{group}}' del estudio '{{study}}'?",
     "groups.zero_existing.message": "No tienes ningún grupo. Ve a la pestaña de grupos para crear uno.",
     "groups.zero.message": "No tienes ningún grupo. Vaya a la pestaña de grupos para crear uno.",
 
