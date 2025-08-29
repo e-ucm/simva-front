@@ -164,6 +164,10 @@ var ActivityPainter = {
 		return `<td id="result_${activity}_${participant}">---</td>`;
 	},
 
+	paintProgressRow(activity, participant) {
+		return `<td id="progress_${activity}_${participant}" class="progress"><div class="partial"></div><div class="done"></div><span><done>0</done>%</span></td>`;
+	},
+
 	paintActivityCompletion: function(activity, status, checkbox=false, completed_on=this.commun.completed_on, completed_off=this.commun.completed_off){
 		let usernames = Object.keys(status);
 
@@ -522,7 +526,7 @@ var ActivityPainter = {
 	},
 
 	getMinioData: function(activity, as_array=false, storage_file_suffix_array=this.communSpecific.storage_file_suffix_array, storage_file_suffix_one_per_line=this.communSpecific.storage_file_suffix_one_per_line){
-		Simva.getMinioDataUrl(activity, as_array, function(error, result){
+		Simva.getMinioDataUrl(activity, function(error, result){
 			if(error){
 				$.toast({
 					heading: this.commun.storage_error_downloading,
