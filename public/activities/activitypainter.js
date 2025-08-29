@@ -542,7 +542,9 @@ var ActivityPainter = {
 				} else {
 					filename=`${activity}_${storage_file_suffix_one_per_line}.txt`;
 				}
-       			Utils.download(`${filename}`,`${result.data}`);
+       			let url = result.url;
+       			// Open the generated URL in a new tab
+       			window.open(url, '_blank');
 			}
 		})
 	},
