@@ -383,11 +383,14 @@
 
 	let participantRow = function(participant){
 		let isToken="";
+		let token="";
 		let role="";
 		if(participant.isToken) {
 			isToken = `<%= t("participants.isToken.ok", { ns : "groups" }) %>`;
+			token = participant.token;
 		} else {
 			isToken = `<%= t("participants.isToken.nok", { ns : "groups" }) %>`;
+			token = "-";
 		}
 		switch(participant.role) {
 			case "student":
@@ -402,7 +405,7 @@
 		return `<tr><td><img src="/icon/user.png"></td>
 			<td>${participant.username}</td>
 			<td>${isToken}</td>
-			<td>${participant.token}</td>
+			<td>${token}</td>
 			<td><a href="${participant.email}">${participant.email}</a></td>
 			<td>${role}</td>
 			<td><input class="red" type="button" value="<%= t("participants.remove.title", { ns : "groups" }) %>" onclick="removeParticipant('${participant.username}')"></td>`;
