@@ -382,12 +382,29 @@
 	}
 
 	let participantRow = function(participant){
+		let isToken="";
+		let role="";
+		if(participant.isToken) {
+			isToken = `<%= t("participants.isToken.ok", { ns : "groups" }) %>`;
+		} else {
+			isToken = `<%= t("participants.isToken.nok", { ns : "groups" }) %>`;
+		}
+		switch(participant.role) {
+			case "student":
+				role = `<%= t("student", { ns : "roles" }) %>`;
+				break;
+			case "teacher":
+				role = `<%= t("teacher", { ns : "roles" }) %>`;
+				break;
+			default:
+				role = `<%= t("participants.role.notdefined", { ns : "groups" }) %>`;
+		}
 		return `<tr><td><img src="/icon/user.png"></td>
 			<td>${participant.username}</td>
-			<td>${participant.isToken}</td>
+			<td>${isToken}</td>
 			<td>${participant.token}</td>
 			<td><a href="${participant.email}">${participant.email}</a></td>
-			<td>${participant.role}</td>
+			<td>${role}</td>
 			<td><input class="red" type="button" value="<%= t("participants.remove.title", { ns : "groups" }) %>" onclick="removeParticipant('${participant.username}')"></td>`;
 	}
 
