@@ -1,13 +1,8 @@
 module.exports = function(auth, config){
     var express = require('express'),
     router = express.Router();
-    const defaultLanguage="en";
-    const languages = [
-        { name: 'English', code : 'en' },
-        { name: 'Spanish', code : 'es' },
-        { name: 'French', code : 'fr' },
-        { name: 'Portuguese (Brasil)', code : 'pt-BR' }
-    ];
+    const defaultLanguage=config.i18n.defaultLanguage;
+    
     const logger = require('../../logger');
     const Simva = require('../lib/simva');
     const studycontroler = require('../lib/studycontroler');
@@ -22,7 +17,15 @@ module.exports = function(auth, config){
     });
 
     router.get('/languages/', function(req, res, next) {
-        res.status(200).send({ current : req.cookies.i18next, default: defaultLanguage, languages : languages });
+        const displayNames = new Intl.DisplayNames([req.cookies.i18next], { type: 'language' });
+        res.status(200).send({ current : req.cookies.i18next, default: defaultLanguage, languages : 
+            config.i18n.languages.map(
+                code => ({
+                    name: displayNames.of(code),
+                    code
+                })
+            )
+        });
     });
 
     /**
