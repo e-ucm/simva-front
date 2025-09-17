@@ -72,6 +72,9 @@ config.lti.enabled = process.env.LTI_ENABLED || 'false'
 
 config.i18n = {}
 config.i18n.debug = process.env.I18N_DEBUG === "true"
+languages = process.env.SIMVA_LOCALES || "en,es,pt-BR,fr,it";
+config.i18n.languages = languages.split(",").map(s => s.trim());;
+config.i18n.defaultLanguage = languages[0];
 
 config.kafka = {}
 config.kafka.clientId= process.env.SIMVA_KAFKA_CLIENTID || 'my-client-id'
