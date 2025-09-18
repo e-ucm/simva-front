@@ -35,18 +35,10 @@
 		getUserToken();
 
 		$(document).ready(function() {
-			$(".floater").on('click', function(event){
-				if (event.target !== this)
-    				return;
-				$(this).parent().toggleClass('shown');
-			});
-		});
-		$(document).ready(function() {
-			$(".floater").on('click', function(event){
-				if (event.target !== this)
-    				return;
-				$(this).parent().toggleClass('shown');
-			});
+			$(".floater").off('click').on('click', function(event) { 
+				if (event.target !== this) return;
+				$(this).parent().removeClass('shown');
+			});	
 			var currentlanguageCode;
 			// Get the container element and the button
 			const dropdown = document.getElementById('language-dropdown');

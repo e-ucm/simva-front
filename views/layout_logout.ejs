@@ -16,10 +16,9 @@
 	<script type="text/javascript">
 		var roller = '<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>';
 		$(document).ready(function() {
-			$(".floater").on('click', function(event){
-				if (event.target !== this)
-    				return;
-				$(this).parent().toggleClass('shown');
+			$(".floater").off('click').on('click', function(event) { 
+				if (event.target !== this) return;
+				$(this).parent().removeClass('shown');
 			});
 			var currentlanguageCode;
 			// Get the container element and the button
