@@ -258,6 +258,13 @@ class Simva {
 	}
 
 	// Activities
+	getActivities(sessionId, callback){
+		this.get(`${this.apiurl}/activities`, sessionId, callback);
+	}
+
+	postTemplateActivity(activity, sessionId, callback){
+		this.post(`${this.apiurl}/activities`, activity, sessionId, callback);
+	}
 
 	addActivityToTest(study_id, test_id, activity, sessionId, callback){
 		this.post(`${this.apiurl}/studies/${study_id}/tests/${test_id}/activities`, activity, sessionId, callback);

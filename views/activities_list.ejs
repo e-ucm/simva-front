@@ -1,8 +1,241 @@
-<%# views/activities_list.ejs %>
+<%# views/study_view.ejs %>
  
-<% extend('layout_with_menu_and_sse') %>
+<% extend('layout_with_menu') %>
+
+<script type="text/javascript">
+	let completeActivities= null;
+	let refreshActivities = function(){
+		Simva.getTemplateActivities(function(error, result){
+			if(!error){
+				completeActivities=result;
+				paintActivities(result);
+			}
+		});
+	}
+
+	let paintActivities = function(activities){
+		$('#activities_list').text('');
+		count=0
+		for (var i = 0; i < activities.length; i++) {
+			if(activities[i].test == null) {
+				let card = $(toCard(activities[i]));
+				$('#activities_list').append(card);
+				count++;
+			}
+		}
+		if(count == 0) {
+			$('#activities_list').text("<%- t('zero.message.title', { ns : 'activities' }) %>");
+		}
+	}
+	$(document).ready(function() {
+		let painters = Object.keys(PainterFactory.Painters);
+
+		Simva.getActivityTypes(function(error, activitytypes){
+			if(!error) {
+				for (var i = 0; i < activitytypes.length; i++) {
+					if(PainterFactory.Painters[activitytypes[i].type]){
+						PainterFactory.Painters[activitytypes[i].type].setUtils(activitytypes[i].utils);
+						PainterFactory.Painters[activitytypes[i].type].simple_name = activitytypes[i].name;
+						PainterFactory.Painters[activitytypes[i].type].description = activitytypes[i].description;
+						PainterFactory.Painters[activitytypes[i].type].commun = activitytypes[i].commun;
+						PainterFactory.Painters[activitytypes[i].type].communSpecific = activitytypes[i].communSpecific;
+						PainterFactory.Painters[activitytypes[i].type].specific = activitytypes[i].specific;
+						let row = `<option value="${activitytypes[i].type}">${PainterFactory.Painters[activitytypes[i].type].simple_name}</option>`;
+						if(activitytypes[i].type != "activity") {
+							$('#new_activity_form select[name="type"]').append(row);
+						}
+					}
+				}
+				refreshActivities();
+			}
+			
+		});
+
+		$('#new_activity_form select[name="type"]').on('change', function(event){
+			$('#new_activity_extras').empty();
+			$('#new_activity_extras').append(`${PainterFactory.Painters[$(this).val()].description}\n`);
+			PainterFactory.Painters[$(this).val()].getExtraTemplateForm((error, result) => {
+				console.log(result);
+				if(!error) {
+					$('#new_activity_extras').append(result);
+				}
+			});
+		});
+
+		$("#new_activity_form").on('submit', function(event){
+			event.preventDefault();
+			let currentform = this;
+			let form = Utils.getFormData($("#new_activity_form"));
+			Utils.toggleSubmit(currentform);
+			let errorbox = $(this).find('.error');
+
+			PainterFactory.Painters[form.type].extractTemplateInformation('#new_activity_form', function(error, activity){
+				if(error){
+					errorbox.text(error);
+				}else{
+					activity.description=form.description;
+					Simva.postTemplateActivity(activity, function(error, result){
+						Utils.toggleSubmit(currentform);
+						if(error && error.responseJSON){
+							errorbox.text(error.responseJSON.message);
+						}else{
+							Utils.toggleAddForm('new_activity');
+							refreshActivities();
+						}
+					});
+				}
+			});
+
+			return false;
+		});
+
+		$("#edit_activity_form").on('submit', function(event){
+			event.preventDefault();
+			let currentform = this;
+			let form = Utils.getFormData($("#edit_activity_form"));
+			Utils.toggleSubmit(currentform);
+			let errorbox = $(this).find('.error');
+			let activity = getActivityFromActivityId(form.activity);
+			PainterFactory.Painters[form.type].extractEditTemplateInformation('#edit_activity_form', activity, function(error, updatedActivity){
+				if(error){
+					errorbox.text(error);
+				}else{
+					if(Object.keys(updatedActivity).length == 0) {
+						errorbox.text("No changes detected !");
+						Utils.toggleSubmit(currentform);
+					} else {
+						updatedActivity.id = form.activity;
+						Simva.updateActivity(updatedActivity, function(error, result){
+							Utils.toggleSubmit(currentform);
+							if(error && error.responseJSON){
+								errorbox.text(error.responseJSON.message);
+							}else{
+								Utils.toggleAddForm('edit_activity');
+								refreshActivities();
+							}
+						});
+					}
+				}
+			});
+			return false;
+		});
+	});
+
+	let changeTab = function(tab, form, subform){
+		$(`#${form} .tab`).removeClass('selected');
+		$(`#${form} .subform`).removeClass('selected');
+		$(tab).toggleClass('selected');
+		$(`#${subform}`).toggleClass('selected');
+	}
+
+
+	let toCard = function(activity){
+		return `<a class="stopable"><div class="studycard selectable card third">
+			<span class="button yellow" onclick="openEditActivityForm('${activity._id}', '${activity.name}')">🖍️</span>
+			<span class="button red delete" onclick="deleteActivity('${activity._id}', '${activity.name}')">X</span>
+			<h1><%- t('single.title', { ns : 'activities' }) %>: ${activity.name}</h1>
+			<h1><%- t('type', { ns : 'activities' }) %>: ${activity.type}</h1>
+			</div></a>`;
+	}
+
+	let openActivityForm = function(){
+		Utils.toggleAddForm('new_activity');
+		$('#new_activity_extras').empty();
+		$('#new_activity_extras').append(`${PainterFactory.Painters["limesurvey"].description}\n`);	
+		PainterFactory.Painters["limesurvey"].getExtraTemplateForm((error, result) => {
+			console.log(result);
+			if(!error) {
+				$('#new_activity_extras').append(result);
+			}
+		});
+	}
+
+	let getActivityFromActivityId = function(activityId) {
+		for(let i=0; i< completeActivities.length; i++) {
+			let activity=completeActivities[i];
+			if(activity._id == activityId) {
+				return activity;
+			}
+		}
+	}
+
+	let openEditActivityForm = function(activityId){
+		document.getElementById("edit_activity_error").innerHTML = "";
+		let activity= getActivityFromActivityId(activityId);
+		var inputElement = document.getElementById('edit_activity_name');
+		inputElement.value = activity.name;
+		var inputElement = document.getElementById('edit_activity_type');
+		inputElement.value = activity.type;
+		$('#edit_activity_extras').empty();
+		$('#edit_activity_extras').append(`${PainterFactory.Painters[activity.type].description}\n`);
+		$('#edit_activity_extras').append(PainterFactory.Painters[activity.type].getEditExtraTemplateForm(activity));
+		PainterFactory.Painters[activity.type].updateInputEditExtraTemplateForm(activity)
+		$('#edit_activity span[class="error"]').val("");
+		$('#edit_activity input[name="activity"]').val(activity._id);
+		$('#edit_activity').toggleClass('shown');
+	}
+
+</script>
+<script type="text/javascript" src="/activities/activitypainter.js"></script>
+<script type="text/javascript" src="/activities/limesurveypainter.js"></script>
+<script type="text/javascript" src="/activities/rageanalyticspainter.js"></script>
+<script type="text/javascript" src="/activities/miniopainter.js"></script>
+<script type="text/javascript" src="/activities/rageminiopainter.js"></script>
+<script type="text/javascript" src="/activities/gameplaypainter.js"></script>
+<script type="text/javascript" src="/activities/manualpainter.js"></script>
+<script type="text/javascript" src="/activities/ltitoolpainter.js"></script>
+<script type="text/javascript" src="/activities/imspackagepainter.js"></script>
 
 <div class="card">
 	<h1><%= t('title', { ns : 'activities'}) %></h1>
-	<p><%- t('text', { ns : 'activities'}).replace(/\n/g, '<br><br>') %> %></p>
+</div>
+
+<div id="activities_list">
+	<div style="width: 100%; text-align: center; padding: 200px;">
+		<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+	</div>
+</div>
+
+<div id="new_activity" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<div id="new_activity_tab" class="subform selected">
+				<form id="new_activity_form">
+					<input type="hidden" name="test">
+					<input type="text" name="name" placeholder="<%- t('activities.placeholder', { ns : 'studies' }) %>" required>
+					<select name="type">
+					</select>
+					<input type="text" name="description" placeholder="<%- t('description', { ns : 'studies' }) %>" required>
+					<fieldset id="new_activity_extras">
+					</fieldset>
+					<input type="submit" value="<%- t('activities.add.title', { ns : 'studies' }) %>">
+					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+					<span class="error"></span>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="edit_activity" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<form id="edit_activity_form">
+				<input type="hidden" name="test">
+				<input type="hidden" name="activity">
+				<input id="edit_activity_type" type="hidden" name="type">
+				<input id="edit_activity_name" type="text" name="name" placeholder="<%- t('activities.placeholder', { ns : 'studies' }) %>" required>
+				<input type="text" name="description" placeholder="<%- t('description', { ns : 'studies' }) %>" required>
+				<fieldset id="edit_activity_extras">
+				</fieldset>
+				<input type="submit" value="<%- t('activities.edit.title', { ns : 'studies' }) %>">
+				<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+				<span class="error" id="edit_activity_error"></span>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="floating_buttons">
+	<a unselectable="on" class="basic" onclick="openActivityForm()">+</a>
 </div>

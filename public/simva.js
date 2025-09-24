@@ -207,6 +207,13 @@ var Simva = {
 
 
 	// Activities
+	getTemplateActivities: function(callback){
+		Utils.get(`/bff/activities`, callback);
+	},
+
+	postTemplateActivity: function(activity, callback){
+		Utils.post(`/bff/activities`, activity, callback);
+	},
 
 	addActivityToTest: function(study_id, test_id, activity, callback){
 		Utils.post(`/bff/studies/${study_id}/tests/${test_id}/activities`, activity, callback);

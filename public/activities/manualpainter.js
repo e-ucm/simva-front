@@ -50,9 +50,6 @@ var ManualActivityPainter = {
 		activity.type = this.supportedType;
 
 		activity.user_managed = formdata.user_managed === 'on';
-		if(formdata.uri !== ''){
-			activity.uri = formdata.uri;
-		}
 
 		callback(null, activity);
 	},
@@ -70,13 +67,92 @@ var ManualActivityPainter = {
 		if(actualActivity.extra_data.user_managed !== user_managed) {
 			activity.user_managed = user_managed;
 		}
-		
-		if(!(actualActivity.extra_data.uri == formdata.uri)) {
-			if(actualActivity.extra_data.uri) {
-				activity.uri = formdata.uri;
+
+		callback(null, activity);
+	},
+
+	
+	getExtraTemplateForm: function (callback) {
+		callback(null, `<p><label for="manual_uri" style="width: 100%; text-align: center;">${this.specific.uri_title}</label><input id="manual_uri" type="text" name="uri">
+			 <span class="info">${this.specific.uri_explication}</p></div>`);
+	},
+
+	getEditExtraTemplateForm: function () {
+		return `<p><label for="edit_manual_uri" style="width: 100%; text-align: center;">${this.specific.uri_title}</label><input id="edit_manual_uri" type="text" name="uri">
+		<span class="info">${this.specific.uri_explication}</p></div>`;
+	},
+
+	getExtraTemplateForm: function (callback) {
+		callback(null, `<div class="manual_activity">
+				<div class="tabs">
+					<span class="tab selected" method="uri" onclick="changeTab(this, 'new_activity_extras','uri')">${this.specific.uri_title}</span>
+					<span class="tab" method="package" onclick="changeTab(this,'new_activity_extras','package')">${this.specific.gameplay_game_package_title}</span>
+				</div>
+				<div id="uri" class="subform selected">
+					<p><label for="manual_uri" style="width: 100%; text-align: center;">${this.specific.uri_title}</label><input id="manual_uri" type="text" name="game_uri">
+					<span>
+					<p>${this.specific.uri_explication}</p>
+				</div>
+				<div id="package" class="subform">
+					<p><label for="manual_package" style="width: 100%; text-align: center;">${this.specific.package_title}</label><input id="manual_package" type="file" name="manual_package">
+				</div>		
+			</div>`);
+	},
+
+	getEditExtraTemplateForm: function () {
+		return `<div class="edit_manual_activity">
+				<div class="tabs">
+					<span class="tab selected" method="edit_uri" onclick="changeTab(this, 'new_activity_extras','edit_uri')">${this.specific.uri_title}</span>
+					<span class="tab" method="edit_package" onclick="changeTab(this,'new_activity_extras','edit_package')">${this.specific.gameplay_game_package_title}</span>
+				</div>
+				<div id="edit_uri" class="subform selected">
+					<p><label for="edit_manual_uri" style="width: 100%; text-align: center;">${this.specific.uri_title}</label><input id="edit_manual_uri" type="text" name="edit_manual_uri">
+					<span>
+					<p>${this.specific.uri_explication}</p>
+				</div>
+				<div id="edit_package" class="subform">
+					<p><label for="edit_manual_package" style="width: 100%; text-align: center;">${this.specific.package_title}</label><input id="edit_manual_package" type="file" name="edit_manual_package">
+				</div>		
+			</div>`;
+	},
+
+	updateInputEditExtraTemplateForm(activity) {
+		var gameplay_game_uri = document.getElementById('edit_gameplay_game_uri');
+		gameplay_game_uri.value = activity.extra_data.game_uri;
+	},
+
+	extractTemplateInformation: function(form, callback){
+		let activity = {};
+
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+
+		activity.name = formdata.name;
+		activity.type = this.supportedType;
+
+		if(formdata.game_uri !== ''){
+			activity.game_uri = formdata.game_uri;
+		}
+
+		callback(null, activity);
+	},
+
+	extractEditTemplateInformation: function(form, actualActivity, callback){
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+		let activity = {};
+
+		if(actualActivity.name !== formdata.name) {
+			activity.name = formdata.name;
+		}
+
+		let game_uri=formdata.game_uri;
+		if(!(actualActivity.extra_data.game_uri == game_uri)) {
+			if(actualActivity.extra_data.game_uri) {
+				activity.game_uri = game_uri;
 			} else {
-				if(formdata.uri !== ''){
-					activity.uri = formdata.uri;
+				if(game_uri !== ''){
+					activity.game_uri = game_uri;
 				}
 			}
 		}

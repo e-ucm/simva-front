@@ -19,19 +19,17 @@ var GameplayActivityPainter = {
 	},
 
 	getExtraForm: function (callback) {
-		callback(null, `<div class="gameplay_activity"><p><label for="gameplay_trace_storage">${this.commun.storage_title}</label><input id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
-			 <p><label for="gameplay_backup">${this.communSpecific.result_title}</label><input id="gameplay_backup" type="checkbox" name="backup" checked></p>
-			 <p><label for="gameplay_scorm_xAPI">${this.specific.xapi_by_game_title}</label><input id="gameplay_scorm_xAPI" type="checkbox" name="scorm_xapi"></p>
-			 <p><label for="gameplay_game_uri" style="width: 100%; text-align: center;">${this.specific.game_uri_title}</label><input id="gameplay_game_uri" type="text" name="game_uri">
-			 <span><p>${this.specific.game_uri_explication}</p></div>`);
+		callback(null, `<div class="gameplay_activity">
+			 	<p><label for="gameplay_trace_storage">${this.commun.storage_title}</label><input id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
+			 	<p><label for="gameplay_backup">${this.communSpecific.result_title}</label><input id="gameplay_backup" type="checkbox" name="backup" checked></p>
+			 </div>`);
 	},
 
 	getEditExtraForm: function () {
-		return `<div class="gameplay_activity"><p><label for="edit_gameplay_trace_storage">${this.commun.storage_title}</label><input id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
-			 <p><label for="edit_gameplay_backup">${this.communSpecific.result_title}</label><input id="edit_gameplay_backup" type="checkbox" name="backup" checked></p>
-			 <p><label for="edit_gameplay_scorm_xAPI">${this.specific.xapi_by_game_title}</label><input id="edit_gameplay_scorm_xAPI" type="checkbox" name="scorm_xapi" checked></p>
-			 <p><label for="edit_gameplay_game_uri" style="width: 100%; text-align: center;">${this.specific.game_uri_title}</label><input id="edit_gameplay_game_uri" type="text" name="game_uri">
-			 <span class="info"><p>${this.specific.game_uri_explication}</p></div>`;
+		return `<div class="gameplay_activity">
+					<p><label for="edit_gameplay_trace_storage">${this.commun.storage_title}</label><input id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
+			 		<p><label for="edit_gameplay_backup">${this.communSpecific.result_title}</label><input id="edit_gameplay_backup" type="checkbox" name="backup" checked></p>
+			 	</div>`;
 	},
 
 	updateInputEditExtraForm(activity) {
@@ -39,9 +37,6 @@ var GameplayActivityPainter = {
 		gameplay_trace_storage.checked = activity.extra_data.config.trace_storage;
 		var gameplay_backup = document.getElementById('edit_gameplay_backup');
 		gameplay_backup.checked = activity.extra_data.config.backup;
-		var gameplay_game_uri = document.getElementById('edit_gameplay_game_uri');
-		gameplay_game_uri.value = activity.extra_data.game_uri;
-
 	},
 
 	extractInformation: function(form, callback){
@@ -54,11 +49,7 @@ var GameplayActivityPainter = {
 		activity.type = this.supportedType;
 
 		activity.trace_storage = formdata.trace_storage === 'on';
-		activity.realtime = formdata.realtime === 'on';
 		activity.backup = formdata.backup === 'on';
-		if(formdata.game_uri !== ''){
-			activity.game_uri = formdata.game_uri;
-		}
 
 		callback(null, activity);
 	},
@@ -67,24 +58,89 @@ var GameplayActivityPainter = {
 		let jform = $(form);
 		let formdata = Utils.getFormData(jform);
 		let activity = {};
-
 		if(actualActivity.name !== formdata.name) {
 			activity.name = formdata.name;
 		}
-	
 		let trace_storage = formdata.trace_storage === 'on';
 		if(actualActivity.extra_data.config.trace_storage !== trace_storage) {
 			activity.trace_storage = trace_storage;
-		}
-		let realtime = formdata.realtime === 'on';
-		if(actualActivity.extra_data.config.realtime !== realtime) {
-			activity.realtime = realtime;
 		}
 		let backup = formdata.backup === 'on';
 		if(actualActivity.extra_data.config.backup !== backup) {
 			activity.backup = backup;
 		}
-		let game_uri=formdata.game_uri;
+		callback(null, activity);
+	},
+
+	getExtraTemplateForm: function (callback) {
+		callback(null, `<div class="gameplay_activity">
+				<p><label for="gameplay_scorm_xAPI">${this.specific.xapi_by_game_title}</label><input id="gameplay_scorm_xAPI" type="checkbox" name="scorm_xapi" checked></p>
+				<div class="tabs">
+					<span class="tab selected" method="game_uri" onclick="changeTab(this, 'new_activity_extras','game_uri')">${this.specific.game_uri_title}</span>
+					<span class="tab" method="package" onclick="changeTab(this,'new_activity_extras','package')">${this.specific.gameplay_game_package_title}</span>
+				</div>
+				<div id="game_uri" class="subform selected">
+					<p><label for="gameplay_game_uri" style="width: 100%; text-align: center;">${this.specific.game_uri_title}</label><input id="gameplay_game_uri" type="text" name="game_uri">
+					<span>
+					<p>${this.specific.game_uri_explication}</p>
+				</div>
+				<div id="package" class="subform">
+					<p><label for="gameplay_game_package" style="width: 100%; text-align: center;">${this.specific.gameplay_game_package_title}</label><input id="gameplay_game_package" type="file" name="game_package">
+				</div>		
+			</div>`);
+	},
+
+	getEditExtraTemplateForm: function () {
+		return `<div class="gameplay_activity">
+				<p><label for="edit_gameplay_scorm_xAPI">${this.specific.xapi_by_game_title}</label><input id="edit_gameplay_scorm_xAPI" type="checkbox" name="scorm_xapi" checked></p>
+				<div class="tabs">
+					<span class="tab selected" method="game_uri" onclick="changeTab(this, 'edit_activity_extras','edit_game_uri')">${this.specific.game_uri_title}</span>
+					<span class="tab" method="package" onclick="changeTab(this,'edit_activity_extras','edit_package')">${this.specific.gameplay_game_package_title}</span>
+				</div>
+				<div id="edit_game_uri" class="subform selected">
+					<p><label for="edit_gameplay_game_uri" style="width: 100%; text-align: center;">${this.specific.game_uri_title}</label><input id="edit_gameplay_game_uri" type="text" name="game_uri">
+					<span>
+					<p>${this.specific.game_uri_explication}</p>
+				</div>
+				<div id="edit_package" class="subform">
+					<p><label for="edit_gameplay_game_package" style="width: 100%; text-align: center;">${this.specific.gameplay_game_package_title}</label><input id="edit_gameplay_game_package" type="file" name="game_package">
+				</div>		
+			</div>`;
+	},
+
+	updateInputEditExtraTemplateForm(activity) {
+		if(activity.extra_data.game_uri == null) {
+			var gameplay_game_uri = document.getElementById('edit_gameplay_game_uri');
+			gameplay_game_uri.value = activity.extra_data.game_uri;
+		}
+	},
+
+	extractTemplateInformation: function(form, callback){
+		let activity = {};
+
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+
+		activity.name = formdata.name;
+		activity.type = this.supportedType;
+
+		if(formdata.game_uri !== ''){
+			activity.game_uri = formdata.game_uri;
+		}
+
+		callback(null, activity);
+	},
+
+	extractEditTemplateInformation: function(form, actualActivity, callback){
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+		let activity = {};
+
+		if(actualActivity.name !== formdata.name) {
+			activity.name = formdata.name;
+		}
+
+		let game_uri=formdata.edit_game_uri;
 		if(!(actualActivity.extra_data.game_uri == game_uri)) {
 			if(actualActivity.extra_data.game_uri) {
 				activity.game_uri = game_uri;
@@ -94,7 +150,7 @@ var GameplayActivityPainter = {
 				}
 			}
 		}
-	
+
 		callback(null, activity);
 	},
 

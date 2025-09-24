@@ -50,6 +50,40 @@ var LTIToolPainter = {
 		return "";
 	},
 
+	
+	getExtraTemplateForm: function (callback) {
+		callback(null, '');
+	},
+
+	getEditExtraTemplateForm: function () {
+		return '';
+	},
+
+	updateInputEditExtraTemplateForm(activity) {
+	},
+
+	extractEditTemplateInformation: function(form, actualActivity, callback){
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+		let activity = {};
+		if(actualActivity.name !== formdata.name) {
+			activity.name = formdata.name;
+		}
+		callback(null, activity);
+	},
+
+	extractTemplateInformation: function(form, callback){
+		let activity = {};
+
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+
+		activity.name = formdata.name;
+		activity.type = this.supportedType;
+
+		callback(null, activity);
+	},
+
 	updateInputEditExtraForm(activity) {
 	},
 

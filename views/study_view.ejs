@@ -420,28 +420,6 @@
 					PainterFactory.Painters[activitytypes[i].type].commun = activitytypes[i].commun;
 					PainterFactory.Painters[activitytypes[i].type].communSpecific = activitytypes[i].communSpecific;
 					PainterFactory.Painters[activitytypes[i].type].specific = activitytypes[i].specific;
-					//switch(activitytypes[i].type){
-					//	case 'rageminio':
-					//		break;
-					//	case 'miniokafka':
-					//		break;
-					//	case 'rageanalytics':
-					//		break;
-					//	case 'limesurvey':
-					//		break;
-					//	case 'gameplay':
-					//		break;
-					//	case 'activity':
-					//		break;
-					//	case 'manual':
-					//		break;
-					//	case 'ltitool':
-					//		break;
-					//	case 'imspackage':
-					//		break;
-					//	default:
-					//		break;
-					//}
 					let row = `<option value="${activitytypes[i].type}">${PainterFactory.Painters[activitytypes[i].type].simple_name}</option>`;
 					$('#new_activity_form select[name="type"]').append(row);
 				}

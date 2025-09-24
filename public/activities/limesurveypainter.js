@@ -23,14 +23,14 @@ var LimeSurveyPainter = {
 		this.newlimesurveyurl=this.utils.newurl;
 	},
 
-	getExtraForm: function (callback) {
+	getExtraTemplateForm: function (callback) {
 		let form = '';
 		Simva.islimesurveyadmin((error, result) => {
 			if(!error) {
 				console.log(result);
 				if(result.isLimesurveyUserAdmin == false) {
 					form+=`<p>${this.specific.new_message}</p>
-						<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">${this.specific.title}</a></p>`
+						<p><a class="button green" onclick="PainterFactory.Painters['limesurvey'].openNewLimesurvey()">${this.specific.title}</a></p>`
 				} else {
 					form += `<div class="tabs">
 					<span class="tab selected" method="byid" onclick="changeTab(this, 'new_activity_extras','limesurvey_byid')">${this.specific.surveyid_title}</span>
@@ -55,7 +55,7 @@ var LimeSurveyPainter = {
 					form += `</div>
 					<div id="limesurvey_bynew" class="subform">
 						<p>${this.specific.new_message}</p>
-						<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">${this.specific.title}</a></p>
+						<p><a class="button green" onclick="PainterFactory.Painters['limesurvey'].openNewLimesurvey()">${this.specific.title}</a></p>
 					</div>
 					<div id="limesurvey_byupload" class="subform">
 						<p>${this.specific.upload_message}</p>
@@ -64,13 +64,13 @@ var LimeSurveyPainter = {
 				}
 			} else {
 				form+=`<p>${this.specific.new_message}</p>
-					<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">${this.specific.title}</a></p>`
+					<p><a class="button green" onclick="PainterFactory.Painters['limesurvey'].openNewLimesurvey()">${this.specific.title}</a></p>`
 			};
 			callback(null, form);
 		});	
 	},
 
-	getEditExtraForm: function () {
+	getEditExtraTemplateForm: function () {
 		let form=`${this.specific.survey_title}`;
 		if(this.utils.surveys.length > 1){
 			form += '<select name="existingid" id="existing_survey_list"></select>';
@@ -82,7 +82,7 @@ var LimeSurveyPainter = {
 		return form;
 	},
 
-	updateInputEditExtraForm(activity) {
+	updateInputEditExtraTemplateForm(activity) {
 		Simva.setSurveyOwner(activity._id, (error, result) => {
 			// Step 1: Get the select element
 			var languageSelectElement = document.getElementById('language_list');
@@ -130,6 +130,40 @@ var LimeSurveyPainter = {
 		});
 	},
 
+	
+	getExtraForm: function (callback) {
+		callback(null, '');
+	},
+
+	getEditExtraForm: function () {
+		return '';
+	},
+
+	updateInputEditExtraForm(activity) {
+	},
+
+	extractEditInformation: function(form, actualActivity, callback){
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+		let activity = {};
+		if(actualActivity.name !== formdata.name) {
+			activity.name = formdata.name;
+		}
+		callback(null, activity);
+	},
+
+	extractInformation: function(form, callback){
+		let activity = {};
+
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+
+		activity.name = formdata.name;
+		activity.type = this.supportedType;
+
+		callback(null, activity);
+	},
+
 	downloadBackup: function(activity, type, user){
 		var toastParams = {
 			heading: this.commun.result_error_downloading,
@@ -151,7 +185,7 @@ var LimeSurveyPainter = {
 
 	},
 
-	extractInformation: function(form, callback){
+	extractTemplateInformation: function(form, callback){
 		let activity = {};
 
 		let jform = $(form);
@@ -194,7 +228,7 @@ var LimeSurveyPainter = {
 		}
 	},
 
-	extractEditInformation: function(form, actualActivity, callback){
+	extractEditTemplateInformation: function(form, actualActivity, callback){
 		let jform = $(form);
 		let formdata = Utils.getFormData(jform);
 		let activity = {};
@@ -269,10 +303,10 @@ var LimeSurveyPainter = {
 			<p class="subtitle">${this.simple_name}</p>
 			<p>${this.specific.survey_title}: <a target="_blank" href="${this.utils.url}${activity.extra_data.surveyId}">${activity.extra_data.surveyId}</a></p>
 			<p>${this.specific.language_title}: ${activity.extra_data.language}</p>
-			<p><a class="button green" onclick="LimeSurveyPainter.openEditLimesurvey('${activity.id}', '${activity.extra_data.surveyId}')">${this.specific.edit_title}</a></p>
-			<p><a onclick="LimeSurveyPainter.generateTinyURL('${activity._id}', ${activity.extra_data.surveyId})">${this.specific.short_url_title}</a></p>
-			<p><a onclick="LimeSurveyPainter.downloadBackup('${activity._id}', 'full')"> ${this.specific.backup_full_title} : ⬇️</a>
-			<a onclick="LimeSurveyPainter.downloadBackup('${activity._id}', 'code')"> ${this.specific.backup_code_title} : ⬇️</a></p>
+			<p><a class="button green" onclick="PainterFactory.Painters['limesurvey'].openEditLimesurvey('${activity.id}', '${activity.extra_data.surveyId}')">${this.specific.edit_title}</a></p>
+			<p><a onclick="PainterFactory.Painters['limesurvey'].generateTinyURL('${activity._id}', ${activity.extra_data.surveyId})">${this.specific.short_url_title}</a></p>
+			<p><a onclick="PainterFactory.Painters['limesurvey'].downloadBackup('${activity._id}', 'full')"> ${this.specific.backup_full_title} : ⬇️</a>
+			<a onclick="PainterFactory.Painters['limesurvey'].downloadBackup('${activity._id}', 'code')"> ${this.specific.backup_code_title} : ⬇️</a></p>
 			${this.commun.storage_title} : 
 			<p>${this.commun.storage_file_title} <a onclick="PainterFactory.Painters['activity'].getMinioData('${activity._id}')" target="_blank">${this.commun.storage_file_one_per_line_title}</a></p>
 			${PainterFactory.Painters["activity"].paintActivityParticipantsTable(activity, participants, false)}</div>`);

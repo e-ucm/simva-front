@@ -401,6 +401,29 @@ module.exports = function(auth, config){
         });
     });
 
+    router.get('/activities', auth, async (req, res, next) => {
+        Simva.getActivities(req.session.id, (error, result) => {
+            if(error) {
+                next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.post('/activities', auth, async (req, res, next) => {
+        let activity = req.body;
+        activity.test=null;
+		activity.owners=[req.session.user.data.username];
+        Simva.postTemplateActivity(activity, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
     router.get('/activities/:activityid', auth, async (req, res, next) => {
         Simva.getActivity(req.params["activityid"], req.session.id, (error, result) => {
             if(error) {
