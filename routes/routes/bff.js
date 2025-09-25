@@ -1,3 +1,5 @@
+const usertools = require('../lib/usertools');
+
 module.exports = function(auth, config){
     var express = require('express'),
     router = express.Router();
@@ -45,6 +47,35 @@ module.exports = function(auth, config){
         });
     });
 
+    router.post('/groups/:groupid/users', auth, async (req, res, next) => {
+        let groupid = req.params['groupid'];
+        let generateUser = (callback)  => {
+            let username = usertools.generateUsername(req.body.algorithm, req.body.length);
+            let password = username;
+            let email = `${username}@example.com`
+            if(req.body.useNewGeneration) {
+                email=`${groupid}_${email}`;
+            }
+            Simva.register(groupid, username, email, password, 'student', true, req.body.useNewGeneration, req.session.id, callback);
+        }
+        
+        let users=[];
+        
+        let completed=(error, user)  => {
+            if(error) {
+                generateUser(completed);
+            } else {
+                users.push(user.username);
+                if(users.length == req.body.batchLength) {
+                    res.status(200).send(users);
+                }
+            }
+        };
+        for(let i=0; i < req.body.batchLength; i++) {
+            generateUser(completed);
+        }
+    });
+
     router.patch('/users/:username', auth, async (req, res, next) => {
         Simva.setRole(req.body.username, req.body.role, req.session.id, (error, result) => {
             if(error) {
@@ -60,7 +91,11 @@ module.exports = function(auth, config){
             if(error) {
                 next(error.response.data);
             } else {
-                res.status(200).send(result);
+                let name={username : result.username};
+                if(result.isToken == 'true') {
+                    name={token : result.token};
+                }
+                res.status(200).send(name);
             }
         });
     });

@@ -5,6 +5,7 @@ var Simva = {
 	expiration: null,
 	ssoUrl:null,
 	ssoRealm:null,
+	url:null,
 
 	setSSOURL: function(ssoUrl){
 		this.ssoUrl = ssoUrl;
@@ -16,6 +17,10 @@ var Simva = {
 
 	setAPIURL: function(apiUrl){
 		this.apiurl = apiUrl;
+	},
+
+	setURL: function(url){
+		this.url = url;
 	},
 
 	login: function(username, password, callback){
@@ -56,6 +61,17 @@ var Simva = {
 			useNewGeneration : useNewGeneration
 		};
 		Utils.post(`/bff/users`, body, callback);
+	},
+
+	// USER
+	generateAndRegister: function(groupid, algorithm, length, batchLength, useNewGeneration, callback){
+		let body = {
+			algorithm: algorithm,
+			length: Number(length),
+			batchLength: Number(batchLength),
+			useNewGeneration : useNewGeneration
+		};
+		Utils.post(`/bff/groups/${groupid}/users`, body, callback);
 	},
 
 	setRole: function(username, role, callback){

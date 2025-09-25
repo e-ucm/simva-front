@@ -114,6 +114,7 @@ var GameplayActivityPainter = {
 		var content = JSON.stringify({
 			online: true,
 			simva :true,
+			homepage:`${Simva.url}`,
 			lrs_endpoint : `${Simva.apiurl}/activities/${activityId}`,
 			auth_protocol : "oauth2",
 			auth_parameters : {
