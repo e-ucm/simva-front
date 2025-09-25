@@ -1,148 +1,153 @@
 const logger = require('../../logger');
-const Simva  = require('./simva');
+const SimvaAsync = require('./simvaAsync');
 const testcontroler = require('./testscontroler');
 const groupcontroler = require('./groupcontroler');
 
 module.exports = {
     async getCompleteStudy(studyid, sessionid) {
-        let study=await this.getStudy(studyid, sessionid);
-        study.participants = await this.getStudyParticipants(studyid, sessionid);
-        study.allgroups = await groupcontroler.getGroups(sessionid);
-        study.completeGroups = await this.getStudyGroups(studyid, sessionid);
-        study.completeAllocator = await this.getStudyAllocator(studyid, sessionid);
-        let participants={}
-        for(let i=0; i<study.participants.length;i++) {
-            let user=study.participants[i];
-            let username=user.username;
-            let userDisplay=username;
-            if(user.isToken) {
-                userDisplay=user.token;
-            }
-            participants[username]=userDisplay;
+        let study=await SimvaAsync.getStudy(studyid, sessionid);
+        try {
+            study.participants = await SimvaAsync.getStudyParticipants(studyid, sessionid);
+        } catch(e) {
+            logger.warn(e);
         }
-        study.completeAllocator.data={};
-        study.completeAllocator.data.displayparticipants=participants;
+        try {
+            study.allgroups = await SimvaAsync.getGroups(sessionid);
+        } catch(e) {
+            logger.warn(e);
+        }
+        try {
+            study.completeGroups = await SimvaAsync.getStudyGroups(studyid, sessionid);
+        } catch(e) {
+            logger.warn(e);
+        }
+        try {
+            study.completeAllocator = await SimvaAsync.getAllocator(studyid, sessionid);
+        } catch(e) {
+            logger.warn(e);
+        }
         study.completeTests=[];
         for(let i=0;i<study.tests.length;i++) {
-            study.completeTests.push(await testcontroler.getCompleteTest(studyid, study.tests[i], sessionid));
+            try {
+                study.completeTests.push(await testcontroler.getCompleteTest(studyid, study.tests[i], sessionid));
+            } catch(e) {
+                logger.warn(e);
+            }
         }
         return study;
     },
 
     async exportStudy(studyid, complete, sessionid) {
-        let study=await this.getStudy(studyid, sessionid);
-        study.allocator = await this.getStudyAllocator(studyid, sessionid);
+        let study=await SimvaAsync.getStudy(studyid, sessionid);
+        try {
+            study.allocator = await SimvaAsync.getAllocator(studyid, sessionid);
+        } catch(e) {
+            logger.warn(e);
+        }
         let testsid = study.tests;
         study.tests=[];
         for(let i=0;i<testsid.length;i++) {
-            study.tests.push(await testcontroler.exportTest(studyid, testsid[i], complete, sessionid));
+            try {
+                study.tests.push(await testcontroler.exportTest(studyid, testsid[i], complete, sessionid));
+            } catch(e) {
+                logger.warn(e);
+            }
         }
         return study;
     },
 
     async importStudy(newstudy, sessionid) {
-        let study=await this.addStudy(newstudy.name, sessionid);
+        let study=await SimvaAsync.addStudy(newstudy.name, sessionid);
         for(let i=0;i<newstudy.tests.length;i++) {
-            await testcontroler.importTest(study._id, newstudy.tests[i], sessionid);
+            try {
+                await testcontroler.importTest(study._id, newstudy.tests[i], sessionid);
+            } catch(e) {
+                logger.warn(e);
+            }
         }
         return study;
     },
-    
-    
-    getStudies(sessionid) {
-        return new Promise((resolve, reject) => {
-            Simva.getStudies(sessionid, (error, result) => {
-                if(error) {
-                    reject(error);
-                } else {
-                    resolve(result);
-                }
-            });
-        });
+
+    async addSandboxToTest(studyId, testId, useNewGeneration, sessionid) {
+        logger.info(`Sandbox: ${studyId}.${testId}`);
+        let study = await SimvaAsync.getStudy(studyId, sessionid);
+        let test = await SimvaAsync.getStudyTest(studyId, testId, sessionid);
+        let studyGroups = await SimvaAsync.getStudyGroups(studyId, sessionid);
+        let sandboxGroup=`sandbox_${studyId}`;
+        logger.info(sandboxGroup);
+        let studyGroup = studyGroups.find(g => g.name === sandboxGroup);
+        let params = {
+            username : 'sandbox',
+            useNewGeneration : useNewGeneration,
+            checkIfExists : true
+        }
+        if (!studyGroup) {
+            studyGroup = await SimvaAsync.addGroup(sandboxGroup, useNewGeneration, sessionid);
+            logger.info(studyGroup);
+            params.groupid=studyGroup._id;
+            let student = await groupcontroler.generateStudentUser(params, sessionid);
+            studyGroup.participants.push(student.username);
+            studyGroup.sandbox=true;
+            await SimvaAsync.updateGroup(studyGroup, sessionid);
+            study.groups.push(studyGroup._id);
+        } else {
+            params.groupid=studyGroup._id;
+        }
+        study.sandbox=testId;
+        study.sandboxGroup=studyGroup._id;
+        await SimvaAsync.updateStudy(study, sessionid);
+        let allocator = await SimvaAsync.getAllocator(studyId, sessionid);
+        if(!allocator.extra_data) {
+            allocator.extra_data={};
+        }
+        if(!allocator.extra_data.allocations) {
+            allocator.extra_data.allocations={};
+        }
+        if(allocator.type == "default") {
+            if(useNewGeneration) {
+                allocator.extra_data.allocations[`${params.groupid}_${params.username}`]=testId;
+            } else {
+                allocator.extra_data.allocations[`${params.username}`]=testId;
+            }
+        } else {
+            allocator.extra_data.allocations[`${params.groupid}`]=testId;
+        }
+        logger.info(allocator);
+        await SimvaAsync.updateAllocator(studyId, allocator, sessionid);
+        return studyGroup;
     },
 
-    refreshStudy(study, sessionid) {
-        return new Promise((resolve, reject) => {
-            Simva.updateStudy(study, sessionid, (error, result) => {
-                if(error) {
-                    reject(error);
-                } else {
-                    resolve(result);
-                }
-            });
-        });
-    },
+    async deleteSandboxFromTest(studyId, testId, sessionid) {
+        logger.info(`Deleting sandbox setup for: ${studyId}.${testId}`);
 
+        // 1. Get study, allocator, and groups
+        let study = await SimvaAsync.getStudy(studyId, sessionid);
+        let allocator = await SimvaAsync.getAllocator(studyId, sessionid);
+        let studyGroups = await SimvaAsync.getStudyGroups(studyId, sessionid);
+        let sandboxGroupId = study.sandboxGroup; // saved when creating
+        let sandboxGroup = studyGroups.find(g => g._id === sandboxGroupId);
+        logger.info(sandboxGroup);
+        // 2. Remove sandbox flag from study
+        study.sandbox=null;
+        study.sandboxGroup=null;
+        study.groups = study.groups.filter(gid => gid !== sandboxGroupId);
+        await SimvaAsync.updateStudy(study, sessionid);
 
-    addStudy(studyname, sessionid) {
-        return new Promise((resolve, reject) => {
-            Simva.addStudy(studyname, sessionid, (error, study) => {
-                if(error) {
-                    reject(error);
-                } else {
-                    resolve(study);
-                }
-            });
-        });
-    },
+        // 3. Clean allocator mapping
+        if(allocator.type == "default") {
+            delete allocator.extra_data.allocations[sandboxGroup.participants[0]];
+        } else if(allocator.type == "group") {
+            delete allocator.extra_data.allocations[sandboxGroupId];
+        }
+        await SimvaAsync.updateAllocator(studyId, allocator, sessionid);
+        
+        // 4. Optionally delete sandbox group & user
+        if (sandboxGroup) {
+            logger.info(`Deleting sandbox group ${sandboxGroup.name}`);
+            await SimvaAsync.deleteGroup(sandboxGroupId, sessionid);
+        }
 
-    getStudy(studyid, sessionid) {
-        return new Promise((resolve, reject) => {
-            Simva.getStudy(studyid, sessionid, (error, study) => {
-                if(error) {
-                    reject(error);
-                } else {
-                    resolve(study);
-                }
-            });
-        });
-    },
+        return {deleted : true};
+    }
 
-    getStudyParticipants(studyid, sessionid) {
-        return new Promise((resolve, reject) => {
-            Simva.getStudyParticipants(studyid, sessionid, (error, participants) => {
-                if(error) {
-                    reject(error);
-                } else {
-                    resolve(participants);
-                }
-            });
-        });
-    },
-
-    getStudyGroups(studyid, sessionid) {
-        return new Promise((resolve, reject) => {
-            Simva.getStudyGroups(studyid, sessionid, (error, groups) => {
-                if(error) {
-                    reject(error);
-                } else {
-                    resolve(groups);
-                }
-            });
-        });
-    },
-
-    getStudyAllocator(studyid, sessionid) {
-        return new Promise((resolve, reject) => {
-            Simva.getAllocator(studyid, sessionid, (error, allocator) => {
-                if(error) {
-                    reject(error);
-                } else {
-                    resolve(allocator);
-                }
-            });
-        });
-    },
-
-    getStudyTests(studyid, sessionid) {
-        return new Promise((resolve, reject) => {
-            Simva.getStudyTests(studyid, sessionid, (error, tests) => {
-                if(error) {
-                    reject(error);
-                } else {
-                    resolve(tests);
-                }
-            });
-        });
-    },
 }
