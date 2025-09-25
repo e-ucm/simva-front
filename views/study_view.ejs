@@ -1163,12 +1163,43 @@
 
 	let paintTest = function(test){
 		$('#tests').append(`<div id="test_${test._id}" class="test">
-			<div class="top"><h3>${test.name}</h3><input class="violet" type="button" value="<%- t('tests.expand', { ns : 'studies' }) %>" onclick="toggleTest('${test._id}')">
-			<input class="green" type="button" value="<%- t('activities.add.title', { ns : 'studies' }) %>" onclick="openActivityForm('${test._id}')">
-			<input class="yellow" type="button" value="<%- t('tests.edit.title', { ns : 'studies' }) %>" onclick="openEditTestForm('${test._id}')">
-			<input class="red" type="button" value="<%- t('tests.delete.title', { ns : 'studies' }) %>" onclick="deleteTest('${test._id}', '${test.name}')">
-			<input class="orange" type="button" value="<%- t('tests.duplicate.title', { ns : 'studies' }) %>" onclick="openEditDuplicateForm('${test._id}')"></div>
+			<div class="top">
+				<h3>${test.name}</h3>
+				<input class="violet" type="button" value="<%- t('tests.expand', { ns : 'studies' }) %>" onclick="toggleTest('${test._id}')">
+				<input class="green" type="button" value="<%- t('activities.add.title', { ns : 'studies' }) %>" onclick="openActivityForm('${test._id}')">
+				<input class="yellow" type="button" value="<%- t('tests.edit.title', { ns : 'studies' }) %>" onclick="openEditTestForm('${test._id}')">
+				<input class="red" type="button" value="<%- t('tests.delete.title', { ns : 'studies' }) %>" onclick="deleteTest('${test._id}', '${test.name}')">
+				<input class="orange" type="button" value="<%- t('tests.duplicate.title', { ns : 'studies' }) %>" onclick="openEditDuplicateForm('${test._id}')">
+				<input class="pink" type="button" value="<%- t('tests.sandbox.add', { ns : 'studies' }) %>" onclick="generateSandBoxEnvironement('${test._id}')">
+				<input class="green" type="button" value="<%- t('tests.sandbox.reset', { ns : 'studies' }) %>" onclick="resetSandBoxEnvironement('${test._id}')">
+				<input class="green" type="button" value="<%- t('tests.sandbox.run', { ns : 'studies' }) %>" onclick="runSandBoxEnvironement('${test._id}')">
+				<input class="red" type="button" value="<%- t('tests.sandbox.delete', { ns : 'studies' }) %>" onclick="deleteSandBoxEnvironement('${test._id}')">
+			</div>
 			<div class="activities collapsed">${roller}</div>`);
+	}
+
+	let generateSandBoxEnvironement=function(testId)  {
+		Simva.generateSandBoxEnvironement(studyid, testId, function(error, result){
+			if(!error) {
+				reloadStudy();
+			}
+		});
+	}
+
+	let resetSandBoxEnvironement=function(testId)  {
+		Simva.resetSandBoxEnvironement(studyid, testId, function(error, result){
+			if(!error) {
+				reloadStudy();
+			}
+		});
+	}
+
+	let runSandBoxEnvironement=function(testId)  {
+		Simva.runSandBoxEnvironement(studyid, testId, function(error, result){
+			if(!error) {
+				h_ref=result;
+			}
+		});
 	}
 
 	let paintTestActivities = function(test, activities, participants){

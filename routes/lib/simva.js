@@ -89,7 +89,7 @@ class Simva {
 		Utils.post(`${this.shlinkapiurl}/rest/v3/short-urls`, body, callback, null, this.shlinkapikey);
 	}
 
-		//SHLINK URL
+	//SHLINK URL
 	generateURL(url, tag, title, customSlug, length, callback){
 		let body = {
 			"longUrl": url,
