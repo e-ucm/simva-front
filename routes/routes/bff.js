@@ -174,7 +174,7 @@ module.exports = function(auth, config){
             let group = await groupcontroler.getCompleteGroup(groupid, sessionid);
             res.status(200).send(group);
         } catch(error) {
-            next(error.response.data);
+            next(error);
         }
     });
 
@@ -233,7 +233,7 @@ module.exports = function(auth, config){
             let study = await studycontroler.getCompleteStudy(studyId, sessionid);
             res.status(200).send(study);
         } catch(error) {
-            next(error.response.data);
+            next(error);
         }
     });
                                 
@@ -415,7 +415,7 @@ module.exports = function(auth, config){
             let study = await studycontroler.exportStudy(studyId, true, sessionid);
             res.status(200).send(study);
         } catch(error) {
-            next(error.response.data);
+            next(error);
         }
     });
 
@@ -426,7 +426,7 @@ module.exports = function(auth, config){
             let study = await studycontroler.importStudy(newstudy, sessionid);
             res.status(200).send(study);
         } catch(error) {
-            next(error.response.data);
+            next(error);
         }
     });
 
