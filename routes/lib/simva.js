@@ -136,6 +136,10 @@ class Simva {
 		this.post(`${this.apiurl}/users`, body, sessionId, callback);
 	}
 
+	getUser(username, sessionId, callback){
+		this.get(`${this.apiurl}/users?search_string=${encodeURI(`{"username":"${username}"}`)}`, sessionId, callback);
+	}
+
 	setRole(username, role, sessionId, callback){
 		let body = { username: username, role: role };
 		this.patch(`${this.apiurl}/users/${username}`, body, sessionId, callback);

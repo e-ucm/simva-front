@@ -319,23 +319,10 @@ module.exports = function(auth, config){
     router.post('/studies/:studyid/tests/:testid/sandbox', auth, async (req, res, next) => {
         let studyId=req.params["studyid"];
         let testId=req.params["testid"];
-        logger.info(`Sandbox : ${studyId} _ ${testId}`);
         let use_new_generation = req.query["new"] ? req.query["new"] == "true" : true;
-        let sessionid = req.session.id;
         try {
-            let sandbox_group=`sandbox_${studyId}_${testId}`;
-            logger.info(sandbox_group);
-            let study = await SimvaAsync.getStudy(studyId, sessionid);
-            let test = await SimvaAsync.getStudyTest(studyId, testId, sessionid);
-            let studyGroups = await SimvaAsync.getStudyGroups(studyId, sessionid);
-            let study_group = studyGroups.find(g => g.name === sandbox_group);
-            if (!study_group) {
-                study_group = await SimvaAsync.addGroup(sandbox_group, use_new_generation, sessionid);
-                await SimvaAsync.
-                study.groups.push(study_group._id);
-                await SimvaAsync.updateStudy(study, sessionid);
-            }
-            res.status(200).send({sandbox_group:study_group._id});
+            let result = await studycontroler.addSandboxToTest(studyId, testId, use_new_generation, req.session.id);
+            res.status(200).send(result);
         } catch(error) {
             next(error);
         } 
@@ -344,31 +331,31 @@ module.exports = function(auth, config){
     router.get('/studies/:studyid/tests/:testid/sandbox', auth, async (req, res, next) => {
         let studyId=req.params["studyid"];
         let testId=req.params["testid"];
-        let sessionid = req.session.id;
-        let sandbox_group=`sandbox_${studyId}_${testId}`;
-        sandbox_group
         try {
-            res.status(200).send({sandbox_group:study_group._id});
+            res.status(200).send({study:studyId});
         } catch(error) {
-            next(error.response.data);
+            next(error);
         } 
     });
 
     router.patch('/studies/:studyid/tests/:testid/sandbox', auth, async (req, res, next) => {
         let studyId=req.params["studyid"];
         let testId=req.params["testid"];
-        let sessionid = req.session.id;
-        let sandbox_group=`sandbox_${studyId}_${testId}`;
-        sandbox_group
+        try {
+            res.status(200).send({study:studyId});
+        } catch(error) {
+            next(error);
+        } 
     });
 
     router.delete('/studies/:studyid/tests/:testid/sandbox', auth, async (req, res, next) => {
         let studyId=req.params["studyid"];
         let testId=req.params["testid"];
-        let sessionid = req.session.id;
-        let sandbox_group=`sandbox_${studyId}_${testId}`;
-
-
+        try {
+            res.status(200).send({study:studyId});
+        } catch(error) {
+            next(error);
+        }
     });
     /**
     * ALLOCATORS

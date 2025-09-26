@@ -23,20 +23,27 @@ module.exports = {
         let password = username;
         let email = `${username}@example.com`
         if(params.useNewGeneration) {
-            email=`${params.groupid}_${email}`;
+            email=`${params.groupid}.${email}`;
         }
-        let user = await SimvaAsync.register(params.groupid, username, email, password, 'student', true, params.useNewGeneration, sessionid);
+        let user;
+        if(params.checkIfExists) {
+            user = await SimvaAsync.getUser(username, sessionid);
+            if(user.username) {
+                return user;
+            }
+        } 
+        user = await SimvaAsync.register(params.groupid, username, email, password, 'student', true, params.useNewGeneration, sessionid);
         return user;
     },
 
-    async generateStudentUserWithRetry(params, sessionId, maxRetries, retryCount = 0) {
+    async generateStudentUserWithRetry(params, sessionid, maxRetries, retryCount = 0) {
         try {
-            const student = await this.generateStudentUser(params, sessionId);
+            const student = await this.generateStudentUser(params, sessionid);
             return student;
         } catch (e) {
             if (retryCount < maxRetries) {
                 logger.debug(`Retry ${retryCount + 1}: failed to generate user →`, e);
-                return this.generateStudentUserWithRetry(params, sessionId, maxRetries, retryCount + 1);
+                return this.generateStudentUserWithRetry(params, sessionid, maxRetries, retryCount + 1);
             } else {
                 throw new Error(`Failed after ${maxRetries} retries: ${e.message}`);
             }
