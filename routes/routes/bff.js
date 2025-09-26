@@ -7,7 +7,6 @@ module.exports = function(auth, config){
     
     const logger = require('../../logger');
     const Simva = require('../lib/simva');
-    const SimvaAsync = require('../lib/simvaAsync');
     const studycontroler = require('../lib/studycontroler');
     const groupcontroler = require('../lib/groupcontroler');
     const testscontroler = require('../lib/testscontroler');
@@ -71,31 +70,32 @@ module.exports = function(auth, config){
 
     router.post('/groups/:groupid/users', auth, async (req, res, next) => {
         let groupid = req.params['groupid'];
-        let generateUser = (callback)  => {
-            let username = usertools.generateUsername(req.body.algorithm, req.body.length);
-            let password = username;
-            let email = `${username}@example.com`
-            if(req.body.useNewGeneration) {
-                email=`${groupid}_${email}`;
-            }
-            Simva.register(groupid, username, email, password, 'student', true, req.body.useNewGeneration, req.session.id, callback);
-        }
-        
         let users=[];
-        
-        let completed=(error, user)  => {
-            if(error) {
-                generateUser(completed);
-            } else {
-                users.push(user.username);
-                if(users.length == req.body.batchLength) {
-                    res.status(200).send(users);
-                }
-            }
-        };
-        for(let i=0; i < req.body.batchLength; i++) {
-            generateUser(completed);
+        let params = {
+            algorithm: req.body.algorithm,
+            length : req.body.length,
+            groupid: groupid,
+            useNewGeneration:req.body.useNewGeneration,
         }
+        let batchLength=req.body.batchLength;
+        while (users.length < batchLength) {
+            // Fire off remaining promises in parallel
+            const remaining = batchLength - users.length;
+            const promises = Array.from({ length: remaining }, () => groupcontroler.generateStudentUserWithRetry(params, req.session.id, 5));
+            logger.info("Test");
+            try {
+                const results = await Promise.all(promises);
+                logger.info(results);
+                users.push(...results.map(student => student.username));
+                logger.info(users.length);
+                logger.info(users);
+            } catch (err) {
+                logger.error("Error generating some users:", err);
+                // continue loop → it will retry failed ones
+            }
+        }
+
+        res.status(200).send(users);
     });
 
     router.patch('/users/:username', auth, async (req, res, next) => {
