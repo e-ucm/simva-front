@@ -21,6 +21,36 @@ class UserTools {
 		return pre;
 	}
 
+	/**
+	 * Get a Keycloak token for a sandbox student user
+	 * @param {string} studentId - the sandbox student username (also password)
+	 * @returns {Promise<{ access_token: string, refresh_token: string }>}
+	 */
+	async getSandboxToken(login_hint, scope, studentId) {
+		const url = config.sso.tokenUrl;
+
+		const params = new URLSearchParams();
+		params.append("grant_type", "password");
+		params.append("client_id", config.sso.clientId);   // replace with your client_id
+		params.append("client_secret", config.sso.clientSecret);
+		params.append("scope", scope);
+		params.append("login_hint", login_hint);
+		params.append("username", studentId);
+		params.append("password", studentId);         // since password = username
+		logger.info(params);
+
+		try {
+			const response = await axios.post(url, params, {
+			headers: { "Content-Type": "application/x-www-form-urlencoded" }
+			});
+
+			return response.data; // contains access_token, refresh_token, etc.
+		} catch (error) {
+			console.error("Sandbox login failed:", error.response?.data || error.message);
+			throw error;
+		}
+	}
+
 	redirectOpenId(level, req, res) {
 		var pre=this.preTabs(level);
 		if(req.session.intendedUrl && req.session.intendedUrl.toLowerCase().includes("scheduler")) {
@@ -174,8 +204,8 @@ class UserTools {
 		let simvaJwtToken = this.decodeJWT(token);
 		logger.info(`getProfileFromJWT() : ${JSON.stringify(simvaJwtToken)}`);
 		profile.provider = simvaJwtToken.iss;
-		profile.id = simvaJwtToken.data.id;
-		profile.username = simvaJwtToken.data.username;
+		//profile.id = simvaJwtToken.data.id;
+		profile.username = simvaJwtToken.preferred_username;
 		profile.email = simvaJwtToken.email;
 		profile.roles = simvaJwtToken.realm_access.roles;
 		profile.role = this.getRoleFromJWT(simvaJwtToken);

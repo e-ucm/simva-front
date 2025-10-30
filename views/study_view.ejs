@@ -1162,6 +1162,16 @@
 	}
 
 	let paintTest = function(test){
+		let sandbox="";
+		if(study.sandbox == test._id) {
+			sandbox = `<input class="green" type="button" value="<%- t('tests.sandbox.reset', { ns : 'studies' }) %>" onclick="resetSandBoxEnvironement('${test._id}')">
+				<a href="<%= config.simva.url %>/scheduler/${studyid}/sandbox" target="_blank">
+					<input class="green" type="button" value="<%- t('tests.sandbox.run', { ns : 'studies' }) %>">
+				</a>
+				<input class="red" type="button" value="<%- t('tests.sandbox.delete', { ns : 'studies' }) %>" onclick="deleteSandBoxEnvironement('${test._id}')">`;
+		} else {
+			sandbox = `<input class="pink" type="button" value="<%- t('tests.sandbox.add', { ns : 'studies' }) %>" onclick="generateSandBoxEnvironement('${test._id}')">`;
+		}
 		$('#tests').append(`<div id="test_${test._id}" class="test">
 			<div class="top">
 				<h3>${test.name}</h3>
@@ -1170,10 +1180,7 @@
 				<input class="yellow" type="button" value="<%- t('tests.edit.title', { ns : 'studies' }) %>" onclick="openEditTestForm('${test._id}')">
 				<input class="red" type="button" value="<%- t('tests.delete.title', { ns : 'studies' }) %>" onclick="deleteTest('${test._id}', '${test.name}')">
 				<input class="orange" type="button" value="<%- t('tests.duplicate.title', { ns : 'studies' }) %>" onclick="openEditDuplicateForm('${test._id}')">
-				<input class="pink" type="button" value="<%- t('tests.sandbox.add', { ns : 'studies' }) %>" onclick="generateSandBoxEnvironement('${test._id}')">
-				<input class="green" type="button" value="<%- t('tests.sandbox.reset', { ns : 'studies' }) %>" onclick="resetSandBoxEnvironement('${test._id}')">
-				<input class="green" type="button" value="<%- t('tests.sandbox.run', { ns : 'studies' }) %>" onclick="runSandBoxEnvironement('${test._id}')">
-				<input class="red" type="button" value="<%- t('tests.sandbox.delete', { ns : 'studies' }) %>" onclick="deleteSandBoxEnvironement('${test._id}')">
+				${sandbox}
 			</div>
 			<div class="activities collapsed">${roller}</div>`);
 	}
@@ -1194,10 +1201,21 @@
 		});
 	}
 
-	let runSandBoxEnvironement=function(testId)  {
-		Simva.runSandBoxEnvironement(studyid, testId, function(error, result){
+	let deleteSandBoxEnvironement=function(testId)  {
+		Simva.deleteSandBoxEnvironement(studyid, testId, function(error, result){
 			if(!error) {
-				h_ref=result;
+				reloadStudy();
+			}
+		});
+	}
+
+	let runSandBoxEnvironement=function(testId)  {
+		Simva.runSandBoxEnvironement(studyid, function(error, result){
+			if(!error) {
+				let context = $('#iframe_floating iframe')[0].contentWindow.document;
+				let body = $('body', context);
+				body.html(result);
+				Utils.toggleAddForm('iframe_floating');
 			}
 		});
 	}

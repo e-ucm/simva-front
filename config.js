@@ -37,6 +37,7 @@ config.sso.publicClient = process.env.SSO_PUBLIC_CLIENT || 'false'
 
 config.sso.accountPath = process.env.SSO_ACCOUNT_PATH || '/account'
 config.sso.accountUrl = `${config.sso.url}/realms/${config.sso.realm}${config.sso.accountPath}?referrer=${config.sso.clientId}&referrer_uri=${config.simva.url}`
+config.sso.tokenUrl = `${config.sso.url}/realms/${config.sso.realm}/protocol/openid-connect/token`
 config.sso.userCanSelectRole=process.env.SSO_USER_CAN_SELECT_ROLE || "true"
 config.sso.administratorContact= process.env.SSO_ADMINISTRATOR_CONTACT || "contact@administrator.com"
 config.sso.studentAllowedRole = (process.env.SSO_STUDENT_ALLOWED_ROLE === "true") ? "student" : null

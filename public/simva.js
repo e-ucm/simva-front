@@ -212,6 +212,9 @@ var Simva = {
 		Utils.get(`/bff/studies/${study_id}/schedule`, callback);
 	},
 
+	getStudyScheduleSandbox: function(study_id, callback){
+		Utils.get(`/bff/studies/${study_id}/schedule/sandbox`, callback);
+	},
 	
 	getScheduleEventsPresignedUrl: function(study_id, callback){
 		Utils.get(`/studies/${study_id}/schedule/events/getPresignedUrl`, callback);
@@ -230,8 +233,8 @@ var Simva = {
 		Utils.patch(`/bff/studies/${study_id}/tests/${test_id}/sandbox`, {}, callback);
 	},
 
-	runSandBoxEnvironement:function(study_id, test_id, callback)  {
-		Utils.get(`/bff/studies/${study_id}/tests/${test_id}/sandbox`, callback);
+	runSandBoxEnvironement:function(study_id, callback)  {
+		Utils.get(`/scheduler/${study_id}/sandbox`, callback);
 	},
 	
 	deleteSandBoxEnvironement:function(study_id, test_id, callback)  {

@@ -325,34 +325,25 @@ module.exports = function(auth, config){
             res.status(200).send(result);
         } catch(error) {
             next(error);
-        } 
-    });
-
-    router.get('/studies/:studyid/tests/:testid/sandbox', auth, async (req, res, next) => {
-        let studyId=req.params["studyid"];
-        let testId=req.params["testid"];
-        try {
-            res.status(200).send({study:studyId});
-        } catch(error) {
-            next(error);
-        } 
+        }
     });
 
     router.patch('/studies/:studyid/tests/:testid/sandbox', auth, async (req, res, next) => {
-        let studyId=req.params["studyid"];
-        let testId=req.params["testid"];
-        try {
-            res.status(200).send({study:studyId});
-        } catch(error) {
-            next(error);
-        } 
+        Simva.resetSandbox(req.params["studyid"], req.params["testid"], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
     });
 
     router.delete('/studies/:studyid/tests/:testid/sandbox', auth, async (req, res, next) => {
         let studyId=req.params["studyid"];
         let testId=req.params["testid"];
         try {
-            res.status(200).send({study:studyId});
+            let result = await studycontroler.deleteSandboxFromTest(studyId, testId, req.session.id);
+            res.status(200).send(result);
         } catch(error) {
             next(error);
         }
@@ -459,6 +450,16 @@ module.exports = function(auth, config){
 
     router.get('/studies/:studyid/schedule', auth, async (req, res, next) => {
         Simva.getStudySchedule(req.params["studyid"], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.get('/studies/:studyid/schedule/sandbox', auth, async (req, res, next) => {
+        Simva.getStudySchedule(req.params["studyid"], `${req.params["studyid"]}_sandbox_user`, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {

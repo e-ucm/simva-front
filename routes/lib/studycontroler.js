@@ -78,21 +78,23 @@ module.exports = {
         let studyGroup = studyGroups.find(g => g.name === sandboxGroup);
         let params = {
             username : 'sandbox',
-            groupid: studyGroup._id,
             useNewGeneration : useNewGeneration,
             checkIfExists : true
         }
         if (!studyGroup) {
             studyGroup = await SimvaAsync.addGroup(sandboxGroup, useNewGeneration, sessionid);
             logger.info(studyGroup);
+            params.groupid=studyGroup._id;
             let student = await groupcontroler.generateStudentUser(params, sessionid);
             studyGroup.participants.push(student.username);
             studyGroup.sandbox=true;
             await SimvaAsync.updateGroup(studyGroup, sessionid);
             study.groups.push(studyGroup._id);
-            study.sandboxGroup=studyGroup._id;
+        } else {
+            params.groupid=studyGroup._id;
         }
         study.sandbox=testId;
+        study.sandboxGroup=studyGroup._id;
         await SimvaAsync.updateStudy(study, sessionid);
         let allocator = await SimvaAsync.getAllocator(studyId, sessionid);
         if(!allocator.extra_data) {
@@ -113,5 +115,39 @@ module.exports = {
         logger.info(allocator);
         await SimvaAsync.updateAllocator(studyId, allocator, sessionid);
         return studyGroup;
+    },
+
+    async deleteSandboxFromTest(studyId, testId, sessionid) {
+        logger.info(`Deleting sandbox setup for: ${studyId}.${testId}`);
+
+        // 1. Get study, allocator, and groups
+        let study = await SimvaAsync.getStudy(studyId, sessionid);
+        let allocator = await SimvaAsync.getAllocator(studyId, sessionid);
+        let studyGroups = await SimvaAsync.getStudyGroups(studyId, sessionid);
+        let sandboxGroupId = study.sandboxGroup; // saved when creating
+        let sandboxGroup = studyGroups.find(g => g._id === sandboxGroupId);
+        logger.info(sandboxGroup);
+        // 2. Remove sandbox flag from study
+        study.sandbox=null;
+        study.sandboxGroup=null;
+        study.groups = study.groups.filter(gid => gid !== sandboxGroupId);
+        await SimvaAsync.updateStudy(study, sessionid);
+
+        // 3. Clean allocator mapping
+        if(allocator.type == "default") {
+            delete allocator.extra_data.allocations[sandboxGroup.participants[0]];
+        } else if(allocator.type == "group") {
+            delete allocator.extra_data.allocations[sandboxGroupId];
+        }
+        await SimvaAsync.updateAllocator(studyId, allocator, sessionid);
+        
+        // 4. Optionally delete sandbox group & user
+        if (sandboxGroup) {
+            logger.info(`Deleting sandbox group ${sandboxGroup.name}`);
+            await SimvaAsync.deleteGroup(sandboxGroupId, sessionid);
+        }
+
+        return {deleted : true};
     }
+
 }
