@@ -491,7 +491,29 @@ var ActivityPainter = {
 		Simva.setActivityCompletion(activityId, username, status, function(){
 			console.log('saved');
 		});
-	}
+	},
+
+	getMinioData: function(activity, as_array=false){
+		Simva.getMinioDataUrl(activity, as_array, function(error, result){
+			if(error){
+				$.toast({
+					heading: 'Error loading the result',
+					text: error.message,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+			}else{
+				let filename=activity;
+				if(as_array) {
+					filename=`${activity}_traces_data_as_array.json`;
+				} else {
+					filename=`${activity}_traces_data_one_per_line.txt`;
+				}
+       			Utils.download(`${filename}`,`${result.data}`);
+			}
+		})
+	},
 }
 
 PainterFactory.addPainter(ActivityPainter);

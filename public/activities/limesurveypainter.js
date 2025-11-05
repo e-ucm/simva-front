@@ -270,9 +270,10 @@ var LimeSurveyPainter = {
 			<p><a onclick="LimeSurveyPainter.generateTinyURL('${activity._id}', ${activity.extra_data.surveyId})">Generate Tiny URL</a></p>
 			<p><a onclick="LimeSurveyPainter.downloadBackup('${activity._id}', 'full')"> Full : ⬇️</a>
 			<a onclick="LimeSurveyPainter.downloadBackup('${activity._id}', 'code')"> Code : ⬇️</a></p>
-			<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%  [ <doneres>0</doneres> /<total>0</total> ]</span></div>
-			<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>
-			${this.paintActivityParticipantsTable(activity, participants)}</div>`);
+			Trace Storage : 
+			<p>Download as <a onclick="PainterFactory.Painters['activity'].getMinioData('${activity._id}', true)" target="_blank">Array</a></p>
+			<p>Download as <a onclick="PainterFactory.Painters['activity'].getMinioData('${activity._id}', false)" target="_blank">OneTracePerLine</a></p>
+			${PainterFactory.Painters["activity"].paintActivityParticipantsTable(activity, participants, false)}</div>`);
 	},
 
 	paintActivityParticipantsTable: function(activity, participants){

@@ -153,9 +153,12 @@ var GameplayActivityPainter = {
 		}
 		activitybox += '<br>'
 		*/
-		activitybox += '<p>Trace Storage: '
+		activitybox += '<br>Trace Storage:'
 		if(activity.extra_data.config.trace_storage) {
-			activitybox += `<a onclick="GameplayActivityPainter.getMinioData('${activity._id}')" target="_blank">Download Data</a>
+			activitybox += `<p>Download as <a onclick="PainterFactory.Painters['activity'].getMinioData('${activity._id}', true)" target="_blank">Array</a></p>
+			<p>Download as <a onclick="PainterFactory.Painters['activity'].getMinioData('${activity._id}', false)" target="_blank">OneTracePerLine</a></p>
+			</br>
+			<br>
 			<br>
 			XASU Config:
 			<a onclick="GameplayActivityPainter.downloadXasuConfig('${activity._id}','${activity.study}')">
