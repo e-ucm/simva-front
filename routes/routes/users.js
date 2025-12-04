@@ -24,7 +24,13 @@ module.exports = function(auth, config){
        }
       if ('login_hint' in options) {
         params.login_hint = options.login_hint;
-       }
+      }
+      if ('hideLocaleDropdown' in options) {
+        params.hideLocaleDropdown = options.hideLocaleDropdown;
+      }
+      if ('ui_locales' in options) {
+        params.ui_locales = options.ui_locales;
+      }
       return params;
     }
   }
@@ -89,7 +95,17 @@ module.exports = function(auth, config){
      });
   });
 
-  router.get('/openid', passport.authenticate('openid'));
+  router.get('/ssoconnect', (req, res, next) => {
+    usertools.redirectOpenId(1, req, res);
+  });
+
+  router.get('/openid', (req, res, next) => {
+    const options = {
+      hideLocaleDropdown : true,
+      ui_locales : "en"
+    };
+    passport.authenticate('openid', options)(req, res, next);
+  });
 
   router.get('/openid', (req, res, next) => {
     const options = {
@@ -111,10 +127,10 @@ module.exports = function(auth, config){
 );
 
   router.get('/openid/return', function (req, res, next) {
-    passport.authenticate('openid', { failureRedirect: '/users/login' }, function(err, user) {
+    passport.authenticate('openid', { failureRedirect: '/users/openid' }, function(err, user) {
       logger.info('/openid/return: USER');
       if(err){
-        return res.redirect('../login');
+        return res.redirect('../openid');
       }
       req.session.user={};
       req.session.user.data = user.data;

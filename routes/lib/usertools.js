@@ -13,13 +13,17 @@ class UserTools {
     constructor() {
     }
 
-	redirectOpenId(level, req, res) {
+	preTabs(level) {
 		var pre = '/';
 		for(var i = 0; i < level; i++){
 		  pre += '../';
 		}
-		req.session.intendedUrl=`${req.originalUrl}`;
-		if(req.session.intendedUrl.toLowerCase().includes("scheduler")) {
+		return pre;
+	}
+
+	redirectOpenId(level, req, res) {
+		var pre=this.preTabs(level);
+		if(req.session.intendedUrl && req.session.intendedUrl.toLowerCase().includes("scheduler")) {
 		  logger.info("scheduler");
 		  const keyword = "scheduler/";
 		  // Find the index of the keyword
@@ -38,13 +42,15 @@ class UserTools {
 	}
 
 	auth(level){
+		var pre=this.preTabs(level);
 		var tmp=this;
 		return function(req, res, next) {
 		  let simvaToken = userClientsListManager.getJWT(req.session.id);
 		  if (req.session && req.session.user && req.session.user.jwt){
 			tmp.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(req.session.id), (error, result) => {
 				if(error) {
-					tmp.redirectOpenId(level, req, res);
+					req.session.intendedUrl=`${req.originalUrl}`;
+					res.redirect(`${pre}users/login`); 
 				} else {
 					logger.debug("auth() - Token OK");
 					return next();
@@ -61,7 +67,8 @@ class UserTools {
 			logger.info("auth() - New token done");
 			return next();
 		  }else{
-			tmp.redirectOpenId(level, req, res);
+			req.session.intendedUrl=`${req.originalUrl}`;
+			res.redirect(`${pre}users/login`);
 		  }
 		};
 	}

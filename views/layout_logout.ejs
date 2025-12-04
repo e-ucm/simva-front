@@ -140,10 +140,12 @@
 		<div class="right">
 			<span></span><a class="about" href="/about-page"><span><img src="/icon/info.png"></span> <span><%= t('title', { ns : 'about'}) %></span></a></span>
 			<span><a href="https://e-ucm.es/"> <span><%= t('eUCMResearch.title') %></span></a></span>
+			<!--
 			<span><a> <span><%= t('GDPR.title') %></span></a></span>
 			<span><a> <span><%= t('QA.title') %></span></a></span>
-			<span><a> <span><%= t('contact.title') %></span></a></span>
-			<span><a class="login" href="/users/login"><img src="/icon/power.png"> <span><%= t('login.title') %></span></a></span>
+			 -->
+			<span><a  href="/users/login"> <span><%= t('contact.title') %></span></a></span>
+			<span><a class="login" href="/users/ssoconnect"><img src="/icon/power.png"> <span><%= t('login.title') %></span></a></span>
 		</div>
 	</div>
 	
