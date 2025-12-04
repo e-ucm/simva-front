@@ -9,8 +9,10 @@ if(!PainterFactory){
 
 var ActivityPainter = {
 	supportedType: 'miniokafka',
-	simpleName: 'Minio Kafka Activity',
-
+	simple_name: 'Minio Kafka Activity',
+	commun : {},
+	communSpecific : {},
+	specific : {},
 	utils: {},
 	setUtils: function(utils){
 		this.utils = utils;
@@ -74,7 +76,7 @@ var ActivityPainter = {
 			<div class="top"><h4>${activity.name}</h4>
 			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
-			<p class="subtitle">${this.simpleName}</p>
+			<p class="subtitle">${this.simple_name}</p>
 			<p>Minio: <a href="${this.utils.minio_url}${this.utils.minio_bucket}/${this.utils.topics_dir}/${this.utils.trace_topic}/_id=${activity._id}/
 			" target="_blank">Open minio</a></p>
 			<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>

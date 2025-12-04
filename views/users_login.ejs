@@ -1,19 +1,16 @@
-<!DOCTYPE html>
-<html>
+<%# views/about.ejs %>
+ 
+<% extend('layout_logout') %>
+
 <head>
 	<title>Simva Login</title>
 	<link href="/css/style.css" rel="stylesheet" type="text/css">
 </head>
+
 <body class="login floating">
 	<div class="floater">
 		<div id="login_box">
 			<img src="/logo_text.png" alt="logo" />
-			<form method="post" id="login_form">
-				<p>
-					<br>
-					<a class="button violet" href="/users/openid">Login With Keycloak</a>
-				</p>
-			</form>
 		</div>
 	</div>
 </body>

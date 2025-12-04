@@ -24,7 +24,13 @@ module.exports = function(auth, config){
        }
       if ('login_hint' in options) {
         params.login_hint = options.login_hint;
-       }
+      }
+      if ('hideLocaleDropdown' in options) {
+        params.hideLocaleDropdown = options.hideLocaleDropdown;
+      }
+      if ('ui_locales' in options) {
+        params.ui_locales = options.ui_locales;
+      }
       return params;
     }
   }
@@ -65,34 +71,66 @@ module.exports = function(auth, config){
   });
 
   router.get('/login', function(req, res, next) {
-      res.render('users_login', { config: config });
+      res.render('users_login', { 
+        config: config, 
+        t : req.t
+      });
   });
 
   router.get('/role_selection', auth, function(req, res, next) {
-    res.render('users_role_edit', { config: config, user: req.session.user });
+    res.render('users_role_edit', { 
+      config: config, 
+      user: req.session.user, 
+      t : req.t
+    });
   });
 
   
   router.get('/contact_admin', auth, function(req, res, next) {
-    res.render('users_contact_admin', { config: config, user: req.session.user , error : req.query.error });
+    res.render('users_contact_admin', { 
+      config: config, 
+      user: req.session.user, 
+      error : req.query.error,
+      t : req.t
+     });
   });
 
-  router.get('/openid', passport.authenticate('openid'));
+  router.get('/ssoconnect', (req, res, next) => {
+    usertools.redirectOpenId(1, req, res);
+  });
+
+  router.get('/openid', (req, res, next) => {
+    const options = {
+      hideLocaleDropdown : true,
+      ui_locales : "en"
+    };
+    passport.authenticate('openid', options)(req, res, next);
+  });
+
+  router.get('/openid', (req, res, next) => {
+    const options = {
+      hideLocaleDropdown : true,
+      ui_locales : req.cookies.i18next?req.cookies.i18next:"en"
+    };
+    passport.authenticate('openid', options)(req, res, next);
+  });
 
   router.get('/openidscheduler', (req, res, next) => {
     const options = {
       login_hint : req.query.study,
-      simva_user_token: true
+      simva_user_token: true,
+      hideLocaleDropdown : true,
+      ui_locales : req.cookies.i18next?req.cookies.i18next:"en"
     };
     passport.authenticate('openid', options)(req, res, next);
   }
 );
 
   router.get('/openid/return', function (req, res, next) {
-    passport.authenticate('openid', { failureRedirect: '/users/login' }, function(err, user) {
+    passport.authenticate('openid', { failureRedirect: '/users/openid' }, function(err, user) {
       logger.info('/openid/return: USER');
       if(err){
-        return res.redirect('../login');
+        return res.redirect('../openid');
       }
       req.session.user={};
       req.session.user.data = user.data;

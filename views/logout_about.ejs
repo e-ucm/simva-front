@@ -1,0 +1,8 @@
+<%# views/about.ejs %>
+ 
+<% extend('layout_logout') %>
+
+<div class="header_content">
+	<h1><%= t('title', { ns : 'about'}) %></h1>
+	<p><%- t('text', { ns : 'about'}).replace(/\n/g, '<br><br>') %></p>
+</div>

@@ -9,24 +9,24 @@ if(!PainterFactory){
 
 var ImsPackagePainter = {
 	supportedType: 'imspackage',
-	simpleName: 'Ims Package activity',
-
+	simple_name: 'Ims Package activity',
+	commun : {},
+	communSpecific : {},
+	specific : {},
 	utils: {},
 	setUtils: function(utils){
 		this.utils = utils;
 	},
 
 	getExtraForm: function (callback) {
-		callback(null, `<div class="imspackage_activity"><p><label for="imspackage_trace_storage">Trace Storage</label><input id="imspackage_trace_storage" type="checkbox" name="trace_storage"></p>
-			 <p><label for="imspackage_backup">Backup</label><input id="imspackage_backup" type="checkbox" name="backup"></p>
-			 <p><label for="imspackage_package" style="width: 100%; text-align: center;">Package</label><input id="imspackage_package" type="file" name="imspackage">`);
-			 //<p><label for="imspackage_realtime">Realtime</label><input id="imspackage_realtime" type="checkbox" name="realtime"></p>`
+		callback(null, `<div class="imspackage_activity"><p><label for="imspackage_trace_storage">${this.commun.storage_title}</label><input id="imspackage_trace_storage" type="checkbox" name="trace_storage"></p>
+			 <p><label for="imspackage_backup">${this.communSpecific.result_title}</label><input id="imspackage_backup" type="checkbox" name="backup"></p>
+			 <p><label for="imspackage_package" style="width: 100%; text-align: center;">${this.specific.package_title}</label><input id="imspackage_package" type="file" name="imspackage">`);
 	},
 
 	getEditExtraForm: function () {
-		return `<div class="imspackage_activity"><p><label for="edit_imspackage_trace_storage">Trace Storage</label><input id="edit_imspackage_trace_storage" type="checkbox" name="trace_storage"></p>
-			 <p><label for="edit_imspackage_backup">Backup</label><input id="edit_imspackage_backup" type="checkbox" name="backup"></p>`;
-			 //<p><label for="imspackage_realtime">Realtime</label><input id="imspackage_realtime" type="checkbox" name="realtime"></p>`
+		return `<div class="imspackage_activity"><p><label for="edit_imspackage_trace_storage">${this.commun.storage_title}</label><input id="edit_imspackage_trace_storage" type="checkbox" name="trace_storage"></p>
+			 <p><label for="edit_imspackage_backup">${this.communSpecific.result_title}</label><input id="edit_imspackage_backup" type="checkbox" name="backup"></p>`;
 	},
 
 	updateInputEditExtraForm(activity) {
@@ -85,89 +85,20 @@ var ImsPackagePainter = {
 			<div class="top"><h4>${activity.name}</h4>
 			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
-			<p class="subtitle">${this.simpleName}</p>`;
-
-		/*
-		activitybox += '<p>Realtime: ';
-		if(activity.extra_data.config.realtime){
-			activitybox += `<a href="${this.utils.dashboard_url}${activity.extra_data.analytics.activity._id}${this.utils.dashboard_query}" target="_blank">Dashboard</a>`;
-		}else{
-			activitybox += '<i>Disabled</i>';
-		}
-		activitybox += ' - '
-		*/
+			<p class="subtitle">${this.simple_name}</p>`;
 		
-		activitybox += 'Trace Storage: '
+		activitybox += `${this.communSpecific.storage_title}: `
 		if(activity.extra_data.config.trace_storage){
 			activitybox += `<a href="${this.utils.minio_url}minio/${this.utils.minio_bucket}/${this.utils.topics_dir}/${this.utils.trace_topic}/_id=${activity._id}/" target="_blank">Folder</a>`;
 		}else{
-			activitybox += '<i>Disabled</i>';
+			activitybox += `<i>${this.commun.storage_disabled}</i>`;
 		}
-		
-		activitybox += `<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>
-			<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>
-			${this.paintActivityParticipantsTable(activity, participants)}</div>`;
-
+		activitybox += `${PainterFactory.Painters["activity"].paintActivityParticipantsTable(activity, participants, true)}</div>`;
 		$(`#test_${activity.test} .activities`).append(activitybox);
 	},
 
-	paintActivityParticipantsTable: function(activity, participants){
-		let toret = '<table><tr><th>User</th><th>Completed</th><th>Progress</th><th>Traces</th><th>Backup</th></tr>';
-
-		for (var i = 0; i < participants.length; i++) {
-			if(!AllocatorFactory.Painters[allocator.type].isAllocatedToActivity(participants[i].username, activity)){
-				continue;
-			}
-			
-			toret += '<tr>';
-
-			toret += `<td>${PainterFactory.Painters["activity"].paintUsernameOrToken(activity, participants[i])}</td>`;
-
-			toret += `<td id="completion_${activity._id}_${participants[i].username}">---</td>`;
-
-			if(activity.extra_data.config.realtime){
-				toret += `<td id="progress_${activity._id}_${participants[i].username}" class="progress"><div class="partial"></div><div class="done"></div><span><done>0</done>%</span></td>
-						<td id="traces_${activity._id}_${participants[i].username}">---</td>`;
-			}else{
-				toret += '<td colspan="2"><i>Disabled</i></td>'
-			}
-			
-			if(activity.extra_data.config.backup){
-				toret += `<td id="backup_${activity._id}_${participants[i].username}">---</td></tr>`;
-			}else{
-				toret += '<td><i>Disabled</i></td>';
-			}
-		}
-
-		toret += '</table>';
-
-		return toret;
-	},
-
 	paintActivityCompletion: function(activity, status){
-		let usernames = Object.keys(status);
-
-		let done = 0;
-
-		for (var i = 0; i < usernames.length; i++) {
-			if(status[usernames[i]]){
-				done++;
-			}
-
-			let completion = `<span>${status[usernames[i]]}</span>`
-			$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
-			$(`#completion_${activity._id}_${usernames[i]}`).empty();
-			$(`#completion_${activity._id}_${usernames[i]}`).append(completion);
-		}
-
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
-
-		if(isNaN(progress)){
-			progress = 0;
-		}
-
-		$(`#completion_progress_${activity._id} .done`).css('width', `${progress}%` );
-		$(`#completion_progress_${activity._id} done`).text(progress);
+		PainterFactory.Painters["activity"].paintActivityCompletion(activity, status);
 	},
 
 	paintActivityResult: function(activity, results){
@@ -249,14 +180,14 @@ var ImsPackagePainter = {
 		Simva.getActivityResultForUser(activity, user, function(error, result){
 			if(error){
 				$.toast({
-					heading: 'Error loading the result',
+					heading: this.commun.result_error_downloading,
 					text: error.message,
 					position: 'top-right',
 					icon: 'error',
 					stack: false
 				});
 			}else{
-				var filename = `${activity}_${user}.csv`;
+				var filename = `${this.communSpecific.result_file_prefix}_${activity}_${user}.csv`;
 
 				Utils.download(filename, result[user].backup);
 			}
@@ -267,7 +198,7 @@ var ImsPackagePainter = {
 		Simva.getActivityResultForUser(activity, user, function(error, result){
 			if(error){
 				$.toast({
-					heading: 'Error loading the result',
+					heading: this.commun.result_error_loading,
 					text: error.message,
 					position: 'top-right',
 					icon: 'error',

@@ -8,10 +8,17 @@ if(!AllocatorFactory){
 }
 
 var GroupAllocatorPainter = {
-	supportedType: 'group',
-	simpleName: 'Group Allocator',
-	description: 'Group Allocator',
-
+	supportedType: "group",
+	type_translated: "group.type",
+	simple_name: "group.title",
+	description: "group.description",
+	add_title: "allocator.add.title",
+	add_message : "add.message",
+	add_error : "add.error",
+	type_title: "type.title",
+	participant_title: "participant.title",
+	test_title: "test.title",
+	
 	tests: [],
 	groups: [],
 	participants: [],
@@ -35,7 +42,7 @@ var GroupAllocatorPainter = {
 	},
 
 	getFormTitle: function(){
-		return 'Add Allocation';
+		return this.add_title;
 	},
 
 	getFormContent: function(){
@@ -61,7 +68,7 @@ var GroupAllocatorPainter = {
 	paintAllocator: function(allocator){
 		this.allocator = allocator;
 
-		let topaint = `<p class="subtitle italic">Type: <span id="allocator_type">${allocator.type}</span></p>
+		let topaint = `<p class="subtitle italic">${this.type_title}: <span id="allocator_type">${this.type_translated}</span></p>
 			<p class="subtitle justified">${this.description}</p>
 			<table id="allocator_groups" class="allocations">`;
 
@@ -113,7 +120,7 @@ var GroupAllocatorPainter = {
 				$(`#allocation_${group}`).val(previous);
 
 				$.toast({
-					heading: 'Error adding the allocation',
+					heading: tmp.add_error,
 					text: error.message,
 					position: 'top-right',
 					icon: 'error',
@@ -121,7 +128,7 @@ var GroupAllocatorPainter = {
 				});
 			}else{
 				$.toast({
-					heading: 'Allocator updated',
+					heading: tmp.add_message,
 					position: 'top-right',
 					icon: 'success',
 					stack: false
@@ -151,7 +158,7 @@ var GroupAllocatorPainter = {
 			if(error){
 				delete tmp.allocator.extra_data.allocations[participant];
 				$.toast({
-					heading: 'Error adding the allocation',
+					heading: tmp.add_error,
 					text: error.message,
 					position: 'top-right',
 					icon: 'error',
@@ -159,7 +166,7 @@ var GroupAllocatorPainter = {
 				});
 			}else{
 				$.toast({
-					heading: 'Allocator updated',
+					heading: tmp.add_message,
 					position: 'top-right',
 					icon: 'success',
 					stack: false

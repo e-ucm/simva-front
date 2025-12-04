@@ -9,8 +9,10 @@ if(!PainterFactory){
 
 var RageAnalyticsActivityPainter = {
 	supportedType: 'rageanalytics',
-	simpleName: 'RAGE Analytics activity',
-
+	simple_name: 'RAGE Analytics activity',
+	commun : {},
+	communSpecific : {},
+	specific : {},
 	utils: {},
 	setUtils: function(utils){
 		this.utils = utils;
@@ -73,7 +75,7 @@ var RageAnalyticsActivityPainter = {
 		$(`#test_${activity.test} .activities`).append(`<div id="activity_${activity._id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
-			<p class="subtitle">${this.simpleName}</p>
+			<p class="subtitle">${this.simple_name}</p>
 			<p><a onclick="RageAnalyticsActivityPainter.openDashboard('${activity.extra_data.activity._id}')">Dashboard Link</a></p>
 			<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>
 			<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>

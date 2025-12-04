@@ -70,6 +70,12 @@ config.hmac.hmacKey = null
 config.lti = {}
 config.lti.enabled = process.env.LTI_ENABLED || 'false'
 
+config.i18n = {}
+config.i18n.debug = process.env.I18N_DEBUG === "true"
+languages = process.env.SIMVA_LOCALES || "en,es";
+config.i18n.languages = languages.split(",").map(s => s.trim());;
+config.i18n.defaultLanguage = languages[0];
+
 config.kafka = {}
 config.kafka.clientId= process.env.SIMVA_KAFKA_CLIENTID || 'my-client-id'
 config.kafka.brokers= [ process.env.SIMVA_KAFKA_BROKER ] || ['localhost:9092']

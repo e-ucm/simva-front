@@ -91,6 +91,8 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .header .right a img {height: 20px; margin: 5px;}
 .header .right .logout {background-color: black; color: white; border: 0px; margin: 0px; padding: 0px; }
 
+.header_content { width: 100%; height: 100%; padding-top: 50px; position: absolute; z-index: 1;}
+.content_filled { width: 100%; height: 100%; position: absolute; z-index: 1;}
 #activity_content { width: 100%; height: 100%; padding-top: 50px; position: absolute; z-index: 1;}
 .underlay {position: absolute; top: 0px; left: 0px; z-index: 0; display: table; width: 100%; height: 100%; }
 .underlay .centered {display: table-cell; width: 100%; height: 100%; text-align: center; vertical-align: middle;}
@@ -357,3 +359,30 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .menu li span:first-child { width: 60px; }
 .menu li img { width: 50px; height: auto; }
  */
+
+#language-dropdown {
+  position: absolute; /* Make it absolute */
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  padding: 10px;
+  display: none; /* hide the dropdown initially */
+  top:0;
+  z-index: 1000; /* Set the z-index to bring it on top */
+}
+
+#language-dropdown ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#language-dropdown li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+#language-dropdown img {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+}

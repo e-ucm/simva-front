@@ -71,7 +71,6 @@ var Utils = {
 	},
 
 	get: function(url, callback){
-
 		$.ajax({
 			type: 'GET',
 			url: url,
@@ -88,7 +87,6 @@ var Utils = {
 	},
 
 	getPDF: function(url, callback){
-
 		var req = new XMLHttpRequest();
 		req.open("GET", url, true);
 		req.setRequestHeader('Authorization',`Bearer ${jwt}`);
