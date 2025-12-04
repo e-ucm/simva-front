@@ -244,6 +244,10 @@ var Simva = {
 		Utils.post(`/bff/activities/${activity_id}/completion?user=${user}`, { status: status }, callback);
 	},
 
+	setMultiActivityCompletion: function(activity_id, status, callback){
+		Utils.post(`/bff/activities/${activity_id}/multicompletion`, { status: status }, callback);
+	},
+
 	getActivityResultForUser : function(activity_id, student, callback){
 		Utils.get(`/bff/activities/${activity_id}/result?users=${student}`, callback);
 	},

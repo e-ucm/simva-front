@@ -298,7 +298,11 @@ class Simva {
 	setActivityCompletion(activity_id, user, status, sessionId, callback){
 		this.post(`${this.apiurl}/activities/${activity_id}/completion?user=${user}`, { status: status }, sessionId, callback);
 	}
-
+	
+	setMultiActivityCompletion(activity_id, status, sessionId, callback) {
+		this.post(`${this.apiurl}/activities/${activity_id}/multicompletion`, { status: status }, sessionId, callback);
+	}
+	
 	getActivityResultForUser (activity_id, student, sessionId, callback){
 		this.get(`${this.apiurl}/activities/${activity_id}/result?users=${student}`, sessionId, callback);
 	}
