@@ -83,5 +83,12 @@ config.shlink.port = process.env.SHLINK_PORT || '443'
 config.shlink.apiurl =  `${config.shlink.protocol}://${config.shlink.apihost}:${config.shlink.port}`
 config.shlink.apikey = process.env.SHLINK_SERVER_API_KEY || 'myapikey'
 
+config.tmon = {}
+config.tmon.port  = parseInt(process.env.TMON_PORT || 443);
+config.tmon.host = process.env.TMON_HOST || 'tmon.simva.external.test'
+config.tmon.protocol = process.env.TMON_PROTOCOL || 'https'
+let tmonPort = ((default_protocol_ports[config.tmon.protocol] !== config.tmon.port) ? `:${config.tmon.port}` : '')
+config.tmon.url = process.env.TMON_URL || `${config.tmon.protocol}://${config.tmon.host}${tmonPort}`;
+config.tmon.file = process.env.TMON_MINIO_TRACES_FILE || "traces.json"
 
 module.exports = config;

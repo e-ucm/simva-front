@@ -222,7 +222,7 @@ var ActivityPainter = {
 				}
 			}
 
-			let tmpprogress = status[usernames[i]]*100;
+			let tmpprogress = Math.round(status[usernames[i]] * 1000) / 10;
 			$(`#progress_${activity._id}_${usernames[i]} .done`).css('width', `${tmpprogress}%` );
 			$(`#progress_${activity._id}_${usernames[i]} done`).text(tmpprogress);
 		}
@@ -543,6 +543,12 @@ var ActivityPainter = {
 		return `<input class="red" type="button" value="Unset Completion" onclick="PainterFactory.Painters['activity'].setCompletionForAllParticipant('${activity}', false)">
 		<input class="green" type="button" value="Set Completion" onclick="PainterFactory.Painters['activity'].setCompletionForAllParticipant('${activity}', true)">`;
 	},
+	
+	getTMonUrl: function(activityId, testId, studyId) {
+		let url = `${Simva.tmonUrl}/${studyId}/${testId}/${activityId}/${Simva.TMonFile}/dashboard/`;
+		// Open the generated URL in a new tab
+       	window.open(url, '_blank'); 
+	}
 }
 
 PainterFactory.addPainter(ActivityPainter);

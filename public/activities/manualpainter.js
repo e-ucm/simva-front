@@ -103,7 +103,32 @@ var ManualActivityPainter = {
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
 			<p class="subtitle">${this.simpleName}</p>
 			<p>Students ${complete} complete</p>
-			${PainterFactory.Painters["activity"].paintActivityParticipantsTable(activity, participants, true, false, true)}</div>`);
+			<a onclick="PainterFactory.Painters['activity'].getMinioData('${activity._id}')" target="_blank">Download Data</a>
+			<br>
+			<a onclick="PainterFactory.Painters['activity'].getTMonUrl('${activity._id}','${activity.test}','${activity.study}')">
+				Open TMon Dashboard
+			</a>
+			<br>
+			<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>% [ <doneres>0</doneres> /<total>0</total> ]</span></div>
+			<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>
+			${this.paintActivityParticipantsTable(activity, participants)}</div>`);
+	},
+
+	paintActivityParticipantsTable: function(activity, participants){
+		let toret = '<table><tr><th>User</th><th>Completed</th><th>Result</th></tr>';
+
+		for (var i = 0; i < participants.length; i++) {
+			if(!AllocatorFactory.Painters[allocator.type].isAllocatedToActivity(participants[i].username, activity)){
+				continue;
+			}
+			toret += `<tr><td>${PainterFactory.Painters["activity"].paintUsernameOrToken(activity, participants[i])}</td>
+				${PainterFactory.Painters['activity'].paintCompletionRow(activity._id,participants[i].username, true)}
+				${PainterFactory.Painters['activity'].paintResultRow(activity._id,participants[i].username)}</tr>`;
+		}
+
+		toret += '</table>';
+
+		return toret;
 	},
 
 	updateActivityCompletion: function(activityId, username, completion) {
