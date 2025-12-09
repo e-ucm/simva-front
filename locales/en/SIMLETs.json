@@ -43,7 +43,7 @@
     "allocator.group.title":"Group Allocator",
     "allocator.group.description":"This allocator allows you to select to which session branch is each group assigned.",
     "allocator.type.title":"Type",
-    "allocator.sessions.title":"Sesion",
+    "allocator.sessions.title":"Session",
     "allocator.participants.title":"Participant",
     "allocator.add.error":"Error adding the allocation",
     "allocator.add.message":"Allocator updated",
