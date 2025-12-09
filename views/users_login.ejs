@@ -1,17 +1,24 @@
-<%# views/about.ejs %>
+<%# views/users_login.ejs %>
  
 <% extend('layout_logout') %>
 
-<head>
-	<title>Simva Login</title>
-	<link href="/css/style.css" rel="stylesheet" type="text/css">
-</head>
+<script type="text/javascript">
+	document.addEventListener('DOMContentLoaded', () => {
+		const iframe = document.getElementById('sso_connect');
+		const logout_header = document.getElementById('logout_header');
+		iframe.addEventListener('load', () => {
+			try {
+				const currentUrl = iframe.contentWindow.location.href;
+				logout_header.remove();
+				window.location.href=currentUrl;
+        		console.log('Iframe loaded new URL:', currentUrl);	
+				console.log('Detected SSO finished, reloading parent');
+			} catch(e) {
+				console.log('Cross-origin, cannot access URL');
+			}
+		});
+	});
+</script>
 
-<body class="login floating">
-	<div class="floater">
-		<div id="login_box">
-			<img src="/logo_text.png" alt="logo" />
-		</div>
-	</div>
-</body>
-</html>
+<iframe id="sso_connect" class="content_filled" src="/users/ssoconnect">
+</iframe>
