@@ -1167,22 +1167,22 @@
 	let paintTest = function(test){
 		let sandbox="";
 		if(study.sandbox == test._id) {
-			sandbox = `<input class="green" type="button" value="<%- t('tests.sandbox.reset', { ns : 'studies' }) %>" onclick="resetSandBoxEnvironement('${test._id}')">
+			sandbox = `<input class="green" type="button" value="<%- t('sessions.sandbox.reset', { ns : 'SIMLETs' }) %>" onclick="resetSandBoxEnvironement('${test._id}')">
 				<a href="<%= config.simva.url %>/scheduler/${studyid}/sandbox" target="_blank">
-					<input class="green" type="button" value="<%- t('tests.sandbox.run', { ns : 'studies' }) %>">
+					<input class="green" type="button" value="<%- t('sessions.sandbox.run', { ns : 'SIMLETs' }) %>">
 				</a>
-				<input class="red" type="button" value="<%- t('tests.sandbox.delete', { ns : 'studies' }) %>" onclick="deleteSandBoxEnvironement('${test._id}')">`;
+				<input class="red" type="button" value="<%- t('sessions.sandbox.delete', { ns : 'SIMLETs' }) %>" onclick="deleteSandBoxEnvironement('${test._id}')">`;
 		} else {
-			sandbox = `<input class="pink" type="button" value="<%- t('tests.sandbox.add', { ns : 'studies' }) %>" onclick="generateSandBoxEnvironement('${test._id}')">`;
+			sandbox = `<input class="pink" type="button" value="<%- t('sessions.sandbox.add', { ns : 'SIMLETs' }) %>" onclick="generateSandBoxEnvironement('${test._id}')">`;
 		}
 		$('#tests').append(`<div id="test_${test._id}" class="test">
 			<div class="top">
 				<h3>${test.name}</h3>
-				<input class="violet" type="button" value="<%- t('tests.expand', { ns : 'studies' }) %>" onclick="toggleTest('${test._id}')">
-				<input class="green" type="button" value="<%- t('activities.add.title', { ns : 'studies' }) %>" onclick="openActivityForm('${test._id}')">
-				<input class="yellow" type="button" value="<%- t('tests.edit.title', { ns : 'studies' }) %>" onclick="openEditTestForm('${test._id}')">
-				<input class="red" type="button" value="<%- t('tests.delete.title', { ns : 'studies' }) %>" onclick="deleteTest('${test._id}', '${test.name}')">
-				<input class="orange" type="button" value="<%- t('tests.duplicate.title', { ns : 'studies' }) %>" onclick="openEditDuplicateForm('${test._id}')">
+				<input class="violet" type="button" value="<%- t('sessions.expand', { ns : 'SIMLETs' }) %>" onclick="toggleTest('${test._id}')">
+				<input class="green" type="button" value="<%- t('activities.add.title', { ns : 'SIMLETs' }) %>" onclick="openActivityForm('${test._id}')">
+				<input class="yellow" type="button" value="<%- t('sessions.edit.title', { ns : 'SIMLETs' }) %>" onclick="openEditTestForm('${test._id}')">
+				<input class="red" type="button" value="<%- t('sessions.delete.title', { ns : 'SIMLETs' }) %>" onclick="deleteTest('${test._id}', '${test.name}')">
+				<input class="orange" type="button" value="<%- t('sessions.duplicate.title', { ns : 'SIMLETs' }) %>" onclick="openEditDuplicateForm('${test._id}')">
 				${sandbox}
 			</div>
 			<div class="activities collapsed">${roller}</div>`);
