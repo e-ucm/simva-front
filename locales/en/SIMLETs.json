@@ -89,7 +89,7 @@
     "scheduler.shlink.custom_slug.placeholder":"Custom Slug",
 
     "scheduler.shlink.delete.title":"Delete Scheduler Shlink URL",
-    "scheduler.shlink.delete.confirm":"Are you sure do you want to delete the short link '{{shortCode}}' from SIMLET '{{SIMLET}}'?",
+    "scheduler.shlink.delete.confirm":"Are you sure do you want to delete the short link '{{shlink}}' from SIMLET '{{SIMLET}}'?",
     
     "scheduler.noSIMLET.title" : "You have no SIMLETs yet to participate.",
     "scheduler.title" : "Click here to start or continue your session in the SIMLET.",

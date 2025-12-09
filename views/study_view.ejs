@@ -757,7 +757,7 @@
 	deleteShLink = function(){
 		if(study.shlink) {
 			let shortCode=study.shlink.shortCode;
-			if(confirm(`<%- t('scheduler.shlink.delete.confirm', { ns : 'SIMLETs', shortCode : '${shortCode}', SIMLET : '${study.name}'  }) %>`)){
+			if(confirm(`<%- t('scheduler.shlink.delete.confirm', { ns : 'SIMLETs', shlink : '${shortCode}', SIMLET : '${study.name}'  }) %>`)){
 				Simva.deleteShLink(shortCode, (error, result) => {
 					if(!error) {
 						study.shlink=null;
@@ -893,7 +893,7 @@
 	}
 
 	let deleteOwner = function(owner){
-		if(confirm(`<%- t('coordinators.delete.confirm', { ns : 'SIMLETs', owner : '${owner}', SIMLET : '${study.name}' }) %>`)){
+		if(confirm(`<%- t('coordinators.delete.confirm', { ns : 'SIMLETs', coordinator : '${owner}', SIMLET : '${study.name}' }) %>`)){
 			let toremove = -1;
 			for (var i = 0; i < study.owners.length; i++) {
 				if(study.owners[i] === owner){
@@ -930,7 +930,7 @@
 
 	let deleteActivity = function(activityid, activityname, testid){
 		let test=getTestFromTestId(testid);
-		if(confirm(`<%- t('activities.delete.confirm', { ns : 'SIMLETs', activity : '${activityname}', test: '${test}' , SIMLET : '${study.name}' }) %>`)){
+		if(confirm(`<%- t('activities.delete.confirm', { ns : 'SIMLETs', activity : '${activityname}', session: '${test}' , SIMLET : '${study.name}' }) %>`)){
 			Simva.deleteActivity(activityid, function(error, result){
 				reloadStudy();
 			});
