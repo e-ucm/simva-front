@@ -17,7 +17,7 @@
     "name.placeholder":"SIMLET name",
     "name.edit.no_change" : "No changes detected in new SIMLET name !",
     
-    "coordinators.title":"Coordinator",
+    "coordinators.title":"Coordinators",
     "coordinators.placeholder":"Coordinator username",
     "coordinators.add.title":"Add Coordinator",
     "coordinators.error.already_in": "The Coordinator is already in the SIMLET.",
