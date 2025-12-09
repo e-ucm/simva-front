@@ -282,23 +282,19 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .content .test .activities .activity.tactivity { background-color: gray; }
 .content .test .activities .activity.tlimesurvey { 
 	background-color: #3f8446; 
-    width: 400px;
+    width: 500px;
 }
-.content .test .activities .activity.trageanalytics {
-	background-color: #c84949;
-    background: -webkit-linear-gradient(left, #ff7d7d, #ffd17d , #ffff7b, #7bff7b, #84ffff, #8080ff, #ff7aff);
-    background: -o-linear-gradient(right, #ff7d7d, #ffd17d, #ffff7b, #7bff7b, #84ffff, #8080ff, #ff7aff); 
-    background: -moz-linear-gradient(right, #ff7d7d, #ffd17d, #ffff7b, #7bff7b, #84ffff, #8080ff, #ff7aff); 
-    background: linear-gradient(to right, #ff7d7d, #ffd17d, #ffff7b, #7bff7b, #84ffff, #8080ff, #ff7aff); 
-    width: 325px;
-}
-.content .test .activities .activity.tgameplay {
-	background-color: black;
+.content .test .activities .activity.tmanual { 
+	background-color: blueviolet; 
 	color: white;
     width: 400px;
 }
 
-.content .test .activities .activity.tminiokafka { background-color: #30819a; }
+.content .test .activities .activity.tgameplay {
+	background-color: black;
+	color: white;
+    width: 500px;
+}
 
 .content .test .activities .activity.trageminio {
 	background-color: #c84949;
