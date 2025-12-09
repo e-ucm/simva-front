@@ -14,7 +14,7 @@
     "activity.storage.file.one_per_line.suffix":"actividad_una_traza_por_linea",
 
     "limesurvey.name": "Actividad de Limesurvey",
-    "limesurvey.description": "Una actividad basada en encuestas que utiliza LimeSurvey como servicio.",
+    "limesurvey.description": "Una actividad basada en encuestas que utiliza LimeSurvey como servicio, permitiendo a los participantes responder a encuestas previas y posteriores a otras actividades y a los coordinadores recopilar datos de forma eficaz.",
     "limesurvey.result.title":"Resultado",
     "limesurvey.result.file.prefix":"resultado_encuesta",
     "limesurvey.result.zero": "Sin iniciar",
@@ -45,7 +45,7 @@
     "limesurvey.no_method":"Seleccione primero un método",
 
     "gameplay.name": "Actividad de juego",
-    "gameplay.description": "Una actividad de procesador xAPI que utiliza Minio.",
+    "gameplay.description": "La acción de jugar a un juego serio en el que se recopilan los datos de interacción de los participantes a través del componente xAPI (trackers en el código), diseñado para integrar contenido educativo de forma atractiva.",
     "gameplay.result.title":"Copia de seguridad",
     "gameplay.result.file.prefix":"juego_copia_seguridad",
     "gameplay.result.zero": "Sin copia de seguridad",
@@ -61,7 +61,7 @@
     "gameplay.xasu.title":"Configuracion de Xasu",
 
     "manual.name": "Actividad manual",
-    "manual.description": "Una actividad que no se comunica con Simva y debe gestionarse manualmente.",
+    "manual.description": "Un ejercicio de aprendizaje tradicional que deben realizar los participantes, como leer un libro, leer un artículo, ver un vídeo o cualquier otra tarea de aprendizaje pasivo.",
     "manual.result.title":null,
     "manual.result.file.prefix":null,
     "manual.result.zero": null,
