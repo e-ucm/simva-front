@@ -100,7 +100,7 @@
     "completed.off": "False",
 
     "progress.title":"Progress",
-    "user.title":"User",
+    "participant.title":"Participant",
 
     "result.title":"Result",
     "result.disabled":"disabled",
