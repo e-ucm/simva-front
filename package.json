@@ -1,17 +1,18 @@
 {
   "name": "simva-front",
   "description": "Simva, AKA Simple Validator, AKA SurveyManager is the evolution of a tool created to integrate and ease the task of validating serious games using pre-post surveys as a control point. This version allows to create more complex studies with more variety of activities and different allocations.",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "scripts": {
-    "start": "node bin/www $NODE_ARGS",
-    "dev": "nodemon --inspect=0.0.0.0:9229 bin/www $NODE_ARGS",
-    "dev:profiling": "nodemon --inspect=0.0.0.0:9229 --prof bin/www $NODE_ARGS",
-    "dev:clinic:doctor": "clinic doctor $CLINIC_ARGS -- node bin/www $NODE_ARGS",
-    "dev:clinic:bubbleprof": "clinic bubbleprof $CLINIC_ARGS -- node bin/www $NODE_ARGS",
-    "dev:clinic:flame": "clinic flame $CLINIC_ARGS -- node bin/www $NODE_ARGS",
-    "dev:clinic:heapprofiler": "clinic heapprofiler $CLINIC_ARGS -- node bin/www $NODE_ARGS"
+    "start": "pm2-runtime ecosystem.config.js",
+    "dev": "pm2-runtime ecosystem.config.js",
+    "dev:profiling": "pm2-runtime ecosystem.config.js",
+    "dev:clinic:doctor": "clinic doctor $CLINIC_ARGS -- pm2-runtime ecosystem.config.js",
+    "dev:clinic:bubbleprof": "clinic bubbleprof $CLINIC_ARGS -- pm2-runtime ecosystem.config.js",
+    "dev:clinic:flame": "clinic flame $CLINIC_ARGS -- pm2-runtime ecosystem.config.js",
+    "dev:clinic:heapprofiler": "clinic heapprofiler $CLINIC_ARGS -- pm2-runtime ecosystem.config.js"
   },
   "dependencies": {
+    "pm2":"^6.0.14",
     "axios": "^1.7.4",
     "base58-universal": "^2.0.0",
     "body-parser": "1.20.3",

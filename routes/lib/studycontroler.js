@@ -34,6 +34,71 @@ module.exports = {
                 logger.warn(e);
             }
         }
+        try {
+            studyTask={
+                task: 'getStudy',
+                params: 'objectId',
+                object: 'Study',
+                objectLoad: 'false',
+                objectEvent: 'true',
+                objectId: studyid
+            };
+            await SimvaAsync.addToTaskList(studyTask,sessionid);
+        } catch(e) {
+            logger.warn(e);
+        }
+        try {
+            participantTask={
+                task: 'getStudyUsersParticipants',
+                params: '',
+                object: 'Study',
+                objectLoad: 'true',
+                objectEvent: 'true',
+                objectId: studyid
+            };
+            await SimvaAsync.addToTaskList(participantTask,sessionid);
+        } catch(e) {
+            logger.warn(e);
+        }
+        try {
+            groupTask={
+                task: 'getStudyGroups',
+                params: '',
+                object: 'Study',
+                objectLoad: 'true',
+                objectEvent: 'true',
+                objectId: studyid
+            };
+            await SimvaAsync.addToTaskList(groupTask,sessionid);
+        } catch(e) {
+            logger.warn(e);
+        }
+        try {
+            allocatorTask={
+                task: 'getStudyAllocator',
+                params: '',
+                object: 'Study',
+                objectLoad: 'true',
+                objectEvent: 'true',
+                objectId: studyid
+            };
+            await SimvaAsync.addToTaskList(allocatorTask,sessionid);
+        } catch(e) {
+            logger.warn(e);
+        }
+        try {
+            testTask={
+                task: 'getStudyTests',
+                params: 'objectUser',
+                object: 'Study',
+                objectLoad: 'true',
+                objectEvent: 'false',
+                objectId: studyid
+            };
+            await SimvaAsync.addToTaskList(testTask,sessionid);  
+        } catch(e) {
+            logger.warn(e);
+        }
         return study;
     },
 

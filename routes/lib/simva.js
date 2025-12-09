@@ -154,6 +154,11 @@ class Simva {
 	}
 
 	// GROUPS
+	addToTaskList(body, sessionId, callback){
+		this.post(`${this.apiurl}/tasklist`,body, sessionId, callback);
+	}
+
+	// GROUPS
 	getGroups(sessionId, callback){
 		this.get(`${this.apiurl}/groups`, sessionId, callback);
 	}

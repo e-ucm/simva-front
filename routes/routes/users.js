@@ -8,7 +8,6 @@ const Simva = require('../lib/simva');
 
 const userClientsListManager = require('../lib/userClientsListManager');
 let usertools = require('../lib/usertools');
-const cron = require('node-cron');
 
 module.exports = function(auth, config){
 

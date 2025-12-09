@@ -134,6 +134,20 @@ module.exports = function(auth, config){
     });
     
     /**
+    * Add to Task List
+    * 
+    */
+    router.get('/tasklist', auth, async (req, res, next) => {
+        Simva.addToTaskList(body, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    /**
     * GROUPS
     * 
     */
