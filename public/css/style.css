@@ -280,7 +280,10 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .content .test .activities .activity { background-color: gray; width: 250px; padding: 10px; margin-top: 10px; box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3); display: inline-block; margin-right: 10px;}
 
 .content .test .activities .activity.tactivity { background-color: gray; }
-.content .test .activities .activity.tlimesurvey { background-color: #3f8446; }
+.content .test .activities .activity.tlimesurvey { 
+	background-color: #3f8446; 
+    width: 400px;
+}
 .content .test .activities .activity.trageanalytics {
 	background-color: #c84949;
     background: -webkit-linear-gradient(left, #ff7d7d, #ffd17d , #ffff7b, #7bff7b, #84ffff, #8080ff, #ff7aff);

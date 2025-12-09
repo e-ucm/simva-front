@@ -506,6 +506,16 @@ module.exports = function(auth, config){
         });
     });
 
+    router.post('/activities/:activityid/suspend', auth, async (req, res, next) => {
+        Simva.setActivitySuspend(req.params["activityid"], req.body.user, req.body.status, req.body.reason, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
     router.get('/activities/:activityid/result', auth, async (req, res, next) => {
         if(req.query.type) {
             if(req.query.users) {

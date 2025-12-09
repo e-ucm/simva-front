@@ -303,6 +303,11 @@ class Simva {
 		this.post(`${this.apiurl}/activities/${activity_id}/multicompletion`, { status: status }, sessionId, callback);
 	}
 	
+
+	setActivitySuspend(activity_id, user, status, reason, sessionId, callback) {
+		this.post(`${this.apiurl}/activities/${activity_id}/suspend`, { user: user , status : status, reason : reason }, sessionId, callback);
+	}
+
 	getActivityResultForUser (activity_id, student, sessionId, callback){
 		this.get(`${this.apiurl}/activities/${activity_id}/result?users=${student}`, sessionId, callback);
 	}

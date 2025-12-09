@@ -266,6 +266,10 @@ var Simva = {
 	setMultiActivityCompletion: function(activity_id, status, callback){
 		Utils.post(`/bff/activities/${activity_id}/multicompletion`, { status: status }, callback);
 	},
+	
+	setActivitySuspend: function(activity_id, user, status, reason, callback){
+		Utils.post(`/bff/activities/${activity_id}/suspend`, { user : user , status : status, reason : reason }, callback);
+	},
 
 	getActivityResultForUser : function(activity_id, student, callback){
 		Utils.get(`/bff/activities/${activity_id}/result?users=${student}`, callback);

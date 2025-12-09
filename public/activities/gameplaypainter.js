@@ -39,6 +39,8 @@ var GameplayActivityPainter = {
 		gameplay_trace_storage.checked = activity.extra_data.config.trace_storage;
 		var gameplay_backup = document.getElementById('edit_gameplay_backup');
 		gameplay_backup.checked = activity.extra_data.config.backup;
+		var gameplay_scorm_xAPI = document.getElementById('edit_gameplay_scorm_xAPI');
+		gameplay_scorm_xAPI.checked = activity.extra_data.config.scorm_xapi_by_game;
 		var gameplay_game_uri = document.getElementById('edit_gameplay_game_uri');
 		gameplay_game_uri.value = activity.extra_data.game_uri;
 
@@ -54,8 +56,8 @@ var GameplayActivityPainter = {
 		activity.type = this.supportedType;
 
 		activity.trace_storage = formdata.trace_storage === 'on';
-		activity.realtime = formdata.realtime === 'on';
 		activity.backup = formdata.backup === 'on';
+		activity.scorm_xapi_by_game = formdata.scorm_xapi === 'on';
 		if(formdata.game_uri !== ''){
 			activity.game_uri = formdata.game_uri;
 		}
@@ -71,14 +73,13 @@ var GameplayActivityPainter = {
 		if(actualActivity.name !== formdata.name) {
 			activity.name = formdata.name;
 		}
-	
 		let trace_storage = formdata.trace_storage === 'on';
 		if(actualActivity.extra_data.config.trace_storage !== trace_storage) {
 			activity.trace_storage = trace_storage;
 		}
-		let realtime = formdata.realtime === 'on';
-		if(actualActivity.extra_data.config.realtime !== realtime) {
-			activity.realtime = realtime;
+		let scorm_xapi_by_game = formdata.scorm_xapi === 'on';
+		if(actualActivity.extra_data.config.scorm_xapi_by_game !== scorm_xapi_by_game) {
+			activity.scorm_xapi_by_game = scorm_xapi_by_game;
 		}
 		let backup = formdata.backup === 'on';
 		if(actualActivity.extra_data.config.backup !== backup) {
@@ -132,10 +133,6 @@ var GameplayActivityPainter = {
 
 		var filename = "tracker_config.json";
 
-		var blob = new Blob([content], {
-		 type: "text/plain;charset=utf-8"
-		});
-
 		Utils.download(filename, content);
 	},
 
@@ -169,7 +166,7 @@ var GameplayActivityPainter = {
 			activitybox += `<i>${this.commun.result_disabled}</i>`;
 		}
 		activitybox += '</p>';
-		activitybox += `${PainterFactory.Painters["activity"].paintActivityParticipantsTable(activity, participants)}</div>`;
+		activitybox += `${PainterFactory.Painters["activity"].paintActivityParticipantsTable(activity, participants, true)}</div>`;
 
 		$(`#test_${activity.test} .activities`).append(activitybox);
 	},
@@ -216,46 +213,6 @@ var GameplayActivityPainter = {
 				}
 			});
 		}
-	},
-	
-	openTraces: function(activity, user){
-		Simva.getActivityResultForUser(activity, user, function(error, result){
-			if(error){
-				$.toast({
-					heading: 'Error loading the result',
-					text: error.message,
-					position: 'top-right',
-					icon: 'error',
-					stack: false
-				});
-			}else{
-
-				let printAnalysisRecursive = function(analysis){
-					let block = '<div>';
-					let keys = Object.keys(analysis);
-
-					for (var i = keys.length - 1; i >= 0; i--) {
-						if(typeof analysis[keys[i]] === 'object'){
-							block += `<p>${keys[i]}</p>`;
-							block += printAnalysisRecursive(analysis[keys[i]]);
-						}else{
-							block += `<p>${keys[i]}: ${analysis[keys[i]]}</p>`;
-						}
-					}
-					
-					block += '</div>';
-
-					return block;
-				}
-
-
-				let content = `<link href="/css/style.css" rel="stylesheet" type="text/css"><div style="padding: 20px;" class="analysis">${printAnalysisRecursive(result[user].realtime)}</div>`;
-				let context = $('#iframe_floating iframe')[0].contentWindow.document;
-				let body = $('body', context);
-				body.html(content);
-				Utils.toggleAddForm('iframe_floating');
-			}
-		})
 	},
 }
 

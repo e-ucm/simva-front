@@ -103,10 +103,86 @@
 		var completed = '<body style="background-color: black; color: white; font-family: sans-serif; text-align: center;"><h1>Study Completed!</h1><p>Congratulations, you have completed all the activities of the study.</p><p>Ask the teacher if there are more steps to continue.</p></body>';
 
 		let current_activity_id = null;
+
+		let isUserInteracting = {
+			isMouseOver: true,
+			isWindowFocused: true,
+			isDocumentVisible: true,
+		};
+		let previousState=true;
+
+		let getIframeSrc = function(event) {
+ 		 	var el = event.target;
+  			return eventFromIframe(event) ? el.getAttribute('src') : '';
+		}
+
+		function eventFromIframe(event) {
+			var el = event.target;
+			return el && el.tagName && el.tagName.toLowerCase() == 'iframe';
+		}
+
 		$(document).ready(function() {
 			getUserToken();
 			reloadSchedule();
+
+			document.addEventListener('mouseover', () => {
+				isUserInteracting.isMouseOver = true;
+				updateUserInteractionState("mouse_over");
+			});
+
+			document.addEventListener('mouseout', (event) => {
+				if (!event.relatedTarget) {
+					isUserInteracting.isMouseOver = false;
+					updateUserInteractionState("mouse_out");
+				}
+			});
+
+			window.addEventListener('focus', () => {
+				isUserInteracting.isWindowFocused = true;
+				//console.log('Window lost focus.');
+				updateUserInteractionState("windows_focus");
+			});
+
+			window.addEventListener('blur', () => {
+				isUserInteracting.isWindowFocused = false;
+				//console.log('Window gained focus.');
+				updateUserInteractionState("windows_focus");
+			});
+
+			document.addEventListener('visibilitychange', () => {
+				isUserInteracting.isDocumentVisible = document.visibilityState === 'visible';
+				//console.log(`Document is ${isUserInteracting.isDocumentVisible ? 'visible' : 'hidden'}.`);
+				updateUserInteractionState("change_tab");
+			});
+
+			window.addEventListener('beforeunload', () => {
+				if(current_activity_id != null) {
+					console.log("Suspended");
+					Simva.setActivitySuspend(current_activity_id, username, true, "unload_page", function() {
+						console.log("Suspended in Simva");
+					});
+				}
+			});
 		});
+
+		// Function to update the user interaction state and notify the server if changed
+		let updateUserInteractionState = function(reason) {
+			const isInteracting = isUserInteractingFunc();
+			if (isInteracting !== previousState) {
+				console.log(`User is ${isInteracting ? 'interacting' : 'not interacting'} with the page.`);
+				previousState = isInteracting;
+				if(current_activity_id != null) {
+					Simva.setActivitySuspend(current_activity_id, username, !isInteracting, reason, function() {
+						console.log("OK in Simva");
+					});
+				}
+			}
+		}
+
+		// Example function to check if the user is actively interacting
+		let isUserInteractingFunc = function() {
+			return Object.values(isUserInteracting).every(state => state);
+		}
 
 		let getUserToken = function(){
 			Simva.getCurrentUser(function(error, result) {
