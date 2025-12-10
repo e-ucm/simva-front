@@ -132,11 +132,4 @@ module.exports = {
         }
         return study;
     },
-
-    },
-
-
-
-
-
 }
