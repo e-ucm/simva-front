@@ -174,8 +174,8 @@ class UserTools {
 		let simvaJwtToken = this.decodeJWT(token);
 		logger.info(`getProfileFromJWT() : ${JSON.stringify(simvaJwtToken)}`);
 		profile.provider = simvaJwtToken.iss;
-		profile.id = simvaJwtToken.data.id;
-		profile.username = simvaJwtToken.data.username;
+		//profile.id = simvaJwtToken.data.id;
+		profile.username = simvaJwtToken.preferred_username;
 		profile.email = simvaJwtToken.email;
 		profile.roles = simvaJwtToken.realm_access.roles;
 		profile.role = this.getRoleFromJWT(simvaJwtToken);

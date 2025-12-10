@@ -1,7 +1,8 @@
 module.exports = function(auth, config){
 
   var express = require('express'),
-    router = express.Router();
+  router = express.Router();
+  const logger = require('../../logger');
 
   router.get('/', auth, function(req, res, next) {
   	if(req.session.user.data.role === 'teacher'){
