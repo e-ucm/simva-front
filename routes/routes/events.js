@@ -43,6 +43,7 @@ module.exports = function(auth, config){
         try {
         if(await validateUrl(url, query, config.hmac.hmacKey)) {
             let studyid = req.query.studyId;
+            let groupid = req.query.groupId;
             let user = req.query.username;
             let userRole = req.query.userRole;
             let sessionID = req.query.sessionID;
@@ -57,6 +58,16 @@ module.exports = function(auth, config){
                 };
                 logger.debug(JSON.stringify(options));
                 sseClientsListManager.addActivityAndUserToMap(options.id,options.user, options.userRole, options.clientId);
+            }
+            if(groupid) {
+                const options = {
+                    id: groupid,
+                    user: user,
+                    userRole: userRole,
+                    clientId: clientId
+                };
+                logger.debug(JSON.stringify(options));
+                sseClientsListManager.addGroupAndUserToMap(options.id,options.user, options.userRole, options.clientId);
             }
             sseManager.sendMessageToClientList([clientId], {message:'ping',type:'ping'});
         } else {

@@ -13,6 +13,13 @@ class SSEClientsListManager {
         this.displayClients();
     }
 
+    addGroupAndUserToMap(id, user, userRole, clientId) {
+        var obj = { user : user, userRole : userRole, id : id};
+        obj.lastTime= Date.now();
+        this.clients.set(clientId, obj);
+        this.displayClients();
+    }
+
     displayClients() {
         logger.info("{");
         for (let [clientId, clientData] of this.clients) {
@@ -41,8 +48,8 @@ class SSEClientsListManager {
         for (let [clientId, clientData] of this.clients) {
             let client = clientData; // Parse the stored client data
             if (client.userRole === 'teacher') {
-                // Check if the client's study includes the studyId
-                if (client.id == message.studyId) {
+                // Check if the client's study includes the studyId or the groupId
+                if (client.id == message.studyId || client.id == message.groupId) {
                     clientsToSend.push(clientId); // Add to the list if conditions are met
                     client.lastTime= Date.now();
                     this.clients.set(clientId, client);

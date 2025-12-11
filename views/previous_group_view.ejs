@@ -1,6 +1,6 @@
 <%# views/group_view.ejs %>
  
-<% extend('layout_with_menu_and_sse') %>
+<% extend('layout_with_menu') %>
 
 <!--<div id="roller" style="width: 100%; text-align: center; padding: 200px;">
 	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
@@ -118,7 +118,40 @@
 <div class="floating_buttons">
 	<a unselectable="on" class="pdf" onclick="window.print();">PDF</a>
 </div>
+<script type="text/javascript">
+	if(true)  {
+		// Create an instance of SSEClientManager
+		Simva.getGroupEventsPresignedUrl('<%= group %>', function(error, result){
+			if(!error) {
+				const presignedUrl = result.url;
+				const sseClient = new SSEClientManager(presignedUrl);
 
+				// Listen for general messages (default "message" event)
+				sseClient.on('message', (data) => {
+					console.debug('New message from server:', data);
+					// Update UI or process data here
+				});
+
+				// Listen for connection open event
+				sseClient.on('open', () => {
+					console.log('Connection to SSE server established.');
+				});
+
+				sseClient.triggerEvent('ping');
+				sseClient.on('ping', (data) => {
+					console.debug('ping:', data);
+				});
+
+				// Close the SSE connection when it's no longer needed
+				window.addEventListener('beforeunload', () => {
+					if (sseClient) {
+						sseClient.closeConnection(); // Call closeConnection method
+					}
+				});
+			}
+		});
+	}
+</script>
 <script type="text/javascript">
 	let group = {};
 	let groupid = "<%= group %>";

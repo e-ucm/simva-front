@@ -227,6 +227,10 @@ var Simva = {
 		Utils.get(`/simlets/${study_id}/schedule/events/getPresignedUrl`, callback);
 	},
 
+	getGroupEventsPresignedUrl: function(group_id, callback) {
+		Utils.get(`/groups/${group_id}/events/getPresignedUrl`, callback);
+	},
+
 	getEventsPresignedUrl: function(callback){
 		Utils.get(`/events/getPresignedUrl`, callback);
 	},
