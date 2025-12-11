@@ -29,21 +29,63 @@ module.exports = {
         study.completeTests=[];
         for(let i=0;i<study.tests.length;i++) {
             try {
-                study.completeTests.push(await testcontroler.getCompleteTest(studyid, study.tests[i], sessionid));
+                let test=await testcontroler.getCompleteTest(studyid, study.tests[i], sessionid);
+                study.completeTests.push(test);
             } catch(e) {
                 logger.warn(e);
             }
         }
         try {
-            var studyTask={
-                task: 'getCompleteStudy',
-                params: 'objectUser',
+            const participantTask={
+                task: 'getStudyUsersParticipants',
+                params: '',
                 object: 'Study',
                 objectLoad: 'true',
                 objectEvent: 'true',
-                objectId: studyid
+                objectId: study._id
             };
-            await SimvaAsync.addToTaskList(studyTask,sessionid);
+            await SimvaAsync.addToTaskList(participantTask, sessionid);
+        } catch(e) {
+            logger.warn(e);
+        }
+        try {
+            const groupTask={
+                task: 'getStudyGroups',
+                params: '',
+                object: 'Study',
+                objectLoad: 'true',
+                objectEvent: 'true',
+                objectId: study._id
+            };
+            await SimvaAsync.addToTaskList(groupTask, sessionid);
+        } catch(e) {
+            logger.warn(e);
+        }
+        try {
+            const allocatorTask={
+                task: 'getStudyAllocator',
+                params: '',
+                object: 'Study',
+                objectLoad: 'true',
+                objectEvent: 'true',
+                objectId: study._id
+            };
+            await SimvaAsync.addToTaskList(allocatorTask, sessionid);
+        } catch(e) {
+            logger.warn(e);
+        }
+        try {
+            study.tests.forEach(async test =>  {
+                var testTask={
+                    task: 'toObject',
+                    params: '',
+                    object: 'Test',
+                    objectEvent: 'true',
+                    objectLoad: 'true',
+                    objectId: test
+                };
+                await SimvaAsync.addToTaskList(testTask, sessionid);
+            });
         } catch(e) {
             logger.warn(e);
         }

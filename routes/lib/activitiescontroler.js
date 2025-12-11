@@ -57,6 +57,100 @@ module.exports = {
                 logger.warn(e);
             }
         }
+        try {
+            var activityCompletionTask={
+		    	task: 'getCompletion',
+		    	params: '',
+		    	object: 'Activity',
+		    	objectEvent: 'true',
+		    	objectLoad: 'true',
+		    	objectId: activityid
+		    };
+		    await SimvaAsync.addToTaskList(activityCompletionTask, sessionid);
+        } catch(e) {
+            logger.warn(e);
+        }
+        try {
+		    var activityProgressTask={
+		    	task: 'getProgress',
+		    	params: '',
+		    	object: 'Activity',
+		    	objectEvent: 'true',
+		    	objectLoad: 'true',
+		    	objectId: activityid
+		    };
+		    await SimvaAsync.addToTaskList(activityProgressTask, sessionid);
+        } catch(e) {
+            logger.warn(e);
+        }
+        try {
+		    var activityCanBeOpenedTask={
+		    	task: 'canBeOpened',
+		    	params: '',
+		    	object: 'Activity',
+		    	objectEvent: 'true',
+		    	objectLoad: 'true',
+		    	objectId: activityid
+		    };
+		    await SimvaAsync.addToTaskList(activityCanBeOpenedTask, sessionid);
+        } catch(e) {
+            logger.warn(e);
+        }
+        try {
+		    var activityTargetTask={
+		    	task: 'target',
+		    	params: '',
+		    	object: 'Activity',
+		    	objectEvent: 'true',
+		    	objectLoad: 'true',
+		    	objectId: activityid
+		    };
+		    await SimvaAsync.addToTaskList(activityTargetTask, sessionid);
+        } catch(e) {
+            logger.warn(e);
+        }
+        if(act.type == "limesurvey") {
+            try {
+                var activityResultTask={
+                    task: 'getResults',
+                    params: '',
+                    object: 'Activity',
+                    objectEvent: 'true',
+                    objectLoad: 'true',
+                    objectId: activityid
+                };
+                await SimvaAsync.addToTaskList(activityResultTask, sessionid);
+            } catch(e) {
+                logger.warn(e);
+            }
+            try {
+                var activitySurveyLanguagesTask={
+                    task: 'getSurveyLanguages',
+                    params: '',
+                    object: 'Activity',
+                    objectEvent: 'true',
+                    objectLoad: 'true',
+                    objectId: activityid
+                };
+                await SimvaAsync.addToTaskList(activitySurveyLanguagesTask, sessionid);
+            } catch(e) {
+                logger.warn(e);
+            }
+        } else {
+            try {
+                var activityResultTask={
+                    task: 'hasResults',
+                    params: '',
+                    object: 'Activity',
+                    objectEvent: 'true',
+                    objectLoad: 'true',
+                    objectId: activityid
+                };
+                await SimvaAsync.addToTaskList(activityResultTask, sessionid);
+            } catch(e) {
+                logger.warn(e);
+            }
+        }
         return act;
     },
 

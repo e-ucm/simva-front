@@ -12,8 +12,8 @@ module.exports = {
         }
         try {
             groupTask={
-                task: 'getCompleteGroup',
-                params: 'objectUser',
+                task: 'toObject',
+                params: '',
                 object: 'Group',
                 objectLoad: 'true',
                 objectEvent: 'true',
@@ -23,6 +23,19 @@ module.exports = {
         } catch(e) {
             logger.warn(e);
         }
+        try {
+			const participantTask={
+				task: 'getParticipants',
+				params: '',
+				object: 'Group',
+				objectLoad: 'true',
+				objectEvent: 'true',
+				objectId: groupid
+			};
+			await SimvaAsync.addToTaskList([participantTask]);
+		} catch(e) {
+			logger.warn(e);
+		}
         return group;
     },
 
