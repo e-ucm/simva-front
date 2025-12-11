@@ -66,7 +66,7 @@ module.exports = {
 		    	objectLoad: 'true',
 		    	objectId: activityid
 		    };
-		    await SimvaAsync.addToTaskList(activityCompletionTask, sessionid);
+		    SimvaAsync.addToTaskList(activityCompletionTask, sessionid);
         } catch(e) {
             logger.warn(e);
         }
@@ -79,7 +79,7 @@ module.exports = {
 		    	objectLoad: 'true',
 		    	objectId: activityid
 		    };
-		    await SimvaAsync.addToTaskList(activityProgressTask, sessionid);
+		    SimvaAsync.addToTaskList(activityProgressTask, sessionid);
         } catch(e) {
             logger.warn(e);
         }
@@ -92,7 +92,7 @@ module.exports = {
 		    	objectLoad: 'true',
 		    	objectId: activityid
 		    };
-		    await SimvaAsync.addToTaskList(activityCanBeOpenedTask, sessionid);
+		    SimvaAsync.addToTaskList(activityCanBeOpenedTask, sessionid);
         } catch(e) {
             logger.warn(e);
         }
@@ -105,7 +105,7 @@ module.exports = {
 		    	objectLoad: 'true',
 		    	objectId: activityid
 		    };
-		    await SimvaAsync.addToTaskList(activityTargetTask, sessionid);
+		    SimvaAsync.addToTaskList(activityTargetTask, sessionid);
         } catch(e) {
             logger.warn(e);
         }
@@ -119,7 +119,7 @@ module.exports = {
                     objectLoad: 'true',
                     objectId: activityid
                 };
-                await SimvaAsync.addToTaskList(activityResultTask, sessionid);
+                SimvaAsync.addToTaskList(activityResultTask, sessionid);
             } catch(e) {
                 logger.warn(e);
             }
@@ -132,7 +132,7 @@ module.exports = {
                     objectLoad: 'true',
                     objectId: activityid
                 };
-                await SimvaAsync.addToTaskList(activitySurveyLanguagesTask, sessionid);
+                SimvaAsync.addToTaskList(activitySurveyLanguagesTask, sessionid);
             } catch(e) {
                 logger.warn(e);
             }
@@ -146,7 +146,7 @@ module.exports = {
                     objectLoad: 'true',
                     objectId: activityid
                 };
-                await SimvaAsync.addToTaskList(activityResultTask, sessionid);
+                SimvaAsync.addToTaskList(activityResultTask, sessionid);
             } catch(e) {
                 logger.warn(e);
             }

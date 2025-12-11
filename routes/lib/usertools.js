@@ -101,7 +101,7 @@ class UserTools {
     authExpiredAndRefreshAuthWithCallback(session, callback) {
         this.authExpired(session, config, (error, result) => {
             if(error) {
-                logger.info(JSON.stringify(error));
+                logger.warn(JSON.stringify(error));
 				if(session && session.id) {
              	   userClientsListManager.removeSession(session.id);
 				}

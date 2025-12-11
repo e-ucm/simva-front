@@ -44,7 +44,7 @@ module.exports = {
                 objectEvent: 'true',
                 objectId: study._id
             };
-            await SimvaAsync.addToTaskList(participantTask, sessionid);
+            SimvaAsync.addToTaskList(participantTask, sessionid);
         } catch(e) {
             logger.warn(e);
         }
@@ -57,7 +57,7 @@ module.exports = {
                 objectEvent: 'true',
                 objectId: study._id
             };
-            await SimvaAsync.addToTaskList(groupTask, sessionid);
+            SimvaAsync.addToTaskList(groupTask, sessionid);
         } catch(e) {
             logger.warn(e);
         }
@@ -70,7 +70,7 @@ module.exports = {
                 objectEvent: 'true',
                 objectId: study._id
             };
-            await SimvaAsync.addToTaskList(allocatorTask, sessionid);
+            SimvaAsync.addToTaskList(allocatorTask, sessionid);
         } catch(e) {
             logger.warn(e);
         }
@@ -84,7 +84,7 @@ module.exports = {
                     objectLoad: 'true',
                     objectId: test
                 };
-                await SimvaAsync.addToTaskList(testTask, sessionid);
+                SimvaAsync.addToTaskList(testTask, sessionid);
             });
         } catch(e) {
             logger.warn(e);

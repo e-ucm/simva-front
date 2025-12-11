@@ -11,7 +11,7 @@ module.exports = {
            logger.warn(e);
         }
         try {
-            groupTask={
+            const groupTask={
                 task: 'toObject',
                 params: '',
                 object: 'Group',
@@ -19,7 +19,7 @@ module.exports = {
                 objectEvent: 'true',
                 objectId: groupid
             };
-            await SimvaAsync.addToTaskList(groupTask,sessionid);
+            SimvaAsync.addToTaskList(groupTask,sessionid);
         } catch(e) {
             logger.warn(e);
         }
@@ -32,7 +32,7 @@ module.exports = {
 				objectEvent: 'true',
 				objectId: groupid
 			};
-			await SimvaAsync.addToTaskList([participantTask]);
+			SimvaAsync.addToTaskList(participantTask, sessionid);
 		} catch(e) {
 			logger.warn(e);
 		}
