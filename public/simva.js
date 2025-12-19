@@ -154,7 +154,7 @@ var Simva = {
 	},
 
 	getStudyEventsPresignedUrl: function(study_id, callback){
-		Utils.get(`/studies/${study_id}/events/getPresignedUrl`, callback);
+		Utils.get(`/simlets/${study_id}/events/getPresignedUrl`, callback);
 	},
 
 	duplicateTestFromStudy: function(study_id, name, testId, callback){
@@ -222,15 +222,34 @@ var Simva = {
 		Utils.get(`/bff/studies/${study_id}/schedule`, callback);
 	},
 
+	getStudyScheduleSandbox: function(study_id, callback){
+		Utils.get(`/bff/studies/${study_id}/schedule/sandbox`, callback);
+	},
 	
 	getScheduleEventsPresignedUrl: function(study_id, callback){
-		Utils.get(`/studies/${study_id}/schedule/events/getPresignedUrl`, callback);
+		Utils.get(`/simlets/${study_id}/schedule/events/getPresignedUrl`, callback);
 	},
 
 	getEventsPresignedUrl: function(callback){
 		Utils.get(`/events/getPresignedUrl`, callback);
 	},
 
+	// Sandbox 
+	generateSandBoxEnvironement:function(study_id, test_id, callback)  {
+		Utils.post(`/bff/studies/${study_id}/tests/${test_id}/sandbox`, { use_new : true }, callback);
+	},
+
+	resetSandBoxEnvironement:function(study_id, test_id, callback)  {
+		Utils.patch(`/bff/studies/${study_id}/tests/${test_id}/sandbox`, {}, callback);
+	},
+
+	runSandBoxEnvironement:function(study_id, callback)  {
+		Utils.get(`/scheduler/${study_id}/sandbox`, callback);
+	},
+	
+	deleteSandBoxEnvironement:function(study_id, test_id, callback)  {
+		Utils.delete(`/bff/studies/${study_id}/tests/${test_id}/sandbox`, callback);
+	},
 
 	// Activities
 

@@ -19,18 +19,18 @@
 				$('#studies_list').append(toCard(studies[i]));
 			}
 		}else{
-			$('#studies_list').text("<%- t('scheduler.nostudy.title', { ns : 'studies' }) %>");
+			$('#studies_list').text("<%- t('scheduler.noSIMLET.title', { ns : 'SIMLETs' }) %>");
 		}
 	}
 
 	let toCard = function(study){
 		return `<a href="/scheduler/${study._id}"><div class="selectable card third">
-			<h1><%- t('single.title', { ns : 'studies' }) %>: ${study.name}</h1>
-			<p><%- t('scheduler.title', { ns : 'studies' }) %></p>
+			<h1><%- t('single.title', { ns : 'SIMLETs' }) %>: ${study.name}</h1>
+			<p><%- t('scheduler.title', { ns : 'SIMLETs' }) %></p>
 			</div></a>`;
 	}
 </script>
-<h1><%- t('title', { ns : 'studies' }) %></h1>
+<h1><%- t('title', { ns : 'SIMLETs' }) %></h1>
 <div id="studies_list">
 	<div style="width: 100%; text-align: center; padding: 200px;">
 		<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>

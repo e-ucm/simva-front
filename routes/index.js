@@ -41,7 +41,7 @@ app.use('/', router);
 app.use('/users', require('./routes/users.js')(usertools.auth(1), config));
 app.use('/bff', require('./routes/bff.js')(usertools.auth(1), config));
 app.use('/events', require('./routes/events.js')(usertools.auth(1), config));
-app.use('/studies', require('./routes/studies.js')(usertools.auth(1), config));
+app.use('/simlets', require('./routes/studies.js')(usertools.auth(1), config));
 app.use('/groups', require('./routes/groups.js')(usertools.auth(1), config));
 app.use('/previous-groups', require('./routes/previous-groups.js')(usertools.auth(1), config));
 app.use('/activities', require('./routes/activities.js')(usertools.auth(1), config));

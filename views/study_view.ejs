@@ -5,9 +5,9 @@
 <!--<div id="roller" style="width: 100%; text-align: center; padding: 200px;">
 	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 </div>-->
-<h1><%- t('single.title', { ns : 'studies' }) %>: <span id="study_name"></span></h1><input class="yellow" type="button" value="<%- t('name.edit.title', { ns : 'studies' }) %>" onclick="openEditStudyForm('<%= study %>')">
+<h1><%- t('single.title', { ns : 'SIMLETs' }) %>: <span id="study_name"></span></h1><input class="yellow" type="button" value="<%- t('name.edit.title', { ns : 'SIMLETs' }) %>" onclick="openEditStudyForm('<%= study %>')">
 
-<input class="blue" type="button" value="<%- t('scheduler.shlink.generate.title', { ns : 'studies' }) %>" id="generate_shlink_url" onclick="openGenerateLinkForm()" style="visibility: hidden;"><a class="button green" id="shlink_url" onclick="copyShortURL()" style="visibility: hidden;"><span id="shlink_url_short"></span></a></h3><input class="red" type="button" value="<%- t('scheduler.shlink.delete.title', { ns : 'studies' }) %>" id="delete_shlink_url" onclick="deleteShLink()"  style="visibility: hidden;">
+<input class="blue" type="button" value="<%- t('scheduler.shlink.generate.title', { ns : 'SIMLETs' }) %>" id="generate_shlink_url" onclick="openGenerateLinkForm()" style="visibility: hidden;"><a class="button green" id="shlink_url" onclick="copyShortURL()" style="visibility: hidden;"><span id="shlink_url_short"></span></a></h3><input class="red" type="button" value="<%- t('scheduler.shlink.delete.title', { ns : 'SIMLETs' }) %>" id="delete_shlink_url" onclick="deleteShLink()"  style="visibility: hidden;">
 
 <div id="study">
 	<div class="left">
@@ -18,23 +18,23 @@
 		</div>
 
 		<div class="graybox owners">
-			<h2><%- t('owners.title', { ns : 'studies' }) %></h2>
+			<h2><%- t('coordinators.title', { ns : 'SIMLETs' }) %></h2>
 			<p></p>
 			<table id="owners">
 			</table>
-			<input class="violet" type="button" value="<%- t('owners.add.title', { ns : 'studies' }) %>" onclick="Utils.toggleAddForm('add_owner')">
+			<input class="violet" type="button" value="<%- t('coordinators.add.title', { ns : 'SIMLETs' }) %>" onclick="Utils.toggleAddForm('add_owner')">
 		</div>
 
 		<div class="graybox groups">
-			<h2><%- t('groups.title', { ns : 'studies' }) %></h2>
+			<h2><%- t('groups.title', { ns : 'SIMLETs' }) %></h2>
 			<p></p>
 			<table id="groups">
 			</table>
-			<input class="violet" type="button" value="<%- t('groups.add.title', { ns : 'studies' }) %>" onclick="Utils.toggleAddForm('add_group')">
+			<input class="violet" type="button" value="<%- t('groups.add.title', { ns : 'SIMLETs' }) %>" onclick="Utils.toggleAddForm('add_group')">
 		</div>
 
 		<div class="graybox allocator default">
-			<h2><%- t('allocator.title', { ns : 'studies' }) %></h2> 
+			<h2><%- t('allocator.title', { ns : 'SIMLETs' }) %></h2> 
 			<span class="edit"><img src="/icon/gear.png" onclick="Utils.toggleAddForm('change_allocator')"></span>
 			<div id="allocator_content">
 				
@@ -42,18 +42,18 @@
 		</div>
 		<% if(config.lti.enabled == 'true'){ %>
 		<div class="graybox lti_platforms default">
-			<h2><%- t('lti_platform.title', { ns : 'studies' }) %></h2>
+			<h2><%- t('lti_platform.title', { ns : 'SIMLETs' }) %></h2>
 			<p></p>
 			<table id="lti_platforms">
 			</table>
-			<input class="violet" type="button" value="<%- t('lti_platform.add.title', { ns : 'studies' }) %>" onclick="Utils.toggleAddForm('add_platform')">
+			<input class="violet" type="button" value="<%- t('lti_platform.add.title', { ns : 'SIMLETs' }) %>" onclick="Utils.toggleAddForm('add_platform')">
 		</div>
 		<% } %>
 	</div>
 	<div class="card">
 		<div class="top">
-			<h2><%- t('tests.title', { ns : 'studies' }) %></h2>
-			<input class="violet" type="button" value="<%- t('tests.add.title', { ns : 'studies' }) %>" onclick="Utils.toggleAddForm('add_test')">
+			<h2><%- t('sessions.title', { ns : 'SIMLETs' }) %></h2>
+			<input class="violet" type="button" value="<%- t('sessions.add.title', { ns : 'SIMLETs' }) %>" onclick="Utils.toggleAddForm('add_test')">
 		</div>
 		<div id="tests" class="tests">
 		</div>
@@ -63,11 +63,11 @@
 	<div class="floater">
 		<div class="form">
 			<div id="add_group_tab" class="subform selected">
-				<h2><%- t('groups.add.title', { ns : 'studies' }) %></h2>
+				<h2><%- t('groups.add.title', { ns : 'SIMLETs' }) %></h2>
 				<form id="add_group_form">
 					<select id="group_select" name="group">
 					</select>
-					<input type="submit" value="<%- t('groups.add.title', { ns : 'studies' }) %>">
+					<input type="submit" value="<%- t('groups.add.title', { ns : 'SIMLETs' }) %>">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 					<span class="error"></span>
 				</form>
@@ -80,22 +80,22 @@
 	<div class="floater">
 		<div class="form">
 			<div id="add_platform_tab" class="subform selected">
-				<h2><%- t('lti_platforms.add.title', { ns : 'studies' }) %></h2>
+				<h2><%- t('lti_platforms.add.title', { ns : 'SIMLETs' }) %></h2>
 				<form id="add_platform_form">
-					<p><%- t('lti_platforms.add.name.title', { ns : 'studies' }) %>:</p>
+					<p><%- t('lti_platforms.add.name.title', { ns : 'SIMLETs' }) %>:</p>
 					<input type="text" name="name" placeholder="imsglobal">
-					<p><%- t('lti_platforms.add.url.title', { ns : 'studies' }) %>:</p>
+					<p><%- t('lti_platforms.add.url.title', { ns : 'SIMLETs' }) %>:</p>
 					<input type="text" name="url" placeholder="https://lti-ri.imsglobal.org/platforms/2056">
-					<p><%- t('lti_platforms.add.client_id.title', { ns : 'studies' }) %>:</p>
+					<p><%- t('lti_platforms.add.client_id.title', { ns : 'SIMLETs' }) %>:</p>
 					<input type="text" name="clientId" placeholder="lti-test">
-					<p><%- t('lti_platforms.add.authentication_endpoint.title', { ns : 'studies' }) %>:</p>
+					<p><%- t('lti_platforms.add.authentication_endpoint.title', { ns : 'SIMLETs' }) %>:</p>
 					<input type="text" name="authenticationEndpoint" placeholder="https://lti-ri.imsglobal.org/platforms/2056/authorizations/new">
-					<p><%- t('lti_platforms.add.accesstoken_endpoint.title', { ns : 'studies' }) %>Accesstoken Endpoint:</p>
+					<p><%- t('lti_platforms.add.accesstoken_endpoint.title', { ns : 'SIMLETs' }) %>Accesstoken Endpoint:</p>
 					<input type="text" name="accesstokenEndpoint" placeholder="https://lti-ri.imsglobal.org/platforms/2056/access_tokens">
-					<p><%- t('lti_platforms.add.jkws_url.title', { ns : 'studies' }) %>:</p>
+					<p><%- t('lti_platforms.add.jkws_url.title', { ns : 'SIMLETs' }) %>:</p>
 					<input type="text" name="jkwsUrl" placeholder="https://lti-ri.imsglobal.org/platforms/2056/platform_keys/1952.json">
 
-					<input type="submit" value="<%- t('lti_platforms.add.title', { ns : 'studies' }) %>">
+					<input type="submit" value="<%- t('lti_platforms.add.title', { ns : 'SIMLETs' }) %>">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 					<span class="error"></span>
 				</form>
@@ -107,11 +107,11 @@
 <div id="change_allocator" class="new_element floating">
 	<div class="floater">
 		<div class="form">
-			<h2><%- t('allocator.change.title', { ns : 'studies' }) %></h2>
+			<h2><%- t('allocator.change.title', { ns : 'SIMLETs' }) %></h2>
 			<form id="change_allocator_form">
 				<div id="change_allocator_content">
 				</div>
-				<input type="button" value="<%- t('allocator.change.submit', { ns : 'studies' }) %>" onclick="changeAllocator()">
+				<input type="button" value="<%- t('allocator.change.submit', { ns : 'SIMLETs' }) %>" onclick="changeAllocator()">
 				<span class="error"></span>
 			</form>
 		</div>
@@ -135,10 +135,10 @@
 	<div class="floater">
 		<div class="form">
 			<div id="existing_owner_tab" class="subform selected">
-				<h2><%- t('owners.add.title', { ns : 'studies' }) %></h2>
+				<h2><%- t('coordinators.add.title', { ns : 'SIMLETs' }) %></h2>
 				<form id="existing_owner_form">
-					<input type="text" name="name" placeholder="<%- t('owners.placeholder', { ns : 'studies' }) %>" required>
-					<input type="submit" value="<%- t('owners.add.title', { ns : 'studies' }) %>">
+					<input type="text" name="name" placeholder="<%- t('coordinators.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<input type="submit" value="<%- t('coordinators.add.title', { ns : 'SIMLETs' }) %>">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 					<span class="error"></span>
 				</form>
@@ -151,10 +151,10 @@
 	<div class="floater">
 		<div class="form">
 			<div id="add_test_tab" class="subform selected">
-				<h2><%- t('tests.add.title', { ns : 'studies' }) %></h2>
+				<h2><%- t('sessions.add.title', { ns : 'SIMLETs' }) %></h2>
 				<form id="add_test_form">
-					<input type="text" name="name" placeholder="<%- t('tests.placeholder', { ns : 'studies' }) %>" required>
-					<input type="submit" value="<%- t('tests.add.title', { ns : 'studies' }) %>">
+					<input type="text" name="name" placeholder="<%- t('sessions.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<input type="submit" value="<%- t('sessions.add.title', { ns : 'SIMLETs' }) %>">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 					<span class="error"></span>
 				</form>
@@ -168,12 +168,12 @@
 	<div class="floater">
 		<div class="form">
 			<div id="edit_study_tab" class="subform selected">
-				<h2><%- t('name.edit.title', { ns : 'studies' }) %></h2>
+				<h2><%- t('name.edit.title', { ns : 'SIMLETs' }) %></h2>
 				<form id="edit_study_form">
 					<input hidden type="text" name="study">
 					<input hidden type="text" name="studyName">
-					<input type="text" name="name" id="edit_study_name" placeholder="<%- t('name.placeholder', { ns : 'studies' }) %>" required>
-					<input type="submit" value="<%- t('name.edit.title', { ns : 'studies' }) %>">
+					<input type="text" name="name" id="edit_study_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<input type="submit" value="<%- t('name.edit.title', { ns : 'SIMLETs' }) %>">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 					<span class="error" id="edit_study_error"></span>
 				</form>
@@ -185,28 +185,28 @@
 <div id="generate_study_link" class="new_element floating">
 	<div class="floater">
 		<div class="form">
-			<h2><%- t('scheduler.shlink.generate.title', { ns : 'studies' }) %></h2>
+			<h2><%- t('scheduler.shlink.generate.title', { ns : 'SIMLETs' }) %></h2>
 			<div class="tabs">
-				<span class="tab selected" type="hidden" onclick="changeTab(this, 'generate_study_link','generate_study_link_length_tab')"><%- t('scheduler.shlink.generate.randomly_length.title', { ns : 'studies' }) %></span>
-				<span class="tab" onclick="changeTab(this, 'generate_study_link','generate_study_custom_slug_link_tab')"><%- t('scheduler.shlink.generate.custom_slug.title', { ns : 'studies' }) %></span>
+				<span class="tab selected" type="hidden" onclick="changeTab(this, 'generate_study_link','generate_study_link_length_tab')"><%- t('scheduler.shlink.generate.randomly_length.title', { ns : 'SIMLETs' }) %></span>
+				<span class="tab" onclick="changeTab(this, 'generate_study_link','generate_study_custom_slug_link_tab')"><%- t('scheduler.shlink.generate.custom_slug.title', { ns : 'SIMLETs' }) %></span>
 			</div>
 			<div id="generate_study_custom_slug_link_tab" class="subform">
 				<form id="generate_study_custom_slug_link_form">
-					<h3><%- t('scheduler.shlink.generate.custom_slug.title', { ns : 'studies' }) %></h3>
+					<h3><%- t('scheduler.shlink.generate.custom_slug.title', { ns : 'SIMLETs' }) %></h3>
 					<input hidden type="text" name="study">
-					<input type="text" name="custom_slug" id="custom_slug_shlink" placeholder="<%- t('scheduler.shlink.custom_slug.placeholder', { ns : 'studies' }) %>" required>
-					<input type="submit" value="<%- t('scheduler.shlink.generate.submit', { ns : 'studies' }) %>">
+					<input type="text" name="custom_slug" id="custom_slug_shlink" placeholder="<%- t('scheduler.shlink.custom_slug.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<input type="submit" value="<%- t('scheduler.shlink.generate.submit', { ns : 'SIMLETs' }) %>">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 					<span class="error" id="generate_link_custom_slug_error"></span>
 				</form>
 			</div>
 			<div id="generate_study_link_length_tab" class="subform selected">
 				<form id="generate_study_link_length_form">
-					<h3><%- t('scheduler.shlink.generate.randomly_length.title', { ns : 'studies' }) %></h3>
+					<h3><%- t('scheduler.shlink.generate.randomly_length.title', { ns : 'SIMLETs' }) %></h3>
 					<input hidden type="text" name="study">
-					<p><%- t('scheduler.shlink.generate.randomly_length.message', { ns : 'studies' }) %></p>
+					<p><%- t('scheduler.shlink.generate.randomly_length.message', { ns : 'SIMLETs' }) %></p>
 					<input type="number" step=1 min=4 name="link_length_shlink" id="link_length_shlink" onchange="this.value = Math.max(4, parseInt(this.value));" value=4 required>
-					<input type="submit" value="<%- t('scheduler.shlink.generate.submit', { ns : 'studies' }) %>">
+					<input type="submit" value="<%- t('scheduler.shlink.generate.submit', { ns : 'SIMLETs' }) %>">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 					<span class="error" id="generate_link_error"></span>
 				</form>
@@ -219,12 +219,12 @@
 	<div class="floater">
 		<div class="form">
 			<div id="edit_test_tab" class="subform selected">
-				<h2><%- t('tests.edit.title', { ns : 'studies' }) %></h2>
+				<h2><%- t('sessions.edit.title', { ns : 'SIMLETs' }) %></h2>
 				<form id="edit_test_form">
 					<input hidden type="text" name="test">
 					<input hidden type="text" name="testName">
-					<input type="text" name="name" id="edit_test_name" placeholder="<%- t('tests.placeholder', { ns : 'studies' }) %>" required>
-					<input type="submit" value="<%- t('tests.edit.title', { ns : 'studies' }) %>">
+					<input type="text" name="name" id="edit_test_name" placeholder="<%- t('sessions.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<input type="submit" value="<%- t('sessions.edit.title', { ns : 'SIMLETs' }) %>">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 					<span class="error" id="edit_test_error"></span>
 				</form>
@@ -237,12 +237,12 @@
 	<div class="floater">
 		<div class="form">
 			<div id="duplicate_test_tab" class="subform selected">
-				<h2><%- t('tests.duplicate.title', { ns : 'studies' }) %></h2>
+				<h2><%- t('sessions.duplicate.title', { ns : 'SIMLETs' }) %></h2>
 				<form id="duplicate_test_form">
 					<input hidden type="text" name="test">
 					<input hidden type="text" name="testName">
-					<input type="text" name="name" id="duplicate_test_name" placeholder="<%- t('tests.placeholder', { ns : 'studies' }) %>" required>
-					<input type="submit" value="<%- t('tests.duplicate.title', { ns : 'studies' }) %>">
+					<input type="text" name="name" id="duplicate_test_name" placeholder="<%- t('sessions.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<input type="submit" value="<%- t('sessions.duplicate.title', { ns : 'SIMLETs' }) %>">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 					<span class="error" id="duplicate_test_error"></span>
 				</form>
@@ -255,18 +255,18 @@
 	<div class="floater">
 		<div class="form">
 			<div class="tabs">
-				<span class="tab selected" onclick="changeTab(this, 'add_activity','new_activity_tab')"><%- t('activities.add.new.title', { ns : 'studies' }) %></span>
-				<span class="tab" type="hidden" onclick="changeTab(this, 'add_activity','existing_activity_tab')"><%- t('activities.add.existing.title', { ns : 'studies' }) %></span>
+				<span class="tab selected" onclick="changeTab(this, 'add_activity','new_activity_tab')"><%- t('activities.add.new.title', { ns : 'SIMLETs' }) %></span>
+				<span class="tab" type="hidden" onclick="changeTab(this, 'add_activity','existing_activity_tab')"><%- t('activities.add.existing.title', { ns : 'SIMLETs' }) %></span>
 			</div>
 			<div id="new_activity_tab" class="subform selected">
 				<form id="new_activity_form">
 					<input type="hidden" name="test">
-					<input type="text" name="name" placeholder="<%- t('activities.placeholder', { ns : 'studies' }) %>" required>
+					<input type="text" name="name" placeholder="<%- t('activities.placeholder', { ns : 'SIMLETs' }) %>" required>
 					<select name="type">
 					</select>
 					<fieldset id="new_activity_extras">
 					</fieldset>
-					<input type="submit" value="<%- t('activities.add.title', { ns : 'studies' }) %>">
+					<input type="submit" value="<%- t('activities.add.title', { ns : 'SIMLETs' }) %>">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 					<span class="error"></span>
 				</form>
@@ -274,10 +274,10 @@
 			<div id="existing_activity_tab" class="subform">
 				<form id="existing_activity_form">
 					<input type="hidden" name="test">
-					<input type="text" name="name" placeholder="<%- t('activities.placeholder', { ns : 'studies' }) %>" required>
+					<input type="text" name="name" placeholder="<%- t('activities.placeholder', { ns : 'SIMLETs' }) %>" required>
 					<select name="type">
 					</select>
-					<input disabled type="submit" value="<%- t('activities.add.title', { ns : 'studies' }) %> (Not enabled)">
+					<input disabled type="submit" value="<%- t('activities.add.title', { ns : 'SIMLETs' }) %> (Not enabled)">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 					<span class="error"></span>
 				</form>
@@ -293,11 +293,11 @@
 				<input type="hidden" name="test">
 				<input type="hidden" name="activity">
 				<input id="edit_activity_type" type="hidden" name="type">
-				<input id="edit_activity_name" type="text" name="name" placeholder="<%- t('activities.placeholder', { ns : 'studies' }) %>" required>
+				<input id="edit_activity_name" type="text" name="name" placeholder="<%- t('activities.placeholder', { ns : 'SIMLETs' }) %>" required>
 				</select>
 				<fieldset id="edit_activity_extras">
 				</fieldset>
-				<input type="submit" value="<%- t('activities.edit.title', { ns : 'studies' }) %>">
+				<input type="submit" value="<%- t('activities.edit.title', { ns : 'SIMLETs' }) %>">
 				<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 				<span class="error" id="edit_activity_error"></span>
 			</form>
@@ -489,7 +489,7 @@
 
 			for (var i = 0; i < study.owners.length; i++) {
 				if(study.owners[i] == form.name){
-					errorbox.text("<%- t('owners.error.already_in', { ns : 'studies' }) %>");
+					errorbox.text("<%- t('coordinators.error.already_in', { ns : 'SIMLETs' }) %>");
 					return false;
 				}
 			}
@@ -514,7 +514,7 @@
 			let errorbox = $(this).find('.error');
 
 			if(study.groups.indexOf(form.group) !== -1){
-				errorbox.text("<%- t('groups.error.already_in', { ns : 'studies' }) %>");
+				errorbox.text("<%- t('groups.error.already_in', { ns : 'SIMLETs' }) %>");
 			}else{
 				study.groups.push(form.group);
 				Simva.updateStudy(study, function(error, result){
@@ -661,7 +661,7 @@
 			Utils.toggleSubmit(currentform);
 			let errorbox = $(this).find('.error');
 			if(form.name == form.testName) {
-				errorbox.text("<%- t('name.edit.no_change', { ns : 'studies' }) %>");
+				errorbox.text("<%- t('name.edit.no_change', { ns : 'SIMLETs' }) %>");
 				Utils.toggleSubmit(currentform);
 			} else {
 				var test = { id : form.test , name : form.name};
@@ -685,7 +685,7 @@
 			Utils.toggleSubmit(currentform);
 			let errorbox = $(this).find('.error');
 			if(form.name == form.studyName) {
-				errorbox.text("<%- t('name.edit.no_change', { ns : 'studies' }) %>");
+				errorbox.text("<%- t('name.edit.no_change', { ns : 'SIMLETs' }) %>");
 				Utils.toggleSubmit(currentform);
 			} else {
 				study.name = form.name;
@@ -757,7 +757,7 @@
 	deleteShLink = function(){
 		if(study.shlink) {
 			let shortCode=study.shlink.shortCode;
-			if(confirm(`<%- t('scheduler.shlink.delete.confirm', { ns : 'studies', shortCode : '${shortCode}', study : '${study.name}'  }) %>`)){
+			if(confirm(`<%- t('scheduler.shlink.delete.confirm', { ns : 'SIMLETs', shlink : '${shortCode}', SIMLET : '${study.name}'  }) %>`)){
 				Simva.deleteShLink(shortCode, (error, result) => {
 					if(!error) {
 						study.shlink=null;
@@ -851,7 +851,7 @@
 				platforms = [];
 				completed();
 			} else {
-				window.location.href="/studies";
+				window.location.href="/simlets";
 			}
 		});
 	}
@@ -867,7 +867,7 @@
 	// Functionality
 
 	let deleteGroup = function(groupid, groupname){
-		if(confirm(`<%- t('groups.delete.confirm', { ns : 'studies', group : '${groupname}', study : '${study.name}' }) %>`)){
+		if(confirm(`<%- t('groups.delete.confirm', { ns : 'SIMLETs', group : '${groupname}', SIMLET : '${study.name}' }) %>`)){
 			let toremove = -1;
 			for (var i = 0; i < study.groups.length; i++) {
 				if(study.groups[i] === groupid){
@@ -885,7 +885,7 @@
 	}
 
 	let deletePlatform = function(platform){
-		if(confirm(`<%- t('lti_platform.delete.confirm', { ns : 'studies', platform : '${platform}', study : '${study.name}' }) %>`)){
+		if(confirm(`<%- t('lti_platform.delete.confirm', { ns : 'SIMLETs', platform : '${platform}', SIMLET : '${study.name}' }) %>`)){
 			Simva.removePlatform(platform, function(error, result){
 				reloadStudy();
 			});
@@ -893,7 +893,7 @@
 	}
 
 	let deleteOwner = function(owner){
-		if(confirm(`<%- t('owners.delete.confirm', { ns : 'studies', owner : '${owner}', study : '${study.name}' }) %>`)){
+		if(confirm(`<%- t('coordinators.delete.confirm', { ns : 'SIMLETs', coordinator : '${owner}', SIMLET : '${study.name}' }) %>`)){
 			let toremove = -1;
 			for (var i = 0; i < study.owners.length; i++) {
 				if(study.owners[i] === owner){
@@ -911,7 +911,7 @@
 	}
 
 	let deleteTest = function(testid, testName) {
-		if(confirm(`<%- t('tests.delete.confirm', { ns : 'studies', test : '${testName}', study : '${study.name}' }) %>`)){
+		if(confirm(`<%- t('sessions.delete.confirm', { ns : 'SIMLETs', session : '${testName}', SIMLET : '${study.name}' }) %>`)){
 			let toremove = -1;
 			for (var i = 0; i < study.tests.length; i++) {
 				if(study.tests[i] === testid){
@@ -930,7 +930,7 @@
 
 	let deleteActivity = function(activityid, activityname, testid){
 		let test=getTestFromTestId(testid);
-		if(confirm(`<%- t('activities.delete.confirm', { ns : 'studies', activity : '${activityname}', test: '${test}' , study : '${study.name}' }) %>`)){
+		if(confirm(`<%- t('activities.delete.confirm', { ns : 'SIMLETs', activity : '${activityname}', session: '${test}' , SIMLET : '${study.name}' }) %>`)){
 			Simva.deleteActivity(activityid, function(error, result){
 				reloadStudy();
 			});
@@ -1033,7 +1033,7 @@
 
 		if(study.shlink) {
 			$('#generate_shlink_url').text("");
-			$('#shlink_url_short').text(`<%- t('scheduler.shlink.message', { ns : 'studies', shlink : '${study.shlink.shortUrl}' }) %>`);
+			$('#shlink_url_short').text(`<%- t('scheduler.shlink.message', { ns : 'SIMLETs', shlink : '${study.shlink.shortUrl}' }) %>`);
 			document.getElementById("generate_shlink_url").style.visibility = "hidden";
 			document.getElementById("shlink_url").style.visibility = "visible";
 			document.getElementById("delete_shlink_url").style.visibility = "visible";
@@ -1064,7 +1064,7 @@
 
 		$('#tests').empty();
 		if(tests.length === 0){
-			$('#tests').append("<p><%- t('tests.zero.message', { ns : 'studies' }) %></p>");
+			$('#tests').append("<p><%- t('sessions.zero.message', { ns : 'SIMLETs' }) %></p>");
 		}else{
 			for (var i = 0; i < tests.length; i++) {
 				fullyPaintTest(tests[i]);
@@ -1075,7 +1075,7 @@
 	let paintAddGroup = function(groups){
 		$('#group_select').empty('');
 		if(groups.length == 0){
-			$('#group_select').append("<p><%- t('groups.zero_existing.message', { ns : 'studies' }) %></p>");
+			$('#group_select').append("<p><%- t('groups.zero_existing.message', { ns : 'SIMLETs' }) %></p>");
 		}else{
 			for (var i = 0; i < groups.length; i++) {
 				$('#group_select').append(addGroupRow(groups[i]));
@@ -1117,7 +1117,7 @@
 	let paintGroups = function(groups){
 		$('#groups').html('');
 		if(groups.length == 0){
-			$('#groups').append("<p><%- t('groups.zero.message', { ns : 'studies' }) %></p>");
+			$('#groups').append("<p><%- t('groups.zero.message', { ns : 'SIMLETs' }) %></p>");
 		}else{
 			for (var i = 0; i < groups.length; i++) {
 				$('#groups').append(groupRow(groups[i]));
@@ -1128,7 +1128,7 @@
 	let paintPlatforms = function(platforms){
 		$('#lti_platforms').html('');
 		if(platforms.length == 0){
-			$('#lti_platforms').append("<p><%- t('lti_platform.zero.message', { ns : 'studies' }) %></p>");
+			$('#lti_platforms').append("<p><%- t('lti_platform.zero.message', { ns : 'SIMLETs' }) %></p>");
 		}else{
 			for (var i = 0; i < platforms.length; i++) {
 				$('#lti_platforms').append(platformRow(platforms[i]));
@@ -1165,20 +1165,69 @@
 	}
 
 	let paintTest = function(test){
+		let sandbox="";
+		if(study.sandbox == test._id) {
+			sandbox = `<input class="green" type="button" value="<%- t('sessions.sandbox.reset', { ns : 'SIMLETs' }) %>" onclick="resetSandBoxEnvironement('${test._id}')">
+				<a href="<%= config.simva.url %>/scheduler/${studyid}/sandbox" target="_blank">
+					<input class="green" type="button" value="<%- t('sessions.sandbox.run', { ns : 'SIMLETs' }) %>">
+				</a>
+				<input class="red" type="button" value="<%- t('sessions.sandbox.delete', { ns : 'SIMLETs' }) %>" onclick="deleteSandBoxEnvironement('${test._id}')">`;
+		} else {
+			sandbox = `<input class="pink" type="button" value="<%- t('sessions.sandbox.add', { ns : 'SIMLETs' }) %>" onclick="generateSandBoxEnvironement('${test._id}')">`;
+		}
 		$('#tests').append(`<div id="test_${test._id}" class="test">
-			<div class="top"><h3>${test.name}</h3><input class="violet" type="button" value="<%- t('tests.expand', { ns : 'studies' }) %>" onclick="toggleTest('${test._id}')">
-			<input class="green" type="button" value="<%- t('activities.add.title', { ns : 'studies' }) %>" onclick="openActivityForm('${test._id}')">
-			<input class="yellow" type="button" value="<%- t('tests.edit.title', { ns : 'studies' }) %>" onclick="openEditTestForm('${test._id}')">
-			<input class="red" type="button" value="<%- t('tests.delete.title', { ns : 'studies' }) %>" onclick="deleteTest('${test._id}', '${test.name}')">
-			<input class="orange" type="button" value="<%- t('tests.duplicate.title', { ns : 'studies' }) %>" onclick="openEditDuplicateForm('${test._id}')"></div>
+			<div class="top">
+				<h3>${test.name}</h3>
+				<input class="violet" type="button" value="<%- t('sessions.expand', { ns : 'SIMLETs' }) %>" onclick="toggleTest('${test._id}')">
+				<input class="green" type="button" value="<%- t('activities.add.title', { ns : 'SIMLETs' }) %>" onclick="openActivityForm('${test._id}')">
+				<input class="yellow" type="button" value="<%- t('sessions.edit.title', { ns : 'SIMLETs' }) %>" onclick="openEditTestForm('${test._id}')">
+				<input class="red" type="button" value="<%- t('sessions.delete.title', { ns : 'SIMLETs' }) %>" onclick="deleteTest('${test._id}', '${test.name}')">
+				<input class="orange" type="button" value="<%- t('sessions.duplicate.title', { ns : 'SIMLETs' }) %>" onclick="openEditDuplicateForm('${test._id}')">
+				${sandbox}
+			</div>
 			<div class="activities collapsed">${roller}</div>`);
+	}
+
+	let generateSandBoxEnvironement=function(testId)  {
+		Simva.generateSandBoxEnvironement(studyid, testId, function(error, result){
+			if(!error) {
+				reloadStudy();
+			}
+		});
+	}
+
+	let resetSandBoxEnvironement=function(testId)  {
+		Simva.resetSandBoxEnvironement(studyid, testId, function(error, result){
+			if(!error) {
+				reloadStudy();
+			}
+		});
+	}
+
+	let deleteSandBoxEnvironement=function(testId)  {
+		Simva.deleteSandBoxEnvironement(studyid, testId, function(error, result){
+			if(!error) {
+				reloadStudy();
+			}
+		});
+	}
+
+	let runSandBoxEnvironement=function(testId)  {
+		Simva.runSandBoxEnvironement(studyid, function(error, result){
+			if(!error) {
+				let context = $('#iframe_floating iframe')[0].contentWindow.document;
+				let body = $('body', context);
+				body.html(result);
+				Utils.toggleAddForm('iframe_floating');
+			}
+		});
 	}
 
 	let paintTestActivities = function(test, activities, participants){
 		$(`#test_${test._id} .activities`).empty();
 
 		if(activities.length === 0){
-			$(`#test_${test._id} .activities`).text("<%- t('activities.zero.message', { ns : 'studies' }) %>");
+			$(`#test_${test._id} .activities`).text("<%- t('activities.zero.message', { ns : 'SIMLETs' }) %>");
 		}else{
 			for (var i = 0; i < activities.length; i++) {
 				switch(activities[i].type){
@@ -1203,7 +1252,7 @@
 
 
 	let ownerRow = function(owner){
-		let toret = `<tr><td>${owner}</td><td><input class="red" type="button" value="<%- t('owners.delete.title', { ns : 'studies' }) %>"`;
+		let toret = `<tr><td>${owner}</td><td><input class="red" type="button" value="<%- t('coordinators.delete.title', { ns : 'SIMLETs' }) %>"`;
 		if(owner == '<%= user.data.username %>'){
 			toret += ' disabled="disabled"';
 		}else{
@@ -1215,7 +1264,7 @@
 	}
 
 	let groupRow = function(group){
-		let toret = `<tr><td>${group.name}</td><td><input class="red" type="button" value="<%- t('groups.delete.title', { ns : 'studies' }) %>" onclick="deleteGroup('${group._id}', '${group.name}')" `
+		let toret = `<tr><td>${group.name}</td><td><input class="red" type="button" value="<%- t('groups.delete.title', { ns : 'SIMLETs' }) %>" onclick="deleteGroup('${group._id}', '${group.name}')" `
 		if(group.link && group.link.type){
 			toret += ' disabled';
 		}
@@ -1225,7 +1274,7 @@
 	}
 
 	let platformRow = function(platform){
-		let toret = `<tr><td>${platform.name}</td><td><input class="red" type="button" value="<%- t('lti_platform.delete.title', { ns : 'studies' }) %>"
+		let toret = `<tr><td>${platform.name}</td><td><input class="red" type="button" value="<%- t('lti_platform.delete.title', { ns : 'SIMLETs' }) %>"
 		onclick="removePlatform('${platform._id}')"
 		></td></tr>`;
 		return toret;
@@ -1247,7 +1296,7 @@
 				}
 			}
 		}else{
-			toret += "<option><%- t('tests.zero.title', { ns : 'studies' }) %></option>";
+			toret += "<option><%- t('sessions.zero.title', { ns : 'SIMLETs' }) %></option>";
 		}
 		
 

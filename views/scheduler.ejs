@@ -96,8 +96,17 @@
 	<script type="text/javascript">
 		//
 		let studyId = "<%= study %>";
+		let sandbox = "<%= sandbox %>";
 		let username = "<%= user.data.username %>";
-
+		let sandbox_username, teacher_username;
+		sandbox_boolean=(sandbox.toLowerCase() === "true");
+		if(sandbox_boolean) {
+			sandbox_username = "<%= user.data.username %>";
+			teacher_username = "<%= teacher_user.data.username %>";
+		} else {
+			username = "<%= user.data.username %>";
+		}
+		
 		var manual = '<body style="background-color: black; color: white; font-family: sans-serif; text-align: center;"><h1>External Activity</h1><p>Ask or listen your teacher for what you have to do on this activity.</p><p>If you are allowed to complete the activity on your own, there should be a "complete activity" button above.</p></body>';
 
 		var completed = '<body style="background-color: black; color: white; font-family: sans-serif; text-align: center;"><h1>Study Completed!</h1><p>Congratulations, you have completed all the activities of the study.</p><p>Ask the teacher if there are more steps to continue.</p></body>';
@@ -185,77 +194,91 @@
 		}
 
 		let getUserToken = function(){
-			Simva.getCurrentUser(function(error, result) {
-				if(!error) {
-					if(result.token) {
-						document.getElementById('username').innerText = result.token;
-					} else {
-						document.getElementById('username').innerText = result.username;
+			if(sandbox_boolean) {
+				document.getElementById('username').innerText = `Sandbox User : sandbox / Current User : ${teacher_username}`;
+			} else {
+				Simva.getCurrentUser(function(error, result) {
+					if(!error) {
+						if(result.token) {
+							document.getElementById('username').innerText = result.token;
+						} else {
+							document.getElementById('username').innerText = result.username;
+						}
 					}
-				}
-			})
+				})
+			}
+			
 		}
 		
 		let avoid_refreshing = false;
-		let reloadSchedule = function(){
-			Simva.getStudySchedule(studyId, function(error, result){
-				if(!current_activity_id || current_activity_id !== result.next){
-					current_activity_id = result.next;
+		let updateSchedule = function(error, result){
+			if(!current_activity_id || current_activity_id !== result.next){
+				current_activity_id = result.next;
 
-					if(!result.next){
-						if(!avoid_refreshing){
-						avoid_refreshing = true;
-							$("#complete_activity").hide();
+				if(!result.next){
+					if(!avoid_refreshing){
+					avoid_refreshing = true;
+						$("#complete_activity").hide();
+						$('#activity_content').hide(10, function(){
+							$('#activity_content').attr('src', 'about:blank');
+							paintCurrentActivity('Completed');
+							document.getElementById('activity_content').src = `data:text/html;charset=utf-8,${escape(completed)}`;
+							$('#activity_content').show();
+							console.log('showing');
+						});
+					}
+					return;
+				}
+
+				avoid_refreshing = false;
+
+				if(!error){
+					let activity = result.activities[result.next];
+					activity._id = result.next;
+					Simva.isActivityOpenable(activity._id, function(error, result){
+						if(!error){
+							if(activity.details.user_managed){
+								$("#complete_activity").show();
+							}else{
+								$("#complete_activity").hide();
+							}
+						}
+						if(result.openable){
+							Simva.getActivityTarget(activity._id, function(error, result){
+								if (error) {
+     								console.error("Error getting the URL of the activity target:", error);
+        							return;
+    							}
+								try {
+									$('#activity_content').attr('src', result[username]);
+								} catch (error) {
+									console.error("Error getting source:", error);
+									return;
+								}
+							});
+						}else{
 							$('#activity_content').hide(10, function(){
 								$('#activity_content').attr('src', 'about:blank');
-								paintCurrentActivity('Completed');
-								document.getElementById('activity_content').src = `data:text/html;charset=utf-8,${escape(completed)}`;
+								document.getElementById('activity_content').src = `data:text/html;charset=utf-8,${escape(manual)}`;
 								$('#activity_content').show();
 								console.log('showing');
 							});
 						}
-						return;
-					}
-
-					avoid_refreshing = false;
-
-					if(!error){
-						let activity = result.activities[result.next];
-						activity._id = result.next;
-						Simva.isActivityOpenable(activity._id, function(error, result){
-							if(!error){
-								if(activity.details.user_managed){
-									$("#complete_activity").show();
-								}else{
-									$("#complete_activity").hide();
-								}
-							}
-							if(result.openable){
-								Simva.getActivityTarget(activity._id, function(error, result){
-									if (error) {
-     									console.error("Error getting the URL of the activity target:", error);
-        								return;
-    								}
-									try {
-										$('#activity_content').attr('src', result[username]);
-									} catch (error) {
-										console.error("Error getting source:", error);
-										return;
-									}
-								});
-							}else{
-								$('#activity_content').hide(10, function(){
-									$('#activity_content').attr('src', 'about:blank');
-									document.getElementById('activity_content').src = `data:text/html;charset=utf-8,${escape(manual)}`;
-									$('#activity_content').show();
-									console.log('showing');
-								});
-							}
-						});
-						paintCurrentActivity(activity.name);
-					}
+					});
+					paintCurrentActivity(activity.name);
 				}
-			});
+			}
+		};
+		let reloadSchedule = function(){
+			if(sandbox_boolean) {
+				Simva.getStudyScheduleSandbox(studyId, function(error, result) {
+					updateSchedule(error, result);
+				});
+			} else {
+				Simva.getStudySchedule(studyId, function(error, result) {
+					updateSchedule(error, result);
+				});
+			}
 		}
 
 		let paintCurrentActivity = function(name){
@@ -383,13 +406,13 @@
 				<div id="language-dropdown" style="display: flex; flex-wrap: wrap;"></div>
 				<button id="lang-btn"></button>
 			</span>
-			<span class="logo"><img src="/logo.png"></span> <span class="title"><%- t('scheduler.current', { ns : 'studies' }) %></span><span id="current_activity_name"></span>
+			<span class="logo"><img src="/logo.png"></span> <span class="title"><%- t('scheduler.current', { ns : 'SIMLETs' }) %></span><span id="current_activity_name"></span>
 		</div>
 		<div class="right">
-			<span id="refresh"><a style="cursor: pointer;" onclick="location.reload()"><img src="/icon/refresh.png"> <span><%- t('scheduler.refresh', { ns : 'studies' }) %></span></a></span>
-			<span id="complete_activity" style="display: none"><a style="cursor: pointer;" onclick="completeActivity()"><img src="/icon/check.png"> <span><%- t('scheduler.complete', { ns : 'studies' }) %></span></a></span>
+			<span id="refresh"><a style="cursor: pointer;" onclick="location.reload()"><img src="/icon/refresh.png"> <span><%- t('scheduler.refresh', { ns : 'SIMLETs' }) %></span></a></span>
+			<span id="complete_activity" style="display: none"><a style="cursor: pointer;" onclick="completeActivity()"><img src="/icon/check.png"> <span><%- t('scheduler.complete', { ns : 'SIMLETs' }) %></span></a></span>
 			<span><a><img src="/icon/user_white.png"> <span id="username"></span></a></span>
-			<span><a class="logout" href="/studies/"><img src="/icon/back.png"> <span><%- t('scheduler.exit', { ns : 'studies' }) %></span></a></span>
+			<span><a class="logout" href="/simlets/"><img src="/icon/back.png"> <span><%- t('scheduler.exit', { ns : 'SIMLETs' }) %></span></a></span>
 			<span><a class="logout" href="/users/logout"><img src="/icon/power.png"> <span><%- t('logout.title') %></span></a></span>
 		</div>
 	</div>

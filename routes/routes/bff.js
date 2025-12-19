@@ -70,31 +70,32 @@ module.exports = function(auth, config){
 
     router.post('/groups/:groupid/users', auth, async (req, res, next) => {
         let groupid = req.params['groupid'];
-        let generateUser = (callback)  => {
-            let username = usertools.generateUsername(req.body.algorithm, req.body.length);
-            let password = username;
-            let email = `${username}@example.com`
-            if(req.body.useNewGeneration) {
-                email=`${groupid}_${email}`;
-            }
-            Simva.register(groupid, username, email, password, 'student', true, req.body.useNewGeneration, req.session.id, callback);
-        }
-        
         let users=[];
-        
-        let completed=(error, user)  => {
-            if(error) {
-                generateUser(completed);
-            } else {
-                users.push(user.username);
-                if(users.length == req.body.batchLength) {
-                    res.status(200).send(users);
-                }
-            }
-        };
-        for(let i=0; i < req.body.batchLength; i++) {
-            generateUser(completed);
+        let params = {
+            algorithm: req.body.algorithm,
+            length : req.body.length,
+            groupid: groupid,
+            useNewGeneration:req.body.useNewGeneration,
         }
+        let batchLength=req.body.batchLength;
+        while (users.length < batchLength) {
+            // Fire off remaining promises in parallel
+            const remaining = batchLength - users.length;
+            const promises = Array.from({ length: remaining }, () => groupcontroler.generateStudentUserWithRetry(params, req.session.id, 5));
+            logger.info("Test");
+            try {
+                const results = await Promise.all(promises);
+                logger.info(results);
+                users.push(...results.map(student => student.username));
+                logger.info(users.length);
+                logger.info(users);
+            } catch (err) {
+                logger.error("Error generating some users:", err);
+                // continue loop → it will retry failed ones
+            }
+        }
+
+        res.status(200).send(users);
     });
 
     router.patch('/users/:username', auth, async (req, res, next) => {
@@ -173,7 +174,7 @@ module.exports = function(auth, config){
             let group = await groupcontroler.getCompleteGroup(groupid, sessionid);
             res.status(200).send(group);
         } catch(error) {
-            next(error.response.data);
+            next(error);
         }
     });
 
@@ -232,7 +233,7 @@ module.exports = function(auth, config){
             let study = await studycontroler.getCompleteStudy(studyId, sessionid);
             res.status(200).send(study);
         } catch(error) {
-            next(error.response.data);
+            next(error);
         }
     });
                                 
@@ -313,6 +314,41 @@ module.exports = function(auth, config){
     });
 
     /**
+     * SANDBOX
+     */
+    router.post('/studies/:studyid/tests/:testid/sandbox', auth, async (req, res, next) => {
+        let studyId=req.params["studyid"];
+        let testId=req.params["testid"];
+        let use_new_generation = req.query["new"] ? req.query["new"] == "true" : true;
+        try {
+            let result = await studycontroler.addSandboxToTest(studyId, testId, use_new_generation, req.session.id);
+            res.status(200).send(result);
+        } catch(error) {
+            next(error);
+        }
+    });
+
+    router.patch('/studies/:studyid/tests/:testid/sandbox', auth, async (req, res, next) => {
+        Simva.resetSandbox(req.params["studyid"], req.params["testid"], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.delete('/studies/:studyid/tests/:testid/sandbox', auth, async (req, res, next) => {
+        let studyId=req.params["studyid"];
+        let testId=req.params["testid"];
+        try {
+            let result = await studycontroler.deleteSandboxFromTest(studyId, testId, req.session.id);
+            res.status(200).send(result);
+        } catch(error) {
+            next(error);
+        }
+    });
+    /**
     * ALLOCATORS
     * 
     */
@@ -357,7 +393,7 @@ module.exports = function(auth, config){
             let study = await studycontroler.exportStudy(studyId, true, sessionid);
             res.status(200).send(study);
         } catch(error) {
-            next(error.response.data);
+            next(error);
         }
     });
 
@@ -368,7 +404,7 @@ module.exports = function(auth, config){
             let study = await studycontroler.importStudy(newstudy, sessionid);
             res.status(200).send(study);
         } catch(error) {
-            next(error.response.data);
+            next(error);
         }
     });
 
@@ -414,6 +450,16 @@ module.exports = function(auth, config){
 
     router.get('/studies/:studyid/schedule', auth, async (req, res, next) => {
         Simva.getStudySchedule(req.params["studyid"], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.get('/studies/:studyid/schedule/sandbox', auth, async (req, res, next) => {
+        Simva.getStudySchedule(req.params["studyid"], `${req.params["studyid"]}_sandbox_user`, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
@@ -630,7 +676,7 @@ module.exports = function(auth, config){
                 commun['storage_file_one_per_line_title'] = req.t(`storage.file.one_per_line.title`, { ns : 'activities' } );
                 commun['storage_error_downloading'] = req.t(`storage.error.downloading`, { ns : 'activities' } );
                 commun['progress_title'] = req.t(`progress.title`, { ns : 'activities' } );
-                commun['user_title'] = req.t(`user.title`, { ns : 'activities' } );
+                commun['user_title'] = req.t(`participant.title`, { ns : 'activities' } );
                 commun['tmon_title'] = req.t(`tmon.title`, { ns : 'activities' } );
 
                 result.forEach(element => {
@@ -705,15 +751,15 @@ module.exports = function(auth, config){
                 next(error.response.data);
             } else {
                 result.forEach(element => {
-                    element['description'] = req.t(`allocator.${element.type}.description`, { ns : 'studies' } );
-                    element['name'] = req.t(`allocator.${element.type}.title`, { ns : 'studies' } );
-                    element['type_t'] = req.t(`allocator.${element.type}.type`, { ns : 'studies' } );
-                    element['type_title'] = req.t(`allocator.type.title`, { ns : 'studies' } );
-                    element['test_title'] = req.t(`allocator.tests.title`, { ns : 'studies' } );
-                    element['participant_title'] = req.t(`allocator.participants.title`, { ns : 'studies' } );
-                    element['add_error'] = req.t(`allocator.add.error`, { ns : 'studies' } );
-                    element['add_message'] = req.t(`allocator.add.message`, { ns : 'studies' } );
-                    element['add_title'] = req.t(`allocator.add.title`, { ns : 'studies' } );
+                    element['description'] = req.t(`allocator.${element.type}.description`, { ns : 'SIMLETs' } );
+                    element['name'] = req.t(`allocator.${element.type}.title`, { ns : 'SIMLETs' } );
+                    element['type_t'] = req.t(`allocator.${element.type}.type`, { ns : 'SIMLETs' } );
+                    element['type_title'] = req.t(`allocator.type.title`, { ns : 'SIMLETs' } );
+                    element['test_title'] = req.t(`allocator.sessions.title`, { ns : 'SIMLETs' } );
+                    element['participant_title'] = req.t(`allocator.participants.title`, { ns : 'SIMLETs' } );
+                    element['add_error'] = req.t(`allocator.add.error`, { ns : 'SIMLETs' } );
+                    element['add_message'] = req.t(`allocator.add.message`, { ns : 'SIMLETs' } );
+                    element['add_title'] = req.t(`allocator.add.title`, { ns : 'SIMLETs' } );
                 });
                 res.status(200).send(result);
             }

@@ -57,7 +57,7 @@
 				};
 				reader.readAsDataURL($("#import_study_form").find('input[name="exportJson"]').get(0).files[0]);
 			}else{
-				$("#error").text("<%- t('new.upload.errorMessage', { ns : 'studies' }) %>");
+				$("#error").text("<%- t('new.upload.errorMessage', { ns : 'SIMLETs' }) %>");
 				Utils.toggleSubmit(currentform);
 			}
 
@@ -72,7 +72,7 @@
 			Utils.toggleSubmit(currentform);
 			let errorbox = $(this).find('.error');
 			if(form.name == form.studyName) {
-				errorbox.text("<%- t('name.edit.nochange', { ns : 'studies' }) %>");
+				errorbox.text("<%- t('name.edit.nochange', { ns : 'SIMLETs' }) %>");
 				Utils.toggleSubmit(currentform);
 			} else {
 				Simva.getStudy(form.study, function(error, study){
@@ -108,14 +108,14 @@
 				$('#studies_list').append(card);
 			}
 		}else{
-			$('#studies_list').text("<%- t('zero.message.title', { ns : 'studies' }) %>");
+			$('#studies_list').text("<%- t('zero.message.title', { ns : 'SIMLETs' }) %>");
 		}
 	}
 
 	let deleteStudy = function(studyid, studyname){
 		event.preventDefault();
 		event.stopPropagation();
-		if(confirm(`<%- t('remove.confirm', { ns : 'studies', study : '${studyname}' }) %>`)){
+		if(confirm(`<%- t('remove.confirm', { ns : 'SIMLETs', SIMLET : '${studyname}' }) %>`)){
 			Simva.deleteStudy(studyid, function(error, result){
 				if(!error){
 					refreshStudies();
@@ -137,13 +137,13 @@
 	}
 	
 	let toCard = function(study){
-		return `<a class="stopable" href="/studies/${study._id}"><div class="studycard selectable card third">
+		return `<a class="stopable" href="/simlets/${study._id}"><div class="studycard selectable card third">
 			<span class="button yellow" onclick="openEditStudyForm('${study._id}', '${study.name}')">🖍️</span>
 			<span class="button red delete" onclick="deleteStudy('${study._id}', '${study.name}')">X</span>
-			<h1><%- t('single.title', { ns : 'studies' }) %>: ${study.name}</h1>
-			<p><strong><%- t('groups.title', { ns : 'studies' }) %>:</strong> ${study.groups.length}</p>
-			<p><strong><%- t('tests.title', { ns : 'studies' }) %>:</strong> ${study.tests.length}</p>
-			<p><strong><%- t('owners.title', { ns : 'studies' }) %>:</strong> ${study.owners.length}</p>
+			<h1><%- t('single.title', { ns : 'SIMLETs' }) %>: ${study.name}</h1>
+			<p><strong><%- t('groups.title', { ns : 'SIMLETs' }) %>:</strong> ${study.groups.length}</p>
+			<p><strong><%- t('sessions.title', { ns : 'SIMLETs' }) %>:</strong> ${study.tests.length}</p>
+			<p><strong><%- t('coordinators.title', { ns : 'SIMLETs' }) %>:</strong> ${study.owners.length}</p>
 			</div></a>`;
 	}
 
@@ -154,7 +154,7 @@
 		$(`#${subform}`).toggleClass('selected');
 	}
 </script>
-<h1><%- t('title', { ns : 'studies' }) %></h1>
+<h1><%- t('title', { ns : 'SIMLETs' }) %></h1>
 <div id="studies_list">
 	<div style="width: 100%; text-align: center; padding: 200px;">
 		<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
@@ -163,22 +163,22 @@
 <div id="new_study" class="new_element floating">
 	<div class="floater">
 		<div class="form">
-			<h1><%- t('new.title', { ns : 'studies' }) %></h1>
+			<h1><%- t('new.title', { ns : 'SIMLETs' }) %></h1>
 			<div class="tabs">
-				<span class="tab selected" onclick="changeTab(this, 'new_study','new_study_tab')"><%- t('new.title', { ns : 'studies' }) %></span>
-				<span class="tab" onclick="changeTab(this, 'new_study','import_study_tab')"><%- t('new.upload.title', { ns : 'studies' }) %></span>
+				<span class="tab selected" onclick="changeTab(this, 'new_study','new_study_tab')"><%- t('new.title', { ns : 'SIMLETs' }) %></span>
+				<span class="tab" onclick="changeTab(this, 'new_study','import_study_tab')"><%- t('new.upload.title', { ns : 'SIMLETs' }) %></span>
 			</div>
 			<div id="new_study_tab" class="subform selected">
 				<form id="new_study_form">
-					<input type="text" name="name" placeholder="<%- t('name.placeholder', { ns : 'studies' }) %>">
-					<input type="submit" value="<%- t('new.submit', { ns : 'studies' }) %>">
+					<input type="text" name="name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>">
+					<input type="submit" value="<%- t('new.submit', { ns : 'SIMLETs' }) %>">
 				</form>
 			</div>
 			<div hidden id="import_study_tab" class="subform">
 				<form id="import_study_form">
-					<p><%- t('new.upload.message', { ns : 'studies' }) %></p>
+					<p><%- t('new.upload.message', { ns : 'SIMLETs' }) %></p>
 					<input type="file" name="exportJson">
-					<input type="submit" value="<%- t('new.submit', { ns : 'studies' }) %>">
+					<input type="submit" value="<%- t('new.submit', { ns : 'SIMLETs' }) %>">
 				</form>
 			</div>
 		</div>	
@@ -188,11 +188,11 @@
 	<div class="floater">
 		<div class="form">
 			<div id="edit_study_tab" class="subform selected">
-				<h2>"<%- t('name.edit.title', { ns : 'studies' }) %></h2>
+				<h2>"<%- t('name.edit.title', { ns : 'SIMLETs' }) %></h2>
 				<form id="edit_study_form">
 					<input hidden type="text" id="study_id" name="study" required>
 					<input hidden type="text" id="study_name" name="studyName" required>
-					<input type="text" name="name" id="edit_study_name" placeholder="<%- t('name.placeholder', { ns : 'studies' }) %>" required>
+					<input type="text" name="name" id="edit_study_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
 					<input type="submit" value="Edit">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 					<span class="error" id="edit_study_error"></span>
