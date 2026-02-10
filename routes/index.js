@@ -111,6 +111,7 @@ app.use((err, req, res, next) => {
   const status = err.status || 500;
   const msg = err.error || err.message;
   logger.info(`Error ${status} (${msg}) on ${req.method} ${req.url} with payload ${req.body}.`);
+  logger.error(err);
   res.status(status).send({ message: msg });
 });
 

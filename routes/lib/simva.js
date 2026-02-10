@@ -137,7 +137,7 @@ class Simva {
 	}
 
 	getUser(username, sessionId, callback){
-		this.get(`${this.apiurl}/users?search_string=${encodeURI(`{"username":"${username}"}`)}`, sessionId, callback);
+		this.get(`${this.apiurl}/users?username=${username}`, sessionId, callback);
 	}
 
 	setRole(username, role, sessionId, callback){
@@ -159,8 +159,8 @@ class Simva {
 	}
 
 	// GROUPS
-	getGroups(sessionId, callback){
-		this.get(`${this.apiurl}/groups`, sessionId, callback);
+	getGroups(useNewGeneration, sessionId, callback){
+		this.get(`${this.apiurl}/groups?use_new_generation=${useNewGeneration}`, sessionId, callback);
 	}
 
 	addGroup(name, newversion, sessionId, callback){
@@ -192,84 +192,88 @@ class Simva {
 	// STUDIES
 
 	getStudies(sessionId, callback){
-		this.get(`${this.apiurl}/studies`, sessionId, callback);
+		this.get(`${this.apiurl}/simlets`, sessionId, callback);
 	}
 
 	addStudy(name, sessionId, callback){
 		let body = { name: name };
-		this.post(`${this.apiurl}/studies`, body, sessionId, callback);
+		this.post(`${this.apiurl}/simlets`, body, sessionId, callback);
 	}
 
 	addTestToStudy(study_id, name, sessionId, callback){
 		let body = { name: name };
-		this.post(`${this.apiurl}/studies/${study_id}/tests`, body, sessionId, callback);
+		this.post(`${this.apiurl}/simlets/${study_id}/tests`, body, sessionId, callback);
 	}
 
 	duplicateTestFromStudy(study_id, name, testId, sessionId, callback){
 		let body = { name: name, from : testId };
-		this.post(`${this.apiurl}/studies/${study_id}/tests`, body, sessionId, callback);
+		this.post(`${this.apiurl}/simlets/${study_id}/tests`, body, sessionId, callback);
 	}
 
 	getStudy(study_id, sessionId, callback){
-		this.get(`${this.apiurl}/studies/${study_id}`, sessionId, callback);
+		this.get(`${this.apiurl}/simlets/${study_id}`, sessionId, callback);
+	}
+
+	getStudySessions(study_id, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${study_id}/sessions`, sessionId, callback);
 	}
 
 	updateStudy(study, sessionId, callback){
-		this.put(`${this.apiurl}/studies/${study._id}`, study, sessionId, callback);
+		this.put(`${this.apiurl}/simlets/${study._id}`, study, sessionId, callback);
 	}
 
 	updateTest(studyId, test, sessionId, callback){
-		this.patch(`${this.apiurl}/studies/${studyId}/tests/${test.id}`, test, sessionId, callback);
+		this.patch(`${this.apiurl}/simlets/${studyId}/tests/${test.id}`, test, sessionId, callback);
 	}
 
 	deleteStudy(study_id, sessionId, callback){
-		this.delete(`${this.apiurl}/studies/${study_id}`, sessionId, callback);
+		this.delete(`${this.apiurl}/simlets/${study_id}`, sessionId, callback);
 	}
 
 	getAllocator(study_id, sessionId, callback){
-		this.get(`${this.apiurl}/studies/${study_id}/allocator`, sessionId, callback);
+		this.get(`${this.apiurl}/simlets/${study_id}/allocator`, sessionId, callback);
 	}
 
 	updateAllocator(study_id, allocator, sessionId, callback){
-		this.put(`${this.apiurl}/studies/${study_id}/allocator`, allocator, sessionId, callback);
+		this.put(`${this.apiurl}/simlets/${study_id}/allocator`, allocator, sessionId, callback);
 	}
 
 	getStudyTests(study_id, sessionId, callback){
-		this.get(`${this.apiurl}/studies/${study_id}/tests`, sessionId, callback);
+		this.get(`${this.apiurl}/simlets/${study_id}/tests`, sessionId, callback);
 	}
 
 	exportStudyConfig(study_id, sessionId, callback){
-		this.get(`${this.apiurl}/studies/${study_id}/export`, sessionId, callback);
+		this.get(`${this.apiurl}/simlets/${study_id}/export`, sessionId, callback);
 	}
 
 	importStudyConfig(newStudy, sessionId, callback){
-		this.post(`${this.apiurl}/studies/import`, newStudy, sessionId, callback);
+		this.post(`${this.apiurl}/simlets/import`, newStudy, sessionId, callback);
 	}
 
 	getStudyTest(study_id,test_id, sessionId, callback){
-		this.get(`${this.apiurl}/studies/${study_id}/tests/${test_id}`, sessionId, callback);
+		this.get(`${this.apiurl}/simlets/${study_id}/tests/${test_id}`, sessionId, callback);
 	}
 
 	getStudyGroups(study_id, sessionId, callback){
-		this.get(`${this.apiurl}/studies/${study_id}/groups`, sessionId, callback);
+		this.get(`${this.apiurl}/simlets/${study_id}/groups`, sessionId, callback);
 	}
 
 	getTestActivities(study_id, test_id, sessionId, callback){
-		this.get(`${this.apiurl}/studies/${study_id}/tests/${test_id}/activities`, sessionId, callback);
+		this.get(`${this.apiurl}/simlets/${study_id}/tests/${test_id}/activities`, sessionId, callback);
 	}
 
 	getStudyParticipants(study_id, sessionId, callback){
-		this.get(`${this.apiurl}/studies/${study_id}/participants`, sessionId, callback);
+		this.get(`${this.apiurl}/simlets/${study_id}/participants`, sessionId, callback);
 	}
 
 	getStudySchedule(study_id, sessionId, callback){
-		this.get(`${this.apiurl}/studies/${study_id}/schedule`, sessionId, callback);
+		this.get(`${this.apiurl}/simlets/${study_id}/schedule`, sessionId, callback);
 	}
 
 	// Activities
 
 	addActivityToTest(study_id, test_id, activity, sessionId, callback){
-		this.post(`${this.apiurl}/studies/${study_id}/tests/${test_id}/activities`, activity, sessionId, callback);
+		this.post(`${this.apiurl}/simlets/${study_id}/tests/${test_id}/activities`, activity, sessionId, callback);
 	}
 	
 	updateActivity(activity, sessionId, callback){

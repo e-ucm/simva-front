@@ -180,14 +180,14 @@
 			let form = Utils.getFormData($("#existing_owner_form"));
 			let errorbox = $(this).find('.error');
 
-			for (var i = 0; i < group.owners.length; i++) {
+			for (var i = 0; i < group.coordinators.length; i++) {
 				if(group.owners[i] == form.name){
 					errorbox.text('The owner is already in the group.');
 					return false;
 				}
 			}
 
-			group.owners.push(form.name);
+			group.coordinators.push(form.name);
 
 			Simva.updateGroup(group, function(error, result){
 				reloadGroup();
@@ -355,14 +355,14 @@
 	let deleteOwner = function(owner){
 		if(confirm(`<%- t('owners.remove.confirm', { ns: 'groups', owner : '${owner}', group : '${group.name}' }) %>`)){
 			let toremove = -1;
-			for (var i = 0; i < group.owners.length; i++) {
+			for (var i = 0; i < group.coordinators.length; i++) {
 				if(group.owners[i] === owner){
 					toremove = i;
 					break;
 				}
 			}
 
-			group.owners.splice(i, 1);
+			group.coordinators.splice(i, 1);
 
 			Simva.updateGroup(group, function(error, result){
 				reloadGroup();
@@ -374,7 +374,7 @@
 		$('#group_name').text(group.name);
 
 		$('#owners').html('');
-		for (var i = 0; i < group.owners.length; i++) {
+		for (var i = 0; i < group.coordinators.length; i++) {
 			$('#owners').append(ownerRow(group.owners[i]));
 		}
 		$('#participants').empty();

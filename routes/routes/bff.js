@@ -152,7 +152,7 @@ module.exports = function(auth, config){
     * 
     */
     router.get('/groups', auth, async (req, res, next) => {
-        Simva.getGroups(req.session.id, (error, result) => {
+        Simva.getGroups(req.query.use_new_generation === 'true', req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
@@ -162,7 +162,7 @@ module.exports = function(auth, config){
     });
 
     router.post('/groups', auth, async (req, res, next) => {
-        Simva.addGroup(req.body.name, req.body.version, req.session.id, (error, result) => {
+        Simva.addGroup(req.body.name, req.body.use_new_generation, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
@@ -719,6 +719,7 @@ module.exports = function(auth, config){
             if(error) {
                 next(error.response.data);
             } else {
+                logger.info("Allocator types before i18n processing:", result);
                 result.forEach(element => {
                     element['description'] = req.t(`allocator.${element.type}.description`, { ns : 'SIMLETs' } );
                     element['name'] = req.t(`allocator.${element.type}.title`, { ns : 'SIMLETs' } );

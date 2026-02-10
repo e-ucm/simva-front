@@ -14,7 +14,7 @@
 				}else{
 					Utils.toggleAddForm('new_group');
 					$('#groups_list').html(roller);
-					Simva.getGroups(function(error, result){
+					Simva.getGroups(false, function(error, result){
 						if(!error){
 							paintGroups(result);
 						}
@@ -42,7 +42,7 @@
 							if(!error){
 								Utils.toggleSubmit(currentform);
 								Utils.toggleAddForm('edit_group');
-								Simva.getGroups(function(error, result){
+								Simva.getGroups(false, function(error, result){
 									if(!error){
 										paintGroups(result);
 									}
@@ -57,7 +57,7 @@
 		});
 
 		$('#groups_list').html(roller);
-		Simva.getGroups(function(error, result){
+		Simva.getGroups(false, function(error, result){
 			if(!error){
 				paintGroups(result);
 			}
@@ -98,7 +98,7 @@
 		if(confirm(`<%= t("remove.confirm", { ns : "groups", group : "${groupname}" }) %>`)){
 			Simva.deleteGroup(groupid, function(error, result){
 				if(!error){
-					Simva.getGroups(function(error, result){
+					Simva.getGroups(false, function(error, result){
 						if(!error){
 							paintGroups(result);
 						}
@@ -109,12 +109,12 @@
 	}
 
 	let toCard = function(group){
-		return `<a href="/previous-groups/${group._id}"><div class="selectable card third">
-			<input class="yellow" type="button" value="🖍️" onclick="openEditGroupForm('${group._id}','${group.name}')">
-			<input class="red" type="button" value="X" onclick="deleteGroup('${group._id}', '${group.name}')">
+		return `<a href="/previous-groups/${group.group_id}"><div class="selectable card third">
+			<input class="yellow" type="button" value="🖍️" onclick="openEditGroupForm('${group.group_id}','${group.name}')">
+			<input class="red" type="button" value="X" onclick="deleteGroup('${group.group_id}', '${group.name}')">
 			<h1><%= t("single.title", { ns : "groups" }) %>: ${group.name}</h1>
 			<p><strong><%= t("participants.title", { ns : "groups" }) %>:</strong> ${group.participants.length}</p>
-			<p><strong><%= t("owners.title", { ns : "groups" }) %>:</strong> ${group.owners.length}</p>
+			<p><strong><%= t("owners.title", { ns : "groups" }) %>:</strong> ${group.coordinators.length}</p>
 			</div></a>`;
 	}
 </script>

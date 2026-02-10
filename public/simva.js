@@ -33,11 +33,6 @@ var Simva = {
 		this.tmonFile = tmonFile;
 	},
 
-	login: function(username, password, callback){
-		let body = { username: username, password: password }
-		Utils.post('/users/login', body, callback);
-	},
-
 	refreshAuth : function(callback){
 		Utils.get(`/users/refresh_auth`, callback);
 	},
@@ -107,16 +102,16 @@ var Simva = {
 	},
 
 	// GROUPS
-	getGroups: function(callback){
-		Utils.get(`/bff/groups`, callback);
+	getGroups: function(use_new_generation, callback){
+		Utils.get(`/bff/groups?use_new_generation=${use_new_generation}`, callback);
 	},
 
-	addGroup: function(name, newversion, callback){
+	addGroup: function(name, use_new_generation, callback){
 		let body = { name: name	 };
-		if(newversion) {
-			body.version = 1;
+		if(use_new_generation) {
+			body.use_new_generation = true;
 		} else {
-			body.version = 0;
+			body.use_new_generation = false;
 		}
 		Utils.post(`/bff/groups`, body, callback);
 	},

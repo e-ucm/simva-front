@@ -12,82 +12,30 @@ module.exports = {
             logger.warn(e);
         }
         try {
-            study.allgroups = await SimvaAsync.getGroups(sessionid);
+            study.allgroups = await SimvaAsync.getGroups(true, sessionid);
+            study.allgroups = [ ...study.allgroups, ...await SimvaAsync.getGroups(false, sessionid)];
         } catch(e) {
             logger.warn(e);
         }
-        try {
-            study.completeGroups = await SimvaAsync.getStudyGroups(studyid, sessionid);
-        } catch(e) {
-            logger.warn(e);
-        }
+        //try {
+        //    study.completeGroups = await SimvaAsync.getStudyGroups(studyid, sessionid);
+        //} catch(e) {
+        //    logger.warn(e);
+        //}
         try {
             study.completeAllocator = await SimvaAsync.getAllocator(studyid, sessionid);
         } catch(e) {
             logger.warn(e);
         }
         study.completeTests=[];
-        for(let i=0;i<study.tests.length;i++) {
+        logger.info({study}, "Study data before fetching complete tests");
+        for(let i=0;i<study.sessions.length;i++) {
             try {
-                let test=await testcontroler.getCompleteTest(studyid, study.tests[i], sessionid);
+                let test=await testcontroler.getCompleteTest(studyid, study.sessions[i], sessionid);
                 study.completeTests.push(test);
             } catch(e) {
                 logger.warn(e);
             }
-        }
-        try {
-            const participantTask={
-                task: 'getStudyUsersParticipants',
-                params: '',
-                object: 'Study',
-                objectLoad: 'true',
-                objectEvent: 'true',
-                objectId: study._id
-            };
-            SimvaAsync.addToTaskList(participantTask, sessionid);
-        } catch(e) {
-            logger.warn(e);
-        }
-        try {
-            const groupTask={
-                task: 'getStudyGroups',
-                params: '',
-                object: 'Study',
-                objectLoad: 'true',
-                objectEvent: 'true',
-                objectId: study._id
-            };
-            SimvaAsync.addToTaskList(groupTask, sessionid);
-        } catch(e) {
-            logger.warn(e);
-        }
-        try {
-            const allocatorTask={
-                task: 'getStudyAllocator',
-                params: '',
-                object: 'Study',
-                objectLoad: 'true',
-                objectEvent: 'true',
-                objectId: study._id
-            };
-            SimvaAsync.addToTaskList(allocatorTask, sessionid);
-        } catch(e) {
-            logger.warn(e);
-        }
-        try {
-            study.tests.forEach(async test =>  {
-                var testTask={
-                    task: 'toObject',
-                    params: '',
-                    object: 'Test',
-                    objectEvent: 'true',
-                    objectLoad: 'true',
-                    objectId: test
-                };
-                SimvaAsync.addToTaskList(testTask, sessionid);
-            });
-        } catch(e) {
-            logger.warn(e);
         }
         return study;
     },

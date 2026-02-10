@@ -10,32 +10,6 @@ module.exports = {
         } catch(e) {
            logger.warn(e);
         }
-        try {
-            const groupTask={
-                task: 'toObject',
-                params: '',
-                object: 'Group',
-                objectLoad: 'true',
-                objectEvent: 'true',
-                objectId: groupid
-            };
-            SimvaAsync.addToTaskList(groupTask,sessionid);
-        } catch(e) {
-            logger.warn(e);
-        }
-        try {
-			const participantTask={
-				task: 'getParticipants',
-				params: '',
-				object: 'Group',
-				objectLoad: 'true',
-				objectEvent: 'true',
-				objectId: groupid
-			};
-			SimvaAsync.addToTaskList(participantTask, sessionid);
-		} catch(e) {
-			logger.warn(e);
-		}
         return group;
     },
 
