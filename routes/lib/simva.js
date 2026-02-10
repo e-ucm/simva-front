@@ -159,7 +159,11 @@ class Simva {
 	}
 
 	// GROUPS
-	getGroups(useNewGeneration, sessionId, callback){
+	getGroups(sessionId, callback){
+		this.get(`${this.apiurl}/groups`, sessionId, callback);
+	}
+
+	getGroupsWithVersion(useNewGeneration, sessionId, callback){
 		this.get(`${this.apiurl}/groups?use_new_generation=${useNewGeneration}`, sessionId, callback);
 	}
 
@@ -202,12 +206,12 @@ class Simva {
 
 	addTestToStudy(study_id, name, sessionId, callback){
 		let body = { name: name };
-		this.post(`${this.apiurl}/simlets/${study_id}/tests`, body, sessionId, callback);
+		this.post(`${this.apiurl}/simlets/${study_id}/sessions`, body, sessionId, callback);
 	}
 
 	duplicateTestFromStudy(study_id, name, testId, sessionId, callback){
 		let body = { name: name, from : testId };
-		this.post(`${this.apiurl}/simlets/${study_id}/tests`, body, sessionId, callback);
+		this.post(`${this.apiurl}/simlets/${study_id}/sessions`, body, sessionId, callback);
 	}
 
 	getStudy(study_id, sessionId, callback){
@@ -223,7 +227,7 @@ class Simva {
 	}
 
 	updateTest(studyId, test, sessionId, callback){
-		this.patch(`${this.apiurl}/simlets/${studyId}/tests/${test.id}`, test, sessionId, callback);
+		this.patch(`${this.apiurl}/simlets/${studyId}/sessions/${test.id}`, test, sessionId, callback);
 	}
 
 	deleteStudy(study_id, sessionId, callback){
@@ -239,7 +243,7 @@ class Simva {
 	}
 
 	getStudyTests(study_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${study_id}/tests`, sessionId, callback);
+		this.get(`${this.apiurl}/simlets/${study_id}/sessions`, sessionId, callback);
 	}
 
 	exportStudyConfig(study_id, sessionId, callback){
@@ -251,7 +255,7 @@ class Simva {
 	}
 
 	getStudyTest(study_id,test_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${study_id}/tests/${test_id}`, sessionId, callback);
+		this.get(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}`, sessionId, callback);
 	}
 
 	getStudyGroups(study_id, sessionId, callback){
@@ -259,7 +263,7 @@ class Simva {
 	}
 
 	getTestActivities(study_id, test_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${study_id}/tests/${test_id}/activities`, sessionId, callback);
+		this.get(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/activities`, sessionId, callback);
 	}
 
 	getStudyParticipants(study_id, sessionId, callback){
@@ -273,7 +277,7 @@ class Simva {
 	// Activities
 
 	addActivityToTest(study_id, test_id, activity, sessionId, callback){
-		this.post(`${this.apiurl}/simlets/${study_id}/tests/${test_id}/activities`, activity, sessionId, callback);
+		this.post(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/activities`, activity, sessionId, callback);
 	}
 	
 	updateActivity(activity, sessionId, callback){

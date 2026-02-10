@@ -152,13 +152,24 @@ module.exports = function(auth, config){
     * 
     */
     router.get('/groups', auth, async (req, res, next) => {
-        Simva.getGroups(req.query.use_new_generation === 'true', req.session.id, (error, result) => {
-            if(error) {
-                next(error.response.data);
-            } else {
-                res.status(200).send(result);
-            }
-        });
+        if(req.query.use_new_generation) {
+            Simva.getGroupsWithVersion(req.query.use_new_generation === 'true', req.session.id, (error, result) => {
+                if(error) {
+                    next(error.response.data);
+                } else {
+                    res.status(200).send(result);
+                }
+            });
+        } else {
+            Simva.getGroups(req.session.id, (error, result) => {
+                if(error) {
+                    next(error.response.data);
+                } else {
+                    res.status(200).send(result);
+                }
+            });
+        }
+        
     });
 
     router.post('/groups', auth, async (req, res, next) => {

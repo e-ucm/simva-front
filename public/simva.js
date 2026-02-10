@@ -1,4 +1,3 @@
-
 var Simva = {
 	apiurl: null,
 	jwt: null,

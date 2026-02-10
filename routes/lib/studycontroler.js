@@ -12,16 +12,15 @@ module.exports = {
             logger.warn(e);
         }
         try {
-            study.allgroups = await SimvaAsync.getGroups(true, sessionid);
-            study.allgroups = [ ...study.allgroups, ...await SimvaAsync.getGroups(false, sessionid)];
+            study.allgroups = await SimvaAsync.getGroups(sessionid);
         } catch(e) {
             logger.warn(e);
         }
-        //try {
-        //    study.completeGroups = await SimvaAsync.getStudyGroups(studyid, sessionid);
-        //} catch(e) {
-        //    logger.warn(e);
-        //}
+        try {
+            study.completeGroups = await SimvaAsync.getStudyGroups(studyid, sessionid);
+        } catch(e) {
+            logger.warn(e);
+        }
         try {
             study.completeAllocator = await SimvaAsync.getAllocator(studyid, sessionid);
         } catch(e) {
