@@ -89,7 +89,7 @@ var RageMinioActivityPainter = {
 		let toret = '<table><tr><th>User</th><th>Completed</th><th>Progress</th><th>Traces</th><th>Backup</th></tr>';
 
 		for (var i = 0; i < participants.length; i++) {
-			if(!AllocatorFactory.Painters[allocator.type].isAllocatedToActivity(participants[i].username, activity)){
+			if(!AllocatorFactory.Painters[allocator.allocator_type].isAllocatedToActivity(participants[i].username, activity)){
 				continue;
 			}
 			
@@ -106,6 +106,9 @@ var RageMinioActivityPainter = {
 	},
 
 	paintActivityCompletion: function(activity, status){
+		if(!status) {
+			return;
+		}
 		let usernames = Object.keys(status);
 
 		let done = 0;
@@ -132,6 +135,9 @@ var RageMinioActivityPainter = {
 	},
 
 	paintActivityResult: function(activity, results){
+		if(!results) {
+			return;
+		}
 		let usernames = Object.keys(results);
 
 		let done = 0, partial = 0;

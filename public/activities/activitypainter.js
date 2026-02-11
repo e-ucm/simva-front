@@ -75,6 +75,9 @@ var ActivityPainter = {
 	},
 
 	paintActivityTargets: function(activity, results){
+		if(!results) {
+			return;
+		}
 		let usernames = Object.keys(results);
 
 		let done = 0, partial = 0;
@@ -116,7 +119,7 @@ var ActivityPainter = {
 		toret += '</tr>';
 
 		for (var i = 0; i < participants.length; i++) {
-			if(!AllocatorFactory.Painters[allocator.type].isAllocatedToActivity(participants[i].username, activity)){
+			if(!AllocatorFactory.Painters[allocator.allocator_type].isAllocatedToActivity(participants[i].username, activity)){
 				continue;
 			}
 			toret += `<tr><td>${this.paintUsernameOrToken(activity, participants[i])}</td>`;
@@ -173,6 +176,9 @@ var ActivityPainter = {
 	},
 
 	paintActivityCompletion: function(activity, status, checkbox=false, completed_on=this.commun.completed_on, completed_off=this.commun.completed_off){
+		if(!status) {
+			return;
+		}
 		let usernames = Object.keys(status);
 
 		let done = 0;
@@ -218,6 +224,9 @@ var ActivityPainter = {
 	},
 
 	paintActivityProgress: function(activity, status){
+		if(!status) {
+			return;
+		}
 		let usernames = Object.keys(status);
 		let done = 0, partial = 0;
 
@@ -253,6 +262,9 @@ var ActivityPainter = {
 	},
 
 	paintActivityResult: function(activity, results, defaultValue="true", displayDefaultValue=this.communSpecific.result_zero, partialValue=null,displayPartialValue=this.communSpecific.result_view_partial_value, finalValue="true", displayFinalValue=this.communSpecific.result_view_final_value,painter="PainterFactory.Painters['activity']"){
+		if(!results) {
+			return;
+		}
 		let usernames = Object.keys(results);
 
 		let done = 0, partial = 0;

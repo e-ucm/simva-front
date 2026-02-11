@@ -148,7 +148,7 @@ var LTIToolPainter = {
 		let toret = '<table><tr><th>User</th><th>Completed</th><th>Result</th></tr>';
 
 		for (var i = 0; i < participants.length; i++) {
-			if(!AllocatorFactory.Painters[allocator.type].isAllocatedToActivity(participants[i].username, activity)){
+			if(!AllocatorFactory.Painters[allocator.allocator_type].isAllocatedToActivity(participants[i].username, activity)){
 				continue;
 			}
 			toret += `<tr><td>${PainterFactory.Painters["activity"].paintUsernameOrToken(activity, participants[i])}</td>`;
@@ -162,6 +162,9 @@ var LTIToolPainter = {
 	},
 
 	paintActivityCompletion: function(activity, status){
+		if(!status) {
+			return;
+		}
 		let usernames = Object.keys(status);
 
 		let done = 0;
@@ -189,6 +192,9 @@ var LTIToolPainter = {
 	},
 
 	paintActivityResult: function(activity, results){
+		if(!results) {
+			return;
+		}
 		let usernames = Object.keys(results);
 
 		let done = 0, partial = 0;

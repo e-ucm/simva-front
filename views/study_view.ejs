@@ -800,8 +800,8 @@
 	}
 
 	let toggleAllocatorForm = function(){
-		$('#edit_allocator_title').html(AllocatorFactory.Painters[allocator.type].getFormTitle());
-		$('#edit_allocator_content').html(AllocatorFactory.Painters[allocator.type].getFormContent());
+		$('#edit_allocator_title').html(AllocatorFactory.Painters[allocator.allocator_type].getFormTitle());
+		$('#edit_allocator_content').html(AllocatorFactory.Painters[allocator.allocator_type].getFormContent());
 		$('#edit_allocator').toggleClass('shown');
 	}
 
@@ -1035,7 +1035,7 @@
 			document.getElementById("delete_shlink_url").style.visibility = "hidden";
 		}
 
-		paintOwners(study.owners);
+		paintOwners(study.direct_permissions);
 
 		paintActive(study.active);
 
@@ -1129,20 +1129,20 @@
 	}
 
 	let paintAllocator = function(allocator, tests, groups, participants){
-		AllocatorFactory.Painters[allocator.type].setTests(tests);
-		AllocatorFactory.Painters[allocator.type].setGroups(groups);
-		AllocatorFactory.Painters[allocator.type].setStudy(study);
-		AllocatorFactory.Painters[allocator.type].setParticipants(participants);
+		AllocatorFactory.Painters[allocator.allocator_type].setTests(tests);
+		AllocatorFactory.Painters[allocator.allocator_type].setGroups(groups);
+		AllocatorFactory.Painters[allocator.allocator_type].setStudy(study);
+		AllocatorFactory.Painters[allocator.allocator_type].setParticipants(participants);
 
-		AllocatorFactory.Painters[allocator.type].paintAllocator(allocator);
+		AllocatorFactory.Painters[allocator.allocator_type].paintAllocator(allocator);
 
-		$(`#allocator_${allocator.type}`).prop('checked',true);
+		$(`#allocator_${allocator.allocator_type}`).prop('checked',true);
 	}
 
 	let changeAllocator = function(){
 		let type = $('#change_allocator_form input:radio[name=type]:checked').val();
 
-		if(allocator.type !== type){
+		if(allocator.allocator_type !== type){
 			Simva.updateAllocator(study._id, { type: type }, function(error, result){
 				if(error){
 					$('#change_allocator_form .error').val(error.message);

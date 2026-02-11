@@ -102,6 +102,9 @@ var ImsPackagePainter = {
 	},
 
 	paintActivityResult: function(activity, results){
+		if(!results) {
+			return;
+		}
 		let usernames = Object.keys(results);
 
 		let done = 0, partial = 0;
