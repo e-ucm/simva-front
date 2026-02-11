@@ -83,7 +83,7 @@ var LimeSurveyPainter = {
 	},
 
 	updateInputEditExtraForm(activity) {
-		Simva.setSurveyOwner(activity._id, (error, result) => {
+		Simva.setSurveyOwner(activity.activity_id, (error, result) => {
 			// Step 1: Get the select element
 			var languageSelectElement = document.getElementById('language_list');
 			// Step 2: Loop through the data and create options
@@ -101,12 +101,12 @@ var LimeSurveyPainter = {
 				});
 				
 				// Set a specific option as selected
-				if(activity.extra_data.language) {
-					languageSelectElement.value=activity.extra_data.language;
+				if(activity.language) {
+					languageSelectElement.value=activity.language;
 				}
 			}
 			// Step 2: Loop through the data and create options
-			Simva.getSurveyList(activity._id, (error, result) => {
+			Simva.getSurveyList(activity.activity_id, (error, result) => {
 				if(!error) {
 					// Step 1: Get the select element
 					var selectElement = document.getElementById('existing_survey_list');
@@ -124,7 +124,7 @@ var LimeSurveyPainter = {
 					});
 
 					// Set a specific option as selected
-					selectElement.value=activity.extra_data.surveyId;
+					selectElement.value=activity.surveyId;
 				}
 			});
 		});
@@ -202,7 +202,7 @@ var LimeSurveyPainter = {
 		if(actualActivity.name !== formdata.name) {
 			activity.name = formdata.name;
 		}
-		let actualSurveyid=actualActivity.extra_data.surveyId;
+		let actualSurveyid=actualActivity.surveyId;
 		if(typeof(actualSurveyid) == "string") {
 			actualSurveyid=Number(actualSurveyid);
 		}
@@ -214,7 +214,7 @@ var LimeSurveyPainter = {
 			activity.copysurvey = surveyid;
 		}
 
-		if(actualActivity.extra_data.language !== formdata.language) {
+		if(actualActivity.language !== formdata.language) {
 			activity.language = formdata.language;
 		}
 
@@ -231,6 +231,9 @@ var LimeSurveyPainter = {
 			PainterFactory.Painters["activity"].paintActivityTargets(activity, activity.data.target);
 		}
 		PainterFactory.Painters["activity"].paintActivityCompletion(activity, activity.data.completion, false);
+		if(!activity.data.result){
+			return;
+		}
 		let usernames = Object.keys(activity.data.result);
 		let map= {};
 		for (var i = 0; i < usernames.length; i++) {
@@ -262,19 +265,19 @@ var LimeSurveyPainter = {
 	},
 
 	paintActivity: function(activity, participants){
-		$(`#test_${activity.test} .activities`).append(`<div id="activity_${activity._id}" class="activity t${activity.type}">
+		$(`#test_${activity.session_id} .activities`).append(`<div id="activity_${activity.activity_id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
-			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
+			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity.activity_id}')">
+			<input class="red" type="button" value="X" onclick="deleteActivity('${activity.activity_id}', '${activity.name}', '${activity.session_id}')"></div>
 			<p class="subtitle">${this.simple_name}</p>
-			<p>${this.specific.survey_title}: <a target="_blank" href="${this.utils.url}${activity.extra_data.surveyId}">${activity.extra_data.surveyId}</a></p>
-			<p>${this.specific.language_title}: ${activity.extra_data.language}</p>
-			<p><a class="button green" onclick="LimeSurveyPainter.openEditLimesurvey('${activity.id}', '${activity.extra_data.surveyId}')">${this.specific.edit_title}</a></p>
-			<p><a onclick="LimeSurveyPainter.generateTinyURL('${activity._id}', ${activity.extra_data.surveyId})">${this.specific.short_url_title}</a></p>
-			<p><a onclick="LimeSurveyPainter.downloadBackup('${activity._id}', 'full')"> ${this.specific.backup_full_title} : ⬇️</a>
-			<a onclick="LimeSurveyPainter.downloadBackup('${activity._id}', 'code')"> ${this.specific.backup_code_title} : ⬇️</a></p>
+			<p>${this.specific.survey_title}: <a target="_blank" href="${this.utils.url}${activity.surveyId}">${activity.surveyId}</a></p>
+			<p>${this.specific.language_title}: ${activity.language}</p>
+			<p><a class="button green" onclick="LimeSurveyPainter.openEditLimesurvey('${activity.id}', '${activity.surveyId}')">${this.specific.edit_title}</a></p>
+			<p><a onclick="LimeSurveyPainter.generateTinyURL('${activity.activity_id}', ${activity.surveyId})">${this.specific.short_url_title}</a></p>
+			<p><a onclick="LimeSurveyPainter.downloadBackup('${activity.activity_id}', 'full')"> ${this.specific.backup_full_title} : ⬇️</a>
+			<a onclick="LimeSurveyPainter.downloadBackup('${activity.activity_id}', 'code')"> ${this.specific.backup_code_title} : ⬇️</a></p>
 			${this.commun.storage_title} : 
-			<p>${this.commun.storage_file_title} <a onclick="PainterFactory.Painters['activity'].getMinioData('${activity._id}')" target="_blank">${this.commun.storage_file_one_per_line_title}</a></p>
+			<p>${this.commun.storage_file_title} <a onclick="PainterFactory.Painters['activity'].getMinioData('${activity.activity_id}')" target="_blank">${this.commun.storage_file_one_per_line_title}</a></p>
 			${PainterFactory.Painters["activity"].paintActivityParticipantsTable(activity, participants, false)}</div>`);
 	},
 

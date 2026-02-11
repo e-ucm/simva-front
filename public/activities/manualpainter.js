@@ -33,10 +33,10 @@ var ManualActivityPainter = {
 
 	updateInputEditExtraForm(activity) {
 		var manual_user_managed = document.getElementById('edit_manual_user_managed');
-		manual_user_managed.checked = activity.extra_data.user_managed;
+		manual_user_managed.checked = activity.user_managed;
 		var manual_uri = document.getElementById('edit_manual_uri');
-		if(activity.extra_data.uri) {
-			manual_uri.value = activity.extra_data.uri;
+		if(activity.uri) {
+			manual_uri.value = activity.uri;
 		}
 	},
 
@@ -67,12 +67,12 @@ var ManualActivityPainter = {
 		}
 	
 		let user_managed = formdata.user_managed === 'on';
-		if(actualActivity.extra_data.user_managed !== user_managed) {
+		if(actualActivity.user_managed !== user_managed) {
 			activity.user_managed = user_managed;
 		}
 		
-		if(!(actualActivity.extra_data.uri == formdata.uri)) {
-			if(actualActivity.extra_data.uri) {
+		if(!(actualActivity.uri == formdata.uri)) {
+			if(actualActivity.uri) {
 				activity.uri = formdata.uri;
 			} else {
 				if(formdata.uri !== ''){
@@ -98,16 +98,16 @@ var ManualActivityPainter = {
 	},
 
 	paintActivity: function(activity, participants){
-		let complete=activity.extra_data.user_managed ? this.specific.student_complete_ok : this.specific.student_complete_nok;
-		$(`#test_${activity.test} .activities`).append(`<div id="activity_${activity._id}" class="activity t${activity.type}">
+		let complete=activity.user_managed ? this.specific.student_complete_ok : this.specific.student_complete_nok;
+		$(`#test_${activity.session_id} .activities`).append(`<div id="activity_${activity.activity_id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
-			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
+			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity.activity_id}')">
+			<input class="red" type="button" value="X" onclick="deleteActivity('${activity.activity_id}', '${activity.name}', '${activity.session_id}')"></div>
 			<p class="subtitle">${this.simple_name}</p>
 			<p><strong>${complete}<strong></p>
-			<p>${this.commun.storage_file_title} <a onclick="PainterFactory.Painters['activity'].getMinioData('${activity._id}')" target="_blank">${this.commun.storage_file_one_per_line_title}</a></p>
+			<p>${this.commun.storage_file_title} <a onclick="PainterFactory.Painters['activity'].getMinioData('${activity.activity_id}')" target="_blank">${this.commun.storage_file_one_per_line_title}</a></p>
 			<br>
-			<a onclick="PainterFactory.Painters['activity'].getTMonUrl('${activity._id}','${activity.test}','${activity.study}')">
+			<a onclick="PainterFactory.Painters['activity'].getTMonUrl('${activity.activity_id}','${activity.session_id}','${activity.study}')">
 				${this.commun.tmon_title}
 			</a>
 			<br>

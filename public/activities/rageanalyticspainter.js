@@ -72,13 +72,13 @@ var RageAnalyticsActivityPainter = {
 	},
 
 	paintActivity: function(activity, participants){
-		$(`#test_${activity.test} .activities`).append(`<div id="activity_${activity._id}" class="activity t${activity.type}">
+		$(`#test_${activity.session_id} .activities`).append(`<div id="activity_${activity.activity_id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
+			<input class="red" type="button" value="X" onclick="deleteActivity('${activity.activity_id}', '${activity.name}', '${activity.session_id}')"></div>
 			<p class="subtitle">${this.simple_name}</p>
-			<p><a onclick="RageAnalyticsActivityPainter.openDashboard('${activity.extra_data.activity._id}')">Dashboard Link</a></p>
-			<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>
-			<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>
+			<p><a onclick="RageAnalyticsActivityPainter.openDashboard('${activity.rage_activity_id}')">Dashboard Link</a></p>
+			<div id="completion_progress_${activity.activity_id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>
+			<div id="result_progress_${activity.activity_id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>
 			${this.paintActivityParticipantsTable(activity, participants)}</div>`);
 	},
 
@@ -91,9 +91,9 @@ var RageAnalyticsActivityPainter = {
 			}
 			
 			toret += `<tr><td>${PainterFactory.Painters["activity"].paintUsernameOrToken(activity, participants[i])}</td>
-				<td id="completion_${activity._id}_${participants[i].username}">---</td>
-				<td id="progress_${activity._id}_${participants[i].username}" class="progress"><div class="partial"></div><div class="done"></div><span><done>0</done>%</span></td>
-				<td id="result_${activity._id}_${participants[i].username}">---</td>`;
+				<td id="completion_${activity.activity_id}_${participants[i].username}">---</td>
+				<td id="progress_${activity.activity_id}_${participants[i].username}" class="progress"><div class="partial"></div><div class="done"></div><span><done>0</done>%</span></td>
+				<td id="result_${activity.activity_id}_${participants[i].username}">---</td>`;
 		}
 
 		toret += '</table>';
@@ -115,9 +115,9 @@ var RageAnalyticsActivityPainter = {
 			}
 
 			let completion = `<span>${status[usernames[i]]}</span>`
-			$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
-			$(`#completion_${activity._id}_${usernames[i]}`).empty();
-			$(`#completion_${activity._id}_${usernames[i]}`).append(completion);
+			$(`#completion_${activity.activity_id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
+			$(`#completion_${activity.activity_id}_${usernames[i]}`).empty();
+			$(`#completion_${activity.activity_id}_${usernames[i]}`).append(completion);
 		}
 
 		let progress = Math.round((done / usernames.length) * 1000) / 10; 
@@ -126,8 +126,8 @@ var RageAnalyticsActivityPainter = {
 			progress = 0;
 		}
 
-		$(`#completion_progress_${activity._id} .done`).css('width', `${progress}%` );
-		$(`#completion_progress_${activity._id} done`).text(progress);
+		$(`#completion_progress_${activity.activity_id} .done`).css('width', `${progress}%` );
+		$(`#completion_progress_${activity.activity_id} done`).text(progress);
 	},
 
 	paintActivityResult: function(activity, results){
@@ -144,7 +144,7 @@ var RageAnalyticsActivityPainter = {
 
 			if(status){
 				done++;
-				result = `<span><a onclick="RageAnalyticsActivityPainter.openResults('${activity._id}','${usernames[i]}')">See Results</a></span>`;
+				result = `<span><a onclick="RageAnalyticsActivityPainter.openResults('${activity.activity_id}','${usernames[i]}')">See Results</a></span>`;
 
 				let tmpprogress = 0; 
 				if(results[usernames[i]]
@@ -160,14 +160,14 @@ var RageAnalyticsActivityPainter = {
 
 				tmpprogress = (tmpprogress * 1000) / 10;
 
-				$(`#progress_${activity._id}_${usernames[i]} .done`).css('width', `${tmpprogress}%` );
-				$(`#progress_${activity._id}_${usernames[i]} done`).text(tmpprogress);
+				$(`#progress_${activity.activity_id}_${usernames[i]} .done`).css('width', `${tmpprogress}%` );
+				$(`#progress_${activity.activity_id}_${usernames[i]} done`).text(tmpprogress);
 			}
 
 
-			$(`#result_${activity._id}_${usernames[i]}`).addClass(status ? 'green' : 'red');
-			$(`#result_${activity._id}_${usernames[i]}`).empty();
-			$(`#result_${activity._id}_${usernames[i]}`).append(result);
+			$(`#result_${activity.activity_id}_${usernames[i]}`).addClass(status ? 'green' : 'red');
+			$(`#result_${activity.activity_id}_${usernames[i]}`).empty();
+			$(`#result_${activity.activity_id}_${usernames[i]}`).append(result);
 		}
 
 		let progress = Math.round((done / usernames.length) * 1000) / 10; 
@@ -180,10 +180,10 @@ var RageAnalyticsActivityPainter = {
 			partialprogress = 0;
 		}
 
-		$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
-		$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
-		$(`#result_progress_${activity._id} done`).text(progress);
-		$(`#result_progress_${activity._id} partial`).text(partialprogress);
+		$(`#result_progress_${activity.activity_id} .done`).css('width', `${progress}%` );
+		$(`#result_progress_${activity.activity_id} .partial`).css('width', `${partialprogress}%` );
+		$(`#result_progress_${activity.activity_id} done`).text(progress);
+		$(`#result_progress_${activity.activity_id} partial`).text(partialprogress);
 	},
 
 	openResults: function(activity, user){

@@ -36,11 +36,11 @@ var GameplayActivityPainter = {
 
 	updateInputEditExtraForm(activity) {
 		var gameplay_trace_storage = document.getElementById('edit_gameplay_trace_storage');
-		gameplay_trace_storage.checked = activity.extra_data.config.trace_storage;
+		gameplay_trace_storage.checked = activity.trace_storage;
 		var gameplay_backup = document.getElementById('edit_gameplay_backup');
-		gameplay_backup.checked = activity.extra_data.config.backup;
+		gameplay_backup.checked = activity.backup;
 		var gameplay_scorm_xAPI = document.getElementById('edit_gameplay_scorm_xAPI');
-		gameplay_scorm_xAPI.checked = activity.extra_data.config.scorm_xapi_by_game;
+		gameplay_scorm_xAPI.checked = activity.scorm_xapi_by_game;
 		var gameplay_game_uri = document.getElementById('edit_gameplay_game_uri');
 		gameplay_game_uri.value = activity.extra_data.game_uri;
 
@@ -74,15 +74,15 @@ var GameplayActivityPainter = {
 			activity.name = formdata.name;
 		}
 		let trace_storage = formdata.trace_storage === 'on';
-		if(actualActivity.extra_data.config.trace_storage !== trace_storage) {
+		if(actualActivity.trace_storage !== trace_storage) {
 			activity.trace_storage = trace_storage;
 		}
 		let scorm_xapi_by_game = formdata.scorm_xapi === 'on';
-		if(actualActivity.extra_data.config.scorm_xapi_by_game !== scorm_xapi_by_game) {
+		if(actualActivity.scorm_xapi_by_game !== scorm_xapi_by_game) {
 			activity.scorm_xapi_by_game = scorm_xapi_by_game;
 		}
 		let backup = formdata.backup === 'on';
-		if(actualActivity.extra_data.config.backup !== backup) {
+		if(actualActivity.backup !== backup) {
 			activity.backup = backup;
 		}
 		let game_uri=formdata.game_uri;
@@ -137,22 +137,22 @@ var GameplayActivityPainter = {
 	},
 
 	paintActivity: function(activity, participants){
-		let activitybox = `<div id="activity_${activity._id}" class="activity t${activity.type}">
+		let activitybox = `<div id="activity_${activity.activity_id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
-			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
+			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity.activity_id}')">
+			<input class="red" type="button" value="X" onclick="deleteActivity('${activity.activity_id}', '${activity.name}', '${activity.session_id}')"></div>
 			<p class="subtitle">${this.simple_name}</p>`;
 		activitybox += `<br>${this.commun.storage_title}:`;
-		if(activity.extra_data.config.trace_storage) {
-			activitybox += `<a onclick="PainterFactory.Painters['activity'].getMinioData('${activity._id}')" target="_blank">${this.commun.storage_file_title} ${this.commun.storage_file_one_per_line_title}</a>
+		if(activity.trace_storage) {
+			activitybox += `<a onclick="PainterFactory.Painters['activity'].getMinioData('${activity.activity_id}')" target="_blank">${this.commun.storage_file_title} ${this.commun.storage_file_one_per_line_title}</a>
 			<br>
 			<br>
-			<a onclick="PainterFactory.Painters['activity'].getTMonUrl('${activity._id}','${activity.test}','${activity.study}')">
+			<a onclick="PainterFactory.Painters['activity'].getTMonUrl('${activity.activity_id}','${activity.session_id}','${activity.study}')">
 				${this.commun.tmon_title}
 			</a>
 			<br>
 			${this.specific.xasu_title}:
-			<a onclick="GameplayActivityPainter.downloadXasuConfig('${activity._id}','${activity.study}')">
+			<a onclick="GameplayActivityPainter.downloadXasuConfig('${activity.activity_id}','${activity.study}')">
 				<img src="/ua.png"  width="20" height="20">
 			</a>`;
 		} else {
@@ -160,15 +160,15 @@ var GameplayActivityPainter = {
 		}
 		activitybox +='<br>'
 		activitybox += `${this.communSpecific.result_title}:`
-		if(activity.extra_data.config.backup){
-			activitybox += `<a onclick="GameplayActivityPainter.downloadBackup('${activity._id}')"> ⬇️</a>` 
+		if(activity.backup){
+			activitybox += `<a onclick="GameplayActivityPainter.downloadBackup('${activity.activity_id}')"> ⬇️</a>` 
 		} else {
 			activitybox += `<i>${this.commun.result_disabled}</i>`;
 		}
 		activitybox += '</p>';
 		activitybox += `${PainterFactory.Painters["activity"].paintActivityParticipantsTable(activity, participants, true)}</div>`;
 
-		$(`#test_${activity.test} .activities`).append(activitybox);
+		$(`#test_${activity.session_id} .activities`).append(activitybox);
 	},
 
 	updateActivityResult: function(activityId, username, backup) {

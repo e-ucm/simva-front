@@ -83,30 +83,30 @@ var ActivityPainter = {
 		let done = 0, partial = 0;
 		
 		for (var i = 0; i < usernames.length; i++) {
-			$(`#${activity._id}_${usernames[i]}_target`).attr('href', results[usernames[i]]);
+			$(`#${activity.activity_id}_${usernames[i]}_target`).attr('href', results[usernames[i]]);
 		}
 	},
  
 	paintActivity: function(activity, participants){
-		$(`#test_${activity.test} .activities`).append(`<div id="activity_${activity._id}" class="activity t${activity.type}">
+		$(`#test_${activity.session_id} .activities`).append(`<div id="activity_${activity.activity_id}" class="activity t${activity.type}">
 			<div class="top"><h4>${activity.name}</h4>
-			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
+			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity.activity_id}')">
+			<input class="red" type="button" value="X" onclick="deleteActivity('${activity.activity_id}', '${activity.name}', '${activity.session_id}')"></div>
 			<p class="subtitle">${this.simple_name}</p>
-			<p>${this.communSpecific.result_title}:<a onclick="PainterFactory.Painters["activity"].downloadResults('${activity._id}')"> ⬇️</a></p>
+			<p>${this.communSpecific.result_title}:<a onclick="PainterFactory.Painters["activity"].downloadResults('${activity.activity_id}')"> ⬇️</a></p>
 			${this.paintActivityParticipantsTable(activity, participants, true)}</div>`);
 	},
 
 	paintActivityParticipantsTable: function(activity, participants, checkbox=false, progress=true, result=true){
-		let toret = `<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>${this.commun.completed_title}: <done>0</done>% [ <doneres>0</doneres>/<total>0</total> ]</span></div>`;
+		let toret = `<div id="completion_progress_${activity.activity_id}" class="progress"><div class="partial"></div><div class="done"></div><span>${this.commun.completed_title}: <done>0</done>% [ <doneres>0</doneres>/<total>0</total> ]</span></div>`;
 		if(checkbox) {
-			toret += this.paintActivityButtonCompletion(activity._id);
+			toret += this.paintActivityButtonCompletion(activity.activity_id);
 		}
 		if(progress) {
-			toret += `<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>${this.commun.result_title}: <done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>`;
+			toret += `<div id="result_progress_${activity.activity_id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>${this.commun.result_title}: <done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>`;
 		}
 		if(result) {
-			toret += `<div id="progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>${this.commun.progress_title}:<done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>`;
+			toret += `<div id="progress_${activity.activity_id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>${this.commun.progress_title}:<done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>`;
 		}
 		
 		toret += `<table><tr><th>${this.commun.user_title}</th><th>${this.commun.completed_title}</th>`;
@@ -123,12 +123,12 @@ var ActivityPainter = {
 				continue;
 			}
 			toret += `<tr><td>${this.paintUsernameOrToken(activity, participants[i])}</td>`;
-			toret += `${this.paintCompletionRow(activity._id,participants[i].username, checkbox)}`;
+			toret += `${this.paintCompletionRow(activity.activity_id,participants[i].username, checkbox)}`;
 			if(progress) {
-				toret += `${this.paintProgressRow(activity._id,participants[i].username)}`
+				toret += `${this.paintProgressRow(activity.activity_id,participants[i].username)}`
 			}
 			if(result){
-				toret += `${this.paintResultRow(activity._id,participants[i].username)}`;
+				toret += `${this.paintResultRow(activity.activity_id,participants[i].username)}`;
 			}else{
 				toret += `<td><i>${this.commun.result_disabled}</i></td>`;
 			}
@@ -146,7 +146,7 @@ var ActivityPainter = {
 		}
 		let toret="";
 		if(openable) {
-			toret += `<a id="${activity._id}_${participant.username}_target" class="targeturl" target="_blank" href="">${this.getUsernameOrToken(participant)}</a>`;
+			toret += `<a id="${activity.activity_id}_${participant.username}_target" class="targeturl" target="_blank" href="">${this.getUsernameOrToken(participant)}</a>`;
 		} else {
 			toret += `${this.getUsernameOrToken(participant)}`;
 		}
@@ -189,14 +189,14 @@ var ActivityPainter = {
 			}
 			if(checkbox) {
 				if(status[usernames[i]]){
-					$(`#completion_${activity._id}_${usernames[i]}`).addClass('green');
-					$(`#completion_${activity._id}_${usernames[i]}`).removeClass('red');
+					$(`#completion_${activity.activity_id}_${usernames[i]}`).addClass('green');
+					$(`#completion_${activity.activity_id}_${usernames[i]}`).removeClass('red');
 				}else{
-					$(`#completion_${activity._id}_${usernames[i]}`).removeClass('green');
-					$(`#completion_${activity._id}_${usernames[i]}`).addClass('red');
+					$(`#completion_${activity.activity_id}_${usernames[i]}`).removeClass('green');
+					$(`#completion_${activity.activity_id}_${usernames[i]}`).addClass('red');
 				}
 	
-				$(`#completion_${activity._id}_${usernames[i]}`).find('input[type="checkbox"]').prop('checked', status[usernames[i]]);
+				$(`#completion_${activity.activity_id}_${usernames[i]}`).find('input[type="checkbox"]').prop('checked', status[usernames[i]]);
 			} else {
 				let completion = "";
 				if(status[usernames[i]]==true) {
@@ -205,9 +205,9 @@ var ActivityPainter = {
 					completion=`<span>${completed_off}</span>`;
 				}
 				
-			 	$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
-				$(`#completion_${activity._id}_${usernames[i]}`).empty();
-				$(`#completion_${activity._id}_${usernames[i]}`).append(completion);
+			 	$(`#completion_${activity.activity_id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
+				$(`#completion_${activity.activity_id}_${usernames[i]}`).empty();
+				$(`#completion_${activity.activity_id}_${usernames[i]}`).append(completion);
 			}
 		}
 
@@ -217,10 +217,10 @@ var ActivityPainter = {
 			progress = 0;
 		}
 
-		$(`#completion_progress_${activity._id} .done`).css('width', `${progress}%` );
-		$(`#completion_progress_${activity._id} done`).text(progress);
-		$(`#completion_progress_${activity._id} doneres`).text(done);
-		$(`#completion_progress_${activity._id} total`).text(usernames.length);
+		$(`#completion_progress_${activity.activity_id} .done`).css('width', `${progress}%` );
+		$(`#completion_progress_${activity.activity_id} done`).text(progress);
+		$(`#completion_progress_${activity.activity_id} doneres`).text(done);
+		$(`#completion_progress_${activity.activity_id} total`).text(usernames.length);
 	},
 
 	paintActivityProgress: function(activity, status){
@@ -239,26 +239,26 @@ var ActivityPainter = {
 			}
 
 			let tmpprogress = Math.round(status[usernames[i]] * 1000) / 10;
-			$(`#progress_${activity._id}_${usernames[i]} .done`).css('width', `${tmpprogress}%` );
-			$(`#progress_${activity._id}_${usernames[i]} done`).text(tmpprogress);
+			$(`#progress_${activity.activity_id}_${usernames[i]} .done`).css('width', `${tmpprogress}%` );
+			$(`#progress_${activity.activity_id}_${usernames[i]} done`).text(tmpprogress);
 		}
 
 		let progress = Math.round((done / usernames.length) * 1000) / 10; 
 		if(isNaN(progress)){
 			progress = 0;
 		}
-		$(`#progress_${activity._id} .done`).css('width', `${progress}%` );
-		$(`#progress_${activity._id} done`).text(progress);
-		$(`#progress_${activity._id} doneres`).text(done);
+		$(`#progress_${activity.activity_id} .done`).css('width', `${progress}%` );
+		$(`#progress_${activity.activity_id} done`).text(progress);
+		$(`#progress_${activity.activity_id} doneres`).text(done);
 
 		let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
 		if(isNaN(partialprogress)){
 			partialprogress = 0;
 		}
-		$(`#progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
-		$(`#progress_${activity._id} partial`).text(partialprogress);
-		$(`#progress_${activity._id} partialres`).text(partial);
-		$(`#progress_${activity._id} total`).text(usernames.length);
+		$(`#progress_${activity.activity_id} .partial`).css('width', `${partialprogress}%` );
+		$(`#progress_${activity.activity_id} partial`).text(partialprogress);
+		$(`#progress_${activity.activity_id} partialres`).text(partial);
+		$(`#progress_${activity.activity_id} total`).text(usernames.length);
 	},
 
 	paintActivityResult: function(activity, results, defaultValue="true", displayDefaultValue=this.communSpecific.result_zero, partialValue=null,displayPartialValue=this.communSpecific.result_view_partial_value, finalValue="true", displayFinalValue=this.communSpecific.result_view_final_value,painter="PainterFactory.Painters['activity']"){
@@ -292,33 +292,33 @@ var ActivityPainter = {
 					result = `<span>${displayDefaultValue}</span>`;
 				} else {
 					result = `<span>
-					<a onclick="${painter}.openResults('${activity._id}','${usernames[i]}')">${state}</a>
-					<a onclick="${painter}.downloadResults('${activity._id}','${usernames[i]}')">⬇️</a>
+					<a onclick="${painter}.openResults('${activity.activity_id}','${usernames[i]}')">${state}</a>
+					<a onclick="${painter}.downloadResults('${activity.activity_id}','${usernames[i]}')">⬇️</a>
 					</span>`;
 				}
 			}
-			$(`#result_${activity._id}_${usernames[i]}`).removeClass();
-			$(`#result_${activity._id}_${usernames[i]}`).addClass(color);
-			$(`#result_${activity._id}_${usernames[i]}`).empty();
-			$(`#result_${activity._id}_${usernames[i]}`).append(result);
+			$(`#result_${activity.activity_id}_${usernames[i]}`).removeClass();
+			$(`#result_${activity.activity_id}_${usernames[i]}`).addClass(color);
+			$(`#result_${activity.activity_id}_${usernames[i]}`).empty();
+			$(`#result_${activity.activity_id}_${usernames[i]}`).append(result);
 		}
 
 		let progress = Math.round((done / usernames.length) * 1000) / 10; 
 		if(isNaN(progress)){
 			progress = 0;
 		}
-		$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
-		$(`#result_progress_${activity._id} done`).text(progress);
-		$(`#result_progress_${activity._id} doneres`).text(done);
+		$(`#result_progress_${activity.activity_id} .done`).css('width', `${progress}%` );
+		$(`#result_progress_${activity.activity_id} done`).text(progress);
+		$(`#result_progress_${activity.activity_id} doneres`).text(done);
 
 		let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
 		if(isNaN(partialprogress)){
 			partialprogress = 0;
 		}
-		$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
-		$(`#result_progress_${activity._id} partial`).text(partialprogress);
-		$(`#result_progress_${activity._id} partialres`).text(partial);
-		$(`#result_progress_${activity._id} total`).text(usernames.length);
+		$(`#result_progress_${activity.activity_id} .partial`).css('width', `${partialprogress}%` );
+		$(`#result_progress_${activity.activity_id} partial`).text(partialprogress);
+		$(`#result_progress_${activity.activity_id} partialres`).text(partial);
+		$(`#result_progress_${activity.activity_id} total`).text(usernames.length);
 	},
 
 	updateActivityCompletion: function(activityId, username, completion, checkbox=false) {
