@@ -628,7 +628,7 @@
 				item._id === form.test
 			)[0].completeActivities;
 			let activity = activities.filter(activity => 
-				activity._id === form.activity
+				activity.activity_id === form.activity
 			)[0];
 			PainterFactory.Painters[form.type].extractEditInformation('#edit_activity_form', activity, function(error, updatedActivity){
 				if(error){
@@ -945,9 +945,9 @@
 		$('#edit_activity_extras').append(`${PainterFactory.Painters[activity.type].description}\n`);
 		$('#edit_activity_extras').append(PainterFactory.Painters[activity.type].getEditExtraForm());
 		PainterFactory.Painters[activity.type].updateInputEditExtraForm(activity);
-		$('#edit_activity input[name="test"]').val(activity.test);
+		$('#edit_activity input[name="test"]').val(activity.session_id);
 		$('#edit_activity span[class="error"]').val("");
-		$('#edit_activity input[name="activity"]').val(activity._id);
+		$('#edit_activity input[name="activity"]').val(activity.activity_id);
 		$('#edit_activity').toggleClass('shown');
 	}
 
@@ -957,7 +957,7 @@
 		let test = getTestFromTestId(testId);
 		inputElement.value = test.name;
 		$('#duplicate_test').toggleClass('shown');
-		$('#duplicate_test input[name="test"]').val(test._id);
+		$('#duplicate_test input[name="test"]').val(test.session_id);
 		$('#duplicate_test span[class="error"]').val("");
 		$('#duplicate_test input[name="testName"]').val(test.name);
 	}
@@ -965,7 +965,7 @@
 	let getTestFromTestId = function(testId){
 		for(let i=0; i< tests.length; i++) {
 			let test=tests[i];
-			if(test._id == testId) {
+			if(test.session_id == testId) {
 				return test;
 			}
 		}
@@ -977,7 +977,7 @@
 			let test=tests[i];
 			for(let j=0; j< test.completeActivities.length; j++) {
 				let activity=test.completeActivities[j];
-				if(activity._id == activityId) {
+				if(activity.activity_id == activityId) {
 					return activity;
 				}
 			}
@@ -991,7 +991,7 @@
 		let test = getTestFromTestId(testId);
 		inputElement.value = test.name;
 		$('#edit_test').toggleClass('shown');
-		$('#edit_test input[name="test"]').val(test._id);
+		$('#edit_test input[name="test"]').val(test.session_id);
 		$('#edit_test span[class="error"]').val("");
 		$('#edit_test input[name="testName"]').val(test.name);
 	}
@@ -1157,23 +1157,23 @@
 	}
 
 	let paintTest = function(test){
-		$('#tests').append(`<div id="test_${test._id}" class="test">
-			<div class="top"><h3>${test.name}</h3><input class="violet" type="button" value="<%- t('sessions.expand', { ns : 'SIMLETs' }) %>" onclick="toggleTest('${test._id}')">
-			<input class="green" type="button" value="<%- t('activities.add.title', { ns : 'SIMLETs' }) %>" onclick="openActivityForm('${test._id}')">
-			<input class="yellow" type="button" value="<%- t('sessions.edit.title', { ns : 'SIMLETs' }) %>" onclick="openEditTestForm('${test._id}')">
-			<input class="red" type="button" value="<%- t('sessions.delete.title', { ns : 'SIMLETs' }) %>" onclick="deleteTest('${test._id}', '${test.name}')">
-			<input class="orange" type="button" value="<%- t('sessions.duplicate.title', { ns : 'SIMLETs' }) %>" onclick="openEditDuplicateForm('${test._id}')"></div>
+		$('#tests').append(`<div id="test_${test.session_id}" class="test">
+			<div class="top"><h3>${test.name}</h3><input class="violet" type="button" value="<%- t('sessions.expand', { ns : 'SIMLETs' }) %>" onclick="toggleTest('${test.session_id}')">
+			<input class="green" type="button" value="<%- t('activities.add.title', { ns : 'SIMLETs' }) %>" onclick="openActivityForm('${test.session_id}')">
+			<input class="yellow" type="button" value="<%- t('sessions.edit.title', { ns : 'SIMLETs' }) %>" onclick="openEditTestForm('${test.session_id}')">
+			<input class="red" type="button" value="<%- t('sessions.delete.title', { ns : 'SIMLETs' }) %>" onclick="deleteTest('${test.session_id}', '${test.name}')">
+			<input class="orange" type="button" value="<%- t('sessions.duplicate.title', { ns : 'SIMLETs' }) %>" onclick="openEditDuplicateForm('${test.session_id}')"></div>
 			<div class="activities collapsed">${roller}</div>`);
 	}
 
 	let paintTestActivities = function(test, activities, participants){
-		$(`#test_${test._id} .activities`).empty();
+		$(`#test_${test.session_id} .activities`).empty();
 
 		if(activities.length === 0){
-			$(`#test_${test._id} .activities`).text("<%- t('activities.zero.message', { ns : 'SIMLETs' }) %>");
+			$(`#test_${test.session_id} .activities`).text("<%- t('activities.zero.message', { ns : 'SIMLETs' }) %>");
 		}else{
 			for (var i = 0; i < activities.length; i++) {
-				switch(activities[i].type){
+				switch(activities[i].activity_type){
 					case 'rageminio':
 					case 'miniokafka':
 					case 'rageanalytics':
@@ -1183,7 +1183,7 @@
 					case 'manual':
 					case 'ltitool':
 					case 'imspackage':
-						PainterFactory.Painters[activities[i].type].fullyPaintActivity(activities[i]);
+						PainterFactory.Painters[activities[i].activity_type].fullyPaintActivity(activities[i]);
 						break;
 					default:
 						ActivityPainter.fullyPaintActivity(activities[i]);
@@ -1232,10 +1232,10 @@
 
 		if(tests.length > 0){
 			for (var i = 0; i < tests.length; i++) {
-				if(allocation.test == tests[i]._id){
-					toret += `<option value="${tests[i]._id}">${tests[i].name}</option>`;
+				if(allocation.test == tests[i].session_id){
+					toret += `<option value="${tests[i].session_id}">${tests[i].name}</option>`;
 				}else{
-					toret += `<option value="${tests[i]._id}" selected>${tests[i].name}</option>`;
+					toret += `<option value="${tests[i].session_id}" selected>${tests[i].name}</option>`;
 				}
 			}
 		}else{
@@ -1244,7 +1244,7 @@
 		
 
 		toret += '</select></td></tr>';
-		return 
+		return toret;
 	}
 </script>
 <script type="text/javascript" src="/activities/activitypainter.js"></script>

@@ -221,8 +221,8 @@
 
 					if(!error){
 						let activity = result.activities[result.next];
-						activity._id = result.next;
-						Simva.isActivityOpenable(activity._id, function(error, result){
+						activity.activity_id = result.next;
+						Simva.isActivityOpenable(activity.activity_id, function(error, result){
 							if(!error){
 								if(activity.details.user_managed){
 									$("#complete_activity").show();
@@ -231,7 +231,7 @@
 								}
 							}
 							if(result.openable){
-								Simva.getActivityTarget(activity._id, function(error, result){
+								Simva.getActivityTarget(activity.activity_id, function(error, result){
 									if (error) {
      									console.error("Error getting the URL of the activity target:", error);
         								return;
