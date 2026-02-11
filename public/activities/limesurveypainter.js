@@ -159,7 +159,7 @@ var LimeSurveyPainter = {
 		let method = $('#new_activity_extras .tab.selected').attr('method');
 
 		activity.name = formdata.name;
-		activity.type = this.supportedType;
+		activity.activity_type = this.supportedType;
 
 		switch(method){
 			case 'byid':
@@ -265,7 +265,7 @@ var LimeSurveyPainter = {
 	},
 
 	paintActivity: function(activity, participants){
-		$(`#test_${activity.session_id} .activities`).append(`<div id="activity_${activity.activity_id}" class="activity t${activity.type}">
+		$(`#test_${activity.session_id} .activities`).append(`<div id="activity_${activity.activity_id}" class="activity t${activity.activity_type}">
 			<div class="top"><h4>${activity.name}</h4>
 			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity.activity_id}')">
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity.activity_id}', '${activity.name}', '${activity.session_id}')"></div>
