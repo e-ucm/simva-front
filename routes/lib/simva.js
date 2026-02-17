@@ -177,13 +177,8 @@ class Simva {
 	}
 
 	addGroup(name, newversion, sessionId, callback){
-		let body = { name: name	 };
-		if(newversion) {
-			body.version = 1;
-		} else {
-			body.version = 0;
-		}
-		this.post(`${this.apiurl}/groups`, body, sessionId, callback);
+		let body = { name: name };
+		this.post(`${this.apiurl}/groups?use_new_generation=${newversion}`, body, sessionId, callback);
 	}
 
 	updateGroup(group, sessionId, callback){
