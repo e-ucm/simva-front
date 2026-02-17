@@ -127,6 +127,10 @@ var Simva = {
 		Utils.get(`/bff/groups/${group_id}/participants`, callback);
 	},
 
+	deleteGroupParticipants: function(group_id, participant_id, keycloakDelete, callback){
+		Utils.delete(`/bff/groups/${group_id}/participants/${participant_id}?keycloakDelete=${keycloakDelete}`, callback);
+	},
+
 	// STUDIES
 
 	getStudies: function(callback){

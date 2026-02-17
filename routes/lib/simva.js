@@ -201,6 +201,10 @@ class Simva {
 	getGroupParticipants(group_id, sessionId, callback){
 		this.get(`${this.apiurl}/groups/${group_id}/participants`, sessionId, callback);
 	}
+	
+	deleteGroupParticipants(group_id, participant_id, keycloakDelete, sessionId, callback){
+		this.delete(`${this.apiurl}/groups/${group_id}/participants/${participant_id}?keycloakDelete=${keycloakDelete}`, sessionId, callback);
+	}
 
 	// STUDIES
 

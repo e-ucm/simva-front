@@ -227,6 +227,19 @@ module.exports = function(auth, config){
         });
     });
 
+    router.delete('/groups/:groupid/participants/:participantid', auth, async (req, res, next) => {
+        let groupid = req.params['groupid'];
+        let participantid = req.params['participantid'];
+        let removeKeycloak = req.query.keycloakDelete === 'true';
+        Simva.deleteGroupParticipants(groupid, participantid, removeKeycloak, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
     /**
     * STUDIES
     * 

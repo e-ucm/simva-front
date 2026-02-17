@@ -239,19 +239,9 @@
 					return false;
 				}
 			}
-
 			group.participants.push(form.name);
-
-			Simva.updateGroup(group, function(error, result){
-				reloadGroup();
-
-				if(error && error.responseJSON){
-					errorbox.text(error.responseJSON.message);
-				}else{
-					Utils.toggleAddForm('add_participant');
-				}
-			});
-
+			Utils.toggleAddForm('add_participant');
+			reloadGroup();
 			return false;
 		});
 
@@ -265,16 +255,8 @@
 					errorbox.text(error.responseJSON.message);
 				}else{
 					group.participants.push(form.username);
-
-					Simva.updateGroup(group, function(error, result){
-						reloadGroup();
-
-						if(error && error.responseJSON){
-							errorbox.text(error.responseJSON.message);
-						}else{
-							Utils.toggleAddForm('add_participant');
-						}
-					});
+					Utils.toggleAddForm('add_participant');
+					reloadGroup();
 				}
 			});
 
@@ -291,15 +273,8 @@
 			Simva.generateAndRegister(groupid, form.algorithm, form.length, form.amount, (error, generated) => {
 				if(!error) { 
 					group.participants = group.participants.concat(generated);
-					Simva.updateGroup(group, function(error, result){
-						Utils.toggleSubmit(currentform);
-						reloadGroup();
-						if(error && error.responseJSON){
-							errorbox.text(error.responseJSON.message);
-						}else{
-							Utils.toggleAddForm('add_participant');
-						}
-					});
+					Utils.toggleAddForm('add_participant');
+					reloadGroup();
 				}
 			});
 
@@ -334,19 +309,9 @@
 		});
 	}
 
-	let removeParticipant = function(participant){
+	let removeParticipant = function(participant_id, participant, removeKeycloak=false){
 		if(confirm(`<%- t('participants.remove.confirm', { ns: 'groups',  participant : '${participant}', group : '${group.name}' }) %>`)){
-			let toremove = -1;
-			for (var i = 0; i < group.participants.length; i++) {
-				if(group.participants[i] === participant){
-					toremove = i;
-					break;
-				}
-			}
-
-			group.participants.splice(i, 1);
-
-			Simva.updateGroup(group, function(error, result){
+			Simva.deleteGroupParticipants(group._id, participant_id, removeKeycloak, function(error, result){
 				reloadGroup();
 			});
 		}
@@ -429,7 +394,7 @@
 			<td>${participant.username}</td>
 			<td><a href="${participant.email}">${participant.email}</a></td>
 			<td>${role}</td>
-			<td><input class="red" type="button" value="<%= t("participants.remove.title", { ns : "groups" }) %>" onclick="removeParticipant('${participant.username}')"></td>`;
+			<td><input class="red" type="button" value="<%= t("participants.remove.title", { ns : "groups" }) %>" onclick="removeParticipant('${participant.user_id}', '${participant.username}', true)"></td>`;
 	}
 
 	let headerRowPDF = function(group){
