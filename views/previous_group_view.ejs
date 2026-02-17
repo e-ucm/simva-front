@@ -289,7 +289,7 @@
 			document.getElementById("edit_group_error").innerHTML = "";
 			var inputElement = document.getElementById('edit_group_name');
 			inputElement.value = group.name;
-			$('#edit_group input[name="group"]').val(group._id);
+			$('#edit_group input[name="group"]').val(group.group_id);
 			$('#edit_group span[class="error"]').val("");
 			$('#edit_group input[name="groupName"]').val(group.name);
 			Utils.toggleAddForm('edit_group');
@@ -311,7 +311,7 @@
 
 	let removeParticipant = function(participant_id, participant, removeKeycloak=false){
 		if(confirm(`<%- t('participants.remove.confirm', { ns: 'groups',  participant : '${participant}', group : '${group.name}' }) %>`)){
-			Simva.deleteGroupParticipants(group._id, participant_id, removeKeycloak, function(error, result){
+			Simva.deleteGroupParticipants(group.group_id, participant_id, removeKeycloak, function(error, result){
 				reloadGroup();
 			});
 		}
