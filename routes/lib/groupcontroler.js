@@ -20,19 +20,14 @@ module.exports = {
         } else {
             username=usertools.generateUsername(params.algorithm, params.length);
         }
-        let password = username;
-        let email = `${username}@example.com`
-        if(params.useNewGeneration) {
-            email=`${params.groupid}.${email}`;
-        }
-        let user;
+        logger.info(`Generated username ${username} for group ID ${params.groupid} using algorithm ${params.algorithm} with length ${params.length}`);
         if(params.checkIfExists) {
             user = await SimvaAsync.getUser(username, sessionid);
             if(user.username) {
                 return user;
             }
         } 
-        user = await SimvaAsync.register(params.groupid, username, email, password, 'student', true, params.useNewGeneration, sessionid);
+        user = await SimvaAsync.registerGeneratedUser(params.groupid, username, sessionid);
         return user;
     },
 

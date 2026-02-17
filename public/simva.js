@@ -63,26 +63,22 @@ var Simva = {
 	},
 
 	// USER
-	register: function(groupid, username, email, password, role, isToken, useNewGeneration, callback){
+	register: function(groupid, username, email, password, role, callback){
 		let body = {
-			groupid : groupid,
 			username: username,
 			email: email,
 			password: password,
-			role: role,
-			isToken : isToken,
-			useNewGeneration : useNewGeneration
+			role: role
 		};
-		Utils.post(`/bff/users`, body, callback);
+		Utils.post(`/bff/groups/${groupid}/users`, body, callback);
 	},
 
 	// USER
-	generateAndRegister: function(groupid, algorithm, length, batchLength, useNewGeneration, callback){
+	generateAndRegister: function(groupid, algorithm, length, batchLength, callback){
 		let body = {
 			algorithm: algorithm,
 			length: Number(length),
-			batchLength: Number(batchLength),
-			useNewGeneration : useNewGeneration
+			batchLength: Number(batchLength)
 		};
 		Utils.post(`/bff/groups/${groupid}/users`, body, callback);
 	},

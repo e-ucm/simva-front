@@ -58,44 +58,44 @@ module.exports = function(auth, config){
     * USERS
     * 
     */
-    router.post('/users', auth, async (req, res, next) => {
-        Simva.register(req.body.groupid, req.body.username, req.body.email, req.body.password, req.body.role, req.body.isToken, req.body.useNewGeneration, req.session.id, (error, result) => {
-            if(error) {
-                next(error.response.data);
-            } else {
-                res.status(200).send(result);
-            }
-        });
-    });
-
     router.post('/groups/:groupid/users', auth, async (req, res, next) => {
-        let groupid = req.params['groupid'];
-        let users=[];
-        let params = {
-            algorithm: req.body.algorithm,
-            length : req.body.length,
-            groupid: groupid,
-            useNewGeneration:req.body.useNewGeneration,
-        }
-        let batchLength=req.body.batchLength;
-        while (users.length < batchLength) {
-            // Fire off remaining promises in parallel
-            const remaining = batchLength - users.length;
-            const promises = Array.from({ length: remaining }, () => groupcontroler.generateStudentUserWithRetry(params, req.session.id, 5));
-            logger.info("Test");
-            try {
-                const results = await Promise.all(promises);
-                logger.info(results);
-                users.push(...results.map(student => student.username));
-                logger.info(users.length);
-                logger.info(users);
-            } catch (err) {
-                logger.error("Error generating some users:", err);
-                // continue loop → it will retry failed ones
+        if(req.body.algorithm && req.body.length && req.body.batchLength) {
+            let groupid = req.params['groupid'];
+            let users=[];
+            let params = {
+                algorithm: req.body.algorithm,
+                length : req.body.length,
+                groupid: groupid,
+                checkIfExists: req.body.checkIfExists || false,
             }
-        }
+            let batchLength=req.body.batchLength;
+            while (users.length < batchLength) {
+                // Fire off remaining promises in parallel
+                const remaining = batchLength - users.length;
+                const promises = Array.from({ length: remaining }, () => groupcontroler.generateStudentUserWithRetry(params, req.session.id, 5));
+                logger.info("Test");
+                try {
+                    const results = await Promise.all(promises);
+                    logger.info(results);
+                    users.push(...results.map(student => student.username));
+                    logger.info(users.length);
+                    logger.info(users);
+                } catch (err) {
+                    logger.error("Error generating some users:", err);
+                    // continue loop → it will retry failed ones
+                }
+            }
 
-        res.status(200).send(users);
+            res.status(200).send(users);
+        } else {
+            Simva.register(req.params["groupid"], req.body.username, req.body.email, req.body.password, req.body.role, req.session.id, (error, result) => {
+                if(error) {
+                    next(error.response.data);
+                } else {
+                    res.status(200).send(result);
+                }
+            });
+        }
     });
 
     router.patch('/users/:username', auth, async (req, res, next) => {

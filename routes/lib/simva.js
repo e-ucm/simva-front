@@ -2,6 +2,7 @@ const Utils = require('./utils');
 const config = require('../../config');
 const userClientsListManager = require('./userClientsListManager');
 const usertools = require('./usertools');
+const logger = require('../../logger');
 class Simva {
 	apiurl;
 	ssoUrl;
@@ -123,17 +124,25 @@ class Simva {
 	}
 
 	// USER
-	register(groupid, username, email, password, role, isToken, useNewGeneration, sessionId, callback){
+	registerGeneratedUser(groupid, token, sessionId, callback){
+		logger.info(`Registering generated user with token ${token} for group ID ${groupid}`);
 		let body = {
-			groupid : groupid,
+			token: token,
+			role: "student",
+			isToken : true
+		};
+		this.post(`${this.apiurl}/groups/${groupid}/participants`, body, sessionId, callback);
+	}
+
+	register(groupid, username, email, password, role, sessionId, callback){
+		let body = {
 			username: username,
 			email: email,
 			password: password,
 			role: role,
-			isToken : isToken,
-			useNewGeneration : useNewGeneration
+			isToken : false
 		};
-		this.post(`${this.apiurl}/users`, body, sessionId, callback);
+		this.post(`${this.apiurl}/groups/${groupid}/participants`, body, sessionId, callback);
 	}
 
 	getUser(username, sessionId, callback){

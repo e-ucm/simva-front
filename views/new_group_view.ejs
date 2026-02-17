@@ -261,7 +261,7 @@
 			let form = Utils.getFormData($("#new_participant_form"));
 			let errorbox = $(this).find('.error');
 
-			Simva.register(groupid, form.username.toLowerCase(), form.email, form.password, form.role, false, false, function(error, result){
+			Simva.register(groupid, form.username.toLowerCase(), form.email, form.password, form.role, function(error, result){
 				if(error && error.responseJSON){
 					errorbox.text(error.responseJSON.message);
 				}else{
@@ -289,7 +289,7 @@
 			let form = Utils.getFormData($("#batch_participant_form"));
 			let errorbox = $(this).find('.error');
 
-			Simva.generateAndRegister(groupid, form.algorithm, form.length, form.amount, true, (error, generated) => {
+			Simva.generateAndRegister(groupid, form.algorithm, form.length, form.amount, (error, generated) => {
 				if(!error) { 
 					group.participants = group.participants.concat(generated);
 					Simva.updateGroup(group, function(error, result){
