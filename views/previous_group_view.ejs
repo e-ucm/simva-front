@@ -312,7 +312,9 @@
 	let removeParticipant = function(participant_id, participant, removeKeycloak=false){
 		if(confirm(`<%- t('participants.remove.confirm', { ns: 'groups',  participant : '${participant}', group : '${group.name}' }) %>`)){
 			Simva.deleteGroupParticipants(group.group_id, participant_id, removeKeycloak, function(error, result){
-				reloadGroup();
+				if(!error){
+					reloadGroup();
+				}
 			});
 		}
 	}
