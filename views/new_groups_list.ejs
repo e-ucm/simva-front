@@ -70,9 +70,7 @@
 		$('#groups_list').text('');
 		if(groups.length > 0){
 			for (var i = 0; i < groups.length; i++) {
-				if(groups[i].version == 1) {
-					$('#groups_list').append(toCard(groups[i]));
-				}
+				$('#groups_list').append(toCard(groups[i]));
 			}
 		}else{
 			$('#groups_list').text('<%= t("zero.message.title", { ns : "groups" }) %>');
@@ -109,9 +107,9 @@
 	}
 
 	let toCard = function(group){
-		return `<a href="/groups/${group._id}"><div class="selectable card third">
-			<input class="yellow" type="button" value="🖍️" onclick="openEditGroupForm('${group._id}','${group.name}')">
-			<input class="red" type="button" value="X" onclick="deleteGroup('${group._id}', '${group.name}')">
+		return `<a href="/groups/${group.group_id}"><div class="selectable card third">
+			<input class="yellow" type="button" value="🖍️" onclick="openEditGroupForm('${group.group_id}','${group.name}')">
+			<input class="red" type="button" value="X" onclick="deleteGroup('${group.group_id}', '${group.name}')">
 			<h1><%= t("single.title", { ns : "groups" }) %>: ${group.name}</h1>
 			<p><strong><%= t("participants.title", { ns : "groups" }) %>:</strong> ${group.participants.length}</p>
 			<p><strong><%= t("owners.title", { ns : "groups" }) %>:</strong> ${group.direct_permissions.length}</p>
