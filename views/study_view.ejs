@@ -940,11 +940,11 @@
 		var inputElement = document.getElementById('edit_activity_name');
 		inputElement.value = activity.name;
 		var inputElement = document.getElementById('edit_activity_type');
-		inputElement.value = activity.type;
+		inputElement.value = activity.activity_type;
 		$('#edit_activity_extras').empty();
-		$('#edit_activity_extras').append(`${PainterFactory.Painters[activity.type].description}\n`);
-		$('#edit_activity_extras').append(PainterFactory.Painters[activity.type].getEditExtraForm());
-		PainterFactory.Painters[activity.type].updateInputEditExtraForm(activity);
+		$('#edit_activity_extras').append(`${PainterFactory.Painters[activity.activity_type].description}\n`);
+		$('#edit_activity_extras').append(PainterFactory.Painters[activity.activity_type].getEditExtraForm());
+		PainterFactory.Painters[activity.activity_type].updateInputEditExtraForm(activity);
 		$('#edit_activity input[name="test"]').val(activity.session_id);
 		$('#edit_activity span[class="error"]').val("");
 		$('#edit_activity input[name="activity"]').val(activity.activity_id);
