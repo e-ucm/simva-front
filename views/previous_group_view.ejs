@@ -405,7 +405,7 @@
 
 	let participantRowPDF = function(participant, position){
 		let username = participant.username;
-		if(participant.isToken == "true") {
+		if(Boolean(participant.isToken)) {
 			username = participant.token;
 		}
 		return `<tr><td>${position}</td><td></td><td>${username}</td><td>${username}</td><td>${username}</td><td>${username}</td></tr>`;
