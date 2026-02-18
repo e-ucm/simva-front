@@ -36,14 +36,13 @@ var GameplayActivityPainter = {
 
 	updateInputEditExtraForm(activity) {
 		var gameplay_trace_storage = document.getElementById('edit_gameplay_trace_storage');
-		gameplay_trace_storage.checked = activity.trace_storage;
+		gameplay_trace_storage.checked = Boolean(activity.activity_trace_storage);
 		var gameplay_backup = document.getElementById('edit_gameplay_backup');
-		gameplay_backup.checked = activity.backup;
+		gameplay_backup.checked = Boolean(activity.game_backup);
 		var gameplay_scorm_xAPI = document.getElementById('edit_gameplay_scorm_xAPI');
-		gameplay_scorm_xAPI.checked = activity.scorm_xapi_by_game;
+		gameplay_scorm_xAPI.checked = Boolean(activity.game_scorm_xapi);
 		var gameplay_game_uri = document.getElementById('edit_gameplay_game_uri');
-		gameplay_game_uri.value = activity.extra_data.game_uri;
-
+		gameplay_game_uri.value = activity.game_url || "";
 	},
 
 	extractInformation: function(form, callback){
@@ -55,11 +54,12 @@ var GameplayActivityPainter = {
 		activity.name = formdata.name;
 		activity.activity_type = this.supportedType;
 
-		activity.trace_storage = formdata.trace_storage === 'on';
-		activity.backup = formdata.backup === 'on';
-		activity.scorm_xapi_by_game = formdata.scorm_xapi === 'on';
+		activity.activity_trace_storage = formdata.trace_storage === 'on';
+		activity.game_backup = formdata.backup === 'on';
+		activity.game_scorm_xapi = formdata.scorm_xapi === 'on';
 		if(formdata.game_uri !== ''){
 			activity.game_uri = formdata.game_uri;
+			activity.game_url = formdata.game_uri;
 		}
 
 		callback(null, activity);
@@ -73,25 +73,30 @@ var GameplayActivityPainter = {
 		if(actualActivity.name !== formdata.name) {
 			activity.name = formdata.name;
 		}
+		const actualTraceStorage = actualActivity.activity_trace_storage;
 		let trace_storage = formdata.trace_storage === 'on';
-		if(actualActivity.trace_storage !== trace_storage) {
-			activity.trace_storage = trace_storage;
+		if(actualTraceStorage !== trace_storage) {
+			activity.activity_trace_storage = trace_storage;
 		}
+		const actualScormXapiByGame = actualActivity.game_scorm_xapi;
 		let scorm_xapi_by_game = formdata.scorm_xapi === 'on';
-		if(actualActivity.scorm_xapi_by_game !== scorm_xapi_by_game) {
-			activity.scorm_xapi_by_game = scorm_xapi_by_game;
+		if(actualScormXapiByGame !== scorm_xapi_by_game) {
+			activity.game_scorm_xapi = scorm_xapi_by_game;
 		}
+		const actualBackup = actualActivity.game_backup;
 		let backup = formdata.backup === 'on';
-		if(actualActivity.backup !== backup) {
-			activity.backup = backup;
+		if(actualBackup !== backup) {
+			activity.game_backup = backup;
 		}
 		let game_uri=formdata.game_uri;
 		if(!(actualActivity.extra_data.game_uri == game_uri)) {
 			if(actualActivity.extra_data.game_uri) {
 				activity.game_uri = game_uri;
+				activity.game_url = game_uri;
 			} else {
 				if(game_uri !== ''){
 					activity.game_uri = game_uri;
+					activity.game_url = game_uri;
 				}
 			}
 		}
@@ -143,7 +148,7 @@ var GameplayActivityPainter = {
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity.activity_id}', '${activity.activity_name}', '${activity.session_id}')"></div>
 			<p class="subtitle">${this.simple_name}</p>`;
 		activitybox += `<br>${this.commun.storage_title}:`;
-		if(activity.trace_storage) {
+		if(activity.activity_trace_storage) {
 			activitybox += `<a onclick="PainterFactory.Painters['activity'].getMinioData('${activity.activity_id}')" target="_blank">${this.commun.storage_file_title} ${this.commun.storage_file_one_per_line_title}</a>
 			<br>
 			<br>
@@ -160,7 +165,7 @@ var GameplayActivityPainter = {
 		}
 		activitybox +='<br>'
 		activitybox += `${this.communSpecific.result_title}:`
-		if(activity.backup){
+		if(activity.game_backup){
 			activitybox += `<a onclick="GameplayActivityPainter.downloadBackup('${activity.activity_id}')"> ⬇️</a>` 
 		} else {
 			activitybox += `<i>${this.commun.result_disabled}</i>`;

@@ -33,10 +33,10 @@ var ManualActivityPainter = {
 
 	updateInputEditExtraForm(activity) {
 		var manual_user_managed = document.getElementById('edit_manual_user_managed');
-		manual_user_managed.checked = activity.user_managed;
+		manual_user_managed.checked = Boolean(activity.manual_user_managed);
 		var manual_uri = document.getElementById('edit_manual_uri');
-		if(activity.uri) {
-			manual_uri.value = activity.uri;
+		if(activity.manual_ressource_url) {
+			manual_uri.value = activity.manual_ressource_url;
 		}
 	},
 
@@ -49,9 +49,9 @@ var ManualActivityPainter = {
 		activity.name = formdata.name;
 		activity.activity_type = this.supportedType;
 
-		activity.user_managed = formdata.user_managed === 'on';
+		activity.manual_user_managed = formdata.user_managed === 'on';
 		if(formdata.uri !== ''){
-			activity.uri = formdata.uri;
+			activity.manual_ressource_url = formdata.uri;
 		}
 
 		callback(null, activity);
@@ -66,17 +66,19 @@ var ManualActivityPainter = {
 			activity.name = formdata.name;
 		}
 	
+		const actualUserManaged = actualActivity.manual_user_managed;
 		let user_managed = formdata.user_managed === 'on';
-		if(actualActivity.user_managed !== user_managed) {
-			activity.user_managed = user_managed;
+		if(actualUserManaged !== user_managed) {
+			activity.manual_user_managed = user_managed;
 		}
 		
-		if(!(actualActivity.uri == formdata.uri)) {
-			if(actualActivity.uri) {
-				activity.uri = formdata.uri;
+		const actualUri = actualActivity.manual_ressource_url;
+		if(!(actualUri == formdata.uri)) {
+			if(actualUri) {
+				activity.manual_ressource_url = formdata.uri;
 			} else {
 				if(formdata.uri !== ''){
-					activity.uri = formdata.uri;
+					activity.manual_ressource_url = formdata.uri;
 				}
 			}
 		}
@@ -98,7 +100,7 @@ var ManualActivityPainter = {
 	},
 
 	paintActivity: function(activity, participants){
-		let complete=activity.user_managed ? this.specific.student_complete_ok : this.specific.student_complete_nok;
+		let complete=activity.manual_user_managed ? this.specific.student_complete_ok : this.specific.student_complete_nok;
 		$(`#test_${activity.session_id} .activities`).append(`<div id="activity_${activity.activity_id}" class="activity t${activity.activity_type}">
 			<div class="top"><h4>${activity.activity_name}</h4>
 			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity.activity_id}')">

@@ -33,14 +33,14 @@ var LimeSurveyPainter = {
 						<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">${this.specific.title}</a></p>`
 				} else {
 					form += `<div class="tabs">
-					<span class="tab selected" method="byid" onclick="changeTab(this, 'new_activity_extras','limesurvey_byid')">${this.specific.surveyid_title}</span>
+					<span class="tab selected" method="byid" onclick="changeTab(this, 'new_activity_extras','limesurvey_byid')">${this.specific.survey_id_title}</span>
 					<span class="tab" method="byexisting" onclick="changeTab(this,'new_activity_extras','limesurvey_byexisting')">${this.specific.existing_title}</span>
 					<span class="tab" method="bynew" onclick="changeTab(this, 'new_activity_extras','limesurvey_bynew')">${this.specific.new_title}</span>
 					<span class="tab" method="byupload" onclick="changeTab(this, 'new_activity_extras','limesurvey_byupload')">${this.specific.upload_title}</span>
 					</div>
 					<div id="limesurvey_byid" class="subform selected">
-					<p>${this.specific.surveyid_title}:</p>
-					<input type="number" name="surveyid" placeholder="${this.specific.surveyid_placeholder}">
+					<p>${this.specific.survey_id_title}:</p>
+					<input type="number" name="surveyid" placeholder="${this.specific.survey_id_placeholder}">
 					</div>
 					<div id="limesurvey_byexisting" class="subform">`;
 					if(this.utils.surveys.length > 0){
@@ -101,8 +101,9 @@ var LimeSurveyPainter = {
 				});
 				
 				// Set a specific option as selected
-				if(activity.language) {
-					languageSelectElement.value=activity.language;
+				const selectedLanguage = activity.suvey_language;
+				if(selectedLanguage) {
+					languageSelectElement.value = selectedLanguage;
 				}
 			}
 			// Step 2: Loop through the data and create options
@@ -124,7 +125,7 @@ var LimeSurveyPainter = {
 					});
 
 					// Set a specific option as selected
-					selectElement.value=activity.surveyId;
+					selectElement.value=activity.survey_id;
 				}
 			});
 		});
@@ -163,7 +164,7 @@ var LimeSurveyPainter = {
 
 		switch(method){
 			case 'byid':
-				activity.copysurvey = formdata.surveyid;
+				activity.copysurvey = formdata.survey_id;
 				callback(null, activity);
 				break;
 			case 'byexisting':
@@ -202,7 +203,7 @@ var LimeSurveyPainter = {
 		if(actualActivity.name !== formdata.name) {
 			activity.name = formdata.name;
 		}
-		let actualSurveyid=actualActivity.surveyId;
+		let actualSurveyid=actualActivity.survey_id;
 		if(typeof(actualSurveyid) == "string") {
 			actualSurveyid=Number(actualSurveyid);
 		}
@@ -214,8 +215,9 @@ var LimeSurveyPainter = {
 			activity.copysurvey = surveyid;
 		}
 
-		if(actualActivity.language !== formdata.language) {
-			activity.language = formdata.language;
+		const actualLanguage = actualActivity.suvey_language;
+		if(actualLanguage !== formdata.language) {
+			activity.suvey_language = formdata.language;
 		}
 
 		callback(null, activity);
@@ -270,10 +272,10 @@ var LimeSurveyPainter = {
 			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity.activity_id}')">
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity.activity_id}', '${activity.activity_name}', '${activity.session_id}')"></div>
 			<p class="subtitle">${this.simple_name}</p>
-			<p>${this.specific.survey_title}: <a target="_blank" href="${this.utils.url}${activity.surveyId}">${activity.surveyId}</a></p>
-			<p>${this.specific.language_title}: ${activity.language}</p>
-			<p><a class="button green" onclick="LimeSurveyPainter.openEditLimesurvey('${activity.id}', '${activity.surveyId}')">${this.specific.edit_title}</a></p>
-			<p><a onclick="LimeSurveyPainter.generateTinyURL('${activity.activity_id}', ${activity.surveyId})">${this.specific.short_url_title}</a></p>
+			<p>${this.specific.survey_title}: <a target="_blank" href="${this.utils.url}${activity.survey_id}">${activity.survey_id}</a></p>
+			<p>${this.specific.language_title}: ${activity.suvey_language}</p>
+			<p><a class="button green" onclick="LimeSurveyPainter.openEditLimesurvey('${activity.id}', '${activity.survey_id}')">${this.specific.edit_title}</a></p>
+			<p><a onclick="LimeSurveyPainter.generateTinyURL('${activity.activity_id}', ${activity.survey_id})">${this.specific.short_url_title}</a></p>
 			<p><a onclick="LimeSurveyPainter.downloadBackup('${activity.activity_id}', 'full')"> ${this.specific.backup_full_title} : ⬇️</a>
 			<a onclick="LimeSurveyPainter.downloadBackup('${activity.activity_id}', 'code')"> ${this.specific.backup_code_title} : ⬇️</a></p>
 			${this.commun.storage_title} : 
