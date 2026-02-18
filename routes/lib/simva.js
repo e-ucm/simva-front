@@ -177,7 +177,7 @@ class Simva {
 	}
 
 	addGroup(name, newversion, sessionId, callback){
-		let body = { name: name };
+		let body = { group_name: name };
 		this.post(`${this.apiurl}/groups?use_new_generation=${newversion}`, body, sessionId, callback);
 	}
 
@@ -208,17 +208,17 @@ class Simva {
 	}
 
 	addStudy(name, sessionId, callback){
-		let body = { name: name };
+		let body = { simlet_name: name };
 		this.post(`${this.apiurl}/simlets`, body, sessionId, callback);
 	}
 
 	addTestToStudy(study_id, name, sessionId, callback){
-		let body = { name: name };
+		let body = { session_name: name };
 		this.post(`${this.apiurl}/simlets/${study_id}/sessions`, body, sessionId, callback);
 	}
 
 	duplicateTestFromStudy(study_id, name, testId, sessionId, callback){
-		let body = { name: name, from : testId };
+		let body = { session_name: name, from : testId };
 		this.post(`${this.apiurl}/simlets/${study_id}/sessions`, body, sessionId, callback);
 	}
 

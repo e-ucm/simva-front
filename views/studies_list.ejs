@@ -138,11 +138,11 @@
 	
 	let toCard = function(study){
 		return `<a class="stopable" href="/simlets/${study.simlet_id}"><div class="studycard selectable card third">
-			<span class="button yellow" onclick="openEditStudyForm('${study.simlet_id}', '${study.name}')">🖍️</span>
-			<span class="button red delete" onclick="deleteStudy('${study.simlet_id}', '${study.name}')">X</span>
-			<h1><%- t('single.title', { ns : 'SIMLETs' }) %>: ${study.name}</h1>
+			<span class="button yellow" onclick="openEditStudyForm('${study.simlet_id}', '${study.simlet_name}')">🖍️</span>
+			<span class="button red delete" onclick="deleteStudy('${study.simlet_id}', '${study.simlet_name}')">X</span>
+			<h1><%- t('single.title', { ns : 'SIMLETs' }) %>: ${study.simlet_name}</h1>
 			<p><strong><%- t('groups.title', { ns : 'SIMLETs' }) %>:</strong> ${study.groups.length}</p>
-			<p><strong><%- t('description.title', { ns : 'SIMLETs' }) %>:</strong> ${study.description}</p>
+			<p><strong><%- t('description.title', { ns : 'SIMLETs' }) %>:</strong> ${study.simlet_description}</p>
 			<p><strong><%- t('created_at.title', { ns : 'SIMLETs' }) %>:</strong> ${study.createdAt}</p>
 			<p><strong><%- t('updated_at.title', { ns : 'SIMLETs' }) %>:</strong> ${study.updatedAt}</p>
 			<p><strong><%- t('sessions.title', { ns : 'SIMLETs' }) %>:</strong> ${study.sessions.length}</p>

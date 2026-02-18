@@ -100,9 +100,9 @@ var ManualActivityPainter = {
 	paintActivity: function(activity, participants){
 		let complete=activity.user_managed ? this.specific.student_complete_ok : this.specific.student_complete_nok;
 		$(`#test_${activity.session_id} .activities`).append(`<div id="activity_${activity.activity_id}" class="activity t${activity.activity_type}">
-			<div class="top"><h4>${activity.name}</h4>
+			<div class="top"><h4>${activity.activity_name}</h4>
 			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity.activity_id}')">
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity.activity_id}', '${activity.name}', '${activity.session_id}')"></div>
+			<input class="red" type="button" value="X" onclick="deleteActivity('${activity.activity_id}', '${activity.activity_name}', '${activity.session_id}')"></div>
 			<p class="subtitle">${this.simple_name}</p>
 			<p><strong>${complete}<strong></p>
 			<p>${this.commun.storage_file_title} <a onclick="PainterFactory.Painters['activity'].getMinioData('${activity.activity_id}')" target="_blank">${this.commun.storage_file_one_per_line_title}</a></p>

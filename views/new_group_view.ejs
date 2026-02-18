@@ -236,7 +236,7 @@
 
 			for (var i = 0; i < group.participants.length; i++) {
 				if(group.participants[i] == form.name){
-					errorbox.text(`t("participants.errormessage.alreadyInGroup", { ns : "groups", group : "${group.name}", participant : "${form.name}" }) %>`); 
+					errorbox.text(`t("participants.errormessage.alreadyInGroup", { ns : "groups", group : "${group.group_name}", participant : "${form.name}" }) %>`); 
 					return false;
 				}
 			}
@@ -313,7 +313,7 @@
 	}
 
 	let removeParticipant = function(participant_id, participant, removeKeycloak=false){
-		if(confirm(`<%- t('participants.remove.confirm', { ns: 'groups',  participant : '${participant}', group : '${group.name}' }) %>`)){
+		if(confirm(`<%- t('participants.remove.confirm', { ns: 'groups',  participant : '${participant}', group : '${group.group_name}' }) %>`)){
 			Simva.deleteGroupParticipants(group.group_id, participant_id, removeKeycloak, function(error, result){
 				if(!error){
 					reloadGroup();
@@ -323,7 +323,7 @@
 	}
 
 	let deleteOwner = function(owner){
-		if(confirm(`<%- t('owners.remove.confirm', { ns: 'groups', owner : '${owner}', group : '${group.name}' }) %>`)){
+		if(confirm(`<%- t('owners.remove.confirm', { ns: 'groups', owner : '${owner}', group : '${group.group_name}' }) %>`)){
 			let toremove = -1;
 			for (var i = 0; i < group.direct_permissions.length; i++) {
 				if(group.direct_permissions[i] === owner){
@@ -376,7 +376,7 @@
 	}
 
 	let groupHeaderNoParticipantsPDF = function(groupname) {
-		return `<thead><tr><th colspan="6"><%= t("single.title", { ns : "groups" }) %>: ${group.name}</th></tr></thead>`;
+		return `<thead><tr><th colspan="6"><%= t("single.title", { ns : "groups" }) %>: ${group.group_name}</th></tr></thead>`;
 	}
 
 	let participantHeader = function(){
@@ -414,7 +414,7 @@
 	}
 
 	let headerRowPDF = function(group){
-		return `<thead><tr><th colspan="6"><%= t("single.title", { ns : "groups" }) %>: ${group.name}</th></tr><tr><td width="5%"><%= t("participants.pdf.no.title", { ns : "groups" }) %></td><td width="45%"><%= t("participants.pdf.name.title", { ns : "groups" }) %></td><td width="40%" colspan="4"><%= t("participants.pdf.code.title", { ns : "groups" }) %></td></tr></thead>`;
+		return `<thead><tr><th colspan="6"><%= t("single.title", { ns : "groups" }) %>: ${group.group_name}</th></tr><tr><td width="5%"><%= t("participants.pdf.no.title", { ns : "groups" }) %></td><td width="45%"><%= t("participants.pdf.name.title", { ns : "groups" }) %></td><td width="40%" colspan="4"><%= t("participants.pdf.code.title", { ns : "groups" }) %></td></tr></thead>`;
 	}
 
 	let participantRowPDF = function(participant, position){

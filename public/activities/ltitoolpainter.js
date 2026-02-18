@@ -62,7 +62,7 @@ var LTIToolPainter = {
 			if(this.tools.length > 0){
 				form += '<select id="lti_tool_id" name="existingid" style="width: 87%">';
 				for (var i = 0; i < this.tools.length; i++) {
-					form += `<option value="${this.tools[i]._id}">${this.tools[i].name}</option>`;
+					form += `<option value="${this.tools[i]._id}">${this.tools[i].session_name}</option>`;
 				}
 
 				form += '</select><a style="width: 10%" class="button red" onclick="LTIToolPainter.deleteSelectedLtiTool()">X</a>';
@@ -134,9 +134,9 @@ var LTIToolPainter = {
 		}
 
 		$(`#test_${activity.session_id} .activities`).append(`<div id="activity_${activity.activity_id}" class="activity t${activity.activity_type}">
-			<div class="top"><h4>${activity.name}</h4>
+			<div class="top"><h4>${activity.activity_name}</h4>
 			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity.activity_id}')">
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity.activity_id}', '${activity.name}', '${activity.session_id}')"></div>
+			<input class="red" type="button" value="X" onclick="deleteActivity('${activity.activity_id}', '${activity.activity_name}', '${activity.session_id}')"></div>
 			<p class="subtitle">${this.simple_name}</p>
 			<p>Tool ClientID: ${tool.client_id}</p>
 			<div id="completion_progress_${activity.activity_id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>

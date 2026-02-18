@@ -68,7 +68,7 @@ var DefaultAllocatorPainter = {
 		toret += `</select><p>${this.test_title}: </p><select name="test">`;
 
 		for (var i = 0; i < tests.length; i++) {
-			toret += `<option value="${tests[i]._id}">${tests[i].name}</option>`;
+			toret += `<option value="${tests[i]._id}">${tests[i].session_name}</option>`;
 		}
 
 		toret += `</select><input type="button" value="${this.add_title}" onclick="DefaultAllocatorPainter.addAllocation()">`;
@@ -104,7 +104,7 @@ var DefaultAllocatorPainter = {
 		for (var i = 0; i < this.tests.length; i++) {
 			selected=(this.tests[i]._id === allocation.test ? 'selected' : '')
 			topaint += `<option value="${this.tests[i]._id}" ${selected}> 
-			${this.tests[i].name}</option>`;
+			${this.tests[i].session_name}</option>`;
 		}
 
 		return topaint;

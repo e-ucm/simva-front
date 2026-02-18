@@ -25,7 +25,7 @@
 
 	let toCard = function(study){
 		return `<a href="/scheduler/${study._id}"><div class="selectable card third">
-			<h1><%- t('single.title', { ns : 'SIMLETs' }) %>: ${study.name}</h1>
+			<h1><%- t('single.title', { ns : 'SIMLETs' }) %>: ${study.study_name}</h1>
 			<p><%- t('scheduler.title', { ns : 'SIMLETs' }) %></p>
 			</div></a>`;
 	}

@@ -266,9 +266,9 @@ var LimeSurveyPainter = {
 
 	paintActivity: function(activity, participants){
 		$(`#test_${activity.session_id} .activities`).append(`<div id="activity_${activity.activity_id}" class="activity t${activity.activity_type}">
-			<div class="top"><h4>${activity.name}</h4>
+			<div class="top"><h4>${activity.activity_name}</h4>
 			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity.activity_id}')">
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity.activity_id}', '${activity.name}', '${activity.session_id}')"></div>
+			<input class="red" type="button" value="X" onclick="deleteActivity('${activity.activity_id}', '${activity.activity_name}', '${activity.session_id}')"></div>
 			<p class="subtitle">${this.simple_name}</p>
 			<p>${this.specific.survey_title}: <a target="_blank" href="${this.utils.url}${activity.surveyId}">${activity.surveyId}</a></p>
 			<p>${this.specific.language_title}: ${activity.language}</p>

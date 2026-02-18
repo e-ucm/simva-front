@@ -173,7 +173,7 @@ module.exports = function(auth, config){
     });
 
     router.post('/groups', auth, async (req, res, next) => {
-        Simva.addGroup(req.body.name, req.body.use_new_generation, req.session.id, (error, result) => {
+        Simva.addGroup(req.body.group_name, req.body.use_new_generation, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
@@ -255,7 +255,7 @@ module.exports = function(auth, config){
     });
 
     router.post('/studies', auth, async (req, res, next) => {
-        Simva.addStudy(req.body.name, req.session.id, (error, result) => {
+        Simva.addStudy(req.body.simlet_name, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
@@ -303,14 +303,14 @@ module.exports = function(auth, config){
         if(req.body.from) {
             try {
                 let testToDuplicate=await testscontroler.exportTest(req.params["studyid"], req.body.from, false, req.session.id);
-                testToDuplicate.name = req.body.name;
+                testToDuplicate.name = req.body.session_name;
                 let newTest=await testscontroler.importTest(req.params["studyid"], testToDuplicate, req.session.id);
                 res.status(200).send(newTest);
-            } catch {
+            } catch(error) {
                 next(error.response.data);
             }
         } else {
-            Simva.addTestToStudy(req.params["studyid"], req.body.name, req.session.id, (error, result) => {
+            Simva.addTestToStudy(req.params["studyid"], req.body.session_name, req.session.id, (error, result) => {
                 if(error) {
                     next(error.response.data);
                 } else {

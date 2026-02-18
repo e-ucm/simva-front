@@ -108,9 +108,9 @@
 
 	let toCard = function(group){
 		return `<a href="/groups/${group.group_id}"><div class="selectable card third">
-			<input class="yellow" type="button" value="🖍️" onclick="openEditGroupForm('${group.group_id}','${group.name}')">
-			<input class="red" type="button" value="X" onclick="deleteGroup('${group.group_id}', '${group.name}')">
-			<h1><%= t("single.title", { ns : "groups" }) %>: ${group.name}</h1>
+			<input class="yellow" type="button" value="🖍️" onclick="openEditGroupForm('${group.group_id}','${group.group_name}')">
+			<input class="red" type="button" value="X" onclick="deleteGroup('${group.group_id}', '${group.group_name}')">
+			<h1><%= t("single.title", { ns : "groups" }) %>: ${group.group_name}</h1>
 			<p><strong><%= t("participants.title", { ns : "groups" }) %>:</strong> ${group.participants.length}</p>
 			<p><strong><%= t("owners.title", { ns : "groups" }) %>:</strong> ${group.direct_permissions.length}</p>
 			</div></a>`;

@@ -757,7 +757,7 @@
 	deleteShLink = function(){
 		if(study.shlink) {
 			let shortCode=study.shlink.shortCode;
-			if(confirm(`<%- t('scheduler.shlink.delete.confirm', { ns : 'SIMLETs', shlink : '${shortCode}', SIMLET : '${study.name}'  }) %>`)){
+			if(confirm(`<%- t('scheduler.shlink.delete.confirm', { ns : 'SIMLETs', shlink : '${shortCode}', SIMLET : '${study.study_name}'  }) %>`)){
 				Simva.deleteShLink(shortCode, (error, result) => {
 					if(!error) {
 						study.shlink=null;
@@ -792,7 +792,7 @@
 			if(!error){
 				var studyExport = result;
 				var content = JSON.stringify(studyExport, null, 2);
-				var filename = `simva-${study.name}-export.json`;
+				var filename = `simva-${study.study_name}-export.json`;
 
 				Utils.download(filename, content);
 			}
@@ -859,7 +859,7 @@
 	// Functionality
 
 	let deleteGroup = function(groupid, groupname){
-		if(confirm(`<%- t('groups.delete.confirm', { ns : 'SIMLETs', group : '${groupname}', SIMLET : '${study.name}' }) %>`)){
+		if(confirm(`<%- t('groups.delete.confirm', { ns : 'SIMLETs', group : '${groupname}', SIMLET : '${study.study_name}' }) %>`)){
 			let toremove = -1;
 			for (var i = 0; i < study.groups.length; i++) {
 				if(study.groups[i] === groupid){
@@ -877,7 +877,7 @@
 	}
 
 	let deletePlatform = function(platform){
-		if(confirm(`<%- t('lti_platform.delete.confirm', { ns : 'SIMLETs', platform : '${platform}', SIMLET : '${study.name}' }) %>`)){
+		if(confirm(`<%- t('lti_platform.delete.confirm', { ns : 'SIMLETs', platform : '${platform}', SIMLET : '${study.study_name}' }) %>`)){
 			Simva.removePlatform(platform, function(error, result){
 				reloadStudy();
 			});
@@ -885,7 +885,7 @@
 	}
 
 	let deleteOwner = function(owner){
-		if(confirm(`<%- t('coordinators.delete.confirm', { ns : 'SIMLETs', coordinator : '${owner}', SIMLET : '${study.name}' }) %>`)){
+		if(confirm(`<%- t('coordinators.delete.confirm', { ns : 'SIMLETs', coordinator : '${owner}', SIMLET : '${study.study_name}' }) %>`)){
 			let toremove = -1;
 			for (var i = 0; i < study.owners.length; i++) {
 				if(study.owners[i] === owner){
@@ -903,7 +903,7 @@
 	}
 
 	let deleteTest = function(testid, testName) {
-		if(confirm(`<%- t('sessions.delete.confirm', { ns : 'SIMLETs', session : '${testName}', SIMLET : '${study.name}' }) %>`)){
+		if(confirm(`<%- t('sessions.delete.confirm', { ns : 'SIMLETs', session : '${testName}', SIMLET : '${study.study_name}' }) %>`)){
 			let toremove = -1;
 			for (var i = 0; i < study.tests.length; i++) {
 				if(study.tests[i] === testid){
@@ -922,7 +922,7 @@
 
 	let deleteActivity = function(activityid, activityname, testid){
 		let test=getTestFromTestId(testid);
-		if(confirm(`<%- t('activities.delete.confirm', { ns : 'SIMLETs', activity : '${activityname}', session: '${test}' , SIMLET : '${study.name}' }) %>`)){
+		if(confirm(`<%- t('activities.delete.confirm', { ns : 'SIMLETs', activity : '${activityname}', session: '${test}' , SIMLET : '${study.study_name}' }) %>`)){
 			Simva.deleteActivity(activityid, function(error, result){
 				reloadStudy();
 			});
@@ -1158,10 +1158,10 @@
 
 	let paintTest = function(test){
 		$('#tests').append(`<div id="test_${test.session_id}" class="test">
-			<div class="top"><h3>${test.name}</h3><input class="violet" type="button" value="<%- t('sessions.expand', { ns : 'SIMLETs' }) %>" onclick="toggleTest('${test.session_id}')">
+			<div class="top"><h3>${test.session_name}</h3><input class="violet" type="button" value="<%- t('sessions.expand', { ns : 'SIMLETs' }) %>" onclick="toggleTest('${test.session_id}')">
 			<input class="green" type="button" value="<%- t('activities.add.title', { ns : 'SIMLETs' }) %>" onclick="openActivityForm('${test.session_id}')">
 			<input class="yellow" type="button" value="<%- t('sessions.edit.title', { ns : 'SIMLETs' }) %>" onclick="openEditTestForm('${test.session_id}')">
-			<input class="red" type="button" value="<%- t('sessions.delete.title', { ns : 'SIMLETs' }) %>" onclick="deleteTest('${test.session_id}', '${test.name}')">
+			<input class="red" type="button" value="<%- t('sessions.delete.title', { ns : 'SIMLETs' }) %>" onclick="deleteTest('${test.session_id}', '${test.session_name}')">
 			<input class="orange" type="button" value="<%- t('sessions.duplicate.title', { ns : 'SIMLETs' }) %>" onclick="openEditDuplicateForm('${test.session_id}')"></div>
 			<div class="activities collapsed">${roller}</div>`);
 	}
@@ -1207,7 +1207,7 @@
 	}
 
 	let groupRow = function(group){
-		let toret = `<tr><td>${group.name}</td><td><input class="red" type="button" value="<%- t('groups.delete.title', { ns : 'SIMLETs' }) %>" onclick="deleteGroup('${group._id}', '${group.name}')" `
+		let toret = `<tr><td>${group.group_name}</td><td><input class="red" type="button" value="<%- t('groups.delete.title', { ns : 'SIMLETs' }) %>" onclick="deleteGroup('${group._id}', '${group.group_name}')" `
 		if(group.link && group.link.type){
 			toret += ' disabled';
 		}
@@ -1224,7 +1224,7 @@
 	}
 
 	let addGroupRow = function(group){
-		return `<option value="${group._id}">${group.name}</option>`;
+		return `<option value="${group._id}">${group.group_name}</option>`;
 	}
 
 	let allocationRow = function(allocation, tests){
@@ -1233,9 +1233,9 @@
 		if(tests.length > 0){
 			for (var i = 0; i < tests.length; i++) {
 				if(allocation.test == tests[i].session_id){
-					toret += `<option value="${tests[i].session_id}">${tests[i].name}</option>`;
+					toret += `<option value="${tests[i].session_id}">${tests[i].session_name}</option>`;
 				}else{
-					toret += `<option value="${tests[i].session_id}" selected>${tests[i].name}</option>`;
+					toret += `<option value="${tests[i].session_id}" selected>${tests[i].session_name}</option>`;
 				}
 			}
 		}else{

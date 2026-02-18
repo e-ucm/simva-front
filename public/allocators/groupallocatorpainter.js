@@ -87,7 +87,7 @@ var GroupAllocatorPainter = {
 
 	generateRow: function(allocation){
 		let topaint = `<tr>
-			<td>${allocation.group.name}</td>
+			<td>${allocation.group.group_name}</td>
 			<td>
 				<select id="allocation_${allocation.group._id}" 
 					onchange="GroupAllocatorPainter.updateAllocation('${allocation.group._id}')"
@@ -95,7 +95,7 @@ var GroupAllocatorPainter = {
 
 		for (var i = 0; i < this.tests.length; i++) {
 			let selected=(this.tests[i]._id === allocation.test ? 'selected' : '')
-			topaint += `<option value="${this.tests[i]._id}" ${selected}>${this.tests[i].name}</option>`;
+			topaint += `<option value="${this.tests[i]._id}" ${selected}>${this.tests[i].session_name}</option>`;
 		}
 		return topaint;
 	},

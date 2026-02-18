@@ -102,7 +102,7 @@ var Simva = {
 	},
 
 	addGroup: function(name, use_new_generation, callback){
-		let body = { name: name	 };
+		let body = { group_name: name };
 		if(use_new_generation) {
 			body.use_new_generation = true;
 		} else {
@@ -138,12 +138,12 @@ var Simva = {
 	},
 
 	addStudy: function(name, callback){
-		let body = { name: name };
+		let body = { simlet_name: name };
 		Utils.post(`/bff/studies`, body, callback);
 	},
 
 	addTestToStudy: function(study_id, name, callback){
-		let body = { name: name };
+		let body = { session_name: name };
 		Utils.post(`/bff/studies/${study_id}/tests`, body, callback);
 	},
 
@@ -152,7 +152,7 @@ var Simva = {
 	},
 
 	duplicateTestFromStudy: function(study_id, name, testId, callback){
-		let body = { name: name, from : testId };
+		let body = { session_name: name, from : testId };
 		Utils.post(`/bff/studies/${study_id}/tests`, body, callback);
 	},
 
