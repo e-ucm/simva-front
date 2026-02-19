@@ -189,6 +189,10 @@ class Simva {
 		this.get(`${this.apiurl}/groups/${group_id}`, sessionId, callback);
 	}
 
+	getGroupDirectPermissions(group_id, sessionId, callback){
+		this.get(`${this.apiurl}/groups/${group_id}/permissions`, sessionId, callback);
+	}
+
 	deleteGroup(group_id, sessionId, callback){
 		this.delete(`${this.apiurl}/groups/${group_id}`, sessionId, callback);
 	}
@@ -205,6 +209,10 @@ class Simva {
 
 	getStudies(sessionId, callback){
 		this.get(`${this.apiurl}/simlets`, sessionId, callback);
+	}
+
+	getStudyDirectPermissions(study_id, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${study_id}/permissions`, sessionId, callback);
 	}
 
 	addStudy(name, sessionId, callback){

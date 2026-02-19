@@ -34,6 +34,11 @@
 					<h2><%= t('owners.add.title' , { ns : 'groups' }) %></h2>
 					<form id="existing_owner_form">
 						<input type="text" name="name" placeholder="<%= t('owners.add.username.placeholder' , { ns : 'groups' }) %>" required>
+						<select name="permission" required>
+							<option value="">Select Permission</option>
+							<option value="READ">Read</option>
+							<option value="WRITE">Write</option>
+						</select>
 						<input type="submit" value="<%= t('owners.add.title' , { ns : 'groups' }) %>">
 						<span class="error"></span>
 					</form>
@@ -181,14 +186,22 @@
 			let form = Utils.getFormData($("#existing_owner_form"));
 			let errorbox = $(this).find('.error');
 
+			// Check if owner already exists
 			for (var i = 0; i < group.direct_permissions.length; i++) {
-				if(group.direct_permissions[i] == form.name){
+				if(group.direct_permissions[i].username == form.name){
 					errorbox.text('The coordinator is already in the group.');
 					return false;
 				}
 			}
 
-			group.direct_permissions.push(form.name);
+			// Create new owner object
+			let newOwner = {
+				username: form.name,
+				permission: form.permission,
+				isCurrentUser: false
+			};
+
+			group.direct_permissions.push(newOwner);
 
 			Simva.updateGroup(group, function(error, result){
 				reloadGroup();
@@ -326,7 +339,7 @@
 		if(confirm(`<%- t('owners.remove.confirm', { ns: 'groups', owner : '${owner}', group : '${group.group_name}' }) %>`)){
 			let toremove = -1;
 			for (var i = 0; i < group.direct_permissions.length; i++) {
-				if(group.direct_permissions[i] === owner){
+				if(group.direct_permissions[i].username === owner){
 					toremove = i;
 					break;
 				}
@@ -364,11 +377,11 @@
 	}
 
 	let ownerRow = function(owner){
-		let toret = `<tr><td>${owner}</td><td><input class="red" type="button" value="<%= t("owners.remove.title", { ns : "groups" }) %>"`;
-		if(owner == '<%= user.data.username %>'){
+		let toret = `<tr><td>${owner.username}</td><td>${owner.permission}</td><td><input class="red" type="button" value="<%= t("owners.remove.title", { ns : "groups" }) %>"`;
+		if(owner.isCurrentUser){
 			toret += ' disabled="disabled"';
 		}else{
-			toret += ` onclick="deleteOwner('${owner}')"`
+			toret += ` onclick="deleteOwner('${owner.username}')"`
 		}
 
 		toret += '></td></tr>';

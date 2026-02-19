@@ -138,6 +138,11 @@
 				<h2><%- t('coordinators.add.title', { ns : 'SIMLETs' }) %></h2>
 				<form id="existing_owner_form">
 					<input type="text" name="name" placeholder="<%- t('coordinators.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<select name="permission" required>
+						<option value="">Select Permission</option>
+						<option value="READ">Read</option>
+						<option value="WRITE">Write</option>
+					</select>
 					<input type="submit" value="<%- t('coordinators.add.title', { ns : 'SIMLETs' }) %>">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 					<span class="error"></span>
@@ -487,14 +492,25 @@
 			let form = Utils.getFormData($("#existing_owner_form"));
 			let errorbox = $(this).find('.error');
 
+			// Check if owner already exists
 			for (var i = 0; i < study.owners.length; i++) {
-				if(study.owners[i] == form.name){
+				if(study.owners[i].username == form.name){
 					errorbox.text("<%- t('coordinators.error.already_in', { ns : 'SIMLETs' }) %>");
 					return false;
 				}
 			}
+			if(form.permission !== "READ" && form.permission !== "WRITE"){
+				errorbox.text("<%- t('coordinators.error.permission', { ns : 'SIMLETs' }) %>");
+				return false;
+			}
+			// Create new owner object
+			let newOwner = {
+				username: form.name,
+				permission: form.permission,
+				isCurrentUser: false
+			};
 
-			study.owners.push(form.name);
+			study.owners.push(newOwner);
 
 			Simva.updateStudy(study, function(error, result){
 				if(error && error.responseJSON){
@@ -1195,11 +1211,11 @@
 
 
 	let ownerRow = function(owner){
-		let toret = `<tr><td>${owner}</td><td><input class="red" type="button" value="<%- t('coordinators.delete.title', { ns : 'SIMLETs' }) %>"`;
-		if(owner == '<%= user.data.username %>'){
+		let toret = `<tr><td>${owner.username}</td><td>${owner.permission}</td><td><input class="red" type="button" value="<%- t('coordinators.delete.title', { ns : 'SIMLETs' }) %>"`;
+		if(owner.isCurrentUser){
 			toret += ' disabled="disabled"';
 		}else{
-			toret += ` onclick="deleteOwner('${owner}')"`
+			toret += ` onclick="deleteOwner('${owner.username}')"`
 		}
 
 		toret += '></td></tr>';

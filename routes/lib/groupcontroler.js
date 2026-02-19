@@ -10,6 +10,11 @@ module.exports = {
         } catch(e) {
            logger.warn(e);
         }
+        try {
+            group.direct_permissions=(await SimvaAsync.getGroupDirectPermissions(groupid, sessionid)).permissions;
+        } catch(e) {
+           logger.warn(e);
+        }
         return group;
     },
 

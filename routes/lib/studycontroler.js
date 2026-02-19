@@ -36,6 +36,11 @@ module.exports = {
                 logger.warn(e);
             }
         }
+        try {
+            study.direct_permissions = (await SimvaAsync.getStudyDirectPermissions(studyid, sessionid)).permissions;
+        } catch(e) {
+            logger.warn(e);
+        }
         return study;
     },
 
