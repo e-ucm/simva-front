@@ -199,68 +199,84 @@
 		let avoid_refreshing = false;
 		let reloadSchedule = function(){
 			Simva.getStudySchedule(studyId, function(error, result){
-				if(!current_activity_id || current_activity_id !== result.next){
-					current_activity_id = result.next;
+				if(error){ 
+						$("#complete_activity").hide();
+						$('.underlay').hide();
+						$('#activity_content').hide(10, function(){
+							$('#activity_content').attr('src', 'about:blank');
+							paintCurrentActivity('Error');
+							let errorMessage = error.responseJSON?.message || error.responseJSON?.error || error.statusText || error.message || 'Unknown error';
+							let errorHtml = `<html><body style="display:flex;justify-content:center;align-items:center;height:100vh;margin:0;font-family:sans-serif;"><p style="color:red;font-size:24px;text-align:center;">${errorMessage}</p></body></html>`;
+							document.getElementById('activity_content').src = `data:text/html;charset=utf-8,${encodeURIComponent(errorHtml)}`;
+							$('#activity_content').show();
+							console.log('showing');
+						});
+						avoid_refreshing=false;
+				} else {
+					if(!current_activity_id || current_activity_id !== result.next){
+						current_activity_id = result.next;
 
-					if(!result.next){
-						if(!avoid_refreshing){
-						avoid_refreshing = true;
-							$("#complete_activity").hide();
-							$('#activity_content').hide(10, function(){
-								$('#activity_content').attr('src', 'about:blank');
-								paintCurrentActivity('Completed');
-								document.getElementById('activity_content').src = `data:text/html;charset=utf-8,${escape(completed)}`;
-								$('#activity_content').show();
-								console.log('showing');
-							});
-						}
-						return;
-					}
-
-					avoid_refreshing = false;
-
-					if(!error){
-						let activity = result.activities[result.next];
-						activity.activity_id = result.next;
-						Simva.isActivityOpenable(activity.activity_id, function(error, result){
-							if(!error){
-								if(activity.user_managed){
-									$("#complete_activity").show();
-								}else{
-									$("#complete_activity").hide();
-								}
-							}
-							if(result.openable){
-								Simva.getActivityTarget(activity.activity_id, function(error, result){
-									if (error) {
-     									console.error("Error getting the URL of the activity target:", error);
-        								return;
-    								}
-									try {
-										console.log("Activity target URL:", result);
-										Simva.getCurrentUser(function(error, user){
-											if(!error) {
-												console.log("Current user:", user);
-												$('#activity_content').attr('src', result[user.user_id]);
-											}
-										});
-									} catch (error) {
-										console.error("Error getting source:", error);
-										return;
-									}
-								});
-							}else{
+						if(!result.next){
+							if(!avoid_refreshing){
+								avoid_refreshing = true;
+								$("#complete_activity").hide();
 								$('#activity_content').hide(10, function(){
 									$('#activity_content').attr('src', 'about:blank');
-									document.getElementById('activity_content').src = `data:text/html;charset=utf-8,${escape(manual)}`;
+									paintCurrentActivity('Completed');
+									document.getElementById('activity_content').src = `data:text/html;charset=utf-8,${escape(completed)}`;
 									$('#activity_content').show();
 									console.log('showing');
 								});
 							}
-						});
-						paintCurrentActivity(activity.activity_name);
+							return;
+						}
+
+						avoid_refreshing = false;
+
+						if(!error){
+							let activity = result.activities[result.next];
+							activity.activity_id = result.next;
+							Simva.isActivityOpenable(activity.activity_id, function(error, result){
+								if(!error){
+									if(activity.user_managed){
+										$("#complete_activity").show();
+									}else{
+										$("#complete_activity").hide();
+									}
+								}
+								if(result.openable){
+									Simva.getActivityTarget(activity.activity_id, function(error, result){
+										if (error) {
+											console.error("Error getting the URL of the activity target:", error);
+											return;
+										}
+										try {
+											console.log("Activity target URL:", result);
+											Simva.getCurrentUser(function(error, user){
+												if(!error) {
+													console.log("Current user:", user);
+													$('#activity_content').attr('src', result[user.user_id]);
+												}
+											});
+										} catch (error) {
+											console.error("Error getting source:", error);
+											return;
+										}
+									});
+								}else{
+									$('#activity_content').hide(10, function(){
+										$('#activity_content').attr('src', 'about:blank');
+										document.getElementById('activity_content').src = `data:text/html;charset=utf-8,${escape(manual)}`;
+										$('#activity_content').show();
+										console.log('showing');
+									});
+								}
+							});
+							paintCurrentActivity(activity.activity_name);
+						}
 					}
 				}
+				
 			});
 		}
 
