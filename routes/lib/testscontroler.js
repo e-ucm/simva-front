@@ -14,6 +14,11 @@ module.exports = {
                logger.warn(e);
             }
         }
+        try {
+            test.completeParticipants = await SimvaAsync.getSessionParticipants(studyid, testid, sessionid);
+        } catch(e) {
+            logger.warn(e);
+        }
         return test;
     },
 

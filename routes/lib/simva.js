@@ -286,6 +286,11 @@ class Simva {
 		this.get(`${this.apiurl}/simlets/${study_id}/participants`, sessionId, callback);
 	}
 
+	getSessionParticipants(study_id, test_id, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/participants`, sessionId, callback);
+	}
+
+
 	getStudySchedule(study_id, sessionId, callback){
 		this.get(`${this.apiurl}/simlets/${study_id}/schedule`, sessionId, callback);
 	}
