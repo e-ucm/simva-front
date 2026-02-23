@@ -113,9 +113,9 @@ module.exports = function(auth, config){
             if(error) {
                 next(error.response.data);
             } else {
-                let name={username : result.username};
-                if(result.isToken == 'true') {
-                    name={token : result.token};
+                let name={username : result.username, user_id : result.user_id};
+                if(result.isToken) {
+                    name={token : result.token, user_id : result.user_id};
                 }
                 res.status(200).send(name);
             }

@@ -224,7 +224,7 @@
 						activity.activity_id = result.next;
 						Simva.isActivityOpenable(activity.activity_id, function(error, result){
 							if(!error){
-								if(activity.details.user_managed){
+								if(activity.user_managed){
 									$("#complete_activity").show();
 								}else{
 									$("#complete_activity").hide();
@@ -237,7 +237,13 @@
         								return;
     								}
 									try {
-										$('#activity_content').attr('src', result[username]);
+										console.log("Activity target URL:", result);
+										Simva.getCurrentUser(function(error, user){
+											if(!error) {
+												console.log("Current user:", user);
+												$('#activity_content').attr('src', result[user.user_id]);
+											}
+										});
 									} catch (error) {
 										console.error("Error getting source:", error);
 										return;
@@ -252,7 +258,7 @@
 								});
 							}
 						});
-						paintCurrentActivity(activity.name);
+						paintCurrentActivity(activity.activity_name);
 					}
 				}
 			});
