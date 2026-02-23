@@ -329,6 +329,14 @@ class Simva {
 		this.get(`${this.apiurl}/activities/${activity_id}/progress`, sessionId, callback);
 	}
 
+	getActivityInitialized(activity_id, sessionId, callback){
+		this.get(`${this.apiurl}/activities/${activity_id}/initialized`, sessionId, callback);
+	}
+
+	setActivityInitialized(activity_id, user, status, sessionId, callback){
+		this.post(`${this.apiurl}/activities/${activity_id}/initialized?user=${user}`, { status: status }, sessionId, callback);
+	}
+
 	getActivityCompletion(activity_id, sessionId, callback){
 		this.get(`${this.apiurl}/activities/${activity_id}/completion`, sessionId, callback);
 	}

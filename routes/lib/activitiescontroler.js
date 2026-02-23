@@ -30,6 +30,11 @@ module.exports = {
             throw e;
         }
         try {
+            act.data.init=await SimvaAsync.getActivityInitialized(activityid, sessionid);
+        } catch(e) {
+            logger.warn(e);
+        }
+        try {
             act.data.openable=Boolean((await SimvaAsync.isActivityOpenable(activityid, sessionid)).openable);
         } catch(e) {
             logger.warn(e);
