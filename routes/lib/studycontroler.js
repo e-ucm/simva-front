@@ -26,6 +26,11 @@ module.exports = {
         } catch(e) {
             logger.warn(e);
         }
+        try {
+            study.direct_permissions = (await SimvaAsync.getStudyDirectPermissions(studyid, sessionid)).permissions;
+        } catch(e) {
+            logger.warn(e);
+        }
         study.completeTests=[];
         logger.info({study}, "Study data before fetching complete tests");
         for(let i=0;i<study.sessions.length;i++) {
@@ -34,12 +39,8 @@ module.exports = {
                 study.completeTests.push(test);
             } catch(e) {
                 logger.warn(e);
+                throw e;
             }
-        }
-        try {
-            study.direct_permissions = (await SimvaAsync.getStudyDirectPermissions(studyid, sessionid)).permissions;
-        } catch(e) {
-            logger.warn(e);
         }
         return study;
     },

@@ -21,16 +21,19 @@ module.exports = {
             act.data.completion=await SimvaAsync.getActivityCompletion(activityid, sessionid);
         } catch(e) {
             logger.warn(e);
+            throw e;
         }
         try {
             act.data.progress=await SimvaAsync.getActivityProgress(activityid, sessionid);
         } catch(e) {
             logger.warn(e);
+            throw e;
         }
         try {
-            act.data.openable=(await SimvaAsync.isActivityOpenable(activityid, sessionid)).openable;
+            act.data.openable=Boolean((await SimvaAsync.isActivityOpenable(activityid, sessionid)).openable);
         } catch(e) {
             logger.warn(e);
+            throw e;
         }
         if(act.data.openable) {
             try {

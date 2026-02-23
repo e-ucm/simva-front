@@ -641,7 +641,7 @@
 			Utils.toggleSubmit(currentform);
 			let errorbox = $(this).find('.error');
 			let activities = tests.filter(item => 
-				item._id === form.test
+				item.session_id === form.test
 			)[0].completeActivities;
 			let activity = activities.filter(activity => 
 				activity.activity_id === form.activity
@@ -954,7 +954,7 @@
 		document.getElementById("edit_activity_error").innerHTML = "";
 		let activity= getActivityFromActivityId(activityId);
 		var inputElement = document.getElementById('edit_activity_name');
-		inputElement.value = activity.name;
+		inputElement.value = activity.activity_name;
 		var inputElement = document.getElementById('edit_activity_type');
 		inputElement.value = activity.activity_type;
 		$('#edit_activity_extras').empty();
