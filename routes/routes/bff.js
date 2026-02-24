@@ -461,6 +461,16 @@ module.exports = function(auth, config){
         });
     });
 
+    router.post('/studies/:studyid/tests/:testid/activate', auth, async (req, res, next) => {
+        Simva.activateSession(req.params["studyid"], req.params["testid"], req.body.activate, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
     /**
     * ACTIVITIES
     * 

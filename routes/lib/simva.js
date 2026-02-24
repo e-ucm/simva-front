@@ -295,6 +295,10 @@ class Simva {
 		this.get(`${this.apiurl}/simlets/${study_id}/schedule`, sessionId, callback);
 	}
 
+	activateSession(study_id, test_id, activate, sessionId, callback){
+		this.post(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/activate`, { activate }, sessionId, callback);
+	}
+
 	// Activities
 
 	addActivityToTest(study_id, test_id, activity, sessionId, callback){

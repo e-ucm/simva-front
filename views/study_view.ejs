@@ -978,6 +978,14 @@
 		$('#duplicate_test input[name="testName"]').val(test.name);
 	}
 
+	let activateTest = function(testId, active){
+		Simva.activateSession(studyid, testId, active, function(error, result) {
+			if(!error) {
+				reloadStudy();
+			}
+		})
+	}
+
 	let getTestFromTestId = function(testId){
 		for(let i=0; i< tests.length; i++) {
 			let test=tests[i];
@@ -1173,13 +1181,19 @@
 	}
 
 	let paintTest = function(test){
-		$('#tests').append(`<div id="test_${test.session_id}" class="test">
+		let testDiv=`<div id="test_${test.session_id}" class="test">
 			<div class="top"><h3>${test.session_name}</h3><input class="violet" type="button" value="<%- t('sessions.expand', { ns : 'SIMLETs' }) %>" onclick="toggleTest('${test.session_id}')">
 			<input class="green" type="button" value="<%- t('activities.add.title', { ns : 'SIMLETs' }) %>" onclick="openActivityForm('${test.session_id}')">
 			<input class="yellow" type="button" value="<%- t('sessions.edit.title', { ns : 'SIMLETs' }) %>" onclick="openEditTestForm('${test.session_id}')">
 			<input class="red" type="button" value="<%- t('sessions.delete.title', { ns : 'SIMLETs' }) %>" onclick="deleteTest('${test.session_id}', '${test.session_name}')">
-			<input class="orange" type="button" value="<%- t('sessions.duplicate.title', { ns : 'SIMLETs' }) %>" onclick="openEditDuplicateForm('${test.session_id}')"></div>
-			<div class="activities collapsed">${roller}</div>`);
+			<input class="orange" type="button" value="<%- t('sessions.duplicate.title', { ns : 'SIMLETs' }) %>" onclick="openEditDuplicateForm('${test.session_id}')">`;
+		if(Boolean(test.session_active)) {
+			testDiv+=`<input class="blue" type="button" value="<%- t('sessions.desactivate.title', { ns : 'SIMLETs' }) %>" onclick="activateTest('${test.session_id}', false)">`;
+		} else {
+			testDiv+=`<input class="blue" type="button" value="<%- t('sessions.activate.title', { ns : 'SIMLETs' }) %>" onclick="activateTest('${test.session_id}', true)">`;
+		}
+		testDiv+=`</div><div class="activities collapsed">${roller}</div>`;
+		$('#tests').append(testDiv);
 	}
 
 	let paintTestActivities = function(test, activities, participants){
