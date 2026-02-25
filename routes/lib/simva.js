@@ -149,6 +149,19 @@ class Simva {
 		this.get(`${this.apiurl}/users?username=${username}`, sessionId, callback);
 	}
 
+	getUsers(query, sessionId, callback){
+		const queryString = query ? `?${new URLSearchParams(query).toString()}` : '';
+		this.get(`${this.apiurl}/users${queryString}`, sessionId, callback);
+	}
+
+	linkUserAccount(data, sessionId, callback){
+		this.post(`${this.apiurl}/users/link`, data, sessionId, callback);
+	}
+
+	processUserEvents(data, sessionId, callback){
+		this.post(`${this.apiurl}/users/events`, data, sessionId, callback);
+	}
+
 	setRole(username, role, sessionId, callback){
 		let body = { username: username, role: role };
 		this.patch(`${this.apiurl}/users/${username}`, body, sessionId, callback);
@@ -182,15 +195,35 @@ class Simva {
 	}
 
 	updateGroup(group, sessionId, callback){
-		this.put(`${this.apiurl}/groups/${group._id}`, group, sessionId, callback);
+		this.patch(`${this.apiurl}/groups/${group._id}`, group, sessionId, callback);
 	}
 
 	getGroup(group_id, sessionId, callback){
 		this.get(`${this.apiurl}/groups/${group_id}`, sessionId, callback);
 	}
 
+	getGroupCount(sessionId, callback){
+		this.get(`${this.apiurl}/groups/count`, sessionId, callback);
+	}
+
+	getGroupSimlets(group_id, sessionId, callback){
+		this.get(`${this.apiurl}/groups/${group_id}/simlets`, sessionId, callback);
+	}
+
 	getGroupDirectPermissions(group_id, sessionId, callback){
 		this.get(`${this.apiurl}/groups/${group_id}/permissions`, sessionId, callback);
+	}
+
+	getGroupPermissionsForUser(group_id, user_id, sessionId, callback){
+		this.get(`${this.apiurl}/groups/${group_id}/permissions/${user_id}`, sessionId, callback);
+	}
+
+	patchGroupPermissionsForUser(group_id, user_id, permissions, sessionId, callback){
+		this.patch(`${this.apiurl}/groups/${group_id}/permissions/${user_id}`, permissions, sessionId, callback);
+	}
+
+	deleteGroupPermissionsForUser(group_id, user_id, sessionId, callback){
+		this.delete(`${this.apiurl}/groups/${group_id}/permissions/${user_id}`, sessionId, callback);
 	}
 
 	deleteGroup(group_id, sessionId, callback){
@@ -213,6 +246,22 @@ class Simva {
 
 	getStudyDirectPermissions(study_id, sessionId, callback){
 		this.get(`${this.apiurl}/simlets/${study_id}/permissions`, sessionId, callback);
+	}
+
+	createStudyPermissions(study_id, permissions, sessionId, callback){
+		this.post(`${this.apiurl}/simlets/${study_id}/permissions`, permissions, sessionId, callback);
+	}
+
+	getStudyPermissionsForUser(study_id, user_id, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${study_id}/permissions/${user_id}`, sessionId, callback);
+	}
+
+	patchStudyPermissionsForUser(study_id, user_id, permissions, sessionId, callback){
+		this.patch(`${this.apiurl}/simlets/${study_id}/permissions/${user_id}`, permissions, sessionId, callback);
+	}
+
+	deleteStudyPermissionsForUser(study_id, user_id, sessionId, callback){
+		this.delete(`${this.apiurl}/simlets/${study_id}/permissions/${user_id}`, sessionId, callback);
 	}
 
 	addStudy(name, sessionId, callback){
@@ -239,7 +288,7 @@ class Simva {
 	}
 
 	updateStudy(study, sessionId, callback){
-		this.put(`${this.apiurl}/simlets/${study._id}`, study, sessionId, callback);
+		this.patch(`${this.apiurl}/simlets/${study._id}`, study, sessionId, callback);
 	}
 
 	updateTest(studyId, test, sessionId, callback){
@@ -255,7 +304,7 @@ class Simva {
 	}
 
 	updateAllocator(study_id, allocator, sessionId, callback){
-		this.put(`${this.apiurl}/simlets/${study_id}/allocator`, allocator, sessionId, callback);
+		this.patch(`${this.apiurl}/simlets/${study_id}/allocator`, allocator, sessionId, callback);
 	}
 
 	getStudyTests(study_id, sessionId, callback){
@@ -278,6 +327,14 @@ class Simva {
 		this.get(`${this.apiurl}/simlets/${study_id}/groups`, sessionId, callback);
 	}
 
+	addStudyGroup(study_id, group_id, sessionId, callback){
+		this.post(`${this.apiurl}/simlets/${study_id}/groups/${group_id}`, {}, sessionId, callback);
+	}
+
+	deleteStudyGroup(study_id, group_id, sessionId, callback){
+		this.delete(`${this.apiurl}/simlets/${study_id}/groups/${group_id}`, sessionId, callback);
+	}
+
 	getTestActivities(study_id, test_id, sessionId, callback){
 		this.get(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/activities`, sessionId, callback);
 	}
@@ -297,6 +354,30 @@ class Simva {
 
 	activateSession(study_id, test_id, activate, sessionId, callback){
 		this.post(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/activate`, { activate }, sessionId, callback);
+	}
+
+	allocateToSession(study_id, test_id, id, payload, sessionId, callback){
+		this.post(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/allocate/${id}`, payload || {}, sessionId, callback);
+	}
+
+	getSessionPermissions(study_id, test_id, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/permissions`, sessionId, callback);
+	}
+
+	createSessionPermissions(study_id, test_id, permissions, sessionId, callback){
+		this.post(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/permissions`, permissions, sessionId, callback);
+	}
+
+	getSessionPermissionsForUser(study_id, test_id, user_id, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/permissions/${user_id}`, sessionId, callback);
+	}
+
+	patchSessionPermissionsForUser(study_id, test_id, user_id, permissions, sessionId, callback){
+		this.patch(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/permissions/${user_id}`, permissions, sessionId, callback);
+	}
+
+	deleteSessionPermissionsForUser(study_id, test_id, user_id, sessionId, callback){
+		this.delete(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/permissions/${user_id}`, sessionId, callback);
 	}
 
 	// Activities
@@ -333,6 +414,15 @@ class Simva {
 		this.get(`${this.apiurl}/activities/${activity_id}/progress`, sessionId, callback);
 	}
 
+	setActivityProgress(activity_id, user, status, sessionId, callback){
+		const userQuery = user ? `?user=${user}` : '';
+		this.post(`${this.apiurl}/activities/${activity_id}/progress${userQuery}`, { status: status }, sessionId, callback);
+	}
+
+	openActivity(activity_id, sessionId, callback){
+		this.get(`${this.apiurl}/activities/${activity_id}/open`, sessionId, callback);
+	}
+
 	getActivityInitialized(activity_id, sessionId, callback){
 		this.get(`${this.apiurl}/activities/${activity_id}/initialized`, sessionId, callback);
 	}
@@ -350,12 +440,20 @@ class Simva {
 	}
 	
 	setMultiActivityCompletion(activity_id, status, sessionId, callback) {
-		this.post(`${this.apiurl}/activities/${activity_id}/multicompletion`, { status: status }, sessionId, callback);
+		this.post(`${this.apiurl}/activities/${activity_id}/completion/multi`, { status: status }, sessionId, callback);
 	}
 	
 
 	setActivitySuspend(activity_id, user, status, reason, sessionId, callback) {
-		this.post(`${this.apiurl}/activities/${activity_id}/suspend`, { user: user , status : status, reason : reason }, sessionId, callback);
+		this.post(`${this.apiurl}/activities/${activity_id}/suspension`, { user: user , status : status, reason : reason }, sessionId, callback);
+	}
+
+	getActivitySuspension(activity_id, sessionId, callback) {
+		this.get(`${this.apiurl}/activities/${activity_id}/suspension`, sessionId, callback);
+	}
+
+	setActivitySuspension(activity_id, user, status, reason, sessionId, callback) {
+		this.post(`${this.apiurl}/activities/${activity_id}/suspension`, { user: user , status : status, reason : reason }, sessionId, callback);
 	}
 
 	getActivityResultForUser (activity_id, student, sessionId, callback){
@@ -392,6 +490,10 @@ class Simva {
 
 	getMinioDataUrl(activity_id, sessionId, callback){
 		this.get(`${this.apiurl}/activities/${activity_id}/presignedurl`, sessionId, callback);
+	}
+
+	setActivityTest(activity_id, payload, sessionId, callback){
+		this.post(`${this.apiurl}/activities/${activity_id}/test`, payload, sessionId, callback);
 	}
 
 	deleteActivity(activity_id, sessionId, callback){

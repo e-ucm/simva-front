@@ -88,6 +88,19 @@ var Simva = {
 		Utils.patch(`/bff/users/${username}`, body, callback);
 	},
 
+	getUsers: function(query, callback){
+		const queryString = query ? `?${new URLSearchParams(query).toString()}` : '';
+		Utils.get(`/bff/users${queryString}`, callback);
+	},
+
+	linkUserAccount: function(data, callback){
+		Utils.post(`/bff/users/link`, data, callback);
+	},
+
+	processUserEvents: function(data, callback){
+		Utils.post(`/bff/users/events`, data, callback);
+	},
+
 	getCurrentUser: function(callback){
 		Utils.get(`/bff/users/me`, callback);
 	},
@@ -112,11 +125,35 @@ var Simva = {
 	},
 
 	updateGroup: function(group, callback){
-		Utils.put(`/bff/groups/${group._id}`, group, callback);
+		Utils.patch(`/bff/groups/${group._id}`, group, callback);
 	},
 
 	getGroup: function(group_id, callback){
 		Utils.get(`/bff/groups/${group_id}`, callback);
+	},
+
+	getGroupCount: function(callback){
+		Utils.get(`/bff/groups/count`, callback);
+	},
+
+	getGroupSimlets: function(group_id, callback){
+		Utils.get(`/bff/groups/${group_id}/simlets`, callback);
+	},
+
+	getGroupPermissions: function(group_id, callback){
+		Utils.get(`/bff/groups/${group_id}/permissions`, callback);
+	},
+
+	getGroupPermissionsForUser: function(group_id, user_id, callback){
+		Utils.get(`/bff/groups/${group_id}/permissions/${user_id}`, callback);
+	},
+
+	patchGroupPermissionsForUser: function(group_id, user_id, permissions, callback){
+		Utils.patch(`/bff/groups/${group_id}/permissions/${user_id}`, permissions, callback);
+	},
+
+	deleteGroupPermissionsForUser: function(group_id, user_id, callback){
+		Utils.delete(`/bff/groups/${group_id}/permissions/${user_id}`, callback);
 	},
 
 	deleteGroup: function(group_id, callback){
@@ -161,7 +198,7 @@ var Simva = {
 	},
 
 	updateStudy: function(study, callback){
-		Utils.put(`/bff/studies/${study._id}`, study, callback);
+		Utils.patch(`/bff/studies/${study._id}`, study, callback);
 	},
 
 	updateTest: function(studyId, test, callback){
@@ -180,8 +217,28 @@ var Simva = {
 		Utils.get(`/bff/studies/${study_id}/allocator`, callback);
 	},
 
+	getStudyPermissions: function(study_id, callback){
+		Utils.get(`/bff/studies/${study_id}/permissions`, callback);
+	},
+
+	createStudyPermissions: function(study_id, permissions, callback){
+		Utils.post(`/bff/studies/${study_id}/permissions`, permissions, callback);
+	},
+
+	getStudyPermissionsForUser: function(study_id, user_id, callback){
+		Utils.get(`/bff/studies/${study_id}/permissions/${user_id}`, callback);
+	},
+
+	patchStudyPermissionsForUser: function(study_id, user_id, permissions, callback){
+		Utils.patch(`/bff/studies/${study_id}/permissions/${user_id}`, permissions, callback);
+	},
+
+	deleteStudyPermissionsForUser: function(study_id, user_id, callback){
+		Utils.delete(`/bff/studies/${study_id}/permissions/${user_id}`, callback);
+	},
+
 	updateAllocator: function(study_id, allocator, callback){
-		Utils.put(`/bff/studies/${study_id}/allocator`, allocator, callback);
+		Utils.patch(`/bff/studies/${study_id}/allocator`, allocator, callback);
 	},
 
 	getStudyTests: function(study_id, callback){
@@ -200,8 +257,44 @@ var Simva = {
 		Utils.get(`/bff/studies/${study_id}/tests/${test_id}`, callback);
 	},
 
+	getSessionParticipants: function(study_id, test_id, callback){
+		Utils.get(`/bff/studies/${study_id}/tests/${test_id}/participants`, callback);
+	},
+
+	allocateToSession: function(study_id, test_id, id, payload, callback){
+		Utils.post(`/bff/studies/${study_id}/tests/${test_id}/allocate/${id}`, payload || {}, callback);
+	},
+
+	getSessionPermissions: function(study_id, test_id, callback){
+		Utils.get(`/bff/studies/${study_id}/tests/${test_id}/permissions`, callback);
+	},
+
+	createSessionPermissions: function(study_id, test_id, permissions, callback){
+		Utils.post(`/bff/studies/${study_id}/tests/${test_id}/permissions`, permissions, callback);
+	},
+
+	getSessionPermissionsForUser: function(study_id, test_id, user_id, callback){
+		Utils.get(`/bff/studies/${study_id}/tests/${test_id}/permissions/${user_id}`, callback);
+	},
+
+	patchSessionPermissionsForUser: function(study_id, test_id, user_id, permissions, callback){
+		Utils.patch(`/bff/studies/${study_id}/tests/${test_id}/permissions/${user_id}`, permissions, callback);
+	},
+
+	deleteSessionPermissionsForUser: function(study_id, test_id, user_id, callback){
+		Utils.delete(`/bff/studies/${study_id}/tests/${test_id}/permissions/${user_id}`, callback);
+	},
+
 	getStudyGroups: function(study_id, callback){
 		Utils.get(`/bff/studies/${study_id}/groups`, callback);
+	},
+
+	addStudyGroup: function(study_id, group_id, callback){
+		Utils.post(`/bff/studies/${study_id}/groups/${group_id}`, {}, callback);
+	},
+
+	deleteStudyGroup: function(study_id, group_id, callback){
+		Utils.delete(`/bff/studies/${study_id}/groups/${group_id}`, callback);
 	},
 
 	getTestActivities: function(study_id, test_id, callback){
@@ -243,6 +336,10 @@ var Simva = {
 		Utils.get(`/bff/activities/${activity_id}`, callback);
 	},
 
+	exportActivity: function(activity_id, complete, callback){
+		Utils.get(`/bff/activities/${activity_id}/export?complete=${complete}`, callback);
+	},
+
 	setSurveyOwner: function(activity_id, callback){
 		Utils.patch(`/bff/activities/${activity_id}/surveyowner`, {}, callback);
 	},
@@ -251,9 +348,30 @@ var Simva = {
 		Utils.get(`/bff/activities/${activity_id}/usersurveylist`, callback);
 	},
 
+	getSurveyLanguages: function(activity_id, callback){
+		Utils.get(`/bff/activities/${activity_id}/surveylanguages`, callback);
+	},
+
 
 	getActivityProgress: function(activity_id, callback){
 		Utils.get(`/bff/activities/${activity_id}/progress`, callback);
+	},
+
+	setActivityProgress: function(activity_id, user, status, callback){
+		const userQuery = user ? `?user=${user}` : '';
+		Utils.post(`/bff/activities/${activity_id}/progress${userQuery}`, { status: status }, callback);
+	},
+
+	openActivity: function(activity_id, callback){
+		Utils.get(`/bff/activities/${activity_id}/open`, callback);
+	},
+
+	getActivityInitialized: function(activity_id, callback){
+		Utils.get(`/bff/activities/${activity_id}/initialized`, callback);
+	},
+
+	setActivityInitialized: function(activity_id, user, status, callback){
+		Utils.post(`/bff/activities/${activity_id}/initialized?user=${user}`, { status: status }, callback);
 	},
 
 	getActivityCompletion: function(activity_id, callback){
@@ -265,11 +383,19 @@ var Simva = {
 	},
 
 	setMultiActivityCompletion: function(activity_id, status, callback){
-		Utils.post(`/bff/activities/${activity_id}/multicompletion`, { status: status }, callback);
+		Utils.post(`/bff/activities/${activity_id}/completion/multi`, { status: status }, callback);
 	},
 	
 	setActivitySuspend: function(activity_id, user, status, reason, callback){
-		Utils.post(`/bff/activities/${activity_id}/suspend`, { user : user , status : status, reason : reason }, callback);
+		Utils.post(`/bff/activities/${activity_id}/suspension`, { user : user , status : status, reason : reason }, callback);
+	},
+
+	getActivitySuspension: function(activity_id, callback){
+		Utils.get(`/bff/activities/${activity_id}/suspension`, callback);
+	},
+
+	setActivitySuspension: function(activity_id, user, status, reason, callback){
+		Utils.post(`/bff/activities/${activity_id}/suspension`, { user : user , status : status, reason : reason }, callback);
 	},
 
 	getActivityResultForUser : function(activity_id, student, callback){
@@ -306,6 +432,10 @@ var Simva = {
 
 	getMinioDataUrl: function(activity_id, callback){
 		Utils.get(`/bff/activities/${activity_id}/presignedurl`, callback);
+	},
+
+	setActivityTest: function(activity_id, payload, callback){
+		Utils.post(`/bff/activities/${activity_id}/test`, payload, callback);
 	},
 
 	deleteActivity: function(activity_id, callback){

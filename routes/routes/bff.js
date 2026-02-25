@@ -107,6 +107,16 @@ module.exports = function(auth, config){
             }
         });
     });
+
+    router.get('/users', auth, async (req, res, next) => {
+        Simva.getUsers(req.query, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
   
     router.get('/users/me', auth, async (req, res, next) => {
         Simva.getCurrentUser(req.session.id, (error, result) => {
@@ -118,6 +128,26 @@ module.exports = function(auth, config){
                     name={token : result.token, user_id : result.user_id};
                 }
                 res.status(200).send(name);
+            }
+        });
+    });
+
+    router.post('/users/link', auth, async (req, res, next) => {
+        Simva.linkUserAccount(req.body, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.post('/users/events', auth, async (req, res, next) => {
+        Simva.processUserEvents(req.body, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
             }
         });
     });
@@ -182,6 +212,16 @@ module.exports = function(auth, config){
         });
     });
 
+    router.patch('/groups/:groupid', auth, async (req, res, next) => {
+        Simva.updateGroup(req.body, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
     router.put('/groups/:groupid', auth, async (req, res, next) => {
         Simva.updateGroup(req.body, req.session.id, (error, result) => {
             if(error) {
@@ -203,10 +243,70 @@ module.exports = function(auth, config){
         }
     });
 
+    router.get('/groups/count', auth, async (req, res, next) => {
+        Simva.getGroupCount(req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.get('/groups/:groupid/permissions', auth, async (req, res, next) => {
+        Simva.getGroupDirectPermissions(req.params['groupid'], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.get('/groups/:groupid/permissions/:userid', auth, async (req, res, next) => {
+        Simva.getGroupPermissionsForUser(req.params['groupid'], req.params['userid'], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.patch('/groups/:groupid/permissions/:userid', auth, async (req, res, next) => {
+        Simva.patchGroupPermissionsForUser(req.params['groupid'], req.params['userid'], req.body, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.delete('/groups/:groupid/permissions/:userid', auth, async (req, res, next) => {
+        Simva.deleteGroupPermissionsForUser(req.params['groupid'], req.params['userid'], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
     router.delete('/groups/:groupid', auth, async (req, res, next) => {
         Simva.deleteGroup(req.params['groupid'], req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.get('/groups/:groupid/simlets', auth, async (req, res, next) => {
+        Simva.getGroupSimlets(req.params['groupid'], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -275,6 +375,16 @@ module.exports = function(auth, config){
         }
     });
                                 
+    router.patch('/studies/:studyid', auth, async (req, res, next) => {
+        Simva.updateStudy(req.body, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
     router.put('/studies/:studyid', auth, async (req, res, next) => {
         Simva.updateStudy(req.body, req.session.id, (error, result) => {
             if(error) {
@@ -341,8 +451,12 @@ module.exports = function(auth, config){
         });
     });
 
-    router.patch('/studies/:studyid', auth, async (req, res, next) => {
-        Simva.deleteStudy(req.params["studyid"], req.session.id, (error, result) => {
+    /**
+    * ALLOCATORS
+    * 
+    */
+    router.get('/studies/:studyid/allocator', auth, async (req, res, next) => {
+        Simva.getAllocator(req.params["studyid"], req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
@@ -351,12 +465,58 @@ module.exports = function(auth, config){
         });
     });
 
-    /**
-    * ALLOCATORS
-    * 
-    */
-    router.get('/studies/:studyid/allocator', auth, async (req, res, next) => {
-        Simva.getAllocator(req.params["studyid"], req.session.id, (error, result) => {
+    router.get('/studies/:studyid/permissions', auth, async (req, res, next) => {
+        Simva.getStudyDirectPermissions(req.params["studyid"], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.post('/studies/:studyid/permissions', auth, async (req, res, next) => {
+        Simva.createStudyPermissions(req.params["studyid"], req.body, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.get('/studies/:studyid/permissions/:userid', auth, async (req, res, next) => {
+        Simva.getStudyPermissionsForUser(req.params["studyid"], req.params['userid'], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.patch('/studies/:studyid/permissions/:userid', auth, async (req, res, next) => {
+        Simva.patchStudyPermissionsForUser(req.params["studyid"], req.params['userid'], req.body, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.delete('/studies/:studyid/permissions/:userid', auth, async (req, res, next) => {
+        Simva.deleteStudyPermissionsForUser(req.params["studyid"], req.params['userid'], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.patch('/studies/:studyid/allocator', auth, async (req, res, next) => {
+        Simva.updateAllocator(req.params["studyid"], req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
@@ -421,10 +581,100 @@ module.exports = function(auth, config){
         });
     });
 
+    router.get('/studies/:studyid/tests/:testid/participants', auth, async (req, res, next) => {
+        Simva.getSessionParticipants(req.params["studyid"], req.params["testid"], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.post('/studies/:studyid/tests/:testid/allocate/:id', auth, async (req, res, next) => {
+        Simva.allocateToSession(req.params["studyid"], req.params["testid"], req.params['id'], req.body || {}, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.get('/studies/:studyid/tests/:testid/permissions', auth, async (req, res, next) => {
+        Simva.getSessionPermissions(req.params["studyid"], req.params["testid"], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.post('/studies/:studyid/tests/:testid/permissions', auth, async (req, res, next) => {
+        Simva.createSessionPermissions(req.params["studyid"], req.params["testid"], req.body, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.get('/studies/:studyid/tests/:testid/permissions/:userid', auth, async (req, res, next) => {
+        Simva.getSessionPermissionsForUser(req.params["studyid"], req.params["testid"], req.params['userid'], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.patch('/studies/:studyid/tests/:testid/permissions/:userid', auth, async (req, res, next) => {
+        Simva.patchSessionPermissionsForUser(req.params["studyid"], req.params["testid"], req.params['userid'], req.body, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.delete('/studies/:studyid/tests/:testid/permissions/:userid', auth, async (req, res, next) => {
+        Simva.deleteSessionPermissionsForUser(req.params["studyid"], req.params["testid"], req.params['userid'], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
     router.get('/studies/:studyid/groups', auth, async (req, res, next) => {
         Simva.getStudyGroups(req.params["studyid"], req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.post('/studies/:studyid/groups/:groupid', auth, async (req, res, next) => {
+        Simva.addStudyGroup(req.params["studyid"], req.params["groupid"], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.delete('/studies/:studyid/groups/:groupid', auth, async (req, res, next) => {
+        Simva.deleteStudyGroup(req.params["studyid"], req.params["groupid"], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -495,10 +745,70 @@ module.exports = function(auth, config){
         });
     });
 
+    router.get('/activities/:activityid/export', auth, async (req, res, next) => {
+        Simva.exportActivity(req.params["activityid"], req.query.complete === 'true', req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
     router.patch('/activities/:activityid/surveyowner', auth, async (req, res, next) => {
         Simva.setSurveyOwner(req.params["activityid"], req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.get('/activities/:activityid/surveylanguages', auth, async (req, res, next) => {
+        Simva.getSurveyLanguages(req.params["activityid"], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.get('/activities/:activityid/open', auth, async (req, res, next) => {
+        Simva.openActivity(req.params["activityid"], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.get('/activities/:activityid/initialized', auth, async (req, res, next) => {
+        Simva.getActivityInitialized(req.params["activityid"], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.post('/activities/:activityid/initialized', auth, async (req, res, next) => {
+        Simva.setActivityInitialized(req.params["activityid"], req.query.user, req.body.status, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.post('/activities/:activityid/progress', auth, async (req, res, next) => {
+        Simva.setActivityProgress(req.params["activityid"], req.query.user, req.body.status, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -535,8 +845,28 @@ module.exports = function(auth, config){
         });
     });
 
+    router.get('/activities/:activityid/suspension', auth, async (req, res, next) => {
+        Simva.getActivitySuspension(req.params["activityid"], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
     router.post('/activities/:activityid/completion', auth, async (req, res, next) => {
         Simva.setActivityCompletion(req.params["activityid"], req.query.user, req.body.status, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.post('/activities/:activityid/completion/multi', auth, async (req, res, next) => {
+        Simva.setMultiActivityCompletion(req.params["activityid"], req.body.status, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
@@ -555,8 +885,18 @@ module.exports = function(auth, config){
         });
     });
 
+    router.post('/activities/:activityid/suspension', auth, async (req, res, next) => {
+        Simva.setActivitySuspension(req.params["activityid"], req.body.user, req.body.status, req.body.reason, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
     router.post('/activities/:activityid/suspend', auth, async (req, res, next) => {
-        Simva.setActivitySuspend(req.params["activityid"], req.body.user, req.body.status, req.body.reason, req.session.id, (error, result) => {
+        Simva.setActivitySuspension(req.params["activityid"], req.body.user, req.body.status, req.body.reason, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
@@ -646,6 +986,16 @@ module.exports = function(auth, config){
         });
     });
 
+    router.post('/activities/:activityid/test', auth, async (req, res, next) => {
+        Simva.setActivityTest(req.params["activityid"], req.body, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
     router.delete('/activities/:activityid', auth, async (req, res, next) => {
         Simva.deleteActivity(req.params["activityid"], req.session.id, (error, result) => {
             if(error) {
@@ -681,62 +1031,65 @@ module.exports = function(auth, config){
                 commun['progress_title'] = req.t(`progress.title`, { ns : 'activities' } );
                 commun['user_title'] = req.t(`participant.title`, { ns : 'activities' } );
                 commun['tmon_title'] = req.t(`tmon.title`, { ns : 'activities' } );
+                commun['init_title'] = req.t(`init.title`, { ns : 'activities' } );
+                commun['init_on'] = req.t(`init.on`, { ns : 'activities' } );
+                commun['init_off'] = req.t(`init.off`, { ns : 'activities' } );
 
                 result.forEach(element => {
-                    element['description'] = req.t(`${element.type}.description`, { ns : 'activities' } );
-                    element['name'] = req.t(`${element.type}.name`, { ns : 'activities' } );
+                    element['description'] = req.t(`${element.activity_type}.description`, { ns : 'activities' } );
+                    element['name'] = req.t(`${element.activity_type}.name`, { ns : 'activities' } );
                     element['commun']=commun;
                     communSpecific={};
-                    switch(element.type){
+                    switch(element.activity_type){
 						case 'limesurvey':
 						case 'gameplay':
 						case 'activity':
                         case 'manual':
-							communSpecific['result_file_prefix'] = req.t(`${element.type}.result.file.prefix`, { ns : 'activities' } );
-                            communSpecific['result_title'] = req.t(`${element.type}.result.title`, { ns : 'activities' } );
-                            communSpecific['result_zero'] = req.t(`${element.type}.result.zero`, { ns : 'activities' } );
-                            communSpecific['result_view_partial_value'] = req.t(`${element.type}.result.view.partial`, { ns : 'activities' } );
-                            communSpecific['result_view_final_value'] = req.t(`${element.type}.result.view.final`, { ns : 'activities' } );
-                            communSpecific['storage_title'] = req.t(`${element.type}.storage.title`, { ns : 'activities' } );
-                            communSpecific['storage_file_suffix_array'] = req.t(`${element.type}.storage.file.array.suffix`, { ns : 'activities' } );
-                            communSpecific['storage_file_suffix_one_per_line'] = req.t(`${element.type}.storage.file.one_per_line.suffix`, { ns : 'activities' } );
+							communSpecific['result_file_prefix'] = req.t(`${element.activity_type}.result.file.prefix`, { ns : 'activities' } );
+                            communSpecific['result_title'] = req.t(`${element.activity_type}.result.title`, { ns : 'activities' } );
+                            communSpecific['result_zero'] = req.t(`${element.activity_type}.result.zero`, { ns : 'activities' } );
+                            communSpecific['result_view_partial_value'] = req.t(`${element.activity_type}.result.view.partial`, { ns : 'activities' } );
+                            communSpecific['result_view_final_value'] = req.t(`${element.activity_type}.result.view.final`, { ns : 'activities' } );
+                            communSpecific['storage_title'] = req.t(`${element.activity_type}.storage.title`, { ns : 'activities' } );
+                            communSpecific['storage_file_suffix_array'] = req.t(`${element.activity_type}.storage.file.array.suffix`, { ns : 'activities' } );
+                            communSpecific['storage_file_suffix_one_per_line'] = req.t(`${element.activity_type}.storage.file.one_per_line.suffix`, { ns : 'activities' } );
                             break;
 						default:
 							break; 
                     }
                     element['communSpecific']=communSpecific;
                     specific={};
-                    switch(element.type){
+                    switch(element.activity_type){
 						case 'limesurvey':
-                            specific['surveyid_title'] = req.t(`${element.type}.surveyid.title`, { ns : 'activities' } );
-							specific['surveyid_placeholder'] = req.t(`${element.type}.surveyid.placeholder`, { ns : 'activities' } );
-                            specific['existing_title'] = req.t(`${element.type}.existing.title`, { ns : 'activities' } );
-                            specific['new_title'] = req.t(`${element.type}.new.title`, { ns : 'activities' } );
-                            specific['new_message'] = req.t(`${element.type}.new.message`, { ns : 'activities' } );
-                            specific['upload_title'] = req.t(`${element.type}.upload.title`, { ns : 'activities' } );
-                            specific['upload_message'] = req.t(`${element.type}.upload.message`, { ns : 'activities' } );
-                            specific['language_title'] = req.t(`${element.type}.language.title`, { ns : 'activities' } );
-                            specific['survey_title'] = req.t(`${element.type}.survey.title`, { ns : 'activities' } );
-                            specific['edit_title'] = req.t(`${element.type}.edit.title`, { ns : 'activities' } );
-                            specific['short_url_title'] = req.t(`${element.type}.short_url.title`, { ns : 'activities' } );
-                            specific['backup_full_title'] = req.t(`${element.type}.backup.full.title`, { ns : 'activities' } );
-                            specific['backup_code_title'] = req.t(`${element.type}.backup.code.title`, { ns : 'activities' } );
+                            specific['surveyid_title'] = req.t(`${element.activity_type}.surveyid.title`, { ns : 'activities' } );
+							specific['surveyid_placeholder'] = req.t(`${element.activity_type}.surveyid.placeholder`, { ns : 'activities' } );
+                            specific['existing_title'] = req.t(`${element.activity_type}.existing.title`, { ns : 'activities' } );
+                            specific['new_title'] = req.t(`${element.activity_type}.new.title`, { ns : 'activities' } );
+                            specific['new_message'] = req.t(`${element.activity_type}.new.message`, { ns : 'activities' } );
+                            specific['upload_title'] = req.t(`${element.activity_type}.upload.title`, { ns : 'activities' } );
+                            specific['upload_message'] = req.t(`${element.activity_type}.upload.message`, { ns : 'activities' } );
+                            specific['language_title'] = req.t(`${element.activity_type}.language.title`, { ns : 'activities' } );
+                            specific['survey_title'] = req.t(`${element.activity_type}.survey.title`, { ns : 'activities' } );
+                            specific['edit_title'] = req.t(`${element.activity_type}.edit.title`, { ns : 'activities' } );
+                            specific['short_url_title'] = req.t(`${element.activity_type}.short_url.title`, { ns : 'activities' } );
+                            specific['backup_full_title'] = req.t(`${element.activity_type}.backup.full.title`, { ns : 'activities' } );
+                            specific['backup_code_title'] = req.t(`${element.activity_type}.backup.code.title`, { ns : 'activities' } );
 							break;
 						case 'gameplay':
-                            specific['xapi_by_game_title'] = req.t(`${element.type}.xapi_by_game.title`, { ns : 'activities' } );
-                            specific['game_uri_title'] = req.t(`${element.type}.game_uri.title`, { ns : 'activities' } );
-                            specific['game_uri_explication'] = req.t(`${element.type}.game_uri.explication`, { ns : 'activities' } );
-                            specific['xasu_title'] = req.t(`${element.type}.xasu.title`, { ns : 'activities' } );
+                            specific['xapi_by_game_title'] = req.t(`${element.activity_type}.xapi_by_game.title`, { ns : 'activities' } );
+                            specific['game_uri_title'] = req.t(`${element.activity_type}.game_uri.title`, { ns : 'activities' } );
+                            specific['game_uri_explication'] = req.t(`${element.activity_type}.game_uri.explication`, { ns : 'activities' } );
+                            specific['xasu_title'] = req.t(`${element.activity_type}.xasu.title`, { ns : 'activities' } );
 							break;
                         case 'manual':
-                            specific['student_complete_title'] = req.t(`${element.type}.student_complete.title`, { ns : 'activities' } );
-                            specific['student_complete_ok'] = req.t(`${element.type}.student_complete.ok`, { ns : 'activities' } );
-                            specific['student_complete_nok'] = req.t(`${element.type}.student_complete.nok`, { ns : 'activities' } );
-                            specific['uri_title'] = req.t(`${element.type}.uri.title`, { ns : 'activities' } );
-                            specific['uri_explication'] = req.t(`${element.type}.uri.explication`, { ns : 'activities' } );
+                            specific['student_complete_title'] = req.t(`${element.activity_type}.student_complete.title`, { ns : 'activities' } );
+                            specific['student_complete_ok'] = req.t(`${element.activity_type}.student_complete.ok`, { ns : 'activities' } );
+                            specific['student_complete_nok'] = req.t(`${element.activity_type}.student_complete.nok`, { ns : 'activities' } );
+                            specific['uri_title'] = req.t(`${element.activity_type}.uri.title`, { ns : 'activities' } );
+                            specific['uri_explication'] = req.t(`${element.activity_type}.uri.explication`, { ns : 'activities' } );
 							break;
                         case 'imspackage':
-                            specific['package_title'] = req.t(`${element.type}.package.title`, { ns : 'activities' } );
+                            specific['package_title'] = req.t(`${element.activity_type}.package.title`, { ns : 'activities' } );
 							break;
 						default:
 							break; 
@@ -755,9 +1108,9 @@ module.exports = function(auth, config){
             } else {
                 logger.info("Allocator types before i18n processing:", result);
                 result.forEach(element => {
-                    element['description'] = req.t(`allocator.${element.type}.description`, { ns : 'SIMLETs' } );
-                    element['name'] = req.t(`allocator.${element.type}.title`, { ns : 'SIMLETs' } );
-                    element['type_t'] = req.t(`allocator.${element.type}.type`, { ns : 'SIMLETs' } );
+                    element['description'] = req.t(`allocator.${element.allocator_type}.description`, { ns : 'SIMLETs' } );
+                    element['name'] = req.t(`allocator.${element.allocator_type}.title`, { ns : 'SIMLETs' } );
+                    element['type_t'] = req.t(`allocator.${element.allocator_type}.type`, { ns : 'SIMLETs' } );
                     element['type_title'] = req.t(`allocator.type.title`, { ns : 'SIMLETs' } );
                     element['test_title'] = req.t(`allocator.sessions.title`, { ns : 'SIMLETs' } );
                     element['participant_title'] = req.t(`allocator.participants.title`, { ns : 'SIMLETs' } );
