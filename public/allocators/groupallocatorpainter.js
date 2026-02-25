@@ -58,10 +58,10 @@ var GroupAllocatorPainter = {
 			}
 		}
 
-		let notallocated = !((typeof this.allocator.extra_data !== 'undefined')
-						&& (typeof this.allocator.extra_data.allocations[groupid] !== 'undefined'));
+		let notallocated = !((typeof this.allocator.allocations !== 'undefined')
+						&& (typeof this.allocator.allocations[groupid] !== 'undefined'));
 
-		return (!notallocated && this.allocator.extra_data.allocations[groupid] === activity.session_id)
+		return (!notallocated && this.allocator.allocations[groupid] === activity.session_id)
 				|| (notallocated && this.tests[0].session_id === activity.session_id);
 	},
 
@@ -73,8 +73,8 @@ var GroupAllocatorPainter = {
 			<table id="allocator_groups" class="allocations">`;
 
 		for (var i = 0; i < this.groups.length; i++) {
-			if(allocator.extra_data && allocator.extra_data.allocations && allocator.extra_data.allocations[this.groups[i].group_id]){
-				topaint += this.generateRow({group: this.groups[i], test: allocator.extra_data.allocations[this.groups[i].group_id]});
+			if(allocator.allocations && allocator.allocations[this.groups[i].group_id]){
+				topaint += this.generateRow({group: this.groups[i], test: allocator.allocations[this.groups[i].group_id]});
 			}else{
 				topaint += this.generateRow({group: this.groups[i], test: this.tests[0]});
 			}
@@ -105,19 +105,15 @@ var GroupAllocatorPainter = {
 		let tmp = this;
 		const selectedTest = $(`#allocation_${group}`).val();
 
-		if(!this.allocator.extra_data){
-			this.allocator.extra_data = {};
+		if(!this.allocator.allocations){
+			this.allocator.allocations = {};
 		}
 
-		if(!this.allocator.extra_data.allocations){
-			this.allocator.extra_data.allocations = {};
-		}
-
-		previous = this.allocator.extra_data.allocations[group];
-		this.allocator.extra_data.allocations[group]  = $(`#allocation_${group}`).val();
+		previous = this.allocator.allocations[group];
+		this.allocator.allocations[group]  = $(`#allocation_${group}`).val();
 		Simva.allocateToSession(tmp.study.simlet_id, selectedTest, group, {}, function(error, result){
 			if(error){
-				tmp.allocator.extra_data.allocations[group] = previous;
+				tmp.allocator.allocations[group] = previous;
 				$(`#allocation_${group}`).val(previous);
 
 				$.toast({
@@ -145,19 +141,15 @@ var GroupAllocatorPainter = {
 		let participant = $('#edit_allocator_content select[name="username"]').val();
 		let test = $('#edit_allocator_content select[name="test"]').val();
 
-		if(!this.allocator.extra_data){
-			this.allocator.extra_data = {};
+		if(!this.allocator.allocations){
+			this.allocator.allocations = {};
 		}
 
-		if(!this.allocator.extra_data.allocations){
-			this.allocator.extra_data.allocations = {};
-		}
-
-		this.allocator.extra_data.allocations[participant] = test;
+		this.allocator.allocations[participant] = test;
 
 		Simva.allocateToSession(this.study.simlet_id, test, participant, {}, function(error, result){
 			if(error){
-				delete tmp.allocator.extra_data.allocations[participant];
+				delete tmp.allocator.allocations[participant];
 				$.toast({
 					heading: tmp.add_error,
 					text: error.message,

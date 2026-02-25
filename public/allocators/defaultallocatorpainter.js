@@ -46,23 +46,24 @@ var DefaultAllocatorPainter = {
 	},
 
 	isAllocatedToActivity: function(student, activity){
-		let notallocated = !((typeof allocator.extra_data !== 'undefined')
-						&& (typeof allocator.extra_data.allocations[student] !== 'undefined'));
+		// student is user_id
+		let notallocated = !((typeof allocator.allocations !== 'undefined')
+						&& (typeof allocator.allocations[student] !== 'undefined'));
 
-		return (!notallocated && allocator.extra_data.allocations[student] === activity.session_id)
+		return (!notallocated && allocator.allocations[student] === activity.session_id)
 				|| (notallocated && activity.session_id === this.tests[0].session_id);
 	},
 
 	getFormContent: function(){
-		let toret = `<p>${this.participant_title}: </p><select name="username">`;
+		let toret = `<p>${this.participant_title}: </p><select name="user_id">`;
 		for (var i = 0; i < participants.length; i++) {
-			if(allocator.extra_data && allocator.extra_data.allocations){
-				if(allocator.extra_data.allocations[participants[i].username]){
+			if(allocator.allocations){
+				if(allocator.allocations[participants[i].user_id]){
 					continue;
 				}
 			}
 
-			toret += `<option value="${participants[i].username}">${allocator.data.displayparticipants[participants[i].username]}</option>`;
+			toret += `<option value="${participants[i].user_id}">${allocator.data.displayparticipants[participants[i].user_id] || participants[i].username}</option>`;
 		}
 
 		toret += `</select><p>${this.test_title}: </p><select name="test">`;
@@ -83,11 +84,15 @@ var DefaultAllocatorPainter = {
 			<p class="subtitle justified">${this.description}</p>
 			<table id="allocator_participants" class="allocations">`;
 
-		if(allocator.extra_data && allocator.extra_data.allocations){
-			let keys = Object.keys(allocator.extra_data.allocations);
+		if(allocator.allocations){
+			let keys = Object.keys(allocator.allocations);
 
 			for (var i = 0; i < keys.length; i++) {
-				topaint += this.generateRow({username: keys[i], displayUser : allocator.data.displayparticipants[keys[i]], test: allocator.extra_data.allocations[keys[i]]});
+				let userId = keys[i];
+				let participant = this.participants.find(p => p.user_id == userId);
+				let displayUser = (allocator.data && allocator.data.displayparticipants && allocator.data.displayparticipants[userId]) 
+					|| (participant ? participant.username : userId);
+				topaint += this.generateRow({user_id: userId, displayUser: displayUser, test: allocator.allocations[userId]});
 			}
 		}
 
@@ -98,8 +103,8 @@ var DefaultAllocatorPainter = {
 
 	generateRow: function(allocation){
 		let topaint = `<tr><td>${allocation.displayUser}</td>
-			<td><select id="allocation_${allocation.username}"
-			onchange="DefaultAllocatorPainter.updateAllocation('${allocation.username}')">`;
+			<td><select id="allocation_${allocation.user_id}"
+			onchange="DefaultAllocatorPainter.updateAllocation('${allocation.user_id}')">`;
 
 		for (var i = 0; i < this.tests.length; i++) {
 			selected=(this.tests[i].session_id === allocation.test ? 'selected' : '')
@@ -110,31 +115,17 @@ var DefaultAllocatorPainter = {
 		return topaint;
 	},
 
-	updateAllocation: function(participant){
-		let previous = this.allocator.extra_data.allocations[participant];
+	updateAllocation: function(userId){
+		let previous = this.allocator.allocations[userId];
 		let tmp = this;
-		const selectedTest = $(`#allocation_${participant}`).val();
-		const participantData = this.participants.find((p) => p.username === participant);
-		const participantId = participantData ? participantData.user_id : null;
+		const selectedTest = $(`#allocation_${userId}`).val();
 
-		if(!participantId){
-			$(`#allocation_${participant}`).val(previous);
-			$.toast({
-				heading: tmp.add_error,
-				text: `Participant ID not found for ${participant}`,
-				position: 'top-right',
-				icon: 'error',
-				stack: false
-			});
-			return;
-		}
-
-		if(this.allocator.extra_data && this.allocator.extra_data.allocations){
-			this.allocator.extra_data.allocations[participant]  = $(`#allocation_${participant}`).val();
-			Simva.allocateToSession(tmp.study.simlet_id, selectedTest, participantId, {}, function(error, result){
+		if(this.allocator.allocations){
+			this.allocator.allocations[userId] = $(`#allocation_${userId}`).val();
+			Simva.allocateToSession(tmp.study.simlet_id, selectedTest, userId, {}, function(error, result){
 				if(error){
-					tmp.allocator.extra_data.allocations[participant] = previous;
-					$(`#allocation_${participant}`).val(previous);
+					tmp.allocator.allocations[userId] = previous;
+					$(`#allocation_${userId}`).val(previous);
 
 					$.toast({
 						heading: tmp.add_error,
@@ -159,15 +150,13 @@ var DefaultAllocatorPainter = {
 	addAllocation: function(){
 		let tmp = this;
 
-		let participant = $('#edit_allocator_content select[name="username"]').val();
+		let userId = $('#edit_allocator_content select[name="user_id"]').val();
 		let test = $('#edit_allocator_content select[name="test"]').val();
-		let participantData = this.participants.find((p) => p.username === participant);
-		let participantId = participantData ? participantData.user_id : null;
 
-		if(!participantId){
+		if(!userId){
 			$.toast({
 				heading: tmp.add_error,
-				text: `Participant ID not found for ${participant}`,
+				text: `No participant selected`,
 				position: 'top-right',
 				icon: 'error',
 				stack: false
@@ -175,19 +164,15 @@ var DefaultAllocatorPainter = {
 			return;
 		}
 		
-		if(!this.allocator.extra_data){
-			this.allocator.extra_data = {};
+		if(!this.allocator.allocations){
+			this.allocator.allocations = {};
 		}
 
-		if(!this.allocator.extra_data.allocations){
-			this.allocator.extra_data.allocations = {};
-		}
+		this.allocator.allocations[userId] = test;
 
-		this.allocator.extra_data.allocations[participant] = test;
-
-		Simva.allocateToSession(this.study.simlet_id, test, participantId, {}, function(error, result){
+		Simva.allocateToSession(this.study.simlet_id, test, userId, {}, function(error, result){
 			if(error){
-				delete tmp.allocator.extra_data.allocations[participant];
+				delete tmp.allocator.allocations[userId];
 				$.toast({
 					heading: tmp.add_error,
 					text: error.message,
