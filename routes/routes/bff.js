@@ -222,16 +222,6 @@ module.exports = function(auth, config){
         });
     });
 
-    router.put('/groups/:groupid', auth, async (req, res, next) => {
-        Simva.updateGroup(req.params['groupid'], req.body, req.session.id, (error, result) => {
-            if(error) {
-                next(error.response.data);
-            } else {
-                res.status(200).send(result);
-            }
-        });
-    });
-
     router.get('/groups/:groupid', auth, async (req, res, next) => {
         let groupid = req.params['groupid'];
         let sessionid = req.session.id;
@@ -385,16 +375,6 @@ module.exports = function(auth, config){
         });
     });
 
-    router.put('/studies/:studyid', auth, async (req, res, next) => {
-        Simva.updateStudy(req.params['studyid'], req.body, req.session.id, (error, result) => {
-            if(error) {
-                next(error.response.data);
-            } else {
-                res.status(200).send(result);
-            }
-        });
-    });
-
     router.delete('/studies/:studyid', auth, async (req, res, next) => {
         Simva.deleteStudy(req.params['studyid'], req.session.id, (error, result) => {
             if(error) {
@@ -516,16 +496,6 @@ module.exports = function(auth, config){
     });
 
     router.patch('/studies/:studyid/allocator', auth, async (req, res, next) => {
-        Simva.updateAllocator(req.params["studyid"], req.body, req.session.id, (error, result) => {
-            if(error) {
-                next(error.response.data);
-            } else {
-                res.status(200).send(result);
-            }
-        });
-    });
-
-    router.put('/studies/:studyid/allocator', auth, async (req, res, next) => {
         Simva.updateAllocator(req.params["studyid"], req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);

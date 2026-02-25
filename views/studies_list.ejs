@@ -75,13 +75,10 @@
 				errorbox.text("<%- t('name.edit.nochange', { ns : 'SIMLETs' }) %>");
 				Utils.toggleSubmit(currentform);
 			} else {
-				Simva.getStudy(form.study, function(error, study){
-					study.name = form.name;
-					Simva.updateStudy(study.simlet_id, study, function(error, result){
-						Utils.toggleSubmit(currentform);
-						Utils.toggleAddForm('edit_study');
-						refreshStudies();
-					});
+				Simva.updateStudy(form.study, { name: form.name }, function(error, result){
+					Utils.toggleSubmit(currentform);
+					Utils.toggleAddForm('edit_study');
+					refreshStudies();
 				});
 			}
 			return false;

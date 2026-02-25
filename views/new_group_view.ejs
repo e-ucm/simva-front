@@ -201,9 +201,9 @@
 				isCurrentUser: false
 			};
 
-			group.direct_permissions.push(newOwner);
+			let updatedPermissions = [...group.direct_permissions, newOwner];
 
-			Simva.updateGroup(group.group_id, group, function(error, result){
+			Simva.updateGroup(group.group_id, { direct_permissions: updatedPermissions }, function(error, result){
 				reloadGroup();
 
 				if(error && error.responseJSON){
@@ -226,16 +226,11 @@
 				errorbox.text("<%= t('name.edit.nochange', { ns : 'groups' }) %>");
 				Utils.toggleSubmit(currentform);
 			} else {
-				Simva.getGroup(form.group, function(error, group){
+				Simva.updateGroup(form.group, { name: form.name }, function(error, result){
 					if(!error){
-						group.name = form.name;
-						Simva.updateGroup(group.group_id, group, function(error, result){
-							if(!error){
-								Utils.toggleSubmit(currentform);
-								Utils.toggleAddForm('edit_group');
-								reloadGroup();
-							}
-						});
+						Utils.toggleSubmit(currentform);
+						Utils.toggleAddForm('edit_group');
+						reloadGroup();
 					}
 				});
 			}
@@ -345,9 +340,10 @@
 				}
 			}
 
-			group.direct_permissions.splice(toremove, 1);
+			let updatedPermissions = [...group.direct_permissions];
+			updatedPermissions.splice(toremove, 1);
 
-			Simva.updateGroup(group.group_id, group, function(error, result){
+			Simva.updateGroup(group.group_id, { direct_permissions: updatedPermissions }, function(error, result){
 				reloadGroup();
 			});
 		}

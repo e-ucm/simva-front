@@ -716,8 +716,7 @@
 				errorbox.text("<%- t('name.edit.no_change', { ns : 'SIMLETs' }) %>");
 				Utils.toggleSubmit(currentform);
 			} else {
-				study.name = form.name;
-				Simva.updateStudy(study.simlet_id, study, function(error, result){	
+				Simva.updateStudy(study.simlet_id, { name: form.name }, function(error, result){	
 					Utils.toggleSubmit(currentform);
 					Utils.toggleAddForm('edit_study');
 					reloadStudy();
@@ -747,9 +746,9 @@
 			Simva.generateShlinkURL(url, "study", `scheduler_${studyid}`, custom_slug, length, (error, result) => {
 				if(!error) {
 					let shortUrl=result.shortUrl;
-					study.shlink=result;
-					study.shlink.domain="<%= config.shlink.apihost %>";
-					Simva.updateStudy(study.simlet_id, study, (error, result) => {
+					let shlinkData=result;
+					shlinkData.domain="<%= config.shlink.apihost %>";
+					Simva.updateStudy(study.simlet_id, { shlink: shlinkData }, (error, result) => {
 						if(!error) {
 							// Copy the text inside the text field
 							navigator.clipboard.writeText(shortUrl);
@@ -788,8 +787,7 @@
 			if(confirm(`<%- t('scheduler.shlink.delete.confirm', { ns : 'SIMLETs', shlink : '${shortCode}', SIMLET : '${study.study_name}'  }) %>`)){
 				Simva.deleteShLink(shortCode, (error, result) => {
 					if(!error) {
-						study.shlink=null;
-						Simva.updateStudy(study.simlet_id, study, (error, result) => {
+						Simva.updateStudy(study.simlet_id, { shlink: null }, (error, result) => {
 							reloadStudy();
 						});
 					}
@@ -920,9 +918,10 @@
 				}
 			}
 
-			study.tests.splice(i, 1);
+			let updatedTests = [...study.tests];
+			updatedTests.splice(toremove, 1);
 
-			Simva.updateStudy(study.simlet_id, study, function(error, result){
+			Simva.updateStudy(study.simlet_id, { tests: updatedTests }, function(error, result){
 				reloadStudy();
 			});
 		}
@@ -1103,12 +1102,13 @@
 	}
 
 	let setActive = function(){
+		let newActive;
 		if(study.active == null || study.active == "true") { 
-			study.active = false;
+			newActive = false;
 		} else {
-			study.active = true;
+			newActive = true;
 		}
-		Simva.updateStudy(study.simlet_id, study, function(error, result){
+		Simva.updateStudy(study.simlet_id, { active: newActive }, function(error, result){
 			if(!error) {
 				reloadStudy();
 			}
