@@ -50,7 +50,7 @@ var DefaultAllocatorPainter = {
 						&& (typeof allocator.extra_data.allocations[student] !== 'undefined'));
 
 		return (!notallocated && allocator.extra_data.allocations[student] === activity.session_id)
-				|| (notallocated && activity.session_id === this.tests[0]._id);
+				|| (notallocated && activity.session_id === this.tests[0].session_id);
 	},
 
 	getFormContent: function(){
@@ -68,7 +68,7 @@ var DefaultAllocatorPainter = {
 		toret += `</select><p>${this.test_title}: </p><select name="test">`;
 
 		for (var i = 0; i < tests.length; i++) {
-			toret += `<option value="${tests[i]._id}">${tests[i].session_name}</option>`;
+			toret += `<option value="${tests[i].session_id}">${tests[i].session_name}</option>`;
 		}
 
 		toret += `</select><input type="button" value="${this.add_title}" onclick="DefaultAllocatorPainter.addAllocation()">`;
@@ -102,8 +102,8 @@ var DefaultAllocatorPainter = {
 			onchange="DefaultAllocatorPainter.updateAllocation('${allocation.username}')">`;
 
 		for (var i = 0; i < this.tests.length; i++) {
-			selected=(this.tests[i]._id === allocation.test ? 'selected' : '')
-			topaint += `<option value="${this.tests[i]._id}" ${selected}> 
+			selected=(this.tests[i].session_id === allocation.test ? 'selected' : '')
+			topaint += `<option value="${this.tests[i].session_id}" ${selected}> 
 			${this.tests[i].session_name}</option>`;
 		}
 
@@ -131,7 +131,7 @@ var DefaultAllocatorPainter = {
 
 		if(this.allocator.extra_data && this.allocator.extra_data.allocations){
 			this.allocator.extra_data.allocations[participant]  = $(`#allocation_${participant}`).val();
-			Simva.allocateToSession(tmp.study._id, selectedTest, participantId, {}, function(error, result){
+			Simva.allocateToSession(tmp.study.simlet_id, selectedTest, participantId, {}, function(error, result){
 				if(error){
 					tmp.allocator.extra_data.allocations[participant] = previous;
 					$(`#allocation_${participant}`).val(previous);
@@ -185,7 +185,7 @@ var DefaultAllocatorPainter = {
 
 		this.allocator.extra_data.allocations[participant] = test;
 
-		Simva.allocateToSession(this.study._id, test, participantId, {}, function(error, result){
+		Simva.allocateToSession(this.study.simlet_id, test, participantId, {}, function(error, result){
 			if(error){
 				delete tmp.allocator.extra_data.allocations[participant];
 				$.toast({

@@ -124,8 +124,8 @@ var Simva = {
 		Utils.post(`/bff/groups`, body, callback);
 	},
 
-	updateGroup: function(group, callback){
-		Utils.patch(`/bff/groups/${group._id}`, group, callback);
+	updateGroup: function(groupId, group, callback){
+		Utils.patch(`/bff/groups/${groupId}`, group, callback);
 	},
 
 	getGroup: function(group_id, callback){
@@ -197,16 +197,16 @@ var Simva = {
 		Utils.get(`/bff/studies/${study_id}`, callback);
 	},
 
-	updateStudy: function(study, callback){
-		Utils.patch(`/bff/studies/${study._id}`, study, callback);
+	updateStudy: function(studyId, study, callback){
+		Utils.patch(`/bff/studies/${studyId}`, study, callback);
 	},
 
-	updateTest: function(studyId, test, callback){
-		Utils.patch(`/bff/studies/${studyId}/tests/${test.id}`, test, callback);
+	updateTest: function(studyId, sessionId, test, callback){
+		Utils.patch(`/bff/studies/${studyId}/tests/${sessionId}`, test, callback);
 	},
 
-	updateActivity: function(activity, callback){
-		Utils.patch(`/bff/activities/${activity.id}`, activity, callback);
+	updateActivity: function(activityId, activity, callback){
+		Utils.patch(`/bff/activities/${activityId}`, activity, callback);
 	},
 
 	deleteStudy: function(study_id, callback){

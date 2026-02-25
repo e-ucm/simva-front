@@ -38,7 +38,7 @@
 				Simva.getGroup(form.group, function(error, group){
 					if(!error){
 						group.name = form.name;
-						Simva.updateGroup(group, function(error, result){
+						Simva.updateGroup(group.group_id, group, function(error, result){
 							if(!error){
 								Utils.toggleSubmit(currentform);
 								Utils.toggleAddForm('edit_group');

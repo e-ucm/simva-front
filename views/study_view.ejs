@@ -667,7 +667,7 @@
 						Utils.toggleSubmit(currentform);
 					} else {
 						updatedActivity.id = form.activity;
-						Simva.updateActivity(updatedActivity, function(error, result){
+						Simva.updateActivity(form.activity, updatedActivity, function(error, result){
 							Utils.toggleSubmit(currentform);
 							if(error && error.responseJSON){
 								errorbox.text(error.responseJSON.message);
@@ -693,7 +693,7 @@
 				Utils.toggleSubmit(currentform);
 			} else {
 				var test = { id : form.test , name : form.name};
-				Simva.updateTest("<%= study %>", test, function(error, result){
+				Simva.updateTest("<%= study %>", test.test_id, test, function(error, result){
 					Utils.toggleSubmit(currentform);
 					if(error && error.responseJSON){
 						errorbox.text(error.responseJSON.message);
@@ -717,7 +717,7 @@
 				Utils.toggleSubmit(currentform);
 			} else {
 				study.name = form.name;
-				Simva.updateStudy(study, function(error, result){	
+				Simva.updateStudy(study.simlet_id, study, function(error, result){	
 					Utils.toggleSubmit(currentform);
 					Utils.toggleAddForm('edit_study');
 					reloadStudy();
@@ -749,7 +749,7 @@
 					let shortUrl=result.shortUrl;
 					study.shlink=result;
 					study.shlink.domain="<%= config.shlink.apihost %>";
-					Simva.updateStudy(study, (error, result) => {
+					Simva.updateStudy(study.simlet_id, study, (error, result) => {
 						if(!error) {
 							// Copy the text inside the text field
 							navigator.clipboard.writeText(shortUrl);
@@ -789,7 +789,7 @@
 				Simva.deleteShLink(shortCode, (error, result) => {
 					if(!error) {
 						study.shlink=null;
-						Simva.updateStudy(study, (error, result) => {
+						Simva.updateStudy(study.simlet_id, study, (error, result) => {
 							reloadStudy();
 						});
 					}
@@ -801,7 +801,7 @@
 
 	let downloadUAConfig = function(){
 		var content = JSON.stringify({
-			study: study._id,
+			study: study.simlet_id,
 			host: "<%= config.api.host %>",
 			protocol: "<%= config.api.protocol %>",
 			port: "<%= config.api.port %>",
@@ -816,7 +816,7 @@
 	}
 
 	let downloadStudyConfig = function() {
-		Simva.exportStudyConfig(study._id, function(error, result) {
+		Simva.exportStudyConfig(study.simlet_id, function(error, result) {
 			if(!error){
 				var studyExport = result;
 				var content = JSON.stringify(studyExport, null, 2);
@@ -888,7 +888,7 @@
 
 	let deleteGroup = function(groupid, groupname){
 		if(confirm(`<%- t('groups.delete.confirm', { ns : 'SIMLETs', group : '${groupname}', SIMLET : '${study.study_name}' }) %>`)){
-			Simva.deleteStudyGroup(studyid, groupid, function(error, result){
+			Simva.deleteStudyGroup(study.simlet_id, groupid, function(error, result){
 				reloadStudy();
 			});
 		}
@@ -922,7 +922,7 @@
 
 			study.tests.splice(i, 1);
 
-			Simva.updateStudy(study, function(error, result){
+			Simva.updateStudy(study.simlet_id, study, function(error, result){
 				reloadStudy();
 			});
 		}
@@ -1017,7 +1017,7 @@
 		var inputElement = document.getElementById('edit_study_name');
 		inputElement.value = study.name;
 		$('#edit_study').toggleClass('shown');
-		$('#edit_study input[name="study"]').val(study._id);
+		$('#edit_study input[name="study"]').val(study.simlet_id);
 		$('#edit_study input[name="studyName"]').val(study.name);
 	}
 
@@ -1025,7 +1025,7 @@
 		document.getElementById("generate_link_error").innerHTML = "";
 		document.getElementById("generate_link_custom_slug_error").innerHTML = "";
 		var inputElement = document.getElementById('generate_study_link');
-		$('#generate_study_link input[name="study"]').val(study._id);
+		$('#generate_study_link input[name="study"]').val(study.simlet_id);
 		if(study.shlink) {
 			if(study.shlink.custom_slug) {
 				$('#generate_study_link input[name="custom_slug_shlink"]').val(study.shlink.custom_slug);
@@ -1108,7 +1108,7 @@
 		} else {
 			study.active = true;
 		}
-		Simva.updateStudy(study, function(error, result){
+		Simva.updateStudy(study.simlet_id, study, function(error, result){
 			if(!error) {
 				reloadStudy();
 			}
@@ -1159,7 +1159,7 @@
 		let type = $('#change_allocator_form input:radio[name=type]:checked').val();
 
 		if(allocator.allocator_type !== type){
-			Simva.updateAllocator(study._id, { type: type }, function(error, result){
+			Simva.updateAllocator(study.simlet_id, { type: type }, function(error, result){
 				if(error){
 					$('#change_allocator_form .error').val(error.message);
 				}else{
@@ -1230,7 +1230,7 @@
 	}
 
 	let groupRow = function(group){
-		let toret = `<tr><td>${group.group_name}</td><td><input class="red" type="button" value="<%- t('groups.delete.title', { ns : 'SIMLETs' }) %>" onclick="deleteGroup('${group._id}', '${group.group_name}')" `
+		let toret = `<tr><td>${group.group_name}</td><td><input class="red" type="button" value="<%- t('groups.delete.title', { ns : 'SIMLETs' }) %>" onclick="deleteGroup('${group.group_id}', '${group.group_name}')" `
 		if(group.link && group.link.type){
 			toret += ' disabled';
 		}
@@ -1247,7 +1247,7 @@
 	}
 
 	let addGroupRow = function(group){
-		return `<option value="${group._id}">${group.group_name}</option>`;
+		return `<option value="${group.group_id}">${group.group_name}</option>`;
 	}
 
 	let allocationRow = function(allocation, tests){

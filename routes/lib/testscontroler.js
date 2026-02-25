@@ -41,8 +41,8 @@ module.exports = {
         test.activities = [];
         for(let i=0;i<newtest.activities.length;i++) {
             try {
-                let act=await activitiescontroler.importActivity(studyid, test._id, newtest.activities[i], sessionid);
-                test.activities.push(act._id);
+                let act=await activitiescontroler.importActivity(studyid, test.session_id, newtest.activities[i], sessionid);
+                test.activities.push(act.activity_id);
             } catch(e) {
                 logger.warn(e);
             }

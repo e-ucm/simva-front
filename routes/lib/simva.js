@@ -194,8 +194,8 @@ class Simva {
 		this.post(`${this.apiurl}/groups?use_new_generation=${newversion}`, body, sessionId, callback);
 	}
 
-	updateGroup(group, sessionId, callback){
-		this.patch(`${this.apiurl}/groups/${group._id}`, group, sessionId, callback);
+	updateGroup(groupId, group, sessionId, callback){
+		this.patch(`${this.apiurl}/groups/${groupId}`, group, sessionId, callback);
 	}
 
 	getGroup(group_id, sessionId, callback){
@@ -287,12 +287,12 @@ class Simva {
 		this.get(`${this.apiurl}/simlets/${study_id}/sessions`, sessionId, callback);
 	}
 
-	updateStudy(study, sessionId, callback){
-		this.patch(`${this.apiurl}/simlets/${study._id}`, study, sessionId, callback);
+	updateStudy(studyId, study, sessionId, callback){
+		this.patch(`${this.apiurl}/simlets/${studyId}`, study, sessionId, callback);
 	}
 
-	updateTest(studyId, test, sessionId, callback){
-		this.patch(`${this.apiurl}/simlets/${studyId}/sessions/${test.id}`, test, sessionId, callback);
+	updateTest(studyId, testId, test, sessionId, callback){
+		this.patch(`${this.apiurl}/simlets/${studyId}/sessions/${testId}`, test, sessionId, callback);
 	}
 
 	deleteStudy(study_id, sessionId, callback){

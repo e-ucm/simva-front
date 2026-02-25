@@ -77,7 +77,7 @@
 			} else {
 				Simva.getStudy(form.study, function(error, study){
 					study.name = form.name;
-					Simva.updateStudy(study, function(error, result){
+					Simva.updateStudy(study.simlet_id, study, function(error, result){
 						Utils.toggleSubmit(currentform);
 						Utils.toggleAddForm('edit_study');
 						refreshStudies();

@@ -203,7 +203,7 @@
 
 			group.direct_permissions.push(newOwner);
 
-			Simva.updateGroup(group, function(error, result){
+			Simva.updateGroup(group.group_id, group, function(error, result){
 				reloadGroup();
 
 				if(error && error.responseJSON){
@@ -229,7 +229,7 @@
 				Simva.getGroup(form.group, function(error, group){
 					if(!error){
 						group.name = form.name;
-						Simva.updateGroup(group, function(error, result){
+						Simva.updateGroup(group.group_id, group, function(error, result){
 							if(!error){
 								Utils.toggleSubmit(currentform);
 								Utils.toggleAddForm('edit_group');
@@ -347,7 +347,7 @@
 
 			group.direct_permissions.splice(toremove, 1);
 
-			Simva.updateGroup(group, function(error, result){
+			Simva.updateGroup(group.group_id, group, function(error, result){
 				reloadGroup();
 			});
 		}

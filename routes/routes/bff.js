@@ -213,7 +213,7 @@ module.exports = function(auth, config){
     });
 
     router.patch('/groups/:groupid', auth, async (req, res, next) => {
-        Simva.updateGroup(req.body, req.session.id, (error, result) => {
+        Simva.updateGroup(req.params['groupid'], req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
@@ -223,7 +223,7 @@ module.exports = function(auth, config){
     });
 
     router.put('/groups/:groupid', auth, async (req, res, next) => {
-        Simva.updateGroup(req.body, req.session.id, (error, result) => {
+        Simva.updateGroup(req.params['groupid'], req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
@@ -376,7 +376,7 @@ module.exports = function(auth, config){
     });
                                 
     router.patch('/studies/:studyid', auth, async (req, res, next) => {
-        Simva.updateStudy(req.body, req.session.id, (error, result) => {
+        Simva.updateStudy(req.params['studyid'], req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
@@ -386,7 +386,7 @@ module.exports = function(auth, config){
     });
 
     router.put('/studies/:studyid', auth, async (req, res, next) => {
-        Simva.updateStudy(req.body, req.session.id, (error, result) => {
+        Simva.updateStudy(req.params['studyid'], req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
@@ -431,7 +431,7 @@ module.exports = function(auth, config){
     });
 
     router.patch('/studies/:studyid/tests/:testid', auth, async (req, res, next) => {
-        Simva.updateTest(req.params["studyid"], req.body, req.session.id, (error, result) => {
+        Simva.updateTest(req.params["studyid"], req.params["testid"], req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
@@ -442,7 +442,7 @@ module.exports = function(auth, config){
 
    
     router.patch('/activities/:activityid', auth, async (req, res, next) => {
-        Simva.updateActivity(req.body, req.session.id, (error, result) => {
+        Simva.updateActivity(req.params["activityid"], req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
