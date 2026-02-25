@@ -193,23 +193,33 @@
 				}
 			}
 
-			// Create new owner object
-			let newOwner = {
-				username: form.name,
-				permission: form.permission,
-				isCurrentUser: false
-			};
+			if(form.permission !== "READ" && form.permission !== "WRITE"){
+				errorbox.text("Permission must be READ or WRITE");
+				return false;
+			}
 
-			let updatedPermissions = [...group.direct_permissions, newOwner];
-
-			Simva.updateGroup(group.group_id, { direct_permissions: updatedPermissions }, function(error, result){
-				reloadGroup();
-
-				if(error && error.responseJSON){
-					errorbox.text(error.responseJSON.message);
-				}else{
-					Utils.toggleAddForm('add_owner');
+			Simva.getUsers({ username: form.name }, function(error, users){
+				if(error){
+					errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+					return;
 				}
+
+				const foundUser = Array.isArray(users) ? users[0] : users;
+				if(!foundUser || !foundUser.user_id){
+					errorbox.text("User not found");
+					return;
+				}
+
+				Simva.createGroupPermissions(group.group_id, { user_id: foundUser.user_id, permission: form.permission }, function(createError){
+					if(createError && createError.responseJSON){
+						errorbox.text(createError.responseJSON.message);
+					}else if(createError) {
+						errorbox.text(createError.message || createError);
+					}else{
+						Utils.toggleAddForm('add_owner');
+						reloadGroup();
+					}
+				});
 			});
 
 			return false;
@@ -327,20 +337,9 @@
 		}
 	}
 
-	let deleteOwner = function(owner){
-		if(confirm(`<%- t('owners.remove.confirm', { ns: 'groups', owner : '${owner}', group : '${group.group_name}' }) %>`)){
-			let toremove = -1;
-			for (var i = 0; i < group.direct_permissions.length; i++) {
-				if(group.direct_permissions[i].username === owner){
-					toremove = i;
-					break;
-				}
-			}
-
-			let updatedPermissions = [...group.direct_permissions];
-			updatedPermissions.splice(toremove, 1);
-
-			Simva.updateGroup(group.group_id, { direct_permissions: updatedPermissions }, function(error, result){
+	let deleteOwner = function(userId, ownerUsername){
+		if(confirm(`<%- t('owners.remove.confirm', { ns: 'groups', owner : '${ownerUsername}', group : '${group.group_name}' }) %>`)){
+			Simva.deleteGroupPermissionsForUser(group.group_id, userId, function(error, result){
 				reloadGroup();
 			});
 		}
@@ -374,7 +373,7 @@
 		if(owner.isCurrentUser){
 			toret += ' disabled="disabled"';
 		}else{
-			toret += ` onclick="deleteOwner('${owner.username}')"`
+			toret += ` onclick="deleteOwner('${owner.user_id}', '${owner.username}')"`
 		}
 
 		toret += '></td></tr>';

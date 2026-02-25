@@ -652,12 +652,23 @@
 			let form = Utils.getFormData($("#edit_activity_form"));
 			Utils.toggleSubmit(currentform);
 			let errorbox = $(this).find('.error');
-			let activities = tests.filter(item => 
-				item.session_id === form.test
-			)[0].completeActivities;
-			let activity = activities.filter(activity => 
-				activity.activity_id === form.activity
+			let test = tests.filter(item => 
+				item.session_id == form.test
 			)[0];
+			if(!test || !test.completeActivities) {
+				errorbox.text("Test or activities not found");
+				Utils.toggleSubmit(currentform);
+				return false;
+			}
+			let activities = test.completeActivities;
+			let activity = activities.filter(activity => 
+				activity.activity_id == form.activity
+			)[0];
+			if(!activity) {
+				errorbox.text("Activity not found");
+				Utils.toggleSubmit(currentform);
+				return false;
+			}
 			PainterFactory.Painters[form.type].extractEditInformation('#edit_activity_form', activity, function(error, updatedActivity){
 				if(error){
 					errorbox.text(error);
@@ -666,7 +677,6 @@
 						errorbox.text("No changes detected !");
 						Utils.toggleSubmit(currentform);
 					} else {
-						updatedActivity.id = form.activity;
 						Simva.updateActivity(form.activity, updatedActivity, function(error, result){
 							Utils.toggleSubmit(currentform);
 							if(error && error.responseJSON){
@@ -910,18 +920,7 @@
 
 	let deleteTest = function(testid, testName) {
 		if(confirm(`<%- t('sessions.delete.confirm', { ns : 'SIMLETs', session : '${testName}', SIMLET : '${study.study_name}' }) %>`)){
-			let toremove = -1;
-			for (var i = 0; i < study.tests.length; i++) {
-				if(study.tests[i] === testid){
-					toremove = i;
-					break;
-				}
-			}
-
-			let updatedTests = [...study.tests];
-			updatedTests.splice(toremove, 1);
-
-			Simva.updateStudy(study.simlet_id, { tests: updatedTests }, function(error, result){
+			Simva.deleteTest(study.simlet_id, testid, function(error, result){
 				reloadStudy();
 			});
 		}
@@ -990,6 +989,9 @@
 	let getActivityFromActivityId = function(activityId) {
 		for(let i=0; i< tests.length; i++) {
 			let test=tests[i];
+			if(!test.completeActivities) {
+				continue;
+			}
 			for(let j=0; j< test.completeActivities.length; j++) {
 				let activity=test.completeActivities[j];
 				if(activity.activity_id == activityId) {
