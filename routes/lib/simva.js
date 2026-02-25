@@ -149,8 +149,8 @@ class Simva {
 		this.get(`${this.apiurl}/users?username=${username}`, sessionId, callback);
 	}
 
-	getUsers(query, sessionId, callback){
-		const queryString = query ? `?${new URLSearchParams(query).toString()}` : '';
+	getUsers(search, sessionId, callback){
+		const queryString = search ? `?search=${search}` : '';
 		this.get(`${this.apiurl}/users${queryString}`, sessionId, callback);
 	}
 
@@ -273,9 +273,9 @@ class Simva {
 		this.post(`${this.apiurl}/simlets`, body, sessionId, callback);
 	}
 
-	addTestToStudy(study_id, name, sessionId, callback){
-		let body = { session_name: name };
-		this.post(`${this.apiurl}/simlets/${study_id}/sessions`, body, sessionId, callback);
+	   addTestToStudy(study_id, name, description, canBeManuallyActivated, sessionId, callback){
+		   let body = { session_name: name, session_description: description, session_can_be_manually_activated: canBeManuallyActivated };
+		   this.post(`${this.apiurl}/simlets/${study_id}/sessions`, body, sessionId, callback);
 	}
 
 	duplicateTestFromStudy(study_id, name, testId, sessionId, callback){

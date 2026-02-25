@@ -183,9 +183,9 @@ var Simva = {
 		Utils.post(`/bff/studies`, body, callback);
 	},
 
-	addTestToStudy: function(study_id, name, callback){
-		let body = { session_name: name };
-		Utils.post(`/bff/studies/${study_id}/tests`, body, callback);
+	   addTestToStudy: function(study_id, name, description, canBeManuallyActivated, callback){
+		   let body = { session_name: name, session_description: description, session_can_be_manually_activated: canBeManuallyActivated };
+		   Utils.post(`/bff/studies/${study_id}/tests`, body, callback);
 	},
 
 	getStudyEventsPresignedUrl: function(study_id, callback){

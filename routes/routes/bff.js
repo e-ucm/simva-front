@@ -98,6 +98,26 @@ module.exports = function(auth, config){
         }
     });
 
+    router.get('/users', auth, async (req, res, next) => {
+        if(req.query.username) {
+            Simva.getUser(req.query.username, req.session.id, (error, result) => {
+                if(error) {
+                    next(error.response.data);
+                } else {
+                    res.status(200).send(result);
+                }
+            });
+        } else {
+            Simva.getUsers(req.query.search, req.session.id, (error, result) => {
+                if(error) {
+                    next(error.response.data);
+                } else {
+                    res.status(200).send(result);
+                }
+            });
+        }
+    });
+
     router.patch('/users/:username', auth, async (req, res, next) => {
         Simva.setRole(req.body.username, req.body.role, req.session.id, (error, result) => {
             if(error) {
@@ -108,16 +128,6 @@ module.exports = function(auth, config){
         });
     });
 
-    router.get('/users', auth, async (req, res, next) => {
-        Simva.getUsers(req.query, req.session.id, (error, result) => {
-            if(error) {
-                next(error.response?.data || error);
-            } else {
-                res.status(200).send(result);
-            }
-        });
-    });
-  
     router.get('/users/me', auth, async (req, res, next) => {
         Simva.getCurrentUser(req.session.id, (error, result) => {
             if(error) {
@@ -410,7 +420,7 @@ module.exports = function(auth, config){
                 next(error.response.data);
             }
         } else {
-            Simva.addTestToStudy(req.params["studyid"], req.body.session_name, req.session.id, (error, result) => {
+            Simva.addTestToStudy(req.params["studyid"], req.body.session_name, req.body.session_description, req.body.session_can_be_manually_activated, req.session.id, (error, result) => {
                 if(error) {
                     next(error.response.data);
                 } else {

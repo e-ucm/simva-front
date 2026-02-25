@@ -159,6 +159,11 @@
 				<h2><%- t('sessions.add.title', { ns : 'SIMLETs' }) %></h2>
 				<form id="add_test_form">
 					<input type="text" name="name" placeholder="<%- t('sessions.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<input name="description" placeholder="<%- t('sessions.description.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<label style="display:block;margin-top:8px;">
+						<input type="checkbox" name="can_be_manually_activated" checked>
+						<%- t('sessions.can_be_manually_activated', { ns : 'SIMLETs' }) %>
+					</label>
 					<input type="submit" value="<%- t('sessions.add.title', { ns : 'SIMLETs' }) %>">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 					<span class="error"></span>
@@ -590,7 +595,7 @@
 			let form = Utils.getFormData($("#add_test_form"));
 			let errorbox = $(this).find('.error');
 
-			Simva.addTestToStudy(studyid, form.name, function(error, result){
+			   Simva.addTestToStudy(studyid, form.name, form.description, !!form.can_be_manually_activated, function(error, result){
 				if(error && error.responseJSON){
 					errorbox.text(error.responseJSON.message);
 				}else{
