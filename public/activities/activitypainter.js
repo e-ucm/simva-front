@@ -27,6 +27,14 @@ var ActivityPainter = {
 		}
 	},
 
+	getParticipantKey: function(participant){
+		if(participant && participant.user_id !== undefined && participant.user_id !== null){
+			return String(participant.user_id);
+		}
+
+		return String(participant.username);
+	},
+
 	getExtraForm: function (callback) {
 		callback(null, '');
 	},
@@ -61,12 +69,14 @@ var ActivityPainter = {
 		callback(null, activity);
 	},
 
-	fullyPaintActivity: function(activity){
+	fullyPaintActivity: function(activity, participants){
 		this.paintActivity(activity, participants);
 		this.updateParticipants(activity);
 	},
 
 	updateParticipants: function(activity){
+		this.paintActivityInit(activity, activity.data.init);
+		this.paintActivityProgress(activity, activity.data.progress);
 		this.paintActivityCompletion(activity, activity.data.completion, true);
 		this.paintActivityResult(activity, activity.data.hasresult, true);
 		if(activity.data.openable){
@@ -78,12 +88,12 @@ var ActivityPainter = {
 		if(!results) {
 			return;
 		}
-		let usernames = Object.keys(results);
+		let participantKeys = Object.keys(results);
 
 		let done = 0, partial = 0;
 		
-		for (var i = 0; i < usernames.length; i++) {
-			$(`#${activity.activity_id}_${usernames[i]}_target`).attr('href', results[usernames[i]]);
+		for (var i = 0; i < participantKeys.length; i++) {
+			$(`#${activity.activity_id}_${participantKeys[i]}_target`).attr('href', results[participantKeys[i]]);
 		}
 	},
  
@@ -97,38 +107,46 @@ var ActivityPainter = {
 			${this.paintActivityParticipantsTable(activity, participants, true)}</div>`);
 	},
 
-	paintActivityParticipantsTable: function(activity, participants, checkbox=false, progress=true, result=true){
+	paintActivityParticipantsTable: function(activity, participants, checkbox=false, progress=true, result=true, init=true){
 		let toret = `<div id="completion_progress_${activity.activity_id}" class="progress"><div class="partial"></div><div class="done"></div><span>${this.commun.completed_title}: <done>0</done>% [ <doneres>0</doneres>/<total>0</total> ]</span></div>`;
 		if(checkbox) {
 			toret += this.paintActivityButtonCompletion(activity.activity_id);
 		}
+		if(init) {
+			toret += `<div id="init_progress_${activity.activity_id}" class="progress"><div class="partial"></div><div class="done"></div><span>${this.commun.init_title}: <done>0</done>% [ <doneres>0</doneres>/<total>0</total> ]</span></div>`;
+		}
 		if(progress) {
-			toret += `<div id="result_progress_${activity.activity_id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>${this.commun.result_title}: <done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>`;
+			toret += `<div id="progress_${activity.activity_id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>${this.commun.progress_title}: <done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>`;
 		}
 		if(result) {
-			toret += `<div id="progress_${activity.activity_id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>${this.commun.progress_title}:<done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>`;
+			toret += `<div id="result_progress_${activity.activity_id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>${this.commun.result_title}: <done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>`;
 		}
 		
-		toret += `<table><tr><th>${this.commun.user_title}</th><th>${this.commun.completed_title}</th>`;
+		toret += `<table><tr><th>${this.commun.user_title}</th>`;
+		if(init) {
+			toret += `<th>${this.commun.init_title}</th>`;
+		}
 		if(progress) {
 			toret += `<th>${this.commun.progress_title}</th>`;
 		}
+		toret += `<th>${this.commun.completed_title}</th>`;
 		if(result) {
 			toret += `<th>${this.commun.result_title}</th>`;
 		}
 		toret += '</tr>';
 
 		for (var i = 0; i < participants.length; i++) {
-			if(!AllocatorFactory.Painters[allocator.allocator_type].isAllocatedToActivity(participants[i].username, activity)){
-				continue;
-			}
+			const participantKey = this.getParticipantKey(participants[i]);
 			toret += `<tr><td>${this.paintUsernameOrToken(activity, participants[i])}</td>`;
-			toret += `${this.paintCompletionRow(activity.activity_id,participants[i].username, checkbox)}`;
-			if(progress) {
-				toret += `${this.paintProgressRow(activity.activity_id,participants[i].username)}`
+			if(init) {
+				toret += `${this.paintInitRow(activity.activity_id,participantKey)}`;
 			}
+			if(progress) {
+				toret += `${this.paintProgressRow(activity.activity_id,participantKey)}`
+			}
+			toret += `${this.paintCompletionRow(activity.activity_id,participantKey, checkbox)}`;
 			if(result){
-				toret += `${this.paintResultRow(activity.activity_id,participants[i].username)}`;
+				toret += `${this.paintResultRow(activity.activity_id,participantKey)}`;
 			}else{
 				toret += `<td><i>${this.commun.result_disabled}</i></td>`;
 			}
@@ -141,12 +159,13 @@ var ActivityPainter = {
 
 	paintUsernameOrToken(activity, participant, ok=null) {
 		let openable = activity.data.openable;
+		const participantKey = this.getParticipantKey(participant);
 		if(ok !== '') {
 			openable = openable || ok;
 		}
 		let toret="";
 		if(openable) {
-			toret += `<a id="${activity.activity_id}_${participant.username}_target" class="targeturl" target="_blank" href="">${this.getUsernameOrToken(participant)}</a>`;
+			toret += `<a id="${activity.activity_id}_${participantKey}_target" class="targeturl" target="_blank" href="">${this.getUsernameOrToken(participant)}</a>`;
 		} else {
 			toret += `${this.getUsernameOrToken(participant)}`;
 		}
@@ -164,15 +183,69 @@ var ActivityPainter = {
 	},
 
 	paintProgressRow(activity, participant) {
-		return `<td id="progress_${activity}_${participant}" class="progress"><div class="partial"></div><div class="done"></div><span><done>0</done>%</span></td>`;
+		return `<td id="progress_${activity}_${participant}" class="progress"><div class="partial"></div><div class="done"></div><span><done>---</done>%</span></td>`;
 	},
 
 	paintResultRow(activity, participant) {
 		return `<td id="result_${activity}_${participant}">---</td>`;
 	},
 
-	paintProgressRow(activity, participant) {
-		return `<td id="progress_${activity}_${participant}" class="progress"><div class="partial"></div><div class="done"></div><span><done>0</done>%</span></td>`;
+	paintInitRow(activity, participant) {
+		return `<td id="init_${activity}_${participant}">---</td>`;
+	},
+
+	paintActivityInit: function(activity, status, init_on=this.commun.init_on, init_off=this.commun.init_off){
+		if(!status) {
+			return;
+		}
+		let usernames = Object.keys(status);
+
+		let done = 0;
+
+		for (var i = 0; i < usernames.length; i++) {
+			let value = status[usernames[i]];
+			let initText = "";
+			let colorClass = 'red';
+
+			if(value === true) {
+				initText = `<span>${init_on}</span>`;
+				colorClass = 'green';
+				done++;
+			} else if(value === false) {
+				initText = `<span>${init_off}</span>`;
+				colorClass = 'red';
+			} else if(typeof value === 'number') {
+				let progress = Math.round(value * 1000) / 10;
+				initText = `<span>${progress}%</span>`;
+				if(value >= 1) {
+					colorClass = 'green';
+					done++;
+				} else if(value > 0) {
+					colorClass = 'yellow';
+				} else {
+					colorClass = 'red';
+				}
+			} else {
+				initText = `<span>---</span>`;
+				colorClass = '';
+			}
+
+			$(`#init_${activity.activity_id}_${usernames[i]}`).removeClass('green red yellow');
+			$(`#init_${activity.activity_id}_${usernames[i]}`).addClass(colorClass);
+			$(`#init_${activity.activity_id}_${usernames[i]}`).empty();
+			$(`#init_${activity.activity_id}_${usernames[i]}`).append(initText);
+		}
+
+		let progress = Math.round((done / usernames.length) * 1000) / 10; 
+
+		if(isNaN(progress)){
+			progress = 0;
+		}
+
+		$(`#init_progress_${activity.activity_id} .done`).css('width', `${progress}%` );
+		$(`#init_progress_${activity.activity_id} done`).text(progress);
+		$(`#init_progress_${activity.activity_id} doneres`).text(done);
+		$(`#init_progress_${activity.activity_id} total`).text(usernames.length);
 	},
 
 	paintActivityCompletion: function(activity, status, checkbox=false, completed_on=this.commun.completed_on, completed_off=this.commun.completed_off){
@@ -231,14 +304,21 @@ var ActivityPainter = {
 		let done = 0, partial = 0;
 
 		for (var i = 0; i < usernames.length; i++) {
-			if(status[usernames[i]] !== 0){
+			let value = status[usernames[i]];
+			if(value === null || value === undefined) {
+				$(`#progress_${activity.activity_id}_${usernames[i]}`).empty();
+				$(`#progress_${activity.activity_id}_${usernames[i]}`).append('---');
+				$(`#progress_${activity.activity_id}_${usernames[i]}`).removeClass('progress');
+				continue;
+			}
+			if(value !== 0){
 				partial++;
-				if(status[usernames[i]] == 1){
+				if(value == 1){
 					done++;
 				}
 			}
 
-			let tmpprogress = Math.round(status[usernames[i]] * 1000) / 10;
+			let tmpprogress = Math.round(value * 1000) / 10;
 			$(`#progress_${activity.activity_id}_${usernames[i]} .done`).css('width', `${tmpprogress}%` );
 			$(`#progress_${activity.activity_id}_${usernames[i]} done`).text(tmpprogress);
 		}

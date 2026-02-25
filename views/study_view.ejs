@@ -421,14 +421,19 @@
 
 		Simva.getActivityTypes(function(error, activitytypes){
 			for (var i = 0; i < activitytypes.length; i++) {
-				if(PainterFactory.Painters[activitytypes[i].type]){
-					PainterFactory.Painters[activitytypes[i].type].setUtils(activitytypes[i].utils);
-					PainterFactory.Painters[activitytypes[i].type].simple_name = activitytypes[i].name;
-					PainterFactory.Painters[activitytypes[i].type].description = activitytypes[i].description;
-					PainterFactory.Painters[activitytypes[i].type].commun = activitytypes[i].commun;
-					PainterFactory.Painters[activitytypes[i].type].communSpecific = activitytypes[i].communSpecific;
-					PainterFactory.Painters[activitytypes[i].type].specific = activitytypes[i].specific;
-					//switch(activitytypes[i].type){
+				// Set commun translations on base activity painter for all types
+				if(activitytypes[i].commun && PainterFactory.Painters["activity"]) {
+					PainterFactory.Painters["activity"].commun = activitytypes[i].commun;
+					PainterFactory.Painters["activity"].communSpecific = activitytypes[i].communSpecific;
+				}
+				if(PainterFactory.Painters[activitytypes[i].activity_type]){
+					PainterFactory.Painters[activitytypes[i].activity_type].setUtils(activitytypes[i].activity_utils);
+					PainterFactory.Painters[activitytypes[i].activity_type].simple_name = activitytypes[i].name;
+					PainterFactory.Painters[activitytypes[i].activity_type].description = activitytypes[i].description;
+					PainterFactory.Painters[activitytypes[i].activity_type].commun = activitytypes[i].commun;
+					PainterFactory.Painters[activitytypes[i].activity_type].communSpecific = activitytypes[i].communSpecific;
+					PainterFactory.Painters[activitytypes[i].activity_type].specific = activitytypes[i].specific;
+					//switch(activitytypes[i].activity_type){
 					//	case 'rageminio':
 					//		break;
 					//	case 'miniokafka':
@@ -450,7 +455,7 @@
 					//	default:
 					//		break;
 					//}
-					let row = `<option value="${activitytypes[i].type}">${PainterFactory.Painters[activitytypes[i].type].simple_name}</option>`;
+					let row = `<option value="${activitytypes[i].activity_type}">${PainterFactory.Painters[activitytypes[i].activity_type].simple_name}</option>`;
 					$('#new_activity_form select[name="type"]').append(row);
 				}
 			}
@@ -458,17 +463,17 @@
 
 			Simva.getAllocatorTypes(function(error, allocatortypes){
 				for (var i = 0; i < allocatortypes.length; i++) {
-					if(AllocatorFactory.Painters[allocatortypes[i].type]){
-						AllocatorFactory.Painters[allocatortypes[i].type].simple_name = allocatortypes[i].name;
-						AllocatorFactory.Painters[allocatortypes[i].type].description = allocatortypes[i].description;
-						AllocatorFactory.Painters[allocatortypes[i].type].type_translated = allocatortypes[i].type_t;
-						AllocatorFactory.Painters[allocatortypes[i].type].add_message = allocatortypes[i].add_message;
-						AllocatorFactory.Painters[allocatortypes[i].type].add_error = allocatortypes[i].add_error;
-						AllocatorFactory.Painters[allocatortypes[i].type].type_title = allocatortypes[i].type_title;
-						AllocatorFactory.Painters[allocatortypes[i].type].participant_title = allocatortypes[i].participant_title;
-						AllocatorFactory.Painters[allocatortypes[i].type].test_title = allocatortypes[i].test_title;
-						AllocatorFactory.Painters[allocatortypes[i].type].add_title = allocatortypes[i].add_title;
-						let row = `<div class="row"><input type="radio" name="type" id="allocator_${allocatortypes[i].type}" value="${allocatortypes[i].type}"><label for="allocator_${allocatortypes[i].type}"><span class="name">${AllocatorFactory.Painters[allocatortypes[i].type].simple_name}</span><span class="description">${AllocatorFactory.Painters[allocatortypes[i].type].description}</span></label></div>`;
+					if(AllocatorFactory.Painters[allocatortypes[i].allocator_type]){
+						AllocatorFactory.Painters[allocatortypes[i].allocator_type].simple_name = allocatortypes[i].name;
+						AllocatorFactory.Painters[allocatortypes[i].allocator_type].description = allocatortypes[i].description;
+						AllocatorFactory.Painters[allocatortypes[i].allocator_type].type_translated = allocatortypes[i].type_t;
+						AllocatorFactory.Painters[allocatortypes[i].allocator_type].add_message = allocatortypes[i].add_message;
+						AllocatorFactory.Painters[allocatortypes[i].allocator_type].add_error = allocatortypes[i].add_error;
+						AllocatorFactory.Painters[allocatortypes[i].allocator_type].type_title = allocatortypes[i].type_title;
+						AllocatorFactory.Painters[allocatortypes[i].allocator_type].participant_title = allocatortypes[i].participant_title;
+						AllocatorFactory.Painters[allocatortypes[i].allocator_type].test_title = allocatortypes[i].test_title;
+						AllocatorFactory.Painters[allocatortypes[i].allocator_type].add_title = allocatortypes[i].add_title;
+						let row = `<div class="row"><input type="radio" name="type" id="allocator_${allocatortypes[i].allocator_type}" value="${allocatortypes[i].allocator_type}"><label for="allocator_${allocatortypes[i].allocator_type}"><span class="name">${AllocatorFactory.Painters[allocatortypes[i].allocator_type].simple_name}</span><span class="description">${AllocatorFactory.Painters[allocatortypes[i].allocator_type].description}</span></label></div>`;
 						$('#change_allocator_content').append(row);
 					}
 				}
@@ -492,9 +497,10 @@
 			let form = Utils.getFormData($("#existing_owner_form"));
 			let errorbox = $(this).find('.error');
 
-			// Check if owner already exists
-			for (var i = 0; i < study.owners.length; i++) {
-				if(study.owners[i].username == form.name){
+			const owners = study.direct_permissions || study.owners || [];
+
+			for (var i = 0; i < owners.length; i++) {
+				if(owners[i].username == form.name){
 					errorbox.text("<%- t('coordinators.error.already_in', { ns : 'SIMLETs' }) %>");
 					return false;
 				}
@@ -503,22 +509,29 @@
 				errorbox.text("<%- t('coordinators.error.permission', { ns : 'SIMLETs' }) %>");
 				return false;
 			}
-			// Create new owner object
-			let newOwner = {
-				username: form.name,
-				permission: form.permission,
-				isCurrentUser: false
-			};
 
-			study.owners.push(newOwner);
-
-			Simva.updateStudy(study, function(error, result){
-				if(error && error.responseJSON){
-					errorbox.text(error.responseJSON.message);
-				}else{
-					reloadStudy();
-					Utils.toggleAddForm('add_owner');
+			Simva.getUsers({ username: form.name }, function(error, users){
+				if(error){
+					errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+					return;
 				}
+
+				const foundUser = Array.isArray(users) ? users[0] : users;
+				if(!foundUser || !foundUser.user_id){
+					errorbox.text("<%- t('coordinators.error.not_found', { ns : 'SIMLETs' }) %>");
+					return;
+				}
+
+				Simva.createStudyPermissions(studyid, { user_id: foundUser.user_id, permission: form.permission }, function(createError){
+					if(createError && createError.responseJSON){
+						errorbox.text(createError.responseJSON.message);
+					}else if(createError) {
+						errorbox.text(createError.message || createError);
+					}else{
+						reloadStudy();
+						Utils.toggleAddForm('add_owner');
+					}
+				});
 			});
 
 			return false;
@@ -532,8 +545,7 @@
 			if(study.groups.indexOf(form.group) !== -1){
 				errorbox.text("<%- t('groups.error.already_in', { ns : 'SIMLETs' }) %>");
 			}else{
-				study.groups.push(form.group);
-				Simva.updateStudy(study, function(error, result){
+				Simva.addStudyGroup(studyid, form.group, function(error, result){
 					if(error && error.responseJSON){
 						errorbox.text(error.responseJSON.message);
 					}else{
@@ -876,17 +888,7 @@
 
 	let deleteGroup = function(groupid, groupname){
 		if(confirm(`<%- t('groups.delete.confirm', { ns : 'SIMLETs', group : '${groupname}', SIMLET : '${study.study_name}' }) %>`)){
-			let toremove = -1;
-			for (var i = 0; i < study.groups.length; i++) {
-				if(study.groups[i] === groupid){
-					toremove = i;
-					break;
-				}
-			}
-
-			study.groups.splice(i, 1);
-
-			Simva.updateStudy(study, function(error, result){
+			Simva.deleteStudyGroup(studyid, groupid, function(error, result){
 				reloadStudy();
 			});
 		}
@@ -900,19 +902,9 @@
 		}
 	}
 
-	let deleteOwner = function(owner){
+	let deleteOwner = function(userId, owner){
 		if(confirm(`<%- t('coordinators.delete.confirm', { ns : 'SIMLETs', coordinator : '${owner}', SIMLET : '${study.study_name}' }) %>`)){
-			let toremove = -1;
-			for (var i = 0; i < study.owners.length; i++) {
-				if(study.owners[i] === owner){
-					toremove = i;
-					break;
-				}
-			}
-
-			study.owners.splice(i, 1);
-
-			Simva.updateStudy(study, function(error, result){
+			Simva.deleteStudyPermissionsForUser(studyid, userId, function(error, result){
 				reloadStudy();
 			});
 		}
@@ -1073,8 +1065,8 @@
 
 		let fullyPaintTest = function(test){
 			paintTest(test);
-
-			paintTestActivities(test, test.completeActivities, participants);
+			const sessionParticipants = test.completeParticipants || participants;
+			paintTestActivities(test, test.completeActivities, sessionParticipants);
 			
 		}
 
@@ -1197,6 +1189,7 @@
 	}
 
 	let paintTestActivities = function(test, activities, participants){
+		window.participants = participants;
 		$(`#test_${test.session_id} .activities`).empty();
 
 		if(activities.length === 0){
@@ -1213,10 +1206,10 @@
 					case 'manual':
 					case 'ltitool':
 					case 'imspackage':
-						PainterFactory.Painters[activities[i].activity_type].fullyPaintActivity(activities[i]);
+						PainterFactory.Painters[activities[i].activity_type].fullyPaintActivity(activities[i], participants);
 						break;
 					default:
-						ActivityPainter.fullyPaintActivity(activities[i]);
+						ActivityPainter.fullyPaintActivity(activities[i], participants);
 						break;
 				}
 			}
@@ -1229,7 +1222,7 @@
 		if(owner.isCurrentUser){
 			toret += ' disabled="disabled"';
 		}else{
-			toret += ` onclick="deleteOwner('${owner.username}')"`
+			toret += ` onclick="deleteOwner('${owner.user_id}', '${owner.username}')"`
 		}
 
 		toret += '></td></tr>';

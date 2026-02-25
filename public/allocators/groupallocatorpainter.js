@@ -103,6 +103,7 @@ var GroupAllocatorPainter = {
 	updateAllocation: function(group){
 		let previous = null
 		let tmp = this;
+		const selectedTest = $(`#allocation_${group}`).val();
 
 		if(!this.allocator.extra_data){
 			this.allocator.extra_data = {};
@@ -114,7 +115,7 @@ var GroupAllocatorPainter = {
 
 		previous = this.allocator.extra_data.allocations[group];
 		this.allocator.extra_data.allocations[group]  = $(`#allocation_${group}`).val();
-		Simva.updateAllocator(this.study._id, this.allocator, function(error, result){
+		Simva.allocateToSession(tmp.study._id, selectedTest, group, {}, function(error, result){
 			if(error){
 				tmp.allocator.extra_data.allocations[group] = previous;
 				$(`#allocation_${group}`).val(previous);
@@ -154,7 +155,7 @@ var GroupAllocatorPainter = {
 
 		this.allocator.extra_data.allocations[participant] = test;
 
-		Simva.updateAllocator(this.study._id, this.allocator, function(error, result){
+		Simva.allocateToSession(this.study._id, test, participant, {}, function(error, result){
 			if(error){
 				delete tmp.allocator.extra_data.allocations[participant];
 				$.toast({

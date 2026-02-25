@@ -67,7 +67,7 @@ var ImsPackagePainter = {
 		callback(null, activity);
 	},
 
-	fullyPaintActivity: function(activity){
+	fullyPaintActivity: function(activity, participants){
 		this.paintActivity(activity, participants);
 		this.updateParticipants(activity);
 	},

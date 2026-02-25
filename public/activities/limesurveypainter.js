@@ -33,14 +33,14 @@ var LimeSurveyPainter = {
 						<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">${this.specific.title}</a></p>`
 				} else {
 					form += `<div class="tabs">
-					<span class="tab selected" method="byid" onclick="changeTab(this, 'new_activity_extras','limesurvey_byid')">${this.specific.survey_id_title}</span>
+					<span class="tab selected" method="byid" onclick="changeTab(this, 'new_activity_extras','limesurvey_byid')">${this.specific.surveyid_title}</span>
 					<span class="tab" method="byexisting" onclick="changeTab(this,'new_activity_extras','limesurvey_byexisting')">${this.specific.existing_title}</span>
 					<span class="tab" method="bynew" onclick="changeTab(this, 'new_activity_extras','limesurvey_bynew')">${this.specific.new_title}</span>
 					<span class="tab" method="byupload" onclick="changeTab(this, 'new_activity_extras','limesurvey_byupload')">${this.specific.upload_title}</span>
 					</div>
 					<div id="limesurvey_byid" class="subform selected">
-					<p>${this.specific.survey_id_title}:</p>
-					<input type="number" name="surveyid" placeholder="${this.specific.survey_id_placeholder}">
+					<p>${this.specific.surveyid_title}:</p>
+					<input type="number" name="surveyid" placeholder="${this.specific.surveyid_placeholder}">
 					</div>
 					<div id="limesurvey_byexisting" class="subform">`;
 					if(this.utils.surveys.length > 0){
@@ -223,7 +223,7 @@ var LimeSurveyPainter = {
 		callback(null, activity);
 	},
 
-	fullyPaintActivity: function(activity){
+	fullyPaintActivity: function(activity, participants){
 		this.paintActivity(activity, participants);
 		this.updateParticipants(activity);
 	},
@@ -251,6 +251,7 @@ var LimeSurveyPainter = {
 		}
 		PainterFactory.Painters["activity"].paintActivityResult(activity, map, "No Results", this.communSpecific.result_zero, "Started", this.communSpecific.result_view_partial_value, "Completed",this.communSpecific.result_view_final_value,"LimeSurveyPainter");
 		PainterFactory.Painters["activity"].paintActivityProgress(activity, activity.data.progress);
+		PainterFactory.Painters["activity"].paintActivityInit(activity, activity.data.init);
 	},
 
 	generateTinyURL: function(activityId, surveyId) {

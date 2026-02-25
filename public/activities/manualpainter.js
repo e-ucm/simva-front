@@ -86,7 +86,7 @@ var ManualActivityPainter = {
 		callback(null, activity);
 	},
 
-	fullyPaintActivity: function(activity){
+	fullyPaintActivity: function(activity, participants){
 		this.paintActivity(activity, participants);
 		this.updateParticipants(activity);
 	},
@@ -94,6 +94,7 @@ var ManualActivityPainter = {
 	updateParticipants: function(activity){
 		PainterFactory.Painters["activity"].paintActivityCompletion(activity, activity.data.completion, true);
 		PainterFactory.Painters["activity"].paintActivityResult(activity, activity.data.hasresult);
+		PainterFactory.Painters["activity"].paintActivityInit(activity, activity.data.init);
 		if(activity.data.openable){
 			PainterFactory.Painters["activity"].paintActivityTargets(activity, activity.data.target);
 		}

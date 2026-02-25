@@ -111,7 +111,7 @@ var LTIToolPainter = {
 		callback(null, activity);
 	},
 
-	fullyPaintActivity: function(activity){
+	fullyPaintActivity: function(activity, participants){
 		this.paintActivity(activity, participants);
 		this.updateParticipants(activity);
 	},
@@ -148,12 +148,10 @@ var LTIToolPainter = {
 		let toret = '<table><tr><th>User</th><th>Completed</th><th>Result</th></tr>';
 
 		for (var i = 0; i < participants.length; i++) {
-			if(!AllocatorFactory.Painters[allocator.allocator_type].isAllocatedToActivity(participants[i].username, activity)){
-				continue;
-			}
+			const participantKey = PainterFactory.Painters["activity"].getParticipantKey(participants[i]);
 			toret += `<tr><td>${PainterFactory.Painters["activity"].paintUsernameOrToken(activity, participants[i])}</td>`;
-			toret += `<td id="completion_${activity.activity_id}_${participants[i].username}">---</td>
-			<td id="result_${activity.activity_id}_${participants[i].username}">---</td>`;
+			toret += `<td id="completion_${activity.activity_id}_${participantKey}">---</td>
+			<td id="result_${activity.activity_id}_${participantKey}">---</td>`;
 		}
 
 		toret += '</table>';

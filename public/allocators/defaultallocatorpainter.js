@@ -113,10 +113,25 @@ var DefaultAllocatorPainter = {
 	updateAllocation: function(participant){
 		let previous = this.allocator.extra_data.allocations[participant];
 		let tmp = this;
+		const selectedTest = $(`#allocation_${participant}`).val();
+		const participantData = this.participants.find((p) => p.username === participant);
+		const participantId = participantData ? participantData.user_id : null;
+
+		if(!participantId){
+			$(`#allocation_${participant}`).val(previous);
+			$.toast({
+				heading: tmp.add_error,
+				text: `Participant ID not found for ${participant}`,
+				position: 'top-right',
+				icon: 'error',
+				stack: false
+			});
+			return;
+		}
 
 		if(this.allocator.extra_data && this.allocator.extra_data.allocations){
 			this.allocator.extra_data.allocations[participant]  = $(`#allocation_${participant}`).val();
-			Simva.updateAllocator(this.study._id, this.allocator, function(error, result){
+			Simva.allocateToSession(tmp.study._id, selectedTest, participantId, {}, function(error, result){
 				if(error){
 					tmp.allocator.extra_data.allocations[participant] = previous;
 					$(`#allocation_${participant}`).val(previous);
@@ -146,6 +161,19 @@ var DefaultAllocatorPainter = {
 
 		let participant = $('#edit_allocator_content select[name="username"]').val();
 		let test = $('#edit_allocator_content select[name="test"]').val();
+		let participantData = this.participants.find((p) => p.username === participant);
+		let participantId = participantData ? participantData.user_id : null;
+
+		if(!participantId){
+			$.toast({
+				heading: tmp.add_error,
+				text: `Participant ID not found for ${participant}`,
+				position: 'top-right',
+				icon: 'error',
+				stack: false
+			});
+			return;
+		}
 		
 		if(!this.allocator.extra_data){
 			this.allocator.extra_data = {};
@@ -157,7 +185,7 @@ var DefaultAllocatorPainter = {
 
 		this.allocator.extra_data.allocations[participant] = test;
 
-		Simva.updateAllocator(this.study._id, this.allocator, function(error, result){
+		Simva.allocateToSession(this.study._id, test, participantId, {}, function(error, result){
 			if(error){
 				delete tmp.allocator.extra_data.allocations[participant];
 				$.toast({

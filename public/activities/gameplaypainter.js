@@ -104,7 +104,7 @@ var GameplayActivityPainter = {
 		callback(null, activity);
 	},
 
-	fullyPaintActivity: function(activity){
+	fullyPaintActivity: function(activity, participants){
 		this.paintActivity(activity, participants);
 		this.updateParticipants(activity);
 	},
@@ -114,6 +114,7 @@ var GameplayActivityPainter = {
 			PainterFactory.Painters["activity"].paintActivityTargets(activity, activity.data.target);
 		}
 		PainterFactory.Painters["activity"].paintActivityCompletion(activity, activity.data.completion, true);
+		PainterFactory.Painters["activity"].paintActivityInit(activity, activity.data.init);
 		PainterFactory.Painters["activity"].paintActivityProgress(activity, activity.data.progress);
 		PainterFactory.Painters["activity"].paintActivityResult(activity, activity.data.hasresult, false, this.communSpecific.result_zero, null,this.communSpecific.result_view_partial_value, true, this.communSpecific.result_view_final_value);
 	},
