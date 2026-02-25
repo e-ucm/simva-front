@@ -62,7 +62,7 @@ var ManualActivityPainter = {
 		let formdata = Utils.getFormData(jform);
 		let activity = {};
 
-		if(actualActivity.name !== formdata.name) {
+		if(actualActivity.activity_name !== formdata.name) {
 			activity.name = formdata.name;
 		}
 	
@@ -88,15 +88,15 @@ var ManualActivityPainter = {
 
 	fullyPaintActivity: function(activity, participants){
 		this.paintActivity(activity, participants);
-		this.updateParticipants(activity);
+		this.updateParticipants(activity, participants);
 	},
 
-	updateParticipants: function(activity){
-		PainterFactory.Painters["activity"].paintActivityCompletion(activity, activity.data.completion, true);
-		PainterFactory.Painters["activity"].paintActivityResult(activity, activity.data.hasresult);
-		PainterFactory.Painters["activity"].paintActivityInit(activity, activity.data.init);
+	updateParticipants: function(activity, participants){
+		PainterFactory.Painters["activity"].paintActivityCompletion(activity, activity.data.completion, true, participants);
+		PainterFactory.Painters["activity"].paintActivityResult(activity, activity.data.hasresult, "true", participants);
+		PainterFactory.Painters["activity"].paintActivityInit(activity, activity.data.init, participants);
 		if(activity.data.openable){
-			PainterFactory.Painters["activity"].paintActivityTargets(activity, activity.data.target);
+			PainterFactory.Painters["activity"].paintActivityTargets(activity, activity.data.target, participants);
 		}
 	},
 

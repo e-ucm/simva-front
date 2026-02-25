@@ -46,7 +46,7 @@ var RageAnalyticsActivityPainter = {
 		let formdata = Utils.getFormData(jform);
 		let activity = {};
 
-		if(actualActivity.name !== formdata.name) {
+		if(actualActivity.activity_name !== formdata.name) {
 			activity.name = formdata.name;
 		}
 	
@@ -57,18 +57,18 @@ var RageAnalyticsActivityPainter = {
 		this.paintActivity(activity, participants);
 		let tmp = this;
 
-		this.updateParticipants(activity);
+		this.updateParticipants(activity, participants);
 		//setInterval(function(){
-		//	tmp.updateParticipants(activity);
+		//	tmp.updateParticipants(activity, participants);
 		//}, 5000);
 	},
 
-	updateParticipants: function(activity){
+	updateParticipants: function(activity, participants){
 		let tmp = this;
 		activity.tmp = {};
 
-		tmp.paintActivityCompletion(activity, activity.data.completion);
-		tmp.paintActivityResult(activity, activity.data.result);
+		tmp.paintActivityCompletion(activity, activity.data.completion, participants);
+		tmp.paintActivityResult(activity, activity.data.result, participants);
 	},
 
 	paintActivity: function(activity, participants){
@@ -99,26 +99,32 @@ var RageAnalyticsActivityPainter = {
 		return toret;
 	},
 
-	paintActivityCompletion: function(activity, status){
+	paintActivityCompletion: function(activity, status, participants=[]){
+		let total = participants.length;
 		if(!status) {
+			// Even without status, update total if we have participant count
+			if(total > 0) {
+				$(`#completion_progress_${activity.activity_id} .done`).css('width', '0%');
+				$(`#completion_progress_${activity.activity_id} done`).text(0);
+			}
 			return;
 		}
-		let usernames = Object.keys(status);
 
 		let done = 0;
 
-		for (var i = 0; i < usernames.length; i++) {
-			if(status[usernames[i]]){
+		for (var i = 0; i < participants.length; i++) {
+			const participantKey = PainterFactory.Painters["activity"].getParticipantKey(participants[i]);
+			if(status[participantKey]){
 				done++;
 			}
 
-			let completion = `<span>${status[usernames[i]]}</span>`
-			$(`#completion_${activity.activity_id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
-			$(`#completion_${activity.activity_id}_${usernames[i]}`).empty();
-			$(`#completion_${activity.activity_id}_${usernames[i]}`).append(completion);
+			let completion = `<span>${status[participantKey]}</span>`
+			$(`#completion_${activity.activity_id}_${participantKey}`).addClass(!status[participantKey] ? 'red' : 'green');
+			$(`#completion_${activity.activity_id}_${participantKey}`).empty();
+			$(`#completion_${activity.activity_id}_${participantKey}`).append(completion);
 		}
 
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
+		let progress = Math.round((done / total) * 1000) / 10; 
 
 		if(isNaN(progress)){
 			progress = 0;
@@ -128,48 +134,56 @@ var RageAnalyticsActivityPainter = {
 		$(`#completion_progress_${activity.activity_id} done`).text(progress);
 	},
 
-	paintActivityResult: function(activity, results){
+	paintActivityResult: function(activity, results, participants=[]){
+		let total = participants.length;
 		if(!results) {
+			// Even without results, update total if we have participant count
+			if(total > 0) {
+				$(`#result_progress_${activity.activity_id} .done`).css('width', '0%');
+				$(`#result_progress_${activity.activity_id} .partial`).css('width', '0%');
+				$(`#result_progress_${activity.activity_id} done`).text(0);
+				$(`#result_progress_${activity.activity_id} partial`).text(0);
+			}
 			return;
 		}
-		let usernames = Object.keys(results);
 
 		let done = 0, partial = 0;
 
-		for (var i = 0; i < usernames.length; i++) {
-			let status = results[usernames[i]];
+		for (var i = 0; i < participants.length; i++) {
+			const participantKey = PainterFactory.Painters["activity"].getParticipantKey(participants[i]);
+			let status = results[participantKey];
 			let result = '<span>No results</span>'
 
 			if(status){
 				done++;
-				result = `<span><a onclick="RageAnalyticsActivityPainter.openResults('${activity.activity_id}','${usernames[i]}')">See Results</a></span>`;
+				result = `<span><a onclick="RageAnalyticsActivityPainter.openResults('${activity.activity_id}','${participantKey}')">See Results</a></span>`;
 
 				let tmpprogress = 0; 
-				if(results[usernames[i]]
-					&& results[usernames[i]].progressed
-					&& results[usernames[i]].progressed['serious-game']){
-					let keys = Object.keys(results[usernames[i]].progressed['serious-game']);
+				if(results[participantKey]
+					&& results[participantKey].progressed
+					&& results[participantKey].progressed['serious-game']){
+					let keys = Object.keys(results[participantKey].progressed['serious-game']);
 					if(keys.length > 0){
-						if(results[usernames[i]].progressed['serious-game'][keys[0]].progress){
-							tmpprogress = results[usernames[i]].progressed['serious-game'][keys[0]].progress;
+						if(results[participantKey].progressed['serious-game'][keys[0]].progress){
+							tmpprogress = results[participantKey].progressed['serious-game'][keys[0]].progress;
 						}
 					}
 				}
 
 				tmpprogress = (tmpprogress * 1000) / 10;
 
-				$(`#progress_${activity.activity_id}_${usernames[i]} .done`).css('width', `${tmpprogress}%` );
-				$(`#progress_${activity.activity_id}_${usernames[i]} done`).text(tmpprogress);
+				$(`#progress_${activity.activity_id}_${participantKey} .done`).css('width', `${tmpprogress}%` );
+				$(`#progress_${activity.activity_id}_${participantKey} done`).text(tmpprogress);
 			}
 
 
-			$(`#result_${activity.activity_id}_${usernames[i]}`).addClass(status ? 'green' : 'red');
-			$(`#result_${activity.activity_id}_${usernames[i]}`).empty();
-			$(`#result_${activity.activity_id}_${usernames[i]}`).append(result);
+			$(`#result_${activity.activity_id}_${participantKey}`).addClass(status ? 'green' : 'red');
+			$(`#result_${activity.activity_id}_${participantKey}`).empty();
+			$(`#result_${activity.activity_id}_${participantKey}`).append(result);
 		}
 
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
-		let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
+		let progress = Math.round((done / total) * 1000) / 10; 
+		let partialprogress = Math.round((partial / total) * 1000) / 10;
 
 		if(isNaN(progress)){
 			progress = 0;

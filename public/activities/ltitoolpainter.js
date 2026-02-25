@@ -105,7 +105,7 @@ var LTIToolPainter = {
 		let formdata = Utils.getFormData(jform);
 		let activity = {};
 
-		if(actualActivity.name !== formdata.name) {
+		if(actualActivity.activity_name !== formdata.name) {
 			activity.name = formdata.name;
 		}
 		callback(null, activity);
@@ -113,14 +113,14 @@ var LTIToolPainter = {
 
 	fullyPaintActivity: function(activity, participants){
 		this.paintActivity(activity, participants);
-		this.updateParticipants(activity);
+		this.updateParticipants(activity, participants);
 	},
 
-	updateParticipants: function(activity){
-		PainterFactory.Painters["activity"].paintActivityCompletion(activity, activity.data.completion, true);
-		PainterFactory.Painters["activity"].paintActivityResult(activity, activity.data.result);
+	updateParticipants: function(activity, participants){
+		PainterFactory.Painters["activity"].paintActivityCompletion(activity, activity.data.completion, true, participants);
+		PainterFactory.Painters["activity"].paintActivityResult(activity, activity.data.result, "true", participants);
 		if(activity.data.openable){
-			PainterFactory.Painters["activity"].paintActivityTargets(activity, activity.data.target);
+			PainterFactory.Painters["activity"].paintActivityTargets(activity, activity.data.target, participants);
 		}
 	},
 
@@ -159,27 +159,28 @@ var LTIToolPainter = {
 		return toret;
 	},
 
-	paintActivityCompletion: function(activity, status){
+	paintActivityCompletion: function(activity, status, participants=[]){
+		let total = participants.length;
 		if(!status) {
 			return;
 		}
-		let usernames = Object.keys(status);
 
 		let done = 0;
 
-		for (var i = 0; i < usernames.length; i++) {
-			if(status[usernames[i]]){
+		for (var i = 0; i < participants.length; i++) {
+			const participantKey = PainterFactory.Painters["activity"].getParticipantKey(participants[i]);
+			if(status[participantKey]){
 				done++;
 			}
 
-			let completion = `<span>${status[usernames[i]]}</span>`
-			$(`#completion_${activity.activity_id}_${usernames[i]}`).removeClass();
-			$(`#completion_${activity.activity_id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
-			$(`#completion_${activity.activity_id}_${usernames[i]}`).empty();
-			$(`#completion_${activity.activity_id}_${usernames[i]}`).append(completion);
+			let completion = `<span>${status[participantKey]}</span>`
+			$(`#completion_${activity.activity_id}_${participantKey}`).removeClass();
+			$(`#completion_${activity.activity_id}_${participantKey}`).addClass(!status[participantKey] ? 'red' : 'green');
+			$(`#completion_${activity.activity_id}_${participantKey}`).empty();
+			$(`#completion_${activity.activity_id}_${participantKey}`).append(completion);
 		}
 
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
+		let progress = Math.round((done / total) * 1000) / 10; 
 
 		if(isNaN(progress)){
 			progress = 0;
@@ -189,22 +190,23 @@ var LTIToolPainter = {
 		$(`#completion_progress_${activity.activity_id} done`).text(progress);
 	},
 
-	paintActivityResult: function(activity, results){
+	paintActivityResult: function(activity, results, participants=[]){
+		let total = participants.length;
 		if(!results) {
 			return;
 		}
-		let usernames = Object.keys(results);
 
 		let done = 0, partial = 0;
 		
-		for (var i = 0; i < usernames.length; i++) {
+		for (var i = 0; i < participants.length; i++) {
+			const participantKey = PainterFactory.Painters["activity"].getParticipantKey(participants[i]);
 
 			let color = 'red';
 			let state = 'No Results';
 
-			if(results[usernames[i]]){
+			if(results[participantKey]){
 				partial++;
-				if(results[usernames[i]].submitdate){
+				if(results[participantKey].submitdate){
 					color = 'green';
 					state = 'Completed';
 					done++;
@@ -213,18 +215,18 @@ var LTIToolPainter = {
 					state = 'Started';
 				}
 
-				state =`<a onclick="LTIToolPainter.openResults('${activity.activity_id}','${usernames[i]}')">${state}</a>`
+				state =`<a onclick="LTIToolPainter.openResults('${activity.activity_id}','${participantKey}')">${state}</a>`
 			}
 
 			let completion = `<span>${state}</span>`
-			$(`#result_${activity.activity_id}_${usernames[i]}`).removeClass();
-			$(`#result_${activity.activity_id}_${usernames[i]}`).addClass(color);
-			$(`#result_${activity.activity_id}_${usernames[i]}`).empty();
-			$(`#result_${activity.activity_id}_${usernames[i]}`).append(completion);
+			$(`#result_${activity.activity_id}_${participantKey}`).removeClass();
+			$(`#result_${activity.activity_id}_${participantKey}`).addClass(color);
+			$(`#result_${activity.activity_id}_${participantKey}`).empty();
+			$(`#result_${activity.activity_id}_${participantKey}`).append(completion);
 		}
 
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
-		let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
+		let progress = Math.round((done / total) * 1000) / 10; 
+		let partialprogress = Math.round((partial / total) * 1000) / 10;
 
 		if(isNaN(progress)){
 			progress = 0;

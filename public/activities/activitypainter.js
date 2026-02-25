@@ -50,7 +50,7 @@ var ActivityPainter = {
 		let jform = $(form);
 		let formdata = Utils.getFormData(jform);
 		let activity = {};
-		if(actualActivity.name !== formdata.name) {
+		if(actualActivity.activity_name !== formdata.name) {
 			activity.name = formdata.name;
 		}
 		callback(null, activity);
@@ -71,29 +71,29 @@ var ActivityPainter = {
 
 	fullyPaintActivity: function(activity, participants){
 		this.paintActivity(activity, participants);
-		this.updateParticipants(activity);
+		this.updateParticipants(activity, participants);
 	},
 
-	updateParticipants: function(activity){
-		this.paintActivityInit(activity, activity.data.init);
-		this.paintActivityProgress(activity, activity.data.progress);
-		this.paintActivityCompletion(activity, activity.data.completion, true);
-		this.paintActivityResult(activity, activity.data.hasresult, true);
+	updateParticipants: function(activity, participants){
+		this.paintActivityInit(activity, activity.data.init, participants);
+		this.paintActivityProgress(activity, activity.data.progress, participants);
+		this.paintActivityCompletion(activity, activity.data.completion, true, participants);
+		this.paintActivityResult(activity, activity.data.hasresult, true, participants);
 		if(activity.data.openable){
-			PainterFactory.Painters["activity"].paintActivityTargets(activity, activity.data.target);
+			PainterFactory.Painters["activity"].paintActivityTargets(activity, activity.data.target, participants);
 		}
 	},
 
-	paintActivityTargets: function(activity, results){
+	paintActivityTargets: function(activity, results, participants=[]){
 		if(!results) {
 			return;
 		}
-		let participantKeys = Object.keys(results);
 
-		let done = 0, partial = 0;
-		
-		for (var i = 0; i < participantKeys.length; i++) {
-			$(`#${activity.activity_id}_${participantKeys[i]}_target`).attr('href', results[participantKeys[i]]);
+		for (var i = 0; i < participants.length; i++) {
+			const participantKey = this.getParticipantKey(participants[i]);
+			if(results[participantKey]) {
+				$(`#${activity.activity_id}_${participantKey}_target`).attr('href', results[participantKey]);
+			}
 		}
 	},
  
@@ -194,16 +194,25 @@ var ActivityPainter = {
 		return `<td id="init_${activity}_${participant}">---</td>`;
 	},
 
-	paintActivityInit: function(activity, status, init_on=this.commun.init_on, init_off=this.commun.init_off){
+	paintActivityInit: function(activity, status, participants=[], init_on=this.commun.init_on, init_off=this.commun.init_off){
+		let total = participants.length;
 		if(!status) {
+			// Even without status, update total if we have participant count
+			if(total > 0) {
+				$(`#init_progress_${activity.activity_id} .done`).css('width', '0%');
+				$(`#init_progress_${activity.activity_id} done`).text(0);
+				$(`#init_progress_${activity.activity_id} doneres`).text(0);
+				$(`#init_progress_${activity.activity_id} total`).text(total);
+			}
 			return;
 		}
-		let usernames = Object.keys(status);
 
 		let done = 0;
+		console.info("paintActivityInit", status, participants);
 
-		for (var i = 0; i < usernames.length; i++) {
-			let value = status[usernames[i]];
+		for (var i = 0; i < participants.length; i++) {
+			const participantKey = this.getParticipantKey(participants[i]);
+			let value = status[participantKey];
 			let initText = "";
 			let colorClass = 'red';
 
@@ -230,13 +239,13 @@ var ActivityPainter = {
 				colorClass = '';
 			}
 
-			$(`#init_${activity.activity_id}_${usernames[i]}`).removeClass('green red yellow');
-			$(`#init_${activity.activity_id}_${usernames[i]}`).addClass(colorClass);
-			$(`#init_${activity.activity_id}_${usernames[i]}`).empty();
-			$(`#init_${activity.activity_id}_${usernames[i]}`).append(initText);
+			$(`#init_${activity.activity_id}_${participantKey}`).removeClass('green red yellow');
+			$(`#init_${activity.activity_id}_${participantKey}`).addClass(colorClass);
+			$(`#init_${activity.activity_id}_${participantKey}`).empty();
+			$(`#init_${activity.activity_id}_${participantKey}`).append(initText);
 		}
 
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
+		let progress = Math.round((done / total) * 1000) / 10; 
 
 		if(isNaN(progress)){
 			progress = 0;
@@ -245,46 +254,54 @@ var ActivityPainter = {
 		$(`#init_progress_${activity.activity_id} .done`).css('width', `${progress}%` );
 		$(`#init_progress_${activity.activity_id} done`).text(progress);
 		$(`#init_progress_${activity.activity_id} doneres`).text(done);
-		$(`#init_progress_${activity.activity_id} total`).text(usernames.length);
+		$(`#init_progress_${activity.activity_id} total`).text(total);
 	},
 
-	paintActivityCompletion: function(activity, status, checkbox=false, completed_on=this.commun.completed_on, completed_off=this.commun.completed_off){
+	paintActivityCompletion: function(activity, status, checkbox=false, participants=[], completed_on=this.commun.completed_on, completed_off=this.commun.completed_off){
+		let total = participants.length;
 		if(!status) {
+			// Even without status, update total if we have participant count
+			if(total > 0) {
+				$(`#completion_progress_${activity.activity_id} .done`).css('width', '0%');
+				$(`#completion_progress_${activity.activity_id} done`).text(0);
+				$(`#completion_progress_${activity.activity_id} doneres`).text(0);
+				$(`#completion_progress_${activity.activity_id} total`).text(total);
+			}
 			return;
 		}
-		let usernames = Object.keys(status);
 
 		let done = 0;
 
-		for (var i = 0; i < usernames.length; i++) {
-			if(status[usernames[i]]){
+		for (var i = 0; i < participants.length; i++) {
+			const participantKey = this.getParticipantKey(participants[i]);
+			if(status[participantKey]){
 				done++;
 			}
 			if(checkbox) {
-				if(status[usernames[i]]){
-					$(`#completion_${activity.activity_id}_${usernames[i]}`).addClass('green');
-					$(`#completion_${activity.activity_id}_${usernames[i]}`).removeClass('red');
+				if(status[participantKey]){
+					$(`#completion_${activity.activity_id}_${participantKey}`).addClass('green');
+					$(`#completion_${activity.activity_id}_${participantKey}`).removeClass('red');
 				}else{
-					$(`#completion_${activity.activity_id}_${usernames[i]}`).removeClass('green');
-					$(`#completion_${activity.activity_id}_${usernames[i]}`).addClass('red');
+					$(`#completion_${activity.activity_id}_${participantKey}`).removeClass('green');
+					$(`#completion_${activity.activity_id}_${participantKey}`).addClass('red');
 				}
 	
-				$(`#completion_${activity.activity_id}_${usernames[i]}`).find('input[type="checkbox"]').prop('checked', status[usernames[i]]);
+				$(`#completion_${activity.activity_id}_${participantKey}`).find('input[type="checkbox"]').prop('checked', status[participantKey]);
 			} else {
 				let completion = "";
-				if(status[usernames[i]]==true) {
+				if(status[participantKey]==true) {
 					completion=`<span>${completed_on}</span>`;
 				} else {
 					completion=`<span>${completed_off}</span>`;
 				}
 				
-			 	$(`#completion_${activity.activity_id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
-				$(`#completion_${activity.activity_id}_${usernames[i]}`).empty();
-				$(`#completion_${activity.activity_id}_${usernames[i]}`).append(completion);
+			 	$(`#completion_${activity.activity_id}_${participantKey}`).addClass(!status[participantKey] ? 'red' : 'green');
+				$(`#completion_${activity.activity_id}_${participantKey}`).empty();
+				$(`#completion_${activity.activity_id}_${participantKey}`).append(completion);
 			}
 		}
 
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
+		let progress = Math.round((done / total) * 1000) / 10; 
 
 		if(isNaN(progress)){
 			progress = 0;
@@ -293,22 +310,33 @@ var ActivityPainter = {
 		$(`#completion_progress_${activity.activity_id} .done`).css('width', `${progress}%` );
 		$(`#completion_progress_${activity.activity_id} done`).text(progress);
 		$(`#completion_progress_${activity.activity_id} doneres`).text(done);
-		$(`#completion_progress_${activity.activity_id} total`).text(usernames.length);
+		$(`#completion_progress_${activity.activity_id} total`).text(total);
 	},
 
-	paintActivityProgress: function(activity, status){
+	paintActivityProgress: function(activity, status, participants=[]){
+		let total = participants.length;
 		if(!status) {
+			// Even without status, update total if we have participant count
+			if(total > 0) {
+				$(`#progress_${activity.activity_id} .done`).css('width', '0%');
+				$(`#progress_${activity.activity_id} done`).text(0);
+				$(`#progress_${activity.activity_id} doneres`).text(0);
+				$(`#progress_${activity.activity_id} .partial`).css('width', '0%');
+				$(`#progress_${activity.activity_id} partial`).text(0);
+				$(`#progress_${activity.activity_id} partialres`).text(0);
+				$(`#progress_${activity.activity_id} total`).text(total);
+			}
 			return;
 		}
-		let usernames = Object.keys(status);
 		let done = 0, partial = 0;
 
-		for (var i = 0; i < usernames.length; i++) {
-			let value = status[usernames[i]];
+		for (var i = 0; i < participants.length; i++) {
+			const participantKey = this.getParticipantKey(participants[i]);
+			let value = status[participantKey];
 			if(value === null || value === undefined) {
-				$(`#progress_${activity.activity_id}_${usernames[i]}`).empty();
-				$(`#progress_${activity.activity_id}_${usernames[i]}`).append('---');
-				$(`#progress_${activity.activity_id}_${usernames[i]}`).removeClass('progress');
+				$(`#progress_${activity.activity_id}_${participantKey}`).empty();
+				$(`#progress_${activity.activity_id}_${participantKey}`).append('---');
+				$(`#progress_${activity.activity_id}_${participantKey}`).removeClass('progress');
 				continue;
 			}
 			if(value !== 0){
@@ -319,11 +347,11 @@ var ActivityPainter = {
 			}
 
 			let tmpprogress = Math.round(value * 1000) / 10;
-			$(`#progress_${activity.activity_id}_${usernames[i]} .done`).css('width', `${tmpprogress}%` );
-			$(`#progress_${activity.activity_id}_${usernames[i]} done`).text(tmpprogress);
+			$(`#progress_${activity.activity_id}_${participantKey} .done`).css('width', `${tmpprogress}%` );
+			$(`#progress_${activity.activity_id}_${participantKey} done`).text(tmpprogress);
 		}
 
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
+		let progress = Math.round((done / total) * 1000) / 10; 
 		if(isNaN(progress)){
 			progress = 0;
 		}
@@ -331,26 +359,37 @@ var ActivityPainter = {
 		$(`#progress_${activity.activity_id} done`).text(progress);
 		$(`#progress_${activity.activity_id} doneres`).text(done);
 
-		let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
+		let partialprogress = Math.round((partial / total) * 1000) / 10;
 		if(isNaN(partialprogress)){
 			partialprogress = 0;
 		}
 		$(`#progress_${activity.activity_id} .partial`).css('width', `${partialprogress}%` );
 		$(`#progress_${activity.activity_id} partial`).text(partialprogress);
 		$(`#progress_${activity.activity_id} partialres`).text(partial);
-		$(`#progress_${activity.activity_id} total`).text(usernames.length);
+		$(`#progress_${activity.activity_id} total`).text(total);
 	},
 
-	paintActivityResult: function(activity, results, defaultValue="true", displayDefaultValue=this.communSpecific.result_zero, partialValue=null,displayPartialValue=this.communSpecific.result_view_partial_value, finalValue="true", displayFinalValue=this.communSpecific.result_view_final_value,painter="PainterFactory.Painters['activity']"){
+	paintActivityResult: function(activity, results, defaultValue="true", participants=[], displayDefaultValue=this.communSpecific.result_zero, partialValue=null,displayPartialValue=this.communSpecific.result_view_partial_value, finalValue="true", displayFinalValue=this.communSpecific.result_view_final_value,painter="PainterFactory.Painters['activity']"){
+		let total = participants.length;
 		if(!results) {
+			// Even without results, update total if we have participant count
+			if(total > 0) {
+				$(`#result_progress_${activity.activity_id} .done`).css('width', '0%');
+				$(`#result_progress_${activity.activity_id} done`).text(0);
+				$(`#result_progress_${activity.activity_id} doneres`).text(0);
+				$(`#result_progress_${activity.activity_id} .partial`).css('width', '0%');
+				$(`#result_progress_${activity.activity_id} partial`).text(0);
+				$(`#result_progress_${activity.activity_id} partialres`).text(0);
+				$(`#result_progress_${activity.activity_id} total`).text(total);
+			}
 			return;
 		}
-		let usernames = Object.keys(results);
 
 		let done = 0, partial = 0;
 
-		for (var i = 0; i < usernames.length; i++) {
-			let status = results[usernames[i]];
+		for (var i = 0; i < participants.length; i++) {
+			const participantKey = this.getParticipantKey(participants[i]);
+			let status = results[participantKey];
 			let result= `<span>${displayDefaultValue}</span>`;
 			let color = 'red';
 			let state = defaultValue;
@@ -372,18 +411,18 @@ var ActivityPainter = {
 					result = `<span>${displayDefaultValue}</span>`;
 				} else {
 					result = `<span>
-					<a onclick="${painter}.openResults('${activity.activity_id}','${usernames[i]}')">${state}</a>
-					<a onclick="${painter}.downloadResults('${activity.activity_id}','${usernames[i]}')">⬇️</a>
+					<a onclick="${painter}.openResults('${activity.activity_id}','${participantKey}')">${state}</a>
+					<a onclick="${painter}.downloadResults('${activity.activity_id}','${participantKey}')">⬇️</a>
 					</span>`;
 				}
 			}
-			$(`#result_${activity.activity_id}_${usernames[i]}`).removeClass();
-			$(`#result_${activity.activity_id}_${usernames[i]}`).addClass(color);
-			$(`#result_${activity.activity_id}_${usernames[i]}`).empty();
-			$(`#result_${activity.activity_id}_${usernames[i]}`).append(result);
+			$(`#result_${activity.activity_id}_${participantKey}`).removeClass();
+			$(`#result_${activity.activity_id}_${participantKey}`).addClass(color);
+			$(`#result_${activity.activity_id}_${participantKey}`).empty();
+			$(`#result_${activity.activity_id}_${participantKey}`).append(result);
 		}
 
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
+		let progress = Math.round((done / total) * 1000) / 10; 
 		if(isNaN(progress)){
 			progress = 0;
 		}
@@ -391,14 +430,14 @@ var ActivityPainter = {
 		$(`#result_progress_${activity.activity_id} done`).text(progress);
 		$(`#result_progress_${activity.activity_id} doneres`).text(done);
 
-		let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
+		let partialprogress = Math.round((partial / total) * 1000) / 10;
 		if(isNaN(partialprogress)){
 			partialprogress = 0;
 		}
 		$(`#result_progress_${activity.activity_id} .partial`).css('width', `${partialprogress}%` );
 		$(`#result_progress_${activity.activity_id} partial`).text(partialprogress);
 		$(`#result_progress_${activity.activity_id} partialres`).text(partial);
-		$(`#result_progress_${activity.activity_id} total`).text(usernames.length);
+		$(`#result_progress_${activity.activity_id} total`).text(total);
 	},
 
 	updateActivityCompletion: function(activityId, username, completion, checkbox=false) {

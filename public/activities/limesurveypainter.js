@@ -200,7 +200,7 @@ var LimeSurveyPainter = {
 		let formdata = Utils.getFormData(jform);
 		let activity = {};
 
-		if(actualActivity.name !== formdata.name) {
+		if(actualActivity.activity_name !== formdata.name) {
 			activity.name = formdata.name;
 		}
 		let actualSurveyid=actualActivity.survey_id;
@@ -225,15 +225,19 @@ var LimeSurveyPainter = {
 
 	fullyPaintActivity: function(activity, participants){
 		this.paintActivity(activity, participants);
-		this.updateParticipants(activity);
+		this.updateParticipants(activity, participants);
 	},
 
-	updateParticipants: function(activity){
+	updateParticipants: function(activity, participants){
 		if(activity.data.openable){
-			PainterFactory.Painters["activity"].paintActivityTargets(activity, activity.data.target);
+			PainterFactory.Painters["activity"].paintActivityTargets(activity, activity.data.target, participants);
 		}
-		PainterFactory.Painters["activity"].paintActivityCompletion(activity, activity.data.completion, false);
+		PainterFactory.Painters["activity"].paintActivityCompletion(activity, activity.data.completion, false, participants);
 		if(!activity.data.result){
+			// Still update totals even without results
+			PainterFactory.Painters["activity"].paintActivityResult(activity, null, "No Results", participants, this.communSpecific.result_zero, "Started", this.communSpecific.result_view_partial_value, "Completed",this.communSpecific.result_view_final_value,"LimeSurveyPainter");
+			PainterFactory.Painters["activity"].paintActivityProgress(activity, null, participants);
+			PainterFactory.Painters["activity"].paintActivityInit(activity, null, participants);
 			return;
 		}
 		let usernames = Object.keys(activity.data.result);
@@ -249,9 +253,9 @@ var LimeSurveyPainter = {
 			}
 			map[usernames[i]] = state;
 		}
-		PainterFactory.Painters["activity"].paintActivityResult(activity, map, "No Results", this.communSpecific.result_zero, "Started", this.communSpecific.result_view_partial_value, "Completed",this.communSpecific.result_view_final_value,"LimeSurveyPainter");
-		PainterFactory.Painters["activity"].paintActivityProgress(activity, activity.data.progress);
-		PainterFactory.Painters["activity"].paintActivityInit(activity, activity.data.init);
+		PainterFactory.Painters["activity"].paintActivityResult(activity, map, "No Results", participants, this.communSpecific.result_zero, "Started", this.communSpecific.result_view_partial_value, "Completed",this.communSpecific.result_view_final_value,"LimeSurveyPainter");
+		PainterFactory.Painters["activity"].paintActivityProgress(activity, activity.data.progress, participants);
+		PainterFactory.Painters["activity"].paintActivityInit(activity, activity.data.init, participants);
 	},
 
 	generateTinyURL: function(activityId, surveyId) {
@@ -274,8 +278,8 @@ var LimeSurveyPainter = {
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity.activity_id}', '${activity.activity_name}', '${activity.session_id}')"></div>
 			<p class="subtitle">${this.simple_name}</p>
 			<p>${this.specific.survey_title}: <a target="_blank" href="${this.utils.url}${activity.survey_id}">${activity.survey_id}</a></p>
-			<p>${this.specific.language_title}: ${activity.suvey_language}</p>
-			<p><a class="button green" onclick="LimeSurveyPainter.openEditLimesurvey('${activity.id}', '${activity.survey_id}')">${this.specific.edit_title}</a></p>
+			<p>${this.specific.language_title}: ${activity.survey_language}</p>
+			<p><a class="button green" onclick="LimeSurveyPainter.openEditLimesurvey('${activity.activity_id}', '${activity.survey_id}')">${this.specific.edit_title}</a></p>
 			<p><a onclick="LimeSurveyPainter.generateTinyURL('${activity.activity_id}', ${activity.survey_id})">${this.specific.short_url_title}</a></p>
 			<p><a onclick="LimeSurveyPainter.downloadBackup('${activity.activity_id}', 'full')"> ${this.specific.backup_full_title} : ⬇️</a>
 			<a onclick="LimeSurveyPainter.downloadBackup('${activity.activity_id}', 'code')"> ${this.specific.backup_code_title} : ⬇️</a></p>

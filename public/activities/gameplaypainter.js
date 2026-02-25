@@ -70,7 +70,7 @@ var GameplayActivityPainter = {
 		let formdata = Utils.getFormData(jform);
 		let activity = {};
 
-		if(actualActivity.name !== formdata.name) {
+		if(actualActivity.activity_name !== formdata.name) {
 			activity.name = formdata.name;
 		}
 		const actualTraceStorage = actualActivity.activity_trace_storage;
@@ -88,16 +88,11 @@ var GameplayActivityPainter = {
 		if(actualBackup !== backup) {
 			activity.game_backup = backup;
 		}
-		let game_uri=formdata.game_uri;
-		if(!(actualActivity.extra_data.game_uri == game_uri)) {
-			if(actualActivity.extra_data.game_uri) {
+		let game_uri = formdata.game_uri;
+		const actualGameUri = actualActivity.game_url || (actualActivity.extra_data && actualActivity.extra_data.game_uri) || '';
+		if(actualGameUri !== game_uri) {
+			if(game_uri !== '' || actualGameUri !== '') {
 				activity.game_uri = game_uri;
-				activity.game_url = game_uri;
-			} else {
-				if(game_uri !== ''){
-					activity.game_uri = game_uri;
-					activity.game_url = game_uri;
-				}
 			}
 		}
 	
@@ -106,17 +101,17 @@ var GameplayActivityPainter = {
 
 	fullyPaintActivity: function(activity, participants){
 		this.paintActivity(activity, participants);
-		this.updateParticipants(activity);
+		this.updateParticipants(activity, participants);
 	},
 
-	updateParticipants: function(activity){
+	updateParticipants: function(activity, participants){
 		if(activity.data.openable){
-			PainterFactory.Painters["activity"].paintActivityTargets(activity, activity.data.target);
+			PainterFactory.Painters["activity"].paintActivityTargets(activity, activity.data.target, participants);
 		}
-		PainterFactory.Painters["activity"].paintActivityCompletion(activity, activity.data.completion, true);
-		PainterFactory.Painters["activity"].paintActivityInit(activity, activity.data.init);
-		PainterFactory.Painters["activity"].paintActivityProgress(activity, activity.data.progress);
-		PainterFactory.Painters["activity"].paintActivityResult(activity, activity.data.hasresult, false, this.communSpecific.result_zero, null,this.communSpecific.result_view_partial_value, true, this.communSpecific.result_view_final_value);
+		PainterFactory.Painters["activity"].paintActivityCompletion(activity, activity.data.completion, true, participants);
+		PainterFactory.Painters["activity"].paintActivityInit(activity, activity.data.init, participants);
+		PainterFactory.Painters["activity"].paintActivityProgress(activity, activity.data.progress, participants);
+		PainterFactory.Painters["activity"].paintActivityResult(activity, activity.data.hasresult, false, participants, this.communSpecific.result_zero, null,this.communSpecific.result_view_partial_value, true, this.communSpecific.result_view_final_value);
 	},
 	
 	downloadXasuConfig: function(activityId, studyId){

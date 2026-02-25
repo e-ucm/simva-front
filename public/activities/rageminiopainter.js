@@ -47,7 +47,7 @@ var RageMinioActivityPainter = {
 		
 		let activity = {};
 
-		if(actualActivity.name !== formdata.name) {
+		if(actualActivity.activity_name !== formdata.name) {
 			activity.name = formdata.name;
 		}
 	
@@ -58,18 +58,18 @@ var RageMinioActivityPainter = {
 		this.paintActivity(activity, participants);
 		let tmp = this;
 
-		this.updateParticipants(activity);
+		this.updateParticipants(activity, participants);
 		//setInterval(function(){
-		//	tmp.updateParticipants(activity);
+		//	tmp.updateParticipants(activity, participants);
 		//}, 5000);
 	},
 
-	updateParticipants: function(activity){
+	updateParticipants: function(activity, participants){
 		let tmp = this;
 		activity.tmp = {};
 		
-		tmp.paintActivityCompletion(activity, activity.data.completion);
-		tmp.paintActivityResult(activity, activity.data.result);
+		tmp.paintActivityCompletion(activity, activity.data.completion, participants);
+		tmp.paintActivityResult(activity, activity.data.result, participants);
 	},
 
 	paintActivity: function(activity, participants){
@@ -103,26 +103,32 @@ var RageMinioActivityPainter = {
 		return toret;
 	},
 
-	paintActivityCompletion: function(activity, status){
+	paintActivityCompletion: function(activity, status, participants=[]){
+		let total = participants.length;
 		if(!status) {
+			// Even without status, update total if we have participant count
+			if(total > 0) {
+				$(`#completion_progress_${activity.activity_id} .done`).css('width', '0%');
+				$(`#completion_progress_${activity.activity_id} done`).text(0);
+			}
 			return;
 		}
-		let usernames = Object.keys(status);
 
 		let done = 0;
 
-		for (var i = 0; i < usernames.length; i++) {
-			if(status[usernames[i]]){
+		for (var i = 0; i < participants.length; i++) {
+			const participantKey = PainterFactory.Painters["activity"].getParticipantKey(participants[i]);
+			if(status[participantKey]){
 				done++;
 			}
 
-			let completion = `<span>${status[usernames[i]]}</span>`
-			$(`#completion_${activity.activity_id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
-			$(`#completion_${activity.activity_id}_${usernames[i]}`).empty();
-			$(`#completion_${activity.activity_id}_${usernames[i]}`).append(completion);
+			let completion = `<span>${status[participantKey]}</span>`
+			$(`#completion_${activity.activity_id}_${participantKey}`).addClass(!status[participantKey] ? 'red' : 'green');
+			$(`#completion_${activity.activity_id}_${participantKey}`).empty();
+			$(`#completion_${activity.activity_id}_${participantKey}`).append(completion);
 		}
 
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
+		let progress = Math.round((done / total) * 1000) / 10; 
 
 		if(isNaN(progress)){
 			progress = 0;
@@ -132,16 +138,24 @@ var RageMinioActivityPainter = {
 		$(`#completion_progress_${activity.activity_id} done`).text(progress);
 	},
 
-	paintActivityResult: function(activity, results){
+	paintActivityResult: function(activity, results, participants=[]){
+		let total = participants.length;
 		if(!results) {
+			// Even without results, update total if we have participant count
+			if(total > 0) {
+				$(`#result_progress_${activity.activity_id} .done`).css('width', '0%');
+				$(`#result_progress_${activity.activity_id} .partial`).css('width', '0%');
+				$(`#result_progress_${activity.activity_id} done`).text(0);
+				$(`#result_progress_${activity.activity_id} partial`).text(0);
+			}
 			return;
 		}
-		let usernames = Object.keys(results);
 
 		let done = 0, partial = 0;
 
-		for (var i = 0; i < usernames.length; i++) {
-			let status = results[usernames[i]];
+		for (var i = 0; i < participants.length; i++) {
+			const participantKey = PainterFactory.Painters["activity"].getParticipantKey(participants[i]);
+			let status = results[participantKey];
 			let traces = '<span>No traces</span>';
 			let backup = '<span>No backup</span>';
 
@@ -160,32 +174,32 @@ var RageMinioActivityPainter = {
 							}
 						}
 
-						traces = `<span><a onclick="RageMinioActivityPainter.openTraces('${activity.activity_id}','${usernames[i]}')">See traces</a></span>`;
+						traces = `<span><a onclick="RageMinioActivityPainter.openTraces('${activity.activity_id}','${participantKey}')">See traces</a></span>`;
 					}
 
-					if(results[usernames[i]].minio){
-						backup = `<span><a onclick="RageMinioActivityPainter.downloadBackup('${activity.activity_id}','${usernames[i]}')">Download</a></span>`;
+					if(results[participantKey].minio){
+						backup = `<span><a onclick="RageMinioActivityPainter.downloadBackup('${activity.activity_id}','${participantKey}')">Download</a></span>`;
 					}
 				}
 
 				tmpprogress = (tmpprogress * 1000) / 10;
 
-				$(`#progress_${activity.activity_id}_${usernames[i]} .done`).css('width', `${tmpprogress}%` );
-				$(`#progress_${activity.activity_id}_${usernames[i]} done`).text(tmpprogress);
+				$(`#progress_${activity.activity_id}_${participantKey} .done`).css('width', `${tmpprogress}%` );
+				$(`#progress_${activity.activity_id}_${participantKey} done`).text(tmpprogress);
 			}
 
 
-			$(`#traces_${activity.activity_id}_${usernames[i]}`).addClass(status && status.analytics ? 'green' : 'red');
-			$(`#traces_${activity.activity_id}_${usernames[i]}`).empty();
-			$(`#traces_${activity.activity_id}_${usernames[i]}`).append(traces);
+			$(`#traces_${activity.activity_id}_${participantKey}`).addClass(status && status.analytics ? 'green' : 'red');
+			$(`#traces_${activity.activity_id}_${participantKey}`).empty();
+			$(`#traces_${activity.activity_id}_${participantKey}`).append(traces);
 
-			$(`#backup_${activity.activity_id}_${usernames[i]}`).addClass(status && status.minio ? 'green' : 'red');
-			$(`#backup_${activity.activity_id}_${usernames[i]}`).empty();
-			$(`#backup_${activity.activity_id}_${usernames[i]}`).append(backup);
+			$(`#backup_${activity.activity_id}_${participantKey}`).addClass(status && status.minio ? 'green' : 'red');
+			$(`#backup_${activity.activity_id}_${participantKey}`).empty();
+			$(`#backup_${activity.activity_id}_${participantKey}`).append(backup);
 		}
 
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
-		let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
+		let progress = Math.round((done / total) * 1000) / 10; 
+		let partialprogress = Math.round((partial / total) * 1000) / 10;
 
 		if(isNaN(progress)){
 			progress = 0;

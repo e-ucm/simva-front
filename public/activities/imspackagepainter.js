@@ -60,7 +60,7 @@ var ImsPackagePainter = {
 		let formdata = Utils.getFormData(jform);
 		let activity = {};
 
-		if(actualActivity.name !== formdata.name) {
+		if(actualActivity.activity_name !== formdata.name) {
 			activity.name = formdata.name;
 		}
 	
@@ -69,15 +69,15 @@ var ImsPackagePainter = {
 
 	fullyPaintActivity: function(activity, participants){
 		this.paintActivity(activity, participants);
-		this.updateParticipants(activity);
+		this.updateParticipants(activity, participants);
 	},
 
-	updateParticipants: function(activity){
+	updateParticipants: function(activity, participants){
 		if(activity.data.openable){
-			PainterFactory.Painters["activity"].paintActivityTargets(activity, activity.data.target);
+			PainterFactory.Painters["activity"].paintActivityTargets(activity, activity.data.target, participants);
 		}
-		PainterFactory.Painters["activity"].paintActivityCompletion(activity, activity.data.completion, true);
-		PainterFactory.Painters["activity"].paintActivityResult(activity, activity.data.result, false, "No Backup", null, null, true, "See Backup", "imspackage");
+		PainterFactory.Painters["activity"].paintActivityCompletion(activity, activity.data.completion, true, participants);
+		PainterFactory.Painters["activity"].paintActivityResult(activity, activity.data.result, false, participants, "No Backup", null, null, true, "See Backup", "imspackage");
 	},
 
 	paintActivity: function(activity, participants){
@@ -101,16 +101,17 @@ var ImsPackagePainter = {
 		PainterFactory.Painters["activity"].paintActivityCompletion(activity, status);
 	},
 
-	paintActivityResult: function(activity, results){
+	paintActivityResult: function(activity, results, participants=[]){
+		let total = participants.length;
 		if(!results) {
 			return;
 		}
-		let usernames = Object.keys(results);
 
 		let done = 0, partial = 0;
 
-		for (var i = 0; i < usernames.length; i++) {
-			let status = results[usernames[i]];
+		for (var i = 0; i < participants.length; i++) {
+			const participantKey = PainterFactory.Painters["activity"].getParticipantKey(participants[i]);
+			let status = results[participantKey];
 			let traces = '<span>No traces</span>';
 			let backup = '<span><i>Disabled</i></span>';
 			if(activity.backup){
@@ -133,14 +134,14 @@ var ImsPackagePainter = {
 						}
 
 						traces = `<span>
-						<a onclick="ImsPackagePainter.openTraces('${activity.activity_id}','${usernames[i]}')">
+						<a onclick="ImsPackagePainter.openTraces('${activity.activity_id}','${participantKey}')">
 						See traces</a>
 						</span>`;
 					}
 
-					if(activity.backup && results[usernames[i]].backup){
+					if(activity.backup && results[participantKey].backup){
 						backup = `<span>
-						<a onclick="ImsPackagePainter.downloadBackup('${activity.activity_id}','${usernames[i]}')">
+						<a onclick="ImsPackagePainter.downloadBackup('${activity.activity_id}','${participantKey}')">
 						Download</a>
 						</span>`;
 					}
@@ -149,22 +150,22 @@ var ImsPackagePainter = {
 
 				tmpprogress = (tmpprogress * 1000) / 10;
 
-				$(`#progress_${activity.activity_id}_${usernames[i]} .done`).css('width', `${tmpprogress}%` );
-				$(`#progress_${activity.activity_id}_${usernames[i]} done`).text(tmpprogress);
+				$(`#progress_${activity.activity_id}_${participantKey} .done`).css('width', `${tmpprogress}%` );
+				$(`#progress_${activity.activity_id}_${participantKey} done`).text(tmpprogress);
 			}
 
 
-			$(`#traces_${activity.activity_id}_${usernames[i]}`).addClass(status && status.realtime ? 'green' : 'red');
-			$(`#traces_${activity.activity_id}_${usernames[i]}`).empty();
-			$(`#traces_${activity.activity_id}_${usernames[i]}`).append(traces);
+			$(`#traces_${activity.activity_id}_${participantKey}`).addClass(status && status.realtime ? 'green' : 'red');
+			$(`#traces_${activity.activity_id}_${participantKey}`).empty();
+			$(`#traces_${activity.activity_id}_${participantKey}`).append(traces);
 
-			$(`#backup_${activity.activity_id}_${usernames[i]}`).addClass(status && status.backup ? 'green' : 'red');
-			$(`#backup_${activity.activity_id}_${usernames[i]}`).empty();
-			$(`#backup_${activity.activity_id}_${usernames[i]}`).append(backup);
+			$(`#backup_${activity.activity_id}_${participantKey}`).addClass(status && status.backup ? 'green' : 'red');
+			$(`#backup_${activity.activity_id}_${participantKey}`).empty();
+			$(`#backup_${activity.activity_id}_${participantKey}`).append(backup);
 		}
 
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
-		let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
+		let progress = Math.round((done / total) * 1000) / 10; 
+		let partialprogress = Math.round((partial / total) * 1000) / 10;
 
 		if(isNaN(progress)){
 			progress = 0;
