@@ -253,6 +253,16 @@ module.exports = function(auth, config){
         });
     });
 
+    router.post('/groups/:groupid/permissions', auth, async (req, res, next) => {
+        Simva.createGroupPermissions(req.params['groupid'], req.body, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
     router.get('/groups/:groupid/permissions/:userid', auth, async (req, res, next) => {
         Simva.getGroupPermissionsForUser(req.params['groupid'], req.params['userid'], req.session.id, (error, result) => {
             if(error) {
@@ -412,6 +422,16 @@ module.exports = function(auth, config){
 
     router.patch('/studies/:studyid/tests/:testid', auth, async (req, res, next) => {
         Simva.updateTest(req.params["studyid"], req.params["testid"], req.body, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.delete('/studies/:studyid/tests/:testid', auth, async (req, res, next) => {
+        Simva.deleteTest(req.params["studyid"], req.params["testid"], req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {

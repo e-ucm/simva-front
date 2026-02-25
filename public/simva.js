@@ -144,6 +144,10 @@ var Simva = {
 		Utils.get(`/bff/groups/${group_id}/permissions`, callback);
 	},
 
+	createGroupPermissions: function(group_id, permissions, callback){
+		Utils.post(`/bff/groups/${group_id}/permissions`, permissions, callback);
+	},
+
 	getGroupPermissionsForUser: function(group_id, user_id, callback){
 		Utils.get(`/bff/groups/${group_id}/permissions/${user_id}`, callback);
 	},
@@ -255,6 +259,10 @@ var Simva = {
 
 	getStudyTest: function(study_id,test_id, callback){
 		Utils.get(`/bff/studies/${study_id}/tests/${test_id}`, callback);
+	},
+
+	deleteTest: function(study_id, test_id, callback){
+		Utils.delete(`/bff/studies/${study_id}/tests/${test_id}`, callback);
 	},
 
 	getSessionParticipants: function(study_id, test_id, callback){
