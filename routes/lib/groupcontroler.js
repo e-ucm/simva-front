@@ -11,7 +11,7 @@ module.exports = {
            logger.warn(e);
         }
         try {
-            group.direct_permissions=(await SimvaAsync.getGroupDirectPermissions(groupid, sessionid)).permissions;
+            group.direct_permissions=await SimvaAsync.getGroupDirectPermissions(groupid, sessionid);
         } catch(e) {
            logger.warn(e);
         }

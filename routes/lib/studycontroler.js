@@ -27,7 +27,7 @@ module.exports = {
             logger.warn(e);
         }
         try {
-            study.direct_permissions = (await SimvaAsync.getStudyDirectPermissions(studyid, sessionid)).permissions;
+            study.direct_permissions = await SimvaAsync.getStudyDirectPermissions(studyid, sessionid);
         } catch(e) {
             logger.warn(e);
         }
