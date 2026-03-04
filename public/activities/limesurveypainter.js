@@ -101,7 +101,7 @@ var LimeSurveyPainter = {
 				});
 				
 				// Set a specific option as selected
-				const selectedLanguage = activity.suvey_language;
+				const selectedLanguage = activity.survey_language;
 				if(selectedLanguage) {
 					languageSelectElement.value = selectedLanguage;
 				}
@@ -215,9 +215,9 @@ var LimeSurveyPainter = {
 			activity.copysurvey = surveyid;
 		}
 
-		const actualLanguage = actualActivity.suvey_language;
+		const actualLanguage = actualActivity.survey_language;
 		if(actualLanguage !== formdata.language) {
-			activity.suvey_language = formdata.language;
+			activity.survey_language = formdata.language;
 		}
 
 		callback(null, activity);

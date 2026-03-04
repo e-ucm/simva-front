@@ -309,7 +309,7 @@
 		Simva.getGroup(groupId, function(error, group) {
 			document.getElementById("edit_group_error").innerHTML = "";
 			var inputElement = document.getElementById('edit_group_name');
-			inputElement.value = group.name;
+			inputElement.value = group.group_name;
 			$('#edit_group input[name="group"]').val(group.group_id);
 			$('#edit_group span[class="error"]').val("");
 			$('#edit_group input[name="groupName"]').val(group.name);
@@ -349,7 +349,7 @@
 	}
 
 	let paintGroup = function(group, participants){
-		$('#group_name').text(group.name);
+		$('#group_name').text(group.group_name);
 
 		$('#owners').html('');
 		for (var i = 0; i < group.direct_permissions.length; i++) {
