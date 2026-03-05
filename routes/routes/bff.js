@@ -212,39 +212,79 @@ module.exports = function(auth, config){
         
     });
 
-    router.post('/groups', auth, async (req, res, next) => {
-        Simva.addGroup(req.body.group_name, req.body.use_new_generation, req.session.id, (error, result) => {
+
+    /**
+    * SIMLET GROUPS (with simlet_id)
+    * 
+    */
+    router.post('/simlets/:simlet_id/groups/:groupid/users', auth, async (req, res, next) => {
+        if(req.body.algorithm && req.body.length && req.body.batchLength) {
+            let simlet_id = req.params['simlet_id'];
+            let groupid = req.params['groupid'];
+            let users=[];
+            let params = {
+                algorithm: req.body.algorithm,
+                length : req.body.length,
+                groupid: groupid,
+                checkIfExists: req.body.checkIfExists || false,
+            }
+            let batchLength=req.body.batchLength;
+            while (users.length < batchLength) {
+                const remaining = batchLength - users.length;
+                const promises = Array.from({ length: remaining }, () => groupcontroler.generateStudentUserWithRetry(simlet_id, params, req.session.id, 5));
+                try {
+                    const results = await Promise.all(promises);
+                    users.push(...results.map(student => student.username));
+                } catch (err) {
+                    logger.error("Error generating some users:", err);
+                }
+            }
+            res.status(200).send(users);
+        } else {
+            Simva.register(req.params["simlet_id"], req.params["groupid"], req.body.username, req.body.email, req.body.password, req.body.role, req.session.id, (error, result) => {
+                if(error) {
+                    next(error.response?.data || error);
+                } else {
+                    res.status(200).send(result);
+                }
+            });
+        }
+    });
+
+    router.post('/simlets/:simlet_id/groups', auth, async (req, res, next) => {
+        Simva.addGroup(req.params['simlet_id'], req.body.group_name, req.body.use_new_generation, req.body.group_sandbox, req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
         });
     });
 
-    router.patch('/groups/:groupid', auth, async (req, res, next) => {
-        Simva.updateGroup(req.params['groupid'], req.body, req.session.id, (error, result) => {
+    router.patch('/simlets/:simlet_id/groups/:groupid', auth, async (req, res, next) => {
+        Simva.updateGroup(req.params['simlet_id'], req.params['groupid'], req.body, req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
         });
     });
 
-    router.get('/groups/:groupid', auth, async (req, res, next) => {
+    router.get('/simlets/:simlet_id/groups/:groupid', auth, async (req, res, next) => {
+        let simlet_id = req.params['simlet_id'];
         let groupid = req.params['groupid'];
         let sessionid = req.session.id;
         try {
-            let group = await groupcontroler.getCompleteGroup(groupid, sessionid);
+            let group = await groupcontroler.getCompleteGroup(simlet_id, groupid, sessionid);
             res.status(200).send(group);
         } catch(error) {
             next(error);
         }
     });
 
-    router.get('/groups/count', auth, async (req, res, next) => {
-        Simva.getGroupCount(req.session.id, (error, result) => {
+    router.get('/simlets/:simlet_id/groups/count', auth, async (req, res, next) => {
+        Simva.getGroupCount(req.params['simlet_id'], req.session.id, (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -253,8 +293,8 @@ module.exports = function(auth, config){
         });
     });
 
-    router.get('/groups/:groupid/permissions', auth, async (req, res, next) => {
-        Simva.getGroupDirectPermissions(req.params['groupid'], req.session.id, (error, result) => {
+    router.get('/simlets/:simlet_id/groups/:groupid/permissions', auth, async (req, res, next) => {
+        Simva.getGroupDirectPermissions(req.params['simlet_id'], req.params['groupid'], req.session.id, (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -263,8 +303,8 @@ module.exports = function(auth, config){
         });
     });
 
-    router.post('/groups/:groupid/permissions', auth, async (req, res, next) => {
-        Simva.createGroupPermissions(req.params['groupid'], req.body, req.session.id, (error, result) => {
+    router.post('/simlets/:simlet_id/groups/:groupid/permissions', auth, async (req, res, next) => {
+        Simva.createGroupPermissions(req.params['simlet_id'], req.params['groupid'], req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -273,8 +313,8 @@ module.exports = function(auth, config){
         });
     });
 
-    router.get('/groups/:groupid/permissions/:userid', auth, async (req, res, next) => {
-        Simva.getGroupPermissionsForUser(req.params['groupid'], req.params['userid'], req.session.id, (error, result) => {
+    router.get('/simlets/:simlet_id/groups/:groupid/permissions/:userid', auth, async (req, res, next) => {
+        Simva.getGroupPermissionsForUser(req.params['simlet_id'], req.params['groupid'], req.params['userid'], req.session.id, (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -283,8 +323,8 @@ module.exports = function(auth, config){
         });
     });
 
-    router.patch('/groups/:groupid/permissions/:userid', auth, async (req, res, next) => {
-        Simva.patchGroupPermissionsForUser(req.params['groupid'], req.params['userid'], req.body, req.session.id, (error, result) => {
+    router.patch('/simlets/:simlet_id/groups/:groupid/permissions/:userid', auth, async (req, res, next) => {
+        Simva.patchGroupPermissionsForUser(req.params['simlet_id'], req.params['groupid'], req.params['userid'], req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -293,8 +333,8 @@ module.exports = function(auth, config){
         });
     });
 
-    router.delete('/groups/:groupid/permissions/:userid', auth, async (req, res, next) => {
-        Simva.deleteGroupPermissionsForUser(req.params['groupid'], req.params['userid'], req.session.id, (error, result) => {
+    router.delete('/simlets/:simlet_id/groups/:groupid/permissions/:userid', auth, async (req, res, next) => {
+        Simva.deleteGroupPermissionsForUser(req.params['simlet_id'], req.params['groupid'], req.params['userid'], req.session.id, (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -303,18 +343,8 @@ module.exports = function(auth, config){
         });
     });
 
-    router.delete('/groups/:groupid', auth, async (req, res, next) => {
-        Simva.deleteGroup(req.params['groupid'], req.session.id, (error, result) => {
-            if(error) {
-                next(error.response.data);
-            } else {
-                res.status(200).send(result);
-            }
-        });
-    });
-
-    router.get('/groups/:groupid/simlets', auth, async (req, res, next) => {
-        Simva.getGroupSimlets(req.params['groupid'], req.session.id, (error, result) => {
+    router.delete('/simlets/:simlet_id/groups/:groupid', auth, async (req, res, next) => {
+        Simva.deleteGroup(req.params['simlet_id'], req.params['groupid'], req.session.id, (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -323,27 +353,34 @@ module.exports = function(auth, config){
         });
     });
 
-    /**
-    * GROUP PARTICIPANTS
-    * 
-    */
-    router.get('/groups/:groupid/participants', auth, async (req, res, next) => {
-        Simva.getGroupParticipants(req.params['groupid'], req.session.id, (error, result) => {
+    router.get('/simlets/:simlet_id/groups/:groupid/simlets', auth, async (req, res, next) => {
+        Simva.getGroupSimlets(req.params['simlet_id'], req.params['groupid'], req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
         });
     });
 
-    router.delete('/groups/:groupid/participants/:participantid', auth, async (req, res, next) => {
+    router.get('/simlets/:simlet_id/groups/:groupid/participants', auth, async (req, res, next) => {
+        Simva.getGroupParticipants(req.params['simlet_id'], req.params['groupid'], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.delete('/simlets/:simlet_id/groups/:groupid/participants/:participantid', auth, async (req, res, next) => {
+        let simlet_id = req.params['simlet_id'];
         let groupid = req.params['groupid'];
         let participantid = req.params['participantid'];
         let removeKeycloak = req.query.keycloakDelete === 'true';
-        Simva.deleteGroupParticipants(groupid, participantid, removeKeycloak, req.session.id, (error, result) => {
+        Simva.deleteGroupParticipants(simlet_id, groupid, participantid, removeKeycloak, req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }

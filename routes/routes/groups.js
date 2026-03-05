@@ -7,18 +7,21 @@
     router = express.Router();
 
   router.get('/', auth, function(req, res, next) {
-    res.render('new_groups_list', { 
+    res.render('groups_list', { 
       config: config, 
       user: req.session.user,
+      newGeneration: true,
       t : req.t
     });
   });
 
-  router.get('/:groupid', auth, function(req, res, next) {
-    res.render('new_group_view', { 
+  router.get('/:simletid/:groupid', auth, function(req, res, next) {
+    res.render('group_view', { 
       config: config, 
       user: req.session.user, 
       group: req.params['groupid'],
+      simletid: req.params['simletid'],
+      newGeneration: true,
       t : req.t
    });
   });
@@ -27,10 +30,11 @@
    * To get presigned url for groups events
    * 
    */
-  router.get('/:groupid/events/getPresignedUrl', async (req, res, next) => {
+  router.get('/:simletid/:groupid/events/getPresignedUrl', async (req, res, next) => {
     const options = {
       groupId: req.params['groupid'],
       username: req.session.user.data.username,
+      simletId: req.params['simletid'],
       userRole:req.session.user.data.role,
       sessionID: req.session.id
     };
@@ -45,8 +49,15 @@
   });
 
 
-  router.get('/:groupid/print', auth, function(req, res, next) {
-    res.render('new_group_view', { config: config, user: req.session.user, group: req.params['groupid'] });
+  router.get('/:simletid/:groupid/print', auth, function(req, res, next) {
+    res.render('group_view', { 
+      config: config, 
+      user: req.session.user, 
+      group: req.params['groupid'],
+      simletid: req.params['simletid'],
+      newGeneration: true,
+      t: req.t
+    });
   });
 
   return router;

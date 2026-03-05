@@ -6,31 +6,6 @@ const groupcontroler = require('./groupcontroler');
 module.exports = {
     async getCompleteStudy(studyid, sessionid) {
         let study=await SimvaAsync.getStudy(studyid, sessionid);
-        try {
-            study.participants = await SimvaAsync.getStudyParticipants(studyid, sessionid);
-        } catch(e) {
-            logger.warn(e);
-        }
-        try {
-            study.allgroups = await SimvaAsync.getGroups(sessionid);
-        } catch(e) {
-            logger.warn(e);
-        }
-        try {
-            study.completeGroups = await SimvaAsync.getStudyGroups(studyid, sessionid);
-        } catch(e) {
-            logger.warn(e);
-        }
-        try {
-            study.completeAllocator = await SimvaAsync.getAllocator(studyid, sessionid);
-        } catch(e) {
-            logger.warn(e);
-        }
-        try {
-            study.direct_permissions = await SimvaAsync.getStudyDirectPermissions(studyid, sessionid);
-        } catch(e) {
-            logger.warn(e);
-        }
         study.completeTests=[];
         logger.info({study}, "Study data before fetching complete tests");
         for(let i=0;i<study.sessions.length;i++) {
@@ -41,6 +16,14 @@ module.exports = {
                 logger.warn(e);
                 throw e;
             }
+        }
+        try {
+            study.allgroups = await SimvaAsync.getGroups(sessionid);
+            study.completeGroups = await SimvaAsync.getStudyGroups(studyid, sessionid);
+            study.direct_permissions = await SimvaAsync.getStudyDirectPermissions(studyid, sessionid);
+            study.participants = await SimvaAsync.getStudyParticipants(studyid, sessionid);
+        } catch(e) {
+            logger.warn(e);
         }
         return study;
     },

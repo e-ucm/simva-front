@@ -161,7 +161,9 @@
 <script type="text/javascript">
 	let group = {};
 	let groupid = "<%= group %>";
+    let simletid = "<%= simletid %>";
 	let loaded=false;
+	const newGeneration = "<%= newGeneration %>" === "true";
 
 	window.addEventListener('DOMContentLoaded', async() => {
 		const url = new URL(window.location.href);
@@ -211,7 +213,7 @@
 					return;
 				}
 
-				Simva.createGroupPermissions(group.group_id, { user_id: foundUser.user_id, permission: form.permission }, function(createError){
+				Simva.createGroupPermissions(group.simlet_id, group.group_id, { user_id: foundUser.user_id, permission: form.permission }, function(createError){
 					if(createError && createError.responseJSON){
 						errorbox.text(createError.responseJSON.message);
 					}else if(createError) {
@@ -236,7 +238,7 @@
 				errorbox.text("<%= t('name.edit.nochange', { ns : 'groups' }) %>");
 				Utils.toggleSubmit(currentform);
 			} else {
-				Simva.updateGroup(form.group, { name: form.name }, function(error, result){
+				Simva.updateGroup(group.simlet_id, form.group, { group_name: form.name }, function(error, result){
 					if(!error){
 						Utils.toggleSubmit(currentform);
 						Utils.toggleAddForm('edit_group');
@@ -271,7 +273,7 @@
 			let form = Utils.getFormData($("#new_participant_form"));
 			let errorbox = $(this).find('.error');
 
-			Simva.register(groupid, form.username.toLowerCase(), form.email, form.password, form.role, function(error, result){
+			Simva.register(group.simlet_id, groupid, form.username.toLowerCase(), form.email, form.password, form.role, function(error, result){
 				if(error && error.responseJSON){
 					errorbox.text(error.responseJSON.message);
 				}else{
@@ -291,7 +293,7 @@
 			let form = Utils.getFormData($("#batch_participant_form"));
 			let errorbox = $(this).find('.error');
 
-			Simva.generateAndRegister(groupid, form.algorithm, form.length, form.amount, (error, generated) => {
+			Simva.generateAndRegister(group.simlet_id, groupid, form.algorithm, form.length, form.amount, (error, generated) => {
 				if(!error) { 
 					group.participants = group.participants.concat(generated);
 					Utils.toggleAddForm('add_participant');
@@ -306,33 +308,34 @@
 	});
 
 	let openEditGroupForm = function(groupId){
-		Simva.getGroup(groupId, function(error, group) {
+		Simva.getGroup(simletid, groupId, function(error, group) {
 			document.getElementById("edit_group_error").innerHTML = "";
 			var inputElement = document.getElementById('edit_group_name');
 			inputElement.value = group.group_name;
 			$('#edit_group input[name="group"]').val(group.group_id);
 			$('#edit_group span[class="error"]').val("");
-			$('#edit_group input[name="groupName"]').val(group.name);
+			$('#edit_group input[name="groupName"]').val(group.group_name);
 			Utils.toggleAddForm('edit_group');
 		});
 	}
 
 	let reloadGroup = function(){
-		Simva.getGroup(groupid, function(error, result){
+		Simva.getGroup(simletid, groupid, function(error, result){
 			if(!error){
 				group=result;
 				paintGroup(group, group.completeParticipants);
 				delete group.completeParticipants;
 				loaded=true;
 			} else {
-				window.location.href="/groups";
+		        const link = newGeneration ? `/groups/` : `/previous-groups/`;
+				window.location.href=link;
 			}
 		});
 	}
 
 	let removeParticipant = function(participant_id, participant, removeKeycloak=false){
 		if(confirm(`<%- t('participants.remove.confirm', { ns: 'groups',  participant : '${participant}', group : '${group.group_name}' }) %>`)){
-			Simva.deleteGroupParticipants(group.group_id, participant_id, removeKeycloak, function(error, result){
+			Simva.deleteGroupParticipants(group.simlet_id, group.group_id, participant_id, removeKeycloak, function(error, result){
 				if(!error){
 					reloadGroup();
 				}
@@ -342,7 +345,7 @@
 
 	let deleteOwner = function(userId, ownerUsername){
 		if(confirm(`<%- t('owners.remove.confirm', { ns: 'groups', owner : '${ownerUsername}', group : '${group.group_name}' }) %>`)){
-			Simva.deleteGroupPermissionsForUser(group.group_id, userId, function(error, result){
+			Simva.deleteGroupPermissionsForUser(group.simlet_id, group.group_id, userId, function(error, result){
 				reloadGroup();
 			});
 		}
@@ -388,20 +391,15 @@
 	}
 
 	let participantHeader = function(){
-		return `<tr><th></th><th><%= t("participants.username.title", { ns : "groups" }) %></th><th><%= t("participants.isToken.title", { ns : "groups" }) %></th><th><%= t("participants.token.title", { ns : "groups" }) %></th><th><%= t("participants.email.title", { ns : "groups" }) %></th><th><%= t("participants.role.title", { ns : "groups" }) %></th><th></th></tr>`;
+		if(newGeneration) {
+			return `<tr><th></th><th><%= t("participants.username.title", { ns : "groups" }) %></th><th><%= t("participants.isToken.title", { ns : "groups" }) %></th><th><%= t("participants.token.title", { ns : "groups" }) %></th><th><%= t("participants.email.title", { ns : "groups" }) %></th><th><%= t("participants.role.title", { ns : "groups" }) %></th><th></th></tr>`;
+		} else {
+			return `<tr><th></th><th><%= t("participants.username.title", { ns : "groups" }) %></th><th><%= t("participants.email.title", { ns : "groups" }) %></th><th><%= t("participants.role.title", { ns : "groups" }) %></th><th></th></tr>`;
+		}
 	}
 
 	let participantRow = function(participant){
-		let isToken="";
-		let token="";
 		let role="";
-		if(participant.isToken) {
-			isToken = `<%= t("participants.isToken.ok", { ns : "groups" }) %>`;
-			token = participant.token;
-		} else {
-			isToken = `<%= t("participants.isToken.nok", { ns : "groups" }) %>`;
-			token = "-";
-		}
 		switch(participant.role) {
 			case "student":
 				role = `<%= t("student", { ns : "roles" }) %>`;
@@ -412,13 +410,31 @@
 			default:
 				role = `<%= t("participants.role.notdefined", { ns : "groups" }) %>`;
 		}
-		return `<tr><td><img src="/icon/user.png"></td>
-			<td>${participant.username}</td>
-			<td>${isToken}</td>
-			<td>${token}</td>
-			<td><a href="${participant.email}">${participant.email}</a></td>
-			<td>${role}</td>
-			<td><input class="red" type="button" value="<%= t("participants.remove.title", { ns : "groups" }) %>" onclick="removeParticipant('${participant.user_id}', '${participant.username}', true)"></td>`;
+
+		if(newGeneration) {
+			let isToken="";
+			let token="";
+			if(participant.isToken) {
+				isToken = `<%= t("participants.isToken.ok", { ns : "groups" }) %>`;
+				token = participant.token;
+			} else {
+				isToken = `<%= t("participants.isToken.nok", { ns : "groups" }) %>`;
+				token = "-";
+			}
+			return `<tr><td><img src="/icon/user.png"></td>
+				<td>${participant.username}</td>
+				<td>${isToken}</td>
+				<td>${token}</td>
+				<td><a href="${participant.email}">${participant.email}</a></td>
+				<td>${role}</td>
+				<td><input class="red" type="button" value="<%= t("participants.remove.title", { ns : "groups" }) %>" onclick="removeParticipant('${participant.user_id}', '${participant.username}', true)"></td>`;
+		} else {
+			return `<tr><td><img src="/icon/user.png"></td>
+				<td>${participant.username}</td>
+				<td><a href="${participant.email}">${participant.email}</a></td>
+				<td>${role}</td>
+				<td><input class="red" type="button" value="<%= t("participants.remove.title", { ns : "groups" }) %>" onclick="removeParticipant('${participant.user_id}', '${participant.username}', true)"></td>`;
+		}
 	}
 
 	let headerRowPDF = function(group){
@@ -427,7 +443,7 @@
 
 	let participantRowPDF = function(participant, position){
 		let username = participant.username;
-		if(Boolean(participant.isToken)) {
+		if(newGeneration && Boolean(participant.isToken)) {
 			username = participant.token;
 		}
 		return `<tr><td>${position}</td><td></td><td>${username}</td><td>${username}</td><td>${username}</td><td>${username}</td></tr>`;

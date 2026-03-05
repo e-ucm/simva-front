@@ -85,6 +85,67 @@ var GroupAllocatorPainter = {
 		$('#allocator_content').html(topaint);
 	},
 
+	paintAllocatorForGroup: function(group, selector){
+		this.allocator = group;
+
+		let topaint = `<p class="subtitle italic">${this.type_title}: <span>${this.type_translated}</span></p>
+			<p class="subtitle justified">${this.description}</p>
+			<table class="allocations">`;
+
+		// Get the allocated session for this group from allocations
+		let allocatedTest = (group.allocations && group.allocations[group.group_id]) 
+			? group.allocations[group.group_id] 
+			: (this.tests.length > 0 ? this.tests[0].session_id : null);
+
+		topaint += this.generateRowForGroup({group: group, test: allocatedTest});
+
+		topaint += '</table>';
+
+		$(selector).html(topaint);
+	},
+
+	generateRowForGroup: function(allocation){
+		let topaint = `<tr>
+			<td>Session:</td>
+			<td>
+				<select id="allocation_group_${allocation.group.group_id}" 
+					onchange="GroupAllocatorPainter.updateAllocationForGroup('${allocation.group.group_id}')"
+				>`;
+
+		for (var i = 0; i < this.tests.length; i++) {
+			let selected = (this.tests[i].session_id === allocation.test ? 'selected' : '');
+			topaint += `<option value="${this.tests[i].session_id}" ${selected}>${this.tests[i].session_name}</option>`;
+		}
+
+		topaint += '</select></td></tr>';
+		return topaint;
+	},
+
+	updateAllocationForGroup: function(groupId){
+		let tmp = this;
+		const selectedTest = $(`#allocation_group_${groupId}`).val();
+
+		Simva.allocateToSession(tmp.study.simlet_id, selectedTest, groupId, {}, function(error, result){
+			if(error){
+				$.toast({
+					heading: tmp.add_error,
+					text: error.message,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+			}else{
+				$.toast({
+					heading: tmp.add_message,
+					position: 'top-right',
+					icon: 'success',
+					stack: false
+				});
+				reloadStudy();
+			}
+		});
+	},
+
 	generateRow: function(allocation){
 		let topaint = `<tr>
 			<td>${allocation.group.group_name}</td>

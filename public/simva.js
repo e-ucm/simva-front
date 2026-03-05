@@ -63,24 +63,24 @@ var Simva = {
 	},
 
 	// USER
-	register: function(groupid, username, email, password, role, callback){
+	register: function(simlet_id, groupid, username, email, password, role, callback){
 		let body = {
 			username: username,
 			email: email,
 			password: password,
 			role: role
 		};
-		Utils.post(`/bff/groups/${groupid}/users`, body, callback);
+		Utils.post(`/bff/simlets/${simlet_id}/groups/${groupid}/users`, body, callback);
 	},
 
 	// USER
-	generateAndRegister: function(groupid, algorithm, length, batchLength, callback){
+	generateAndRegister: function(simlet_id, groupid, algorithm, length, batchLength, callback){
 		let body = {
 			algorithm: algorithm,
 			length: Number(length),
 			batchLength: Number(batchLength)
 		};
-		Utils.post(`/bff/groups/${groupid}/users`, body, callback);
+		Utils.post(`/bff/simlets/${simlet_id}/groups/${groupid}/users`, body, callback);
 	},
 
 	setRole: function(username, role, callback){
@@ -114,62 +114,67 @@ var Simva = {
 		Utils.get(`/bff/groups?use_new_generation=${use_new_generation}`, callback);
 	},
 
-	addGroup: function(name, use_new_generation, callback){
+	addGroup: function(simlet_id, name, use_new_generation, group_sandbox, callback){
 		let body = { group_name: name };
 		if(use_new_generation) {
 			body.use_new_generation = true;
 		} else {
 			body.use_new_generation = false;
 		}
-		Utils.post(`/bff/groups`, body, callback);
+		if(group_sandbox) {
+			body.group_sandbox = true;
+		} else {
+			body.group_sandbox = false;
+		}
+		Utils.post(`/bff/simlets/${simlet_id}/groups`, body, callback);
 	},
 
-	updateGroup: function(groupId, group, callback){
-		Utils.patch(`/bff/groups/${groupId}`, group, callback);
+	updateGroup: function(simlet_id, groupId, group, callback){
+		Utils.patch(`/bff/simlets/${simlet_id}/groups/${groupId}`, group, callback);
 	},
 
-	getGroup: function(group_id, callback){
-		Utils.get(`/bff/groups/${group_id}`, callback);
+	getGroup: function(simlet_id, group_id, callback){
+		Utils.get(`/bff/simlets/${simlet_id}/groups/${group_id}`, callback);
 	},
 
-	getGroupCount: function(callback){
-		Utils.get(`/bff/groups/count`, callback);
+	getGroupCount: function(simlet_id,callback){
+		Utils.get(`/bff/simlets/${simlet_id}/groups/count`, callback);
 	},
 
-	getGroupSimlets: function(group_id, callback){
-		Utils.get(`/bff/groups/${group_id}/simlets`, callback);
+	getGroupSimlets: function(simlet_id,group_id, callback){
+		Utils.get(`/bff/simlets/${simlet_id}/groups/${group_id}/simlets`, callback);
 	},
 
-	getGroupPermissions: function(group_id, callback){
-		Utils.get(`/bff/groups/${group_id}/permissions`, callback);
+	getGroupPermissions: function(simlet_id,group_id, callback){
+		Utils.get(`/bff/simlets/${simlet_id}/groups/${group_id}/permissions`, callback);
 	},
 
-	createGroupPermissions: function(group_id, permissions, callback){
-		Utils.post(`/bff/groups/${group_id}/permissions`, permissions, callback);
+	createGroupPermissions: function(simlet_id,group_id, permissions, callback){
+		Utils.post(`/bff/simlets/${simlet_id}/groups/${group_id}/permissions`, permissions, callback);
 	},
 
-	getGroupPermissionsForUser: function(group_id, user_id, callback){
-		Utils.get(`/bff/groups/${group_id}/permissions/${user_id}`, callback);
+	getGroupPermissionsForUser: function(simlet_id,group_id, user_id, callback){
+		Utils.get(`/bff/simlets/${simlet_id}/groups/${group_id}/permissions/${user_id}`, callback);
 	},
 
-	patchGroupPermissionsForUser: function(group_id, user_id, permissions, callback){
-		Utils.patch(`/bff/groups/${group_id}/permissions/${user_id}`, permissions, callback);
+	patchGroupPermissionsForUser: function(simlet_id, group_id, user_id, permissions, callback){
+		Utils.patch(`/bff/simlets/${simlet_id}/groups/${group_id}/permissions/${user_id}`, permissions, callback);
 	},
 
-	deleteGroupPermissionsForUser: function(group_id, user_id, callback){
-		Utils.delete(`/bff/groups/${group_id}/permissions/${user_id}`, callback);
+	deleteGroupPermissionsForUser: function(simlet_id,group_id, user_id, callback){
+		Utils.delete(`/bff/simlets/${simlet_id}/groups/${group_id}/permissions/${user_id}`, callback);
 	},
 
-	deleteGroup: function(group_id, callback){
-		Utils.delete(`/bff/groups/${group_id}`, callback);
+	deleteGroup: function(simlet_id,group_id, callback){
+		Utils.delete(`/bff/simlets/${simlet_id}/groups/${group_id}`, callback);
 	},
 
-	getGroupParticipants: function(group_id, callback){
-		Utils.get(`/bff/groups/${group_id}/participants`, callback);
+	getGroupParticipants: function(simlet_id, group_id, callback){
+		Utils.get(`/bff/simlets/${simlet_id}/groups/${group_id}/participants`, callback);
 	},
 
-	deleteGroupParticipants: function(group_id, participant_id, keycloakDelete, callback){
-		Utils.delete(`/bff/groups/${group_id}/participants/${participant_id}?keycloakDelete=${keycloakDelete}`, callback);
+	deleteGroupParticipants: function(simlet_id, group_id, participant_id, keycloakDelete, callback){
+		Utils.delete(`/bff/simlets/${simlet_id}/groups/${group_id}/participants/${participant_id}?keycloakDelete=${keycloakDelete}`, callback);
 	},
 
 	// STUDIES

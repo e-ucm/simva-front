@@ -124,17 +124,17 @@ class Simva {
 	}
 
 	// USER
-	registerGeneratedUser(groupid, token, sessionId, callback){
-		logger.info(`Registering generated user with token ${token} for group ID ${groupid}`);
+	registerGeneratedUser(simlet_id, groupid, token, sessionId, callback){
+		logger.info(`Registering generated user with token ${token} for group ID ${groupid} in simlet ${simlet_id}`);
 		let body = {
 			token: token,
 			role: "student",
 			isToken : true
 		};
-		this.post(`${this.apiurl}/groups/${groupid}/participants`, body, sessionId, callback);
+		this.post(`${this.apiurl}/simlets/${simlet_id}/groups/${groupid}/participants`, body, sessionId, callback);
 	}
 
-	register(groupid, username, email, password, role, sessionId, callback){
+	register(simlet_id, groupid, username, email, password, role, sessionId, callback){
 		let body = {
 			username: username,
 			email: email,
@@ -142,7 +142,7 @@ class Simva {
 			role: role,
 			isToken : false
 		};
-		this.post(`${this.apiurl}/groups/${groupid}/participants`, body, sessionId, callback);
+		this.post(`${this.apiurl}/simlets/${simlet_id}/groups/${groupid}/participants`, body, sessionId, callback);
 	}
 
 	getUser(username, sessionId, callback){
@@ -189,57 +189,57 @@ class Simva {
 		this.get(`${this.apiurl}/groups?use_new_generation=${useNewGeneration}`, sessionId, callback);
 	}
 
-	addGroup(name, newversion, sessionId, callback){
-		let body = { group_name: name };
-		this.post(`${this.apiurl}/groups?use_new_generation=${newversion}`, body, sessionId, callback);
+	addGroup(simlet_id, name, newversion, group_sandbox, sessionId, callback){
+		let body = { group_name: name, group_use_new_generation: newversion, group_sandbox: group_sandbox };
+		this.post(`${this.apiurl}/simlets/${simlet_id}/groups`, body, sessionId, callback);
 	}
 
-	updateGroup(groupId, group, sessionId, callback){
-		this.patch(`${this.apiurl}/groups/${groupId}`, group, sessionId, callback);
+	updateGroup(simlet_id, groupId, group, sessionId, callback){
+		this.patch(`${this.apiurl}/simlets/${simlet_id}/groups/${groupId}`, group, sessionId, callback);
 	}
 
-	getGroup(group_id, sessionId, callback){
-		this.get(`${this.apiurl}/groups/${group_id}`, sessionId, callback);
+	getGroup(simlet_id, group_id, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}`, sessionId, callback);
 	}
 
-	getGroupCount(sessionId, callback){
-		this.get(`${this.apiurl}/groups/count`, sessionId, callback);
+	getGroupCount(simlet_id, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/count`, sessionId, callback);
 	}
 
-	getGroupSimlets(group_id, sessionId, callback){
-		this.get(`${this.apiurl}/groups/${group_id}/simlets`, sessionId, callback);
+	getGroupSimlets(simlet_id, group_id, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/simlets`, sessionId, callback);
 	}
 
-	getGroupDirectPermissions(group_id, sessionId, callback){
-		this.get(`${this.apiurl}/groups/${group_id}/permissions`, sessionId, callback);
+	deleteGroup(simlet_id, group_id, sessionId, callback){
+		this.delete(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}`, sessionId, callback);
 	}
 
-	createGroupPermissions(group_id, permissions, sessionId, callback){
-		this.post(`${this.apiurl}/groups/${group_id}/permissions`, permissions, sessionId, callback);
-	}
-
-	getGroupPermissionsForUser(group_id, user_id, sessionId, callback){
-		this.get(`${this.apiurl}/groups/${group_id}/permissions/${user_id}`, sessionId, callback);
-	}
-
-	patchGroupPermissionsForUser(group_id, user_id, permissions, sessionId, callback){
-		this.patch(`${this.apiurl}/groups/${group_id}/permissions/${user_id}`, permissions, sessionId, callback);
-	}
-
-	deleteGroupPermissionsForUser(group_id, user_id, sessionId, callback){
-		this.delete(`${this.apiurl}/groups/${group_id}/permissions/${user_id}`, sessionId, callback);
-	}
-
-	deleteGroup(group_id, sessionId, callback){
-		this.delete(`${this.apiurl}/groups/${group_id}`, sessionId, callback);
-	}
-
-	getGroupParticipants(group_id, sessionId, callback){
-		this.get(`${this.apiurl}/groups/${group_id}/participants`, sessionId, callback);
+	getGroupParticipants(simlet_id, group_id, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/participants`, sessionId, callback);
 	}
 	
-	deleteGroupParticipants(group_id, participant_id, keycloakDelete, sessionId, callback){
-		this.delete(`${this.apiurl}/groups/${group_id}/participants/${participant_id}?keycloakDelete=${keycloakDelete}`, sessionId, callback);
+	deleteGroupParticipants(simlet_id, group_id, participant_id, keycloakDelete, sessionId, callback){
+		this.delete(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/participants/${participant_id}?keycloakDelete=${keycloakDelete}`, sessionId, callback);
+	}
+
+	getGroupDirectPermissions(simlet_id, group_id, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/permissions`, sessionId, callback);
+	}
+
+	createGroupPermissions(simlet_id, group_id, permissions, sessionId, callback){
+		this.post(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/permissions`, permissions, sessionId, callback);
+	}
+
+	getGroupPermissionsForUser(simlet_id, group_id, user_id, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/permissions/${user_id}`, sessionId, callback);
+	}
+
+	patchGroupPermissionsForUser(simlet_id, group_id, user_id, permissions, sessionId, callback){
+		this.patch(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/permissions/${user_id}`, permissions, sessionId, callback);
+	}
+
+	deleteGroupPermissionsForUser(simlet_id, group_id, user_id, sessionId, callback){
+		this.delete(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/permissions/${user_id}`, sessionId, callback);
 	}
 
 	// STUDIES

@@ -27,19 +27,11 @@
 
 		<div class="graybox groups">
 			<h2><%- t('groups.title', { ns : 'SIMLETs' }) %></h2>
-			<p></p>
-			<table id="groups">
-			</table>
 			<input class="violet" type="button" value="<%- t('groups.add.title', { ns : 'SIMLETs' }) %>" onclick="Utils.toggleAddForm('add_group')">
-		</div>
-
-		<div class="graybox allocator default">
-			<h2><%- t('allocator.title', { ns : 'SIMLETs' }) %></h2> 
-			<span class="edit"><img src="/icon/gear.png" onclick="Utils.toggleAddForm('change_allocator')"></span>
-			<div id="allocator_content">
-				
+			<div id="groups_container">
 			</div>
 		</div>
+
 		<% if(config.lti.enabled == 'true'){ %>
 		<div class="graybox lti_platforms default">
 			<h2><%- t('lti_platform.title', { ns : 'SIMLETs' }) %></h2>
@@ -111,7 +103,7 @@
 			<form id="change_allocator_form">
 				<div id="change_allocator_content">
 				</div>
-				<input type="button" value="<%- t('allocator.change.submit', { ns : 'SIMLETs' }) %>" onclick="changeAllocator()">
+				<input type="button" value="<%- t('allocator.change.submit', { ns : 'SIMLETs' }) %>">
 				<span class="error"></span>
 			</form>
 		</div>
@@ -1061,9 +1053,7 @@
 
 		paintActive(study.active);
 
-		paintAllocator(allocator, tests, groups, participants);
-
-		paintGroups(groups);
+		paintGroups(groups, tests, participants);
 
 		paintAddGroup(allgroups);
 	
@@ -1129,13 +1119,14 @@
 		}
 	}
 
-	let paintGroups = function(groups){
-		$('#groups').html('');
+	let paintGroups = function(groups, tests, participants){
+		$('#groups_container').html('');
 		if(groups.length == 0){
-			$('#groups').append("<p><%- t('groups.zero.message', { ns : 'SIMLETs' }) %></p>");
+			$('#groups_container').append("<p><%- t('groups.zero.message', { ns : 'SIMLETs' }) %></p>");
 		}else{
 			for (var i = 0; i < groups.length; i++) {
-				$('#groups').append(groupRow(groups[i]));
+				$('#groups_container').append(groupBox(groups[i]));
+				paintAllocator(groups[i], tests, groups, participants);
 			}
 		}
 	}
@@ -1151,24 +1142,35 @@
 		}
 	}
 
-	let paintAllocator = function(allocator, tests, groups, participants){
-		AllocatorFactory.Painters[allocator.allocator_type].setTests(tests);
-		AllocatorFactory.Painters[allocator.allocator_type].setGroups(groups);
-		AllocatorFactory.Painters[allocator.allocator_type].setStudy(study);
-		AllocatorFactory.Painters[allocator.allocator_type].setParticipants(participants);
+	let paintAllocator = function(group, tests, groups, participants){
+		const allocatorType = group.group_allocator_type || 'default';
+		if(AllocatorFactory.Painters[allocatorType]) {
+			AllocatorFactory.Painters[allocatorType].setTests(tests);
+			AllocatorFactory.Painters[allocatorType].setGroups(groups);
+			AllocatorFactory.Painters[allocatorType].setStudy(study);
+			AllocatorFactory.Painters[allocatorType].setParticipants(participants);
+			AllocatorFactory.Painters[allocatorType].paintAllocatorForGroup(group, `#allocator_content_${group.group_id}`);
+		} else {
+			$(`#allocator_content_${group.group_id}`).html(`<p>Allocator type: ${allocatorType}</p>`);
+		}
+	}
 
-		AllocatorFactory.Painters[allocator.allocator_type].paintAllocator(allocator);
+	let currentGroupIdForAllocator = null;
 
-		$(`#allocator_${allocator.allocator_type}`).prop('checked',true);
+	let openChangeAllocatorForm = function(groupId, currentAllocatorType) {
+		currentGroupIdForAllocator = groupId;
+		$('#change_allocator_form input:radio[name=type]').prop('checked', false);
+		$(`#allocator_${currentAllocatorType}`).prop('checked', true);
+		Utils.toggleAddForm('change_allocator');
 	}
 
 	let changeAllocator = function(){
 		let type = $('#change_allocator_form input:radio[name=type]:checked').val();
 
-		if(allocator.allocator_type !== type){
-			Simva.updateAllocator(study.simlet_id, { type: type }, function(error, result){
+		if(currentGroupIdForAllocator){
+			Simva.updateGroup(study.simlet_id, currentGroupIdForAllocator, { allocator_type: type }, function(error, result){
 				if(error){
-					$('#change_allocator_form .error').val(error.message);
+					$('#change_allocator_form .error').text(error.responseJSON ? error.responseJSON.message : error.message);
 				}else{
 					Utils.toggleAddForm('change_allocator');
 					reloadStudy();
@@ -1234,6 +1236,20 @@
 
 		toret += '></td></tr>';
 		return toret;
+	}
+
+	let groupBox = function(group){
+		let deleteDisabled = (group.link && group.link.type) ? ' disabled' : '';
+		return `<div class="graybox allocator default" id="group_box_${group.group_id}">
+			<h3>${group.group_name}</h3>
+			<input class="red" type="button" value="<%- t('groups.delete.title', { ns : 'SIMLETs' }) %>" onclick="deleteGroup('${group.group_id}', '${group.group_name}')"${deleteDisabled}>
+			<div class="allocator-section">
+				<h4><%- t('allocator.title', { ns : 'SIMLETs' }) %></h4>
+				<span class="edit"><img src="/icon/gear.png" onclick="openChangeAllocatorForm('${group.group_id}', '${group.group_allocator_type || 'default'}')"></span>
+				<div id="allocator_content_${group.group_id}">
+				</div>
+			</div>
+		</div>`;
 	}
 
 	let groupRow = function(group){

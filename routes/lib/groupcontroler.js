@@ -3,22 +3,22 @@ const SimvaAsync  = require('./simvaAsync');
 const usertools = require('./usertools');
 
 module.exports = {
-    async getCompleteGroup(groupid, sessionid) {
-        let group=await SimvaAsync.getGroup(groupid, sessionid);
+    async getCompleteGroup(simlet_id, group_id, sessionid) {
+        let group = await SimvaAsync.getGroup(simlet_id, group_id, sessionid);
         try {
-            group.completeParticipants=await SimvaAsync.getGroupParticipants(groupid, sessionid);
+            group.completeParticipants = await SimvaAsync.getGroupParticipants(simlet_id, group_id, sessionid);
         } catch(e) {
            logger.warn(e);
         }
         try {
-            group.direct_permissions=await SimvaAsync.getGroupDirectPermissions(groupid, sessionid);
+            group.direct_permissions = [];
         } catch(e) {
            logger.warn(e);
         }
         return group;
     },
 
-    async generateStudentUser(params, sessionid) {
+    async generateStudentUser(simlet_id, params, sessionid) {
         let username;
         if(params.username) {
             username=params.username;
@@ -32,18 +32,18 @@ module.exports = {
                 return user;
             }
         } 
-        user = await SimvaAsync.registerGeneratedUser(params.groupid, username, sessionid);
+        user = await SimvaAsync.registerGeneratedUser(simlet_id, params.groupid, username, sessionid);
         return user;
     },
 
-    async generateStudentUserWithRetry(params, sessionid, maxRetries, retryCount = 0) {
+    async generateStudentUserWithRetry(simlet_id, params, sessionid, maxRetries, retryCount = 0) {
         try {
-            const student = await this.generateStudentUser(params, sessionid);
+            const student = await this.generateStudentUser(simlet_id, params, sessionid);
             return student;
         } catch (e) {
             if (retryCount < maxRetries) {
                 logger.debug(`Retry ${retryCount + 1}: failed to generate user →`, e);
-                return this.generateStudentUserWithRetry(params, sessionid, maxRetries, retryCount + 1);
+                return this.generateStudentUserWithRetry(simlet_id, params, sessionid, maxRetries, retryCount + 1);
             } else {
                 throw new Error(`Failed after ${maxRetries} retries: ${e.message}`);
             }
