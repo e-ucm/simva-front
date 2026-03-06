@@ -125,7 +125,7 @@ var GroupAllocatorPainter = {
 		let tmp = this;
 		const selectedTest = $(`#allocation_group_${groupId}`).val();
 
-		Simva.allocateToSession(tmp.study.simlet_id, selectedTest, groupId, {}, function(error, result){
+		Simva.allocateToSession(tmp.study.simlet_id, groupId, selectedTest, null, function(error, result){
 			if(error){
 				$.toast({
 					heading: tmp.add_error,
@@ -161,21 +161,21 @@ var GroupAllocatorPainter = {
 		return topaint;
 	},
 
-	updateAllocation: function(group){
+	updateAllocation: function(groupId){
 		let previous = null
 		let tmp = this;
-		const selectedTest = $(`#allocation_${group}`).val();
+		const selectedTest = $(`#allocation_${groupId}`).val();
 
 		if(!this.allocator.allocations){
 			this.allocator.allocations = {};
 		}
 
-		previous = this.allocator.allocations[group];
-		this.allocator.allocations[group]  = $(`#allocation_${group}`).val();
-		Simva.allocateToSession(tmp.study.simlet_id, selectedTest, group, {}, function(error, result){
+		previous = this.allocator.allocations[groupId];
+		this.allocator.allocations[groupId]  = $(`#allocation_${groupId}`).val();
+		Simva.allocateToSession(tmp.study.simlet_id, groupId, selectedTest, null, function(error, result){
 			if(error){
-				tmp.allocator.allocations[group] = previous;
-				$(`#allocation_${group}`).val(previous);
+				tmp.allocator.allocations[groupId] = previous;
+				$(`#allocation_${groupId}`).val(previous);
 
 				$.toast({
 					heading: tmp.add_error,
@@ -196,21 +196,20 @@ var GroupAllocatorPainter = {
 		});
 	},
 
-	addAllocation: function(){
+	addAllocation: function(groupId){
 		let tmp = this;
 
-		let participant = $('#edit_allocator_content select[name="username"]').val();
 		let test = $('#edit_allocator_content select[name="test"]').val();
 
 		if(!this.allocator.allocations){
 			this.allocator.allocations = {};
 		}
 
-		this.allocator.allocations[participant] = test;
+		this.allocator.allocations[groupId] = test;
 
-		Simva.allocateToSession(this.study.simlet_id, test, participant, {}, function(error, result){
+		Simva.allocateToSession(this.study.simlet_id, groupId, test, null, function(error, result){
 			if(error){
-				delete tmp.allocator.allocations[participant];
+				delete tmp.allocator.allocations[groupId];
 				$.toast({
 					heading: tmp.add_error,
 					text: error.message,
@@ -225,7 +224,6 @@ var GroupAllocatorPainter = {
 					icon: 'success',
 					stack: false
 				});
-				toggleAllocatorForm();
 				tmp.paintAllocator(tmp.allocator);
 				reloadStudy();
 			}

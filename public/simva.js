@@ -278,8 +278,8 @@ var Simva = {
 		Utils.get(`/bff/studies/${study_id}/tests/${test_id}/participants`, callback);
 	},
 
-	allocateToSession: function(study_id, test_id, id, payload, callback){
-		Utils.post(`/bff/studies/${study_id}/tests/${test_id}/allocate/${id}`, payload || {}, callback);
+	allocateToSession: function(study_id, group_id, test_id, participant_id, callback){
+		Utils.post(`/bff/studies/${study_id}/groups/${group_id}/allocate/${test_id}`, participant_id ? { participant_id: participant_id } : {}, callback);
 	},
 
 	getSessionPermissions: function(study_id, test_id, callback){

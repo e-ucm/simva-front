@@ -368,8 +368,9 @@ class Simva {
 		this.post(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/activate`, { activate }, sessionId, callback);
 	}
 
-	allocateToSession(study_id, test_id, id, payload, sessionId, callback){
-		this.post(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/allocate/${id}`, payload || {}, sessionId, callback);
+	allocateToSession(study_id, group_id, test_id, participant_id, sessionId, callback){
+		const payload = participant_id ? { participant_id: parseInt(participant_id) } : {};
+		this.post(`${this.apiurl}/simlets/${study_id}/groups/${group_id}/allocate/${test_id}`, payload, sessionId, callback);
 	}
 
 	getSessionPermissions(study_id, test_id, sessionId, callback){

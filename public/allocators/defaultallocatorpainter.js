@@ -41,6 +41,15 @@ var DefaultAllocatorPainter = {
 		this.groups = groups;
 	},
 
+	findGroupForParticipant: function(userId){
+		for(let i = 0; i < this.groups.length; i++){
+			if(this.groups[i].participants && this.groups[i].participants.includes(userId)){
+				return this.groups[i].group_id;
+			}
+		}
+		return null;
+	},
+
 	getFormTitle: function(){
 		return this.add_title;
 	},
@@ -72,9 +81,15 @@ var DefaultAllocatorPainter = {
 			toret += `<option value="${tests[i].session_id}">${tests[i].session_name}</option>`;
 		}
 
-		toret += `</select><input type="button" value="${this.add_title}" onclick="DefaultAllocatorPainter.addAllocation()">`;
+		toret += `</select><input type="button" value="${this.add_title}" onclick="DefaultAllocatorPainter.addAllocationFromForm()">`;
 
 		return toret;
+	},
+
+	addAllocationFromForm: function(){
+		let userId = $('#edit_allocator_content select[name="user_id"]').val();
+		let groupId = this.findGroupForParticipant(userId);
+		this.addAllocation(groupId);
 	},
 
 	paintAllocator: function(allocator){
@@ -153,7 +168,7 @@ var DefaultAllocatorPainter = {
 		let tmp = this;
 		const selectedTest = $(`#allocation_${groupId}_${userId}`).val();
 
-		Simva.allocateToSession(tmp.study.simlet_id, selectedTest, userId, {}, function(error, result){
+		Simva.allocateToSession(tmp.study.simlet_id, groupId, selectedTest, userId, function(error, result){
 			if(error){
 				$.toast({
 					heading: tmp.add_error,
@@ -175,12 +190,13 @@ var DefaultAllocatorPainter = {
 	},
 
 	generateRow: function(allocation){
+		let groupId = this.findGroupForParticipant(allocation.user_id);
 		let topaint = `<tr><td>${allocation.displayUser}</td>
 			<td><select id="allocation_${allocation.user_id}"
-			onchange="DefaultAllocatorPainter.updateAllocation('${allocation.user_id}')">`;
+			onchange="DefaultAllocatorPainter.updateAllocation('${allocation.user_id}', '${groupId}')">`;
 
 		for (var i = 0; i < this.tests.length; i++) {
-			selected=(this.tests[i].session_id === allocation.test ? 'selected' : '')
+			let selected = (this.tests[i].session_id === allocation.test ? 'selected' : '');
 			topaint += `<option value="${this.tests[i].session_id}" ${selected}> 
 			${this.tests[i].session_name}</option>`;
 		}
@@ -188,14 +204,14 @@ var DefaultAllocatorPainter = {
 		return topaint;
 	},
 
-	updateAllocation: function(userId){
+	updateAllocation: function(userId, groupId){
 		let previous = this.allocator.allocations[userId];
 		let tmp = this;
 		const selectedTest = $(`#allocation_${userId}`).val();
 
 		if(this.allocator.allocations){
 			this.allocator.allocations[userId] = $(`#allocation_${userId}`).val();
-			Simva.allocateToSession(tmp.study.simlet_id, selectedTest, userId, {}, function(error, result){
+			Simva.allocateToSession(tmp.study.simlet_id, groupId, selectedTest, userId, function(error, result){
 				if(error){
 					tmp.allocator.allocations[userId] = previous;
 					$(`#allocation_${userId}`).val(previous);
@@ -220,7 +236,7 @@ var DefaultAllocatorPainter = {
 		}
 	},
 
-	addAllocation: function(){
+	addAllocation: function(groupId){
 		let tmp = this;
 
 		let userId = $('#edit_allocator_content select[name="user_id"]').val();
@@ -243,7 +259,7 @@ var DefaultAllocatorPainter = {
 
 		this.allocator.allocations[userId] = test;
 
-		Simva.allocateToSession(this.study.simlet_id, test, userId, {}, function(error, result){
+		Simva.allocateToSession(this.study.simlet_id, groupId, test, userId, function(error, result){
 			if(error){
 				delete tmp.allocator.allocations[userId];
 				$.toast({
@@ -260,7 +276,6 @@ var DefaultAllocatorPainter = {
 					icon: 'success',
 					stack: false
 				});
-				toggleAllocatorForm();
 				tmp.paintAllocator(tmp.allocator);
 				reloadStudy();
 			}

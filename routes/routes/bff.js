@@ -642,8 +642,8 @@ module.exports = function(auth, config){
         });
     });
 
-    router.post('/studies/:studyid/tests/:testid/allocate/:id', auth, async (req, res, next) => {
-        Simva.allocateToSession(req.params["studyid"], req.params["testid"], req.params['id'], req.body || {}, req.session.id, (error, result) => {
+    router.post('/studies/:studyid/groups/:groupid/allocate/:testid', auth, async (req, res, next) => {
+        Simva.allocateToSession(req.params["studyid"], req.params["groupid"], req.params["testid"], req.body?.participant_id || null, req.session.id, (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
