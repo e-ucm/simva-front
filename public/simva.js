@@ -169,6 +169,10 @@ var Simva = {
 		Utils.delete(`/bff/simlets/${simlet_id}/groups/${group_id}`, callback);
 	},
 
+	addGroupParticipant: function(simlet_id, group_id, participant_id, callback){
+		Utils.post(`/bff/simlets/${simlet_id}/groups/${group_id}/participants/${participant_id}`, { }, callback);
+	},
+
 	getGroupParticipants: function(simlet_id, group_id, callback){
 		Utils.get(`/bff/simlets/${simlet_id}/groups/${group_id}/participants`, callback);
 	},

@@ -58,9 +58,23 @@ module.exports = function(auth, config){
     * USERS
     * 
     */
-    router.post('/groups/:groupid/users', auth, async (req, res, next) => {
-        if(req.body.algorithm && req.body.length && req.body.batchLength) {
-            let groupid = req.params['groupid'];
+    router.post('/simlets/:simletid/groups/:groupid/participants/:participantid', auth, async (req, res, next) => {
+        let simletid = req.params['simletid'];
+        let groupid = req.params['groupid'];
+        let participantid = req.params['participantid'];
+        Simva.addGroupParticipant(simletid, groupid, participantid, req.session.id, (error, result) => {
+            if(error) {
+                    next(error.response.data);
+                } else {
+                    res.status(200).send(result);
+                }
+            });
+    });
+
+    router.post('/simlets/:simletid/groups/:groupid/users', auth, async (req, res, next) => {
+        let simletid = req.params['simletid'];
+        let groupid = req.params['groupid'];
+        if(req.body.algorithm && req.body.length && req.body.batchLength) {    
             let users=[];
             let params = {
                 algorithm: req.body.algorithm,
@@ -72,7 +86,7 @@ module.exports = function(auth, config){
             while (users.length < batchLength) {
                 // Fire off remaining promises in parallel
                 const remaining = batchLength - users.length;
-                const promises = Array.from({ length: remaining }, () => groupcontroler.generateStudentUserWithRetry(params, req.session.id, 5));
+                const promises = Array.from({ length: remaining }, () => groupcontroler.generateStudentUserWithRetry(simletid, params, req.session.id, 5));
                 logger.info("Test");
                 try {
                     const results = await Promise.all(promises);
@@ -88,7 +102,7 @@ module.exports = function(auth, config){
 
             res.status(200).send(users);
         } else {
-            Simva.register(req.params["groupid"], req.body.username, req.body.email, req.body.password, req.body.role, req.session.id, (error, result) => {
+            Simva.register(simletid, groupid, req.body.username, req.body.email, req.body.password, req.body.role, req.session.id, (error, result) => {
                 if(error) {
                     next(error.response.data);
                 } else {
@@ -378,7 +392,7 @@ module.exports = function(auth, config){
         let groupid = req.params['groupid'];
         let participantid = req.params['participantid'];
         let removeKeycloak = req.query.keycloakDelete === 'true';
-        Simva.deleteGroupParticipants(simlet_id, groupid, participantid, removeKeycloak, req.session.id, (error, result) => {
+        Simva.deleteGroupParticipant(simlet_id, groupid, participantid, removeKeycloak, req.session.id, (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {

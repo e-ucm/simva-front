@@ -214,11 +214,15 @@ class Simva {
 		this.delete(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}`, sessionId, callback);
 	}
 
+	addGroupParticipant(simlet_id, group_id, participant_id, sessionId, callback){
+		this.post(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/participants/${participant_id}`, { }, sessionId, callback);
+	}
+
 	getGroupParticipants(simlet_id, group_id, sessionId, callback){
 		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/participants`, sessionId, callback);
 	}
 	
-	deleteGroupParticipants(simlet_id, group_id, participant_id, keycloakDelete, sessionId, callback){
+	deleteGroupParticipant(simlet_id, group_id, participant_id, keycloakDelete, sessionId, callback){
 		this.delete(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/participants/${participant_id}?keycloakDelete=${keycloakDelete}`, sessionId, callback);
 	}
 
