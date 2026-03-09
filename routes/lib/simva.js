@@ -373,6 +373,10 @@ class Simva {
 		this.post(`${this.apiurl}/simlets/${study_id}/groups/${group_id}/allocate/${test_id}`, payload, sessionId, callback);
 	}
 
+	allocateRandomly(study_id, group_id, data, sessionId, callback){
+		this.post(`${this.apiurl}/simlets/${study_id}/groups/${group_id}/allocate/random`, data, sessionId, callback);
+	}
+
 	getSessionPermissions(study_id, test_id, sessionId, callback){
 		this.get(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/permissions`, sessionId, callback);
 	}

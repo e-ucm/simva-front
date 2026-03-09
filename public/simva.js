@@ -282,6 +282,10 @@ var Simva = {
 		Utils.post(`/bff/studies/${study_id}/groups/${group_id}/allocate/${test_id}`, participant_id ? { participant_id: participant_id } : {}, callback);
 	},
 
+	allocateRandomly: function(study_id, group_id, data, callback){
+		Utils.post(`/bff/studies/${study_id}/groups/${group_id}/allocate/random`, data, callback);
+	},
+
 	getSessionPermissions: function(study_id, test_id, callback){
 		Utils.get(`/bff/studies/${study_id}/tests/${test_id}/permissions`, callback);
 	},

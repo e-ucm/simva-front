@@ -652,6 +652,16 @@ module.exports = function(auth, config){
         });
     });
 
+    router.post('/studies/:studyid/groups/:groupid/allocate/random', auth, async (req, res, next) => {
+        Simva.allocateRandomly(req.params["studyid"], req.params["groupid"], req.body, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
     router.get('/studies/:studyid/tests/:testid/permissions', auth, async (req, res, next) => {
         Simva.getSessionPermissions(req.params["studyid"], req.params["testid"], req.session.id, (error, result) => {
             if(error) {
