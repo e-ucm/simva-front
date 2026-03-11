@@ -78,7 +78,7 @@ router.get('/e-ucm', function(req, res, next) {
 });
 
 router.get('/', usertools.auth(0), function(req, res, next) {
-  if(req.session.user.data.role == 'teacher'){
+  if(req.session.user.data.role == 'teacher' || req.session.user.data.role == 'administrator' || req.session.user.data.role == 'lrsmanager'){
     res.render('home', { 
       config: config, 
       user: req.session.user,

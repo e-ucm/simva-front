@@ -85,7 +85,7 @@ module.exports = function(auth, config){
   });
 
   router.get('/', auth, function(req, res, next) {
-    if(req.session.user.data.role === 'teacher'){
+    if(req.session.user.data.role === 'teacher' || req.session.user.data.role === 'administrator'){
       res.render('studies_list', { 
         config: config, 
         user: req.session.user,
