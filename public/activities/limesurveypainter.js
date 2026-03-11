@@ -322,7 +322,7 @@ var LimeSurveyPainter = {
 	},
 
 	openEditLimesurvey: function(activityId, surveyid){
-		$('#iframe_floating iframe').prop('src', `${this.editlimesurveyurl}${surveyid}`);
+		$('#iframe_floating iframe').prop('src', `${this.editlimesurveyurl.replace('{{surveyId}}', surveyid)}`);
 		Simva.setSurveyOwner(activityId, function(error, result){
 			let currentSrc = $('#iframe_floating iframe').prop('src');
 			$('#iframe_floating iframe').prop('src', `${currentSrc}`);

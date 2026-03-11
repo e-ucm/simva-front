@@ -1188,7 +1188,7 @@
 			<input class="yellow" type="button" value="<%- t('sessions.edit.title', { ns : 'SIMLETs' }) %>" onclick="openEditTestForm('${test.session_id}')">
 			<input class="red" type="button" value="<%- t('sessions.delete.title', { ns : 'SIMLETs' }) %>" onclick="deleteTest('${test.session_id}', '${test.session_name}')">
 			<input class="orange" type="button" value="<%- t('sessions.duplicate.title', { ns : 'SIMLETs' }) %>" onclick="openEditDuplicateForm('${test.session_id}')">`;
-		if(Boolean(test.session_active)) {
+		if(test.session_status === "active") {
 			testDiv+=`<input class="blue" type="button" value="<%- t('sessions.desactivate.title', { ns : 'SIMLETs' }) %>" onclick="activateTest('${test.session_id}', false)">`;
 		} else {
 			testDiv+=`<input class="blue" type="button" value="<%- t('sessions.activate.title', { ns : 'SIMLETs' }) %>" onclick="activateTest('${test.session_id}', true)">`;

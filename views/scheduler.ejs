@@ -235,7 +235,6 @@
 
 						if(!error){
 							let activity = result.activities[result.next];
-							activity.activity_id = result.next;
 							Simva.isActivityOpenable(activity.activity_id, function(error, result){
 								if(!error){
 									if(activity.user_managed){
