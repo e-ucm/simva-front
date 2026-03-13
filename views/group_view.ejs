@@ -127,7 +127,7 @@
 <script type="text/javascript">
 	if(true)  {
 		// Create an instance of SSEClientManager
-		Simva.getGroupEventsPresignedUrl('<%= group %>', function(error, result){
+		Simva.getGroupEventsPresignedUrl('<%= simletid %>', '<%= group %>', function(error, result){
 			if(!error) {
 				const presignedUrl = result.url;
 				const sseClient = new SSEClientManager(presignedUrl);

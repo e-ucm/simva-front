@@ -4,9 +4,27 @@ module.exports = function(auth, config){
   const logger = require('../../logger');
   const { createHMACKey } = require("../lib/hMacKey/crypto.js");
   const { createUrl } = require("../lib/hMacKey/tokens.js");
+  const SimvaAsync = require('../lib/simvaAsync');
   const sseManager = require('../lib/sseManager');  // Import SSE Manager
   const sseClientsListManager = require('../lib/sseClientsListManager');
   const KafkaClient = require("../lib/kafka");
+
+  function resolveUserIdFromSession(sessionUser) {
+    const candidates = [
+      sessionUser?.sql?.user_id,
+      sessionUser?.data?.user_id,
+      sessionUser?.data?.id,
+      sessionUser?.id
+    ];
+
+    for (const value of candidates) {
+      if (value !== undefined && value !== null && value !== '' && value !== 'undefined') {
+        return value;
+      }
+    }
+
+    return undefined;
+  }
 
   initHmacKey();
   kafka = new KafkaClient(config.kafka);
@@ -34,10 +52,18 @@ module.exports = function(auth, config){
 
     async function processMessage(message) {
         // Broadcast the message to client list
-        var msg = JSON.parse(message.value);
-        var clients=sseClientsListManager.getClientList(msg);
+        var msg = typeof message.value === 'string' ? JSON.parse(message.value) : message.value;
+        const normalizedMsg = {
+          ...msg,
+          studyId: msg.studyId ?? msg.simlet_id,
+          groupId: msg.groupId ?? msg.group_id,
+          user: msg.user ?? msg.username,
+          userId: msg.userId ?? msg.user_id ?? msg.participant_id
+        };
+
+        var clients=sseClientsListManager.getClientList(normalizedMsg);
         logger.info(JSON.stringify(clients));
-        sseManager.sendMessageToClientList(clients, msg);
+        sseManager.sendMessageToClientList(clients, normalizedMsg);
     }
   
 
@@ -46,14 +72,16 @@ module.exports = function(auth, config){
    * 
    */
   router.get('/:studyid/schedule/events/getPresignedUrl', async (req, res, next) => {
-    const options = {
-      studyId: req.params['studyid'],
-      username: req.session.user.data.username,
-      userRole:"student",
-      sessionID: req.session.id
-    };
-
     try {
+        const me = await SimvaAsync.getCurrentUser(req.session.id);
+        const userId = me?.user_id ?? resolveUserIdFromSession(req.session.user);
+        const options = {
+          studyId: req.params['studyid'],
+          username: req.session.user.data.username,
+          userRole:"student",
+          sessionID: req.session.id,
+          ...(userId !== undefined ? { userId } : {})
+        };
         const url = `${config.simva.url}/events`;
         const result = await createUrl(url, options, config.hmac.hmacKey);
         res.status(200).send(result.data);
@@ -67,14 +95,16 @@ module.exports = function(auth, config){
    * 
    */
   router.get('/:studyid/events/getPresignedUrl', async (req, res, next) => {
-    const options = {
-      studyId: req.params['studyid'],
-      username: req.session.user.data.username,
-      userRole:"teacher",
-      sessionID: req.session.id
-    };
-
     try {
+        const me = await SimvaAsync.getCurrentUser(req.session.id);
+        const userId = me?.user_id ?? resolveUserIdFromSession(req.session.user);
+        const options = {
+          studyId: req.params['studyid'],
+          username: req.session.user.data.username,
+          userRole:"teacher",
+          sessionID: req.session.id,
+          ...(userId !== undefined ? { userId } : {})
+        };
         const url = `${config.simva.url}/events`;
         params={};
         const result = await createUrl(url, options, config.hmac.hmacKey);

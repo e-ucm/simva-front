@@ -32,7 +32,155 @@ var ActivityPainter = {
 			return String(participant.user_id);
 		}
 
+		if(participant && participant.participant_id !== undefined && participant.participant_id !== null){
+			return String(participant.participant_id);
+		}
+
+		if(participant && participant.id !== undefined && participant.id !== null){
+			return String(participant.id);
+		}
+
+		if(participant && participant.isToken && participant.token !== undefined && participant.token !== null){
+			return String(participant.token);
+		}
+
 		return String(participant.username);
+	},
+
+	getParticipantKeys: function(participant){
+		let keys = [];
+
+		if(participant && participant.user_id !== undefined && participant.user_id !== null){
+			keys.push(String(participant.user_id));
+		}
+
+		if(participant && participant.participant_id !== undefined && participant.participant_id !== null){
+			keys.push(String(participant.participant_id));
+		}
+
+		if(participant && participant.id !== undefined && participant.id !== null){
+			keys.push(String(participant.id));
+		}
+
+		if(participant && participant.username !== undefined && participant.username !== null){
+			keys.push(String(participant.username));
+		}
+
+		if(participant && participant.token !== undefined && participant.token !== null){
+			keys.push(String(participant.token));
+		}
+
+		if(participant && participant.isToken && participant.token !== undefined && participant.token !== null){
+			keys.unshift(String(participant.token));
+		}
+
+		return Array.from(new Set(keys));
+	},
+
+	getParticipantMappedValue: function(map, participant){
+		if(!map){
+			return undefined;
+		}
+
+		const keys = this.getParticipantKeys(participant);
+		for (let i = 0; i < keys.length; i++) {
+			if(Object.prototype.hasOwnProperty.call(map, keys[i])) {
+				return map[keys[i]];
+			}
+		}
+
+		return undefined;
+	},
+
+	isDownloadUrl: function(value){
+		if(typeof value !== 'string') {
+			return false;
+		}
+
+		return /^(https?:)?\/\//.test(value) || value.startsWith('/');
+	},
+
+	downloadContent: function(source, filename, errorHeading){
+		if(!this.isDownloadUrl(source)) {
+			Utils.download(filename, source);
+			return;
+		}
+
+		fetch(source)
+			.then((response) => {
+				if(!response.ok) {
+					throw new Error(`HTTP ${response.status}`);
+				}
+				return response.blob();
+			})
+			.then((blob) => {
+				const objectUrl = window.URL.createObjectURL(blob);
+				const link = document.createElement('a');
+				link.href = objectUrl;
+				link.download = filename;
+				link.style.display = 'none';
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+				window.URL.revokeObjectURL(objectUrl);
+			})
+			.catch((error) => {
+				$.toast({
+					heading: errorHeading,
+					text: error.message,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+			});
+	},
+
+	displayResultInFloatingFrame: function(content){
+		const stringifyres = String(content)
+			.replace(/</g, "&lt;")
+			.replace(/>/g, "&gt;");
+
+		let renderedContent = `<pre style="padding: 20px; background-color: #f0f0f0; color: #333; font-family: monospace; white-space: pre-wrap; word-wrap: break-word;">${stringifyres}</pre>`;
+
+		let context = $('#iframe_floating iframe')[0].contentWindow.document;
+		let body = $('body', context);
+
+		body.html(renderedContent);
+		body.css({
+			'margin': '0',
+			'padding': '0',
+			'overflow': 'auto',
+			'height': '100vh'
+		});
+
+		Utils.toggleAddForm('iframe_floating');
+	},
+
+	openResultContent: function(source, errorHeading){
+		if(!this.isDownloadUrl(source)) {
+			this.displayResultInFloatingFrame(source);
+			return;
+		}
+
+		fetch(source)
+			.then((response) => {
+				if(!response.ok) {
+					throw new Error(`HTTP ${response.status}`);
+				}
+				return response.text();
+			})
+			.then((content) => {
+				this.displayResultInFloatingFrame(content);
+			})
+			.catch((error) => {
+				$.toast({
+					heading: errorHeading,
+					text: error.message,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+			});
 	},
 
 	getExtraForm: function (callback) {
@@ -91,8 +239,9 @@ var ActivityPainter = {
 
 		for (var i = 0; i < participants.length; i++) {
 			const participantKey = this.getParticipantKey(participants[i]);
-			if(results[participantKey]) {
-				$(`#${activity.activity_id}_${participantKey}_target`).attr('href', results[participantKey]);
+			const target = this.getParticipantMappedValue(results, participants[i]);
+			if(target) {
+				$(`#${activity.activity_id}_${participantKey}_target`).attr('href', target);
 			}
 		}
 	},
@@ -212,7 +361,7 @@ var ActivityPainter = {
 
 		for (var i = 0; i < participants.length; i++) {
 			const participantKey = this.getParticipantKey(participants[i]);
-			let value = status[participantKey];
+			let value = this.getParticipantMappedValue(status, participants[i]);
 			let initText = "";
 			let colorClass = 'red';
 
@@ -274,11 +423,12 @@ var ActivityPainter = {
 
 		for (var i = 0; i < participants.length; i++) {
 			const participantKey = this.getParticipantKey(participants[i]);
-			if(status[participantKey]){
+			const completionValue = this.getParticipantMappedValue(status, participants[i]);
+			if(completionValue){
 				done++;
 			}
 			if(checkbox) {
-				if(status[participantKey]){
+				if(completionValue){
 					$(`#completion_${activity.activity_id}_${participantKey}`).addClass('green');
 					$(`#completion_${activity.activity_id}_${participantKey}`).removeClass('red');
 				}else{
@@ -286,16 +436,16 @@ var ActivityPainter = {
 					$(`#completion_${activity.activity_id}_${participantKey}`).addClass('red');
 				}
 	
-				$(`#completion_${activity.activity_id}_${participantKey}`).find('input[type="checkbox"]').prop('checked', status[participantKey]);
+				$(`#completion_${activity.activity_id}_${participantKey}`).find('input[type="checkbox"]').prop('checked', Boolean(completionValue));
 			} else {
 				let completion = "";
-				if(status[participantKey]==true) {
+				if(completionValue==true) {
 					completion=`<span>${completed_on}</span>`;
 				} else {
 					completion=`<span>${completed_off}</span>`;
 				}
 				
-			 	$(`#completion_${activity.activity_id}_${participantKey}`).addClass(!status[participantKey] ? 'red' : 'green');
+		 		$(`#completion_${activity.activity_id}_${participantKey}`).addClass(!completionValue ? 'red' : 'green');
 				$(`#completion_${activity.activity_id}_${participantKey}`).empty();
 				$(`#completion_${activity.activity_id}_${participantKey}`).append(completion);
 			}
@@ -332,7 +482,7 @@ var ActivityPainter = {
 
 		for (var i = 0; i < participants.length; i++) {
 			const participantKey = this.getParticipantKey(participants[i]);
-			let value = status[participantKey];
+			let value = this.getParticipantMappedValue(status, participants[i]);
 			if(value === null || value === undefined) {
 				$(`#progress_${activity.activity_id}_${participantKey}`).empty();
 				$(`#progress_${activity.activity_id}_${participantKey}`).append('---');
@@ -389,7 +539,7 @@ var ActivityPainter = {
 
 		for (var i = 0; i < participants.length; i++) {
 			const participantKey = this.getParticipantKey(participants[i]);
-			let status = results[participantKey];
+			let status = this.getParticipantMappedValue(results, participants[i]);
 			let result= `<span>${displayDefaultValue}</span>`;
 			let color = 'red';
 			let state = defaultValue;
@@ -583,7 +733,7 @@ var ActivityPainter = {
 	},
 
 	openResults: function(activity, user){
-		Simva.getActivityResultForUser(activity, user, function(error, result){
+		Simva.getActivityResultForUser(activity, user, (error, result) => {
 			if(error){
 				$.toast({
 					heading: this.commun.result_error_loading,
@@ -593,43 +743,27 @@ var ActivityPainter = {
 					stack: false
 				});
 			} else {
-				// Extract and sanitize the string
-				const stringifyres = result[user]
-					.replace(/</g, "&lt;")
-					.replace(/>/g, "&gt;");
-				// Create a pre-formatted text element with styling
-				let content = `<pre style="padding: 20px; background-color: #f0f0f0; color: #333; font-family: monospace; white-space: pre-wrap; word-wrap: break-word;">${stringifyres}</pre>`;
-            
-				let context = $('#iframe_floating iframe')[0].contentWindow.document;
-				let body = $('body', context);
-				
-				// Set the content and ensure proper styling
-				body.html(content);
-				body.css({
-					'margin': '0',
-					'padding': '0',
-					'overflow': 'auto',
-					'height': '100vh'
-				});
-				Utils.toggleAddForm('iframe_floating');
+				this.openResultContent(result[user], this.commun.result_error_loading);
 			}
 		});
 	},
 
 	downloadResults: function(activity, user){
+		var toastParams = {
+			heading: this.commun.result_error_downloading,
+			position: 'top-right',
+			icon: 'error',
+			stack: false
+		};
+
 		if(user) {
-			Simva.getActivityResultForUser(activity, user, function(error, result){
+			Simva.getActivityResultForUser(activity, user, (error, result) => {
 				if(error){
-					$.toast({
-						heading: this.commun.result_error_downloading,
-						text: error.message,
-						position: 'top-right',
-						icon: 'error',
-						stack: false
-					});
+					toastParams.text = error.message;
+					$.toast(toastParams);
 				} else {
 					var filename = `${this.communSpecific.result_file_prefix}_${activity}_${user}.json`;
-					Utils.download(filename, result[user]);
+					this.downloadContent(result[user], filename, this.commun.result_error_downloading);
 				}
 			});
 		} else {
@@ -693,7 +827,28 @@ var ActivityPainter = {
 					stack: false
 				});
 			}else{
-				console.info("OK");
+				const downloadUrl = result && result.url ? result.url : null;
+
+				if(!downloadUrl) {
+					$.toast({
+						heading: 'Error loading the result',
+						text: 'No download URL returned by the server',
+						position: 'top-right',
+						icon: 'error',
+						stack: false
+					});
+					return;
+				}
+
+				const link = document.createElement('a');
+				link.href = downloadUrl;
+				link.target = '_blank';
+				link.rel = 'noopener noreferrer';
+				link.download = '';
+				link.style.display = 'none';
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
 			}
 		})
 	},

@@ -343,11 +343,14 @@
 				// Example: You might send events like "activity_initialized" from the server
 				sseClient.triggerEvent('activity_initialized');
 				sseClient.on('activity_initialized', (data) => {
-					if(data.activityType == "gameplay") {
-						PainterFactory.Painters[data.activityType].updateActivityProgress(data.activityId, data.user, 0);
+					const activityType = data.activity_type;
+					const activityId = data.activity_id;
+					const user = data.username;
+					if(activityType == "gameplay") {
+						PainterFactory.Painters[activityType].updateActivityProgress(activityId, user, 0);
 					}
-					if(data.activityType == "limesurvey") {
-						PainterFactory.Painters[data.activityType].updateActivityResult(data.activityId, data.user, "Started");
+					if(activityType == "limesurvey") {
+						PainterFactory.Painters[activityType].updateActivityResult(activityId, user, "Started");
 					}
 				});
 
@@ -355,11 +358,15 @@
 				// Example: You might send events like "activity_progressed" from the server
 				sseClient.triggerEvent('activity_progressed');
 				sseClient.on('activity_progressed', (data) => {
-					if(data.activityType == "gameplay") {
-						PainterFactory.Painters[data.activityType].updateActivityProgress(data.activityId, data.user, data.val);
+					const activityType = data.activity_type;
+					const activityId = data.activity_id;
+					const user = data.username;
+					const val = data.progress !== undefined ? data.progress : undefined;
+					if(activityType == "gameplay") {
+						PainterFactory.Painters[activityType].updateActivityProgress(activityId, user, val);
 					}
-					if(data.activityType == "limesurvey") {
-						PainterFactory.Painters[data.activityType].updateActivityProgress(data.activityId, data.user, data.val);
+					if(activityType == "limesurvey") {
+						PainterFactory.Painters[activityType].updateActivityProgress(activityId, user, val);
 					}
 				});
 
@@ -367,18 +374,22 @@
 				// Example: You might send events like "activity_completed" from the server
 				sseClient.triggerEvent('activity_completed');
 				sseClient.on('activity_completed', (data) => {
-					if(data.activityType == "gameplay") {
-						PainterFactory.Painters[data.activityType].updateActivityCompletion(data.activityId, data.user, data.status);
+					const activityType = data.activity_type;
+					const activityId = data.activity_id;
+					const user = data.username;
+					const status = data.status !== undefined ? data.status : true;
+					if(activityType == "gameplay") {
+						PainterFactory.Painters[activityType].updateActivityCompletion(activityId, user, status);
 					}
-					if(data.activityType == "manual") {
-						PainterFactory.Painters[data.activityType].updateActivityCompletion(data.activityId, data.user, data.status);
+					if(activityType == "manual") {
+						PainterFactory.Painters[activityType].updateActivityCompletion(activityId, user, status);
 					}
-					if(data.activityType == "limesurvey") {
-						PainterFactory.Painters[data.activityType].updateActivityCompletion(data.activityId, data.user, "true");
-						PainterFactory.Painters[data.activityType].updateActivityResult(data.activityId, data.user, "Completed");
+					if(activityType == "limesurvey") {
+						PainterFactory.Painters[activityType].updateActivityCompletion(activityId, user, "true");
+						PainterFactory.Painters[activityType].updateActivityResult(activityId, user, "Completed");
 					}
-					if(data.activityType == "activity") {
-						PainterFactory.Painters[data.activityType].updateActivityCompletion(data.activityId, data.user, data.status, true);
+					if(activityType == "activity") {
+						PainterFactory.Painters[activityType].updateActivityCompletion(activityId, user, status, true);
 					}
 				});
 

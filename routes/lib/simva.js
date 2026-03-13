@@ -171,6 +171,10 @@ class Simva {
 		this.get(`${this.apiurl}/users/me`, sessionId, callback);
 	}
 
+	getMe(sessionId, callback){
+		this.getCurrentUser(sessionId, callback);
+	}
+
 	islimesurveyadmin(sessionId, callback){
 		this.get(`${this.apiurl}/users/islimesurveyadmin`, sessionId, callback);
 	}

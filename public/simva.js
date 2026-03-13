@@ -198,7 +198,7 @@ var Simva = {
 	},
 
 	getStudyEventsPresignedUrl: function(study_id, callback){
-		Utils.get(`/studies/${study_id}/events/getPresignedUrl`, callback);
+		Utils.get(`/simlets/${study_id}/events/getPresignedUrl`, callback);
 	},
 
 	duplicateTestFromStudy: function(study_id, name, testId, callback){
@@ -332,11 +332,11 @@ var Simva = {
 
 	
 	getScheduleEventsPresignedUrl: function(study_id, callback){
-		Utils.get(`/studies/${study_id}/schedule/events/getPresignedUrl`, callback);
+		Utils.get(`/simlets/${study_id}/schedule/events/getPresignedUrl`, callback);
 	},
 
-	getGroupEventsPresignedUrl: function(group_id, callback) {
-		Utils.get(`/groups/${group_id}/events/getPresignedUrl`, callback);
+	getGroupEventsPresignedUrl: function(simlet_id, group_id, callback) {
+		Utils.get(`/groups/${simlet_id}/${group_id}/events/getPresignedUrl`, callback);
 	},
 
 	getEventsPresignedUrl: function(callback){

@@ -45,6 +45,10 @@ module.exports = function(auth, config){
             let studyid = req.query.studyId;
             let groupid = req.query.groupId;
             let user = req.query.username;
+            let userId = req.query.userId;
+            if (userId === 'undefined' || userId === '' || userId === 'null') {
+                userId = undefined;
+            }
             let userRole = req.query.userRole;
             let sessionID = req.query.sessionID;
             var clientId = sseManager.addClient(req, res);
@@ -53,21 +57,23 @@ module.exports = function(auth, config){
                 const options = {
                     id: studyid,
                     user: user,
+                    userId: userId,
                     userRole: userRole,
                     clientId: clientId
                 };
                 logger.debug(JSON.stringify(options));
-                sseClientsListManager.addActivityAndUserToMap(options.id,options.user, options.userRole, options.clientId);
+                sseClientsListManager.addActivityAndUserToMap(options.id, options.user, options.userRole, options.clientId, options.userId);
             }
             if(groupid) {
                 const options = {
                     id: groupid,
                     user: user,
+                    userId: userId,
                     userRole: userRole,
                     clientId: clientId
                 };
                 logger.debug(JSON.stringify(options));
-                sseClientsListManager.addGroupAndUserToMap(options.id,options.user, options.userRole, options.clientId);
+                sseClientsListManager.addGroupAndUserToMap(options.id, options.user, options.userRole, options.clientId, options.userId);
             }
             sseManager.sendMessageToClientList([clientId], {message:'ping',type:'ping'});
         } else {

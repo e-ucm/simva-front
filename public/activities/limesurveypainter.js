@@ -236,8 +236,8 @@ var LimeSurveyPainter = {
 		if(!activity.data.result){
 			// Still update totals even without results
 			PainterFactory.Painters["activity"].paintActivityResult(activity, null, "No Results", participants, this.communSpecific.result_zero, "Started", this.communSpecific.result_view_partial_value, "Completed",this.communSpecific.result_view_final_value,"LimeSurveyPainter");
-			PainterFactory.Painters["activity"].paintActivityProgress(activity, null, participants);
-			PainterFactory.Painters["activity"].paintActivityInit(activity, null, participants);
+			PainterFactory.Painters["activity"].paintActivityProgress(activity, activity.data.progress, participants);
+			PainterFactory.Painters["activity"].paintActivityInit(activity, activity.data.init, participants);
 			return;
 		}
 		let usernames = Object.keys(activity.data.result);
