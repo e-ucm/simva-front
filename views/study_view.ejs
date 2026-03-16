@@ -339,18 +339,37 @@
 					console.log('Connection to SSE server established.');
 				});
 
+				const resolveParticipantKey = (activityId, data) => {
+					const candidates = [data.userId, data.user_id, data.participant_id, data.username, data.user]
+						.filter((candidate) => candidate !== undefined && candidate !== null)
+						.map((candidate) => String(candidate));
+
+					for (const candidate of candidates) {
+						if (
+							document.getElementById(`progress_${activityId}_${candidate}`) ||
+							document.getElementById(`completion_${activityId}_${candidate}`) ||
+							document.getElementById(`result_${activityId}_${candidate}`) ||
+							document.getElementById(`init_${activityId}_${candidate}`)
+						) {
+							return candidate;
+						}
+					}
+
+					return candidates[0];
+				};
+
 				// Handle custom event types from the server (if applicable)
 				// Example: You might send events like "activity_initialized" from the server
 				sseClient.triggerEvent('activity_initialized');
 				sseClient.on('activity_initialized', (data) => {
 					const activityType = data.activity_type;
 					const activityId = data.activity_id;
-					const user = data.username;
+					const participantKey = resolveParticipantKey(activityId, data);
 					if(activityType == "gameplay") {
-						PainterFactory.Painters[activityType].updateActivityProgress(activityId, user, 0);
+						PainterFactory.Painters[activityType].updateActivityProgress(activityId, participantKey, 0);
 					}
 					if(activityType == "limesurvey") {
-						PainterFactory.Painters[activityType].updateActivityResult(activityId, user, "Started");
+						PainterFactory.Painters[activityType].updateActivityResult(activityId, participantKey, "Started");
 					}
 				});
 
@@ -360,13 +379,13 @@
 				sseClient.on('activity_progressed', (data) => {
 					const activityType = data.activity_type;
 					const activityId = data.activity_id;
-					const user = data.username;
-					const val = data.progress !== undefined ? data.progress : undefined;
+					const participantKey = resolveParticipantKey(activityId, data);
+					const val = data.progress ?? data.value;
 					if(activityType == "gameplay") {
-						PainterFactory.Painters[activityType].updateActivityProgress(activityId, user, val);
+						PainterFactory.Painters[activityType].updateActivityProgress(activityId, participantKey, val);
 					}
 					if(activityType == "limesurvey") {
-						PainterFactory.Painters[activityType].updateActivityProgress(activityId, user, val);
+						PainterFactory.Painters[activityType].updateActivityProgress(activityId, participantKey, val);
 					}
 				});
 
@@ -376,20 +395,20 @@
 				sseClient.on('activity_completed', (data) => {
 					const activityType = data.activity_type;
 					const activityId = data.activity_id;
-					const user = data.username;
-					const status = data.status !== undefined ? data.status : true;
+					const participantKey = resolveParticipantKey(activityId, data);
+					const status = data.status ?? data.value ?? true;
 					if(activityType == "gameplay") {
-						PainterFactory.Painters[activityType].updateActivityCompletion(activityId, user, status);
+						PainterFactory.Painters[activityType].updateActivityCompletion(activityId, participantKey, status);
 					}
 					if(activityType == "manual") {
-						PainterFactory.Painters[activityType].updateActivityCompletion(activityId, user, status);
+						PainterFactory.Painters[activityType].updateActivityCompletion(activityId, participantKey, status);
 					}
 					if(activityType == "limesurvey") {
-						PainterFactory.Painters[activityType].updateActivityCompletion(activityId, user, "true");
-						PainterFactory.Painters[activityType].updateActivityResult(activityId, user, "Completed");
+						PainterFactory.Painters[activityType].updateActivityCompletion(activityId, participantKey, status);
+						PainterFactory.Painters[activityType].updateActivityResult(activityId, participantKey, "Completed");
 					}
 					if(activityType == "activity") {
-						PainterFactory.Painters[activityType].updateActivityCompletion(activityId, user, status, true);
+						PainterFactory.Painters[activityType].updateActivityCompletion(activityId, participantKey, status, true);
 					}
 				});
 

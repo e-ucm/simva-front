@@ -55,6 +55,8 @@ module.exports = function(auth, config){
         var msg = typeof message.value === 'string' ? JSON.parse(message.value) : message.value;
         const normalizedMsg = {
           ...msg,
+          activity_type: msg.activity_type ?? msg.activityType,
+          activity_id: msg.activity_id ?? msg.activityId,
           studyId: msg.studyId ?? msg.simlet_id,
           groupId: msg.groupId ?? msg.group_id,
           user: msg.user ?? msg.username,
