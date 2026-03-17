@@ -107,7 +107,7 @@ var LimeSurveyPainter = {
 				}
 			}
 			// Step 2: Loop through the data and create options
-			Simva.getSurveyList(activity.activity_id, (error, result) => {
+			Simva.getSurveyList((error, result) => {
 				if(!error) {
 					// Step 1: Get the select element
 					var selectElement = document.getElementById('existing_survey_list');
@@ -223,37 +223,70 @@ var LimeSurveyPainter = {
 		callback(null, activity);
 	},
 
-	fullyPaintActivity: function(activity, participants){
+	fullyPaintActivity: async function(activity, participants){
 		this.paintActivity(activity, participants);
-		this.updateParticipants(activity, participants);
+		await this.updateParticipants(activity, participants);
 	},
 
-	updateParticipants: function(activity, participants){
+	updateParticipants: async function(activity, participants){
 		if(activity.data.openable){
 			PainterFactory.Painters["activity"].paintActivityTargets(activity, activity.data.target, participants);
 		}
 		PainterFactory.Painters["activity"].paintActivityCompletion(activity, activity.data.completion, false, participants);
-		if(!activity.data.result){
+		PainterFactory.Painters["activity"].paintActivityProgress(activity, activity.data.progress, participants);
+		PainterFactory.Painters["activity"].paintActivityInit(activity, activity.data.init, participants);
+		console.log("Result");
+		console.log(activity.data.hasresult);
+		console.log(activity.data.result);
+		if(!activity.data.hasresult){
 			// Still update totals even without results
-			PainterFactory.Painters["activity"].paintActivityResult(activity, null, "No Results", participants, this.communSpecific.result_zero, "Started", this.communSpecific.result_view_partial_value, "Completed",this.communSpecific.result_view_final_value,"LimeSurveyPainter");
-			PainterFactory.Painters["activity"].paintActivityProgress(activity, activity.data.progress, participants);
-			PainterFactory.Painters["activity"].paintActivityInit(activity, activity.data.init, participants);
+			PainterFactory.Painters["activity"].paintActivityResult(activity, activity.data.hasresult, "No Results", participants, this.communSpecific.result_zero, "Started", this.communSpecific.result_view_partial_value, "Completed",this.communSpecific.result_view_final_value);
 			return;
 		}
-		let usernames = Object.keys(activity.data.result);
-		let map= {};
-		for (var i = 0; i < usernames.length; i++) {
+		const userids = Object.keys(activity.data.result);
+		const map = {};
+		for (const userid of userids) {
 			let state = this.communSpecific.result_zero;
-			if(activity.data.result[usernames[i]]){
-				if(activity.data.result[usernames[i]].submitdate){
-					state = this.communSpecific.result_view_final;
-				}else{
-					state = this.communSpecific.result_view_partial;
+			try {
+				const value = activity.data.result[userid];
+				map[userid] = state;
+				if (PainterFactory.Painters["activity"].isDownloadUrl(value)) {
+					console.log(`Fetching result for user ${userid} from URL: ${value}`);
+					map[userid] = this.communSpecific.result_view_partial_value;
+					//const response = await fetch(value);
+					//if (!response.ok) {
+					//	throw new Error(`HTTP ${response.status}`);
+					//}
+//
+					//const blob = await response.blob();
+					//const text = await blob.text(); // ⚠️ must await
+					//console.log(text);
+					//let parsed;
+					//try {
+					//	parsed = JSON.parse(text); // assuming JSON
+					//} catch {
+					//	parsed = {};
+					//}
+//
+					//if (parsed.submitdate) {
+					//	map[userid] = this.communSpecific.result_view_final_value;
+					//}
 				}
+			} catch (error) {
+				$.toast({
+					heading: this.commun.result_error_loading,
+					text: error.message,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
 			}
-			map[usernames[i]] = state;
-		}
-		PainterFactory.Painters["activity"].paintActivityResult(activity, map, "No Results", participants, this.communSpecific.result_zero, "Started", this.communSpecific.result_view_partial_value, "Completed",this.communSpecific.result_view_final_value,"LimeSurveyPainter");
+		};
+		console.log("Map:");
+		console.log(map);
+
+
+		PainterFactory.Painters["activity"].paintActivityResult(activity, map, "No Results", participants, this.communSpecific.result_zero, "Started", this.communSpecific.result_view_partial_value, "Completed",this.communSpecific.result_view_final_value);
 		PainterFactory.Painters["activity"].paintActivityProgress(activity, activity.data.progress, participants);
 		PainterFactory.Painters["activity"].paintActivityInit(activity, activity.data.init, participants);
 	},
