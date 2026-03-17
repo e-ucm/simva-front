@@ -236,11 +236,10 @@ var LimeSurveyPainter = {
 		PainterFactory.Painters["activity"].paintActivityProgress(activity, activity.data.progress, participants);
 		PainterFactory.Painters["activity"].paintActivityInit(activity, activity.data.init, participants);
 		console.log("Result");
-		console.log(activity.data.hasresult);
 		console.log(activity.data.result);
-		if(!activity.data.hasresult){
+		if(!activity.data.result){
 			// Still update totals even without results
-			PainterFactory.Painters["activity"].paintActivityResult(activity, activity.data.hasresult, "No Results", participants, this.communSpecific.result_zero, "Started", this.communSpecific.result_view_partial_value, "Completed",this.communSpecific.result_view_final_value);
+			PainterFactory.Painters["activity"].paintActivityResult(activity, null, "No Results", participants, this.communSpecific.result_zero, "Started", this.communSpecific.result_view_partial_value, "Completed",this.communSpecific.result_view_final_value);
 			return;
 		}
 		const userids = Object.keys(activity.data.result);

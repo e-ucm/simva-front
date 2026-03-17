@@ -44,7 +44,7 @@ module.exports = {
                 logger.warn(e);
             }
         }
-        if(act.type == "limesurvey") {
+        if(act.activity_type == "limesurvey") {
             try {
                 act.data.result=await SimvaAsync.getActivityResult(activityid, sessionid);
             } catch(e) {
