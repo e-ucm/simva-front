@@ -151,7 +151,7 @@ var LimeSurveyPainter = {
 		let formdata = Utils.getFormData(jform);
 		let method = $('#new_activity_extras .tab.selected').attr('method');
 
-		activity.name = formdata.name;
+		activity.activity_name = formdata.name;
 		activity.activity_type = this.supportedType;
 
 		switch(method){

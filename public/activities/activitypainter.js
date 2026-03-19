@@ -199,7 +199,7 @@ var ActivityPainter = {
 		let formdata = Utils.getFormData(jform);
 		let activity = {};
 		if(actualActivity.activity_name !== formdata.name) {
-			activity.name = formdata.name;
+			activity.activity_name = formdata.name;
 		}
 		callback(null, activity);
 	},
@@ -211,7 +211,7 @@ var ActivityPainter = {
 		let jform = $(form);
 		let formdata = Utils.getFormData(jform);
 
-		activity.name = formdata.name;
+		activity.activity_name = formdata.name;
 		activity.activity_type = this.supportedType;
 
 		callback(null, activity);

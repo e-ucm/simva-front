@@ -38,11 +38,11 @@ var GameplayActivityPainter = {
 		var gameplay_trace_storage = document.getElementById('edit_gameplay_trace_storage');
 		gameplay_trace_storage.checked = Boolean(activity.activity_trace_storage);
 		var gameplay_backup = document.getElementById('edit_gameplay_backup');
-		gameplay_backup.checked = Boolean(activity.game_backup);
+		gameplay_backup.checked = Boolean(activity.activity_game_backup);
 		var gameplay_scorm_xAPI = document.getElementById('edit_gameplay_scorm_xAPI');
-		gameplay_scorm_xAPI.checked = Boolean(activity.game_scorm_xapi);
+		gameplay_scorm_xAPI.checked = Boolean(activity.activity_game_scorm_xapi);
 		var gameplay_game_uri = document.getElementById('edit_gameplay_game_uri');
-		gameplay_game_uri.value = activity.game_url || "";
+		gameplay_game_uri.value = activity.activity_game_uri || "";
 	},
 
 	extractInformation: function(form, callback){
@@ -51,15 +51,14 @@ var GameplayActivityPainter = {
 		let jform = $(form);
 		let formdata = Utils.getFormData(jform);
 
-		activity.name = formdata.name;
+		activity.activity_name = formdata.name;
 		activity.activity_type = this.supportedType;
 
 		activity.activity_trace_storage = formdata.trace_storage === 'on';
-		activity.game_backup = formdata.backup === 'on';
-		activity.game_scorm_xapi = formdata.scorm_xapi === 'on';
-		if(formdata.game_uri !== ''){
-			activity.game_uri = formdata.game_uri;
-			activity.game_url = formdata.game_uri;
+		activity.activity_game_backup = formdata.backup === 'on';
+		activity.activity_game_scorm_xapi = formdata.scorm_xapi === 'on';
+		if(formdata.activity_game_uri !== ''){
+			activity.activity_game_uri = formdata.game_uri;
 		}
 
 		callback(null, activity);
@@ -71,7 +70,7 @@ var GameplayActivityPainter = {
 		let activity = {};
 
 		if(actualActivity.activity_name !== formdata.name) {
-			activity.name = formdata.name;
+			activity.activity_name = formdata.name;
 		}
 		const actualTraceStorage = actualActivity.activity_trace_storage;
 		let trace_storage = formdata.trace_storage === 'on';
