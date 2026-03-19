@@ -32,26 +32,18 @@ var LimeSurveyPainter = {
 					form+=`<p>${this.specific.new_message}</p>
 						<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">${this.specific.title}</a></p>`
 				} else {
-					form += `<div class="tabs">
-					<span class="tab selected" method="byid" onclick="changeTab(this, 'new_activity_extras','limesurvey_byid')">${this.specific.surveyid_title}</span>
-					<span class="tab" method="byexisting" onclick="changeTab(this,'new_activity_extras','limesurvey_byexisting')">${this.specific.existing_title}</span>
-					<span class="tab" method="bynew" onclick="changeTab(this, 'new_activity_extras','limesurvey_bynew')">${this.specific.new_title}</span>
-					<span class="tab" method="byupload" onclick="changeTab(this, 'new_activity_extras','limesurvey_byupload')">${this.specific.upload_title}</span>
+					form += `<div name="limesurvey_tabs" class="tabs">
+					<span class="tab selected" method="byid" onclick="LimesurveyChangeTab(this, 'new_activity_extras','limesurvey_byid')">${this.specific.surveyid_title}</span>
+					<span class="tab" method="byexisting" onclick="LimesurveyChangeTab(this,'new_activity_extras','limesurvey_byexisting')">${this.specific.existing_title}</span>
+					<span class="tab" method="bynew" onclick="LimesurveyChangeTab(this, 'new_activity_extras','limesurvey_bynew')">${this.specific.new_title}</span>
+					<span class="tab" method="byupload" onclick="LimesurveyChangeTab(this, 'new_activity_extras','limesurvey_byupload')">${this.specific.upload_title}</span>
 					</div>
 					<div id="limesurvey_byid" class="subform selected">
 					<p>${this.specific.surveyid_title}:</p>
 					<input type="number" name="surveyid" placeholder="${this.specific.surveyid_placeholder}">
 					</div>
 					<div id="limesurvey_byexisting" class="subform">`;
-					if(this.utils.surveys.length > 0){
-						form += '<select name="existingid">';
-						for (var i = 0; i < this.utils.surveys.length; i++) {
-							form += `<option value="${this.utils.surveys[i].sid}">${this.utils.surveys[i].surveyls_title} - ${this.utils.surveys[i].sid}</option>`;
-						}
-						form += '</select>';
-					}else{
-						form += `<p>${this.specific.existing_zero_message}</p>`;
-					}
+					form += '<select name="existingid" id="existingid_select"></select>';
 					form += `</div>
 					<div id="limesurvey_bynew" class="subform">
 						<p>${this.specific.new_message}</p>
@@ -248,6 +240,7 @@ var LimeSurveyPainter = {
 			let state = this.communSpecific.result_zero;
 			try {
 				const value = activity.data.result[userid];
+				const completed = activity.data.completion[userid];
 				map[userid] = state;
 				if (PainterFactory.Painters["activity"].isDownloadUrl(value)) {
 					console.log(`Fetching result for user ${userid} from URL: ${value}`);
@@ -256,7 +249,6 @@ var LimeSurveyPainter = {
 					//if (!response.ok) {
 					//	throw new Error(`HTTP ${response.status}`);
 					//}
-//
 					//const blob = await response.blob();
 					//const text = await blob.text(); // ⚠️ must await
 					//console.log(text);
@@ -266,10 +258,9 @@ var LimeSurveyPainter = {
 					//} catch {
 					//	parsed = {};
 					//}
-//
-					//if (parsed.submitdate) {
-					//	map[userid] = this.communSpecific.result_view_final_value;
-					//}
+					if (completed) {
+						map[userid] = this.communSpecific.result_view_final_value;
+					}
 				}
 			} catch (error) {
 				$.toast({
@@ -312,7 +303,6 @@ var LimeSurveyPainter = {
 			<p>${this.specific.survey_title}: <a target="_blank" href="${this.utils.url}${activity.survey_id}">${activity.survey_id}</a></p>
 			<p>${this.specific.language_title}: ${activity.survey_language}</p>
 			<p><a class="button green" onclick="LimeSurveyPainter.openEditLimesurvey('${activity.activity_id}', '${activity.survey_id}')">${this.specific.edit_title}</a></p>
-			<p><a onclick="LimeSurveyPainter.generateTinyURL('${activity.activity_id}', ${activity.survey_id})">${this.specific.short_url_title}</a></p>
 			<p><a onclick="LimeSurveyPainter.downloadBackup('${activity.activity_id}', 'full')"> ${this.specific.backup_full_title} : ⬇️</a>
 			<a onclick="LimeSurveyPainter.downloadBackup('${activity.activity_id}', 'code')"> ${this.specific.backup_code_title} : ⬇️</a></p>
 			${this.commun.storage_title} : 
@@ -414,3 +404,33 @@ var LimeSurveyPainter = {
 }
 
 PainterFactory.addPainter(LimeSurveyPainter);
+// Patch: Update survey list when switching to 'limesurvey_byexisting' tab
+LimesurveyChangeTab = function(tab, form, subform){
+	console.log(`Changing to tab: ${subform}`);
+	$(`#${form} .tab`).removeClass('selected');
+	$(`#${form} .subform`).removeClass('selected');
+	$(tab).toggleClass('selected');
+	$(`#${subform}`).toggleClass('selected');
+	// Add survey list update logic for limesurvey_byexisting
+	if(subform === 'limesurvey_byexisting'){
+		Simva.getSurveyList((error, result) => {
+			if(error){
+				console.error('Error fetching survey list:', error);
+				return;
+			}
+			var select = document.getElementById('existingid_select');
+			if(select){
+				while(select.firstChild){
+					select.removeChild(select.firstChild);
+				}
+				for(var i=0;i<result.length;i++){
+					var survey = result[i];
+					var option = document.createElement('option');
+					option.value = survey.sid;
+					option.text = survey.surveyls_title + ' - ' + survey.sid;
+					select.appendChild(option);
+				}
+			}
+		});
+	}
+}

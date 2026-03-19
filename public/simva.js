@@ -187,8 +187,8 @@ var Simva = {
 		Utils.get(`/bff/studies`, callback);
 	},
 
-	addStudy: function(name, callback){
-		let body = { simlet_name: name };
+	addStudy: function(name, description, callback){
+		let body = { simlet_name: name, simlet_description : description };
 		Utils.post(`/bff/studies`, body, callback);
 	},
 
@@ -361,18 +361,17 @@ var Simva = {
 		Utils.get(`/bff/activities/${activity_id}/export?complete=${complete}`, callback);
 	},
 
-	setSurveyOwner: function(activity_id, callback){
-		Utils.patch(`/bff/activities/${activity_id}/surveyowner`, {}, callback);
+	setSurveyOwner: function(survey_id, callback){
+		Utils.patch(`/bff/limesurvey/surveys/${survey_id}/owner`, {}, callback);
 	},
 
-	getSurveyList: function(activity_id, callback){
-		Utils.get(`/bff/activities/${activity_id}/usersurveylist`, callback);
+	getSurveyList: function(callback){
+		Utils.get(`/bff/limesurvey/surveys`, callback);
 	},
 
-	getSurveyLanguages: function(activity_id, callback){
-		Utils.get(`/bff/activities/${activity_id}/surveylanguages`, callback);
+	getSurveyLanguages: function(survey_id, callback){
+		Utils.get(`/bff/limesurvey/surveys/${survey_id}/languages`, callback);
 	},
-
 
 	getActivityProgress: function(activity_id, callback){
 		Utils.get(`/bff/activities/${activity_id}/progress`, callback);

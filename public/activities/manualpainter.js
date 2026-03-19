@@ -93,8 +93,6 @@ var ManualActivityPainter = {
 
 	updateParticipants: function(activity, participants){
 		PainterFactory.Painters["activity"].paintActivityCompletion(activity, activity.data.completion, true, participants);
-		PainterFactory.Painters["activity"].paintActivityResult(activity, activity.data.hasresult, "true", participants);
-		PainterFactory.Painters["activity"].paintActivityInit(activity, activity.data.init, participants);
 		if(activity.data.openable){
 			PainterFactory.Painters["activity"].paintActivityTargets(activity, activity.data.target, participants);
 		}
@@ -114,7 +112,7 @@ var ManualActivityPainter = {
 				${this.commun.tmon_title}
 			</a>
 			<br>
-			${PainterFactory.Painters["activity"].paintActivityParticipantsTable(activity, participants, true, false, true)}</div>`);
+			${PainterFactory.Painters["activity"].paintActivityParticipantsTable(activity, participants, true, false, false, false)}</div>`);
 	},
 
 	updateActivityCompletion: function(activityId, username, completion) {

@@ -276,8 +276,8 @@ class Simva {
 		this.delete(`${this.apiurl}/simlets/${study_id}/permissions/${user_id}`, sessionId, callback);
 	}
 
-	addStudy(name, sessionId, callback){
-		let body = { simlet_name: name };
+	addStudy(name, description, sessionId, callback){
+		let body = { simlet_name: name , simlet_description : description  };
 		this.post(`${this.apiurl}/simlets`, body, sessionId, callback);
 	}
 
@@ -419,16 +419,16 @@ class Simva {
 		this.get(`${this.apiurl}/activities/${activity_id}/export?complete=${complete}`, sessionId, callback);
 	}
 
-	setSurveyOwner(activity_id, sessionId, callback){
-		this.patch(`${this.apiurl}/activities/${activity_id}/surveyowner`, {}, sessionId, callback);
+	setSurveyOwner(survey_id, sessionId, callback){
+		this.patch(`${this.apiurl}/limesurvey/surveys/${survey_id}/owner`, {}, sessionId, callback);
 	}
 
-	getSurveyList(activity_id, sessionId, callback){
-		this.get(`${this.apiurl}/activities/${activity_id}/usersurveylist`, sessionId, callback);
+	getSurveyList(sessionId, callback){
+		this.get(`${this.apiurl}/limesurvey/surveys`, sessionId, callback);
 	}
 
-	getSurveyLanguages(activity_id, sessionId, callback){
-		this.get(`${this.apiurl}/activities/${activity_id}/surveylanguages`, sessionId, callback);
+	getSurveyLanguages(survey_id, sessionId, callback){
+		this.get(`${this.apiurl}/limesurvey/surveys/${survey_id}/languages`, sessionId, callback);
 	}
 
 	getActivityProgress(activity_id, sessionId, callback){

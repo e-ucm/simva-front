@@ -416,7 +416,7 @@ module.exports = function(auth, config){
     });
 
     router.post('/studies', auth, async (req, res, next) => {
-        Simva.addStudy(req.body.simlet_name, req.session.id, (error, result) => {
+        Simva.addStudy(req.body.simlet_name, req.body.simlet_description, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
@@ -816,8 +816,8 @@ module.exports = function(auth, config){
         });
     });
 
-    router.patch('/activities/:activityid/surveyowner', auth, async (req, res, next) => {
-        Simva.setSurveyOwner(req.params["activityid"], req.session.id, (error, result) => {
+    router.patch('/limesurvey/surveys/:surveyid/owner', auth, async (req, res, next) => {
+        Simva.setSurveyOwner(req.params["surveyid"], req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
@@ -826,8 +826,8 @@ module.exports = function(auth, config){
         });
     });
 
-    router.get('/activities/:activityid/surveylanguages', auth, async (req, res, next) => {
-        Simva.getSurveyLanguages(req.params["activityid"], req.session.id, (error, result) => {
+    router.get('/limesurvey/surveys/:surveyid/languages', auth, async (req, res, next) => {
+        Simva.getSurveyLanguages(req.params["surveyid"], req.session.id, (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -876,8 +876,8 @@ module.exports = function(auth, config){
         });
     });
 
-    router.get('/activities/:activityid/usersurveylist', auth, async (req, res, next) => {
-        Simva.getSurveyList(req.params["activityid"], req.session.id, (error, result) => {
+    router.get('/limesurvey/surveys', auth, async (req, res, next) => {
+        Simva.getSurveyList(req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {

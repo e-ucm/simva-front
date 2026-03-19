@@ -9,7 +9,7 @@
 			let currentform = this;
 			let form = Utils.getFormData($("#new_study_form"));
 			Utils.toggleSubmit(currentform);
-			Simva.addStudy(form.name, function(error, result){
+			Simva.addStudy(form.name, form.description, function(error, result){
 				if(error && error.responseJSON){
 					Utils.toggleSubmit(currentform);
 					$("#error").text(error.responseJSON.message);
@@ -75,7 +75,7 @@
 				errorbox.text("<%- t('name.edit.nochange', { ns : 'SIMLETs' }) %>");
 				Utils.toggleSubmit(currentform);
 			} else {
-				Simva.updateStudy(form.study, { name: form.name }, function(error, result){
+				Simva.updateStudy(form.study, { simlet_name: form.name }, function(error, result){
 					Utils.toggleSubmit(currentform);
 					Utils.toggleAddForm('edit_study');
 					refreshStudies();
@@ -143,6 +143,7 @@
 			<p><strong><%- t('created_at.title', { ns : 'SIMLETs' }) %>:</strong> ${study.createdAt}</p>
 			<p><strong><%- t('updated_at.title', { ns : 'SIMLETs' }) %>:</strong> ${study.updatedAt}</p>
 			<p><strong><%- t('sessions.title', { ns : 'SIMLETs' }) %>:</strong> ${study.sessions.length}</p>
+			<p><strong><%- t('tags.title', { ns : 'SIMLETs' }) %>:</strong> ${study.tags}</p>
 			</div></a>`;
 	}
 
@@ -170,6 +171,7 @@
 			<div id="new_study_tab" class="subform selected">
 				<form id="new_study_form">
 					<input type="text" name="name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>">
+					<input name="description" placeholder="<%- t('description.placeholder', { ns : 'SIMLETs' }) %>" required>
 					<input type="submit" value="<%- t('new.submit', { ns : 'SIMLETs' }) %>">
 				</form>
 			</div>

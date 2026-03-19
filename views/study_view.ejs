@@ -486,7 +486,14 @@
 					$('#new_activity_form select[name="type"]').append(row);
 				}
 			}
-			$('#new_activity_extras').append(`${PainterFactory.Painters["activity"].description}\n`);
+			$('#new_activity_extras').empty();
+			$('#new_activity_extras').append(`${PainterFactory.Painters["gameplay"].description}\n`);
+			PainterFactory.Painters["gameplay"].getExtraForm((error, result) => {
+				console.log(result);
+				if(!error) {
+					$('#new_activity_extras').append(result);
+				}
+			});
 
 			Simva.getAllocatorTypes(function(error, allocatortypes){
 				for (var i = 0; i < allocatortypes.length; i++) {
@@ -729,7 +736,7 @@
 				errorbox.text("<%- t('name.edit.no_change', { ns : 'SIMLETs' }) %>");
 				Utils.toggleSubmit(currentform);
 			} else {
-				var test = { id : form.test , name : form.name};
+				var test = { session_name : form.name };
 				Simva.updateTest("<%= study %>", test.test_id, test, function(error, result){
 					Utils.toggleSubmit(currentform);
 					if(error && error.responseJSON){
@@ -753,7 +760,7 @@
 				errorbox.text("<%- t('name.edit.no_change', { ns : 'SIMLETs' }) %>");
 				Utils.toggleSubmit(currentform);
 			} else {
-				Simva.updateStudy(study.simlet_id, { name: form.name }, function(error, result){	
+				Simva.updateStudy(study.simlet_id, { simlet_name: form.name }, function(error, result){	
 					Utils.toggleSubmit(currentform);
 					Utils.toggleAddForm('edit_study');
 					reloadStudy();
@@ -938,9 +945,11 @@
 	}
 
 	let deleteOwner = function(userId, owner){
-		if(confirm(`<%- t('coordinators.delete.confirm', { ns : 'SIMLETs', coordinator : '${owner}', SIMLET : '${study.study_name}' }) %>`)){
+		if(confirm(`<%- t('coordinators.delete.confirm', { ns : 'SIMLETs', owner : '${owner}', SIMLET : '${study.simlet_name}' }) %>`)){
 			Simva.deleteStudyPermissionsForUser(studyid, userId, function(error, result){
-				reloadStudy();
+				if(!error) {
+					reloadStudy();
+				}
 			});
 		}
 	}
@@ -988,11 +997,11 @@
 		document.getElementById("duplicate_test_error").innerHTML = "";
 		var inputElement = document.getElementById('duplicate_test_name');
 		let test = getTestFromTestId(testId);
-		inputElement.value = test.name;
+		inputElement.value = test.session_name;
 		$('#duplicate_test').toggleClass('shown');
 		$('#duplicate_test input[name="test"]').val(test.session_id);
 		$('#duplicate_test span[class="error"]').val("");
-		$('#duplicate_test input[name="testName"]').val(test.name);
+		$('#duplicate_test input[name="testName"]').val(test.session_name);
 	}
 
 	let activateTest = function(testId, active){
@@ -1033,20 +1042,20 @@
 		document.getElementById("edit_test_error").innerHTML = "";
 		var inputElement = document.getElementById('edit_test_name');
 		let test = getTestFromTestId(testId);
-		inputElement.value = test.name;
+		inputElement.value = test.session_name;
 		$('#edit_test').toggleClass('shown');
 		$('#edit_test input[name="test"]').val(test.session_id);
 		$('#edit_test span[class="error"]').val("");
-		$('#edit_test input[name="testName"]').val(test.name);
+		$('#edit_test input[name="testName"]').val(test.session_name);
 	}
 
 	let openEditStudyForm = function(studyId){
 		document.getElementById("edit_study_error").innerHTML = "";
 		var inputElement = document.getElementById('edit_study_name');
-		inputElement.value = study.name;
+		inputElement.value = study.simlet_name;
 		$('#edit_study').toggleClass('shown');
 		$('#edit_study input[name="study"]').val(study.simlet_id);
-		$('#edit_study input[name="studyName"]').val(study.name);
+		$('#edit_study input[name="studyName"]').val(study.simlet_name);
 	}
 
 	let openGenerateLinkForm = function() {
