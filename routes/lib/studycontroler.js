@@ -14,7 +14,6 @@ module.exports = {
                 study.completeTests.push(test);
             } catch(e) {
                 logger.warn(e);
-                throw e;
             }
         }
         try {

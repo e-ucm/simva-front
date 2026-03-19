@@ -12,7 +12,6 @@ module.exports = {
                 test.completeActivities.push(await activitiescontroler.getCompleteActivity(studyid, testid, test.activities[i], sessionid));
             } catch(e) {
                logger.warn(e);
-               throw e;
             }
         }
         try {

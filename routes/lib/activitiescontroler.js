@@ -15,7 +15,13 @@ module.exports = {
     },
 
     async getCompleteActivity(studyid, testid, activityid, sessionid) {
-        let act=await SimvaAsync.getActivity(activityid, sessionid);
+        let act={activity_id: activityid};
+        try {
+            act=await SimvaAsync.getActivity(activityid, sessionid);
+        }
+        catch(e) {
+            logger.error(e);
+        }
         act.data = {};
         try {
             act.data.completion=await SimvaAsync.getActivityCompletion(activityid, sessionid);

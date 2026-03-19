@@ -19,9 +19,11 @@ var GameplayActivityPainter = {
 	},
 
 	getExtraForm: function (callback) {
-		callback(null, `<div class="gameplay_activity"><p><label for="gameplay_trace_storage">${this.commun.storage_title}</label><input id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
+		callback(null, `<div class="gameplay_activity">
+			<p><label for="gameplay_trace_storage">${this.commun.storage_title}</label><input id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
 			 <p><label for="gameplay_backup">${this.communSpecific.result_title}</label><input id="gameplay_backup" type="checkbox" name="backup" checked></p>
 			 <p><label for="gameplay_scorm_xAPI">${this.specific.xapi_by_game_title}</label><input id="gameplay_scorm_xAPI" type="checkbox" name="scorm_xapi"></p>
+			 <p><label for="gameplay_restarted">${this.communSpecific.restarted_title}</label><input id="gameplay_restarted" type="checkbox" name="restarted"></p>
 			 <p><label for="gameplay_game_uri" style="width: 100%; text-align: center;">${this.specific.game_uri_title}</label><input id="gameplay_game_uri" type="text" name="game_uri">
 			 <span><p>${this.specific.game_uri_explication}</p></div>`);
 	},
@@ -30,6 +32,7 @@ var GameplayActivityPainter = {
 		return `<div class="gameplay_activity"><p><label for="edit_gameplay_trace_storage">${this.commun.storage_title}</label><input id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
 			 <p><label for="edit_gameplay_backup">${this.communSpecific.result_title}</label><input id="edit_gameplay_backup" type="checkbox" name="backup" checked></p>
 			 <p><label for="edit_gameplay_scorm_xAPI">${this.specific.xapi_by_game_title}</label><input id="edit_gameplay_scorm_xAPI" type="checkbox" name="scorm_xapi" checked></p>
+			 <p><label for="edit_gameplay_restarted">${this.communSpecific.restarted_title}</label><input id="edit_gameplay_restarted" type="checkbox" name="restarted"></p>
 			 <p><label for="edit_gameplay_game_uri" style="width: 100%; text-align: center;">${this.specific.game_uri_title}</label><input id="edit_gameplay_game_uri" type="text" name="game_uri">
 			 <span class="info"><p>${this.specific.game_uri_explication}</p></div>`;
 	},
@@ -38,11 +41,13 @@ var GameplayActivityPainter = {
 		var gameplay_trace_storage = document.getElementById('edit_gameplay_trace_storage');
 		gameplay_trace_storage.checked = Boolean(activity.activity_trace_storage);
 		var gameplay_backup = document.getElementById('edit_gameplay_backup');
-		gameplay_backup.checked = Boolean(activity.activity_game_backup);
+		gameplay_backup.checked = Boolean(activity.game_backup);
 		var gameplay_scorm_xAPI = document.getElementById('edit_gameplay_scorm_xAPI');
-		gameplay_scorm_xAPI.checked = Boolean(activity.activity_game_scorm_xapi);
+		gameplay_scorm_xAPI.checked = Boolean(activity.game_scorm_xapi);
+		var gameplay_restarted = document.getElementById('edit_gameplay_restarted');
+		gameplay_restarted.checked = Boolean(activity.activity_can_be_restarted);
 		var gameplay_game_uri = document.getElementById('edit_gameplay_game_uri');
-		gameplay_game_uri.value = activity.activity_game_uri || "";
+		gameplay_game_uri.value = activity.game_uri || "";
 	},
 
 	extractInformation: function(form, callback){
@@ -55,10 +60,15 @@ var GameplayActivityPainter = {
 		activity.activity_type = this.supportedType;
 
 		activity.activity_trace_storage = formdata.trace_storage === 'on';
-		activity.activity_game_backup = formdata.backup === 'on';
-		activity.activity_game_scorm_xapi = formdata.scorm_xapi === 'on';
-		if(formdata.activity_game_uri !== ''){
-			activity.activity_game_uri = formdata.game_uri;
+		activity.game_backup = formdata.backup === 'on';
+		activity.game_scorm_xapi = formdata.scorm_xapi === 'on';
+		activity.activity_can_be_restarted = formdata.restarted === 'on';
+		if(formdata.game_uri !== ''){
+			activity.game_type = 'WEB';
+			activity.game_url = formdata.game_uri;
+		} else {
+			activity.game_url = null;
+			activity.game_type = "DESKTOP";
 		}
 
 		callback(null, activity);
@@ -91,7 +101,7 @@ var GameplayActivityPainter = {
 		const actualGameUri = actualActivity.game_url || (actualActivity.extra_data && actualActivity.extra_data.game_uri) || '';
 		if(actualGameUri !== game_uri) {
 			if(game_uri !== '' || actualGameUri !== '') {
-				activity.game_uri = game_uri;
+				activity.game_url = game_uri;
 			}
 		}
 	
@@ -143,7 +153,7 @@ var GameplayActivityPainter = {
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity.activity_id}', '${activity.activity_name}', '${activity.session_id}')"></div>
 			<p class="subtitle">${this.simple_name}</p>`;
 		activitybox += `<br>${this.commun.storage_title}:`;
-		if(activity.activity_trace_storage) {
+		if(Boolean(activity.activity_trace_storage)) {
 			activitybox += `<a onclick="PainterFactory.Painters['activity'].getMinioData('${activity.activity_id}')" target="_blank">${this.commun.storage_file_title} ${this.commun.storage_file_one_per_line_title}</a>
 			<br>
 			<br>

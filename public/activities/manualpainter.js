@@ -21,22 +21,30 @@ var ManualActivityPainter = {
 
 	getExtraForm: function (callback) {
 		callback(null, `<p><label for="manual_user_managed">${this.specific.student_complete_title}</label><input id="manual_user_managed" type="checkbox" name="user_managed"></p>
+			<p><label for="manual_storage">${this.commun.storage_title}</label><input id="manual_storage" type="checkbox" name="storage"></p>
+			 <p><label for="manual_restarted">${this.communSpecific.restarted_title}</label><input id="manual_restarted" type="checkbox" name="restarted"></p>
 			 <p><label for="manual_uri" style="width: 100%; text-align: center;">${this.specific.uri_title}</label><input id="manual_uri" type="text" name="uri">
 			 <span class="info">${this.specific.uri_explication}</p></div>`);
 	},
 
 	getEditExtraForm: function () {
 		return `<p><label for="edit_manual_user_managed">${this.specific.student_complete_title}</label><input id="edit_manual_user_managed" type="checkbox" name="user_managed"></p>
+		<p><label for="edit_manual_storage">${this.commun.storage_title}</label><input id="edit_manual_storage" type="checkbox" name="storage"></p>
+		<p><label for="edit_manual_restarted">${this.communSpecific.restarted_title}</label><input id="edit_manual_restarted" type="checkbox" name="restarted"></p>
 		<p><label for="edit_manual_uri" style="width: 100%; text-align: center;">${this.specific.uri_title}</label><input id="edit_manual_uri" type="text" name="uri">
 		<span class="info">${this.specific.uri_explication}</p></div>`;
 	},
 
 	updateInputEditExtraForm(activity) {
 		var manual_user_managed = document.getElementById('edit_manual_user_managed');
-		manual_user_managed.checked = Boolean(activity.activity_manual_user_managed);
+		manual_user_managed.checked = Boolean(activity.manual_user_managed);
+		var manual_storage = document.getElementById('edit_manual_storage');
+		manual_storage.checked = Boolean(activity.manual_storage);
+		var manual_restarted = document.getElementById('edit_manual_restarted');
+		manual_restarted.checked = Boolean(activity.manual_restarted);
 		var manual_uri = document.getElementById('edit_manual_uri');
-		if(activity.activity_manual_ressource_url) {
-			manual_uri.value = activity.activity_manual_ressource_url;
+		if(activity.manual_ressource_url) {
+			manual_uri.value = activity.manual_ressource_url;
 		}
 	},
 
@@ -49,9 +57,15 @@ var ManualActivityPainter = {
 		activity.activity_name = formdata.name;
 		activity.activity_type = this.supportedType;
 
-		activity.activity_manual_user_managed = formdata.user_managed === 'on';
+		activity.manual_user_managed = formdata.user_managed === 'on';
+		activity.activity_trace_storage = formdata.storage === 'on';
+		activity.activity_can_be_restarted = formdata.restarted === 'on';
 		if(formdata.uri !== ''){
-			activity.activity_manual_ressource_url = formdata.uri;
+			activity.manual_ressource_type = 'WEB';
+			activity.manual_ressource_url = formdata.uri;
+		} else {
+			activity.manual_ressource_url = null;
+			activity.manual_ressource_type = "EXTERNAL";
 		}
 
 		callback(null, activity);
@@ -66,19 +80,19 @@ var ManualActivityPainter = {
 			activity.activity_name = formdata.name;
 		}
 	
-		const actualUserManaged = actualActivity.activity_manual_user_managed;
+		const actualUserManaged = actualActivity.manual_user_managed;
 		let user_managed = formdata.user_managed === 'on';
 		if(actualUserManaged !== user_managed) {
-			activity.activity_manual_user_managed = user_managed;
+			activity.manual_user_managed = user_managed;
 		}
 		
-		const actualUri = actualActivity.activity_manual_ressource_url;
+		const actualUri = actualActivity.manual_ressource_url;
 		if(!(actualUri == formdata.uri)) {
 			if(actualUri) {
-				activity.activity_manual_ressource_url = formdata.uri;
+				activity.manual_ressource_url = formdata.uri;
 			} else {
 				if(formdata.uri !== ''){
-					activity.activity_manual_ressource_url = formdata.uri;
+					activity.manual_ressource_url = formdata.uri;
 				}
 			}
 		}
