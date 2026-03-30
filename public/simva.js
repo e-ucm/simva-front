@@ -83,8 +83,7 @@ var Simva = {
 		Utils.post(`/bff/simlets/${simlet_id}/groups/${groupid}/users`, body, callback);
 	},
 
-	setRole: function(username, role, callback){
-		let body = { username: username, role: role };
+	setRole: function(username, body, callback){
 		Utils.patch(`/bff/users/${username}`, body, callback);
 	},
 
@@ -114,18 +113,7 @@ var Simva = {
 		Utils.get(`/bff/groups?use_new_generation=${use_new_generation}`, callback);
 	},
 
-	addGroup: function(simlet_id, name, use_new_generation, group_sandbox, callback){
-		let body = { group_name: name };
-		if(use_new_generation) {
-			body.use_new_generation = true;
-		} else {
-			body.use_new_generation = false;
-		}
-		if(group_sandbox) {
-			body.group_sandbox = true;
-		} else {
-			body.group_sandbox = false;
-		}
+	addGroup: function(simlet_id, body, callback){
 		Utils.post(`/bff/simlets/${simlet_id}/groups`, body, callback);
 	},
 
@@ -187,22 +175,19 @@ var Simva = {
 		Utils.get(`/bff/studies`, callback);
 	},
 
-	addStudy: function(name, description, callback){
-		let body = { simlet_name: name, simlet_description : description };
+	addStudy: function(body, callback){
 		Utils.post(`/bff/studies`, body, callback);
 	},
 
-	   addTestToStudy: function(study_id, name, description, canBeManuallyActivated, callback){
-		   let body = { session_name: name, session_description: description, session_can_be_manually_activated: canBeManuallyActivated };
-		   Utils.post(`/bff/studies/${study_id}/tests`, body, callback);
+	addTestToStudy: function(study_id, body, callback){
+	   Utils.post(`/bff/studies/${study_id}/tests`, body, callback);
 	},
 
 	getStudyEventsPresignedUrl: function(study_id, callback){
 		Utils.get(`/simlets/${study_id}/events/getPresignedUrl`, callback);
 	},
 
-	duplicateTestFromStudy: function(study_id, name, testId, callback){
-		let body = { session_name: name, from : testId };
+	duplicateTestFromStudy: function(study_id, body, callback){
 		Utils.post(`/bff/studies/${study_id}/tests`, body, callback);
 	},
 
@@ -219,7 +204,11 @@ var Simva = {
 	},
 
 	updateActivity: function(activityId, activity, callback){
-		Utils.patch(`/bff/activities/${activityId}`, activity, callback);
+		if(activity instanceof FormData){
+			Utils.patchForm(`/bff/activities/${activityId}`, activity, callback);
+		} else {
+			Utils.patch(`/bff/activities/${activityId}`, activity, callback);
+		}
 	},
 
 	deleteStudy: function(study_id, callback){
@@ -278,8 +267,8 @@ var Simva = {
 		Utils.get(`/bff/studies/${study_id}/tests/${test_id}/participants`, callback);
 	},
 
-	allocateToSession: function(study_id, group_id, test_id, participant_id, callback){
-		Utils.post(`/bff/studies/${study_id}/groups/${group_id}/allocate/${test_id}`, participant_id ? { participant_id: participant_id } : {}, callback);
+	allocateToSession: function(study_id, group_id, test_id, body, callback){
+		Utils.post(`/bff/studies/${study_id}/groups/${group_id}/allocate/${test_id}`, body, callback);
 	},
 
 	allocateRandomly: function(study_id, group_id, data, callback){
@@ -343,14 +332,18 @@ var Simva = {
 		Utils.get(`/events/getPresignedUrl`, callback);
 	},
 
-	activateSession(study_id, test_id, activate, callback){
-		Utils.post(`/bff/studies/${study_id}/tests/${test_id}/activate`, { activate }, callback);
+	activateSession(study_id, test_id, body, callback){
+		Utils.post(`/bff/studies/${study_id}/tests/${test_id}/activate`, body, callback);
 	},
 
 	// Activities
 
 	addActivityToTest: function(study_id, test_id, activity, callback){
-		Utils.post(`/bff/studies/${study_id}/tests/${test_id}/activities`, activity, callback);
+		if(activity instanceof FormData){
+			Utils.postForm(`/bff/studies/${study_id}/tests/${test_id}/activities`, activity, callback);
+		} else {
+			Utils.post(`/bff/studies/${study_id}/tests/${test_id}/activities`, activity, callback);
+		}
 	},
 
 	getActivity: function(activity_id, callback){
@@ -412,10 +405,6 @@ var Simva = {
 
 	getActivitySuspension: function(activity_id, callback){
 		Utils.get(`/bff/activities/${activity_id}/suspension`, callback);
-	},
-
-	setActivitySuspension: function(activity_id, user, status, reason, callback){
-		Utils.post(`/bff/activities/${activity_id}/suspension`, { user : user , status : status, reason : reason }, callback);
 	},
 
 	getActivityResultForUser : function(activity_id, student, callback){

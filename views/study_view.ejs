@@ -624,7 +624,7 @@
 			let form = Utils.getFormData($("#add_test_form"));
 			let errorbox = $(this).find('.error');
 
-			   Simva.addTestToStudy(studyid, form.name, form.description, !!form.can_be_manually_activated, function(error, result){
+			   Simva.addTestToStudy(studyid, { session_name: form.name, session_description: form.description, session_can_be_manually_activated: !!form.can_be_manually_activated }, function(error, result){
 				if(error && error.responseJSON){
 					errorbox.text(error.responseJSON.message);
 				}else{
@@ -641,7 +641,7 @@
 			let form = Utils.getFormData($("#duplicate_test_form"));
 			let errorbox = $(this).find('.error');
 
-			Simva.duplicateTestFromStudy(studyid, form.name, form.test, function(error, result){
+			Simva.duplicateTestFromStudy(studyid, { session_name: form.name, from: form.test }, function(error, result){
 				if(error && error.responseJSON){
 					errorbox.text(error.responseJSON.message);
 				}else{
@@ -1005,7 +1005,7 @@
 	}
 
 	let activateTest = function(testId, active){
-		Simva.activateSession(studyid, testId, active, function(error, result) {
+		Simva.activateSession(studyid, testId, { activate: active }, function(error, result) {
 			if(!error) {
 				reloadStudy();
 			}

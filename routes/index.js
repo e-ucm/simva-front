@@ -10,7 +10,10 @@ const profiling = require('../profiling');
 
 const app = express();
 
-app.use(bodyParser.json({limit: '1mb'}));
+
+// Body parsers
+app.use(bodyParser.json({ limit: '1mb' }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(session(
   {
@@ -58,14 +61,14 @@ router.get('/about', usertools.auth(0), function(req, res, next) {
 router.get('/about-page', function(req, res, next) {
   res.render('logout_about', { 
     config: config,
-    t : req.t
+    t: req.t
   });
 });
 
 router.get('/e-ucm', function(req, res, next) {
   res.render('logout_e_ucm', { 
     config: config,
-    t : req.t 
+    t: req.t
   });
 });
 

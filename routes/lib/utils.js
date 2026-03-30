@@ -1,17 +1,29 @@
 var axios = require('axios');
+const logger = require('../../logger');
 
 module.exports = {
 	post: function (url, body, callback, jwt, apikey) {
-		const headers = {};
+		const headers =  {};
 		if (jwt) {
 			headers['Authorization'] = `Bearer ${jwt}`;
 		}
 		if(apikey) {
 			headers['X-Api-Key'] = `${apikey}`;
 		}
+		if(body instanceof FormData) {
+			headers['Content-Type'] = 'multipart/form-data';
+		} else {
+			headers['Content-Type'] = 'application/json';
+		}
 
 		axios
-			.post(url, body, { headers })
+			.post(url, body, 
+				{ 
+					headers,
+					maxContentLength: Infinity,
+            		maxBodyLength: Infinity
+				}
+			)
 			.then((response) => {
 				callback(null, response.data);
 			})
@@ -28,8 +40,20 @@ module.exports = {
 		if(apikey) {
 			headers['X-Api-Key'] = `${apikey}`;
 		}
+		if(body instanceof FormData) {
+			headers['Content-Type'] = 'multipart/form-data';
+		} else {
+			headers['Content-Type'] = 'application/json';
+		}
+
 		axios
-			.patch(url, body, { headers })
+			.patch(url, body, 
+				{ 
+					headers,
+					maxContentLength: Infinity,
+            		maxBodyLength: Infinity
+				}
+			)
 			.then((response) => callback(null, response.data))
 			.catch((error) => callback(error));
 	},
@@ -42,8 +66,21 @@ module.exports = {
 		if(apikey) {
 			headers['X-Api-Key'] = `${apikey}`;
 		}
+		
+		if(body instanceof FormData) {
+			headers['Content-Type'] = 'multipart/form-data';
+		} else {
+			headers['Content-Type'] = 'application/json';
+		}
+			
 		axios
-			.put(url, body, { headers })
+			.put(url, body, 
+				{ 
+					headers,
+					maxContentLength: Infinity,
+            		maxBodyLength: Infinity
+				}
+			)
 			.then((response) => callback(null, response.data))
 			.catch((error) => callback(error));
 	},

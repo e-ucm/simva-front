@@ -133,7 +133,7 @@ module.exports = function(auth, config){
     });
 
     router.patch('/users/:username', auth, async (req, res, next) => {
-        Simva.setRole(req.body.username, req.body.role, req.session.id, (error, result) => {
+        Simva.setRole(req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
@@ -192,7 +192,7 @@ module.exports = function(auth, config){
     * 
     */
     router.get('/tasklist', auth, async (req, res, next) => {
-        Simva.addToTaskList(body, req.session.id, (error, result) => {
+        Simva.addToTaskList(req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
@@ -266,7 +266,7 @@ module.exports = function(auth, config){
     });
 
     router.post('/simlets/:simlet_id/groups', auth, async (req, res, next) => {
-        Simva.addGroup(req.params['simlet_id'], req.body.group_name, req.body.use_new_generation, req.body.group_sandbox, req.session.id, (error, result) => {
+        Simva.addGroup(req.params['simlet_id'], req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -416,7 +416,7 @@ module.exports = function(auth, config){
     });
 
     router.post('/studies', auth, async (req, res, next) => {
-        Simva.addStudy(req.body.simlet_name, req.body.simlet_description, req.session.id, (error, result) => {
+        Simva.addStudy(req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
@@ -471,7 +471,7 @@ module.exports = function(auth, config){
                 next(error.response.data);
             }
         } else {
-            Simva.addTestToStudy(req.params["studyid"], req.body.session_name, req.body.session_description, req.body.session_can_be_manually_activated, req.session.id, (error, result) => {
+            Simva.addTestToStudy(req.params["studyid"], req.body, req.session.id, (error, result) => {
                 if(error) {
                     next(error.response.data);
                 } else {
@@ -503,6 +503,7 @@ module.exports = function(auth, config){
 
    
     router.patch('/activities/:activityid', auth, async (req, res, next) => {
+        // Merge fields from multipart form
         Simva.updateActivity(req.params["activityid"], req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
@@ -643,7 +644,7 @@ module.exports = function(auth, config){
     });
 
     router.post('/studies/:studyid/groups/:groupid/allocate/:testid', auth, async (req, res, next) => {
-        Simva.allocateToSession(req.params["studyid"], req.params["groupid"], req.params["testid"], req.body?.participant_id || null, req.session.id, (error, result) => {
+        Simva.allocateToSession(req.params["studyid"], req.params["groupid"], req.params["testid"], req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -773,7 +774,7 @@ module.exports = function(auth, config){
     });
 
     router.post('/studies/:studyid/tests/:testid/activate', auth, async (req, res, next) => {
-        Simva.activateSession(req.params["studyid"], req.params["testid"], req.body.activate, req.session.id, (error, result) => {
+        Simva.activateSession(req.params["studyid"], req.params["testid"], req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
@@ -857,7 +858,7 @@ module.exports = function(auth, config){
     });
 
     router.post('/activities/:activityid/initialized', auth, async (req, res, next) => {
-        Simva.setActivityInitialized(req.params["activityid"], req.query.user, req.body.status, req.session.id, (error, result) => {
+        Simva.setActivityInitialized(req.params["activityid"], req.query.user, req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -867,7 +868,7 @@ module.exports = function(auth, config){
     });
 
     router.post('/activities/:activityid/progress', auth, async (req, res, next) => {
-        Simva.setActivityProgress(req.params["activityid"], req.query.user, req.body.status, req.session.id, (error, result) => {
+        Simva.setActivityProgress(req.params["activityid"], req.query.user, req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -917,7 +918,7 @@ module.exports = function(auth, config){
     });
 
     router.post('/activities/:activityid/completion', auth, async (req, res, next) => {
-        Simva.setActivityCompletion(req.params["activityid"], req.query.user, req.body.status, req.session.id, (error, result) => {
+        Simva.setActivityCompletion(req.params["activityid"], req.query.user, req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
@@ -927,7 +928,7 @@ module.exports = function(auth, config){
     });
 
     router.post('/activities/:activityid/completion/multi', auth, async (req, res, next) => {
-        Simva.setMultiActivityCompletion(req.params["activityid"], req.body.status, req.session.id, (error, result) => {
+        Simva.setMultiActivityCompletion(req.params["activityid"], req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
@@ -937,7 +938,7 @@ module.exports = function(auth, config){
     });
 
     router.post('/activities/:activityid/multicompletion', auth, async (req, res, next) => {
-        Simva.setMultiActivityCompletion(req.params["activityid"], req.body.status, req.session.id, (error, result) => {
+        Simva.setMultiActivityCompletion(req.params["activityid"], req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
@@ -947,17 +948,7 @@ module.exports = function(auth, config){
     });
 
     router.post('/activities/:activityid/suspension', auth, async (req, res, next) => {
-        Simva.setActivitySuspension(req.params["activityid"], req.body.user, req.body.status, req.body.reason, req.session.id, (error, result) => {
-            if(error) {
-                next(error.response.data);
-            } else {
-                res.status(200).send(result);
-            }
-        });
-    });
-
-    router.post('/activities/:activityid/suspend', auth, async (req, res, next) => {
-        Simva.setActivitySuspension(req.params["activityid"], req.body.user, req.body.status, req.body.reason, req.session.id, (error, result) => {
+        Simva.setActivitySuspension(req.params["activityid"], req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {

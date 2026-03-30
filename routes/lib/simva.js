@@ -22,6 +22,7 @@ class Simva {
 
 	// REQUEST
 	post(url, body, sessionId, callback){
+		logger.info(body, `Making POST request to ${url} for session ${sessionId}`);
 		usertools.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(sessionId), (error, result) => {
 			if(!error) {
 				Utils.post(url, body, callback, userClientsListManager.getJWT(sessionId));
@@ -31,9 +32,10 @@ class Simva {
 	}
 
 	patch(url, body, sessionId, callback){
+		logger.info(body, `Making PATCH request to ${url} for session ${sessionId}`);
 		usertools.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(sessionId), (error, result) => {
 			if(!error) {
-		Utils.patch(url, body, callback, userClientsListManager.getJWT(sessionId));
+				Utils.patch(url, body, callback, userClientsListManager.getJWT(sessionId));
 			}
 		});
 	}
@@ -162,8 +164,7 @@ class Simva {
 		this.post(`${this.apiurl}/users/events`, data, sessionId, callback);
 	}
 
-	setRole(username, role, sessionId, callback){
-		let body = { username: username, role: role };
+	setRole(body, sessionId, callback){
 		this.patch(`${this.apiurl}/users/${username}`, body, sessionId, callback);
 	}
 
@@ -193,8 +194,7 @@ class Simva {
 		this.get(`${this.apiurl}/groups?use_new_generation=${useNewGeneration}`, sessionId, callback);
 	}
 
-	addGroup(simlet_id, name, newversion, group_sandbox, sessionId, callback){
-		let body = { group_name: name, group_use_new_generation: newversion, group_sandbox: group_sandbox };
+	addGroup(simlet_id, body, sessionId, callback){
 		this.post(`${this.apiurl}/simlets/${simlet_id}/groups`, body, sessionId, callback);
 	}
 
@@ -276,14 +276,12 @@ class Simva {
 		this.delete(`${this.apiurl}/simlets/${study_id}/permissions/${user_id}`, sessionId, callback);
 	}
 
-	addStudy(name, description, sessionId, callback){
-		let body = { simlet_name: name , simlet_description : description  };
+	addStudy(body, sessionId, callback){
 		this.post(`${this.apiurl}/simlets`, body, sessionId, callback);
 	}
 
-	   addTestToStudy(study_id, name, description, canBeManuallyActivated, sessionId, callback){
-		   let body = { session_name: name, session_description: description, session_can_be_manually_activated: canBeManuallyActivated };
-		   this.post(`${this.apiurl}/simlets/${study_id}/sessions`, body, sessionId, callback);
+	addTestToStudy(study_id, body, sessionId, callback){
+	   this.post(`${this.apiurl}/simlets/${study_id}/sessions`, body, sessionId, callback);
 	}
 
 	duplicateTestFromStudy(study_id, name, testId, sessionId, callback){
@@ -368,13 +366,12 @@ class Simva {
 		this.get(`${this.apiurl}/simlets/${study_id}/schedule`, sessionId, callback);
 	}
 
-	activateSession(study_id, test_id, activate, sessionId, callback){
-		this.post(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/activate`, { activate }, sessionId, callback);
+	activateSession(study_id, test_id, body, sessionId, callback){
+		this.post(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/activate`, body, sessionId, callback);
 	}
 
-	allocateToSession(study_id, group_id, test_id, participant_id, sessionId, callback){
-		const payload = participant_id ? { participant_id: parseInt(participant_id) } : {};
-		this.post(`${this.apiurl}/simlets/${study_id}/groups/${group_id}/allocate/${test_id}`, payload, sessionId, callback);
+	allocateToSession(study_id, group_id, test_id, body, sessionId, callback){
+		this.post(`${this.apiurl}/simlets/${study_id}/groups/${group_id}/allocate/${test_id}`, body, sessionId, callback);
 	}
 
 	allocateRandomly(study_id, group_id, data, sessionId, callback){
@@ -460,24 +457,19 @@ class Simva {
 		this.post(`${this.apiurl}/activities/${activity_id}/completion?user=${user}`, { status: status }, sessionId, callback);
 	}
 	
-	setMultiActivityCompletion(activity_id, status, sessionId, callback) {
-		this.post(`${this.apiurl}/activities/${activity_id}/completion/multi`, { status: status }, sessionId, callback);
-	}
-	
-
-	setActivitySuspend(activity_id, user, status, reason, sessionId, callback) {
-		this.post(`${this.apiurl}/activities/${activity_id}/suspension`, { user: user , status : status, reason : reason }, sessionId, callback);
+	setMultiActivityCompletion(activity_id, body, sessionId, callback) {
+		this.post(`${this.apiurl}/activities/${activity_id}/completion/multi`, body, sessionId, callback);
 	}
 
 	getActivitySuspension(activity_id, sessionId, callback) {
 		this.get(`${this.apiurl}/activities/${activity_id}/suspension`, sessionId, callback);
 	}
 
-	setActivitySuspension(activity_id, user, status, reason, sessionId, callback) {
-		this.post(`${this.apiurl}/activities/${activity_id}/suspension`, { user: user , status : status, reason : reason }, sessionId, callback);
+	setActivitySuspension(activity_id, body, sessionId, callback) {
+		this.post(`${this.apiurl}/activities/${activity_id}/suspension`, body, sessionId, callback);
 	}
 
-	getActivityResultForUser (activity_id, student, sessionId, callback){
+	getActivityResultForUser(activity_id, student, sessionId, callback){
 		this.get(`${this.apiurl}/activities/${activity_id}/result?users=${student}&type=backup`, sessionId, callback);
 	}
 
