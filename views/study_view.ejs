@@ -5,9 +5,24 @@
 <!--<div id="roller" style="width: 100%; text-align: center; padding: 200px;">
 	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 </div>-->
-<h1><%- t('single.title', { ns : 'SIMLETs' }) %>: <span id="study_name"></span></h1><input class="yellow" type="button" value="<%- t('name.edit.title', { ns : 'SIMLETs' }) %>" onclick="openEditStudyForm('<%= study %>')">
+<div class="simletTop">
+	<h1><%- t('single.title', { ns : 'SIMLETs' }) %>: <span id="study_name"></span></h1>
 
-<input class="blue" type="button" value="<%- t('scheduler.shlink.generate.title', { ns : 'SIMLETs' }) %>" id="generate_shlink_url" onclick="openGenerateLinkForm()" style="visibility: hidden;"><a class="button green" id="shlink_url" onclick="copyShortURL()" style="visibility: hidden;"><span id="shlink_url_short"></span></a></h3><input class="red" type="button" value="<%- t('scheduler.shlink.delete.title', { ns : 'SIMLETs' }) %>" id="delete_shlink_url" onclick="deleteShLink()"  style="visibility: hidden;">
+	<div class="simletSettings">
+		<!-- <a onclick="openEditStudyForm('<%= study %>')"><img class="simlet-icon" src="../icon/editar.png"></a>
+		<a id="generate_shlink_url" onclick="openGenerateLinkForm()"><img class="simlet-icon" src="../icon/link.png"></a> -->
+
+		<input class="yellow" type="button" value="<%- t('name.edit.title', { ns : 'SIMLETs' }) %>" onclick="openEditStudyForm('<%= study %>')">
+		<input class="blue" type="button" value="<%- t('scheduler.shlink.generate.title', { ns : 'SIMLETs' }) %>" id="generate_shlink_url" onclick="openGenerateLinkForm()" style="visibility: hidden;">
+		<a class="button green" id="shlink_url" onclick="copyShortURL()" style="visibility: hidden;">
+			<span id="shlink_url_short"></span>
+		</a>
+		</h3>
+		<input class="red"  type="button" value="<%- t('scheduler.shlink.delete.title', { ns : 'SIMLETs' }) %>" id="delete_shlink_url" onclick="deleteShLink()"  style="visibility: hidden;">
+
+	</div>
+
+</div>
 
 <div id="study">
 	<div class="left">
@@ -45,12 +60,12 @@
 	<div class="card">
 		<div class="top">
 			<h2><%- t('sessions.title', { ns : 'SIMLETs' }) %></h2>
-			<input class="violet" type="button" value="<%- t('sessions.add.title', { ns : 'SIMLETs' }) %>" onclick="Utils.toggleAddForm('add_test')">
 		</div>
 		<div id="tests" class="tests">
 		</div>
 	</div>
 </div>
+
 <div id="add_group" class="new_element floating">
 	<div class="floater">
 		<div class="form">
@@ -164,7 +179,6 @@
 		</div>
 	</div>
 </div>
-
 
 <div id="edit_study" class="new_element floating">
 	<div class="floater">
@@ -317,6 +331,7 @@
 <div class="floating_buttons">
 	<a unselectable="on" class="basic" onclick="downloadStudyConfig()"><img src="/config.jpg"></a>
 	<a unselectable="on" class="basic" onclick="downloadUAConfig()"><img src="/ua.png"></a>
+	<a unselectable="on" class="basic" onclick="Utils.toggleAddForm('add_test')">+</a>
 </div>
 
 
@@ -875,8 +890,9 @@
 		$('#edit_allocator').toggleClass('shown');
 	}
 
-	let toggleTest = function(id){
+	let toggleTest = function(id) {
 		$(`#test_${id}`).find('.activities').toggleClass('collapsed');
+		$(`#test_${id}`).find('.expandButton').toggleClass('collapsed');
 	}
 
 	let changeTab = function(tab, form, subform){
@@ -1113,6 +1129,10 @@
 				fullyPaintTest(tests[i]);
 			}
 		}
+
+		if ($(".sessionTop").length == 1) {
+			toggleTest(1);
+		}
 	}
 
 	let paintAddGroup = function(groups){
@@ -1222,45 +1242,44 @@
 
 	let paintTest = function(test){
 		let btnText = "<%- t('sessions.activate.title', { ns : 'SIMLETs' }) %>";
-		let btnFn = "activateTest('${test.session_id}', true)"
+		let btnFn = `activateTest('${test.session_id}', true)`
 		if(test.session_status === "active") {
 			btnText = "<%- t('sessions.desactivate.title', { ns : 'SIMLETs' }) %>";
-			btnFn = "activateTest('${test.session_id}', false)"
+			btnFn = `activateTest('${test.session_id}', false)`
 		}		
 		let testDiv=`
 		<div id="test_${test.session_id}" class="test">
 			<div class="sessionTop" >
 				<h3>${test.session_name}</h3>
+				<div class="expandButton" onclick="toggleTest('${test.session_id}')"></div>
 				<div class="kebab">
 					<ul class="kebab-dropdown">
-						<li class="kebab-icon icon-expand" onclick="toggleTest('${test.session_id}')">
-							<%- t('sessions.expand', { ns : 'SIMLETs' }) %>
-						</li>
 						<li class="kebab-icon icon-add" onclick="openActivityForm('${test.session_id}')">
 							<%- t('activities.add.title', { ns : 'SIMLETs' }) %>
 						</li>
 						<li class="kebab-icon icon-edit" onclick="openEditTestForm('${test.session_id}')">
-							<%- t('activities.edit.title', { ns : 'SIMLETs' }) %>
-						</li>
-						<li class="kebab-icon icon-delete" onclick="deleteTest('${test.session_id}', '${test.session_name}')">
-							<%- t('sessions.delete.title', { ns : 'SIMLETs' }) %>
+							<%- t('sessions.edit.title', { ns : 'SIMLETs' }) %>
 						</li>
 						<li class="kebab-icon icon-duplicate" onclick="openEditDuplicateForm('${test.session_id}')">
 							<%- t('sessions.duplicate.title', { ns : 'SIMLETs' }) %>
 						</li>
-						<li class="kebab-icon icon-toggle onclick="${btnFn}">
+						<li class="kebab-icon icon-toggle" onclick="${btnFn}">
 							${btnText}	
+						</li>
+						<li class="kebab-icon icon-delete" onclick="deleteTest('${test.session_id}', '${test.session_name}')">
+							<%- t('sessions.delete.title', { ns : 'SIMLETs' }) %>
 						</li>
         			</ul>
 				</div>
 			</div>
-			<div class="activities collapsed">
+			<div class="activities">
 				${roller}
 			</div>
 		</div>
 		`;
 		$('#tests').append(testDiv);
-		$(".kebab-dropdown").fadeOut(0)
+		$(".kebab-dropdown").fadeOut(0);
+		toggleTest(test.session_id);
 	}
 
 	let paintTestActivities = function(test, activities, participants){
@@ -1378,9 +1397,9 @@
 		dropdown.fadeToggle(100)
 	});
 	$(document).on('click', function (e) {
-    let $target = $(e.target);
-    if (!$target.closest('.kebab').length) {
-        $('.kebab-dropdown').fadeOut(100);
-    }
-});
+		let $target = $(e.target);
+		if (!$target.closest('.kebab').length) {
+			$('.kebab-dropdown').fadeOut(100);
+		}
+	});
 </script>

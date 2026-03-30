@@ -70,6 +70,8 @@
     "sessions.zero.title":"SIN Sesión",
     "sessions.zero.message": "No hay Sesión para este SIMLET. Intente añadir uno utilizando el botón de la derecha.",
     "sessions.expand":"Expandir/Contraer",
+    "sessions.activate.title":"Activar",
+    "sessions.desactivate.title":"Desactivar",
 
     "activities.add.title":"Añadir actividad",
     "activities.add.new.title":"Añadir nueva actividad",

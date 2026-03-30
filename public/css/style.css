@@ -386,10 +386,59 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
   margin-right: 10px;
 }
 
-.sessionTop {
+
+.simletTop, .sessionTop {
 	display: flex;
 	align-items: center;
 }
+.simletTop.h1 {
+	margin:0;
+	padding:0;
+}
+.simletSettings {
+	display: flex;
+	margin-left: auto;
+	margin-right: 0px;
+	align-items: center;
+}
+.simlet-icon {
+    --iconSize: 25px;
+	--iconMargin: 10px;
+    
+	cursor: pointer;
+	
+	width: var(--iconSize);
+    height: var(--iconSize);
+    vertical-align: middle;
+    margin-right: var(--iconMargin);
+}
+
+.expandButton {
+	--triangleSize: 10px;
+    --triangleColor: black;
+	
+    cursor: pointer;
+	width: 0;
+	height: 0;
+	
+	/* Must be set by the leftmost element in order for the other buttons */
+	margin-left: auto;
+	margin-right: 10px;
+
+	border-left: var(--triangleSize) solid transparent;
+	border-right: var(--triangleSize) solid transparent;
+	border-bottom: var(--triangleSize) solid var(--triangleColor);
+	border-top: 0px solid transparent;
+
+}
+.expandButton.collapsed {
+	border-left: var(--triangleSize) solid transparent;
+	border-right: var(--triangleSize) solid transparent;
+	border-top: var(--triangleSize) solid var(--triangleColor);
+	border-bottom: 0px solid transparent;
+}
+/* .content .test .activities.collapsed { display: none;} */
+
 .kebab {
 	--3dotRadius: 20px;
     --3dotExternalRadius: calc(var(--3dotRadius) * 0.11);
@@ -404,10 +453,10 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	position: relative;
 	display: flex;
 	align-items: center;
-	margin-left: auto;
 	margin-right: 0px;
 }
-.kebab-dropdown {
+
+.kebab ul {
     --kebabBgColor: rgb(73, 73, 73);
     --kebabHoverColor: rgb(39, 39, 39);
     --kebabTextColor: rgb(255, 255, 255);
@@ -422,8 +471,8 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
     transform: translateX(-100%);
     z-index: 10;
 }
-.kebab-dropdown li { list-style-type: none; }
-.kebab-dropdown li:hover { background-color: var(--kebabHoverColor); }
+.kebab li { list-style-type: none; }
+.kebab li:hover { background-color: var(--kebabHoverColor); }
 
 .kebab-icon {
     vertical-align: middle;
@@ -442,10 +491,6 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
     height: var(--iconSize);
     margin-right: var(--iconMargin);
 }
-.icon-expand::before {
-    background-image: url("../icon/expand.png");
-	filter: invert(100%) sepia(4%) saturate(0%) hue-rotate(193deg) brightness(103%) contrast(102%); 
-}
 .icon-add::before {
     background-image: url("../icon/add.png");
 	filter: invert(100%) sepia(4%) saturate(0%) hue-rotate(193deg) brightness(103%) contrast(102%); 
@@ -454,11 +499,20 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
     background-image: url("../icon/editar.png");
 	filter: invert(100%) sepia(4%) saturate(0%) hue-rotate(193deg) brightness(103%) contrast(102%); 
 }
-.icon-delete::before {
-    background-image: url("../icon/trash.png");
-	filter: invert(100%) sepia(4%) saturate(0%) hue-rotate(193deg) brightness(103%) contrast(102%); 
-}
 .icon-duplicate::before {
     background-image: url("../icon/duplicate.png");
 	filter: invert(100%) sepia(4%) saturate(0%) hue-rotate(193deg) brightness(103%) contrast(102%); 
 }
+.icon-toggle::before {
+    background-image: url("../icon/toggle.png");
+	filter: invert(100%) sepia(4%) saturate(0%) hue-rotate(193deg) brightness(103%) contrast(102%); 
+}
+.icon-delete {
+	color: #ff3d3d;
+}
+.icon-delete::before {
+    background-image: url("../icon/trash.png");
+	filter: brightness(0) saturate(100%) invert(29%) sepia(78%) saturate(3518%) hue-rotate(344deg) brightness(122%) contrast(100%);
+}
+
+

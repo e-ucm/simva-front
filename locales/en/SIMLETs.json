@@ -69,7 +69,8 @@
     "sessions.delete.confirm":"Are you sure do you want to delete the Session '{{session}}' from SIMLET '{{SIMLET}}'?\nAll the activities and data will be deleted too.",
     "sessions.zero.title":"NO Session",
     "sessions.zero.message": "There are no Session for this SIMLET. Try adding one using the button on the right.",
-    "sessions.expand":"Expand/Collapse",
+    "sessions.activate.title":"Activate",
+    "sessions.desactivate.title":"Deactivate",
 
     "activities.add.title":"Add activity",
     "activities.add.new.title":"Add new activity",

@@ -70,6 +70,8 @@
     "sessions.zero.title":"PAS DE session",
     "sessions.zero.message": "Il n'y a pas de sessions pour cette SIMLET. Essayez d'en ajouter une en utilisant le bouton à droite.",
     "sessions.expand":"Développer/Réduire",
+    "sessions.activate.title":"Activer",
+    "sessions.desactivate.title":"Désactiver",
 
     "activities.add.title":"Ajouter une activité",
     "activities.add.new.title":"Ajouter une nouvelle activité",
