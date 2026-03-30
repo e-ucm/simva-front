@@ -504,7 +504,7 @@ module.exports = function(auth, config){
    
     router.patch('/activities/:activityid', auth, async (req, res, next) => {
         // Merge fields from multipart form
-        Simva.updateActivity(req.params["activityid"], req.body, req.session.id, (error, result) => {
+        Simva.updateActivity(req.params["activityid"], req, req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
@@ -788,7 +788,7 @@ module.exports = function(auth, config){
     * 
     */
     router.post('/studies/:studyid/tests/:testid/activities', auth, async (req, res, next) => {
-        Simva.addActivityToTest(req.params["studyid"], req.params["testid"], req.body, req.session.id, (error, result) => {
+        Simva.addActivityToTest(req.params["studyid"], req.params["testid"], req, req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {

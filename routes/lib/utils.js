@@ -2,22 +2,27 @@ var axios = require('axios');
 const logger = require('../../logger');
 
 module.exports = {
-	post: function (url, body, callback, jwt, apikey) {
+	post: function (url, req, body, callback, jwt, apikey) {
 		const headers =  {};
+		let transferedBody = body;
 		if (jwt) {
 			headers['Authorization'] = `Bearer ${jwt}`;
 		}
 		if(apikey) {
 			headers['X-Api-Key'] = `${apikey}`;
 		}
-		if(body instanceof FormData) {
+		if (req != undefined && req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data')) {
+			logger.info("Body is form-data, setting Content-Type to multipart/form-data");
+			delete body.formData;
 			headers['Content-Type'] = 'multipart/form-data';
+			transferedBody = req;
 		} else {
+			logger.info("post() - Body is not FormData, setting Content-Type to application/json");
 			headers['Content-Type'] = 'application/json';
 		}
 
 		axios
-			.post(url, body, 
+			.post(url, transferedBody,
 				{ 
 					headers,
 					maxContentLength: Infinity,
@@ -32,22 +37,27 @@ module.exports = {
 			});
 	},
 
-	patch: function (url, body, callback, jwt, apikey) {
+	patch: function (url, req, body, callback, jwt, apikey) {
 		const headers = {};
+		let transferedBody = body;
 		if (jwt) {
 			headers['Authorization'] = `Bearer ${jwt}`;
 		}
 		if(apikey) {
 			headers['X-Api-Key'] = `${apikey}`;
 		}
-		if(body instanceof FormData) {
+		if (body.formData != undefined) {
+			logger.info("Body is form-data, setting Content-Type to multipart/form-data");
+			delete body.formData;
 			headers['Content-Type'] = 'multipart/form-data';
+			transferedBody = req;
 		} else {
+			logger.info("patch() - Body is not FormData, setting Content-Type to application/json");
 			headers['Content-Type'] = 'application/json';
 		}
 
 		axios
-			.patch(url, body, 
+			.patch(url, transferedBody, 
 				{ 
 					headers,
 					maxContentLength: Infinity,
@@ -58,23 +68,27 @@ module.exports = {
 			.catch((error) => callback(error));
 	},
 
-	put: function (url, body, callback, jwt, apikey) {
+	put: function (url, req, body, callback, jwt, apikey) {
 		const headers = {};
+		let transferedBody = body;
 		if (jwt) {
 			headers['Authorization'] = `Bearer ${jwt}`;
 		}
 		if(apikey) {
 			headers['X-Api-Key'] = `${apikey}`;
 		}
-		
-		if(body instanceof FormData) {
+		if (body.formData != undefined) {
+			logger.info("Body is form-data, setting Content-Type to multipart/form-data");
+			delete body.formData;
 			headers['Content-Type'] = 'multipart/form-data';
+			transferedBody = req;
 		} else {
+			logger.info("put() - Body is not FormData, setting Content-Type to application/json");
 			headers['Content-Type'] = 'application/json';
 		}
 			
 		axios
-			.put(url, body, 
+			.put(url, transferedBody, 
 				{ 
 					headers,
 					maxContentLength: Infinity,
