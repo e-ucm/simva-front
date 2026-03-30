@@ -36,6 +36,24 @@ var Utils = {
 		});
 	},
 
+	
+	postForm: function(url, formData, callback){
+	    $.ajax({
+	       type: 'POST',
+	       url: url,
+	       data: formData,
+	       processData: false,
+	       contentType: false,
+	       cache: false,
+	       success: function(data){
+		       callback(null, data);
+	       },
+	       error: function(error){
+		       callback(error);
+	       },
+	    });
+	},
+
 	patch: function(url, body, callback){
 		$.ajax({
 			type: 'PATCH',
@@ -51,6 +69,23 @@ var Utils = {
 				callback(error);
 			},
 		});
+	},
+
+	patchForm: function(url, formData, callback){
+	    $.ajax({
+	       type: 'PATCH',
+	       url: url,
+	       data: formData,
+	       processData: false,
+	       contentType: false,
+	       cache: false,
+	       success: function(data){
+		       callback(null, data);
+	       },
+	       error: function(error){
+		       callback(error);
+	       },
+	    });
 	},
 
 	put: function(url, body, callback){

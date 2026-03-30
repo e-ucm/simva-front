@@ -151,38 +151,51 @@ var LimeSurveyPainter = {
 		let formdata = Utils.getFormData(jform);
 		let method = $('#new_activity_extras .tab.selected').attr('method');
 
+		console.log('[limesurveypainter] extractInformation called');
+		console.log('Form:', form);
+		console.log('FormData:', formdata);
+		console.log('Method:', method);
+
 		activity.activity_name = formdata.name;
 		activity.activity_type = this.supportedType;
 		activity.activity_trace_storage = true; // Always enable trace storage for limesurvey activities
 		activity.activity_can_be_restarted = false; // Limesurvey activities cannot be restarted
 		switch(method){
 			case 'byid':
-				activity.copysurvey = formdata.survey_id;
+				console.log('[limesurveypainter] byid case');
+				activity.copysurvey = parseInt(formdata.surveyid);
 				callback(null, activity);
 				break;
 			case 'byexisting':
-				activity.copysurvey = formdata.existingid;
+				console.log('[limesurveypainter] byexisting case');
+				activity.copysurvey = parseInt(formdata.existingid);
 				callback(null, activity);
 				break;
 			case 'bynew':
+				console.log('[limesurveypainter] bynew case');
 				callback(this.specific.new_after_message);
 				break;
 			case 'byupload':
-				if($(form).find('input[name="lss"]').get(0).files[0]){
+				console.log('[limesurveypainter] byupload case');
+				var fileInput = $(form).find('input[name="lss"]').get(0);
+				if(fileInput && fileInput.files[0]){
+					console.log('[limesurveypainter] File selected for upload:', fileInput.files[0]);
 					var reader = new FileReader();
-					var input = event.target;
 					reader.onload = function(){
 						let raw = reader.result;
 						raw = raw.substr(raw.indexOf(',') + 1);
 						activity.rawsurvey = raw;
+						console.log('[limesurveypainter] File loaded and encoded');
 						callback(null, activity);
 					};
-					reader.readAsDataURL($(form).find('input[name="lss"]').get(0).files[0]);
+					reader.readAsDataURL(fileInput.files[0]);
 				}else{
+					console.log('[limesurveypainter] No file selected for upload');
 					callback(this.specific.upload_error);
 				}
 				break;
 			default:
+				console.log('[limesurveypainter] default/no_method case');
 				callback(this.specific.no_method);
 				break;
 		}
@@ -192,6 +205,11 @@ var LimeSurveyPainter = {
 		let jform = $(form);
 		let formdata = Utils.getFormData(jform);
 		let activity = {};
+
+		console.log('[limesurveypainter] extractEditInformation called');
+		console.log('Form:', form);
+		console.log('FormData:', formdata);
+		console.log('actualActivity:', actualActivity);
 
 		if(actualActivity.activity_name !== formdata.name) {
 			activity.activity_name = formdata.name;

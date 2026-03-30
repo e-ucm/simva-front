@@ -20,21 +20,46 @@ var GameplayActivityPainter = {
 
 	getExtraForm: function (callback) {
 		callback(null, `<div class="gameplay_activity">
+			<div class="gameplay_tabs">
+				<span class="tab selected" method="WEB" onclick="changeTab(this, 'new_activity_extras','gameplay_web')">WEB</span>
+				<span class="tab" method="DESKTOP" onclick="changeTab(this, 'new_activity_extras','gameplay_desktop')">DESKTOP</span>
+			</div>
+			<div id="gameplay_web" class="subform selected">
+				<p><label for="gameplay_game_uri" style="width: 100%; text-align: center;">${this.specific.game_uri_title}</label><input id="gameplay_game_uri" type="text" name="game_uri">
+				<span class="info">${this.specific.game_uri_explication}</span></p>
+			</div>
+			<div id="gameplay_desktop" class="subform">
+				<label for="gamefile">${this.specific.upload_title || 'Upload game file for DESKTOP activity'}</label>
+				   <input type="file" name="file" id="gamefile" placeholder="Game file" accept=".zip">
+				<span class="info">${this.specific.upload_explication || 'Select DESKTOP tab and upload a file.'}</span>
+			</div>
 			<p><label for="gameplay_trace_storage">${this.commun.storage_title}</label><input id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
-			 <p><label for="gameplay_backup">${this.communSpecific.result_title}</label><input id="gameplay_backup" type="checkbox" name="backup" checked></p>
-			 <p><label for="gameplay_scorm_xAPI">${this.specific.xapi_by_game_title}</label><input id="gameplay_scorm_xAPI" type="checkbox" name="scorm_xapi"></p>
-			 <p><label for="gameplay_restarted">${this.communSpecific.restarted_title}</label><input id="gameplay_restarted" type="checkbox" name="restarted"></p>
-			 <p><label for="gameplay_game_uri" style="width: 100%; text-align: center;">${this.specific.game_uri_title}</label><input id="gameplay_game_uri" type="text" name="game_uri">
-			 <span><p>${this.specific.game_uri_explication}</p></div>`);
+			<p><label for="gameplay_backup">${this.communSpecific.result_title}</label><input id="gameplay_backup" type="checkbox" name="backup" checked></p>
+			<p><label for="gameplay_scorm_xAPI">${this.specific.xapi_by_game_title}</label><input id="gameplay_scorm_xAPI" type="checkbox" name="scorm_xapi"></p>
+			<p><label for="gameplay_restarted">${this.communSpecific.restarted_title}</label><input id="gameplay_restarted" type="checkbox" name="restarted"></p>
+		</div>`);
 	},
 
 	getEditExtraForm: function () {
-		return `<div class="gameplay_activity"><p><label for="edit_gameplay_trace_storage">${this.commun.storage_title}</label><input id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
-			 <p><label for="edit_gameplay_backup">${this.communSpecific.result_title}</label><input id="edit_gameplay_backup" type="checkbox" name="backup" checked></p>
-			 <p><label for="edit_gameplay_scorm_xAPI">${this.specific.xapi_by_game_title}</label><input id="edit_gameplay_scorm_xAPI" type="checkbox" name="scorm_xapi" checked></p>
-			 <p><label for="edit_gameplay_restarted">${this.communSpecific.restarted_title}</label><input id="edit_gameplay_restarted" type="checkbox" name="restarted"></p>
-			 <p><label for="edit_gameplay_game_uri" style="width: 100%; text-align: center;">${this.specific.game_uri_title}</label><input id="edit_gameplay_game_uri" type="text" name="game_uri">
-			 <span class="info"><p>${this.specific.game_uri_explication}</p></div>`;
+		return `<div class="gameplay_activity">
+			<div class="gameplay_tabs">
+				<span class="tab selected" method="WEB" onclick="changeTab(this, 'edit_activity_extras','edit_gameplay_web')">WEB</span>
+				<span class="tab" method="DESKTOP" onclick="changeTab(this, 'edit_activity_extras','edit_gameplay_desktop')">DESKTOP</span>
+			</div>
+			<div id="edit_gameplay_web" class="subform selected">
+				<p><label for="edit_gameplay_game_uri" style="width: 100%; text-align: center;">${this.specific.game_uri_title}</label><input id="edit_gameplay_game_uri" type="text" name="game_uri">
+				<span class="info">${this.specific.game_uri_explication}</span></p>
+			</div>
+			<div id="edit_gameplay_desktop" class="subform">
+				<label for="edit_gamefile">${this.specific.upload_title || 'Upload game file for DESKTOP activity'}</label>
+				   <input type="file" name="file" id="edit_gamefile" placeholder="Game file" accept=".zip">
+				<span class="info">${this.specific.upload_explication || 'Select DESKTOP tab and upload a file.'}</span>
+			</div>
+			<p><label for="edit_gameplay_trace_storage">${this.commun.storage_title}</label><input id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
+			<p><label for="edit_gameplay_backup">${this.communSpecific.result_title}</label><input id="edit_gameplay_backup" type="checkbox" name="backup" checked></p>
+			<p><label for="edit_gameplay_scorm_xAPI">${this.specific.xapi_by_game_title}</label><input id="edit_gameplay_scorm_xAPI" type="checkbox" name="scorm_xapi" checked></p>
+			<p><label for="edit_gameplay_restarted">${this.communSpecific.restarted_title}</label><input id="edit_gameplay_restarted" type="checkbox" name="restarted"></p>
+		</div>`;
 	},
 
 	updateInputEditExtraForm(activity) {
@@ -52,32 +77,58 @@ var GameplayActivityPainter = {
 
 	extractInformation: function(form, callback){
 		let activity = {};
-
 		let jform = $(form);
 		let formdata = Utils.getFormData(jform);
+		let method = $('#new_activity_extras .tab.selected').attr('method');
+
+		console.log('[gameplaypainter] extractInformation called');
+		console.log('Form:', form);
+		console.log('FormData:', formdata);
+		console.log('Method:', method);
 
 		activity.activity_name = formdata.name;
 		activity.activity_type = this.supportedType;
-
 		activity.activity_trace_storage = formdata.trace_storage === 'on';
 		activity.game_backup = formdata.backup === 'on';
 		activity.game_scorm_xapi = formdata.scorm_xapi === 'on';
 		activity.activity_can_be_restarted = formdata.restarted === 'on';
-		if(formdata.game_uri !== ''){
-			activity.game_type = 'WEB';
-			activity.game_url = formdata.game_uri;
-		} else {
-			activity.game_url = null;
-			activity.game_type = "DESKTOP";
-		}
 
-		callback(null, activity);
+		switch(method){
+			case 'DESKTOP':
+				activity.game_type = "DESKTOP";
+				console.log('[gameplaypainter] DESKTOP case');
+				// Only for desktop games
+				let rawformdata = PainterFactory.Painters["activity"].extractFileFromEditForm(form, 'gamefile', activity, 'file', 'game_type', 'DESKTOP');
+				if(rawformdata !== undefined) {
+					console.log('[gameplaypainter] File extraction triggered, returning');
+					callback(null, rawformdata); // 👈 send rawformdata for DESKTOP activities
+					return;
+				} else {
+					callback(null, activity);
+				}
+				break;
+			default:
+				console.log('[gameplaypainter] Default case, game_uri:', formdata.game_uri);
+				activity.game_type = 'WEB';
+				if(formdata.game_uri !== ''){
+					activity.game_url = formdata.game_uri;
+				} else {
+					activity.game_url = null;
+				}
+				callback(null, activity);
+				break;
+		}
 	},
 
 	extractEditInformation: function(form, actualActivity, callback){
 		let jform = $(form);
 		let formdata = Utils.getFormData(jform);
 		let activity = {};
+
+		console.log('[gameplaypainter] extractEditInformation called');
+		console.log('Form:', form);
+		console.log('FormData:', formdata);
+		console.log('actualActivity:', actualActivity);
 
 		if(actualActivity.activity_name !== formdata.name) {
 			activity.activity_name = formdata.name;
@@ -98,13 +149,19 @@ var GameplayActivityPainter = {
 			activity.game_backup = backup;
 		}
 		let game_uri = formdata.game_uri;
-		const actualGameUri = actualActivity.game_url || (actualActivity.extra_data && actualActivity.extra_data.game_uri) || '';
+		let actualGameUri = actualActivity.game_url || (actualActivity.extra_data && actualActivity.extra_data.game_uri) || '';
 		if(actualGameUri !== game_uri) {
-			if(game_uri !== '' || actualGameUri !== '') {
-				activity.game_url = game_uri;
-			}
+			activity.game_url = game_uri;
 		}
-	
+
+		// Check for file upload in edit form
+		console.log('[gameplaypainter] Checking file extraction in edit');
+		let rawformdata = PainterFactory.Painters["activity"].extractFileFromEditForm(form, 'gamefile', activity, 'file', 'game_type', 'DESKTOP');
+		if(rawformdata !== undefined) {
+			console.log('[gameplaypainter] File extraction triggered in edit, returning');
+			callback(null, rawformdata); // 👈 send rawformdata for DESKTOP activities
+			return;
+		}
 		callback(null, activity);
 	},
 

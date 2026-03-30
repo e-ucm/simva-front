@@ -194,10 +194,56 @@ var ActivityPainter = {
 	updateInputEditExtraForm(activity) {
 	},
 
+	extractFileFromEditForm(form, inputName, activity, fileField, typeField, typeValue) {
+		console.log('[activitypainter] extractFileFromEditForm called');
+		let fileInput = null;
+
+		// Normalize form (always jQuery)
+		let $form = (form instanceof $) ? form : $(form);
+
+		// Much simpler + reliable selector
+		fileInput = $form.find(`input[name="${inputName}"], input[id="${inputName}"], input[id="edit_${inputName}"]`).get(0);
+
+		console.log('[activitypainter] fileInput selected:', fileInput);
+
+		if (fileInput && fileInput.files && fileInput.files.length > 0) {
+			let file = fileInput.files[0];
+			console.log('[activitypainter] File selected:', file);
+
+			// 🚨 KEY CHANGE: use FormData instead of base64
+			let formData = new FormData();
+			formData.append('formData', true);
+			// Append file
+			formData.append(fileField, file);
+
+			// Append metadata
+			formData.append(typeField, typeValue);
+
+			// Add other activity fields
+			Object.keys(activity).forEach(key => {
+				formData.append(key, activity[key]);
+			});
+
+			console.log('[activitypainter] FormData ready');
+			console.log('FormData entries:');
+			for (let pair of formData.entries()) {
+				console.log(pair[0]+ ':', pair[1]);
+			}
+			return formData; // 👈 send FormData instead of activity
+		}
+
+		console.log('[activitypainter] No file selected');
+		return undefined;
+	},
+
 	extractEditInformation: function(form, actualActivity, callback){
 		let jform = $(form);
 		let formdata = Utils.getFormData(jform);
 		let activity = {};
+		console.log('[activitypainter] extractEditInformation called');
+		console.log('Form:', form);
+		console.log('FormData:', formdata);
+		console.log('actualActivity:', actualActivity);
 		if(actualActivity.activity_name !== formdata.name) {
 			activity.activity_name = formdata.name;
 		}
@@ -210,6 +256,10 @@ var ActivityPainter = {
 
 		let jform = $(form);
 		let formdata = Utils.getFormData(jform);
+
+		console.log('[activitypainter] extractInformation called');
+		console.log('Form:', form);
+		console.log('FormData:', formdata);
 
 		activity.activity_name = formdata.name;
 		activity.activity_type = this.supportedType;

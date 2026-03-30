@@ -171,7 +171,7 @@ module.exports = {
     },
 
     async importActivity(studyid, testid, activity, sessionid) {
-        let act=await SimvaAsync.addActivityToTest(studyid, testid, activity, sessionid);
+        let act=await SimvaAsync.addActivityToTest(studyid, testid, null, activity, sessionid);
         return act;
     },
 }

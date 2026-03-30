@@ -20,19 +20,45 @@ var ManualActivityPainter = {
 	},
 
 	getExtraForm: function (callback) {
-		callback(null, `<p><label for="manual_user_managed">${this.specific.student_complete_title}</label><input id="manual_user_managed" type="checkbox" name="user_managed"></p>
+		callback(null, `<div class="manual_activity">
+			<div class="manual_tabs">
+				<span class="tab selected" method="WEB" onclick="changeTab(this, 'new_activity_extras','manual_web')">WEB</span>
+				<span class="tab" method="EXTERNAL" onclick="changeTab(this, 'new_activity_extras','manual_external')">EXTERNAL</span>
+			</div>
+			<div id="manual_web" class="subform selected">
+				<p><label for="manual_uri" style="width: 100%; text-align: center;">${this.specific.uri_title}</label><input id="manual_uri" type="text" name="uri">
+				<span class="info">${this.specific.uri_explication}</span></p>
+			</div>
+			<div id="manual_external" class="subform">
+				<label for="manualfile">${this.specific.upload_title || 'Upload file for EXTERNAL activity'}</label>
+				   <input type="file" name="file" id="manualfile" placeholder="Manual file" accept=".pdf">
+				<span class="info">${this.specific.upload_explication || 'Select EXTERNAL tab and upload a file.'}</span>
+			</div>
+			<p><label for="manual_user_managed">${this.specific.student_complete_title}</label><input id="manual_user_managed" type="checkbox" name="user_managed"></p>
 			<p><label for="manual_storage">${this.commun.storage_title}</label><input id="manual_storage" type="checkbox" name="storage"></p>
-			 <p><label for="manual_restarted">${this.communSpecific.restarted_title}</label><input id="manual_restarted" type="checkbox" name="restarted"></p>
-			 <p><label for="manual_uri" style="width: 100%; text-align: center;">${this.specific.uri_title}</label><input id="manual_uri" type="text" name="uri">
-			 <span class="info">${this.specific.uri_explication}</p></div>`);
+			<p><label for="manual_restarted">${this.communSpecific.restarted_title}</label><input id="manual_restarted" type="checkbox" name="restarted"></p>
+		</div>`);
 	},
 
 	getEditExtraForm: function () {
-		return `<p><label for="edit_manual_user_managed">${this.specific.student_complete_title}</label><input id="edit_manual_user_managed" type="checkbox" name="user_managed"></p>
-		<p><label for="edit_manual_storage">${this.commun.storage_title}</label><input id="edit_manual_storage" type="checkbox" name="storage"></p>
-		<p><label for="edit_manual_restarted">${this.communSpecific.restarted_title}</label><input id="edit_manual_restarted" type="checkbox" name="restarted"></p>
-		<p><label for="edit_manual_uri" style="width: 100%; text-align: center;">${this.specific.uri_title}</label><input id="edit_manual_uri" type="text" name="uri">
-		<span class="info">${this.specific.uri_explication}</p></div>`;
+		return `<div class="manual_activity">
+			<div class="manual_tabs">
+				<span class="tab selected" method="WEB" onclick="changeTab(this, 'edit_manual_web')">WEB</span>
+				<span class="tab" method="EXTERNAL" onclick="changeTab(this, 'edit_manual_external')">EXTERNAL</span>
+			</div>
+			<div id="edit_manual_web" class="subform selected">
+				<p><label for="edit_manual_uri" style="width: 100%; text-align: center;">${this.specific.uri_title}</label><input id="edit_manual_uri" type="text" name="uri">
+				<span class="info">${this.specific.uri_explication}</span></p>
+			</div>
+			<div id="edit_manual_external" class="subform">
+				<label for="edit_manualfile">${this.specific.upload_title || 'Upload file for EXTERNAL activity'}</label>
+				   <input type="file" name="file" id="edit_manualfile" placeholder="Manual file" accept=".pdf">
+				<span class="info">${this.specific.upload_explication || 'Select EXTERNAL tab and upload a file.'}</span>
+			</div>
+			<p><label for="edit_manual_user_managed">${this.specific.student_complete_title}</label><input id="edit_manual_user_managed" type="checkbox" name="user_managed"></p>
+			<p><label for="edit_manual_storage">${this.commun.storage_title}</label><input id="edit_manual_storage" type="checkbox" name="storage"></p>
+			<p><label for="edit_manual_restarted">${this.communSpecific.restarted_title}</label><input id="edit_manual_restarted" type="checkbox" name="restarted"></p>
+		</div>`;
 	},
 
 	updateInputEditExtraForm(activity) {
@@ -50,53 +76,95 @@ var ManualActivityPainter = {
 
 	extractInformation: function(form, callback){
 		let activity = {};
-
 		let jform = $(form);
 		let formdata = Utils.getFormData(jform);
+		let method = $('#new_activity_extras .tab.selected').attr('method');
+
+		console.log('[manualpainter] extractInformation called');
+		console.log('Form:', form);
+		console.log('FormData:', formdata);
+		console.log('Method:', method);
 
 		activity.activity_name = formdata.name;
 		activity.activity_type = this.supportedType;
-
 		activity.manual_user_managed = formdata.user_managed === 'on';
 		activity.activity_trace_storage = formdata.storage === 'on';
 		activity.activity_can_be_restarted = formdata.restarted === 'on';
-		if(formdata.uri !== ''){
-			activity.manual_ressource_type = 'WEB';
-			activity.manual_ressource_url = formdata.uri;
-		} else {
-			activity.manual_ressource_url = null;
-			activity.manual_ressource_type = "EXTERNAL";
-		}
 
-		callback(null, activity);
+		switch(method){
+			case 'EXTERNAL':
+				// Only for EXTERNAL manual activities
+				console.log('[manualpainter] EXTERNAL case, checking file extraction');
+				let rawformdata = PainterFactory.Painters["activity"].extractFileFromEditForm(form, 'manualfile', callback, activity, 'file', 'manual_ressource_type', 'EXTERNAL');
+				if(rawformdata !== undefined) {
+					console.log('[manualpainter] File extraction triggered, returning');
+					callback(null, rawformdata); // 👈 send rawformdata for EXTERNAL activities
+					return;
+				}
+				console.log('[manualpainter] No file extracted, continuing');
+				callback(null, activity);
+				break;
+			default:
+				console.log('[manualpainter] Default case, uri:', formdata.uri);
+				activity.manual_ressource_type = 'WEB';
+				if(formdata.uri !== ''){
+					activity.manual_ressource_url = formdata.uri;
+				} else {
+					activity.manual_ressource_url = null;
+				}
+				callback(null, activity);
+				break;
+		}
 	},
 
 	extractEditInformation: function(form, actualActivity, callback){
 		let jform = $(form);
 		let formdata = Utils.getFormData(jform);
 		let activity = {};
+		let method = $('#edit_activity_extras .tab.selected').attr('method');
+
+		console.log('[manualpainter] extractEditInformation called');
+		console.log('Form:', form);
+		console.log('FormData:', formdata);
+		console.log('actualActivity:', actualActivity);
 
 		if(actualActivity.activity_name !== formdata.name) {
 			activity.activity_name = formdata.name;
 		}
-	
+    
 		const actualUserManaged = actualActivity.manual_user_managed;
 		let user_managed = formdata.user_managed === 'on';
 		if(actualUserManaged !== user_managed) {
 			activity.manual_user_managed = user_managed;
 		}
-		
-		const actualUri = actualActivity.manual_ressource_url;
-		if(!(actualUri == formdata.uri)) {
-			if(actualUri) {
-				activity.manual_ressource_url = formdata.uri;
-			} else {
-				if(formdata.uri !== ''){
-					activity.manual_ressource_url = formdata.uri;
+        
+		switch(method){
+			case 'EXTERNAL':
+				activity.manual_ressource_type = 'EXTERNAL';
+				console.log('[manualpainter] EXTERNAL case, checking file extraction in edit');
+				const actualUri = actualActivity.manual_ressource_url;
+				if(!(actualUri == formdata.uri)) {
+					if(actualUri) {
+						activity.manual_ressource_url = formdata.uri;
+					} else {
+						if(formdata.uri !== ''){
+							activity.manual_ressource_url = formdata.uri;
+						}
+					}
 				}
-			}
+			case 'WEB':
+				activity.manual_ressource_type = 'WEB';
+				// Check for file upload in edit form
+				console.log('[manualpainter] Checking file extraction in edit');
+				let rawformdata = PainterFactory.Painters["activity"].extractFileFromEditForm(form, 'manualfile', activity, 'file', 'manual_ressource_type', 'EXTERNAL');
+				if(rawformdata !== undefined) {
+					console.log('[manualpainter] File extraction triggered in edit, returning');
+					callback(null, rawformdata); // 👈 send rawformdata for EXTERNAL activities
+					return;
+				} else {
+					callback(null, activity);
+				}
 		}
-
 		callback(null, activity);
 	},
 

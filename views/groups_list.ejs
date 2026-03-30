@@ -26,8 +26,12 @@
 				$("#new_group_form .error").text("Please select a study");
 				return false;
 			}
+			let formData = new FormData();
+			formData.append('group_name', form.name);
+			formData.append('group_sandbox', Boolean(form.group_sandbox));
+			formData.append('group_use_new_generation', newGeneration);
 
-			Simva.addGroup(simlet_id, form.name, newGeneration, Boolean(form.group_sandbox), function(error, result){
+			Simva.addGroup(simlet_id, { group_name : form.name, group_sandbox : Boolean(form.group_sandbox), group_use_new_generation : newGeneration }, function(error, result){
 				if(error && error.responseJSON){
 					$("#new_group_form .error").text(error.responseJSON.message);
 				}else{
@@ -50,12 +54,14 @@
 			let currentform = this;
 			let form = Utils.getFormData($("#edit_group_form"));
 			Utils.toggleSubmit(currentform);
+			let formData = new FormData();
 			let errorbox = $(this).find('.error');
 			if(form.name == form.groupName) {
 				errorbox.text("<%= t('name.edit.nochange', { ns : 'groups' }) %>");
 				Utils.toggleSubmit(currentform);
 			} else {
-				Simva.updateGroup(simletid, form.group, { group_name: form.name }, function(error, result){
+				formData.append('group_name', form.name);
+				Simva.updateGroup(simletid, form.group, { group_name : form.name }, function(error, result){
 					if(!error){
 						Utils.toggleSubmit(currentform);
 						Utils.toggleAddForm('edit_group');
