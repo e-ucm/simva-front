@@ -13,9 +13,20 @@
     "new.upload.message": "Select Exported SIMLET file",
     "new.upload.errorMessage" : "Select the file to upload first.",
     
-    "name.edit.title" : "Edit SIMLET Name",
-    "name.placeholder":"SIMLET name",
-    "name.edit.no_change" : "No changes detected in new SIMLET name !",
+    "edit.no_change": "No changes detected!",
+
+    "edit.title": "Edit",
+    "simlet.tab.title": "SIMLET settings",
+    "edit.submit.title": "Edit SIMLET",
+    "name.edit.title": "Name",
+    "name.placeholder": "SIMLET name",
+    "description.edit.title": "Description",
+    "description.placeholder": "SIMLET description",
+    "url.tab.title": "URL settings",
+    
+    "config.title": "Download config",
+    "config.download.simlet": "Export SIMLET to .json",
+    "config.download.uadventure": "Download uAdventure config",
     
     "coordinators.title":"Coordinators",
     "coordinators.placeholder":"Coordinator username",
@@ -69,8 +80,8 @@
     "sessions.delete.confirm":"Are you sure do you want to delete the Session '{{session}}' from SIMLET '{{SIMLET}}'?\nAll the activities and data will be deleted too.",
     "sessions.zero.title":"NO Session",
     "sessions.zero.message": "There are no Session for this SIMLET. Try adding one using the button on the right.",
-    "sessions.activate.title":"Activate",
-    "sessions.desactivate.title":"Deactivate",
+    "sessions.active.title":"Active",
+    "sessions.inactive.title":"Inactive",
 
     "activities.add.title":"Add activity",
     "activities.add.new.title":"Add new activity",

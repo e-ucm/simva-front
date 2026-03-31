@@ -9,17 +9,9 @@
 	<h1><%- t('single.title', { ns : 'SIMLETs' }) %>: <span id="study_name"></span></h1>
 
 	<div class="simletSettings">
-		<!-- <a onclick="openEditStudyForm('<%= study %>')"><img class="simlet-icon" src="../icon/editar.png"></a>
-		<a id="generate_shlink_url" onclick="openGenerateLinkForm()"><img class="simlet-icon" src="../icon/link.png"></a> -->
-
-		<input class="yellow" type="button" value="<%- t('name.edit.title', { ns : 'SIMLETs' }) %>" onclick="openEditStudyForm('<%= study %>')">
-		<input class="blue" type="button" value="<%- t('scheduler.shlink.generate.title', { ns : 'SIMLETs' }) %>" id="generate_shlink_url" onclick="openGenerateLinkForm()" style="visibility: hidden;">
-		<a class="button green" id="shlink_url" onclick="copyShortURL()" style="visibility: hidden;">
-			<span id="shlink_url_short"></span>
-		</a>
-		</h3>
-		<input class="red"  type="button" value="<%- t('scheduler.shlink.delete.title', { ns : 'SIMLETs' }) %>" id="delete_shlink_url" onclick="deleteShLink()"  style="visibility: hidden;">
-
+		<input class="yellow" type="button" value="<%- t('edit.title', { ns : 'SIMLETs' }) %>" onclick="openEditStudyForm('<%= study %>')">
+		&nbsp;
+		<input class="yellow" type="button" value="<%- t('config.title', { ns : 'SIMLETs' }) %>" onclick="openConfigDownloadForm()">
 	</div>
 
 </div>
@@ -183,16 +175,35 @@
 <div id="edit_study" class="new_element floating">
 	<div class="floater">
 		<div class="form">
+			<div class="tabs">
+				<span class="tab selected" type="hidden" onclick="changeTab(this, 'edit_study','edit_study_tab')">
+					<%- t('simlet.tab.title', { ns : 'SIMLETs' }) %>
+				</span>
+				<span class="tab" onclick="changeTab(this, 'edit_study','edit_url_tab')">
+					<%- t('url.tab.title', { ns : 'SIMLETs' }) %>
+				</span>
+			</div>
+			<br>
 			<div id="edit_study_tab" class="subform selected">
-				<h2><%- t('name.edit.title', { ns : 'SIMLETs' }) %></h2>
 				<form id="edit_study_form">
-					<input hidden type="text" name="study">
-					<input hidden type="text" name="studyName">
-					<input type="text" name="name" id="edit_study_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
-					<input type="submit" value="<%- t('name.edit.title', { ns : 'SIMLETs' }) %>">
+					<h3><%- t('name.edit.title', { ns : 'SIMLETs' }) %></h3>
+					<input type="text" name="studyName" id="edit_study_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<br>
+					<h3><%- t('description.edit.title', { ns : 'SIMLETs' }) %></h3>
+					<input type="text" name="studyDescription" id="edit_study_description" placeholder="<%- t('description.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<br><br>
+					<input type="submit" value="<%- t('edit.submit.title', { ns : 'SIMLETs' }) %>">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 					<span class="error" id="edit_study_error"></span>
 				</form>
+			</div>
+<!-- HI -->
+			<div id="edit_url_tab" class="subform">
+				<input type="button" class="blue" id="generate_shlink_url" value="<%- t('scheduler.shlink.generate.title', { ns : 'SIMLETs' }) %>" onclick="openGenerateLinkForm()">
+				<br><br>
+				<a class="button green" id="shlink_url" onclick="copyShortURL()"><span id="shlink_url_short"></span></a>
+				<br><br>
+				<input type="button" class="red" id="delete_shlink_url" value="<%- t('scheduler.shlink.delete.title', { ns : 'SIMLETs' }) %>" onclick="deleteShLink()">
 			</div>
 		</div>
 	</div>
@@ -321,6 +332,15 @@
 	</div>
 </div>
 
+<div id="download_config" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<input class="yellow" type="button" value="<%- t('config.download.simlet', { ns : 'SIMLETs' }) %>" onclick="downloadStudyConfig()">
+			<br><br>
+			<input class="yellow" type="button" value="<%- t('config.download.uadventure', { ns : 'SIMLETs' }) %>" onclick="downloadUAConfig()">
+		</div>
+	</div>
+</div>
 
 <div id="iframe_floating" class="new_element floating">
 	<div class="floater">
@@ -329,8 +349,6 @@
 </div>
 
 <div class="floating_buttons">
-	<a unselectable="on" class="basic" onclick="downloadStudyConfig()"><img src="/config.jpg"></a>
-	<a unselectable="on" class="basic" onclick="downloadUAConfig()"><img src="/ua.png"></a>
 	<a unselectable="on" class="basic" onclick="Utils.toggleAddForm('add_test')">+</a>
 </div>
 
@@ -723,7 +741,7 @@
 					errorbox.text(error);
 				}else{
 					if(Object.keys(updatedActivity).length == 0) {
-						errorbox.text("No changes detected !");
+						errorbox.text("<%- t('edit.no_change', { ns : 'SIMLETs' }) %>");
 						Utils.toggleSubmit(currentform);
 					} else {
 						Simva.updateActivity(form.activity, updatedActivity, function(error, result){
@@ -748,7 +766,7 @@
 			Utils.toggleSubmit(currentform);
 			let errorbox = $(this).find('.error');
 			if(form.name == form.testName) {
-				errorbox.text("<%- t('name.edit.no_change', { ns : 'SIMLETs' }) %>");
+				errorbox.text("<%- t('edit.no_change', { ns : 'SIMLETs' }) %>");
 				Utils.toggleSubmit(currentform);
 			} else {
 				var test = { session_name : form.name };
@@ -771,11 +789,14 @@
 			let form = Utils.getFormData($("#edit_study_form"));
 			Utils.toggleSubmit(currentform);
 			let errorbox = $(this).find('.error');
-			if(form.name == form.studyName) {
-				errorbox.text("<%- t('name.edit.no_change', { ns : 'SIMLETs' }) %>");
+
+			if (study.simlet_name == form.studyName && study.simlet_description == form.studyDescription) {
+				errorbox.text("<%- t('edit.no_change', { ns : 'SIMLETs' }) %>");
 				Utils.toggleSubmit(currentform);
-			} else {
-				Simva.updateStudy(study.simlet_id, { simlet_name: form.name }, function(error, result){	
+			}
+			else {
+				Simva.updateStudy(study.simlet_id, { simlet_name: form.studyName, simlet_description: form.studyDescription }, 
+				function(error, result) {	
 					Utils.toggleSubmit(currentform);
 					Utils.toggleAddForm('edit_study');
 					reloadStudy();
@@ -784,6 +805,7 @@
 			return false;
 		});
 
+		// HI
 		$("#generate_study_link").on('submit', function(event){
 			event.preventDefault();
 			let currentform = this;
@@ -792,12 +814,14 @@
 			let custom_slug=null;
 			let length=null;
 			let form = Utils.getFormData($("#generate_study_custom_slug_link_form"));
-			if(form.custom_slug != "") {
+			
+			if (form.custom_slug != "") {
 				custom_slug=form.custom_slug;
-			} else {
+			} 
+			else {
 				form = Utils.getFormData($("#generate_study_link_length_form"));
-				if(form.link_length_shlink != "") {
-					length=form.link_length_shlink;
+				if (form.link_length_shlink != "") {
+					length = form.link_length_shlink;
 				}
 			}
 			Utils.toggleSubmit(currentform);
@@ -1020,8 +1044,8 @@
 		$('#duplicate_test input[name="testName"]').val(test.session_name);
 	}
 
-	let activateTest = function(testId, active){
-		Simva.activateSession(studyid, testId, { activate: active }, function(error, result) {
+	let activateTest = function(testId, checkbox){
+		Simva.activateSession(studyid, testId, { activate: checkbox.checked }, function(error, result) {
 			if(!error) {
 				reloadStudy();
 			}
@@ -1066,14 +1090,13 @@
 	}
 
 	let openEditStudyForm = function(studyId){
-		document.getElementById("edit_study_error").innerHTML = "";
-		var inputElement = document.getElementById('edit_study_name');
-		inputElement.value = study.simlet_name;
 		$('#edit_study').toggleClass('shown');
-		$('#edit_study input[name="study"]').val(study.simlet_id);
-		$('#edit_study input[name="studyName"]').val(study.simlet_name);
+		document.getElementById("edit_study_error").innerHTML = "";
+		document.getElementById('edit_study_name').value = study.simlet_name;
+		document.getElementById('edit_study_description').value = study.simlet_description;
 	}
-
+	
+	// HI
 	let openGenerateLinkForm = function() {
 		document.getElementById("generate_link_error").innerHTML = "";
 		document.getElementById("generate_link_custom_slug_error").innerHTML = "";
@@ -1087,21 +1110,29 @@
 		$('#generate_study_link').toggleClass('shown');
 	}
 
+	
+	let openConfigDownloadForm = function() {
+		$('#download_config').toggleClass('shown');
+	}
+
+
 	// Main Paint functions
 
 	let paintStudy = function(study, participants, tests, allocator, groups, allgroups, platforms){
 		$('#study_name').text(study.simlet_name);
-
+// HI
+		console.log(study.shlink);
 		if(study.shlink) {
 			$('#generate_shlink_url').text("");
 			$('#shlink_url_short').text(`<%- t('scheduler.shlink.message', { ns : 'SIMLETs', shlink : '${study.shlink.shortUrl}' }) %>`);
-			document.getElementById("generate_shlink_url").style.visibility = "hidden";
-			document.getElementById("shlink_url").style.visibility = "visible";
-			document.getElementById("delete_shlink_url").style.visibility = "visible";
-		} else {
-			document.getElementById("generate_shlink_url").style.visibility = "visible";
-			document.getElementById("shlink_url").style.visibility = "hidden";
-			document.getElementById("delete_shlink_url").style.visibility = "hidden";
+			// document.getElementById("generate_shlink_url").style.visibility = "hidden";
+			// document.getElementById("shlink_url").style.visibility = "visible";
+			// document.getElementById("delete_shlink_url").style.visibility = "visible";
+		} 
+		else {
+			// document.getElementById("generate_shlink_url").style.visibility = "visible";
+			// document.getElementById("shlink_url").style.visibility = "hidden";
+			// document.getElementById("delete_shlink_url").style.visibility = "hidden";
 		}
 
 		paintOwners(study.direct_permissions);
@@ -1241,16 +1272,23 @@
 	}
 
 	let paintTest = function(test){
-		let btnText = "<%- t('sessions.activate.title', { ns : 'SIMLETs' }) %>";
-		let btnFn = `activateTest('${test.session_id}', true)`
-		if(test.session_status === "active") {
-			btnText = "<%- t('sessions.desactivate.title', { ns : 'SIMLETs' }) %>";
-			btnFn = `activateTest('${test.session_id}', false)`
-		}		
+		let sessionStatusLabel = "<%- t('sessions.inactive.title', { ns : 'SIMLETs' }) %>";
+		let sessionClass = "inactive"
+		let sessionCheckboxStatus = "";
+		if (test.session_status === "active") {
+			sessionStatusLabel = "<%- t('sessions.active.title', { ns : 'SIMLETs' }) %>";
+			sessionClass = "active"
+			sessionCheckboxStatus = "checked";
+		}
+
 		let testDiv=`
 		<div id="test_${test.session_id}" class="test">
 			<div class="sessionTop" >
 				<h3>${test.session_name}</h3>
+				<div class="sessionStatusLabel ${sessionClass}">${sessionStatusLabel}</div>
+				<label class="toggleSession">
+					<input type="checkbox" ${sessionCheckboxStatus} onchange="activateTest('${test.session_id}', this)"><span class="slider"></span></input>
+				</label>
 				<div class="expandButton" onclick="toggleTest('${test.session_id}')"></div>
 				<div class="kebab">
 					<ul class="kebab-dropdown">
@@ -1262,9 +1300,6 @@
 						</li>
 						<li class="kebab-icon icon-duplicate" onclick="openEditDuplicateForm('${test.session_id}')">
 							<%- t('sessions.duplicate.title', { ns : 'SIMLETs' }) %>
-						</li>
-						<li class="kebab-icon icon-toggle" onclick="${btnFn}">
-							${btnText}	
 						</li>
 						<li class="kebab-icon icon-delete" onclick="deleteTest('${test.session_id}', '${test.session_name}')">
 							<%- t('sessions.delete.title', { ns : 'SIMLETs' }) %>

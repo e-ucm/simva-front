@@ -387,6 +387,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 }
 
 
+/* simlet title and settings section */
 .simletTop, .sessionTop {
 	display: flex;
 	align-items: center;
@@ -413,6 +414,73 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
     margin-right: var(--iconMargin);
 }
 
+
+.sessionStatusLabel {
+	/* Must be set by the leftmost element in order for the other buttons */
+	margin-left: auto;
+	
+	margin-right: 10px;
+	width: 100px;
+	height: max-content;
+	text-align: center;
+	vertical-align: middle;
+	padding: 5px;
+
+	background-color:transparent;
+	border-radius: 25px;
+}
+.sessionStatusLabel.inactive {
+	background-color: #f07667;
+}
+.sessionStatusLabel.active {
+	background-color: #8ec26d;
+}
+
+.toggleSession {
+	--btnWidth: 40px;
+	--btnHeight: 20px;
+	
+	margin-right: 10px;
+	position: relative;
+	display: inline-block;
+	width: var(--btnWidth);
+	height: var(--btnHeight);
+}
+.toggleSession input {
+	display: none;
+}
+.slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #333;
+	transition: 0.4s;
+	border-radius: calc(var(--btnHeight) / 2);
+}
+.slider:before {
+	--fillMargin: 4px;
+	--fillOffset: calc(var(--fillMargin) / 2);
+
+	position: absolute;
+	content: "";
+	height: calc(var(--btnHeight) - var(--fillMargin));
+	width: calc(var(--btnHeight) - var(--fillMargin));
+	bottom: var(--fillOffset);
+	left: var(--fillOffset);
+	background-color: #FFF;
+	transition: 0.4s;
+	border-radius: 50%;
+}
+input:checked+.slider {
+	background-color: #060;
+}
+input:checked+.slider:before {
+	transform: translateX(calc(var(--btnWidth) - var(--btnHeight)));
+}
+
 .expandButton {
 	--triangleSize: 10px;
     --triangleColor: black;
@@ -421,10 +489,8 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	width: 0;
 	height: 0;
 	
-	/* Must be set by the leftmost element in order for the other buttons */
-	margin-left: auto;
-	margin-right: 10px;
-
+	margin-right: 5px;
+	
 	border-left: var(--triangleSize) solid transparent;
 	border-right: var(--triangleSize) solid transparent;
 	border-bottom: var(--triangleSize) solid var(--triangleColor);
@@ -503,10 +569,6 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
     background-image: url("../icon/duplicate.png");
 	filter: invert(100%) sepia(4%) saturate(0%) hue-rotate(193deg) brightness(103%) contrast(102%); 
 }
-.icon-toggle::before {
-    background-image: url("../icon/toggle.png");
-	filter: invert(100%) sepia(4%) saturate(0%) hue-rotate(193deg) brightness(103%) contrast(102%); 
-}
 .icon-delete {
 	color: #ff3d3d;
 }
@@ -514,5 +576,3 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
     background-image: url("../icon/trash.png");
 	filter: brightness(0) saturate(100%) invert(29%) sepia(78%) saturate(3518%) hue-rotate(344deg) brightness(122%) contrast(100%);
 }
-
-

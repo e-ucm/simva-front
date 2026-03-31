@@ -13,9 +13,20 @@
     "new.upload.message": "Seleccione Fichero de SIMLET exportado",
     "new.upload.errorMessage" : "Seleccione primero el archivo que desea cargar.",
     
-    "name.edit.title" : "Editar nombre del SIMLET",
+    "edit.no_change": "¡No se detectan cambios!",
+
+    "edit.title": "Editar",
+    "simlet.tab.title": "Configuración del SIMLET",
+    "edit.submit.title": "Editar SIMLET",
+    "name.edit.title": "Nombre",
     "name.placeholder": "Nombre del SIMLET",
-    "name.edit.no_change" : "¡No se detectan cambios en el nuevo nombre del SIMLET !",
+    "description.edit.title": "Descripción",
+    "description.placeholder": "Descripción del SIMLET",
+    "url.tab.title": "Configuración de la URL",
+
+    "config.title": "Descargar configuración",
+    "config.download.simlet": "Exportar SIMLET a .json",
+    "config.download.uadventure": "Descargar configuración para uAdventure",
     
     "coordinators.title":"Coordinadores",
     "coordinators.placeholder":"Nombre de usuario del coordinador",
@@ -70,8 +81,8 @@
     "sessions.zero.title":"SIN Sesión",
     "sessions.zero.message": "No hay Sesión para este SIMLET. Intente añadir uno utilizando el botón de la derecha.",
     "sessions.expand":"Expandir/Contraer",
-    "sessions.activate.title":"Activar",
-    "sessions.desactivate.title":"Desactivar",
+    "sessions.active.title":"Activa",
+    "sessions.inactive.title":"Inactiva",
 
     "activities.add.title":"Añadir actividad",
     "activities.add.new.title":"Añadir nueva actividad",

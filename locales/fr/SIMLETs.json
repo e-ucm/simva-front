@@ -13,9 +13,21 @@
     "new.upload.message": "Sélectionnez fichier de SIMLET exporté",
     "new.upload.errorMessage" : "Sélectionnez le fichier à charger en premier.",
     
-    "name.edit.title" : "Modifier le nom de la SIMLET",
+    "edit.no_change": "Aucun changement n'a été détecté !",
+
+    "edit.title": "",
+    "simlet.tab.title": "",
+    "edit.submit.title": "",
+    "name.edit.title": "Nom",
     "name.placeholder": "Nom de la SIMLET",
-    "name.edit.no_change" : "Aucun changement n'a été détecté dans le nouveau nom de la SIMLET !",
+    "description.edit.title": "",
+    "description.placeholder": "",
+    "url.tab.title": "",
+    
+    "config.title": "",
+    "config.download.simlet": "",
+    "config.download.uadventure": "",
+    
     
     "coordinators.title":"Coordinateurs",
     "coordinators.placeholder":"Nom d'utilisateur du coordinateur",
