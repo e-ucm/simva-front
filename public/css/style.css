@@ -402,16 +402,29 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	margin-right: 0px;
 	align-items: center;
 }
-.simlet-icon {
-    --iconSize: 25px;
-	--iconMargin: 10px;
-    
-	cursor: pointer;
-	
-	width: var(--iconSize);
-    height: var(--iconSize);
-    vertical-align: middle;
-    margin-right: var(--iconMargin);
+
+.studyTabsButtons {
+	/* display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 5px; */
+
+	padding: 10px;
+}
+.studyTabsButtons .yellow {
+	color: black;
+	background-color: lightgray;
+	width: 90px;
+}
+.studyTabsButtons .yellow.selected {
+	color: white;
+	background-color: #f0913f;
+}
+.studyTab { display: none; }
+.studyTab.selected { display: contents; }
+
+.studyUsers {
+	display: none;
 }
 
 
@@ -550,12 +563,17 @@ input:checked+.slider:before {
 	background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-
+	
+    vertical-align: middle;
 	content: "";
 	display: inline-block;
 	width: var(--iconSize);
     height: var(--iconSize);
     margin-right: var(--iconMargin);
+}
+.icon-download::before {
+    background-image: url("../icon/download.png");
+	filter: invert(100%) sepia(4%) saturate(0%) hue-rotate(193deg) brightness(103%) contrast(102%); 
 }
 .icon-add::before {
     background-image: url("../icon/add.png");

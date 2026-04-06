@@ -4,6 +4,9 @@
     "remove.confirm": "Êtes-vous sûr de vouloir supprimer la SIMLET '{{SIMLET}}'?\nToutes les sessions, activités et données seront également supprimées.",
     "zero.message.title" : "Vous n'avez pas encore de SIMLETs. Créez-en une en utilisant le bouton en bas à droite (+).",
 
+    "session.tab.title": "",
+    "users.tab.title": "",
+
     "active.on":"Active",
     "active.off":"Archivé",
 

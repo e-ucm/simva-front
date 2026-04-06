@@ -7,56 +7,76 @@
 </div>-->
 <div class="simletTop">
 	<h1><%- t('single.title', { ns : 'SIMLETs' }) %>: <span id="study_name"></span></h1>
-
 	<div class="simletSettings">
+		<div class="kebab">
+			<ul class="kebab-dropdown" style="display: none;">
+				<li class="kebab-icon " id="activation" onclick="setActive()">
+					
+				</li>
+				<li class="kebab-icon icon-edit" onclick="openEditStudyForm('<%= study %>')">
+					<%- t('edit.title', { ns : 'SIMLETs' }) %>
+				</li>
+				<li class="kebab-icon icon-download" onclick="openConfigDownloadForm()">
+					<%- t('config.title', { ns : 'SIMLETs' }) %>
+				</li>
+			</ul>
+		</div>
+		<!-- <input class="yellow" type="button" id="activation" value="" onclick="setActive()">
+		&nbsp;
 		<input class="yellow" type="button" value="<%- t('edit.title', { ns : 'SIMLETs' }) %>" onclick="openEditStudyForm('<%= study %>')">
 		&nbsp;
-		<input class="yellow" type="button" value="<%- t('config.title', { ns : 'SIMLETs' }) %>" onclick="openConfigDownloadForm()">
+		<input class="yellow" type="button" value="<%- t('config.title', { ns : 'SIMLETs' }) %>" onclick="openConfigDownloadForm()"> -->
 	</div>
-
 </div>
 
-<div id="study">
-	<div class="left">
-		<div class="graybox owners">
-			<table id="active">
-			</table>
-			<input class="violet" type="button" id="activation" value="" onclick="setActive()">
-		</div>
-
-		<div class="graybox owners">
-			<h2><%- t('coordinators.title', { ns : 'SIMLETs' }) %></h2>
-			<p></p>
-			<table id="owners">
-			</table>
-			<input class="violet" type="button" value="<%- t('coordinators.add.title', { ns : 'SIMLETs' }) %>" onclick="Utils.toggleAddForm('add_owner')">
-		</div>
-
-		<div class="graybox groups">
-			<h2><%- t('groups.title', { ns : 'SIMLETs' }) %></h2>
-			<p></p>
-			<div id="groups_container">
+<div id="study_tabs">
+	<div class="studyTabsButtons">
+		<input class="tab yellow selected" type="button" onclick="changeTab(this, 'study_tabs','sessions_tab')" value="<%- t('session.tab.title', { ns : 'SIMLETs' }) %>">
+		<input class="tab yellow" type="button" onclick="changeTab(this, 'study_tabs','users_tab')" value="<%- t('users.tab.title', { ns : 'SIMLETs' }) %>">
+	</div>
+	<div id="sessions_tab" class="subform studyTab selected">
+		<div id="study">
+			<div class="card">
+				<div class="top">
+					<h2><%- t('sessions.title', { ns : 'SIMLETs' }) %></h2>
+				</div>
+				<div id="tests" class="tests">
+				</div>
 			</div>
 		</div>
-
-		<% if(config.lti.enabled == 'true'){ %>
-		<div class="graybox lti_platforms default">
-			<h2><%- t('lti_platform.title', { ns : 'SIMLETs' }) %></h2>
-			<p></p>
-			<table id="lti_platforms">
-			</table>
-			<input class="violet" type="button" value="<%- t('lti_platform.add.title', { ns : 'SIMLETs' }) %>" onclick="Utils.toggleAddForm('add_platform')">
-		</div>
-		<% } %>
 	</div>
-	<div class="card">
-		<div class="top">
-			<h2><%- t('sessions.title', { ns : 'SIMLETs' }) %></h2>
-		</div>
-		<div id="tests" class="tests">
+
+	<div id="users_tab" class="subform studyTab">
+<!-- TODO -->
+		<div class="left">
+			<div class="graybox owners">
+				<h2><%- t('coordinators.title', { ns : 'SIMLETs' }) %></h2>
+				<p></p>
+				<table id="owners">
+				</table>
+				<input class="violet" type="button" value="<%- t('coordinators.add.title', { ns : 'SIMLETs' }) %>" onclick="Utils.toggleAddForm('add_owner')">
+			</div>
+
+			<div class="graybox groups">
+				<h2><%- t('groups.title', { ns : 'SIMLETs' }) %></h2>
+				<p></p>
+				<div id="groups_container">
+				</div>
+			</div>
+
+			<% if(config.lti.enabled == 'true'){ %>
+			<div class="graybox lti_platforms default">
+				<h2><%- t('lti_platform.title', { ns : 'SIMLETs' }) %></h2>
+				<p></p>
+				<table id="lti_platforms">
+				</table>
+				<input class="violet" type="button" value="<%- t('lti_platform.add.title', { ns : 'SIMLETs' }) %>" onclick="Utils.toggleAddForm('add_platform')">
+			</div>
+			<% } %>
 		</div>
 	</div>
 </div>
+
 
 <div id="add_group" class="new_element floating">
 	<div class="floater">
@@ -197,7 +217,7 @@
 					<span class="error" id="edit_study_error"></span>
 				</form>
 			</div>
-<!-- HI -->
+<!-- TODO -->
 			<div id="edit_url_tab" class="subform">
 				<input type="button" class="blue" id="generate_shlink_url" value="<%- t('scheduler.shlink.generate.title', { ns : 'SIMLETs' }) %>" onclick="openGenerateLinkForm()">
 				<br><br>
@@ -805,7 +825,7 @@
 			return false;
 		});
 
-		// HI
+		// TODO
 		$("#generate_study_link").on('submit', function(event){
 			event.preventDefault();
 			let currentform = this;
@@ -1096,7 +1116,7 @@
 		document.getElementById('edit_study_description').value = study.simlet_description;
 	}
 	
-	// HI
+	// TODO
 	let openGenerateLinkForm = function() {
 		document.getElementById("generate_link_error").innerHTML = "";
 		document.getElementById("generate_link_custom_slug_error").innerHTML = "";
@@ -1120,7 +1140,7 @@
 
 	let paintStudy = function(study, participants, tests, allocator, groups, allgroups, platforms){
 		$('#study_name').text(study.simlet_name);
-// HI
+// TODO
 		console.log(study.shlink);
 		if(study.shlink) {
 			$('#generate_shlink_url').text("");
@@ -1177,24 +1197,33 @@
 		}
 	}
 
+	// TODO
 	let paintActive = function(active){
 		$('#active').html('');
-		if(active == null || active == "true") {
-			$('#active').append('<h2>Active</h2>');
-			document.getElementById("activation").value="Achivate"
-		} else {
-			$('#active').append('<h2>Archived</h2>');
-			document.getElementById("activation").value="Activate"
+		let txt = ""
+		let h2 = ""
+		if (active == null || active == "true") {
+			txt = "<%- t('active.off.button', { ns : 'SIMLETs' }) %>"
+			h2 = "<h2>Active</h2>";
+		} 
+		else {
+			txt = "<%- t('active.on.button', { ns : 'SIMLETs' }) %>"
+			h2 = "<h2>Archived</h2>";
 		}
+		$('#active').append(h2);
+		$("#activation").text(txt);
+		$("#activation").val(txt);
 	}
 
 	let setActive = function(){
 		let newActive;
-		if(study.active == null || study.active == "true") { 
+		if (study.active == null || study.active == "true") { 
 			newActive = false;
-		} else {
+		} 
+		else {
 			newActive = true;
 		}
+
 		Simva.updateStudy(study.simlet_id, { active: newActive }, function(error, result){
 			if(!error) {
 				reloadStudy();
@@ -1427,14 +1456,31 @@
 <script type="text/javascript" src="/allocators/sessionallocatorpainter.js"></script>
 <script type="text/javascript" src="/allocators/randomallocatorpainter.js"></script>
 <script type="text/javascript">
-	$('#tests').on('click', '.kebab', function () {
+	function hideAllKebabs(time = 100) {
+		$('.kebab-dropdown:visible').fadeOut(time);
+	}
+
+	hideAllKebabs(0);
+
+	// Close all kebab menus when clicking on one and showing the one that has been clicked
+	$(document).on('click', '.kebab', function (e) {
 		let dropdown = $(this).find(".kebab-dropdown").first();
+		if (!dropdown.is(":visible")) {
+			hideAllKebabs();
+		}
 		dropdown.fadeToggle(100)
 	});
+
+	// Close when clicking inside the kebab dropdown and prevent from opening again
+	$(document).on('click', '.kebab-dropdown, .kebab-dropdown *', function (e) {
+		hideAllKebabs();
+		e.stopPropagation();
+	});
+
+	// Close all kebab menus when clicking anywhere on the page if there's no other kebab being clicked
 	$(document).on('click', function (e) {
-		let $target = $(e.target);
-		if (!$target.closest('.kebab').length) {
-			$('.kebab-dropdown').fadeOut(100);
+		if (!$(e.target).closest('.kebab').length) {
+			hideAllKebabs();
 		}
 	});
 </script>
