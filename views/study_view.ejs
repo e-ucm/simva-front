@@ -10,9 +10,7 @@
 	<div class="simletSettings">
 		<div class="kebab">
 			<ul class="kebab-dropdown" style="display: none;">
-				<li class="kebab-icon " id="activation" onclick="setActive()">
-					
-				</li>
+				<li class="kebab-icon " id="activation" onclick="setActive()"></li>
 				<li class="kebab-icon icon-edit" onclick="openEditStudyForm('<%= study %>')">
 					<%- t('edit.title', { ns : 'SIMLETs' }) %>
 				</li>
@@ -47,7 +45,7 @@
 	</div>
 
 	<div id="users_tab" class="subform studyTab">
-<!-- TODO -->
+<!-- TODO: remove style class dependency -->
 		<div class="left">
 			<div class="graybox owners">
 				<h2><%- t('coordinators.title', { ns : 'SIMLETs' }) %></h2>
@@ -217,7 +215,7 @@
 					<span class="error" id="edit_study_error"></span>
 				</form>
 			</div>
-<!-- TODO -->
+<!-- TODO: show copy/delete buttons and hide generate when link has been generated (and viceversa) -->
 			<div id="edit_url_tab" class="subform">
 				<input type="button" class="blue" id="generate_shlink_url" value="<%- t('scheduler.shlink.generate.title', { ns : 'SIMLETs' }) %>" onclick="openGenerateLinkForm()">
 				<br><br>
@@ -825,7 +823,7 @@
 			return false;
 		});
 
-		// TODO
+		// TODO: check if generate link button works
 		$("#generate_study_link").on('submit', function(event){
 			event.preventDefault();
 			let currentform = this;
@@ -937,6 +935,7 @@
 	let toggleTest = function(id) {
 		$(`#test_${id}`).find('.activities').toggleClass('collapsed');
 		$(`#test_${id}`).find('.expandButton').toggleClass('collapsed');
+		$(`#test_${id}`).find('.activitiesCollapsed').toggleClass('collapsed');
 	}
 
 	let changeTab = function(tab, form, subform){
@@ -1116,7 +1115,6 @@
 		document.getElementById('edit_study_description').value = study.simlet_description;
 	}
 	
-	// TODO
 	let openGenerateLinkForm = function() {
 		document.getElementById("generate_link_error").innerHTML = "";
 		document.getElementById("generate_link_custom_slug_error").innerHTML = "";
@@ -1140,7 +1138,7 @@
 
 	let paintStudy = function(study, participants, tests, allocator, groups, allgroups, platforms){
 		$('#study_name').text(study.simlet_name);
-// TODO
+		// TODO: show copy/delete buttons and hide generate when link has been generated (and viceversa) 
 		console.log(study.shlink);
 		if(study.shlink) {
 			$('#generate_shlink_url').text("");
@@ -1157,6 +1155,7 @@
 
 		paintOwners(study.direct_permissions);
 
+		// TODO: check if text changes on activate/archive when study.active value is not null
 		paintActive(study.active);
 
 		paintGroups(groups, tests, participants);
@@ -1169,7 +1168,6 @@
 			paintTest(test);
 			const sessionParticipants = test.completeParticipants || participants;
 			paintTestActivities(test, test.completeActivities, sessionParticipants);
-			
 		}
 
 		$('#tests').empty();
@@ -1197,7 +1195,6 @@
 		}
 	}
 
-	// TODO
 	let paintActive = function(active){
 		$('#active').html('');
 		let txt = ""
@@ -1309,15 +1306,29 @@
 			sessionClass = "active"
 			sessionCheckboxStatus = "checked";
 		}
-
+		let toggleButton = "";
+		if (test.session_can_be_manually_activated) {
+			toggleButton = 
+			`<label class="toggleSession">
+				<input type="checkbox" ${sessionCheckboxStatus} onchange="activateTest('${test.session_id}', this)"><span class="slider"></span></input>
+			</label>`
+		}
+		
+		const date = new Date(test.createdAt);
+		const formattedDate = date.toLocaleDateString('en-GB');
+		// TODO: calculate user count and completion
+		// console.log("user count:", test.activities.length)
+		// console.log("last activity:", test.completeActivities[test.completeActivities.length - 1])
+		let userCount = 20;
+		let completeUserCount = 5;
+		let lastActivityCompletion = (completeUserCount / userCount) * 100 ;
+		
 		let testDiv=`
 		<div id="test_${test.session_id}" class="test">
 			<div class="sessionTop" >
 				<h3>${test.session_name}</h3>
 				<div class="sessionStatusLabel ${sessionClass}">${sessionStatusLabel}</div>
-				<label class="toggleSession">
-					<input type="checkbox" ${sessionCheckboxStatus} onchange="activateTest('${test.session_id}', this)"><span class="slider"></span></input>
-				</label>
+				${toggleButton}
 				<div class="expandButton" onclick="toggleTest('${test.session_id}')"></div>
 				<div class="kebab">
 					<ul class="kebab-dropdown">
@@ -1334,6 +1345,19 @@
 							<%- t('sessions.delete.title', { ns : 'SIMLETs' }) %>
 						</li>
         			</ul>
+				</div>
+			</div>
+			<div class="activitiesCollapsed">
+				<div class="activityInfo">
+					<%- t('activities.creationDate', { ns : 'SIMLETs' }) %>: ${formattedDate}
+					<br>
+					<%- t('activities.activityCount', { ns : 'SIMLETs' }) %>: ${test.activities.length} &nbsp; <%- t('activities.usercount', { ns : 'SIMLETs' }) %>: ${userCount}
+				</div>
+				<div class="activityProgress progress">
+					<div class="done" style="width:${lastActivityCompletion}%"></div>
+					<span>
+						<%- t('completed.title', { ns : 'activities' }) %>: <done>${lastActivityCompletion}</done>% [ <doneres>${completeUserCount}</doneres>/<total>${userCount}</total> ]
+					</span>
 				</div>
 			</div>
 			<div class="activities">

@@ -97,6 +97,10 @@
     "activities.delete.confirm":"Êtes-vous sûr de vouloir supprimer l'activité '{{activity}}' de la session '{{session}}' de la SIMLET '{{SIMLET}}'?\nToutes les données relatives à l'activité seront également supprimées.",
     "activities.placeholder":"Nom de l'activité",
 
+    "activities.creationDate": "",
+    "activities.activityCount": "",
+    "activities.usercount": "",
+
     "scheduler.shlink.generate.title":"Générer une URL réduite pour le planificateur",
     "scheduler.shlink.generate.randomly_length.title":"Généré de manière aléatoire",
     "scheduler.shlink.generate.randomly_length.message":"Avec une longueur de :",
