@@ -1,6 +1,7 @@
 { 
     "title" : "SIMLETs",
     "single.title" : "SIMLET",
+    "delete.title": "Delete",
     "remove.confirm": "Are you sure do you want to delete the SIMLET '{{SIMLET}}'?\nAll the Sessions, activities and data will be deleted too.",
     "zero.message.title" : "You have no SIMLETs yet. Create one using the bottom right (+) button.",
 
@@ -97,7 +98,8 @@
     "activities.delete.confirm":"Are you sure do you want to delete the activity '{{activity}}' of Session '{{session}}' from SIMLET '{{SIMLET}}'?\nAll the data of the activity will be deleted too.",
     "activities.placeholder":"Activity name",
 
-    "activities.creationDate": "Creation date",
+    "activities.creationDate": "Created at",
+    "activities.updateDate": "Updated at",
     "activities.activityCount": "Activities",
     "activities.usercount": "Users",
 
@@ -117,5 +119,7 @@
     "scheduler.current" : "Current Activity :",
     "scheduler.refresh" : "Refresh Page to Continue SIMLET",
     "scheduler.complete" : "Complete Activity",
-    "scheduler.exit" : "Exit SIMLET"
+    "scheduler.exit" : "Exit SIMLET",
+
+    "tags.title": "Tags"
 }

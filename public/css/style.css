@@ -387,6 +387,15 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 }
 
 
+.simletCardTitle {
+	display: flex;
+	width: 100%;
+}
+.simletCardTitle .kebab {
+	margin-left: auto;
+	margin-right: 0px;
+}
+
 /* simlet title and settings section */
 .simletTop, .sessionTop {
 	display: flex;
@@ -518,12 +527,11 @@ input:checked+.slider:before {
 }
 
 .activities.collapsed { display: none;}
-.activitiesCollapsed {
-	display: none;
+.activitySummary {
+	display: flex;
 	width: 100%;
 	align-items: center;
 }
-.activitiesCollapsed.collapsed {  display: flex; }
 .activityInfo { width: 30%; }
 .activityProgress.progress {
 	width: 40%;
@@ -627,4 +635,4 @@ input:checked+.slider:before {
 .studyTab .left .graybox.allocator.default {
 	width: 100%;
 	justify-content: center;
-} 
+}

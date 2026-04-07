@@ -137,18 +137,32 @@
 		$('#edit_study input[name="studyName"]').val(studyName);
 	}
 	
-	let toCard = function(study){
-		return `<a class="stopable" href="/simlets/${study.simlet_id}"><div class="studycard selectable card third">
-			<span class="button yellow" onclick="openEditStudyForm('${study.simlet_id}', '${study.simlet_name}')">🖍️</span>
-			<span class="button red delete" onclick="deleteStudy('${study.simlet_id}', '${study.simlet_name}')">X</span>
-			<h1><%- t('single.title', { ns : 'SIMLETs' }) %>: ${study.simlet_name}</h1>
-			<p><strong><%- t('groups.title', { ns : 'SIMLETs' }) %>:</strong> ${study.groups.length}</p>
-			<p><strong><%- t('description.title', { ns : 'SIMLETs' }) %>:</strong> ${study.simlet_description}</p>
-			<p><strong><%- t('created_at.title', { ns : 'SIMLETs' }) %>:</strong> ${study.createdAt}</p>
-			<p><strong><%- t('updated_at.title', { ns : 'SIMLETs' }) %>:</strong> ${study.updatedAt}</p>
-			<p><strong><%- t('sessions.title', { ns : 'SIMLETs' }) %>:</strong> ${study.sessions.length}</p>
-			<p><strong><%- t('tags.title', { ns : 'SIMLETs' }) %>:</strong> ${study.tags}</p>
-			</div></a>`;
+	let toCard = function(study) {
+		return `
+		<a class="stopable" href="/simlets/${study.simlet_id}">
+			<div class="studycard selectable card third">
+				<div class="simletCardTitle">
+					<h1><%- t('single.title', { ns : 'SIMLETs' }) %>: ${study.simlet_name}</h1>
+					<div class="kebab">
+						<ul class="kebab-dropdown" style="display: none;">
+							<li class="kebab-icon icon-edit" onclick="openEditStudyForm('${study.simlet_id}', '${study.simlet_name}')">
+								<%- t('edit.title', { ns : 'SIMLETs' }) %>
+							</li>
+							<li class="kebab-icon icon-delete" onclick="deleteStudy('${study.simlet_id}', '${study.simlet_name}')">
+								<%- t('delete.title', { ns : 'SIMLETs' }) %>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<p><strong><%- t('groups.title', { ns : 'SIMLETs' }) %>:</strong> ${study.groups.length}</p>
+				<p><strong><%- t('description.edit.title', { ns : 'SIMLETs' }) %>:</strong> ${study.simlet_description}</p>
+				<p><strong><%- t('activities.creationDate', { ns : 'SIMLETs' }) %>:</strong> ${study.createdAt}</p>
+				<p><strong><%- t('activities.updateDate', { ns : 'SIMLETs' }) %>:</strong> ${study.updatedAt}</p>
+				<p><strong><%- t('sessions.title', { ns : 'SIMLETs' }) %>:</strong> ${study.sessions.length}</p>
+				<p><strong><%- t('tags.title', { ns : 'SIMLETs' }) %>:</strong> ${study.tags}</p>
+			</div>
+		</a>
+		`;
 	}
 
 	let changeTab = function(tab, form, subform){
@@ -158,6 +172,8 @@
 		$(`#${subform}`).toggleClass('selected');
 	}
 </script>
+<script type="text/javascript" src="/kebabs.js"></script>
+
 <h1><%- t('title', { ns : 'SIMLETs' }) %></h1>
 <div id="studies_list">
 	<div style="width: 100%; text-align: center; padding: 200px;">
