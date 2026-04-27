@@ -1212,7 +1212,7 @@
 					$('#change_allocator_form .error').text(error.responseJSON ? error.responseJSON.message : error.message);
 				}else{
 					Utils.toggleAddForm('change_allocator');
-					//reloadStudy();
+					reloadStudy();
 				}
 			});
 		}else{
