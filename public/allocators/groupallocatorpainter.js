@@ -125,7 +125,7 @@ var GroupAllocatorPainter = {
 		let tmp = this;
 		const selectedTest = $(`#allocation_group_${groupId}`).val();
 
-		Simva.allocateToSession(tmp.study.simlet_id, groupId, selectedTest, null, function(error, result){
+		Simva.allocateToSession(tmp.study.simlet_id, groupId, selectedTest, {}, function(error, result){
 			if(error){
 				$.toast({
 					heading: tmp.add_error,
@@ -172,7 +172,7 @@ var GroupAllocatorPainter = {
 
 		previous = this.allocator.allocations[groupId];
 		this.allocator.allocations[groupId]  = $(`#allocation_${groupId}`).val();
-		Simva.allocateToSession(tmp.study.simlet_id, groupId, selectedTest, null, function(error, result){
+		Simva.allocateToSession(tmp.study.simlet_id, groupId, selectedTest, {}, function(error, result){
 			if(error){
 				tmp.allocator.allocations[groupId] = previous;
 				$(`#allocation_${groupId}`).val(previous);
@@ -207,7 +207,7 @@ var GroupAllocatorPainter = {
 
 		this.allocator.allocations[groupId] = test;
 
-		Simva.allocateToSession(this.study.simlet_id, groupId, test, null, function(error, result){
+		Simva.allocateToSession(this.study.simlet_id, groupId, test, {}, function(error, result){
 			if(error){
 				delete tmp.allocator.allocations[groupId];
 				$.toast({

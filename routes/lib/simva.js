@@ -89,7 +89,7 @@ class Simva {
 			body.customSlug = customSlug;
 		}
 		
-		Utils.post(`${this.shlinkapiurl}/rest/v3/short-urls`, null, null, body, callback, null, this.shlinkapikey);
+		Utils.post(`${this.shlinkapiurl}/rest/v3/short-urls`, null, body, callback, null, this.shlinkapikey);
 	}
 
 	//SHLINK URL
@@ -117,7 +117,7 @@ class Simva {
 			body.customSlug = customSlug;
 		}
 		
-		Utils.post(`${this.shlinkapiurl}/rest/v3/short-urls`, null, null, body, callback, null, this.shlinkapikey);
+		Utils.post(`${this.shlinkapiurl}/rest/v3/short-urls`, null, body, callback, null, this.shlinkapikey);
 	}
 
 	//SHLINK URL

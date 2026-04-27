@@ -1213,14 +1213,13 @@
 
 	let setActive = function(){
 		let newActive;
-		if (study.active == null || study.active == "true") { 
+		if(study.simlet_archived == null || study.simlet_archived == "true") { 
 			newActive = false;
 		} 
 		else {
 			newActive = true;
 		}
-
-		Simva.updateStudy(study.simlet_id, { active: newActive }, function(error, result){
+		Simva.updateStudy(study.simlet_id, { simlet_archived: newActive }, function(error, result){
 			if(!error) {
 				reloadStudy();
 			}
@@ -1288,7 +1287,7 @@
 					$('#change_allocator_form .error').text(error.responseJSON ? error.responseJSON.message : error.message);
 				}else{
 					Utils.toggleAddForm('change_allocator');
-					//reloadStudy();
+					reloadStudy();
 				}
 			});
 		}else{

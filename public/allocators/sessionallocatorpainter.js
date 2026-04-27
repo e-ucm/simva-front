@@ -127,53 +127,52 @@ var SessionAllocatorPainter = {
 		// The backend handles this when the allocator type is 'session'
 		for(let i = 0; i < this.groups.length; i++){
 			let groupId = this.groups[i].group_id;
-			Simva.allocateToSession(tmp.study.simlet_id, groupId, sessionIds, null, function(error, result){
-				if(error){
-					$.toast({
-						heading: tmp.add_error,
-						text: error.message,
-						position: 'top-right',
-						icon: 'error',
-						stack: false
-					});
-				}else{
-					$.toast({
-						heading: tmp.add_message,
-						text: 'Group allocated to all sessions',
-						position: 'top-right',
-						icon: 'success',
-						stack: false
-					});
-					reloadStudy();
-				}
-			});
+			//Simva.allocateToSession(tmp.study.simlet_id, groupId, sessionIds, {}, function(error, result){
+			//	if(error){
+			//		$.toast({
+			//			heading: tmp.add_error,
+			//			text: error.message,
+			//			position: 'top-right',
+			//			icon: 'error',
+			//			stack: false
+			//		});
+			//	}else{
+			//		$.toast({
+			//			heading: tmp.add_message,
+			//			text: 'Group allocated to all sessions',
+			//			position: 'top-right',
+			//			icon: 'success',
+			//			stack: false
+			//		});
+			//		reloadStudy();
+			//	}
+			//});
 		}
 	},
 
 	allocateAllForGroup: function(groupId){
 		let tmp = this;
 		let sessionIds = this.tests.map(t => t.session_id);
-		
-		Simva.allocateToSession(tmp.study.simlet_id, groupId, sessionIds, null, function(error, result){
-			if(error){
-				$.toast({
-					heading: tmp.add_error,
-					text: error.message,
-					position: 'top-right',
-					icon: 'error',
-					stack: false
-				});
-			}else{
-				$.toast({
-					heading: tmp.add_message,
-					text: 'Group allocated to all sessions',
-					position: 'top-right',
-					icon: 'success',
-					stack: false
-				});
-				reloadStudy();
-			}
-		});
+		//Simva.allocateToSession(tmp.study.simlet_id, groupId, sessionId, null, function(error, result){
+		//	if(error){
+		//		$.toast({
+		//			heading: tmp.add_error,
+		//			text: error.message,
+		//			position: 'top-right',
+		//			icon: 'error',
+		//			stack: false
+		//		});
+		//	}else{
+		//		$.toast({
+		//			heading: tmp.add_message,
+		//			text: 'Group allocated to all sessions',
+		//			position: 'top-right',
+		//			icon: 'success',
+		//			stack: false
+		//		});
+		//		reloadStudy();
+		//	}
+		//});
 	}
 }
 
