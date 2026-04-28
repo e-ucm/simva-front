@@ -1100,7 +1100,10 @@
 
 		let fullyPaintTest = function(test){
 			paintTest(test);
-			const sessionParticipants = test.completeParticipants || participants;
+			const hasSessionParticipants = Array.isArray(test.completeParticipants) && test.completeParticipants.length > 0;
+			const sessionParticipants = hasSessionParticipants
+				? test.completeParticipants
+				: (Array.isArray(participants) ? participants : []);
 			paintTestActivities(test, test.completeActivities, sessionParticipants);
 			
 		}
