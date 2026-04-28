@@ -97,6 +97,63 @@
 		//
 		let studyId = "<%= study %>";
 		let username = "<%= user.data.username %>";
+		const trackerConfigMessageTypes = ['js-tracker-config'];
+		const trackerReadyMessageTypes = ['js-tracker-ready'];
+		let pendingTrackerMessagePayload = null;
+		let pendingTrackerMessageOrigin = null;
+		let trackerMessageRetryCount = 0;
+		let trackerMessageRetryTimer = null;
+
+		let clearPendingTrackerMessage = function() {
+			pendingTrackerMessagePayload = null;
+			pendingTrackerMessageOrigin = null;
+			trackerMessageRetryCount = 0;
+			if (trackerMessageRetryTimer) {
+				clearTimeout(trackerMessageRetryTimer);
+				trackerMessageRetryTimer = null;
+			}
+		}
+
+		let getOriginFromUrl = function(rawUrl) {
+			if (!rawUrl) {
+				return null;
+			}
+			try {
+				return (new URL(rawUrl, window.location.href)).origin;
+			} catch (parseError) {
+				console.warn('Could not parse activity URL origin for tracker payload transport', parseError);
+				return null;
+			}
+		};
+
+		let sendTrackerConfigToIframe = function(forceRetry) {
+			if (!pendingTrackerMessagePayload || !pendingTrackerMessageOrigin) {
+				return;
+			}
+
+			const iframe = document.getElementById('activity_content');
+			if (!iframe || !iframe.contentWindow) {
+				return;
+			}
+
+			try {
+				for (const messageType of trackerConfigMessageTypes) {
+					iframe.contentWindow.postMessage({
+						type: messageType,
+						payload: pendingTrackerMessagePayload
+					}, pendingTrackerMessageOrigin);
+				}
+			} catch (postError) {
+				console.warn('Failed to send tracker settings to iframe', postError);
+			}
+
+			if (forceRetry && trackerMessageRetryCount < 6) {
+				trackerMessageRetryCount += 1;
+				trackerMessageRetryTimer = setTimeout(function() {
+					sendTrackerConfigToIframe(true);
+				}, 500);
+			}
+		}
 
 		var manual = '<body style="background-color: black; color: white; font-family: sans-serif; text-align: center;"><h1>External Activity</h1><p>Ask or listen your teacher for what you have to do on this activity.</p><p>If you are allowed to complete the activity on your own, there should be a "complete activity" button above.</p></body>';
 
@@ -124,6 +181,30 @@
 		$(document).ready(function() {
 			getUserToken();
 			reloadSchedule();
+
+			const iframe = document.getElementById('activity_content');
+			if (iframe) {
+				iframe.addEventListener('load', function() {
+					sendTrackerConfigToIframe(true);
+				});
+			}
+
+			window.addEventListener('message', function(event) {
+				if (!event.data || !trackerReadyMessageTypes.includes(event.data.type)) {
+					return;
+				}
+
+				const activityFrame = document.getElementById('activity_content');
+				if (!activityFrame || event.source !== activityFrame.contentWindow) {
+					return;
+				}
+
+				if (!pendingTrackerMessageOrigin || event.origin !== pendingTrackerMessageOrigin) {
+					return;
+				}
+
+				sendTrackerConfigToIframe(false);
+			});
 
 			document.addEventListener('mouseover', () => {
 				isUserInteracting.isMouseOver = true;
@@ -200,6 +281,7 @@
 		let reloadSchedule = function(){
 			Simva.getStudySchedule(studyId, function(error, result){
 				if(error){ 
+						clearPendingTrackerMessage();
 						$("#complete_activity").hide();
 						$('.underlay').hide();
 						$('#activity_content').hide(10, function(){
@@ -219,6 +301,7 @@
 						if(!result.next){
 							if(!avoid_refreshing){
 								avoid_refreshing = true;
+								clearPendingTrackerMessage();
 								$("#complete_activity").hide();
 								$('#activity_content').hide(10, function(){
 									$('#activity_content').attr('src', 'about:blank');
@@ -247,6 +330,7 @@
 									Simva.getActivityTarget(activity.activity_id, function(error, result){
 										if (error) {
 											console.error("Error getting the URL of the activity target:", error);
+											clearPendingTrackerMessage();
 											return;
 										}
 										try {
@@ -254,15 +338,34 @@
 											Simva.getCurrentUser(function(error, user){
 												if(!error) {
 													console.log("Current user:", user);
-													$('#activity_content').attr('src', result[user.user_id]);
+													const activityUrl = result[user.user_id];
+													const activityOrigin = getOriginFromUrl(activityUrl);
+													if (activity.activity_type === 'gameplay' && activityOrigin) {
+														Simva.getActivityTrackerConfig(activity.activity_id, function(configError, trackerConfig) {
+															if (configError || !trackerConfig) {
+																clearPendingTrackerMessage();
+																console.warn('Error getting activity tracker config', configError);
+															} else {
+																pendingTrackerMessagePayload = trackerConfig;
+																pendingTrackerMessageOrigin = activityOrigin;
+																trackerMessageRetryCount = 0;
+															}
+															$('#activity_content').attr('src', activityUrl);
+														});
+													} else {
+														clearPendingTrackerMessage();
+														$('#activity_content').attr('src', activityUrl);
+													}
 												}
 											});
 										} catch (error) {
 											console.error("Error getting source:", error);
+											clearPendingTrackerMessage();
 											return;
 										}
 									});
 								}else{
+									clearPendingTrackerMessage();
 									$('#activity_content').hide(10, function(){
 										$('#activity_content').attr('src', 'about:blank');
 										document.getElementById('activity_content').src = `data:text/html;charset=utf-8,${escape(manual)}`;

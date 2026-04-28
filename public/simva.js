@@ -435,6 +435,10 @@ var Simva = {
 		Utils.get(`/bff/activities/${activity_id}/target`, callback);
 	},
 
+	getActivityTrackerConfig: function(activity_id, callback){
+		Utils.get(`/bff/activities/${activity_id}/tracker_config`, callback);
+	},
+
 	isActivityOpenable: function(activity_id, callback){
 		Utils.get(`/bff/activities/${activity_id}/openable`, callback);
 	},

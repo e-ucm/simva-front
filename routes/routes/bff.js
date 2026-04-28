@@ -1018,6 +1018,16 @@ module.exports = function(auth, config){
         });
     });
 
+    router.get('/activities/:activityid/tracker_config', auth, async (req, res, next) => {
+        Simva.getActivityTrackerConfig(req.params["activityid"], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
     router.get('/activities/:activityid/openable', auth, async (req, res, next) => {
         Simva.isActivityOpenable(req.params["activityid"], req.session.id, (error, result) => {
             if(error) {

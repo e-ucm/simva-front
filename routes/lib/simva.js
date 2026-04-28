@@ -496,6 +496,10 @@ class Simva {
 		this.get(`${this.apiurl}/activities/${activity_id}/target`, sessionId, callback);
 	}
 
+	getActivityTrackerConfig(activity_id, sessionId, callback){
+		this.get(`${this.apiurl}/activities/${activity_id}/tracker_config`, sessionId, callback);
+	}
+
 	isActivityOpenable(activity_id, sessionId, callback){
 		this.get(`${this.apiurl}/activities/${activity_id}/openable`, sessionId, callback);
 	}
