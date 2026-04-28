@@ -345,10 +345,28 @@
 	let reloadGroup = function(){
 		Simva.getGroup(simletid, groupid, function(error, result){
 			if(!error){
-				group=result;
-				paintGroup(group, group.completeParticipants);
-				delete group.completeParticipants;
-				loaded=true;
+				group = result;
+				Simva.getGroupParticipants(simletid, groupid, function(participantsError, participantsResult){
+					if(!participantsError && Array.isArray(participantsResult)) {
+						group.completeParticipants = participantsResult;
+					} else {
+						const ids = Array.isArray(group.participants) ? group.participants : [];
+						group.completeParticipants = ids.map(function(id) {
+							return {
+								user_id: id,
+								username: `user_${id}`,
+								email: '',
+								role: undefined,
+								isToken: false,
+								token: ''
+							};
+						});
+					}
+
+					paintGroup(group, Array.isArray(group.completeParticipants) ? group.completeParticipants : []);
+					delete group.completeParticipants;
+					loaded = true;
+				});
 			} else {
 		        const link = newGeneration ? `/groups/` : `/previous-groups/`;
 				window.location.href=link;
@@ -375,24 +393,29 @@
 	}
 
 	let paintGroup = function(group, participants){
-		$('#group_name').text(group.group_name);
+		const safeGroup = group || {};
+		const owners = Array.isArray(safeGroup.direct_permissions) ? safeGroup.direct_permissions : [];
+		const participantRefs = Array.isArray(safeGroup.participants) ? safeGroup.participants : [];
+		const fullParticipants = Array.isArray(participants) ? participants : [];
+
+		$('#group_name').text(safeGroup.group_name || '');
 
 		$('#owners').html('');
-		for (var i = 0; i < group.direct_permissions.length; i++) {
-			$('#owners').append(ownerRow(group.direct_permissions[i]));
+		for (var i = 0; i < owners.length; i++) {
+			$('#owners').append(ownerRow(owners[i]));
 		}
 		$('#participants').empty();
 		$('#pdf_printable_table').empty();
-		if(group.participants.length == 0){
+		if(participantRefs.length === 0){
 			$('#participants').append('<p><%= t("participants.errormessage.zeroInGroup.title", { ns : "groups" }) %><%= t("participants.errormessage.zeroInGroup.message", { ns : "groups" }) %></p>');
-			$('#pdf_printable_table').append(groupHeaderNoParticipantsPDF(group));
+			$('#pdf_printable_table').append(groupHeaderNoParticipantsPDF(safeGroup));
 			$('#pdf_printable_table').append('<p><%= t("participants.errormessage.zeroInGroup.title", { ns : "groups" }) %></p>');
 		}else{
 			$('#participants').append(participantHeader());
-			$('#pdf_printable_table').append(headerRowPDF(group));
-			for (var i = 0; i < participants.length; i++) {
-				$('#participants').append(participantRow(participants[i]));
-				$('#pdf_printable_table').append(participantRowPDF(participants[i], i+1));
+			$('#pdf_printable_table').append(headerRowPDF(safeGroup));
+			for (var i = 0; i < fullParticipants.length; i++) {
+				$('#participants').append(participantRow(fullParticipants[i]));
+				$('#pdf_printable_table').append(participantRowPDF(fullParticipants[i], i+1));
 			}
 		}
 	}
@@ -422,6 +445,7 @@
 	}
 
 	let participantRow = function(participant){
+		const email = participant && participant.email ? participant.email : '-';
 		let role="";
 		switch(participant.role) {
 			case "student":
@@ -448,13 +472,13 @@
 				<td>${participant.username}</td>
 				<td>${isToken}</td>
 				<td>${token}</td>
-				<td><a href="${participant.email}">${participant.email}</a></td>
+				<td>${email === '-' ? '-' : `<a href="${email}">${email}</a>`}</td>
 				<td>${role}</td>
 				<td><input class="red" type="button" value="<%= t("participants.remove.title", { ns : "groups" }) %>" onclick="removeParticipant('${participant.user_id}', '${participant.username}', true)"></td>`;
 		} else {
 			return `<tr><td><img src="/icon/user.png"></td>
 				<td>${participant.username}</td>
-				<td><a href="${participant.email}">${participant.email}</a></td>
+				<td>${email === '-' ? '-' : `<a href="${email}">${email}</a>`}</td>
 				<td>${role}</td>
 				<td><input class="red" type="button" value="<%= t("participants.remove.title", { ns : "groups" }) %>" onclick="removeParticipant('${participant.user_id}', '${participant.username}', true)"></td>`;
 		}

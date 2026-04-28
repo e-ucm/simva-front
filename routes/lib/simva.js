@@ -223,7 +223,7 @@ class Simva {
 	}
 
 	getGroupParticipants(simlet_id, group_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/participants`, null, sessionId, callback);
+		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/participants`, sessionId, callback);
 	}
 	
 	deleteGroupParticipant(simlet_id, group_id, participant_id, keycloakDelete, sessionId, callback){
