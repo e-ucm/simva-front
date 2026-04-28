@@ -67,6 +67,8 @@
     "sessions.placeholder":"Nombre de la Sesión",
     "sessions.delete.title":"Borrar Sesión",
     "sessions.delete.confirm":"¿Seguro que quieres borrar la Sesión '{{sesion}}' del SIMLET '{{SIMLET}}'?\nTambién se eliminarán todas las actividades y datos.",
+    "sessions.activate.title":"Activar",
+    "sessions.desactivate.title":"Desactivar",
     "sessions.zero.title":"SIN Sesión",
     "sessions.zero.message": "No hay Sesión para este SIMLET. Intente añadir uno utilizando el botón de la derecha.",
     "sessions.expand":"Expandir/Contraer",

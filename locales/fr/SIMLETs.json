@@ -67,6 +67,8 @@
     "sessions.placeholder":"Nom du session",
     "sessions.delete.title":"Supplimer la session",
     "sessions.delete.confirm":"Êtes-vous sûr de vouloir supprimer la session '{{session}}' de l'SIMLET '{{SIMLET}}'?\nToutes les activités et les données seront également supprimées.",
+    "sessions.activate.title":"Activer",
+    "sessions.desactivate.title":"Desactiver",
     "sessions.zero.title":"PAS DE session",
     "sessions.zero.message": "Il n'y a pas de sessions pour cette SIMLET. Essayez d'en ajouter une en utilisant le bouton à droite.",
     "sessions.expand":"Développer/Réduire",
