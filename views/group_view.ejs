@@ -345,10 +345,28 @@
 	let reloadGroup = function(){
 		Simva.getGroup(simletid, groupid, function(error, result){
 			if(!error){
-				group=result;
-				paintGroup(group, group.completeParticipants);
-				delete group.completeParticipants;
-				loaded=true;
+				group = result;
+				Simva.getGroupParticipants(simletid, groupid, function(participantsError, participantsResult){
+					if(!participantsError && Array.isArray(participantsResult)) {
+						group.completeParticipants = participantsResult;
+					} else {
+						const ids = Array.isArray(group.participants) ? group.participants : [];
+						group.completeParticipants = ids.map(function(id) {
+							return {
+								user_id: id,
+								username: `user_${id}`,
+								email: '',
+								role: undefined,
+								isToken: false,
+								token: ''
+							};
+						});
+					}
+
+					paintGroup(group, Array.isArray(group.completeParticipants) ? group.completeParticipants : []);
+					delete group.completeParticipants;
+					loaded = true;
+				});
 			} else {
 		        const link = newGeneration ? `/groups/` : `/previous-groups/`;
 				window.location.href=link;
