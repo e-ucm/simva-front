@@ -48,15 +48,6 @@ module.exports = {
             study.participants = Array.from(mergedParticipants.values());
         }
 
-        // Keep per-session participants aligned with the fallback list used by activity painters.
-        if (Array.isArray(study.completeTests)) {
-            for (const test of study.completeTests) {
-                if (!Array.isArray(test.completeParticipants) || test.completeParticipants.length === 0) {
-                    test.completeParticipants = Array.isArray(study.participants) ? study.participants : [];
-                }
-            }
-        }
-
         return study;
     },
 

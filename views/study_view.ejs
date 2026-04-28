@@ -828,7 +828,7 @@
 	deleteShLink = function(){
 		if(study.shlink) {
 			let shortCode=study.shlink.shortCode;
-			if(confirm(`<%- t('scheduler.shlink.delete.confirm', { ns : 'SIMLETs', shlink : '${shortCode}', SIMLET : '${study.study_name}'  }) %>`)){
+			if(confirm(`<%- t('scheduler.shlink.delete.confirm', { ns : 'SIMLETs', shlink : '${shortCode}', SIMLET : '${study.simlet_name}'  }) %>`)){
 				Simva.deleteShLink(shortCode, (error, result) => {
 					if(!error) {
 						Simva.updateStudy(study.simlet_id, { shlink: null }, (error, result) => {
@@ -862,7 +862,7 @@
 			if(!error){
 				var studyExport = result;
 				var content = JSON.stringify(studyExport, null, 2);
-				var filename = `simva-${study.study_name}-export.json`;
+				var filename = `simva-${study.simlet_name}-export.json`;
 
 				Utils.download(filename, content);
 			}
@@ -929,7 +929,7 @@
 	// Functionality
 
 	let deleteGroup = function(groupid, groupname){
-		if(confirm(`<%- t('groups.delete.confirm', { ns : 'SIMLETs', group : '${groupname}', SIMLET : '${study.study_name}' }) %>`)){
+		if(confirm(`<%- t('groups.delete.confirm', { ns : 'SIMLETs', group : '${groupname}', SIMLET : '${study.simlet_name}' }) %>`)){
 			Simva.deleteStudyGroup(study.simlet_id, groupid, function(error, result){
 				reloadStudy();
 			});
@@ -937,7 +937,7 @@
 	}
 
 	let deletePlatform = function(platform){
-		if(confirm(`<%- t('lti_platform.delete.confirm', { ns : 'SIMLETs', platform : '${platform}', SIMLET : '${study.study_name}' }) %>`)){
+		if(confirm(`<%- t('lti_platform.delete.confirm', { ns : 'SIMLETs', platform : '${platform}', SIMLET : '${study.simlet_name}' }) %>`)){
 			Simva.removePlatform(platform, function(error, result){
 				reloadStudy();
 			});
@@ -955,7 +955,7 @@
 	}
 
 	let deleteTest = function(testid, testName) {
-		if(confirm(`<%- t('sessions.delete.confirm', { ns : 'SIMLETs', session : '${testName}', SIMLET : '${study.study_name}' }) %>`)){
+		if(confirm(`<%- t('sessions.delete.confirm', { ns : 'SIMLETs', session : '${testName}', SIMLET : '${study.simlet_name}' }) %>`)){
 			Simva.deleteTest(study.simlet_id, testid, function(error, result){
 				reloadStudy();
 			});
@@ -963,8 +963,9 @@
 	}
 
 	let deleteActivity = function(activityid, activityname, testid){
-		let test=getTestFromTestId(testid);
-		if(confirm(`<%- t('activities.delete.confirm', { ns : 'SIMLETs', activity : '${activityname}', session: '${test}' , SIMLET : '${study.study_name}' }) %>`)){
+		let test = getTestFromTestId(testid);
+		let testName = test && test.session_name ? test.session_name : testid;
+		if(confirm(`<%- t('activities.delete.confirm', { ns : 'SIMLETs', activity : '${activityname}', session: '${testName}' , SIMLET : '${study.simlet_name}' }) %>`)){
 			Simva.deleteActivity(activityid, function(error, result){
 				reloadStudy();
 			});
@@ -1100,10 +1101,9 @@
 
 		let fullyPaintTest = function(test){
 			paintTest(test);
-			const hasSessionParticipants = Array.isArray(test.completeParticipants) && test.completeParticipants.length > 0;
-			const sessionParticipants = hasSessionParticipants
+			const sessionParticipants = Array.isArray(test.completeParticipants)
 				? test.completeParticipants
-				: (Array.isArray(participants) ? participants : []);
+				: [];
 			paintTestActivities(test, test.completeActivities, sessionParticipants);
 			
 		}
@@ -1133,7 +1133,7 @@
 		$('#active').html('');
 		if(active == null || active == "true") {
 			$('#active').append('<h2>Active</h2>');
-			document.getElementById("activation").value="Achivate"
+			document.getElementById("activation").value="Activate"
 		} else {
 			$('#active').append('<h2>Archived</h2>');
 			document.getElementById("activation").value="Activate"

@@ -101,6 +101,9 @@
 
     "progress.title":"Progreso",
     "participant.title":"Participante",
+    "init.title":"Inicio",
+    "init.on":"Verdadero",
+    "init.off":"Falso",
 
     "result.title":"Resultado",
     "result.disabled":"Desactivado",
