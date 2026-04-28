@@ -1,7 +1,6 @@
 const logger = require('../../logger');
 const SimvaAsync = require('./simvaAsync');
 const testcontroler = require('./testscontroler');
-const groupcontroler = require('./groupcontroler');
 
 module.exports = {
     async getCompleteStudy(studyid, sessionid) {
@@ -24,6 +23,31 @@ module.exports = {
         } catch(e) {
             logger.warn(e);
         }
+
+        // Fallback for setups where allocator-based participant endpoints are empty.
+        // In that case, build the participant list from the members of study groups.
+        if (!Array.isArray(study.participants) || study.participants.length === 0) {
+            const mergedParticipants = new Map();
+            const groups = Array.isArray(study.completeGroups) ? study.completeGroups : [];
+
+            for (const group of groups) {
+                try {
+                    const groupParticipants = await SimvaAsync.getGroupParticipants(studyid, group.group_id, sessionid);
+                    if (Array.isArray(groupParticipants)) {
+                        for (const participant of groupParticipants) {
+                            if (participant && participant.user_id !== undefined && participant.user_id !== null) {
+                                mergedParticipants.set(participant.user_id, participant);
+                            }
+                        }
+                    }
+                } catch (e) {
+                    logger.warn(e);
+                }
+            }
+
+            study.participants = Array.from(mergedParticipants.values());
+        }
+
         return study;
     },
 
