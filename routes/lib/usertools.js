@@ -63,7 +63,7 @@ class UserTools {
 			session.user.data = profile;
 			session.user.jwt = simvaToken;
 			userClientsListManager.addClient(session);
-			req.session.user.jwt = true;
+			req.session.user.jwt = simvaToken;
 			logger.info("auth() - New token done");
 			return next();
 		  }else{
@@ -128,9 +128,26 @@ class UserTools {
 
 	isAuthExpired(session, callback){
 		try {
+			if(!session || !session.user || typeof session.user.jwt !== 'string' || !session.user.jwt.trim()) {
+				logger.info("authExpired() - Missing or invalid JWT in session");
+				callback(null, {type:"expired"});
+				return;
+			}
+
 			let current = Math.floor(Date.now() / 1000);
 			let jwtdecoded = this.decodeJWT(session.user.jwt);
+			if(!jwtdecoded || !jwtdecoded.exp) {
+				logger.info("authExpired() - JWT decode failed or missing exp");
+				callback(null, {type:"expired"});
+				return;
+			}
+
 			let expiration = parseInt(jwtdecoded.exp);
+			if(Number.isNaN(expiration)) {
+				logger.info("authExpired() - JWT exp is not a valid number");
+				callback(null, {type:"expired"});
+				return;
+			}
 			if(current > expiration){
 				logger.info(`authExpired() - JWT: ${JSON.stringify(jwtdecoded)}`);
 				logger.info(`authExpired() - Expiration: ${expiration}`);
@@ -141,13 +158,8 @@ class UserTools {
 				callback(null, {type:"ok"});
 			}
 		} catch(e) {
-			callback({
-				status: 500,
-				data: {
-					message: 'Unable to parse accessToken',
-					error: e
-				}
-			});
+			logger.info("authExpired() - Unable to parse token, treating as expired");
+			callback(null, {type:"expired"});
 		}
 	}
 
