@@ -167,8 +167,20 @@ var DefaultAllocatorPainter = {
 	updateAllocationForGroup: function(groupId, userId){
 		let tmp = this;
 		const selectedTest = $(`#allocation_${groupId}_${userId}`).val();
+		const participantId = parseInt(userId, 10);
 
-		Simva.allocateToSession(tmp.study.simlet_id, groupId, selectedTest, { participant_id: userId }, function(error, result){
+		if (Number.isNaN(participantId)) {
+			$.toast({
+				heading: tmp.add_error,
+				text: 'Invalid participant id',
+				position: 'top-right',
+				icon: 'error',
+				stack: false
+			});
+			return;
+		}
+
+		Simva.allocateToSession(tmp.study.simlet_id, groupId, selectedTest, { participant_id: participantId }, function(error, result){
 			if(error){
 				$.toast({
 					heading: tmp.add_error,
@@ -208,10 +220,22 @@ var DefaultAllocatorPainter = {
 		let previous = this.allocator.allocations[userId];
 		let tmp = this;
 		const selectedTest = $(`#allocation_${userId}`).val();
+		const participantId = parseInt(userId, 10);
+
+		if (Number.isNaN(participantId)) {
+			$.toast({
+				heading: tmp.add_error,
+				text: 'Invalid participant id',
+				position: 'top-right',
+				icon: 'error',
+				stack: false
+			});
+			return;
+		}
 
 		if(this.allocator.allocations){
 			this.allocator.allocations[userId] = $(`#allocation_${userId}`).val();
-			Simva.allocateToSession(tmp.study.simlet_id, groupId, selectedTest, { participant_id: userId }, function(error, result){
+			Simva.allocateToSession(tmp.study.simlet_id, groupId, selectedTest, { participant_id: participantId }, function(error, result){
 				if(error){
 					tmp.allocator.allocations[userId] = previous;
 					$(`#allocation_${userId}`).val(previous);
@@ -240,9 +264,10 @@ var DefaultAllocatorPainter = {
 		let tmp = this;
 
 		let userId = $('#edit_allocator_content select[name="user_id"]').val();
+		let participantId = parseInt(userId, 10);
 		let test = $('#edit_allocator_content select[name="test"]').val();
 
-		if(!userId){
+		if(!userId || Number.isNaN(participantId)){
 			$.toast({
 				heading: tmp.add_error,
 				text: `No participant selected`,
@@ -259,7 +284,7 @@ var DefaultAllocatorPainter = {
 
 		this.allocator.allocations[userId] = test;
 
-		Simva.allocateToSession(this.study.simlet_id, groupId, test, { participant_id: userId }, function(error, result){
+		Simva.allocateToSession(this.study.simlet_id, groupId, test, { participant_id: participantId }, function(error, result){
 			if(error){
 				delete tmp.allocator.allocations[userId];
 				$.toast({

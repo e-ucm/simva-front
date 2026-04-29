@@ -84,6 +84,8 @@
     "sessions.placeholder":"Session name",
     "sessions.delete.title":"Delete Session",
     "sessions.delete.confirm":"Are you sure do you want to delete the Session '{{session}}' from SIMLET '{{SIMLET}}'?\nAll the activities and data will be deleted too.",
+    "sessions.activate.title":"Activate",
+    "sessions.desactivate.title":"Deactivate",
     "sessions.zero.title":"NO Session",
     "sessions.zero.message": "There are no Session for this SIMLET. Try adding one using the button on the right.",
     "sessions.active.title":"Active",

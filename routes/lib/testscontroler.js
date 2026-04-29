@@ -6,6 +6,7 @@ const groupcontroler = require('./groupcontroler');
 module.exports = {
     async getCompleteTest(studyid, testid, sessionid) {
         let test=await SimvaAsync.getStudyTest(studyid, testid, sessionid);
+        test.completeParticipants = [];
         test.completeActivities = [];
         for(let i=0;i<test.activities.length;i++) {
             try {

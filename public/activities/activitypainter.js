@@ -302,7 +302,7 @@ var ActivityPainter = {
 			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity.activity_id}')">
 			<input class="red" type="button" value="X" onclick="deleteActivity('${activity.activity_id}', '${activity.activity_name}', '${activity.session_id}')"></div>
 			<p class="subtitle">${this.simple_name}</p>
-			<p>${this.communSpecific.result_title}:<a onclick="PainterFactory.Painters["activity"].downloadResults('${activity.activity_id}')"> ⬇️</a></p>
+			<p>${this.communSpecific.result_title}:<a onclick="PainterFactory.Painters['activity'].downloadResults('${activity.activity_id}')"> ⬇️</a></p>
 			${this.paintActivityParticipantsTable(activity, participants, true)}</div>`);
 	},
 
