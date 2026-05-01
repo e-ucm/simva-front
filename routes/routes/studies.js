@@ -121,7 +121,8 @@ module.exports = function(auth, config){
       res.render('studies_list', { 
         config: config, 
         user: req.session.user,
-        t : req.t
+        t : req.t,
+        archived: false
      });
     }else{
       res.render('studies_play', { 

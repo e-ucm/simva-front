@@ -1,5 +1,6 @@
 { 
     "title" : "SIMLETs",
+    "archived.title": "SIMLETs archivados",
     "single.title" : "SIMLET",
     "delete.title": "Eliminar",
     "remove.confirm": "¿Está seguro de que desea eliminar el SIMLET '{{SIMLET}}'?\nTambién se borrarán todas las Sessions, actividades y datos.",
@@ -8,8 +9,8 @@
     "session.tab.title": "Sesiones",
     "users.tab.title": "Usuarios",
 
-    "active.on":"Activo",
-    "active.off":"Archivado",
+    "archive.title":"Archivar",
+    "dearchive.title":"Desarchivar",
 
     "new.title": "Añadir nuevo SIMLET",
     "new.submit": "Enviar",
@@ -83,12 +84,20 @@
     "sessions.delete.title":"Borrar Sesión",
     "sessions.delete.confirm":"¿Seguro que quieres borrar la Sesión '{{sesion}}' del SIMLET '{{SIMLET}}'?\nTambién se eliminarán todas las actividades y datos.",
     "sessions.activate.title":"Activar",
-    "sessions.desactivate.title":"Desactivar",
+    "sessions.pause.title":"Pausar",
+    "sessions.finish.title":"Terminar",
     "sessions.zero.title":"SIN Sesión",
     "sessions.zero.message": "No hay Sesión para este SIMLET. Intente añadir uno utilizando el botón de la derecha.",
     "sessions.expand":"Expandir/Contraer",
     "sessions.active.title":"Activa",
-    "sessions.inactive.title":"Inactiva",
+    "sessions.paused.title": "Pausada",
+    "sessions.finished.title":"Terminada",
+
+    "sessions.creationDate": "Creado el",
+    "sessions.updateDate": "Actualizado el",
+    "sessions.activityCount": "Actividades",
+    "sessions.usercount": "Usuarios",
+    "sessions.download": "Descargar datos",
 
     "activities.add.title":"Añadir actividad",
     "activities.add.new.title":"Añadir nueva actividad",
@@ -98,11 +107,6 @@
     "activities.delete.title":"Borrar actividad",
     "activities.delete.confirm":"¿Está seguro de que desea eliminar la actividad '{{activity}}' de la Sesión '{{session}}' del SIMLET '{{SIMLET}}'?\nAll the data of the activity will be deleted too.",
     "activities.placeholder":"Nombre de la actividad",
-
-    "activities.creationDate": "Created at",
-    "activities.updateDate": "Actualizado el",
-    "activities.activityCount": "Actividades",
-    "activities.usercount": "Usuarios",
 
     "scheduler.shlink.generate.title":"Generar url reducida para Scheduler",
     "scheduler.shlink.generate.randomly_length.title":"Generado aleatoriamente",

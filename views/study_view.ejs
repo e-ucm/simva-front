@@ -6,11 +6,11 @@
 	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 </div>-->
 <div class="simletTop">
-	<h1><%- t('single.title', { ns : 'SIMLETs' }) %>: <span id="study_name"></span></h1>
+	<h1><%- t('single.title', { ns : 'SIMLETs' }) %>: <span id="simlet_name"></span></h1>
 	<div class="simletSettings">
 		<div class="kebab">
 			<ul class="kebab-dropdown" style="display: none;">
-				<li class="kebab-icon " id="activation" onclick="setActive()"></li>
+				<li class="kebab-icon " id="archivation" onclick="toggleArchived()"></li>
 				<li class="kebab-icon icon-edit" onclick="openEditStudyForm('<%= study %>')">
 					<%- t('edit.title', { ns : 'SIMLETs' }) %>
 				</li>
@@ -19,11 +19,6 @@
 				</li>
 			</ul>
 		</div>
-		<!-- <input class="yellow" type="button" id="activation" value="" onclick="setActive()">
-		&nbsp;
-		<input class="yellow" type="button" value="<%- t('edit.title', { ns : 'SIMLETs' }) %>" onclick="openEditStudyForm('<%= study %>')">
-		&nbsp;
-		<input class="yellow" type="button" value="<%- t('config.title', { ns : 'SIMLETs' }) %>" onclick="openConfigDownloadForm()"> -->
 	</div>
 </div>
 
@@ -45,7 +40,7 @@
 	</div>
 
 	<div id="users_tab" class="subform studyTab">
-<!-- TODO: remove style class dependency -->
+<!-- TODO FRONT: remove style class dependency -->
 		<div class="left">
 			<div class="graybox owners">
 				<h2><%- t('coordinators.title', { ns : 'SIMLETs' }) %></h2>
@@ -205,7 +200,7 @@
 			<div id="edit_study_tab" class="subform selected">
 				<form id="edit_study_form">
 					<h3><%- t('name.edit.title', { ns : 'SIMLETs' }) %></h3>
-					<input type="text" name="studyName" id="edit_study_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<input type="text" name="studyName" id="edit_simlet_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
 					<br>
 					<h3><%- t('description.edit.title', { ns : 'SIMLETs' }) %></h3>
 					<input type="text" name="studyDescription" id="edit_study_description" placeholder="<%- t('description.placeholder', { ns : 'SIMLETs' }) %>" required>
@@ -215,13 +210,17 @@
 					<span class="error" id="edit_study_error"></span>
 				</form>
 			</div>
-<!-- TODO: show copy/delete buttons and hide generate when link has been generated (and viceversa) -->
 			<div id="edit_url_tab" class="subform">
-				<input type="button" class="blue" id="generate_shlink_url" value="<%- t('scheduler.shlink.generate.title', { ns : 'SIMLETs' }) %>" onclick="openGenerateLinkForm()">
-				<br><br>
-				<a class="button green" id="shlink_url" onclick="copyShortURL()"><span id="shlink_url_short"></span></a>
-				<br><br>
-				<input type="button" class="red" id="delete_shlink_url" value="<%- t('scheduler.shlink.delete.title', { ns : 'SIMLETs' }) %>" onclick="deleteShLink()">
+				<p id="generate_shlink_url" >
+					<input type="button" class="blue" value="<%- t('scheduler.shlink.generate.title', { ns : 'SIMLETs' }) %>" onclick="openGenerateLinkForm()">
+				</p>
+				<p  id="shlink_url">
+					<a class="button green" onclick="copyShortURL()"><span id="shlink_url_short"></span></a>
+				</p>
+				<p id="delete_shlink_url" >
+					<input type="button" class="red" value="<%- t('scheduler.shlink.delete.title', { ns : 'SIMLETs' }) %>" onclick="deleteShLink()">
+				</p>
+
 			</div>
 		</div>
 	</div>
@@ -367,7 +366,7 @@
 </div>
 
 <div class="floating_buttons">
-	<a unselectable="on" class="basic" onclick="Utils.toggleAddForm('add_test')">+</a>
+	<a unselectable="on" class="basic" onclick="Utils.toggleAddForm('add_test')" style="display: none;">+</a>
 </div>
 
 
@@ -823,7 +822,6 @@
 			return false;
 		});
 
-		// TODO: check if generate link button works
 		$("#generate_study_link").on('submit', function(event){
 			event.preventDefault();
 			let currentform = this;
@@ -924,6 +922,11 @@
 				Utils.download(filename, content);
 			}
 		})
+	}
+
+	// TODO
+	let downloadSessionData = function(sessionId) {
+		console.log("downloading data for session id:", sessionId);
 	}
 
 	let toggleAllocatorForm = function(){
@@ -1063,8 +1066,17 @@
 		$('#duplicate_test input[name="testName"]').val(test.session_name);
 	}
 
-	let activateTest = function(testId, checkbox){
-		Simva.activateSession(studyid, testId, { activate: checkbox.checked }, function(error, result) {
+	let activateTest = function(testId, nextState) {
+		let act = false;
+		if (nextState == "active") {
+			act = true;
+		}
+		// TODO: Replace activate = true/false for state = active/paused/finished
+		else if (nextState == "paused") {
+			act = true;
+		}
+
+		Simva.activateSession(studyid, testId, { activate: act }, function(error, result) {
 			if(!error) {
 				reloadStudy();
 			}
@@ -1111,7 +1123,7 @@
 	let openEditStudyForm = function(studyId){
 		$('#edit_study').toggleClass('shown');
 		document.getElementById("edit_study_error").innerHTML = "";
-		document.getElementById('edit_study_name').value = study.simlet_name;
+		document.getElementById('edit_simlet_name').value = study.simlet_name;
 		document.getElementById('edit_study_description').value = study.simlet_description;
 	}
 	
@@ -1127,7 +1139,6 @@
 		}
 		$('#generate_study_link').toggleClass('shown');
 	}
-
 	
 	let openConfigDownloadForm = function() {
 		$('#download_config').toggleClass('shown');
@@ -1137,26 +1148,22 @@
 	// Main Paint functions
 
 	let paintStudy = function(study, participants, tests, allocator, groups, allgroups, platforms){
-		$('#study_name').text(study.simlet_name);
-		// TODO: show copy/delete buttons and hide generate when link has been generated (and viceversa) 
-		console.log(study.shlink);
+		$('#simlet_name').text(study.simlet_name);
 		if(study.shlink) {
-			$('#generate_shlink_url').text("");
 			$('#shlink_url_short').text(`<%- t('scheduler.shlink.message', { ns : 'SIMLETs', shlink : '${study.shlink.shortUrl}' }) %>`);
-			// document.getElementById("generate_shlink_url").style.visibility = "hidden";
-			// document.getElementById("shlink_url").style.visibility = "visible";
-			// document.getElementById("delete_shlink_url").style.visibility = "visible";
+			$("#generate_shlink_url").hide();
+			$("#shlink_url").show();
+			$("#delete_shlink_url").show();
 		} 
 		else {
-			// document.getElementById("generate_shlink_url").style.visibility = "visible";
-			// document.getElementById("shlink_url").style.visibility = "hidden";
-			// document.getElementById("delete_shlink_url").style.visibility = "hidden";
+			$("#generate_shlink_url").show();
+			$("#shlink_url").hide();
+			$("#delete_shlink_url").hide();
 		}
 
 		paintOwners(study.direct_permissions);
 
-		// TODO: check if text changes on activate/archive when study.active value is not null
-		paintActive(study.active);
+		paintActive(!study.simlet_archived);
 
 		paintGroups(groups, tests, participants);
 
@@ -1165,10 +1172,10 @@
 		paintPlatforms(platforms);
 
 		let fullyPaintTest = function(test){
-			paintTest(test);
 			const sessionParticipants = Array.isArray(test.completeParticipants)
 				? test.completeParticipants
 				: [];
+			paintTest(test, test.completeActivities, sessionParticipants);
 			paintTestActivities(test, test.completeActivities, sessionParticipants);
 		}
 
@@ -1182,7 +1189,7 @@
 		}
 
 		if ($(".sessionTop").length == 1) {
-			toggleTest(1);
+			toggleTest(tests[0].session_id);
 		}
 	}
 
@@ -1197,36 +1204,56 @@
 		}
 	}
 
-	let paintActive = function(active){
-		$('#active').html('');
+	let paintActive = function(active) {
 		let txt = ""
-		let h2 = ""
-		if (active == null || active == "true") {
-			txt = "<%- t('active.off.button', { ns : 'SIMLETs' }) %>"
-			h2 = "<h2>Active</h2>";
-		} 
-		else {
-			txt = "<%- t('active.on.button', { ns : 'SIMLETs' }) %>"
-			h2 = "<h2>Archived</h2>";
+		if (active == null || active) {
+			txt = "<%- t('archive.title', { ns : 'SIMLETs' }) %>"
+			$(".basic").show();
+			$("#archivation").addClass('icon-archive');
+			$("#archivation").removeClass('icon-dearchive');
 		}
-		$('#active').append(h2);
-		$("#activation").text(txt);
-		$("#activation").val(txt);
+		else {
+			txt = "<%- t('dearchive.title', { ns : 'SIMLETs' }) %>"
+			$(".basic").hide();
+			$("#archivation").addClass('icon-dearchive');
+			$("#archivation").removeClass('icon-archive');
+		}
+		$("#archivation").text(txt);
+
+		let allSessionsFinished = true;
+		study.sessions.forEach(testid => {
+			let test = getTestFromTestId(testid);
+			if (test != null) {
+				// TODO: Remove inactive check when inactive state name changes to finished
+				allSessionsFinished = allSessionsFinished && (test.session_status == "finished" || test.session_status == "inactive");
+			}
+		});
+		if (!allSessionsFinished) {
+			$('#archivation').addClass('li-disabled').removeAttr('onclick');
+		}
+		else {
+			$('#archivation').removeClass('li-disabled').attr('onclick', 'toggleArchived()');
+		}
 	}
 
-	let setActive = function(){
-		let newActive;
-		if(study.simlet_archived == null || study.simlet_archived == "true") { 
-			newActive = false;
-		} 
-		else {
-			newActive = true;
-		}
-		Simva.updateStudy(study.simlet_id, { simlet_archived: newActive }, function(error, result){
-			if(!error) {
-				reloadStudy();
+	let toggleArchived = function() {
+		let allSessionsFinished = true;
+		study.sessions.forEach(testid => {
+			let test = getTestFromTestId(testid);
+			if (test != null) {
+				allSessionsFinished = allSessionsFinished && (test.session_status == "finished" || test.session_status == "inactive");
 			}
-		})
+		});
+		if (allSessionsFinished) {
+			let newActive = !(study.simlet_archived == null || study.simlet_archived);
+			Simva.updateStudy(study.simlet_id, { simlet_archived: newActive }, function(error, result){
+				if(!error) {
+					reloadStudy();
+				}
+			})
+		}
+		
+		
 	}
 
 	let paintOwners = function(owners){
@@ -1298,38 +1325,70 @@
 		}
 	}
 
-	let paintTest = function(test){
-		let sessionStatusLabel = "<%- t('sessions.inactive.title', { ns : 'SIMLETs' }) %>";
-		let sessionClass = "inactive"
-		let sessionCheckboxStatus = "";
-		if (test.session_status === "active") {
-			sessionStatusLabel = "<%- t('sessions.active.title', { ns : 'SIMLETs' }) %>";
-			sessionClass = "active"
-			sessionCheckboxStatus = "checked";
-		}
-		let toggleButton = "";
-		if (test.session_can_be_manually_activated) {
-			toggleButton = 
-			`<label class="toggleSession">
-				<input type="checkbox" ${sessionCheckboxStatus} onchange="activateTest('${test.session_id}', this)"><span class="slider"></span></input>
-			</label>`
-		}
-		
+	let paintTest = function(test, activities, participants) {
 		const date = new Date(test.createdAt);
 		const formattedDate = date.toLocaleDateString('en-GB');
-		// TODO: calculate user count and completion
-		// console.log("user count:", test.activities.length)
-		// console.log("last activity:", test.completeActivities[test.completeActivities.length - 1])
-		let userCount = 20;
-		let completeUserCount = 5;
-		let lastActivityCompletion = (completeUserCount / userCount) * 100 ;
 		
+		let userCount = participants.length;
+		let completeUserCount = 0;
+		if (activities.length > 0) {
+			if (activities[activities.length - 1].data.completion != null) {
+				for (const [key, value] of Object.entries(activities[activities.length - 1].data.completion)) {
+					if (value) {
+						completeUserCount++;
+					}
+				}
+			}
+		}
+		let lastActivityCompletion = 0;
+		if (userCount > 0) {
+			lastActivityCompletion = (completeUserCount / userCount) * 100
+		}
+		lastActivityCompletion = lastActivityCompletion.toFixed(2);
+
+		let sessionClass = test.session_status;
+		// TODO: Remove when inactive state name changes to finished
+		if (sessionClass == "inactive") sessionClass = "finished";
+		let stateButtons = "";
+		let sessionStatusLabel = "";
+		if (sessionClass != "active") {
+			stateButtons += `
+			<li class="kebab-icon icon-activate" onclick="activateTest('${test.session_id}', 'active')">
+				<%- t('sessions.activate.title', { ns : 'SIMLETs' }) %>
+			</li>
+			`
+		}
+		else if (sessionStatusLabel == "") {
+			sessionStatusLabel = `<%- t('sessions.active.title', { ns : 'SIMLETs' }) %>`;
+		}
+		
+		if (test.session_status != "active") {
+			stateButtons += `
+			<li class="kebab-icon icon-pause" onclick="activateTest('${test.session_id}', 'paused')">
+				<%- t('sessions.pause.title', { ns : 'SIMLETs' }) %>
+			</li>
+			`
+		}
+		else if (sessionStatusLabel == "") {
+			sessionStatusLabel = `<%- t('sessions.paused.title', { ns : 'SIMLETs' }) %>`;
+		}
+		
+		if (sessionClass != "finished") {
+			stateButtons += `
+			<li class="kebab-icon icon-finish" onclick="activateTest('${test.session_id}', 'finished')">
+				<%- t('sessions.finish.title', { ns : 'SIMLETs' }) %>
+			</li>
+			`
+		}
+		else if (sessionStatusLabel == "") {
+			sessionStatusLabel = `<%- t('sessions.finished.title', { ns : 'SIMLETs' }) %>`;
+		}
+
 		let testDiv=`
 		<div id="test_${test.session_id}" class="test">
 			<div class="sessionTop" >
 				<h3>${test.session_name}</h3>
 				<div class="sessionStatusLabel ${sessionClass}">${sessionStatusLabel}</div>
-				${toggleButton}
 				<div class="expandButton" onclick="toggleTest('${test.session_id}')"></div>
 				<div class="kebab">
 					<ul class="kebab-dropdown">
@@ -1342,6 +1401,7 @@
 						<li class="kebab-icon icon-duplicate" onclick="openEditDuplicateForm('${test.session_id}')">
 							<%- t('sessions.duplicate.title', { ns : 'SIMLETs' }) %>
 						</li>
+						${stateButtons}
 						<li class="kebab-icon icon-delete" onclick="deleteTest('${test.session_id}', '${test.session_name}')">
 							<%- t('sessions.delete.title', { ns : 'SIMLETs' }) %>
 						</li>
@@ -1350,15 +1410,18 @@
 			</div>
 			<div class="activitySummary">
 				<div class="activityInfo">
-					<%- t('activities.creationDate', { ns : 'SIMLETs' }) %>: ${formattedDate}
+					<%- t('sessions.creationDate', { ns : 'SIMLETs' }) %>: ${formattedDate}
 					<br>
-					<%- t('activities.activityCount', { ns : 'SIMLETs' }) %>: ${test.activities.length} &nbsp; <%- t('activities.usercount', { ns : 'SIMLETs' }) %>: ${userCount}
+					<%- t('sessions.activityCount', { ns : 'SIMLETs' }) %>: ${test.activities.length} &nbsp; <%- t('sessions.usercount', { ns : 'SIMLETs' }) %>: ${userCount}
 				</div>
 				<div class="activityProgress progress">
 					<div class="done" style="width:${lastActivityCompletion}%"></div>
 					<span>
 						<%- t('completed.title', { ns : 'activities' }) %>: <done>${lastActivityCompletion}</done>% [ <doneres>${completeUserCount}</doneres>/<total>${userCount}</total> ]
 					</span>
+				</div>
+				<div class="activityDownload">
+					<a class="kebab-icon icon-download" onclick="downloadSessionData('${test.session_id}')"><b><%- t('sessions.download', { ns : 'SIMLETs' }) %></b><span></span></a>
 				</div>
 			</div>
 			<div class="activities">

@@ -1,5 +1,6 @@
 { 
     "title" : "SIMLETs",
+    "archived.title": "",
     "single.title" : "SIMLET",
     "delete.title": "",
     "remove.confirm": "Êtes-vous sûr de vouloir supprimer la SIMLET '{{SIMLET}}'?\nToutes les sessions, activités et données seront également supprimées.",
@@ -8,8 +9,8 @@
     "session.tab.title": "",
     "users.tab.title": "",
 
-    "active.on":"Active",
-    "active.off":"Archivé",
+    "archive.title":"",
+    "dearchive.title":"",
 
     "new.title": "Ajouter une nouvelle SIMLET",
     "new.submit": "Soumettre",
@@ -84,12 +85,20 @@
     "sessions.delete.title":"Supplimer la session",
     "sessions.delete.confirm":"Êtes-vous sûr de vouloir supprimer la session '{{session}}' de l'SIMLET '{{SIMLET}}'?\nToutes les activités et les données seront également supprimées.",
     "sessions.activate.title":"Activer",
-    "sessions.desactivate.title":"Desactiver",
+    "sessions.pause.title":"",
+    "sessions.finish.title":"",
     "sessions.zero.title":"PAS DE session",
     "sessions.zero.message": "Il n'y a pas de sessions pour cette SIMLET. Essayez d'en ajouter une en utilisant le bouton à droite.",
     "sessions.expand":"Développer/Réduire",
-    "sessions.activate.title":"Activer",
-    "sessions.desactivate.title":"Désactiver",
+    "sessions.active.title":"",
+    "sessions.paused.title": "",
+    "sessions.finished.title":"",
+
+    "sessions.creationDate": "",
+    "sessions.updateDate": "",
+    "sessions.activityCount": "",
+    "sessions.usercount": "",
+    "sessions.download": "",
 
     "activities.add.title":"Ajouter une activité",
     "activities.add.new.title":"Ajouter une nouvelle activité",
@@ -99,11 +108,6 @@
     "activities.delete.title":"Supprimer une activité",
     "activities.delete.confirm":"Êtes-vous sûr de vouloir supprimer l'activité '{{activity}}' de la session '{{session}}' de la SIMLET '{{SIMLET}}'?\nToutes les données relatives à l'activité seront également supprimées.",
     "activities.placeholder":"Nom de l'activité",
-
-    "activities.creationDate": "",
-    "activities.updateDate": "",
-    "activities.activityCount": "",
-    "activities.usercount": "",
 
     "scheduler.shlink.generate.title":"Générer une URL réduite pour le planificateur",
     "scheduler.shlink.generate.randomly_length.title":"Généré de manière aléatoire",

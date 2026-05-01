@@ -451,56 +451,14 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	background-color:transparent;
 	border-radius: 25px;
 }
-.sessionStatusLabel.inactive {
-	background-color: #f07667;
-}
 .sessionStatusLabel.active {
 	background-color: #8ec26d;
 }
-
-.toggleSession {
-	--btnWidth: 40px;
-	--btnHeight: 20px;
-	
-	margin-right: 10px;
-	position: relative;
-	display: inline-block;
-	width: var(--btnWidth);
-	height: var(--btnHeight);
+.sessionStatusLabel.paused {
+	background-color: #fbfd68;
 }
-.toggleSession input {
-	display: none;
-}
-.slider {
-	position: absolute;
-	cursor: pointer;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background-color: #333;
-	transition: 0.4s;
-	border-radius: calc(var(--btnHeight) / 2);
-}
-.slider:before {
-	--fillMargin: 4px;
-	--fillOffset: calc(var(--fillMargin) / 2);
-
-	position: absolute;
-	content: "";
-	height: calc(var(--btnHeight) - var(--fillMargin));
-	width: calc(var(--btnHeight) - var(--fillMargin));
-	bottom: var(--fillOffset);
-	left: var(--fillOffset);
-	background-color: #FFF;
-	transition: 0.4s;
-	border-radius: 50%;
-}
-input:checked+.slider {
-	background-color: #060;
-}
-input:checked+.slider:before {
-	transform: translateX(calc(var(--btnWidth) - var(--btnHeight)));
+.sessionStatusLabel.finished {
+	background-color: #f07667;
 }
 
 .expandButton {
@@ -531,6 +489,7 @@ input:checked+.slider:before {
 	display: flex;
 	width: 100%;
 	align-items: center;
+	margin-top: 5px;
 }
 .activityInfo { width: 30%; }
 .activityProgress.progress {
@@ -541,6 +500,11 @@ input:checked+.slider:before {
 }
 .activityProgress.progress span {
 	top: 3px;
+}
+.activityDownload {
+	margin-right: 15px;
+	margin-left: auto;
+    cursor: pointer;
 }
 
 .kebab {
@@ -577,6 +541,10 @@ input:checked+.slider:before {
 }
 .kebab li { list-style-type: none; }
 .kebab li:hover { background-color: var(--kebabHoverColor); }
+.kebab .li-disabled {
+    pointer-events: none;
+    opacity: 0.6;
+}
 
 .kebab-icon {
     vertical-align: middle;
@@ -595,22 +563,35 @@ input:checked+.slider:before {
 	width: var(--iconSize);
     height: var(--iconSize);
     margin-right: var(--iconMargin);
+
+	filter: invert(100%) sepia(4%) saturate(0%) hue-rotate(193deg) brightness(103%) contrast(102%); 
+}
+.icon-archive::before {
+    background-image: url("../icon/archive.png");
+}
+.icon-dearchive::before {
+    background-image: url("../icon/dearchive.png");
 }
 .icon-download::before {
     background-image: url("../icon/download.png");
-	filter: invert(100%) sepia(4%) saturate(0%) hue-rotate(193deg) brightness(103%) contrast(102%); 
 }
 .icon-add::before {
     background-image: url("../icon/add.png");
-	filter: invert(100%) sepia(4%) saturate(0%) hue-rotate(193deg) brightness(103%) contrast(102%); 
 }
 .icon-edit::before {
     background-image: url("../icon/editar.png");
-	filter: invert(100%) sepia(4%) saturate(0%) hue-rotate(193deg) brightness(103%) contrast(102%); 
+}
+.icon-activate::before {
+    background-image: url("../icon/play.png");
+}
+.icon-pause::before {
+    background-image: url("../icon/pause.png");
+}
+.icon-finish::before {
+    background-image: url("../icon/stop.png");
 }
 .icon-duplicate::before {
     background-image: url("../icon/duplicate.png");
-	filter: invert(100%) sepia(4%) saturate(0%) hue-rotate(193deg) brightness(103%) contrast(102%); 
 }
 .icon-delete {
 	color: #ff3d3d;
@@ -618,6 +599,10 @@ input:checked+.slider:before {
 .icon-delete::before {
     background-image: url("../icon/trash.png");
 	filter: brightness(0) saturate(100%) invert(29%) sepia(78%) saturate(3518%) hue-rotate(344deg) brightness(122%) contrast(100%);
+}
+
+.activityDownload .icon-download::before {
+    filter: none;
 }
 
 .studyTab .left {

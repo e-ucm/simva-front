@@ -49,6 +49,7 @@ app.use('/groups', require('./routes/groups.js')(usertools.auth(1), config));
 app.use('/previous-groups', require('./routes/previous-groups.js')(usertools.auth(1), config));
 app.use('/activities', require('./routes/activities.js')(usertools.auth(1), config));
 app.use('/scheduler', require('./routes/scheduler.js')(usertools.auth(1), config));
+app.use('/archived', require('./routes/archived.js')(usertools.auth(1), config));
 
 router.get('/about', usertools.auth(0), function(req, res, next) {
   res.render('about', { 
