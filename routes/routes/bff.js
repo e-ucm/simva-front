@@ -710,7 +710,7 @@ module.exports = function(auth, config){
             if(error) {
                 next(error.response?.data || error);
             } else {
-                res.status(200).send(result);
+                res.status(200).json(result ?? {});
             }
         });
     });
@@ -720,7 +720,7 @@ module.exports = function(auth, config){
             if(error) {
                 next(error.response?.data || error);
             } else {
-                res.status(200).send(result);
+                res.status(200).json(result ?? {});
             }
         });
     });
