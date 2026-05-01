@@ -402,6 +402,49 @@ module.exports = function(auth, config){
     });
 
     /**
+     * TAGS
+     */
+    router.get('/tags', auth, async (req, res, next) => {
+        Simva.getTags(req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.post('/tags', auth, async (req, res, next) => {
+        Simva.createTag(req.body, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.patch('/tags/:tagid', auth, async (req, res, next) => {
+        Simva.updateTag(req.params['tagid'], req.body, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.delete('/tags/:tagid', auth, async (req, res, next) => {
+        Simva.deleteTag(req.params['tagid'], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    /**
     * STUDIES
     * 
     */
@@ -501,7 +544,26 @@ module.exports = function(auth, config){
         });
     });
 
-   
+    router.post('/simlets/:studyid/tests/:testid/tags/:tag', auth, async (req, res, next) => {
+        Simva.addTagToSession(req.params["studyid"], req.params["testid"], req.params["tag"], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.delete('/simlets/:studyid/tests/:testid/tags/:tag', auth, async (req, res, next) => {
+        Simva.deleteTagFromSession(req.params["studyid"], req.params["testid"], req.params["tag"], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
     router.patch('/activities/:activityid', auth, async (req, res, next) => {
         // Merge fields from multipart form
         Simva.updateActivity(req.params["activityid"], req, req.body, req.session.id, (error, result) => {
