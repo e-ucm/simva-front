@@ -7,14 +7,6 @@ module.exports = {
         let study=await SimvaAsync.getStudy(studyid, sessionid);
         study.completeTests=[];
         logger.info({study}, "Study data before fetching complete tests");
-        for(let i=0;i<study.sessions.length;i++) {
-            try {
-                let test=await testcontroler.getCompleteTest(studyid, study.sessions[i], sessionid);
-                study.completeTests.push(test);
-            } catch(e) {
-                logger.warn(e);
-            }
-        }
         try {
             study.allgroups = await SimvaAsync.getGroups(sessionid);
             study.completeGroups = await SimvaAsync.getStudyGroups(studyid, sessionid);
@@ -46,6 +38,15 @@ module.exports = {
             }
 
             study.participants = Array.from(mergedParticipants.values());
+        }
+        for(let i=0;i<study.sessions.length;i++) {
+            try {
+                let test=await testcontroler.getCompleteTest(studyid, study.sessions[i], sessionid);
+                study.completeTests.push(test);
+            } catch(e) {
+                logger.warn(e);
+                throw e;
+            }
         }
 
         return study;
