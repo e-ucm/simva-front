@@ -5,6 +5,7 @@
     "delete.title": "Eliminar",
     "remove.confirm": "¿Está seguro de que desea eliminar el SIMLET '{{SIMLET}}'?\nTambién se borrarán todas las Sessions, actividades y datos.",
     "zero.message.title" : "Aún no tienes SIMLETs. Crea uno utilizando el botón inferior derecho (+).",
+    "zero.archived.title" : "No hay SIMLETs archivados.",
 
     "session.tab.title": "Sesiones",
     "users.tab.title": "Usuarios",

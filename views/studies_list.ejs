@@ -2,7 +2,80 @@
  
 <% extend('layout_with_menu_and_sse') %>
 
+<h1><%- t('title', { ns : 'SIMLETs' }) %></h1>
+<div id="studies_list">
+	<div style="width: 100%; text-align: center; padding: 200px;">
+		<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+	</div>
+</div>
+
+<% if (typeof archived !== 'undefined' && !archived) { %>
+
+	<div id="new_study" class="new_element floating">
+		<div class="floater">
+			<div class="form">
+				<h1><%- t('new.title', { ns : 'SIMLETs' }) %></h1>
+				<div class="tabs">
+					<span class="tab selected" onclick="changeTab(this, 'new_study','new_study_tab')"><%- t('new.title', { ns : 'SIMLETs' }) %></span>
+					<span class="tab" onclick="changeTab(this, 'new_study','import_study_tab')"><%- t('new.upload.title', { ns : 'SIMLETs' }) %></span>
+				</div>
+				<div id="new_study_tab" class="subform selected">
+					<form id="new_study_form">
+						<br>
+						<h3><%- t('name.edit.title', { ns : 'SIMLETs' }) %></h3>
+						<input type="text" name="name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>">
+						<br>
+						<h3><%- t('description.edit.title', { ns : 'SIMLETs' }) %></h3>
+						<input type="text" name="description" placeholder="<%- t('description.placeholder', { ns : 'SIMLETs' }) %>" required>
+						<br><br>
+						<input type="submit" value="<%- t('new.submit', { ns : 'SIMLETs' }) %>">
+					</form>
+				</div>
+				<div hidden id="import_study_tab" class="subform">
+					<form id="import_study_form">
+						<p><%- t('new.upload.message', { ns : 'SIMLETs' }) %></p>
+						<input type="file" name="exportJson">
+						<input type="submit" value="<%- t('new.submit', { ns : 'SIMLETs' }) %>">
+					</form>
+				</div>
+			</div>	
+		</div>
+	</div>
+
+	<div id="edit_study" class="new_element floating">
+		<div class="floater">
+			<div class="form">
+				<div id="edit_study_tab" class="subform selected">
+					<form id="edit_study_form">
+						<input type="text" name="editingStudyId" id="edit_study_id" style="display: none;">
+						<input type="text" name="prevStudyName" id="prev_study_name" style="display: none;">
+						<input type="text" name="prevStudyDescription" id="prev_study_description" style="display: none;">
+
+						<h3><%- t('name.edit.title', { ns : 'SIMLETs' }) %></h3>
+						<input type="text" name="studyName" id="edit_study_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
+						<br>
+						<h3><%- t('description.edit.title', { ns : 'SIMLETs' }) %></h3>
+						<input type="text" name="studyDescription" id="edit_study_description" placeholder="<%- t('description.placeholder', { ns : 'SIMLETs' }) %>" required>
+						<br><br>
+						<input type="submit" value="<%- t('edit.submit.title', { ns : 'SIMLETs' }) %>">
+						<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+						<span class="error" id="edit_study_error"></span>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="floating_buttons">
+		<a unselectable="on" class="basic" onclick="Utils.toggleAddForm('new_study')">+</a>
+	</div>
+
+<% } %>
+
+
+
 <script type="text/javascript">
+	const archived = "<%= archived %>" === "true";
+
 	$(document).ready(function() {
 		$("#new_study_form").on('submit', function(event){
 			event.preventDefault();
@@ -66,20 +139,18 @@
 			return false;
 		});
 
-
 		$("#edit_study_form").on('submit', function(event){
 			event.preventDefault();
 			let currentform = this;
 			let form = Utils.getFormData($("#edit_study_form"));
 			Utils.toggleSubmit(currentform);
-			let formData = new FormData();
-			let errorbox = $(this).find('.error');
-			if(form.name == form.studyName) {
-				errorbox.text("<%- t('name.edit.nochange', { ns : 'SIMLETs' }) %>");
+			if(form.prevStudyName == form.studyName && form.prevStudyDescription == form.studyDescription) {
+				$('#edit_study_error').text("<%- t('edit.no_change', { ns : 'SIMLETs' }) %>");
 				Utils.toggleSubmit(currentform);
-			} else {
-				formData.append('simlet_name', form.name);
-				Simva.updateStudy(form.study, { simlet_name : form.name, simlet_description : form.description }, function(error, result){
+			} 
+			else {
+				$('#edit_study_error').text("");
+				Simva.updateStudy(form.editingStudyId, { simlet_name : form.studyName, simlet_description : form.studyDescription }, function(error, result){
 					Utils.toggleSubmit(currentform);
 					Utils.toggleAddForm('edit_study');
 					refreshStudies();
@@ -100,16 +171,29 @@
 		});
 	}
 
-	let paintStudies = function(studies){
+	let paintStudies = function(studies) {
 		$('#studies_list').text('');
-		if(studies.length > 0){
-			for (var i = 0; i < studies.length; i++) {
-				let card = $(toCard(studies[i]));
-
-				$('#studies_list').append(card);
+		let paintedStudies = 0;
+		
+		for (var i = 0; i < studies.length; i++) {
+			let study = studies[i]
+			Simva.getStudyParticipants(study.simlet_id, function(error, result){ 
+				if(!error && study.simlet_archived == archived){
+					let card = $(toCard(study, result.length));
+					$('#studies_list').append(card);
+				}
+			});
+			if (study.simlet_archived == archived) {
+				paintedStudies++;
 			}
-		}else{
-			$('#studies_list').text("<%- t('zero.message.title', { ns : 'SIMLETs' }) %>");
+		}
+		if (paintedStudies == 0) {
+			if (!archived) {
+				$('#studies_list').text("<%- t('zero.message.title', { ns : 'SIMLETs' }) %>");
+			}
+			else {
+				$('#studies_list').text("<%- t('zero.archived.title', { ns : 'SIMLETs' }) %>");
+			}
 		}
 	}
 
@@ -125,16 +209,15 @@
 		}
 	}
 
-	let openEditStudyForm = function(studyId, studyName){
-		event.preventDefault();
-		event.stopPropagation();
-		document.getElementById("edit_study_error").innerHTML = "";
-		var inputElement = document.getElementById('edit_study_name');
-		inputElement.value = studyName;
+	let openEditStudyForm = function(studyId, studyName, studyDescription){
+		$('#edit_study_id').val(studyId);
+		$('#prev_study_name').val(studyName);
+		$('#prev_study_description').val(studyDescription);
+		
 		$('#edit_study').toggleClass('shown');
-		$('#edit_study input[name="study"]').val(studyId);
-		$('#edit_study span[class="error"]').val("");
-		$('#edit_study input[name="studyName"]').val(studyName);
+		$('#edit_study_error').text("");
+		$('#edit_study_name').val(studyName);
+		$('#edit_study_description').val(studyDescription);
 	}
 
 	let renderStudyTags = function(study) {
@@ -159,16 +242,16 @@
 		return tagsHtml;
 	}
 	
-	let toCard = function(study) {
+	let toCard = function(study, userCount) {
 		const tagsHtml = renderStudyTags(study);
 		return `
 		<a class="stopable" href="/simlets/${study.simlet_id}">
-			<div class="studycard selectable card third">
+			<div class="selectable card third">
 				<div class="simletCardTitle">
-					<h1><%- t('single.title', { ns : 'SIMLETs' }) %>: ${study.simlet_name}</h1>
+					<h1>${study.simlet_name}</h1>
 					<div class="kebab">
 						<ul class="kebab-dropdown" style="display: none;">
-							<li class="kebab-icon icon-edit" onclick="openEditStudyForm('${study.simlet_id}', '${study.simlet_name}')">
+							<li class="kebab-icon icon-edit" onclick="openEditStudyForm('${study.simlet_id}', '${study.simlet_name}', '${study.simlet_description}')">
 								<%- t('edit.title', { ns : 'SIMLETs' }) %>
 							</li>
 							<li class="kebab-icon icon-delete" onclick="deleteStudy('${study.simlet_id}', '${study.simlet_name}')">
@@ -177,11 +260,11 @@
 						</ul>
 					</div>
 				</div>
-				<p><strong><%- t('groups.title', { ns : 'SIMLETs' }) %>:</strong> ${study.groups.length}</p>
-				<p><strong><%- t('description.edit.title', { ns : 'SIMLETs' }) %>:</strong> ${study.simlet_description}</p>
-				<p><strong><%- t('activities.creationDate', { ns : 'SIMLETs' }) %>:</strong> ${study.createdAt}</p>
-				<p><strong><%- t('activities.updateDate', { ns : 'SIMLETs' }) %>:</strong> ${study.updatedAt}</p>
+				<p class="cardDescription">${study.simlet_description}</p>
+				<p><strong><%- t('sessions.creationDate', { ns : 'SIMLETs' }) %>:</strong> ${study.createdAt}</p>
+				<p><strong><%- t('sessions.updateDate', { ns : 'SIMLETs' }) %>:</strong> ${study.updatedAt}</p>
 				<p><strong><%- t('sessions.title', { ns : 'SIMLETs' }) %>:</strong> ${study.sessions.length}</p>
+				<p><strong><%- t('groups.title', { ns : 'SIMLETs' }) %>:</strong> ${study.groups.length} &nbsp; <strong><%- t('sessions.usercount', { ns : 'SIMLETs' }) %>:</strong> ${userCount}</p>
 				<div class="studyTagsRow">
 					<strong><%- t('tags.title', { ns : 'SIMLETs' }) %>:</strong>
 					${tagsHtml}
@@ -199,105 +282,3 @@
 	}
 </script>
 <script type="text/javascript" src="/kebabs.js"></script>
-
-<h1><%- t('title', { ns : 'SIMLETs' }) %></h1>
-<div id="studies_list">
-	<div style="width: 100%; text-align: center; padding: 200px;">
-		<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-	</div>
-</div>
-<div id="new_study" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<h1><%- t('new.title', { ns : 'SIMLETs' }) %></h1>
-			<div class="tabs">
-				<span class="tab selected" onclick="changeTab(this, 'new_study','new_study_tab')"><%- t('new.title', { ns : 'SIMLETs' }) %></span>
-				<span class="tab" onclick="changeTab(this, 'new_study','import_study_tab')"><%- t('new.upload.title', { ns : 'SIMLETs' }) %></span>
-			</div>
-			<div id="new_study_tab" class="subform selected">
-				<form id="new_study_form">
-					<input type="text" name="name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>">
-					<input name="description" placeholder="<%- t('description.placeholder', { ns : 'SIMLETs' }) %>" required>
-					<input type="submit" value="<%- t('new.submit', { ns : 'SIMLETs' }) %>">
-				</form>
-			</div>
-			<div hidden id="import_study_tab" class="subform">
-				<form id="import_study_form">
-					<p><%- t('new.upload.message', { ns : 'SIMLETs' }) %></p>
-					<input type="file" name="exportJson">
-					<input type="submit" value="<%- t('new.submit', { ns : 'SIMLETs' }) %>">
-				</form>
-			</div>
-		</div>	
-	</div>
-</div>
-<div id="edit_study" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<div id="edit_study_tab" class="subform selected">
-				<h2>"<%- t('name.edit.title', { ns : 'SIMLETs' }) %></h2>
-				<form id="edit_study_form">
-					<input hidden type="text" id="study_id" name="study" required>
-					<input hidden type="text" id="study_name" name="studyName" required>
-					<input type="text" name="name" id="edit_study_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
-					<input type="submit" value="Edit">
-					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<span class="error" id="edit_study_error"></span>
-				</form>
-			</div>
-		</div>
-	</div>
-</div>
-<div class="floating_buttons">
-	<a unselectable="on" class="basic" onclick="Utils.toggleAddForm('new_study')">+</a>
-</div>
-
-<style>
-	.studyTagsRow {
-		display: flex;
-		align-items: flex-start;
-		gap: 6px;
-	}
-
-	.studyTagsRow .sessionTagList {
-		margin-top: 1px;
-	}
-
-	.sessionTagList {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 6px;
-	}
-
-	.sessionTagChip {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-		padding: 2px 8px;
-		border: 1px solid #d9d9d9;
-		border-radius: 999px;
-		background: #ffffff;
-		font-size: 12px;
-		line-height: 1.4;
-	}
-
-	.sessionTagColor {
-		display: inline-block;
-		width: 10px;
-		height: 10px;
-		border-radius: 50%;
-		border: 1px solid #9a9a9a;
-	}
-
-	.sessionTagName {
-		max-width: 180px;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-
-	.sessionTagEmpty {
-		font-size: 12px;
-		opacity: 0.7;
-	}
-</style>

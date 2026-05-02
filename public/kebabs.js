@@ -19,6 +19,7 @@ $(document).on('click', '.kebab', function (e) {
 $(document).on('click', '.kebab-dropdown, .kebab-dropdown *', function (e) {
     hideAllKebabs();
     e.stopPropagation();
+    e.preventDefault();
 });
 
 // Close all kebab menus when clicking anywhere on the page if there's no other kebab being clicked

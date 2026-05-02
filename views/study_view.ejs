@@ -11,7 +11,7 @@
 		<div class="kebab">
 			<ul class="kebab-dropdown" style="display: none;">
 				<li class="kebab-icon " id="archivation" onclick="toggleArchived()"></li>
-				<li class="kebab-icon icon-edit" onclick="openEditStudyForm('<%= study %>')">
+				<li class="kebab-icon icon-edit" onclick="openEditStudyForm()">
 					<%- t('edit.title', { ns : 'SIMLETs' }) %>
 				</li>
 				<li class="kebab-icon icon-download" onclick="openConfigDownloadForm()">
@@ -1332,13 +1332,12 @@
 			let currentform = this;
 			let form = Utils.getFormData($("#edit_study_form"));
 			Utils.toggleSubmit(currentform);
-			let errorbox = $(this).find('.error');
-
 			if (study.simlet_name == form.studyName && study.simlet_description == form.studyDescription) {
-				errorbox.text("<%- t('edit.no_change', { ns : 'SIMLETs' }) %>");
+				$('#edit_study_error').text("<%- t('edit.no_change', { ns : 'SIMLETs' }) %>");
 				Utils.toggleSubmit(currentform);
 			}
 			else {
+				$('#edit_study_error').text("");
 				Simva.updateStudy(study.simlet_id, { simlet_name: form.studyName, simlet_description: form.studyDescription }, 
 				function(error, result) {	
 					Utils.toggleSubmit(currentform);
@@ -1680,11 +1679,11 @@
 		});
 	}
 
-	let openEditStudyForm = function(studyId){
+	let openEditStudyForm = function(){
 		$('#edit_study').toggleClass('shown');
-		document.getElementById("edit_study_error").innerHTML = "";
-		document.getElementById('edit_simlet_name').value = study.simlet_name;
-		document.getElementById('edit_study_description').value = study.simlet_description;
+		$('#edit_study_error').text("");
+		$('#edit_simlet_name').val(study.simlet_name);
+		$('#edit_study_description').val(study.simlet_description);
 	}
 	
 	let openGenerateLinkForm = function() {
@@ -2108,214 +2107,6 @@
 		return toret;
 	}
 </script>
-<style>
-	.sessionTagList {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 6px;
-	}
-
-	.sessionTagChip {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-		padding: 2px 8px;
-		border: 1px solid #d9d9d9;
-		border-radius: 999px;
-		background: #ffffff;
-		font-size: 12px;
-		line-height: 1.4;
-	}
-
-	.sessionTagColor {
-		display: inline-block;
-		width: 10px;
-		height: 10px;
-		border-radius: 50%;
-		border: 1px solid #9a9a9a;
-	}
-
-	.sessionTagName {
-		max-width: 180px;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-
-	.sessionTagEmpty {
-		font-size: 12px;
-		opacity: 0.7;
-	}
-
-	.tagPickerRow {
-		display: flex;
-		align-items: flex-start;
-		gap: 8px;
-	}
-
-	.tagPickerArea {
-		position: relative;
-		flex: 1;
-	}
-
-	.tagPickerInputWrap {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 6px;
-		min-height: 40px;
-		padding: 6px;
-		border: 1px solid #c7cfdb;
-		border-radius: 6px;
-		background: #ffffff;
-		flex: 1;
-		cursor: text;
-	}
-
-	.tagSelectedChips {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 6px;
-	}
-
-	.tagSelectedChip {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-		padding: 3px 8px;
-		border-radius: 3px;
-		background: #38bdf8;
-		color: #ffffff;
-		font-size: 12px;
-		font-weight: 600;
-	}
-
-	.tagSelectedName {
-		max-width: 160px;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-
-	.tagSelectedRemove {
-		border: 0;
-		background: transparent;
-		color: #ffffff;
-		font-weight: 700;
-		padding: 0;
-		cursor: pointer;
-		line-height: 1;
-	}
-
-	.tagSearchInput {
-		min-width: 180px;
-		flex: 1;
-		border: 0;
-		outline: none;
-		font-size: 13px;
-		padding: 3px 2px;
-	}
-
-	.tagDropdown {
-		position: absolute;
-		top: calc(100% + 4px);
-		left: 0;
-		right: 0;
-		max-height: 180px;
-		overflow: auto;
-		background: #ffffff;
-		border: 1px solid #cfd6e1;
-		border-radius: 6px;
-		box-shadow: 0 8px 16px rgba(15, 23, 42, 0.14);
-		z-index: 30;
-	}
-
-	.tagDropdownOption {
-		width: 100%;
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		padding: 6px 8px;
-		border: 0;
-		background: #ffffff;
-		text-align: left;
-	}
-
-	.tagDropdownPick {
-		flex: 1;
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		padding: 4px 2px;
-		border: 0;
-		background: transparent;
-		text-align: left;
-		cursor: pointer;
-	}
-
-	.tagDropdownEdit {
-		border: 1px solid #d2d9e4;
-		background: #f8fafc;
-		border-radius: 4px;
-		font-size: 12px;
-		padding: 4px 8px;
-		color: #334155;
-		cursor: pointer;
-	}
-
-	.tagDropdownOption:hover {
-		background: #f5f8fc;
-	}
-
-	.tagDropdownEdit:hover {
-		background: #eef2f8;
-	}
-
-	.tagDropdownLabel {
-		font-size: 13px;
-		font-weight: 600;
-		color: #304055;
-	}
-
-	.tagDropdownEmpty {
-		padding: 10px;
-		font-size: 12px;
-		color: #64748b;
-	}
-
-	.tagPickerColor {
-		width: 10px;
-		height: 10px;
-		border-radius: 50%;
-		border: 1px solid rgba(15, 23, 42, 0.25);
-	}
-
-	.tagPlusButton {
-		width: 36px;
-		height: 36px;
-		border: none;
-		border-radius: 7px;
-		background: #f0943f;
-		color: white;
-		font-size: 22px;
-		line-height: 1;
-		cursor: pointer;
-	}
-
-	.tagCreator {
-		margin-top: 8px;
-		display: flex;
-		gap: 6px;
-		align-items: center;
-	}
-
-	.tagEditor {
-		margin-top: 8px;
-		display: flex;
-		gap: 6px;
-		align-items: center;
-	}
-</style>
 <script type="text/javascript" src="/activities/activitypainter.js"></script>
 <script type="text/javascript" src="/activities/limesurveypainter.js"></script>
 <script type="text/javascript" src="/activities/rageanalyticspainter.js"></script>
