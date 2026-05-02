@@ -250,6 +250,22 @@ class Simva {
 		this.delete(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/permissions/${user_id}`, sessionId, callback);
 	}
 
+	getTags(sessionId, callback){
+		this.get(`${this.apiurl}/tags`, sessionId, callback);
+	}
+
+	createTag(body, sessionId, callback){
+		this.post(`${this.apiurl}/tags`, null, body, sessionId, callback);
+	}
+
+	updateTag(tag_id, body, sessionId, callback){
+		this.patch(`${this.apiurl}/tags/${tag_id}`, null, body, sessionId, callback);
+	}
+
+	deleteTag(tag_id, sessionId, callback){
+		this.delete(`${this.apiurl}/tags/${tag_id}`, sessionId, callback);
+	}
+
 	// STUDIES
 
 	getStudies(sessionId, callback){
@@ -306,6 +322,14 @@ class Simva {
 
 	deleteTest(studyId, testId, sessionId, callback){
 		this.delete(`${this.apiurl}/simlets/${studyId}/sessions/${testId}`, sessionId, callback);
+	}
+
+	addTagToSession(study_id, test_id, tag, sessionId, callback){
+		this.post(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/tags/${tag}`, null, {}, sessionId, callback);
+	}
+
+	deleteTagFromSession(study_id, test_id, tag, sessionId, callback){
+		this.delete(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/tags/${tag}`, sessionId, callback);
 	}
 
 	deleteStudy(study_id, sessionId, callback){

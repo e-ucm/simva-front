@@ -169,6 +169,22 @@ var Simva = {
 		Utils.delete(`/bff/simlets/${simlet_id}/groups/${group_id}/participants/${participant_id}?keycloakDelete=${keycloakDelete}`, callback);
 	},
 
+	getTags: function(callback){
+		Utils.get(`/bff/tags`, callback);
+	},
+
+	createTag: function(body, callback){
+		Utils.post(`/bff/tags`, body, callback);
+	},
+
+	updateTag: function(tag_id, body, callback){
+		Utils.patch(`/bff/tags/${tag_id}`, body, callback);
+	},
+
+	deleteTag: function(tag_id, callback){
+		Utils.delete(`/bff/tags/${tag_id}`, callback);
+	},
+
 	// STUDIES
 
 	getStudies: function(callback){
@@ -201,6 +217,14 @@ var Simva = {
 
 	updateTest: function(studyId, sessionId, test, callback){
 		Utils.patch(`/bff/studies/${studyId}/tests/${sessionId}`, test, callback);
+	},
+
+	addTagToSession: function(study_id, test_id, tag, callback){
+		Utils.post(`/bff/simlets/${study_id}/tests/${test_id}/tags/${tag}`, {}, callback);
+	},
+
+	deleteTagFromSession: function(study_id, test_id, tag, callback){
+		Utils.delete(`/bff/simlets/${study_id}/tests/${test_id}/tags/${tag}`, callback);
 	},
 
 	updateActivity: function(activityId, activity, callback){

@@ -136,8 +136,31 @@
 		$('#edit_study span[class="error"]').val("");
 		$('#edit_study input[name="studyName"]').val(studyName);
 	}
+
+	let renderStudyTags = function(study) {
+		const tags = Array.isArray(study.tags) ? study.tags : [];
+		if(tags.length === 0) {
+			return '<div class="sessionTagList"><span class="sessionTagEmpty">No tags</span></div>';
+		}
+
+		let tagsHtml = '<div class="sessionTagList">';
+		for (let i = 0; i < tags.length; i++) {
+			const tag = tags[i] || {};
+			const tagName = tag.tag_name || 'Tag';
+			const tagColor = tag.tag_color || '#3b82f6';
+			tagsHtml += `
+				<span class="sessionTagChip">
+					<span class="sessionTagColor" style="background:${tagColor};"></span>
+					<span class="sessionTagName">${tagName}</span>
+				</span>
+			`;
+		}
+		tagsHtml += '</div>';
+		return tagsHtml;
+	}
 	
 	let toCard = function(study) {
+		const tagsHtml = renderStudyTags(study);
 		return `
 		<a class="stopable" href="/simlets/${study.simlet_id}">
 			<div class="studycard selectable card third">
@@ -159,7 +182,10 @@
 				<p><strong><%- t('activities.creationDate', { ns : 'SIMLETs' }) %>:</strong> ${study.createdAt}</p>
 				<p><strong><%- t('activities.updateDate', { ns : 'SIMLETs' }) %>:</strong> ${study.updatedAt}</p>
 				<p><strong><%- t('sessions.title', { ns : 'SIMLETs' }) %>:</strong> ${study.sessions.length}</p>
-				<p><strong><%- t('tags.title', { ns : 'SIMLETs' }) %>:</strong> ${study.tags}</p>
+				<div class="studyTagsRow">
+					<strong><%- t('tags.title', { ns : 'SIMLETs' }) %>:</strong>
+					${tagsHtml}
+				</div>
 			</div>
 		</a>
 		`;
@@ -225,3 +251,53 @@
 <div class="floating_buttons">
 	<a unselectable="on" class="basic" onclick="Utils.toggleAddForm('new_study')">+</a>
 </div>
+
+<style>
+	.studyTagsRow {
+		display: flex;
+		align-items: flex-start;
+		gap: 6px;
+	}
+
+	.studyTagsRow .sessionTagList {
+		margin-top: 1px;
+	}
+
+	.sessionTagList {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+	}
+
+	.sessionTagChip {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding: 2px 8px;
+		border: 1px solid #d9d9d9;
+		border-radius: 999px;
+		background: #ffffff;
+		font-size: 12px;
+		line-height: 1.4;
+	}
+
+	.sessionTagColor {
+		display: inline-block;
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		border: 1px solid #9a9a9a;
+	}
+
+	.sessionTagName {
+		max-width: 180px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.sessionTagEmpty {
+		font-size: 12px;
+		opacity: 0.7;
+	}
+</style>

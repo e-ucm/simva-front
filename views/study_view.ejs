@@ -172,13 +172,46 @@
 				<form id="add_test_form">
 					<input type="text" name="name" placeholder="<%- t('sessions.placeholder', { ns : 'SIMLETs' }) %>" required>
 					<input name="description" placeholder="<%- t('sessions.description.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<div style="margin-top: 10px;">
+						<label style="display:block; margin-bottom: 4px;">Tags</label>
+						<div class="tagPickerArea" data-mode="add">
+							<div class="tagPickerRow">
+								<div class="tagPickerInputWrap" onclick="focusTagSearch('add')">
+									<div id="add_test_selected_tags" class="tagSelectedChips"></div>
+									<input
+										type="text"
+										id="add_test_tag_search"
+										class="tagSearchInput"
+										placeholder="Type a tag to find or create it."
+										onfocus="openTagDropdown('add')"
+										oninput="onTagSearchInput('add')"
+									>
+								</div>
+								<button type="button" class="tagPlusButton" onclick="openTagCreator('add')">+</button>
+							</div>
+							<div id="add_test_tag_dropdown" class="tagDropdown" style="display:none;"></div>
+						</div>
+						<div id="add_test_tag_creator" class="tagCreator" style="display:none;">
+							<input type="text" id="add_test_new_tag_name" placeholder="New tag name" style="flex: 1;">
+							<input type="color" id="add_test_new_tag_color" value="#3b82f6" style="width: 44px; padding: 0;">
+							<button type="button" onclick="createAndSelectTag('add')">Create</button>
+							<button type="button" onclick="closeTagCreator('add')">Cancel</button>
+						</div>
+						<div id="add_test_tag_editor" class="tagEditor" style="display:none;">
+							<input type="text" id="add_test_edit_tag_name" placeholder="Tag name" style="flex: 1;">
+							<input type="color" id="add_test_edit_tag_color" value="#3b82f6" style="width: 44px; padding: 0;">
+							<button type="button" onclick="saveEditedTag('add')">Save</button>
+							<button type="button" onclick="closeTagEditor('add')">Cancel</button>
+						</div>
+						<span class="error" id="add_test_tags_error"></span>
+					</div>
 					<label style="display:block;margin-top:8px;">
 						<input type="checkbox" name="can_be_manually_activated" checked>
 						<%- t('sessions.can_be_manually_activated', { ns : 'SIMLETs' }) %>
 					</label>
 					<input type="submit" value="<%- t('sessions.add.title', { ns : 'SIMLETs' }) %>">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<span class="error"></span>
+					<span class="error" id="add_test_error"></span>
 				</form>
 			</div>
 		</div>
@@ -268,6 +301,38 @@
 					<input hidden type="text" name="test">
 					<input hidden type="text" name="testName">
 					<input type="text" name="name" id="edit_test_name" placeholder="<%- t('sessions.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<div style="margin-top: 10px;">
+						<label style="display:block; margin-bottom: 4px;">Tags</label>
+						<div class="tagPickerArea" data-mode="edit">
+							<div class="tagPickerRow">
+								<div class="tagPickerInputWrap" onclick="focusTagSearch('edit')">
+									<div id="edit_test_selected_tags" class="tagSelectedChips"></div>
+									<input
+										type="text"
+										id="edit_test_tag_search"
+										class="tagSearchInput"
+										placeholder="Type a tag to find or create it."
+										onfocus="openTagDropdown('edit')"
+										oninput="onTagSearchInput('edit')"
+									>
+								</div>
+								<button type="button" class="tagPlusButton" onclick="openTagCreator('edit')">+</button>
+							</div>
+							<div id="edit_test_tag_dropdown" class="tagDropdown" style="display:none;"></div>
+						</div>
+						<div id="edit_test_tag_creator" class="tagCreator" style="display:none;">
+							<input type="text" id="edit_test_new_tag_name" placeholder="New tag name" style="flex: 1;">
+							<input type="color" id="edit_test_new_tag_color" value="#3b82f6" style="width: 44px; padding: 0;">
+							<button type="button" onclick="createAndSelectTag('edit')">Create</button>
+							<button type="button" onclick="closeTagCreator('edit')">Cancel</button>
+						</div>
+						<div id="edit_test_tag_editor" class="tagEditor" style="display:none;">
+							<input type="text" id="edit_test_edit_tag_name" placeholder="Tag name" style="flex: 1;">
+							<input type="color" id="edit_test_edit_tag_color" value="#3b82f6" style="width: 44px; padding: 0;">
+							<button type="button" onclick="saveEditedTag('edit')">Save</button>
+							<button type="button" onclick="closeTagEditor('edit')">Cancel</button>
+						</div>
+					</div>
 					<input type="submit" value="<%- t('sessions.edit.title', { ns : 'SIMLETs' }) %>">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 					<span class="error" id="edit_test_error"></span>
@@ -366,7 +431,7 @@
 </div>
 
 <div class="floating_buttons">
-	<a unselectable="on" class="basic" onclick="Utils.toggleAddForm('add_test')" style="display: none;">+</a>
+	<a unselectable="on" class="basic" onclick="openAddTestForm()" style="display: none;">+</a>
 </div>
 
 
@@ -492,13 +557,452 @@
 <script type="text/javascript">
 	let studyid = "<%= study %>";
 	let study = null, participants = null, tests = null, allocator = null, groups = null, platforms = null;
+	let availableTags = [];
+	let selectedTagsForAdd = [];
+	let selectedTagsForEdit = [];
+	let originalEditTagIds = [];
+	let editingTagByMode = { add: null, edit: null };
+
+	let normalizeTag = function(tag){
+		if(!tag) {
+			return null;
+		}
+		return {
+			tag_id: Number(tag.tag_id),
+			tag_name: tag.tag_name,
+			tag_color: tag.tag_color || "#3b82f6"
+		};
+	}
+
+	let getTagById = function(tagId){
+		const normalizedTagId = Number(tagId);
+		return availableTags.find((tag) => Number(tag.tag_id) === normalizedTagId) || null;
+	}
+
+	let getTagSelectionForMode = function(mode){
+		return mode === 'edit' ? selectedTagsForEdit : selectedTagsForAdd;
+	}
+
+	let setTagCreatorVisible = function(mode, visible){
+		const creatorId = mode === 'edit' ? '#edit_test_tag_creator' : '#add_test_tag_creator';
+		if(visible) {
+			$(creatorId).show();
+		} else {
+			$(creatorId).hide();
+		}
+	}
+
+	let openTagCreator = function(mode){
+		closeTagEditor(mode);
+		setTagCreatorVisible(mode, true);
+		const nameInput = mode === 'edit' ? '#edit_test_new_tag_name' : '#add_test_new_tag_name';
+		$(nameInput).trigger('focus');
+	}
+
+	let closeTagCreator = function(mode){
+		setTagCreatorVisible(mode, false);
+	}
+
+	let setTagEditorVisible = function(mode, visible){
+		const editorId = mode === 'edit' ? '#edit_test_tag_editor' : '#add_test_tag_editor';
+		if(visible) {
+			$(editorId).show();
+		} else {
+			$(editorId).hide();
+		}
+	}
+
+	let openTagEditor = function(mode, tagId){
+		const tag = getTagById(tagId);
+		if(!tag) {
+			return;
+		}
+
+		closeTagCreator(mode);
+		editingTagByMode[mode] = Number(tag.tag_id);
+		const nameInput = mode === 'edit' ? '#edit_test_edit_tag_name' : '#add_test_edit_tag_name';
+		const colorInput = mode === 'edit' ? '#edit_test_edit_tag_color' : '#add_test_edit_tag_color';
+		$(nameInput).val(tag.tag_name || '');
+		$(colorInput).val(tag.tag_color || '#3b82f6');
+		setTagEditorVisible(mode, true);
+		$(nameInput).trigger('focus');
+	}
+
+	let closeTagEditor = function(mode){
+		editingTagByMode[mode] = null;
+		setTagEditorVisible(mode, false);
+	}
+
+	let saveEditedTag = function(mode){
+		const editingTagId = editingTagByMode[mode];
+		if(!editingTagId) {
+			return;
+		}
+
+		const nameInput = mode === 'edit' ? '#edit_test_edit_tag_name' : '#add_test_edit_tag_name';
+		const colorInput = mode === 'edit' ? '#edit_test_edit_tag_color' : '#add_test_edit_tag_color';
+		const tagName = $(nameInput).val().trim();
+		const tagColor = $(colorInput).val();
+		const errorBox = getTagErrorBox(mode);
+		errorBox.text('');
+
+		if(!tagName) {
+			errorBox.text('Tag name is required');
+			return;
+		}
+
+		Simva.updateTag(editingTagId, { tag_name: tagName, tag_color: tagColor }, function(error){
+			if(error) {
+				errorBox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+				return;
+			}
+
+			closeTagEditor(mode);
+			loadAvailableTags(function(loadError){
+				if(loadError) {
+					errorBox.text(loadError.responseJSON ? loadError.responseJSON.message : loadError.message || loadError);
+					return;
+				}
+				renderSelectedSessionTags(mode);
+				openTagDropdown(mode);
+			});
+		});
+	}
+
+	let setTagSelectionForMode = function(mode, tags){
+		if(mode === 'edit') {
+			selectedTagsForEdit = tags;
+		} else {
+			selectedTagsForAdd = tags;
+		}
+	}
+
+	let getTagErrorBox = function(mode){
+		const id = mode === 'edit' ? '#edit_test_error' : '#add_test_error';
+		return $(id);
+	}
+
+	let getTagSearchInputSelector = function(mode){
+		return mode === 'edit' ? '#edit_test_tag_search' : '#add_test_tag_search';
+	}
+
+	let getTagDropdownSelector = function(mode){
+		return mode === 'edit' ? '#edit_test_tag_dropdown' : '#add_test_tag_dropdown';
+	}
+
+	let getTagSelectedContainerSelector = function(mode){
+		return mode === 'edit' ? '#edit_test_selected_tags' : '#add_test_selected_tags';
+	}
+
+	let focusTagSearch = function(mode){
+		$(getTagSearchInputSelector(mode)).trigger('focus');
+	}
+
+	let filterAvailableTagsBySearch = function(mode){
+		const query = $(getTagSearchInputSelector(mode)).val().trim().toLowerCase();
+		if(!query) {
+			return availableTags;
+		}
+
+		return availableTags.filter((tag) => {
+			const name = (tag.tag_name || '').toLowerCase();
+			return name.includes(query);
+		});
+	}
+
+	let renderAvailableTagPills = function(mode){
+		const selectedTags = getTagSelectionForMode(mode);
+		const target = getTagDropdownSelector(mode);
+		const container = $(target);
+		container.empty();
+		const selectedIds = selectedTags.map((tag) => Number(tag.tag_id));
+		const filteredTags = filterAvailableTagsBySearch(mode);
+		const addableTags = filteredTags.filter((tag) => !selectedIds.includes(Number(tag.tag_id)));
+
+		if(availableTags.length === 0) {
+			container.append('<div class="tagDropdownEmpty">No tags yet. Use + to create one.</div>');
+			return;
+		}
+
+		if(filteredTags.length === 0) {
+			container.append('<div class="tagDropdownEmpty">No matches for your search.</div>');
+			return;
+		}
+
+		if(addableTags.length === 0) {
+			container.append('<div class="tagDropdownEmpty">All matching tags are already in this session.</div>');
+			return;
+		}
+
+		for (let i = 0; i < addableTags.length; i++) {
+			const tag = addableTags[i];
+			const isSelected = selectedIds.includes(Number(tag.tag_id));
+			container.append(`
+				<div class="tagDropdownOption">
+					<button type="button" class="tagDropdownPick" onclick="toggleSessionTag('${mode}', ${tag.tag_id})">
+						<input type="checkbox" ${isSelected ? 'checked' : ''} tabindex="-1" onclick="event.preventDefault();">
+						<span class="tagPickerColor" style="background:${tag.tag_color};"></span>
+						<span class="tagDropdownLabel">${tag.tag_name}</span>
+					</button>
+					<button type="button" class="tagDropdownEdit" onclick="openTagEditor('${mode}', ${tag.tag_id})">Edit</button>
+				</div>
+			`);
+		}
+	}
+
+	let renderSelectedSessionTags = function(mode){
+		const selectedTags = getTagSelectionForMode(mode);
+		const container = $(getTagSelectedContainerSelector(mode));
+		container.empty();
+
+		for (let i = 0; i < selectedTags.length; i++) {
+			const tag = selectedTags[i];
+			container.append(`
+				<span class="tagSelectedChip">
+					<span class="tagPickerColor" style="background:${tag.tag_color};"></span>
+					<span class="tagSelectedName">${tag.tag_name}</span>
+					<button type="button" class="tagSelectedRemove" onclick="removeSelectedSessionTag('${mode}', ${tag.tag_id})">x</button>
+				</span>
+			`);
+		}
+
+		renderAvailableTagPills(mode);
+	}
+
+	let refreshTagSelectors = function(){
+		renderSelectedSessionTags('add');
+		renderSelectedSessionTags('edit');
+	}
+
+	let setTagDropdownVisible = function(mode, visible){
+		const dropdown = $(getTagDropdownSelector(mode));
+		if(visible) {
+			renderAvailableTagPills(mode);
+			dropdown.show();
+		} else {
+			dropdown.hide();
+		}
+	}
+
+	let openTagDropdown = function(mode){
+		setTagDropdownVisible(mode, true);
+	}
+
+	let closeTagDropdown = function(mode){
+		setTagDropdownVisible(mode, false);
+	}
+
+	let onTagSearchInput = function(mode){
+		setTagDropdownVisible(mode, true);
+	}
+
+	let loadAvailableTags = function(callback){
+		Simva.getTags(function(error, tags){
+			if(error) {
+				if(callback) {
+					callback(error);
+				}
+				return;
+			}
+
+			availableTags = (Array.isArray(tags) ? tags : [])
+				.map(normalizeTag)
+				.filter((tag) => tag !== null)
+				.filter((tag, index, arr) => arr.findIndex((current) => Number(current.tag_id) === Number(tag.tag_id)) === index)
+				.sort((a, b) => a.tag_name.localeCompare(b.tag_name));
+
+			selectedTagsForAdd = selectedTagsForAdd
+				.map((tag) => getTagById(tag.tag_id) || tag)
+				.filter((tag, index, arr) => arr.findIndex((current) => current.tag_id === tag.tag_id) === index);
+
+			selectedTagsForEdit = selectedTagsForEdit
+				.map((tag) => getTagById(tag.tag_id) || tag)
+				.filter((tag, index, arr) => arr.findIndex((current) => current.tag_id === tag.tag_id) === index);
+
+			refreshTagSelectors();
+
+			if(callback) {
+				callback(null, availableTags);
+			}
+		});
+	}
+
+	let getCurrentEditSessionId = function(){
+		const value = $('#edit_test input[name="test"]').val();
+		if(!value) {
+			return null;
+		}
+		return Number(value);
+	}
+
+	let addSelectedSessionTag = function(mode, tagId){
+		const normalizedTagId = Number(tagId);
+		const selectedTags = getTagSelectionForMode(mode);
+		if(selectedTags.some((tag) => Number(tag.tag_id) === normalizedTagId)) {
+			return;
+		}
+
+		const tag = getTagById(normalizedTagId);
+		if(!tag) {
+			return;
+		}
+
+		const commitSelection = function(){
+			const currentSelection = getTagSelectionForMode(mode);
+			setTagSelectionForMode(mode, [...currentSelection, tag]);
+			renderSelectedSessionTags(mode);
+		}
+
+		if(mode !== 'edit') {
+			commitSelection();
+			return;
+		}
+
+		const editSessionId = getCurrentEditSessionId();
+		if(!editSessionId) {
+			commitSelection();
+			return;
+		}
+
+		const errorBox = getTagErrorBox(mode);
+		errorBox.text('');
+		Simva.addTagToSession(studyid, editSessionId, normalizedTagId, function(error){
+			if(error) {
+				errorBox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+				return;
+			}
+
+			if(!originalEditTagIds.includes(normalizedTagId)) {
+				originalEditTagIds = [...originalEditTagIds, normalizedTagId];
+			}
+
+			commitSelection();
+		});
+	}
+
+	let toggleSessionTag = function(mode, tagId){
+		const selectedTags = getTagSelectionForMode(mode);
+		const normalizedTagId = Number(tagId);
+		const alreadySelected = selectedTags.some((tag) => Number(tag.tag_id) === normalizedTagId);
+		if(alreadySelected) {
+			setTagSelectionForMode(
+				mode,
+				selectedTags.filter((tag) => Number(tag.tag_id) !== normalizedTagId)
+			);
+			renderSelectedSessionTags(mode);
+			return;
+		}
+
+		addSelectedSessionTag(mode, normalizedTagId);
+	}
+
+	let removeSelectedSessionTag = function(mode, tagId){
+		Simva.deleteTagFromSession(studyid, Number($(`#${mode}_test_form input[name="test"]`).val()), tagId, function(error){
+			if(error) {
+				getTagErrorBox(mode).text(error.responseJSON ? error.responseJSON.message : error.message || error);
+				return;
+			} else {
+				const selectedTags = getTagSelectionForMode(mode);
+				const normalizedTagId = Number(tagId);
+				setTagSelectionForMode(
+					mode,
+					selectedTags.filter((tag) => Number(tag.tag_id) !== normalizedTagId)
+				);
+				renderSelectedSessionTags(mode);
+			}
+		});
+		
+	}
+
+	let createAndSelectTag = function(mode){
+		const nameInput = mode === 'edit' ? '#edit_test_new_tag_name' : '#add_test_new_tag_name';
+		const colorInput = mode === 'edit' ? '#edit_test_new_tag_color' : '#add_test_new_tag_color';
+		let tagName = $(nameInput).val().trim();
+		let tagColor = $(colorInput).val();
+		const errorBox = getTagErrorBox(mode);
+		errorBox.text('');
+
+		if(!tagName) {
+			errorBox.text('Tag name is required');
+			return;
+		}
+
+		Simva.createTag({ tag_name: tagName, tag_color: tagColor }, function(error, createdTag){
+			if(error) {
+				errorBox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+				return;
+			}
+
+			const created = normalizeTag(createdTag);
+			if(created) {
+				const selectedTags = getTagSelectionForMode(mode);
+				if(!selectedTags.find((tag) => Number(tag.tag_id) === Number(created.tag_id))) {
+					setTagSelectionForMode(mode, [...selectedTags, created]);
+				}
+			}
+
+			$(nameInput).val('');
+			$(getTagSearchInputSelector(mode)).val('');
+			closeTagCreator(mode);
+			loadAvailableTags(function(loadError){
+				if(loadError) {
+					errorBox.text(loadError.responseJSON ? loadError.responseJSON.message : loadError.message || loadError);
+					return;
+				}
+				renderSelectedSessionTags(mode);
+				openTagDropdown(mode);
+			});
+		});
+	}
+
+	let addTagToSessionAsync = function(studyId, testId, tagId){
+		return new Promise((resolve, reject) => {
+			Simva.addTagToSession(studyId, testId, tagId, function(error, result){
+				if(error) {
+					reject(error);
+					return;
+				}
+				resolve(result);
+			});
+		});
+	}
+
+	let deleteTagFromSessionAsync = function(studyId, testId, tagId){
+		return new Promise((resolve, reject) => {
+			Simva.deleteTagFromSession(studyId, testId, tagId, function(error, result){
+				if(error) {
+					reject(error);
+					return;
+				}
+				resolve(result);
+			});
+		});
+	}
+
+	let syncSessionTags = function(studyId, testId, originalTagIds, targetTagIds, callback){
+		const toAdd = targetTagIds.filter((tagId) => !originalTagIds.includes(tagId));
+		const toDelete = originalTagIds.filter((tagId) => !targetTagIds.includes(tagId));
+
+		Promise.all([
+			...toAdd.map((tagId) => addTagToSessionAsync(studyId, testId, tagId)),
+			...toDelete.map((tagId) => deleteTagFromSessionAsync(studyId, testId, tagId))
+		])
+			.then(() => callback())
+			.catch((error) => callback(error));
+	}
 	
 	$(document).ready(function() {
+		$(document).on('click', function(event){
+			if(!$(event.target).closest('.tagPickerArea').length) {
+				closeTagDropdown('add');
+				closeTagDropdown('edit');
+			}
+		});
+
 		let painters = Object.keys(PainterFactory.Painters);
 
 		Simva.getActivityTypes(function(error, activitytypes){
 			for (var i = 0; i < activitytypes.length; i++) {
-				// Set commun translations on base activity painter for all types
 				if(activitytypes[i].commun && PainterFactory.Painters["activity"]) {
 					PainterFactory.Painters["activity"].commun = activitytypes[i].commun;
 					PainterFactory.Painters["activity"].communSpecific = activitytypes[i].communSpecific;
@@ -510,36 +1014,14 @@
 					PainterFactory.Painters[activitytypes[i].activity_type].commun = activitytypes[i].commun;
 					PainterFactory.Painters[activitytypes[i].activity_type].communSpecific = activitytypes[i].communSpecific;
 					PainterFactory.Painters[activitytypes[i].activity_type].specific = activitytypes[i].specific;
-					//switch(activitytypes[i].activity_type){
-					//	case 'rageminio':
-					//		break;
-					//	case 'miniokafka':
-					//		break;
-					//	case 'rageanalytics':
-					//		break;
-					//	case 'limesurvey':
-					//		break;
-					//	case 'gameplay':
-					//		break;
-					//	case 'activity':
-					//		break;
-					//	case 'manual':
-					//		break;
-					//	case 'ltitool':
-					//		break;
-					//	case 'imspackage':
-					//		break;
-					//	default:
-					//		break;
-					//}
 					let row = `<option value="${activitytypes[i].activity_type}">${PainterFactory.Painters[activitytypes[i].activity_type].simple_name}</option>`;
 					$('#new_activity_form select[name="type"]').append(row);
 				}
 			}
+
 			$('#new_activity_extras').empty();
 			$('#new_activity_extras').append(`${PainterFactory.Painters["gameplay"].description}\n`);
 			PainterFactory.Painters["gameplay"].getExtraForm((error, result) => {
-				console.log(result);
 				if(!error) {
 					$('#new_activity_extras').append(result);
 				}
@@ -563,13 +1045,12 @@
 				}
 				reloadStudy();
 			});
-		})
+		});
 
 		$('#new_activity_form select[name="type"]').on('change', function(event){
 			$('#new_activity_extras').empty();
 			$('#new_activity_extras').append(`${PainterFactory.Painters[$(this).val()].description}\n`);
 			PainterFactory.Painters[$(this).val()].getExtraForm((error, result) => {
-				console.log(result);
 				if(!error) {
 					$('#new_activity_extras').append(result);
 				}
@@ -580,7 +1061,6 @@
 			event.preventDefault();
 			let form = Utils.getFormData($("#existing_owner_form"));
 			let errorbox = $(this).find('.error');
-
 			const owners = study.direct_permissions || study.owners || [];
 
 			for (var i = 0; i < owners.length; i++) {
@@ -668,18 +1148,45 @@
 
 			return false;
 		});
-		
+
 		$("#add_test_form").on('submit', function(event){
 			event.preventDefault();
+			let currentform = this;
 			let form = Utils.getFormData($("#add_test_form"));
-			let errorbox = $(this).find('.error');
+			Utils.toggleSubmit(currentform);
+			let errorbox = $('#add_test_error');
+			errorbox.text('');
+			const selectedTagIds = selectedTagsForAdd.map((tag) => Number(tag.tag_id));
 
-			   Simva.addTestToStudy(studyid, { session_name: form.name, session_description: form.description, session_can_be_manually_activated: !!form.can_be_manually_activated }, function(error, result){
+			Simva.addTestToStudy(studyid, { session_name: form.name, session_description: form.description, session_can_be_manually_activated: !!form.can_be_manually_activated }, function(error, result){
 				if(error && error.responseJSON){
+					Utils.toggleSubmit(currentform);
 					errorbox.text(error.responseJSON.message);
+				}else if(error){
+					Utils.toggleSubmit(currentform);
+					errorbox.text(error.message || error);
 				}else{
-					Utils.toggleAddForm('add_test');
-					reloadStudy();
+					const newSessionId = result && result.session_id ? Number(result.session_id) : null;
+					if(!newSessionId || selectedTagIds.length === 0) {
+						Utils.toggleSubmit(currentform);
+						selectedTagsForAdd = [];
+						renderSelectedSessionTags('add');
+						Utils.toggleAddForm('add_test');
+						reloadStudy();
+						return;
+					}
+
+					syncSessionTags(studyid, newSessionId, [], selectedTagIds, function(syncError){
+						Utils.toggleSubmit(currentform);
+						if(syncError) {
+							errorbox.text(syncError.responseJSON ? syncError.responseJSON.message : syncError.message || syncError);
+							return;
+						}
+						selectedTagsForAdd = [];
+						renderSelectedSessionTags('add');
+						Utils.toggleAddForm('add_test');
+						reloadStudy();
+					});
 				}
 			});
 
@@ -782,20 +1289,40 @@
 			let form = Utils.getFormData($("#edit_test_form"));
 			Utils.toggleSubmit(currentform);
 			let errorbox = $(this).find('.error');
-			if(form.name == form.testName) {
+			errorbox.text('');
+			const selectedTagIds = selectedTagsForEdit.map((tag) => Number(tag.tag_id));
+			const nameChanged = form.name != form.testName;
+			const tagsChanged = selectedTagIds.length !== originalEditTagIds.length || selectedTagIds.some((tagId) => !originalEditTagIds.includes(tagId));
+
+			if(!nameChanged && !tagsChanged) {
 				errorbox.text("<%- t('edit.no_change', { ns : 'SIMLETs' }) %>");
 				Utils.toggleSubmit(currentform);
-			} else {
-				var test = { session_name : form.name };
-				Simva.updateTest("<%= study %>", test.test_id, test, function(error, result){
+				return false;
+			}
+
+			const finishSync = function(){
+				syncSessionTags(studyid, Number(form.test), originalEditTagIds, selectedTagIds, function(syncError){
 					Utils.toggleSubmit(currentform);
-					if(error && error.responseJSON){
-						errorbox.text(error.responseJSON.message);
-					}else{
-						Utils.toggleAddForm('edit_test');
-						reloadStudy();
+					if(syncError) {
+						errorbox.text(syncError.responseJSON ? syncError.responseJSON.message : syncError.message || syncError);
+						return;
 					}
+					Utils.toggleAddForm('edit_test');
+					reloadStudy();
 				});
+			}
+
+			if(nameChanged) {
+				Simva.updateTest("<%= study %>", Number(form.test), { session_name : form.name }, function(error){
+					if(error) {
+						Utils.toggleSubmit(currentform);
+						errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+						return;
+					}
+					finishSync();
+				});
+			} else {
+				finishSync();
 			}
 			return false;
 		});
@@ -1109,15 +1636,48 @@
 		return null;
 	}
 
+	let openAddTestForm = function(){
+		$('#add_test_error').text('');
+		$('#add_test_tags_error').text('');
+		closeTagCreator('add');
+		closeTagEditor('add');
+		closeTagDropdown('add');
+		$('#add_test_new_tag_name').val('');
+		$(getTagSearchInputSelector('add')).val('');
+		selectedTagsForAdd = [];
+		renderSelectedSessionTags('add');
+		loadAvailableTags(function(loadError){
+			if(loadError) {
+				$('#add_test_error').text(loadError.responseJSON ? loadError.responseJSON.message : loadError.message || loadError);
+				return;
+			}
+			$('#add_test').toggleClass('shown');
+		});
+	}
+
 	let openEditTestForm = function(testId){
 		document.getElementById("edit_test_error").innerHTML = "";
+		closeTagCreator('edit');
+		closeTagEditor('edit');
+		closeTagDropdown('edit');
+		$('#edit_test_new_tag_name').val('');
+		$(getTagSearchInputSelector('edit')).val('');
 		var inputElement = document.getElementById('edit_test_name');
 		let test = getTestFromTestId(testId);
+		const currentTags = Array.isArray(test.tags) ? test.tags.map(normalizeTag).filter((tag) => tag !== null) : [];
+		selectedTagsForEdit = currentTags;
+		originalEditTagIds = currentTags.map((tag) => Number(tag.tag_id));
 		inputElement.value = test.session_name;
-		$('#edit_test').toggleClass('shown');
 		$('#edit_test input[name="test"]').val(test.session_id);
-		$('#edit_test span[class="error"]').val("");
 		$('#edit_test input[name="testName"]').val(test.session_name);
+		loadAvailableTags(function(loadError){
+			if(loadError) {
+				$('#edit_test_error').text(loadError.responseJSON ? loadError.responseJSON.message : loadError.message || loadError);
+				return;
+			}
+			renderSelectedSessionTags('edit');
+			$('#edit_test').toggleClass('shown');
+		});
 	}
 
 	let openEditStudyForm = function(studyId){
@@ -1328,6 +1888,23 @@
 	let paintTest = function(test, activities, participants) {
 		const date = new Date(test.createdAt);
 		const formattedDate = date.toLocaleDateString('en-GB');
+		const sessionTags = Array.isArray(test.tags) ? test.tags : [];
+		let sessionTagsHtml = '<div class="sessionTagList"><span class="sessionTagEmpty">No tags</span></div>';
+		if(sessionTags.length > 0) {
+			sessionTagsHtml = '<div class="sessionTagList">';
+			for (let i = 0; i < sessionTags.length; i++) {
+				const tag = sessionTags[i];
+				const tagName = tag && tag.tag_name ? tag.tag_name : 'Tag';
+				const tagColor = tag && tag.tag_color ? tag.tag_color : '#3b82f6';
+				sessionTagsHtml += `
+					<span class="sessionTagChip">
+						<span class="sessionTagColor" style="background:${tagColor};"></span>
+						<span class="sessionTagName">${tagName}</span>
+					</span>
+				`;
+			}
+			sessionTagsHtml += '</div>';
+		}
 		
 		let userCount = participants.length;
 		let completeUserCount = 0;
@@ -1413,6 +1990,7 @@
 					<%- t('sessions.creationDate', { ns : 'SIMLETs' }) %>: ${formattedDate}
 					<br>
 					<%- t('sessions.activityCount', { ns : 'SIMLETs' }) %>: ${test.activities.length} &nbsp; <%- t('sessions.usercount', { ns : 'SIMLETs' }) %>: ${userCount}
+					<div style="margin-top: 8px;">${sessionTagsHtml}</div>
 				</div>
 				<div class="activityProgress progress">
 					<div class="done" style="width:${lastActivityCompletion}%"></div>
@@ -1530,6 +2108,214 @@
 		return toret;
 	}
 </script>
+<style>
+	.sessionTagList {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+	}
+
+	.sessionTagChip {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding: 2px 8px;
+		border: 1px solid #d9d9d9;
+		border-radius: 999px;
+		background: #ffffff;
+		font-size: 12px;
+		line-height: 1.4;
+	}
+
+	.sessionTagColor {
+		display: inline-block;
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		border: 1px solid #9a9a9a;
+	}
+
+	.sessionTagName {
+		max-width: 180px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.sessionTagEmpty {
+		font-size: 12px;
+		opacity: 0.7;
+	}
+
+	.tagPickerRow {
+		display: flex;
+		align-items: flex-start;
+		gap: 8px;
+	}
+
+	.tagPickerArea {
+		position: relative;
+		flex: 1;
+	}
+
+	.tagPickerInputWrap {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 6px;
+		min-height: 40px;
+		padding: 6px;
+		border: 1px solid #c7cfdb;
+		border-radius: 6px;
+		background: #ffffff;
+		flex: 1;
+		cursor: text;
+	}
+
+	.tagSelectedChips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+	}
+
+	.tagSelectedChip {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding: 3px 8px;
+		border-radius: 3px;
+		background: #38bdf8;
+		color: #ffffff;
+		font-size: 12px;
+		font-weight: 600;
+	}
+
+	.tagSelectedName {
+		max-width: 160px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.tagSelectedRemove {
+		border: 0;
+		background: transparent;
+		color: #ffffff;
+		font-weight: 700;
+		padding: 0;
+		cursor: pointer;
+		line-height: 1;
+	}
+
+	.tagSearchInput {
+		min-width: 180px;
+		flex: 1;
+		border: 0;
+		outline: none;
+		font-size: 13px;
+		padding: 3px 2px;
+	}
+
+	.tagDropdown {
+		position: absolute;
+		top: calc(100% + 4px);
+		left: 0;
+		right: 0;
+		max-height: 180px;
+		overflow: auto;
+		background: #ffffff;
+		border: 1px solid #cfd6e1;
+		border-radius: 6px;
+		box-shadow: 0 8px 16px rgba(15, 23, 42, 0.14);
+		z-index: 30;
+	}
+
+	.tagDropdownOption {
+		width: 100%;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 6px 8px;
+		border: 0;
+		background: #ffffff;
+		text-align: left;
+	}
+
+	.tagDropdownPick {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 4px 2px;
+		border: 0;
+		background: transparent;
+		text-align: left;
+		cursor: pointer;
+	}
+
+	.tagDropdownEdit {
+		border: 1px solid #d2d9e4;
+		background: #f8fafc;
+		border-radius: 4px;
+		font-size: 12px;
+		padding: 4px 8px;
+		color: #334155;
+		cursor: pointer;
+	}
+
+	.tagDropdownOption:hover {
+		background: #f5f8fc;
+	}
+
+	.tagDropdownEdit:hover {
+		background: #eef2f8;
+	}
+
+	.tagDropdownLabel {
+		font-size: 13px;
+		font-weight: 600;
+		color: #304055;
+	}
+
+	.tagDropdownEmpty {
+		padding: 10px;
+		font-size: 12px;
+		color: #64748b;
+	}
+
+	.tagPickerColor {
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		border: 1px solid rgba(15, 23, 42, 0.25);
+	}
+
+	.tagPlusButton {
+		width: 36px;
+		height: 36px;
+		border: none;
+		border-radius: 7px;
+		background: #f0943f;
+		color: white;
+		font-size: 22px;
+		line-height: 1;
+		cursor: pointer;
+	}
+
+	.tagCreator {
+		margin-top: 8px;
+		display: flex;
+		gap: 6px;
+		align-items: center;
+	}
+
+	.tagEditor {
+		margin-top: 8px;
+		display: flex;
+		gap: 6px;
+		align-items: center;
+	}
+</style>
 <script type="text/javascript" src="/activities/activitypainter.js"></script>
 <script type="text/javascript" src="/activities/limesurveypainter.js"></script>
 <script type="text/javascript" src="/activities/rageanalyticspainter.js"></script>
