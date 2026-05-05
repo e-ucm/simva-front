@@ -46,20 +46,28 @@ var Simva = {
 
 
 	//SHLINK URL
-	generateShlinkURL(url, tag, title, customSlug, length, callback){
+	generateShlinkURL(simlet_id, customSlug, length, callback){
 		let body = {
-			url: url,
-			tag: tag,
-			title: title,
 			customSlug: customSlug, 
 			length:length
-		}
-		
-		Utils.post(`/bff/shlink`, body, callback);
+		};
+		Utils.post(`/bff/simlets/${simlet_id}/shlink`, body, callback);
 	},
 
-	deleteShLink(shortCode, callback){
-		Utils.delete(`/bff/shlink/${shortCode}`, callback);
+	getShLink(simlet_id, callback){
+		Utils.get(`/bff/simlets/${simlet_id}/shlink`, callback);
+	},
+
+	updateShLink(simlet_id, customSlug, length, callback){
+		let body = {
+			customSlug: customSlug, 
+			length:length
+		};
+		Utils.patch(`/bff/simlets/${simlet_id}/shlink`, body, callback);
+	},	
+
+	deleteShLink(simlet_id, callback){
+		Utils.delete(`/bff/simlets/${simlet_id}/shlink`, callback);
 	},
 
 	// USER

@@ -300,19 +300,6 @@ var LimeSurveyPainter = {
 		PainterFactory.Painters["activity"].paintActivityInit(activity, activity.data.init, participants);
 	},
 
-	generateTinyURL: function(activityId, surveyId) {
-		let url=`${this.utils.url}${surveyId}`;
-		Simva.generateShlinkURL(url, "survey", `survey_${surveyId}`, null, (error, result) => {
-			if(!error) {
-				let shortUrl=result.shortUrl;
-				// Copy the text inside the text field
-				navigator.clipboard.writeText(shortUrl);
-				// Alert Short URL
-				alert(shortUrl);
-			}			
-		});
-	},
-
 	paintActivity: function(activity, participants){
 		$(`#test_${activity.session_id} .activities`).append(`<div id="activity_${activity.activity_id}" class="activity t${activity.activity_type}">
 			<div class="top"><h4>${activity.activity_name}</h4>
