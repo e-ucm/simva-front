@@ -247,8 +247,8 @@
 				<p id="generate_shlink_url" >
 					<input type="button" class="blue" value="<%- t('scheduler.shlink.generate.title', { ns : 'SIMLETs' }) %>" onclick="openGenerateLinkForm()">
 				</p>
-				<p  id="shlink_url">
-					<a class="button green" onclick="copyShortURL()"><span id="shlink_url_short"></span></a>
+				<p id="shlink_url">
+					<input type="button" class="green" id="shlink_url_short" onclick="copyShortURL()" style="white-space: normal; word-wrap: break-word;">
 				</p>
 				<p id="delete_shlink_url" >
 					<input type="button" class="red" value="<%- t('scheduler.shlink.delete.title', { ns : 'SIMLETs' }) %>" onclick="deleteShLink()">
@@ -556,7 +556,7 @@
 </script>
 <script type="text/javascript">
 	let studyid = "<%= study %>";
-	let study = null, participants = null, tests = null, allocator = null, groups = null, platforms = null;
+	let study = null, participants = null, tests = null, allocator = null, groups = null, platforms = null, shlink = null;
 	let availableTags = [];
 	let selectedTagsForAdd = [];
 	let selectedTagsForEdit = [];
@@ -1352,7 +1352,6 @@
 			event.preventDefault();
 			let currentform = this;
 			let errorbox = $(this).find('.error');
-			let url=`<%= config.simva.url %>/scheduler/${studyid}`;
 			let custom_slug=null;
 			let length=null;
 			let form = Utils.getFormData($("#generate_study_custom_slug_link_form"));
@@ -1368,25 +1367,17 @@
 			}
 			Utils.toggleSubmit(currentform);
 			
-			Simva.generateShlinkURL(url, "study", `scheduler_${studyid}`, custom_slug, length, (error, result) => {
+			Simva.generateShlinkURL(studyid, custom_slug, length, (error, result) => {
 				if(!error) {
-					let shortUrl=result.shortUrl;
-					let shlinkData=result;
-					shlinkData.domain="<%= config.shlink.apihost %>";
-					Simva.updateStudy(study.simlet_id, { shlink: shlinkData }, (error, result) => {
-						if(!error) {
-							// Copy the text inside the text field
-							navigator.clipboard.writeText(shortUrl);
-							// Alert Short URL
-							alert(shortUrl);
-							Utils.toggleSubmit(currentform);
-							Utils.toggleAddForm('generate_study_link');
-							reloadStudy();
-						} else {
-							errorbox.text(error);
-							Utils.toggleSubmit(currentform);
-						}
-					})
+					shlink = result;
+					let shortUrl=shlink.shortUrl;
+					// Copy the text inside the text field
+					navigator.clipboard.writeText(shortUrl);
+					// Alert Short URL
+					alert(shortUrl);
+					Utils.toggleSubmit(currentform);
+					Utils.toggleAddForm('generate_study_link');
+					reloadStudy();
 				} else {
 					errorbox.text(error);
 					Utils.toggleSubmit(currentform);
@@ -1397,28 +1388,21 @@
 	});
 
 	copyShortURL = function(){
-		if(study.shlink) {
-			let shortUrl=study.shlink.shortUrl;
-			// Copy the text inside the text field
-			navigator.clipboard.writeText(shortUrl);
-			// Alert Short URL
-			alert(shortUrl);
-		}
+		// Copy the text inside the text field
+		navigator.clipboard.writeText(shlink.shortUrl);
+		// Alert Short URL
+		alert(shlink.shortUrl);
 	}
 
 	deleteShLink = function(){
-		if(study.shlink) {
-			let shortCode=study.shlink.shortCode;
-			if(confirm(`<%- t('scheduler.shlink.delete.confirm', { ns : 'SIMLETs', shlink : '${shortCode}', SIMLET : '${study.simlet_name}'  }) %>`)){
-				Simva.deleteShLink(shortCode, (error, result) => {
-					if(!error) {
-						Simva.updateStudy(study.simlet_id, { shlink: null }, (error, result) => {
-							reloadStudy();
-						});
-					}
-				});
-			}
-			
+		let shortCode=shlink.shortCode;
+		if(confirm(`<%- t('scheduler.shlink.delete.confirm', { ns : 'SIMLETs', shlink : '${shortCode}', SIMLET : '${study.simlet_name}' }) %>`)){
+			Simva.deleteShLink(studyid, (error, result) => {
+				if(!error) {
+					shlink = null;
+					reloadStudy();
+				}
+			});
 		}
 	}
 
@@ -1691,9 +1675,9 @@
 		document.getElementById("generate_link_custom_slug_error").innerHTML = "";
 		var inputElement = document.getElementById('generate_study_link');
 		$('#generate_study_link input[name="study"]').val(study.simlet_id);
-		if(study.shlink) {
-			if(study.shlink.custom_slug) {
-				$('#generate_study_link input[name="custom_slug_shlink"]').val(study.shlink.custom_slug);
+		if(shlink) {
+			if(shlink.shortCode) {
+				$('#generate_study_link input[name="custom_slug_shlink"]').val(shlink.shortCode);
 			}
 		}
 		$('#generate_study_link').toggleClass('shown');
@@ -1708,17 +1692,21 @@
 
 	let paintStudy = function(study, participants, tests, allocator, groups, allgroups, platforms){
 		$('#simlet_name').text(study.simlet_name);
-		if(study.shlink) {
-			$('#shlink_url_short').text(`<%- t('scheduler.shlink.message', { ns : 'SIMLETs', shlink : '${study.shlink.shortUrl}' }) %>`);
-			$("#generate_shlink_url").hide();
-			$("#shlink_url").show();
-			$("#delete_shlink_url").show();
-		} 
-		else {
-			$("#generate_shlink_url").show();
-			$("#shlink_url").hide();
-			$("#delete_shlink_url").hide();
-		}
+
+		Simva.getShLink(studyid, (error, result) => {
+			if(!error) {
+				shlink = result;
+				$('#shlink_url_short').val(`<%- t('scheduler.shlink.message', { ns : 'SIMLETs', shlink : '${shlink.shortUrl}' }) %>`);
+				$("#generate_shlink_url").hide();
+				$("#shlink_url").show();
+				$("#delete_shlink_url").show();
+			} else {
+				shlink = null;
+				$("#generate_shlink_url").show();
+				$("#shlink_url").hide();
+				$("#delete_shlink_url").hide();
+			}
+		});
 
 		paintOwners(study.direct_permissions);
 

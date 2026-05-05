@@ -24,9 +24,11 @@ class Simva {
 	post(url, req, body, sessionId, callback){
 		logger.info(body, `Making POST request to ${url} for session ${sessionId}`);
 		usertools.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(sessionId), (error, result) => {
-			if(!error) {
-				Utils.post(url, req, body, callback, userClientsListManager.getJWT(sessionId));
+			if(error) {
+				callback(error);
+				return;
 			}
+			Utils.post(url, req, body, callback, userClientsListManager.getJWT(sessionId));
 		});
 		
 	}
@@ -34,95 +36,73 @@ class Simva {
 	patch(url, req, body, sessionId, callback){
 		logger.info(body, `Making PATCH request to ${url} for session ${sessionId}`);
 		usertools.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(sessionId), (error, result) => {
-			if(!error) {
-				Utils.patch(url, req, body, callback, userClientsListManager.getJWT(sessionId));
+			if(error) {
+				callback(error);
+				return;
 			}
+			Utils.patch(url, req, body, callback, userClientsListManager.getJWT(sessionId));
 		});
 	}
 
 	put(url, req, body, sessionId, callback){
 		usertools.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(sessionId), (error, result) => {
-			if(!error) {
-				Utils.put(url, req, body, callback, userClientsListManager.getJWT(sessionId));
+			if(error) {
+				callback(error);
+				return;
 			}
+			Utils.put(url, req, body, callback, userClientsListManager.getJWT(sessionId));
 		});
 	}
 
 	get(url, sessionId, callback){
 		usertools.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(sessionId), (error, result) => {
-			if(!error) {
-				Utils.get(url, callback, userClientsListManager.getJWT(sessionId));
+			if(error) {
+				callback(error);
+				return;
 			}
+			Utils.get(url, callback, userClientsListManager.getJWT(sessionId));
 		});
 	}
 
 	delete(url, sessionId, callback){
 		usertools.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(sessionId), (error, result) => {
-			if(!error) {
-				Utils.delete(url, callback, userClientsListManager.getJWT(sessionId));
+			if(error) {
+				callback(error);
+				return;
 			}
+			Utils.delete(url, callback, userClientsListManager.getJWT(sessionId));
 		});
 	}
 
 	//SHLINK URL
-	generateURL(url, tag, title, customSlug, length, callback){
-		let body = {
-			"longUrl": url,
-			"tags": [
-			  tag
-			],
-			//"validSince": "string",
-			//"validUntil": "string",
-			//"maxvisits": 0,
-			"title": title,
-			"crawlable": false,
-			"forwardQuery": true,
-			"findIfExists": true,
-			"domain": `${this.shlinkapidomain}`,
-			//"customSlug": null,
-			//"shortCodeLength": 0
-		}
+	generateURL(simlet_id, customSlug, length, sessionId, callback){
+		let body = {};
 		if(length) {
-			body.shortCodeLength = length;
+			body.length = parseInt(length);
 		}
 		if(customSlug) {
 			body.customSlug = customSlug;
 		}
-		
-		Utils.post(`${this.shlinkapiurl}/rest/v3/short-urls`, null, body, callback, null, this.shlinkapikey);
+		this.post(`${this.apiurl}/simlets/${simlet_id}/shlink`, null, body, sessionId, callback);
 	}
 
-	//SHLINK URL
-	generateURL(url, tag, title, customSlug, length, callback){
-		let body = {
-			"longUrl": url,
-			"tags": [
-			  tag
-			],
-			//"validSince": "string",
-			//"validUntil": "string",
-			//"maxvisits": 0,
-			"title": title,
-			"crawlable": false,
-			"forwardQuery": true,
-			"findIfExists": true,
-			"domain": `${this.shlinkapidomain}`,
-			//"customSlug": null,
-			//"shortCodeLength": 0
-		}
+	getShLink(simlet_id, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simlet_id}/shlink`, sessionId, callback);
+	}
+
+	updateShLink(simlet_id, customSlug, length, sessionId, callback){
+		let body = {};
 		if(length) {
-			body.shortCodeLength = length;
+			body.length = parseInt(length);
 		}
 		if(customSlug) {
 			body.customSlug = customSlug;
 		}
-		
-		Utils.post(`${this.shlinkapiurl}/rest/v3/short-urls`, null, body, callback, null, this.shlinkapikey);
+		this.patch(`${this.apiurl}/simlets/${simlet_id}/shlink`, null, body, sessionId, callback);
 	}
-
-	//SHLINK URL
-	deleteShLink(shortCode, callback){
-		Utils.delete(`${this.shlinkapiurl}/rest/v3/short-urls/${shortCode}?domain=${this.shlinkapidomain}`, callback, null, this.shlinkapikey);
+	
+	deleteShLink(simlet_id, sessionId, callback){
+		this.delete(`${this.apiurl}/simlets/${simlet_id}/shlink`, sessionId, callback);
 	}
 
 	// USER
@@ -439,16 +419,16 @@ class Simva {
 		this.get(`${this.apiurl}/activities/${activity_id}/export?complete=${complete}`, sessionId, callback);
 	}
 
-	setSurveyOwner(survey_id, sessionId, callback){
-		this.patch(`${this.apiurl}/limesurvey/surveys/${survey_id}/owner`, null, {}, sessionId, callback);
+	setSurveyOwner(activity_id, sessionId, callback){
+		this.patch(`${this.apiurl}/limesurvey/${activity_id}/surveyowner`, null, {}, sessionId, callback);
 	}
 
 	getSurveyList(sessionId, callback){
 		this.get(`${this.apiurl}/limesurvey/surveys`, sessionId, callback);
 	}
 
-	getSurveyLanguages(survey_id, sessionId, callback){
-		this.get(`${this.apiurl}/limesurvey/surveys/${survey_id}/languages`, sessionId, callback);
+	getSurveyLanguages(activity_id, sessionId, callback){
+		this.get(`${this.apiurl}/limesurvey/${activity_id}/surveylanguages`, sessionId, callback);
 	}
 
 	getActivityProgress(activity_id, sessionId, callback){

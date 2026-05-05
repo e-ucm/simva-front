@@ -34,20 +34,41 @@ module.exports = function(auth, config){
     * USERS
     * 
     */
-    router.post('/shlink', auth, async (req, res, next) => {
-        Simva.generateURL(req.body.url, req.body.tag, req.body.title, req.body.customSlug, req.body.length, (error, result) => {
+
+    router.post('/simlets/:simletid/shlink', auth, async (req, res, next) => {
+        Simva.generateURL(req.params['simletid'], req.body.customSlug, req.body.length, req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+    
+    router.get('/simlets/:simletid/shlink', auth, async (req, res, next) => {
+        Simva.getShLink(req.params['simletid'], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
         });
     });
 
-    router.delete('/shlink/:shortcode', auth, async (req, res, next) => {
-        Simva.deleteShLink(req.params["shortcode"], (error, result) => {
+    router.patch('/simlets/:simletid/shlink', auth, async (req, res, next) => {
+        Simva.updateShLink(req.params['simletid'], req.body.customSlug, req.body.length, req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.delete('/simlets/:simletid/shlink', auth, async (req, res, next) => {
+        Simva.deleteShLink(req.params["simletid"], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
             } else {
                 res.status(200).send({ message : "Short Link deleted" });
             }
