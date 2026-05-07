@@ -81,7 +81,8 @@
     "sessions.add.title":"Add Session",
     "sessions.edit.title":"Edit Session",
     "sessions.duplicate.title":"Duplicate Session",
-    "sessions.placeholder":"Session name",
+    "sessions.name.placeholder":"Session name",
+    "sessions.description.placeholder":"Session description",
     "sessions.delete.title":"Delete Session",
     "sessions.delete.confirm":"Are you sure do you want to delete the Session '{{session}}' from SIMLET '{{SIMLET}}'?\nAll the activities and data will be deleted too.",
     "sessions.activate.title":"Activate",
@@ -113,7 +114,7 @@
     "scheduler.shlink.generate.randomly_length.message":"With a length of :",
     "scheduler.shlink.generate.custom_slug.title":"Use a custom Slug",
     "scheduler.shlink.generate.submit":"Generate",
-    "scheduler.shlink.message":"Copy short url : {{shlink}}.",
+    "scheduler.shlink.message":"Copy short url: {{shlink}}",
     "scheduler.shlink.custom_slug.placeholder":"Custom Slug",
 
     "scheduler.shlink.delete.title":"Delete Scheduler Shlink URL",

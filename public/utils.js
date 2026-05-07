@@ -19,6 +19,13 @@ var Utils = {
 		$(form).find('.loader').toggle();
 	},
 
+	changeTab : function(tab, form, subform){
+		$(`#${form} .tab`).removeClass('selected');
+		$(`#${form} .subform`).removeClass('selected');
+		$(tab).toggleClass('selected');
+		$(`#${subform}`).toggleClass('selected');
+	},
+
 	post: function(url, body, callback){
 		$.ajax({
 			type: 'POST',

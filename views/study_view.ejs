@@ -9,23 +9,18 @@
 	<h1><%- t('single.title', { ns : 'SIMLETs' }) %>: <span id="simlet_name"></span></h1>
 	<div class="simletSettings">
 		<div class="kebab">
-			<ul class="kebab-dropdown" style="display: none;">
-				<li class="kebab-icon " id="archivation" onclick="toggleArchived()"></li>
-				<li class="kebab-icon icon-edit" onclick="openEditStudyForm()">
-					<%- t('edit.title', { ns : 'SIMLETs' }) %>
-				</li>
-				<li class="kebab-icon icon-download" onclick="openConfigDownloadForm()">
-					<%- t('config.title', { ns : 'SIMLETs' }) %>
-				</li>
-			</ul>
+			
 		</div>
 	</div>
 </div>
 
+<%- include('partials/simlet_commons') %>
+
+
 <div id="study_tabs">
 	<div class="studyTabsButtons">
-		<input class="tab yellow selected" type="button" onclick="changeTab(this, 'study_tabs','sessions_tab')" value="<%- t('session.tab.title', { ns : 'SIMLETs' }) %>">
-		<input class="tab yellow" type="button" onclick="changeTab(this, 'study_tabs','users_tab')" value="<%- t('users.tab.title', { ns : 'SIMLETs' }) %>">
+		<input class="tab yellow selected" type="button" onclick="Utils.changeTab(this, 'study_tabs','sessions_tab')" value="<%- t('session.tab.title', { ns : 'SIMLETs' }) %>">
+		<input class="tab yellow" type="button" onclick="Utils.changeTab(this, 'study_tabs','users_tab')" value="<%- t('users.tab.title', { ns : 'SIMLETs' }) %>">
 	</div>
 	<div id="sessions_tab" class="subform studyTab selected">
 		<div id="study">
@@ -37,27 +32,29 @@
 				</div>
 			</div>
 		</div>
+
+		<div class="floating_buttons">
+			<a unselectable="on" class="basic" onclick="openAddTestForm()" style="display: none;">+</a>
+		</div>
 	</div>
 
-	<div id="users_tab" class="subform studyTab">
-<!-- TODO FRONT: remove style class dependency -->
-		<div class="left">
-			<div class="graybox owners">
-				<h2><%- t('coordinators.title', { ns : 'SIMLETs' }) %></h2>
-				<p></p>
-				<table id="owners">
-				</table>
-				<input class="violet" type="button" value="<%- t('coordinators.add.title', { ns : 'SIMLETs' }) %>" onclick="Utils.toggleAddForm('add_owner')">
-			</div>
+	<div id="users_tab" class="subform studyTab users">
+		<div class="graybox owners">
+			<h2><%- t('coordinators.title', { ns : 'SIMLETs' }) %></h2>
+			<br>
+			<table id="owners">
+			</table>
+			<input class="violet" type="button" value="<%- t('coordinators.add.title', { ns : 'SIMLETs' }) %>" onclick="Utils.toggleAddForm('add_owner')">
+		</div>
 
-			<div class="graybox groups">
-				<h2><%- t('groups.title', { ns : 'SIMLETs' }) %></h2>
-				<p></p>
-				<div id="groups_container">
-				</div>
+		<div class="graybox groups">
+			<h2><%- t('groups.title', { ns : 'SIMLETs' }) %></h2>
+			<p></p>
+			<div id="groups_container">
 			</div>
+		</div>
 
-			<% if(config.lti.enabled == 'true'){ %>
+		<% if(config.lti.enabled == 'true'){ %>
 			<div class="graybox lti_platforms default">
 				<h2><%- t('lti_platform.title', { ns : 'SIMLETs' }) %></h2>
 				<p></p>
@@ -65,11 +62,11 @@
 				</table>
 				<input class="violet" type="button" value="<%- t('lti_platform.add.title', { ns : 'SIMLETs' }) %>" onclick="Utils.toggleAddForm('add_platform')">
 			</div>
-			<% } %>
-		</div>
+		<% } %>
 	</div>
 </div>
 
+<!-- GROUPS -->
 
 <div id="add_group" class="new_element floating">
 	<div class="floater">
@@ -164,16 +161,23 @@
 	</div>
 </div>
 
+
+<!-- SESSIONS -->
 <div id="add_test" class="new_element floating">
 	<div class="floater">
 		<div class="form">
 			<div id="add_test_tab" class="subform selected">
 				<h2><%- t('sessions.add.title', { ns : 'SIMLETs' }) %></h2>
 				<form id="add_test_form">
-					<input type="text" name="name" placeholder="<%- t('sessions.placeholder', { ns : 'SIMLETs' }) %>" required>
-					<input name="description" placeholder="<%- t('sessions.description.placeholder', { ns : 'SIMLETs' }) %>" required>
-					<div style="margin-top: 10px;">
-						<label style="display:block; margin-bottom: 4px;">Tags</label>
+					<br>
+					<h3><%- t('name.edit.title', { ns : 'SIMLETs' }) %></h3>
+					<input type="text" name="name" placeholder="<%- t('sessions.name.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<br>
+					<h3><%- t('description.edit.title', { ns : 'SIMLETs' }) %></h3>
+					<input type="text" name="description" placeholder="<%- t('sessions.description.placeholder', { ns : 'SIMLETs' }) %>" required>
+
+					<h3><%- t('tags.title', { ns : 'SIMLETs' }) %></h3>
+					<div style="margin-top: 5px;">
 						<div class="tagPickerArea" data-mode="add">
 							<div class="tagPickerRow">
 								<div class="tagPickerInputWrap" onclick="focusTagSearch('add')">
@@ -205,87 +209,14 @@
 						</div>
 						<span class="error" id="add_test_tags_error"></span>
 					</div>
-					<label style="display:block;margin-top:8px;">
-						<input type="checkbox" name="can_be_manually_activated" checked>
-						<%- t('sessions.can_be_manually_activated', { ns : 'SIMLETs' }) %>
-					</label>
+					<br>
+					<h3><%- t('sessions.can_be_manually_activated', { ns : 'SIMLETs' }) %></h3>
+					<input type="checkbox" name="can_be_manually_activated" checked>
+					<br>
+					<br>
 					<input type="submit" value="<%- t('sessions.add.title', { ns : 'SIMLETs' }) %>">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 					<span class="error" id="add_test_error"></span>
-				</form>
-			</div>
-		</div>
-	</div>
-</div>
-
-<div id="edit_study" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<div class="tabs">
-				<span class="tab selected" type="hidden" onclick="changeTab(this, 'edit_study','edit_study_tab')">
-					<%- t('simlet.tab.title', { ns : 'SIMLETs' }) %>
-				</span>
-				<span class="tab" onclick="changeTab(this, 'edit_study','edit_url_tab')">
-					<%- t('url.tab.title', { ns : 'SIMLETs' }) %>
-				</span>
-			</div>
-			<br>
-			<div id="edit_study_tab" class="subform selected">
-				<form id="edit_study_form">
-					<h3><%- t('name.edit.title', { ns : 'SIMLETs' }) %></h3>
-					<input type="text" name="studyName" id="edit_simlet_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
-					<br>
-					<h3><%- t('description.edit.title', { ns : 'SIMLETs' }) %></h3>
-					<input type="text" name="studyDescription" id="edit_study_description" placeholder="<%- t('description.placeholder', { ns : 'SIMLETs' }) %>" required>
-					<br><br>
-					<input type="submit" value="<%- t('edit.submit.title', { ns : 'SIMLETs' }) %>">
-					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<span class="error" id="edit_study_error"></span>
-				</form>
-			</div>
-			<div id="edit_url_tab" class="subform">
-				<p id="generate_shlink_url" >
-					<input type="button" class="blue" value="<%- t('scheduler.shlink.generate.title', { ns : 'SIMLETs' }) %>" onclick="openGenerateLinkForm()">
-				</p>
-				<p id="shlink_url">
-					<input type="button" class="green" id="shlink_url_short" onclick="copyShortURL()" style="white-space: normal; word-wrap: break-word;">
-				</p>
-				<p id="delete_shlink_url" >
-					<input type="button" class="red" value="<%- t('scheduler.shlink.delete.title', { ns : 'SIMLETs' }) %>" onclick="deleteShLink()">
-				</p>
-
-			</div>
-		</div>
-	</div>
-</div>
-
-<div id="generate_study_link" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<h2><%- t('scheduler.shlink.generate.title', { ns : 'SIMLETs' }) %></h2>
-			<div class="tabs">
-				<span class="tab selected" type="hidden" onclick="changeTab(this, 'generate_study_link','generate_study_link_length_tab')"><%- t('scheduler.shlink.generate.randomly_length.title', { ns : 'SIMLETs' }) %></span>
-				<span class="tab" onclick="changeTab(this, 'generate_study_link','generate_study_custom_slug_link_tab')"><%- t('scheduler.shlink.generate.custom_slug.title', { ns : 'SIMLETs' }) %></span>
-			</div>
-			<div id="generate_study_custom_slug_link_tab" class="subform">
-				<form id="generate_study_custom_slug_link_form">
-					<h3><%- t('scheduler.shlink.generate.custom_slug.title', { ns : 'SIMLETs' }) %></h3>
-					<input hidden type="text" name="study">
-					<input type="text" name="custom_slug" id="custom_slug_shlink" placeholder="<%- t('scheduler.shlink.custom_slug.placeholder', { ns : 'SIMLETs' }) %>" required>
-					<input type="submit" value="<%- t('scheduler.shlink.generate.submit', { ns : 'SIMLETs' }) %>">
-					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<span class="error" id="generate_link_custom_slug_error"></span>
-				</form>
-			</div>
-			<div id="generate_study_link_length_tab" class="subform selected">
-				<form id="generate_study_link_length_form">
-					<h3><%- t('scheduler.shlink.generate.randomly_length.title', { ns : 'SIMLETs' }) %></h3>
-					<input hidden type="text" name="study">
-					<p><%- t('scheduler.shlink.generate.randomly_length.message', { ns : 'SIMLETs' }) %></p>
-					<input type="number" step=1 min=4 name="link_length_shlink" id="link_length_shlink" onchange="this.value = Math.max(4, parseInt(this.value));" value=4 required>
-					<input type="submit" value="<%- t('scheduler.shlink.generate.submit', { ns : 'SIMLETs' }) %>">
-					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<span class="error" id="generate_link_error"></span>
 				</form>
 			</div>
 		</div>
@@ -298,11 +229,19 @@
 			<div id="edit_test_tab" class="subform selected">
 				<h2><%- t('sessions.edit.title', { ns : 'SIMLETs' }) %></h2>
 				<form id="edit_test_form">
-					<input hidden type="text" name="test">
-					<input hidden type="text" name="testName">
-					<input type="text" name="name" id="edit_test_name" placeholder="<%- t('sessions.placeholder', { ns : 'SIMLETs' }) %>" required>
-					<div style="margin-top: 10px;">
-						<label style="display:block; margin-bottom: 4px;">Tags</label>
+					<br>
+					<input hidden type="text" name="test" id="edit_test_id">
+					<input hidden type="text" name="prevTestName" id="prev_test_name">
+					<input hidden type="text" name="prevTestDescription" id="prev_test_description">
+
+					<h3><%- t('name.edit.title', { ns : 'SIMLETs' }) %></h3>
+					<input type="text" name="testName" id="edit_test_name" placeholder="<%- t('sessions.name.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<br>
+					<h3><%- t('description.edit.title', { ns : 'SIMLETs' }) %></h3>
+					<input type="text" name="testDescription" id="edit_test_description" placeholder="<%- t('sessions.description.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<br>
+					<h3><%- t('tags.title', { ns : 'SIMLETs' }) %></h3>
+					<div style="margin-top: 5px;">
 						<div class="tagPickerArea" data-mode="edit">
 							<div class="tagPickerRow">
 								<div class="tagPickerInputWrap" onclick="focusTagSearch('edit')">
@@ -332,7 +271,9 @@
 							<button type="button" onclick="saveEditedTag('edit')">Save</button>
 							<button type="button" onclick="closeTagEditor('edit')">Cancel</button>
 						</div>
+						<span class="error" id="add_test_tags_error"></span>
 					</div>
+					<br>
 					<input type="submit" value="<%- t('sessions.edit.title', { ns : 'SIMLETs' }) %>">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 					<span class="error" id="edit_test_error"></span>
@@ -364,8 +305,8 @@
 	<div class="floater">
 		<div class="form">
 			<div class="tabs">
-				<span class="tab selected" onclick="changeTab(this, 'add_activity','new_activity_tab')"><%- t('activities.add.new.title', { ns : 'SIMLETs' }) %></span>
-				<span class="tab" type="hidden" onclick="changeTab(this, 'add_activity','existing_activity_tab')"><%- t('activities.add.existing.title', { ns : 'SIMLETs' }) %></span>
+				<span class="tab selected" onclick="Utils.changeTab(this, 'add_activity','new_activity_tab')"><%- t('activities.add.new.title', { ns : 'SIMLETs' }) %></span>
+				<span class="tab" type="hidden" onclick="Utils.changeTab(this, 'add_activity','existing_activity_tab')"><%- t('activities.add.existing.title', { ns : 'SIMLETs' }) %></span>
 			</div>
 			<div id="new_activity_tab" class="subform selected">
 				<form id="new_activity_form">
@@ -412,26 +353,6 @@
 			</form>
 		</div>
 	</div>
-</div>
-
-<div id="download_config" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<input class="yellow" type="button" value="<%- t('config.download.simlet', { ns : 'SIMLETs' }) %>" onclick="downloadStudyConfig()">
-			<br><br>
-			<input class="yellow" type="button" value="<%- t('config.download.uadventure', { ns : 'SIMLETs' }) %>" onclick="downloadUAConfig()">
-		</div>
-	</div>
-</div>
-
-<div id="iframe_floating" class="new_element floating">
-	<div class="floater">
-		<iframe src=""></iframe>
-	</div>
-</div>
-
-<div class="floating_buttons">
-	<a unselectable="on" class="basic" onclick="openAddTestForm()" style="display: none;">+</a>
 </div>
 
 
@@ -554,15 +475,26 @@
 		});
 	}
 </script>
+
+<!-- TAGS -->
 <script type="text/javascript">
 	let studyid = "<%= study %>";
-	let study = null, participants = null, tests = null, allocator = null, groups = null, platforms = null, shlink = null;
+	let study = null, participants = null, tests = null, allocator = null, groups = null, platforms = null;
 	let availableTags = [];
 	let selectedTagsForAdd = [];
 	let selectedTagsForEdit = [];
 	let originalEditTagIds = [];
 	let editingTagByMode = { add: null, edit: null };
 
+	$(document).ready(function() {
+		$(document).on('click', function(event){
+			if(!$(event.target).closest('.tagPickerArea').length) {
+				closeTagDropdown('add');
+				closeTagDropdown('edit');
+			}
+		});
+	});
+	
 	let normalizeTag = function(tag){
 		if(!tag) {
 			return null;
@@ -990,14 +922,31 @@
 			.then(() => callback())
 			.catch((error) => callback(error));
 	}
-	
+</script>
+
+
+<script>
 	$(document).ready(function() {
-		$(document).on('click', function(event){
-			if(!$(event.target).closest('.tagPickerArea').length) {
-				closeTagDropdown('add');
-				closeTagDropdown('edit');
-			}
+		reloadFunc = reloadStudy;
+
+		const kebab = $("#kebab_template .kebab-dropdown").clone();
+		$(".simletSettings .kebab").append(kebab);
+		kebab.find(".icon-edit").click(() => { openEditStudyForm(study.simlet_id) });
+		kebab.find(".icon-url").click(() => { openUrlSettingsForm(study.simlet_id) });
+		kebab.find(".icon-download").click(() => { openConfigDownloadForm(study.simlet_id) });
+		kebab.find(".icon-delete").click(() => { 
+			deleteStudy(study.simlet_id, study.simlet_name) 
+			location.reload();
 		});
+
+		$("#add_study_tabs").remove();
+		$("#import_study_tab").remove();
+		// $(document).on('click', function(event){
+		// 	if(!$(event.target).closest('.tagPickerArea').length) {
+		// 		closeTagDropdown('add');
+		// 		closeTagDropdown('edit');
+		// 	}
+		// });
 
 		let painters = Object.keys(PainterFactory.Painters);
 
@@ -1288,151 +1237,49 @@
 			let currentform = this;
 			let form = Utils.getFormData($("#edit_test_form"));
 			Utils.toggleSubmit(currentform);
-			let errorbox = $(this).find('.error');
-			errorbox.text('');
+
+			console.log(form)
+			const testId = form.test;
+			const nameChanged = form.prevTestName != form.testName;
+			const descriptionChanged = form.prevTestDescription != form.testDescription;
 			const selectedTagIds = selectedTagsForEdit.map((tag) => Number(tag.tag_id));
-			const nameChanged = form.name != form.testName;
 			const tagsChanged = selectedTagIds.length !== originalEditTagIds.length || selectedTagIds.some((tagId) => !originalEditTagIds.includes(tagId));
 
-			if(!nameChanged && !tagsChanged) {
-				errorbox.text("<%- t('edit.no_change', { ns : 'SIMLETs' }) %>");
+			if(!nameChanged && !descriptionChanged && !tagsChanged) {
+				$('#edit_test_error').text("<%- t('edit.no_change', { ns : 'SIMLETs' }) %>");
 				Utils.toggleSubmit(currentform);
-				return false;
 			}
-
-			const finishSync = function(){
-				syncSessionTags(studyid, Number(form.test), originalEditTagIds, selectedTagIds, function(syncError){
-					Utils.toggleSubmit(currentform);
-					if(syncError) {
-						errorbox.text(syncError.responseJSON ? syncError.responseJSON.message : syncError.message || syncError);
-						return;
-					}
-					Utils.toggleAddForm('edit_test');
-					reloadStudy();
-				});
-			}
-
-			if(nameChanged) {
-				Simva.updateTest("<%= study %>", Number(form.test), { session_name : form.name }, function(error){
-					if(error) {
+			else {
+				$('#edit_test_error').text("");
+				const finishSync = function() {
+					syncSessionTags(studyid, Number(testId), originalEditTagIds, selectedTagIds, function(syncError){
 						Utils.toggleSubmit(currentform);
-						errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
-						return;
-					}
-					finishSync();
-				});
-			} else {
-				finishSync();
-			}
-			return false;
-		});
-
-		$("#edit_study_form").on('submit', function(event){
-			event.preventDefault();
-			let currentform = this;
-			let form = Utils.getFormData($("#edit_study_form"));
-			Utils.toggleSubmit(currentform);
-			if (study.simlet_name == form.studyName && study.simlet_description == form.studyDescription) {
-				$('#edit_study_error').text("<%- t('edit.no_change', { ns : 'SIMLETs' }) %>");
-				Utils.toggleSubmit(currentform);
-			}
-			else {
-				$('#edit_study_error').text("");
-				Simva.updateStudy(study.simlet_id, { simlet_name: form.studyName, simlet_description: form.studyDescription }, 
-				function(error, result) {	
-					Utils.toggleSubmit(currentform);
-					Utils.toggleAddForm('edit_study');
-					reloadStudy();
-				});
-			}
-			return false;
-		});
-
-		$("#generate_study_link").on('submit', function(event){
-			event.preventDefault();
-			let currentform = this;
-			let errorbox = $(this).find('.error');
-			let custom_slug=null;
-			let length=null;
-			let form = Utils.getFormData($("#generate_study_custom_slug_link_form"));
-			
-			if (form.custom_slug != "") {
-				custom_slug=form.custom_slug;
-			} 
-			else {
-				form = Utils.getFormData($("#generate_study_link_length_form"));
-				if (form.link_length_shlink != "") {
-					length = form.link_length_shlink;
+						if(syncError) {
+							errorbox.text(syncError.responseJSON ? syncError.responseJSON.message : syncError.message || syncError);
+							return;
+						}
+						Utils.toggleAddForm('edit_test');
+						reloadStudy();
+					});
 				}
-			}
-			Utils.toggleSubmit(currentform);
-			
-			Simva.generateShlinkURL(studyid, custom_slug, length, (error, result) => {
-				if(!error) {
-					shlink = result;
-					let shortUrl=shlink.shortUrl;
-					// Copy the text inside the text field
-					navigator.clipboard.writeText(shortUrl);
-					// Alert Short URL
-					alert(shortUrl);
-					Utils.toggleSubmit(currentform);
-					Utils.toggleAddForm('generate_study_link');
-					reloadStudy();
+
+				if(nameChanged || descriptionChanged) {
+					Simva.updateTest("<%= study %>", Number(testId), { session_name : form.testName, session_description : form.testDescription }, function(error){
+						if(error) {
+							Utils.toggleSubmit(currentform);
+							errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+							return;
+						}
+						finishSync();
+					});
 				} else {
-					errorbox.text(error);
-					Utils.toggleSubmit(currentform);
+					finishSync();
 				}
-			});
+			}
 			return false;
 		});
 	});
 
-	copyShortURL = function(){
-		// Copy the text inside the text field
-		navigator.clipboard.writeText(shlink.shortUrl);
-		// Alert Short URL
-		alert(shlink.shortUrl);
-	}
-
-	deleteShLink = function(){
-		let shortCode=shlink.shortCode;
-		if(confirm(`<%- t('scheduler.shlink.delete.confirm', { ns : 'SIMLETs', shlink : '${shortCode}', SIMLET : '${study.simlet_name}' }) %>`)){
-			Simva.deleteShLink(studyid, (error, result) => {
-				if(!error) {
-					shlink = null;
-					reloadStudy();
-				}
-			});
-		}
-	}
-
-	let downloadUAConfig = function(){
-		var content = JSON.stringify({
-			study: study.simlet_id,
-			host: "<%= config.api.host %>",
-			protocol: "<%= config.api.protocol %>",
-			port: "<%= config.api.port %>",
-			url: "<%= config.simva.url %>",			
-			sso: "<%= config.sso.url %>/realms/<%= config.sso.realm %>/protocol/openid-connect", 
-    		client_id: "uadventure"
-		}, null, 2);
-
-		var filename = "simva.conf";
-
-		Utils.download(filename, content);
-	}
-
-	let downloadStudyConfig = function() {
-		Simva.exportStudyConfig(study.simlet_id, function(error, result) {
-			if(!error){
-				var studyExport = result;
-				var content = JSON.stringify(studyExport, null, 2);
-				var filename = `simva-${study.simlet_name}-export.json`;
-
-				Utils.download(filename, content);
-			}
-		})
-	}
 
 	// TODO
 	let downloadSessionData = function(sessionId) {
@@ -1448,13 +1295,7 @@
 	let toggleTest = function(id) {
 		$(`#test_${id}`).find('.activities').toggleClass('collapsed');
 		$(`#test_${id}`).find('.expandButton').toggleClass('collapsed');
-	}
-
-	let changeTab = function(tab, form, subform){
-		$(`#${form} .tab`).removeClass('selected');
-		$(`#${form} .subform`).removeClass('selected');
-		$(tab).toggleClass('selected');
-		$(`#${subform}`).toggleClass('selected');
+		$(`#test_${id}`).find('.activityDescription').toggleClass('collapsed');
 	}
 
 	let reloadStudy = function(){
@@ -1639,74 +1480,59 @@
 	}
 
 	let openEditTestForm = function(testId){
-		document.getElementById("edit_test_error").innerHTML = "";
+		let test = getTestFromTestId(testId);
+
+		$('#edit_test_id').val(testId);
+		$('#prev_test_name').val(test.session_name);
+		$('#prev_test_description').val(test.session_description);
+		
+		$('#edit_test_error').text("");
+		$('#edit_test_name').val(test.session_name);
+		$('#edit_test_description').val(test.session_description);
+		
 		closeTagCreator('edit');
 		closeTagEditor('edit');
 		closeTagDropdown('edit');
 		$('#edit_test_new_tag_name').val('');
 		$(getTagSearchInputSelector('edit')).val('');
-		var inputElement = document.getElementById('edit_test_name');
-		let test = getTestFromTestId(testId);
 		const currentTags = Array.isArray(test.tags) ? test.tags.map(normalizeTag).filter((tag) => tag !== null) : [];
 		selectedTagsForEdit = currentTags;
 		originalEditTagIds = currentTags.map((tag) => Number(tag.tag_id));
-		inputElement.value = test.session_name;
-		$('#edit_test input[name="test"]').val(test.session_id);
-		$('#edit_test input[name="testName"]').val(test.session_name);
 		loadAvailableTags(function(loadError){
 			if(loadError) {
 				$('#edit_test_error').text(loadError.responseJSON ? loadError.responseJSON.message : loadError.message || loadError);
 				return;
 			}
 			renderSelectedSessionTags('edit');
+
 			$('#edit_test').toggleClass('shown');
 		});
 	}
 
 	let openEditStudyForm = function(){
-		$('#edit_study').toggleClass('shown');
-		$('#edit_study_error').text("");
-		$('#edit_simlet_name').val(study.simlet_name);
-		$('#edit_study_description').val(study.simlet_description);
+		$('#study_form_error').text("");
+		$('#edit_study_id').val(study.simlet_id);
+		
+		$("#study_form_title").text("<%- t('edit.submit.title', { ns : 'SIMLETs' }) %>")
+		$("#name_desc_submit").val("<%- t('edit.submit.title', { ns : 'SIMLETs' }) %>")
+
+		$("#study_form").toggleClass("shown");
+
+		$('#prev_study_name').val(study.simlet_name);
+		$('#prev_study_description').val(study.simlet_description);
+
+		$('#study_name').val(study.simlet_name);
+		$('#study_description').val(study.simlet_description);
 	}
+</script>
 	
-	let openGenerateLinkForm = function() {
-		document.getElementById("generate_link_error").innerHTML = "";
-		document.getElementById("generate_link_custom_slug_error").innerHTML = "";
-		var inputElement = document.getElementById('generate_study_link');
-		$('#generate_study_link input[name="study"]').val(study.simlet_id);
-		if(shlink) {
-			if(shlink.shortCode) {
-				$('#generate_study_link input[name="custom_slug_shlink"]').val(shlink.shortCode);
-			}
-		}
-		$('#generate_study_link').toggleClass('shown');
-	}
 	
-	let openConfigDownloadForm = function() {
-		$('#download_config').toggleClass('shown');
-	}
 
 
-	// Main Paint functions
-
+<!-- Main Paint functions -->
+<script>
 	let paintStudy = function(study, participants, tests, allocator, groups, allgroups, platforms){
 		$('#simlet_name').text(study.simlet_name);
-
-		Simva.getShLink(studyid, (error, result) => {
-			if(!error) {
-				shlink = result;
-				$('#shlink_url_short').val(`<%- t('scheduler.shlink.message', { ns : 'SIMLETs', shlink : '${shlink.shortUrl}' }) %>`);
-				$("#generate_shlink_url").hide();
-				$("#shlink_url").show();
-				$("#delete_shlink_url").show();
-			} else {
-				shlink = null;
-				$("#generate_shlink_url").show();
-				$("#shlink_url").hide();
-				$("#delete_shlink_url").hide();
-			}
-		});
 
 		paintOwners(study.direct_permissions);
 
@@ -1752,59 +1578,55 @@
 	}
 
 	let paintActive = function(active) {
+		let archiveButton = $(".icon-archive");
 		let txt = ""
 		if (active == null || active) {
 			txt = "<%- t('archive.title', { ns : 'SIMLETs' }) %>"
 			$(".basic").show();
-			$("#archivation").addClass('icon-archive');
-			$("#archivation").removeClass('icon-dearchive');
+			archiveButton.addClass('icon-archive');
+			archiveButton.removeClass('icon-dearchive');
+
+			let allSessionsFinished = true;
+			study.sessions.forEach(testid => {
+				let test = getTestFromTestId(testid);
+				if (test != null) {
+					// TODO: Remove inactive check when inactive state name changes to finished
+					allSessionsFinished = allSessionsFinished && (test.session_status == "finished" || test.session_status == "inactive");
+				}
+			});
+			if (!allSessionsFinished) {
+				archiveButton.addClass('li-disabled').removeAttr('onclick');
+			}
+			else {
+				archiveButton.removeClass('li-disabled').attr('onclick', 'toggleArchived()');
+			}
 		}
 		else {
 			txt = "<%- t('dearchive.title', { ns : 'SIMLETs' }) %>"
 			$(".basic").hide();
-			$("#archivation").addClass('icon-dearchive');
-			$("#archivation").removeClass('icon-archive');
-		}
-		$("#archivation").text(txt);
+			archiveButton.addClass('icon-dearchive');
+			archiveButton.removeClass('icon-archive');
 
-		let allSessionsFinished = true;
-		study.sessions.forEach(testid => {
-			let test = getTestFromTestId(testid);
-			if (test != null) {
-				// TODO: Remove inactive check when inactive state name changes to finished
-				allSessionsFinished = allSessionsFinished && (test.session_status == "finished" || test.session_status == "inactive");
-			}
-		});
-		if (!allSessionsFinished) {
-			$('#archivation').addClass('li-disabled').removeAttr('onclick');
+			// TEST: Comment to allow dearchivation
+			// archiveButton.hide();
 		}
-		else {
-			$('#archivation').removeClass('li-disabled').attr('onclick', 'toggleArchived()');
-		}
+		archiveButton.text(txt);
 	}
 
 	let toggleArchived = function() {
-		let allSessionsFinished = true;
-		study.sessions.forEach(testid => {
-			let test = getTestFromTestId(testid);
-			if (test != null) {
-				allSessionsFinished = allSessionsFinished && (test.session_status == "finished" || test.session_status == "inactive");
-			}
-		});
-		if (allSessionsFinished) {
-			let newActive = !(study.simlet_archived == null || study.simlet_archived);
-			Simva.updateStudy(study.simlet_id, { simlet_archived: newActive }, function(error, result){
-				if(!error) {
-					reloadStudy();
-				}
-			})
-		}
-		
-		
+		archiveStudy();
+		// let newActive = !(study.simlet_archived == null || study.simlet_archived);
+		// Simva.updateStudy(study.simlet_id, { simlet_archived: newActive }, function(error, result){
+		// 	if(!error) {
+		// 		reloadStudy();
+		// 	}
+		// })
 	}
 
 	let paintOwners = function(owners){
 		$('#owners').html('');
+		$('#owners').append("<tr><td><b>Username</b></td><td><b>Permissions</b></td><td></td>");
+		
 		for (var i = 0; i < owners.length; i++) {
 			$('#owners').append(ownerRow(owners[i]));
 		}
@@ -1972,6 +1794,7 @@
         			</ul>
 				</div>
 			</div>
+			<div class="activityDescription" style="padding:10px;">${test.session_description}</div>
 			<div class="activitySummary">
 				<div class="activityInfo">
 					<%- t('sessions.creationDate', { ns : 'SIMLETs' }) %>: ${formattedDate}
@@ -2108,4 +1931,3 @@
 <script type="text/javascript" src="/allocators/groupallocatorpainter.js"></script>
 <script type="text/javascript" src="/allocators/sessionallocatorpainter.js"></script>
 <script type="text/javascript" src="/allocators/randomallocatorpainter.js"></script>
-<script type="text/javascript" src="/kebabs.js"></script>

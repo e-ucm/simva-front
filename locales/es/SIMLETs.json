@@ -81,7 +81,8 @@
     "sessions.add.title":"Añadir Sesión",
     "sessions.edit.title":"Editar Sesión",
     "sessions.duplicate.title":"Duplicar Sesión",
-    "sessions.placeholder":"Nombre de la Sesión",
+    "sessions.name.placeholder":"Nombre de la Sesión",
+    "sessions.description.placeholder":"Descripción de la sessión",
     "sessions.delete.title":"Borrar Sesión",
     "sessions.delete.confirm":"¿Seguro que quieres borrar la Sesión '{{sesion}}' del SIMLET '{{SIMLET}}'?\nTambién se eliminarán todas las actividades y datos.",
     "sessions.activate.title":"Activar",
@@ -114,7 +115,7 @@
     "scheduler.shlink.generate.randomly_length.message":"Con una longitud de :",
     "scheduler.shlink.generate.custom_slug.title":"Utilizar un nombre personalizado",
     "scheduler.shlink.generate.submit":"Genere",
-    "scheduler.shlink.message":"Copiar url corta: {{shlink}}.",
+    "scheduler.shlink.message":"Copiar url corta: {{shlink}}",
     "scheduler.shlink.custom_slug.placeholder":"Nombre personalizado",
 
     "scheduler.shlink.delete.title":"Borrar URL Shlink del Programador",

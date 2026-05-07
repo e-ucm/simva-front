@@ -82,7 +82,8 @@
     "sessions.add.title":"Ajouter une session",
     "sessions.edit.title":"Editer le session",
     "sessions.duplicate.title":"Dupliquer la session",
-    "sessions.placeholder":"Nom du session",
+    "sessions.name.placeholder":"Nom du session",
+    "sessions.description.placeholder":"Description du session",
     "sessions.delete.title":"Supplimer la session",
     "sessions.delete.confirm":"Êtes-vous sûr de vouloir supprimer la session '{{session}}' de l'SIMLET '{{SIMLET}}'?\nToutes les activités et les données seront également supprimées.",
     "sessions.activate.title":"Activer",
@@ -115,7 +116,7 @@
     "scheduler.shlink.generate.randomly_length.message":"Avec une longueur de :",
     "scheduler.shlink.generate.custom_slug.title":"Utiliser un Slug personnalisé",
     "scheduler.shlink.generate.submit":"Générer",
-    "scheduler.shlink.message":"Copier l'url courte : {{shlink}}.",
+    "scheduler.shlink.message":"Copier l'url courte : {{shlink}}",
     "scheduler.shlink.custom_slug.placeholder":"Slug personnalisé",
 
     "scheduler.shlink.delete.title":"Supprimer l'URL du lien du planificateur",
