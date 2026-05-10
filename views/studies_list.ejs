@@ -44,7 +44,7 @@
 
 <script type="text/javascript">
 	const archived = "<%= archived %>" === "true";
-
+	
 	$(document).ready(function() {
 		refreshFunc = refreshStudies;
 		
@@ -120,8 +120,8 @@
 	}
 
 
-	let openStudyForm = function(studyId) {
-		Utils.changeTab($('#name_desc_tab_button'), 'study_form','name_desc_tab');
+	const openStudyForm = function(studyId) {
+		changeTab($('#study_name_desc_tab_button'), 'study_form','study_name_desc_tab');
 
 		$('#study_form_error').text("");
 		$('#edit_study_id').val(studyId);
@@ -130,7 +130,7 @@
 		if (studyId == null) {
 			$("#study_form_title").text("<%- t('new.title', { ns : 'SIMLETs' }) %>");
 			$("#add_study_tabs").show();
-			$("#name_desc_submit").val("<%- t('new.submit', { ns : 'SIMLETs' }) %>");
+			$("#study_name_desc_submit").val("<%- t('new.submit', { ns : 'SIMLETs' }) %>");
 
 			// Open form always
 			$("#study_form").toggleClass("shown");
@@ -145,7 +145,7 @@
 		else {
 			$("#study_form_title").text("<%- t('edit.submit.title', { ns : 'SIMLETs' }) %>");
 			$("#add_study_tabs").hide();
-			$("#name_desc_submit").val("<%- t('edit.submit.title', { ns : 'SIMLETs' }) %>");
+			$("#study_name_desc_submit").val("<%- t('edit.submit.title', { ns : 'SIMLETs' }) %>");
 
 			Simva.getStudy(studyId, function(error, result){
 				if(!error) {
@@ -162,49 +162,27 @@
 		}
 	}
 
-	let renderStudyTags = function(study) {
-		const tags = Array.isArray(study.tags) ? study.tags : [];
-		if(tags.length === 0) {
-			return '<div class="sessionTagList"><span class="sessionTagEmpty">No tags</span></div>';
-		}
+	
+	// Add cards programatically to avoid XSS
+	const simletDataIdKey = "simletId"
+	const simletDataDescriptionKey = "simletDescription"
 
-		let tagsHtml = '<div class="sessionTagList">';
-		for (let i = 0; i < tags.length; i++) {
-			const tag = tags[i] || {};
-			const tagName = tag.tag_name || 'Tag';
-			const tagColor = tag.tag_color || '#3b82f6';
-			tagsHtml += `
-				<span class="sessionTagChip">
-					<span class="sessionTagColor" style="background:${tagColor};"></span>
-					<span class="sessionTagName">${tagName}</span>
-				</span>
-			`;
-		}
-		tagsHtml += '</div>';
-		return tagsHtml;
-	}
-
-	addSimletCard = function(study, usercount) {
+	const addSimletCard = function(study, usercount) {
 		const card = $("#simlet_card_template .stopable").clone();
+		card.data(simletDataIdKey, study.simlet_id);
+		card.data(simletDataDescriptionKey, study.simlet_description);
+
 		card.attr("href", `/simlets/${study.simlet_id}`);
 				
 		const kebab = $("#kebab_template .kebab-dropdown").clone();
 		card.find(".kebab").append(kebab);
-		kebab.find(".icon-edit").click(() => { openStudyForm(study.simlet_id) });
-		kebab.find(".icon-url").click(() => { openUrlSettingsForm(study.simlet_id) });
-		kebab.find(".icon-download").click(() => { openConfigDownloadForm(study.simlet_id) });
-		if (!archived) {
-			kebab.find(".icon-archive").click(() => { archiveStudy(study.simlet_id) });
-		}
-		else {
+		if (archived) {
 			kebab.find(".icon-archive").hide();
 		}
-		kebab.find(".icon-delete").click(() => { deleteStudy(study.simlet_id, study.simlet_name) });
 
 		// Disable archive button if not all sessions are finished
 		Simva.getStudy(study.simlet_id, function(error, result) {
 			if (!error) {
-				console.log(result.participants.length)
 				card.find(".cardUsers").after(result.participants.length);
 
 				if (!archived) {
@@ -239,8 +217,34 @@
 		card.find(".cardUpdateDate").append(study.updatedAt);
 		card.find(".carrdSessions").append(study.sessions.length);
 		card.find(".cardGroups").after(study.groups.length);
-		card.find(".studyTagsRow").append(renderStudyTags(study));
+		card.find(".studyTagsRow").append(renderTags(study));
 		
 		$('#studies_list').append(card);
 	}
+
+	// 3-dot menus buttons shared listeners
+	$(document).on('click', ".simletCardTitle .icon-edit", function(e) {
+		const data = $(this).closest(".stopable").data();
+		openStudyForm(data[simletDataIdKey])
+	});
+
+	$(document).on('click', ".simletCardTitle .icon-url", function(e) {
+		const data = $(this).closest(".stopable").data();
+		openUrlSettingsForm(data[simletDataIdKey])
+	});
+
+	$(document).on('click', ".simletCardTitle .icon-download", function(e) {
+		const data = $(this).closest(".stopable").data();
+		openConfigDownloadForm(data[simletDataIdKey])
+	});
+
+	$(document).on('click', ".simletCardTitle .icon-archive", function(e) {
+		const data = $(this).closest(".stopable").data();
+		archiveStudy(data[simletDataIdKey])
+	});
+
+	$(document).on('click', ".simletCardTitle .icon-delete", function(e) {
+		const data = $(this).closest(".stopable").data();
+		deleteStudy(data[simletDataIdKey], data[simletDataDescriptionKey])
+	});	
 </script>

@@ -11,7 +11,7 @@ hr { margin: 10px 0 0; border: 1px solid #000 }
 thead { display: table-header-group; }
 .hidden { display: none; }
 
-input[type="text"], input[type="email"], input[type="password"], input[type="file"], input[type="date"], input[type="time"], input[type="number"], select { margin:4px 10px 8px 0; padding:6px; font-size:15px; border: 1px solid black; }
+input[type="text"], input[type="email"], input[type="password"], input[type="file"], input[type="date"], input[type="time"], input[type="number"], select { padding:6px; font-size:15px; border: 1px solid black; }
 .button, 		input[type="submit"], 		 input[type="button"] 		 { width:auto; border:0; padding:6px; background:#f0913f; font-size:15px; color:#fff; cursor:pointer; }
 .button.orange, input[type="submit"].orange, input[type="button"].orange { border:1px solid #0B617D; background:#0B617D }
 .button.violet, input[type="submit"].violet, input[type="button"].violet { border:1px solid #6b5faa; background:#6b5faa }
@@ -44,6 +44,7 @@ form .role_selector label {
 	background-color: #ffc695; 
 }
 form .role_selector input[type="radio"]:checked+label { font-weight: bold; background-color: #de6700; color: white; }
+.form h3 { margin-top: 10px; margin-bottom: 5px; }
 
 .header { width: 100%; background-color: #ff8f22; height: 50px; overflow: hidden; box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.3); padding: 10px; position: fixed; z-index: 100; }
 .header.black { background-color: black; color: white; }
@@ -372,6 +373,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+	color: black;
 }
 .sessionTagEmpty {
 	font-size: 12px;
@@ -656,29 +658,29 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	border-top: var(--triangleSize) solid var(--triangleColor);
 	border-bottom: 0px solid transparent;
 }
-.activities.collapsed, .activityDescription.collapsed {
+.activities.collapsed {
 	display: none;
 }
 
-.activitySummary {
+.sessionSummary {
 	display: flex;
 	width: 100%;
 	align-items: center;
 	margin-top: 5px;
 }
-.activityInfo {
+.sessionInfo {
 	width: 30%;
 }
-.activityProgress.progress {
+.sessionProgress.progress {
 	width: 40%;
 	height: 20px;
 	border: 1px solid black;
 	margin: 0;
 }
-.activityProgress.progress span {
+.sessionProgress.progress span {
 	top: 3px;
 }
-.activityDownload {
+.sessionDownload {
 	margin-right: 15px;
 	margin-left: auto;
 	cursor: pointer;
@@ -782,6 +784,6 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	background-image: url("../icon/trash.png");
 	filter: brightness(0) saturate(100%) invert(29%) sepia(78%) saturate(3518%) hue-rotate(344deg) brightness(122%) contrast(100%);
 }
-.activityDownload .icon-download::before {
+.sessionSummary .icon-download::before {
 	filter: none;
 }

@@ -5,25 +5,24 @@
 
 		<% if (typeof archived !== 'undefined' && !archived) { %>
 			<div class="tabs" id="add_study_tabs">
-				<span id="name_desc_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'study_form','name_desc_tab')"><%- t('new.title', { ns : 'SIMLETs' }) %></span>
-				<span class="tab" onclick="Utils.changeTab(this, 'study_form','import_study_tab')"><%- t('new.upload.title', { ns : 'SIMLETs' }) %></span>
+				<span id="study_name_desc_tab_button" class="tab selected" onclick="changeTab(this, 'study_form','study_name_desc_tab')"><%- t('new.title', { ns : 'SIMLETs' }) %></span>
+				<span class="tab" onclick="changeTab(this, 'study_form','import_study_tab')"><%- t('new.upload.title', { ns : 'SIMLETs' }) %></span>
 			</div>
 		<% } %>
 
-			<div id="name_desc_tab" class="subform selected">
-				<form id="name_desc_form">
+			<div id="study_name_desc_tab" class="subform selected">
+				<form id="study_name_desc_form">
 					<input hidden type="text" name="editingStudyId" id="edit_study_id">
 					<input hidden type="text" name="prevStudyName" id="prev_study_name">
 					<input hidden type="text" name="prevStudyDescription" id="prev_study_description">
 
-					<br>
 					<h3><%- t('name.edit.title', { ns : 'SIMLETs' }) %></h3>
 					<input type="text" name="studyName" id="study_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
 					<br>
 					<h3><%- t('description.edit.title', { ns : 'SIMLETs' }) %></h3>
 					<input type="text" name="studyDescription" id="study_description" placeholder="<%- t('description.placeholder', { ns : 'SIMLETs' }) %>" required>
 					<br><br>
-					<input type="submit" id="name_desc_submit" value="">
+					<input type="submit" id="study_name_desc_submit" value="">
 				</form>
 			</div>
 
@@ -50,8 +49,8 @@
 			<h2><%- t('scheduler.shlink.generate.title', { ns : 'SIMLETs' }) %></h2>
             <br>
 			<div class="tabs">
-				<span class="tab selected" type="hidden" onclick="Utils.changeTab(this, 'generate_study_link','generate_study_link_length_tab')"><%- t('scheduler.shlink.generate.randomly_length.title', { ns : 'SIMLETs' }) %></span>
-				<span class="tab" onclick="Utils.changeTab(this, 'generate_study_link','generate_study_custom_slug_link_tab')"><%- t('scheduler.shlink.generate.custom_slug.title', { ns : 'SIMLETs' }) %></span>
+				<span class="tab selected" type="hidden" onclick="changeTab(this, 'generate_study_link','generate_study_link_length_tab')"><%- t('scheduler.shlink.generate.randomly_length.title', { ns : 'SIMLETs' }) %></span>
+				<span class="tab" onclick="changeTab(this, 'generate_study_link','generate_study_custom_slug_link_tab')"><%- t('scheduler.shlink.generate.custom_slug.title', { ns : 'SIMLETs' }) %></span>
 			</div>
             <br>
 
@@ -131,15 +130,19 @@
 
 <script type="text/javascript" src="/kebabs.js"></script>
 <script>
+	const changeTab = function(tab, form, subform) {
+		Utils.changeTab(tab, form, subform)
+	}
+
     let currStudyId = null;
 	let reloadFunc = null;
 	let refreshFunc = null;
     let shlink = null;
 
     $(document).ready(function() {
-		$("#name_desc_tab").on("submit", function(event){
+		$("#study_name_desc_tab").on("submit", function(event){
 			let currentform = this;
-			let form = Utils.getFormData($("#name_desc_form"));
+			let form = Utils.getFormData($("#study_name_desc_form"));
 			Utils.toggleSubmit(currentform);
 
 			// Creating new study
@@ -236,7 +239,7 @@
 
     // --- URL FORM ---
 
-    openUrlSettingsForm = function(studyId) {
+    const openUrlSettingsForm = function(studyId) {
         currStudyId = studyId;
 
 		Simva.getShLink(studyId, (error, result) => {
@@ -257,7 +260,7 @@
 		});
 	}
 
-    openGenerateLinkForm = function() {
+    const openGenerateLinkForm = function() {
         $("#study_url_settings").toggleClass("shown");
         $("#generate_study_link").toggleClass("shown");
         $('#generate_link_error').text("");
@@ -265,14 +268,14 @@
         $('#link_length_shlink').val($('#link_length_shlink').prop("min"));
 	}
 
-	copyShortURL = function(){
+	const copyShortURL = function(){
 		// Copy the text inside the text field
 		navigator.clipboard.writeText(shlink.shortUrl);
 		// Alert Short URL
 		alert(shlink.shortUrl);
 	}
 
-    deleteShLink = function(){
+    const deleteShLink = function(){
 		Utils.toggleSubmit($("#generate_study_link"));
         Simva.getStudy(currStudyId, (error, result) => {
 			if(!error) {
@@ -297,12 +300,12 @@
 
     // --- DOWNLOAD FORM ---
 
-    openConfigDownloadForm = function(studyId) {
+    const openConfigDownloadForm = function(studyId) {
         currStudyId = studyId;
 		$('#download_config').toggleClass('shown');
 	}
 
-    downloadUAConfig = function(){
+    const downloadUAConfig = function(){
 		var content = JSON.stringify({
 			study: currStudyId,
 			host: "<%= config.api.host %>",
@@ -318,7 +321,7 @@
 		Utils.download(filename, content);
 	}
 
-	downloadStudyConfig = function() {
+	const downloadStudyConfig = function() {
 		Simva.exportStudyConfig(currStudyId, function(error, result) {
 			if(!error) {
 				var studyExport = result;
@@ -333,7 +336,7 @@
 
 	// --- ARCHIVE/DELETE ---
 
-	archiveStudy = function(studyId) {
+	const archiveStudy = function(studyId) {
 		Simva.updateStudy(studyId, { simlet_archived: true }, function(error, result) {
 			if(!error  && refreshFunc != null) {
 				refreshFunc();
@@ -341,7 +344,7 @@
 		})
 	}
 
-	deleteStudy = function(studyid, studyname){
+	const deleteStudy = function(studyid, studyname){
 		if(confirm(`<%- t('remove.confirm', { ns : 'SIMLETs', SIMLET : '${studyname}' }) %>`)){
 			Simva.deleteStudy(studyid, function(error, result) {
 				if(!error && refreshFunc != null) {
@@ -349,5 +352,32 @@
 				}
 			});
 		}
+	}
+
+
+	// TAGS
+							// study or sessoin
+	const renderTags = function(taggedElem) {
+		const tags = Array.isArray(taggedElem.tags) ? taggedElem.tags : [];
+
+		if (tags.length === 0) {
+			return '<div class="sessionTagList"><span class="sessionTagEmpty">No tags</span></div>';
+		}
+		let tagsHtml = '<div class="sessionTagList">';
+		for (let i = 0; i < tags.length; i++) {
+			const tag = tags[i] || {};
+			// const tagName = tag.tag_name || 'Tag';
+			// const tagColor = tag.tag_color || '#3b82f6';
+			const tagName = tag && tag.tag_name ? tag.tag_name : 'Tag';
+			const tagColor = tag && tag.tag_color ? tag.tag_color : '#3b82f6';
+			tagsHtml += `
+				<span class="sessionTagChip">
+					<span class="sessionTagColor" style="background:${tagColor};"></span>
+					<span class="sessionTagName">${tagName}</span>
+				</span>
+			`;
+		}
+		tagsHtml += '</div>';
+		return tagsHtml;
 	}
 </script>
