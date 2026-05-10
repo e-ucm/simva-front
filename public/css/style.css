@@ -167,9 +167,21 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .content .new_element form input { width:100% }
 .content .new_element form select { width:100% }
 
-.content .new_element .tabs { width: 100%; display: table; }
-.content .new_element .tab { color: white; background-color: gray; width: auto; display: table-cell; padding: 10px; border: 1px solid white; cursor: pointer; }
-.content .new_element .tab.selected { color: black; background-color: white; cursor: default; }
+.content .new_element .tabs { width: 100%; display: flex; }
+.content .new_element .tab {
+	flex: 1;
+	display: flex;
+	height: auto;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+ 	color: black;
+ 	background-color: lightgray;
+ 	padding: 10px;
+ 	border: 1px solid white;
+ 	cursor: pointer;
+ }
+.content .new_element .tab.selected { color: white; background-color: #f0913f; cursor: default; font-weight: 700; }
 .content .new_element .subform { display: none; }
 .content .new_element .subform.selected { display: block; }
 
@@ -543,6 +555,8 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	display: flex;
     gap: 5px;
 	height: min-content;
+	align-items: center;
+	text-align: center;
 }
 
 

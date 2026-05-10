@@ -18,7 +18,7 @@
 
 <div id="study_tabs">
 	<div class="studyTabsButtons">
-		<input class="tab yellow selected" type="button" onclick="changeTab(this, 'study_tabs','sessions_tab')" value="<%- t('session.tab.title', { ns : 'SIMLETs' }) %>">
+		<input class="tab yellow selected" type="button" onclick="changeTab(this, 'study_tabs','sessions_tab')" value="<%- t('sessions.tab.title', { ns : 'SIMLETs' }) %>">
 		<input class="tab yellow" type="button" onclick="changeTab(this, 'study_tabs','users_tab')" value="<%- t('users.tab.title', { ns : 'SIMLETs' }) %>">
 	</div>
 	<div id="sessions_tab" class="subform studyTab selected">
@@ -42,25 +42,25 @@
 					<div class="kebab">
 						<ul class="kebab-dropdown">
 							<li class="kebab-icon icon-edit">
-								<%- t('sessions.edit.title', { ns : 'SIMLETs' }) %>
+								<%- t('session.settings.edit.title', { ns : 'SIMLETs' }) %>
 							</li>
 							<li class="kebab-icon icon-add">
-								<%- t('activities.add.title', { ns : 'SIMLETs' }) %>
+								<%- t('session.settings.add_activity.title', { ns : 'SIMLETs' }) %>
 							</li>
 							<li class="kebab-icon icon-duplicate">
-								<%- t('sessions.duplicate.title', { ns : 'SIMLETs' }) %>
+								<%- t('session.settings.duplicate.title', { ns : 'SIMLETs' }) %>
 							</li>
 							<li class="kebab-icon icon-activate">
-								<%- t('sessions.activate.title', { ns : 'SIMLETs' }) %>
+								<%- t('session.settings.activate.title', { ns : 'SIMLETs' }) %>
 							</li>
 							<li class="kebab-icon icon-pause">
-								<%- t('sessions.pause.title', { ns : 'SIMLETs' }) %>
+								<%- t('session.settings.pause.title', { ns : 'SIMLETs' }) %>
 							</li>
 							<li class="kebab-icon icon-finish">
-								<%- t('sessions.finish.title', { ns : 'SIMLETs' }) %>
+								<%- t('session.settings.finish.title', { ns : 'SIMLETs' }) %>
 							</li>
 							<li class="kebab-icon icon-delete">
-								<%- t('sessions.delete.title', { ns : 'SIMLETs' }) %>
+								<%- t('session.settings.delete.title', { ns : 'SIMLETs' }) %>
 							</li>
 						</ul>
 					</div>
@@ -68,9 +68,9 @@
 				<div class="sessionDescription" style="padding:10px;">	 </div>
 				<div class="sessionSummary">
 					<div class="sessionInfo">
-						<strong class="sessionCreateDate"><%- t('sessions.creationDate', { ns : 'SIMLETs' }) %>: 	</strong>
+						<strong class="sessionCreateDate"><%- t('sessions.createdAt', { ns : 'SIMLETs' }) %>: 	</strong>
 						<br>
-						<strong class="sessionActivities"><%- t('sessions.activityCount', { ns : 'SIMLETs' }) %>:	</strong>  &nbsp; <strong class="sessionUsers"><%- t('sessions.usercount', { ns : 'SIMLETs' }) %>:	</strong>
+						<strong class="sessionActivities"><%- t('sessions.activities', { ns : 'SIMLETs' }) %>:	</strong>  &nbsp; <strong class="sessionUsers"><%- t('sessions.users', { ns : 'SIMLETs' }) %>:	</strong>
 					</div>
 					<div class="activityProgress sessionProgress progress">
 						<div class="done">	</div>
@@ -101,12 +101,12 @@
 							<input hidden type="text" name="prevSessionName" id="prev_session_name">
 							<input hidden type="text" name="prevSessionDescription" id="prev_session_description">
 
-							<h3><%- t('name.edit.title', { ns : 'SIMLETs' }) %></h3>
-							<input type="text" name="sessionName" id="session_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
+							<h3><%- t('sessions.name.title', { ns : 'SIMLETs' }) %></h3>
+							<input type="text" name="sessionName" id="session_name" placeholder="<%- t('sessions.name.placeholder', { ns : 'SIMLETs' }) %>" required>
 							<br>
-							<h3><%- t('description.edit.title', { ns : 'SIMLETs' }) %></h3>
-							<input type="text" name="sessionDescription" id="session_description" placeholder="<%- t('description.placeholder', { ns : 'SIMLETs' }) %>" required>
-							<h3><%- t('tags.title', { ns : 'SIMLETs' }) %></h3>
+							<h3><%- t('sessions.description.title', { ns : 'SIMLETs' }) %></h3>
+							<input type="text" name="sessionDescription" id="session_description" placeholder="<%- t('sessions.description.placeholder', { ns : 'SIMLETs' }) %>" required>
+							<h3><%- t('sessions.tags.title', { ns : 'SIMLETs' }) %></h3>
 							<div style="margin-top: 5px;">
 								<div class="tagPickerArea">
 									<div class="tagPickerRow">
@@ -116,7 +116,7 @@
 												type="text"
 												id="session_tag_search"
 												class="tagSearchInput"
-												placeholder="Type a tag to find or create it."
+												placeholder="<%- t('sessions.tags.input.placeholder', { ns : 'SIMLETs' }) %>"
 												onfocus="openTagDropdown()"
 												oninput="renderAvailableTags()"
 											>
@@ -128,33 +128,30 @@
 									</div>
 								</div>
 								<div id="session_tag_creator" class="tagCreator" style="display:none;">
-									<input type="text" id="session_new_tag_name" placeholder="New tag name" style="flex: 1;">
+									<input type="text" id="session_new_tag_name" placeholder="<%- t('sessions.tags.create.placeholder', { ns : 'SIMLETs' }) %>" style="flex: 1;">
 									<input type="color" id="session_new_tag_color" value="#3b82f6" style="width: 44px; padding: 0;">
-									<!-- TODO: Change hardcoded text for localized strings -->
-									<button type="button" onclick="createAndSelectTag()">Create</button>
-									<button type="button" onclick="closeTagCreator()">Cancel</button>
+									<button type="button" onclick="createAndSelectTag()"><%- t('sessions.tags.create', { ns : 'SIMLETs' }) %></button>
+									<button type="button" onclick="closeTagCreator()"><%- t('sessions.tags.create.cancel', { ns : 'SIMLETs' }) %></button>
 								</div>
 								<div id="session_tag_editor" class="tagEditor" style="display:none;">
 									<input hidden type="text" id="edit_tag_id">
 									<input hidden type="text" id="prev_tag_name">
 									<input hidden type="color" id="prev_tag_color">
 
-									<input type="text" id="session_edit_tag_name" placeholder="Tag name" style="flex: 1;">
+									<input type="text" id="session_edit_tag_name" placeholder="<%- t('sessions.tags.edit.placeholder', { ns : 'SIMLETs' }) %>" style="flex: 1;">
 									<input type="color" id="session_edit_tag_color" value="#3b82f6" style="width: 44px; padding: 0;">
-									<!-- TODO: Change hardcoded text for localized strings -->
-									<button type="button" onclick="saveEditingTag()">Save</button>
-									<button type="button" onclick="closeTagEditor()">Cancel</button>
+									<button type="button" onclick="saveEditingTag()"><%- t('sessions.tags.edit.save', { ns : 'SIMLETs' }) %></button>
+									<button type="button" onclick="closeTagEditor()"><%- t('sessions.tags.edit.cancel', { ns : 'SIMLETs' }) %></button>
 								</div>
 								<span class="error" id="session_tags_error"></span>
 							</div>
-							<br>
 
 							<div id="can_be_manually_activated" >
-								<!-- TODO: Add localized string -->
+								<br>
 								<h3><%- t('sessions.can_be_manually_activated', { ns : 'SIMLETs' }) %></h3>
 								<input type="checkbox" name="can_be_manually_activated" checked>
-								<br>
 							</div>
+							<br>
 							<input type="submit" id="session_submit" value="">
 						</form>
 					</div>
@@ -176,7 +173,7 @@
 
 							<!-- TODO: Add localized string -->
 							<h3>New session name</h3>
-							<input type="text" name="name" id="duplicate_test_name" placeholder="<%- t('sessions.placeholder', { ns : 'SIMLETs' }) %>" required>
+							<input type="text" name="name" id="duplicate_test_name" placeholder="<%- t('sessions.name.placeholder', { ns : 'SIMLETs' }) %>" required>
 							<br><br>
 							<input type="submit" value="<%- t('sessions.duplicate.title', { ns : 'SIMLETs' }) %>">
 							<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
@@ -610,7 +607,7 @@
 				const tagsChanged = selectedTagIds.length !== originalTagsIds.length || selectedTagIds.some((tagId) => !originalTagsIds.includes(tagId));
 
 				if (!nameChanged && !descriptionChanged && !tagsChanged) {
-					errorbox.text("<%- t('edit.no_change', { ns : 'SIMLETs' }) %>");
+					errorbox.text("<%- t('edit.no_changes.message', { ns : 'SIMLETs' }) %>");
 					Utils.toggleSubmit(currentform);
 				}
 				else {
@@ -646,10 +643,10 @@
 			return false;
 		});
 		
+		// TODO: Check
 		$("#duplicate_test_form").on('submit', function(event) {
 			let form = Utils.getFormData($("#duplicate_test_form"));
 			let errorbox = $(this).find('.error');
-			console.log(form)
 			Simva.duplicateTestFromStudy(studyid, { session_name: form.name, from: form.test }, function(error, result) {
 				if (error && error.responseJSON) {
 					errorbox.text(error.responseJSON.message);
@@ -728,7 +725,7 @@
 					errorbox.text(error);
 				} else {
 					if (Object.keys(updatedActivity).length == 0) {
-						errorbox.text("<%- t('edit.no_change', { ns : 'SIMLETs' }) %>");
+						errorbox.text("<%- t('edit.no_changes.message', { ns : 'SIMLETs' }) %>");
 						Utils.toggleSubmit(currentform);
 					} else {
 						Simva.updateActivity(form.activity, updatedActivity, function(error, result) {
@@ -960,7 +957,7 @@
 		// Creating new session
 		if (testId == null) {
 			$("#session_form_title").text("<%- t('sessions.add.title', { ns : 'SIMLETs' }) %>");
-			$("#session_submit").val("<%- t('sessions.add.title', { ns : 'SIMLETs' }) %>");
+			$("#session_submit").val("<%- t('sessions.add.submit', { ns : 'SIMLETs' }) %>");
 			$("#can_be_manually_activated").show();
 
 			$('#prev_session_name').val("");
@@ -975,7 +972,7 @@
 		// Editing session
 		else {
 			$("#session_form_title").text("<%- t('sessions.edit.title', { ns : 'SIMLETs' }) %>");
-			$("#session_submit").val("<%- t('sessions.edit.title', { ns : 'SIMLETs' }) %>");
+			$("#session_submit").val("<%- t('sessions.edit.submit', { ns : 'SIMLETs' }) %>");
 			$("#can_be_manually_activated").hide();
 
 			$('#prev_session_name').val(test.session_name);
@@ -989,6 +986,10 @@
 			originalTagsIds = currentTags.map((tag) => Number(tag.tag_id));
 		}
 
+		closeTagCreator();
+		closeTagDropdown();
+		closeTagEditor();
+		
 		updateAndRenderCurrentTags(function(loadError) {
 			$("#session_form_menu").toggleClass("shown");
 			if (loadError) {
@@ -1002,8 +1003,8 @@
 		$('#study_form_error').text("");
 		$('#edit_study_id').val(study.simlet_id);
 		
-		$("#study_form_title").text("<%- t('edit.submit.title', { ns : 'SIMLETs' }) %>")
-		$("#study_name_desc_submit").val("<%- t('edit.submit.title', { ns : 'SIMLETs' }) %>")
+		$("#study_form_title").text("<%- t('simlet.edit.title', { ns : 'SIMLETs' }) %>")
+		$("#study_name_desc_submit").val("<%- t('simlet.edit.submit', { ns : 'SIMLETs' }) %>")
 
 		$("#study_form").toggleClass("shown");
 
@@ -1037,7 +1038,7 @@
 
 		$('#tests').empty();
 		if (tests.length === 0) {
-			$('#tests').append("<p><%- t('sessions.zero.message', { ns : 'SIMLETs' }) %></p>");
+			$('#tests').append("<p><%- t('no_sessions.message', { ns : 'SIMLETs' }) %></p>");
 		} else {
 			for (var i = 0; i < tests.length; i++) {
 				fullyPaintTest(tests[i]);
@@ -1186,7 +1187,7 @@
 		$(`#test_${test.session_id} .activities`).empty();
 
 		if (activities.length === 0) {
-			$(`#test_${test.session_id} .activities`).text("<%- t('activities.zero.message', { ns : 'SIMLETs' }) %>");
+			$(`#test_${test.session_id} .activities`).text("<%- t('no_activities.message', { ns : 'SIMLETs' }) %>");
 		} else {
 			for (var i = 0; i < activities.length; i++) {
 				switch(activities[i].activity_type) {
@@ -1387,7 +1388,7 @@
 		const errorBox = $("#session_tags_error");
 
 		if (!nameChanged && !colorChanged) {
-			errorBox.text("<%- t('edit.no_change', { ns : 'SIMLETs' }) %>");
+			errorBox.text("<%- t('edit.no_changes.message', { ns : 'SIMLETs' }) %>");
 		}
 		else if ($("#session_edit_tag_name").val() == "" || $("#session_edit_tag_name").val() == null) {
 			errorBox.text('Tag name is required');
@@ -1434,17 +1435,17 @@
 		const addableTags = filteredTags.filter((tag) => !selectedIds.includes(Number(tag.tag_id)));
 
 		if (availableTags.length === 0) {
-			container.append('<div class="tagDropdownEmpty">No tags yet. Use + to create one.</div>');
+			container.append(`<div class="tagDropdownEmpty"><%- t('sessions.tags.dropdown.no_tags', { ns : 'SIMLETs' }) %></div>`);
 			return;
 		}
 
 		if (filteredTags.length === 0) {
-			container.append('<div class="tagDropdownEmpty">No matches for your search.</div>');
+			container.append(`<div class="tagDropdownEmpty"><%- t('sessions.tags.dropdown.no_matches', { ns : 'SIMLETs' }) %></div>`);
 			return;
 		}
 
 		if (addableTags.length === 0) {
-			container.append('<div class="tagDropdownEmpty">All matching tags are already in this session.</div>');
+			container.append(`<div class="tagDropdownEmpty"><%- t('sessions.tags.dropdown.all_matches', { ns : 'SIMLETs' }) %></div>`);
 			return;
 		}
 
@@ -1765,7 +1766,7 @@
 				}
 			}
 		} else {
-			toret += "<option><%- t('sessions.zero.title', { ns : 'SIMLETs' }) %></option>";
+			toret += "<option><%- t('no_session_assigned.title', { ns : 'SIMLETs' }) %></option>";
 		}
 
 		toret += '</select></td></tr>';
