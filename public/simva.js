@@ -475,6 +475,14 @@ var Simva = {
 		Utils.get(`/bff/activities/${activity_id}/presignedurl`, callback);
 	},
 
+	getSessionLRSData: function(simlet_id, session_id, callback){
+		Utils.get(`/bff/simlets/${simlet_id}/sessions/${session_id}/lrs/statements`, callback);
+	},
+
+	getActivityLRSData: function(activity_id, callback){
+		Utils.get(`/bff/activities/${activity_id}/lrs/statements`, callback);
+	},
+
 	setActivityTest: function(activity_id, payload, callback){
 		Utils.post(`/bff/activities/${activity_id}/test`, payload, callback);
 	},

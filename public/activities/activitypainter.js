@@ -867,40 +867,20 @@ var ActivityPainter = {
 	},
 
 	getMinioData: function(activity){
-		Simva.getMinioDataUrl(activity, function(error, result){
+		Simva.getActivityLRSData(activity, (error, data) => {
 			if(error){
 				$.toast({
-					heading: 'Error loading the result',
+					heading: this.commun.result_error_downloading,
 					text: error.message,
 					position: 'top-right',
 					icon: 'error',
 					stack: false
 				});
-			}else{
-				const downloadUrl = result && result.url ? result.url : null;
-
-				if(!downloadUrl) {
-					$.toast({
-						heading: 'Error loading the result',
-						text: 'No download URL returned by the server',
-						position: 'top-right',
-						icon: 'error',
-						stack: false
-					});
-					return;
-				}
-
-				const link = document.createElement('a');
-				link.href = downloadUrl;
-				link.target = '_blank';
-				link.rel = 'noopener noreferrer';
-				link.download = '';
-				link.style.display = 'none';
-				document.body.appendChild(link);
-				link.click();
-				document.body.removeChild(link);
+			} else {
+				this.openResultContent(data.data, this.commun.result_error_downloading);
+				this.downloadContent(data.data, `full_xapi_data_${activity}.json`, this.commun.result_error_downloading);
 			}
-		})
+		});
 	},
 
 	paintActivityButtonCompletion: function(activity) {

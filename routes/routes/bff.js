@@ -1,3 +1,4 @@
+const SimvaAsync = require('../lib/simvaAsync');
 const usertools = require('../lib/usertools');
 
 module.exports = function(auth, config){
@@ -1133,6 +1134,54 @@ module.exports = function(auth, config){
 
     router.delete('/activities/:activityid', auth, async (req, res, next) => {
         Simva.deleteActivity(req.params["activityid"], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.get('/simlets/:simletid/sessions/:sessionid/lrs/statements', auth, async (req, res, next) => {
+        try {
+            let statements = [];
+            let result = await SimvaAsync.getSessionLRSData(req.params["simletid"], req.params["sessionid"], req.session.id);
+            for(let i=0; i<result.statements.length; i++) {
+                statements.push(JSON.stringify(result.statements[i]));
+            }
+            while(result.more != '') {
+                result = await SimvaAsync.getSessionMoreLRSData(req.params["simletid"], req.params["sessionid"], result.more, req.session.id);
+                for(let i=0; i<result.statements.length; i++) {
+                    statements.push(JSON.stringify(result.statements[i]));
+                }
+            }
+            res.status(200).send({data : statements.join('\n')});
+        } catch(error) {
+            next(error.response.data);
+        }
+    });
+
+    router.get('/activities/:activityid/lrs/statements', auth, async (req, res, next) => {
+        try {
+            let statements = [];
+            let result = await SimvaAsync.getActivityLRSData(req.params["activityid"], req.session.id);
+            for(let i=0; i<result.statements.length; i++) {
+                statements.push(JSON.stringify(result.statements[i]));
+            }
+            while(result.more != '') {
+                result = await SimvaAsync.getActivityMoreLRSData(req.params["activityid"], result.more, req.session.id);
+                for(let i=0; i<result.statements.length; i++) {
+                    statements.push(JSON.stringify(result.statements[i]));
+                }
+            }
+            res.status(200).send({data : statements.join('\n')});
+        } catch(error) {
+            next(error.response.data);
+        }
+    });
+
+    router.get('/activities/:activityid/lrs/statements/more', auth, async (req, res, next) => {
+        SimvaAsync.getActivityMoreLRSData(req.params["activityid"], req.query.url, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {

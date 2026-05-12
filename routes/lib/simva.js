@@ -508,6 +508,14 @@ class Simva {
 		this.get(`${this.apiurl}/activities/${activity_id}/presignedurl`, sessionId, callback);
 	}
 
+	getSessionLRSData(simlet_id, session_id, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simlet_id}/sessions/${session_id}/lrs/statements`, sessionId, callback);
+	}
+
+	getActivityLRSData(activity_id, sessionId, callback){
+		this.get(`${this.apiurl}/activities/${activity_id}/lrs/statements`, sessionId, callback);
+	}
+
 	setActivityTest(activity_id, payload, sessionId, callback){
 		this.post(`${this.apiurl}/activities/${activity_id}/test`, null, payload, sessionId, callback);
 	}
