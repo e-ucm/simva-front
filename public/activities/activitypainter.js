@@ -93,94 +93,19 @@ var ActivityPainter = {
 	},
 
 	isDownloadUrl: function(value){
-		if(typeof value !== 'string') {
-			return false;
-		}
-
-		return /^(https?:)?\/\//.test(value) || value.startsWith('/');
+		return Utils.isDownloadUrl(value);
 	},
 
 	downloadContent: function(source, filename, errorHeading){
-		if(!this.isDownloadUrl(source)) {
-			Utils.download(filename, source);
-			return;
-		}
-
-		fetch(source)
-			.then((response) => {
-				if(!response.ok) {
-					throw new Error(`HTTP ${response.status}`);
-				}
-				return response.blob();
-			})
-			.then((blob) => {
-				const objectUrl = window.URL.createObjectURL(blob);
-				const link = document.createElement('a');
-				link.href = objectUrl;
-				link.download = filename;
-				link.style.display = 'none';
-				document.body.appendChild(link);
-				link.click();
-				document.body.removeChild(link);
-				window.URL.revokeObjectURL(objectUrl);
-			})
-			.catch((error) => {
-				$.toast({
-					heading: errorHeading,
-					text: error.message,
-					position: 'top-right',
-					icon: 'error',
-					stack: false
-				});
-			});
+		Utils.downloadContent(source, filename, errorHeading);
 	},
 
 	displayResultInFloatingFrame: function(content){
-		const stringifyres = String(content)
-			.replace(/</g, "&lt;")
-			.replace(/>/g, "&gt;");
-
-		let renderedContent = `<pre style="padding: 20px; background-color: #f0f0f0; color: #333; font-family: monospace; white-space: pre-wrap; word-wrap: break-word;">${stringifyres}</pre>`;
-
-		let context = $('#iframe_floating iframe')[0].contentWindow.document;
-		let body = $('body', context);
-
-		body.html(renderedContent);
-		body.css({
-			'margin': '0',
-			'padding': '0',
-			'overflow': 'auto',
-			'height': '100vh'
-		});
-
-		Utils.toggleAddForm('iframe_floating');
+		Utils.displayResultInFloatingFrame(content, 'iframe_floating');
 	},
 
 	openResultContent: function(source, errorHeading){
-		if(!this.isDownloadUrl(source)) {
-			this.displayResultInFloatingFrame(source);
-			return;
-		}
-
-		fetch(source)
-			.then((response) => {
-				if(!response.ok) {
-					throw new Error(`HTTP ${response.status}`);
-				}
-				return response.text();
-			})
-			.then((content) => {
-				this.displayResultInFloatingFrame(content);
-			})
-			.catch((error) => {
-				$.toast({
-					heading: errorHeading,
-					text: error.message,
-					position: 'top-right',
-					icon: 'error',
-					stack: false
-				});
-			});
+		Utils.openResultContent(source, errorHeading, 'iframe_floating');
 	},
 
 	getExtraForm: function (callback) {

@@ -158,6 +158,14 @@ var Utils = {
 		});
 	},
 
+	isDownloadUrl: function(value){
+		if(typeof value !== 'string') {
+			return false;
+		}
+
+		return /^(https?:)?\/\//.test(value) || value.startsWith('/');
+	},
+
 	download: function(filename, text){
 		var element = document.createElement('a');
 		element.setAttribute('href', `data:text/plain;charset=utf-8, ${encodeURIComponent(text)}`);
@@ -169,6 +177,97 @@ var Utils = {
 		element.click();
 
 		document.body.removeChild(element);
+	},
+
+	downloadContent: function(source, filename, errorHeading){
+		if(!this.isDownloadUrl(source)) {
+			this.download(filename, source);
+			return;
+		}
+
+		fetch(source)
+			.then((response) => {
+				if(!response.ok) {
+					throw new Error(`HTTP ${response.status}`);
+				}
+				return response.blob();
+			})
+			.then((blob) => {
+				const objectUrl = window.URL.createObjectURL(blob);
+				const link = document.createElement('a');
+				link.href = objectUrl;
+				link.download = filename;
+				link.style.display = 'none';
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+				window.URL.revokeObjectURL(objectUrl);
+			})
+			.catch((error) => {
+				if(errorHeading && typeof $ !== 'undefined' && $.toast) {
+					$.toast({
+						heading: errorHeading,
+						text: error.message,
+						position: 'top-right',
+						icon: 'error',
+						stack: false
+					});
+				}
+			});
+	},
+
+	displayResultInFloatingFrame: function(content, floatingId){
+		const stringifyres = String(content)
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;');
+
+		const renderedContent = `<pre style="padding: 20px; background-color: #f0f0f0; color: #333; font-family: monospace; white-space: pre-wrap; word-wrap: break-word;">${stringifyres}</pre>`;
+		const targetFloatingId = floatingId || 'iframe_floating';
+		const iframe = $(`#${targetFloatingId} iframe`)[0];
+		if(!iframe || !iframe.contentWindow || !iframe.contentWindow.document) {
+			return;
+		}
+
+		const context = iframe.contentWindow.document;
+		const body = $('body', context);
+		body.html(renderedContent);
+		body.css({
+			'margin': '0',
+			'padding': '0',
+			'overflow': 'auto',
+			'height': '100vh'
+		});
+
+		this.toggleAddForm(targetFloatingId);
+	},
+
+	openResultContent: function(source, errorHeading, floatingId){
+		if(!this.isDownloadUrl(source)) {
+			this.displayResultInFloatingFrame(source, floatingId);
+			return;
+		}
+
+		fetch(source)
+			.then((response) => {
+				if(!response.ok) {
+					throw new Error(`HTTP ${response.status}`);
+				}
+				return response.text();
+			})
+			.then((content) => {
+				this.displayResultInFloatingFrame(content, floatingId);
+			})
+			.catch((error) => {
+				if(errorHeading && typeof $ !== 'undefined' && $.toast) {
+					$.toast({
+						heading: errorHeading,
+						text: error.message,
+						position: 'top-right',
+						icon: 'error',
+						stack: false
+					});
+				}
+			});
 	},
 
 	decodeJWT: function (token) {

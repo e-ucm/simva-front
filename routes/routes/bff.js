@@ -1142,52 +1142,63 @@ module.exports = function(auth, config){
         });
     });
 
-    router.get('/simlets/:simletid/sessions/:sessionid/lrs/statements', auth, async (req, res, next) => {
-        try {
-            let statements = [];
-            let result = await SimvaAsync.getSessionLRSData(req.params["simletid"], req.params["sessionid"], req.session.id);
-            for(let i=0; i<result.statements.length; i++) {
+    async function collectLrsStatements(fetchFirstPage, fetchNextPage) {
+        const statements = [];
+        let result = await fetchFirstPage();
+        let previousFromCursor = null;
+        while (result) {
+            for (let i = 0; i < (result.statements || []).length; i++) {
                 statements.push(JSON.stringify(result.statements[i]));
             }
-            while(result.more != '') {
-                result = await SimvaAsync.getSessionMoreLRSData(req.params["simletid"], req.params["sessionid"], result.more, req.session.id);
-                for(let i=0; i<result.statements.length; i++) {
-                    statements.push(JSON.stringify(result.statements[i]));
-                }
+
+            more = result.more;
+            logger.info(`Fetched ${statements.length} statements so far...`);
+            logger.info(`More statements available: ${more}`);
+            
+            // Break if no more link
+            if (!more) {
+                break;
             }
-            res.status(200).send({data : statements.join('\n')});
+
+            // Extract the 'from' cursor value to detect infinite loops (parameter order may vary)
+            const fromMatch = more.match(/[?&]from=([^&]+)/);
+            const currentFromCursor = fromMatch ? fromMatch[1] : null;
+            
+            // Break if the cursor hasn't advanced (infinite loop detection)
+            if (currentFromCursor && currentFromCursor === previousFromCursor) {
+                logger.warn(`Pagination cursor stopped advancing at: ${currentFromCursor}`);
+                break;
+            }
+
+            previousFromCursor = currentFromCursor;
+            result = await fetchNextPage(more);
+        }
+
+        return statements.join('\n');
+    }
+
+    router.get('/simlets/:simletid/sessions/:sessionid/lrs/statements', auth, async (req, res, next) => {
+        try {
+            const data = await collectLrsStatements(
+                () => SimvaAsync.getSessionLRSData(req.params["simletid"], req.params["sessionid"], req.session.id),
+                (more) => SimvaAsync.getSessionMoreLRSData(req.params["simletid"], req.params["sessionid"], more, req.session.id)
+            );
+            res.status(200).send({ data });
         } catch(error) {
-            next(error.response.data);
+            next(error.response?.data || error);
         }
     });
 
     router.get('/activities/:activityid/lrs/statements', auth, async (req, res, next) => {
         try {
-            let statements = [];
-            let result = await SimvaAsync.getActivityLRSData(req.params["activityid"], req.session.id);
-            for(let i=0; i<result.statements.length; i++) {
-                statements.push(JSON.stringify(result.statements[i]));
-            }
-            while(result.more != '') {
-                result = await SimvaAsync.getActivityMoreLRSData(req.params["activityid"], result.more, req.session.id);
-                for(let i=0; i<result.statements.length; i++) {
-                    statements.push(JSON.stringify(result.statements[i]));
-                }
-            }
-            res.status(200).send({data : statements.join('\n')});
+            const data = await collectLrsStatements(
+                () => SimvaAsync.getActivityLRSData(req.params["activityid"], req.session.id),
+                (more) => SimvaAsync.getActivityMoreLRSData(req.params["activityid"], more, req.session.id)
+            );
+            res.status(200).send({ data });
         } catch(error) {
-            next(error.response.data);
+            next(error.response?.data || error);
         }
-    });
-
-    router.get('/activities/:activityid/lrs/statements/more', auth, async (req, res, next) => {
-        SimvaAsync.getActivityMoreLRSData(req.params["activityid"], req.query.url, req.session.id, (error, result) => {
-            if(error) {
-                next(error.response.data);
-            } else {
-                res.status(200).send(result);
-            }
-        });
     });
 
     router.get('/activitytypes', auth, async (req, res, next) => {

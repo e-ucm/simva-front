@@ -508,12 +508,25 @@ class Simva {
 		this.get(`${this.apiurl}/activities/${activity_id}/presignedurl`, sessionId, callback);
 	}
 
+	getLrsStatementsMore(baseUrl, more, sessionId, callback){
+		const encodedMore = encodeURIComponent(String(more || ''));
+		this.get(`${baseUrl}?more=${encodedMore}`, sessionId, callback);
+	}
+
 	getSessionLRSData(simlet_id, session_id, sessionId, callback){
 		this.get(`${this.apiurl}/simlets/${simlet_id}/sessions/${session_id}/lrs/statements`, sessionId, callback);
 	}
 
+	getSessionMoreLRSData(simlet_id, session_id, more, sessionId, callback){
+		this.getLrsStatementsMore(`${this.apiurl}/simlets/${simlet_id}/sessions/${session_id}/lrs/statements`, more, sessionId, callback);
+	}
+
 	getActivityLRSData(activity_id, sessionId, callback){
 		this.get(`${this.apiurl}/activities/${activity_id}/lrs/statements`, sessionId, callback);
+	}
+
+	getActivityMoreLRSData(activity_id, more, sessionId, callback){
+		this.getLrsStatementsMore(`${this.apiurl}/activities/${activity_id}/lrs/statements`, more, sessionId, callback);
 	}
 
 	setActivityTest(activity_id, payload, sessionId, callback){
