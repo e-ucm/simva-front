@@ -96,14 +96,14 @@
     "completed.error.message":"Erreur dans la définition de l'achèvement",
     "completed.all.unset": "Complété TOUS OFF",
     "completed.all.set": "Complété TOUS ON",
-    "completed.on": "Vrai",
-    "completed.off": "Faux",
+    "completed.on": "Oui",
+    "completed.off": "Non",
 
     "progress.title":"Progrès",
     "participant.title":"Participant",
     "init.title":"Init",
-    "init.on":"Vrai",
-    "init.off":"Faux",
+    "init.on":"Oui",
+    "init.off":"Non",
 
     "result.title":"Résultat",
     "result.disabled":"Desactivé",

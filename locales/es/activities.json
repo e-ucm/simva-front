@@ -96,14 +96,14 @@
     "completed.error.message":"Error al establecer la finalización",
     "completed.all.unset": "Completar a ningúno",
     "completed.all.set": "Completar a todos",
-    "completed.on": "Verdadero",
-    "completed.off": "Falso",
+    "completed.on": "Si",
+    "completed.off": "No",
 
     "progress.title":"Progreso",
     "participant.title":"Participante",
     "init.title":"Inicio",
-    "init.on":"Verdadero",
-    "init.off":"Falso",
+    "init.on":"Si",
+    "init.off":"No",
 
     "result.title":"Resultado",
     "result.disabled":"Desactivado",

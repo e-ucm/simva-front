@@ -96,14 +96,14 @@
     "completed.error.message":"Error setting the completion",
     "completed.all.unset": "Unset Completion",
     "completed.all.set": "Set Completion",
-    "completed.on": "True",
-    "completed.off": "False",
+    "completed.on": "Yes",
+    "completed.off": "No",
 
     "progress.title":"Progress",
     "participant.title":"Participant",
     "init.title":"Init",
-    "init.on":"True",
-    "init.off":"False",
+    "init.on":"Yes",
+    "init.off":"No",
 
     "result.title":"Result",
     "result.disabled":"disabled",
