@@ -773,12 +773,12 @@
 	
 	$(document).on('click', ".sessionTop .icon-pause", function(e) {
 		const data = $(this).closest(".test").data();
-		activateTest(data[sessionDataIdKey], "paused");
+		activateTest(data[sessionDataIdKey], "inactive");
 	});
 
 	$(document).on('click', ".sessionTop .icon-finish", function(e) {
 		const data = $(this).closest(".test").data();
-		activateTest(data[sessionDataIdKey], "finished");
+		activateTest(data[sessionDataIdKey], "terminated");
 	});
 
 	$(document).on('click', ".sessionTop .icon-delete", function(e) {
@@ -918,16 +918,7 @@
 	}
 
 	let activateTest = function(testId, nextState) {
-		let act = false;
-		if (nextState == "active") {
-			act = true;
-		}
-		// TODO: Replace activate = true/false for state = active/paused/finished
-		else if (nextState == "paused") {
-			act = true;
-		}
-
-		Simva.activateSession(studyid, testId, { activate: act }, function(error, result) {
+		Simva.activateSession(studyid, testId, { activate: nextState }, function(error, result) {
 			if (!error) {
 				reloadStudy();
 			}
@@ -1152,8 +1143,6 @@
 		lastActivityCompletion = lastActivityCompletion.toFixed(2);
 
 		let sessionClass = test.session_status;
-		// TODO: Remove when inactive state name changes to finished
-		if (sessionClass == "inactive") sessionClass = "finished";
 		let sessionStatusLabel = "";
 		
 		if (sessionClass == "active") {
@@ -1162,13 +1151,13 @@
 				sessionStatusLabel = `<%- t('sessions.active.title', { ns : 'SIMLETs' }) %>`;
 			}
 		}
-		if (sessionClass == "paused") {
+		if (sessionClass == "inactive") {
 			session.find(".icon-pause").hide();
 			if (sessionStatusLabel == "") {
 				sessionStatusLabel = `<%- t('sessions.paused.title', { ns : 'SIMLETs' }) %>`;
 			}
 		}
-		if (sessionClass == "finished") {
+		if (sessionClass == "terminated") {
 			session.find(".icon-finish").hide();
 			if (sessionStatusLabel == "") {
 				sessionStatusLabel = `<%- t('sessions.finished.title', { ns : 'SIMLETs' }) %>`;
