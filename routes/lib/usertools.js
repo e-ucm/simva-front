@@ -59,6 +59,10 @@ class UserTools {
 		  } else if(simvaToken){
 			logger.info("auth() - New token");
 			let session = req.session;
+			// Ensure req.session.user exists before setting properties
+			if (!session.user) {
+			  session.user = {};
+			}
 			let profile = tmp.getProfileFromJWT(simvaToken);
 			session.user.data = profile;
 			session.user.jwt = simvaToken;

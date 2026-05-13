@@ -52,6 +52,12 @@ app.use('/scheduler', require('./routes/scheduler.js')(usertools.auth(1), config
 app.use('/archived', require('./routes/archived.js')(usertools.auth(1), config));
 
 router.get('/about', usertools.auth(0), function(req, res, next) {
+  // Defensive check: redirect to login if user is not authenticated
+  if (!req.session || !req.session.user) {
+    req.session.intendedUrl = req.originalUrl;
+    return res.redirect('/users/login');
+  }
+  
   res.render('about', { 
     config: config, 
     user: req.session.user,
@@ -82,6 +88,12 @@ router.get('/e-ucm', function(req, res, next) {
 });
 
 router.get('/', usertools.auth(0), function(req, res, next) {
+  // Defensive check: redirect to login if user is not authenticated
+  if (!req.session || !req.session.user || !req.session.user.data) {
+    req.session.intendedUrl = req.originalUrl;
+    return res.redirect('/users/login');
+  }
+  
   if(req.session.user.data.role == 'teacher' || req.session.user.data.role == 'administrator' || req.session.user.data.role == 'lrsmanager'){
     res.render('home', { 
       config: config, 
