@@ -1,4 +1,19 @@
 body, div, p, h1, h2, h3, ul, li, form { margin: 0px; padding: 0px; }
+
+/* About page sections styling */
+.about_page { padding: 60px 20px 20px 20px !important; width: 100% !important; }
+.about_page h1 { display: block !important; margin: 20px 0 30px 0 !important; padding: 0 !important; font-size: 2.2em !important; color: #ff8f22 !important; font-weight: bold !important; }
+.aboutSections { padding: 20px; max-width: 1200px; margin: 0 auto; display: block !important; }
+.aboutSections h1 { margin: 20px 0 30px 0; padding: 0; font-size: 2.2em; color: #ff8f22; font-weight: bold; }
+.aboutSection { margin-bottom: 30px; border-bottom: 2px solid #ddd; padding: 15px 0 20px 0; display: block !important; scroll-margin-top: 60px; }
+.aboutSection:last-child { border-bottom: none; }
+.aboutSection h2 { margin: 20px 0 15px 0; padding: 0; font-size: 1.8em; font-weight: bold; color: #ff8f22; }
+.aboutSection h3 { margin: 15px 0 15px 0; padding: 0; font-size: 1.4em; font-weight: bold; color: #0B617D; }
+.aboutSection p { margin: 10px 0; padding: 0; line-height: 1.6; color: #333; }
+.aboutSubSection { margin-left: 20px; margin-top: 15px; margin-bottom: 15px; padding: 15px; background-color: #f9f9f9; border-left: 4px solid #ff8f22; display: block !important; }
+.aboutSubSection h4 { margin: 0 0 10px 0; padding: 0; font-size: 1.1em; font-weight: bold; color: #0B617D; }
+.aboutSubSection p { margin: 0; padding: 0; line-height: 1.5; color: #444; }
+
 * { margin: 0px; padding: 0px; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box }
 html, body { font-family: sans-serif; margin: 0; height: 100%; width: 100% }
 body { background-color: #fff6ec }

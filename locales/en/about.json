@@ -1,4 +1,65 @@
-{ 
+{
     "title": "About",
-    "text": "This section is reserved for information, tutorials, guidance, etc.\nMost home information will be added here and home will be transformed into a dashboard.\nMeanwhile this is a placeholder.\nIt will be available in a future version."
+    "text": "This section is reserved for information, tutorials, guidance, etc.\nMost home information will be added here and home will be transformed into a dashboard.\nMeanwhile this is a placeholder.\nIt will be available in a future version.",
+    
+    "simva.title": "SIMVA",
+    "simva.description": "SIMVA infrastructure is an open architecture software which is composed of several interconnected systems. Among these systems are the unified SSO login system (KeyCloak), the processing queue system (Kafka), a cloud storage system (Minio) and a Learning record Store (LRS) to store the xAPI data. Its architecture is scalable and interoperable with other third-party tools, which enables the delegation of the most critical functionalities to reliable and scalable platforms.",
+    "simva.frontend.title": "SIMVA Front-end",
+    "simva.frontend.description": "SIMVA front-end is used to integrate the games into the system, create surveys, manage sessions, manage users participation in the sessions and to track/analyze sessions' data in real-time. This data evolves from users' responses to surveys to full insights and metrics during the whole session which also includes game-play data.",
+    "simva.roles.title": "Roles and Permissions",
+    "simva.roles.description": "In SIMVA, the user can be a teacher, a student, a researcher or a developer. The roles and permissions in the front-end are categorized into a supervisor, a coordinator and a participant. Which will be explained later in this document.",
+    
+    "simlet.title": "SIMLET (SIMVA APPLET)",
+    "simlet.description": "A container in SIMVA front-end web application to encapsulate the data of different sessions. A SIMLET is created to achieve a particular objective, for example to compare the effectiveness of a particular SG, compare between the abilities of three groups of students or compare the programming knowledge acquired across different games. Each SIMLET has its own supervisors with full authority on the SIMLET's sessions and activities. The main supervisor (the user who created the SIMLET) is the only user allowed to delete the whole SIMLET.",
+    "archived_simlet.title": "Archived SIMLET",
+    "archived_simlet.description": "An archived SIMLET is kept for reference and can be restored later. It is hidden from active working lists but preserves its configuration and history.",
+    
+    "session.title": "Session",
+    "session.description": "A container in SIMVA front-end web application to encapsulate the data of several activities. A session consists of one or more activities (pre-survey, game-play or manual/traditional learning activity and post-survey) to be undertaken by a group of participants. Each session has its own coordinators with full authority on the session's activities.",
+    
+    "supervisor.title": "SIMLET Supervisor",
+    "supervisor.description": "A user who has full access to a particular SIMLET. The main supervisor creates the SIMLET first and then can edit/delete the SIMLET or assign other supervisors or coordinators specifying the permission mode whether \"Editor\" or \"Viewer\". A supervisor with \"Editor\" mode can edit the SIMLET's information (title and description), add/edit/delete sessions, add/edit/delete different activities that compose the sessions, and assign the participants to be involved in each session. Also, a supervisor with \"Editor\" mode can add tags to the sessions, start them, track and export the results. A supervisor with \"Viewer\" mode can only view the SIMLET's configurations alongside its sessions and the associated activities and its results with no ability to add, edit or delete. Only the main supervisor is allowed to delete the SIMLET.",
+    
+    "coordinator.title": "Session Coordinator",
+    "coordinator.description": "A user who has full access to a particular session. There are two permission modes: \"Editor\" and \"Viewer\". A coordinator with \"Editor\" mode can edit the session's information (title and description), add tags to the session, add/edit/delete the different activities that form a session. In addition, a coordinator with \"Editor\" mode can assign other coordinators to the session and set their permission, whether \"Editor\" or \"Viewer\". Coordinators with both modes \"Editor\" and \"Viewer\" have access to the dashboard to view results and export them but starting the session is only limited to the coordinators with \"Editor\" mode.",
+    
+    "participant.title": "Participant",
+    "participant.description": "A user (a student for example) whose role is to undertake the activities such as answering the surveys and playing the games. The supervisor of the SIMLET can view each participant's results.",
+    
+    "gameclient.title": "Game-client",
+    "gameclient.description": "A game client is all metadata of the game such as title, description, category (awareness or education), and subject area (mathematics, programming, bullying, etc). It's the game's URL for a web game or the game compressed file for a desktop game.",
+    
+    "integratedgame.title": "Integrated game into SIMVA",
+    "integratedgame.description": "An integrated game into SIMVA means that the game-client is described in SIMVA and presented as a game-play activity template. Each time a new game is integrated into SIMVA, a game-play activity template with an ID is automatically generated. Each time the game is used in a game-play activity within a session, a new game-play activity instance is created from this template. This means that the game-play activity instance will reference the game-play activity template using its ID. Supervisors can display the integrated games from a menu in SIMVA front-end.",
+    
+    "activity.title": "Activity",
+    "activity.description": "An action or set of actions to be performed by participants. This action could be answering surveys (Limesurvey activity), playing serious games (Gameplay activity) or undertaking traditional learning exercises (manual activity).",
+    "activity.types.title": "Activity Types",
+    
+    "limesurvey.title": "Limesurvey Activity",
+    "limesurvey.description": "A survey-based activity that uses LimeSurvey as service, allowing participants to answer pre and post surveys and enabling the owners to collect data effectively.",
+    
+    "gameplay.title": "Gameplay Activity",
+    "gameplay.description": "The action of playing the serious game where participants game interaction data are collected via the xAPI component (trackers in the code), designed to integrate educational content in an engaging manner.",
+    
+    "manual.title": "Manual Activity",
+    "manual.description": "A traditional learning exercise to be undertaken by participants such as reading a book, reading an article, watching a video or any other passive learning task.",
+    
+    "activitytemplate.title": "Activity Template",
+    "activitytemplate.description": "An activity template represents the static description of an activity. It defines the metadata of an activity such as its title and description. One template can be used within many sessions by creating instances of the template. The activity template can be a survey activity, a manual activity or a game-play activity. In case of game-play activity, it will also contain game-client data.",
+    
+    "activityinstance.title": "Activity Instance",
+    "activityinstance.description": "An activity instance represents a concrete execution of an activity template. It stores participant's specific data, such as surveys' responses, manual activity performance, game-play activity interactions, such as traces and results. When the user adds an activity to a particular session, an instance of that activity template is automatically created. In case of game-play activity, the activity instance is referenced to the integrated game's ID. However, the game's collected data will be stored at the session's game-play activity level.",
+    
+    "manualcompletion.title": "Manual Completion for Activities",
+    "manualcompletion.description": "In case a participant completes an activity but its status is not set automatically to \"completed\" for a reason, there is a button that enables the supervisor/coordinator to manually change the status to \"completed\". It's also possible to manually change the status of an activity to \"completed\" for all participants at once.",
+    
+    "dashboard.title": "SIMVA dashboard",
+    "dashboard.description": "Each SIMLET contains a visual dashboard with detailed information about sessions' activities. The dashboard demonstrates general information about each activity status showing the percentage of participants completion, progress and result. It also demonstrates a detailed list of the participants, this list shows each participant's name, completion status, progress status and backup result. While the activity is receiving xAPI data, whether it's in progress or completed the dashboard is updated correspondingly to the received traces.",
+    
+    "group.title": "Group",
+    "group.description": "A Group is a set of participants used to organize assignments and allocation rules across sessions.",
+    
+    "users.title": "Users",
+    "users.description": "Users, groups, and coordinators define who participates in the Simlet and how participants are assigned to sessions."
 }

@@ -1,4 +1,65 @@
-{ 
+{
     "title": "Acerca de",
-    "text": "Esta sección está reservada para información, tutoriales, orientación, etc.\nLa mayor parte de la información de la home se añadirá aquí y la home se transformará en un dashboard.\nMientras tanto esto es un placeholder.\nEstará disponible en una versión futura."
+    "text": "Esta sección está reservada para información, tutoriales, orientación, etc.\nLa mayor parte de la información de la home se añadirá aquí y la home se transformará en un dashboard.\nMientras tanto esto es un placeholder.\nEstará disponible en una versión futura.",
+    
+    "simva.title": "SIMVA",
+    "simva.description": "La infraestructura de SIMVA es un software de arquitectura abierta que se compone de varios sistemas interconectados. Entre estos sistemas se encuentran el sistema de login SSO unificado (KeyCloak), el sistema de cola de procesamiento (Kafka) y el sistema de almacenamiento en la nube (Minio). Su arquitectura es escalable e interoperable con otras herramientas de terceros, lo que permite delegar las funcionalidades más críticas a plataformas confiables y escalables.",
+    "simva.frontend.title": "Front-end de SIMVA",
+    "simva.frontend.description": "El front-end de SIMVA se utiliza para integrar juegos en el sistema, crear encuestas, gestionar sesiones, gestionar la participación de usuarios en sesiones y realizar seguimiento/análisis de datos de sesiones en tiempo real. Estos datos evolucionan desde las respuestas de usuarios a encuestas hasta información completa y métricas durante toda la sesión, que también incluyen datos de jugabilidad.",
+    "simva.roles.title": "Roles y permisos",
+    "simva.roles.description": "En SIMVA, el usuario puede ser un profesor, estudiante, investigador o desarrollador. Los roles y permisos en el front-end se categorizan en supervisor, coordinador y participante. Estos se explicarán más adelante en este documento.",
+    
+    "simlet.title": "SIMLET (SIMVA APPLET)",
+    "simlet.description": "Un contenedor en la aplicación web del front-end de SIMVA para encapsular datos de diferentes sesiones. Un SIMLET se crea para lograr un objetivo particular, por ejemplo, para comparar la efectividad de un juego serio en particular, comparar entre las habilidades de tres grupos de estudiantes o comparar el conocimiento de programación adquirido en diferentes juegos. Cada SIMLET tiene sus propios supervisores con autoridad total sobre las sesiones y actividades del SIMLET. El supervisor principal (el usuario que creó el SIMLET) es el único usuario autorizado para eliminar todo el SIMLET.",
+    "archived_simlet.title": "SIMLET archivado",
+    "archived_simlet.description": "Un SIMLET archivado se conserva como referencia y puede restaurarse más tarde. Se oculta de las listas activas pero mantiene su configuración e historial.",
+    
+    "session.title": "Sesión",
+    "session.description": "Un contenedor en la aplicación web del front-end de SIMVA para encapsular datos de varias actividades. Una sesión consta de una o más actividades (encuesta previa, jugabilidad o actividad de aprendizaje manual/tradicional y encuesta posterior) a ser realizadas por un grupo de participantes. Cada sesión tiene sus propios coordinadores con autoridad total sobre las actividades de la sesión.",
+    
+    "supervisor.title": "Supervisor de SIMLET",
+    "supervisor.description": "Un usuario que tiene acceso total a un SIMLET en particular. El supervisor principal crea el SIMLET primero y luego puede editar/eliminar el SIMLET o asignar otros supervisores o coordinadores especificando el modo de permiso, ya sea 'Editor' o 'Visor'. Un supervisor con modo 'Editor' puede editar la información del SIMLET (título y descripción), agregar/editar/eliminar sesiones, agregar/editar/eliminar diferentes actividades que componen las sesiones y asignar los participantes que estarán involucrados en cada sesión. Además, un supervisor con modo 'Editor' puede agregar etiquetas a las sesiones, iniciarlas, rastrear y exportar resultados. Un supervisor con modo 'Visor' solo puede ver las configuraciones del SIMLET junto con sus sesiones y las actividades asociadas y sus resultados sin capacidad para agregar, editar o eliminar. Solo el supervisor principal puede eliminar el SIMLET.",
+    
+    "coordinator.title": "Coordinador de sesión",
+    "coordinator.description": "Un usuario que tiene acceso total a una sesión en particular. Hay dos modos de permiso: 'Editor' y 'Visor'. Un coordinador con modo 'Editor' puede editar la información de la sesión (título y descripción), agregar etiquetas a la sesión, agregar/editar/eliminar las diferentes actividades que forman una sesión. Además, un coordinador con modo 'Editor' puede asignar otros coordinadores a la sesión y establecer su permiso, ya sea 'Editor' o 'Visor'. Los coordinadores con ambos modos 'Editor' y 'Visor' tienen acceso al panel para ver resultados y exportarlos, pero iniciar la sesión solo está limitado a los coordinadores con modo 'Editor'.",
+    
+    "participant.title": "Participante",
+    "participant.description": "Un usuario (por ejemplo, un estudiante) cuyo rol es realizar actividades como responder encuestas y jugar juegos. Cada participante también puede ver sus propios resultados.",
+    
+    "gameclient.title": "Cliente de juego",
+    "gameclient.description": "Un cliente de juego es todos los metadatos del juego como título, descripción, categoría (conciencia o educación) y área temática (matemáticas, programación, bullying, etc). Es la URL del juego para un juego web o el archivo comprimido del juego para un juego de escritorio.",
+    
+    "integratedgame.title": "Juego integrado en SIMVA",
+    "integratedgame.description": "Un juego integrado en SIMVA significa que el cliente de juego se describe en SIMVA y se presenta como una plantilla de actividad de jugabilidad. Cada vez que se integra un nuevo juego en SIMVA, se genera automáticamente una plantilla de actividad de jugabilidad con una identificación. Cada vez que se usa el juego en una actividad de jugabilidad dentro de una sesión, se crea una nueva instancia de actividad de jugabilidad a partir de esta plantilla. Esto significa que la instancia de actividad de jugabilidad hará referencia a la plantilla de actividad de jugabilidad usando su identificación. Los supervisores pueden mostrar los juegos integrados desde un menú en el front-end de SIMVA.",
+    
+    "activity.title": "Actividad",
+    "activity.description": "Una acción o conjunto de acciones a realizar por los participantes. Esta acción podría ser responder encuestas (actividad LimeSurvey), jugar juegos serios (actividad de jugabilidad) o realizar ejercicios de aprendizaje tradicional (actividad manual).",
+    "activity.types.title": "Tipos de actividad",
+    
+    "limesurvey.title": "Actividad LimeSurvey",
+    "limesurvey.description": "Una actividad basada en encuestas que utiliza LimeSurvey como servicio, permitiendo a los participantes responder encuestas previas y posteriores y permitiendo a los propietarios recopilar datos de manera efectiva.",
+    
+    "gameplay.title": "Actividad de jugabilidad",
+    "gameplay.description": "La acción de jugar el juego serio donde los datos de interacción del juego de los participantes se recopilan a través del componente xAPI (rastreadores en el código), diseñado para integrar contenido educativo de una manera atractiva.",
+    
+    "manual.title": "Actividad manual",
+    "manual.description": "Un ejercicio de aprendizaje tradicional a realizar por los participantes, como leer un libro, leer un artículo, ver un video o cualquier otra tarea de aprendizaje pasivo.",
+    
+    "activitytemplate.title": "Plantilla de actividad",
+    "activitytemplate.description": "Una plantilla de actividad representa la descripción estática de una actividad. Define los metadatos de una actividad como su título y descripción. Una plantilla se puede usar en muchas sesiones creando instancias de la plantilla. La plantilla de actividad puede ser una actividad de encuesta, una actividad manual o una actividad de jugabilidad. En caso de actividad de jugabilidad, también contendrá datos del cliente de juego.",
+    
+    "activityinstance.title": "Instancia de actividad",
+    "activityinstance.description": "Una instancia de actividad representa una ejecución concreta de una plantilla de actividad. Almacena datos específicos de los participantes, como respuestas de encuestas, rendimiento de actividades manuales, interacciones de actividades de jugabilidad, como rastros y resultados. Cuando el usuario agrega una actividad a una sesión particular, se crea automáticamente una instancia de esa plantilla de actividad. En caso de actividad de jugabilidad, la instancia de actividad se referencia al ID del juego integrado. Sin embargo, los datos recopilados del juego se almacenarán al nivel de actividad de jugabilidad de la sesión.",
+    
+    "manualcompletion.title": "Finalización manual para actividades",
+    "manualcompletion.description": "En caso de que un participante complete una actividad pero su estado no se establezca automáticamente en 'completado' por alguna razón, hay un botón que permite al supervisor/coordinador cambiar manualmente el estado a 'completado'. También es posible cambiar manualmente el estado de una actividad a 'completado' para todos los participantes a la vez.",
+    
+    "dashboard.title": "Panel de SIMVA",
+    "dashboard.description": "Cada SIMLET contiene un panel visual con información detallada sobre las actividades de las sesiones. El panel muestra información general sobre el estado de cada actividad, mostrando el porcentaje de finalización de participantes, progreso y resultado. También demuestra una lista detallada de los participantes, esta lista muestra el nombre de cada participante, estado de finalización, estado de progreso y resultado de copia de seguridad. Mientras la actividad recibe datos xAPI, ya sea en progreso o completada, el panel se actualiza correspondientemente a los rastros recibidos.",
+    
+    "group.title": "Grupo",
+    "group.description": "Un grupo es un conjunto de participantes utilizados para organizar asignaciones y reglas de distribución entre sesiones.",
+    
+    "users.title": "Usuarios",
+    "users.description": "Los usuarios, grupos y coordinadores definen quién participa en el SIMLET y cómo se asignan los participantes a las sesiones."
 }

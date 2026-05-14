@@ -1,0 +1,198 @@
+<%
+function getLocaleText(key, ns) {
+	const value = t(key, { ns, defaultValue: key });
+	if (value === key) {
+		return '';
+	}
+	return value;
+}
+
+// Core sections in order
+const coreSection = {
+	id: 'simva',
+	title: getLocaleText('simva.title', 'about'),
+	description: getLocaleText('simva.description', 'about'),
+	subsections: [
+		{
+			id: 'simva-frontend',
+			title: getLocaleText('simva.frontend.title', 'about'),
+			description: getLocaleText('simva.frontend.description', 'about'),
+		},
+		{
+			id: 'simva-roles',
+			title: getLocaleText('simva.roles.title', 'about'),
+			description: getLocaleText('simva.roles.description', 'about'),
+		},
+	]
+};
+
+const simletSection = {
+	id: 'simlet',
+	title: getLocaleText('simlet.title', 'about'),
+	description: getLocaleText('simlet.description', 'about'),
+	subsections: [
+		{
+			id: 'archived-simlet',
+			title: getLocaleText('archived_simlet.title', 'about'),
+			description: getLocaleText('archived_simlet.description', 'about'),
+		},
+	]
+};
+
+const sessionSection = {
+	id: 'session',
+	title: getLocaleText('session.title', 'about'),
+	description: getLocaleText('session.description', 'about'),
+};
+
+const rolesSection = {
+	id: 'roles',
+	title: 'Roles and Permissions',
+	subsections: [
+		{
+			id: 'supervisor',
+			title: getLocaleText('supervisor.title', 'about'),
+			description: getLocaleText('supervisor.description', 'about'),
+		},
+		{
+			id: 'coordinator',
+			title: getLocaleText('coordinator.title', 'about'),
+			description: getLocaleText('coordinator.description', 'about'),
+		},
+		{
+			id: 'participant',
+			title: getLocaleText('participant.title', 'about'),
+			description: getLocaleText('participant.description', 'about'),
+		},
+	]
+};
+
+const gameSection = {
+	id: 'games',
+	title: 'Games Integration',
+	subsections: [
+		{
+			id: 'gameclient',
+			title: getLocaleText('gameclient.title', 'about'),
+			description: getLocaleText('gameclient.description', 'about'),
+		},
+		{
+			id: 'integratedgame',
+			title: getLocaleText('integratedgame.title', 'about'),
+			description: getLocaleText('integratedgame.description', 'about'),
+		},
+	]
+};
+
+const activitySection = {
+	id: 'activity',
+	title: getLocaleText('activity.title', 'about'),
+	description: getLocaleText('activity.description', 'about'),
+	typesTitle: getLocaleText('activity.types.title', 'about'),
+	subsections: [
+		{
+			id: 'limesurvey',
+			title: getLocaleText('limesurvey.title', 'about'),
+			description: getLocaleText('limesurvey.description', 'about'),
+		},
+		{
+			id: 'gameplay',
+			title: getLocaleText('gameplay.title', 'about'),
+			description: getLocaleText('gameplay.description', 'about'),
+		},
+		{
+			id: 'manual',
+			title: getLocaleText('manual.title', 'about'),
+			description: getLocaleText('manual.description', 'about'),
+		},
+	]
+};
+
+const templateSection = {
+	id: 'templates',
+	title: 'Activity Definitions',
+	subsections: [
+		{
+			id: 'activitytemplate',
+			title: getLocaleText('activitytemplate.title', 'about'),
+			description: getLocaleText('activitytemplate.description', 'about'),
+		},
+		{
+			id: 'activityinstance',
+			title: getLocaleText('activityinstance.title', 'about'),
+			description: getLocaleText('activityinstance.description', 'about'),
+		},
+	]
+};
+
+const managementSection = {
+	id: 'management',
+	title: 'Session Management',
+	subsections: [
+		{
+			id: 'manualcompletion',
+			title: getLocaleText('manualcompletion.title', 'about'),
+			description: getLocaleText('manualcompletion.description', 'about'),
+		},
+		{
+			id: 'dashboard',
+			title: getLocaleText('dashboard.title', 'about'),
+			description: getLocaleText('dashboard.description', 'about'),
+		},
+	]
+};
+
+const usersSection = {
+	id: 'users',
+	title: getLocaleText('users.title', 'about'),
+	description: getLocaleText('users.description', 'about'),
+};
+
+const groupSection = {
+	id: 'group',
+	title: getLocaleText('group.title', 'about'),
+	description: getLocaleText('group.description', 'about'),
+};
+
+// Build main sections with filters
+const mainSections = [coreSection, simletSection, sessionSection, activitySection, groupSection, rolesSection, gameSection, managementSection ] //usersSection, templateSection]
+	.filter((section) => section.title || (section.subsections && section.subsections.some(s => s.title && s.description)));
+
+const otherSections = [];
+%>
+
+<div class="aboutSections">
+<h1><%= t('title', { ns : 'about'}) %></h1>
+	<% mainSections.forEach((section) => { %>
+		<section id="<%= section.id %>" class="aboutSection">
+			<% if (section.title) { %>
+				<h2><%= section.title %></h2>
+			<% } %>
+			<% if (section.description) { %>
+				<p><%= section.description %></p>
+			<% } %>
+			<% if (section.subsections && section.subsections.length > 0) { %>
+				<% if (section.typesTitle) { %>
+					<h3><%= section.typesTitle %></h3>
+				<% } %>
+				<% section.subsections.forEach((subsection) => { %>
+					<% if (subsection.title && subsection.description) { %>
+						<section id="<%= subsection.id %>" class="aboutSubSection">
+							<h4><%= subsection.title %></h4>
+							<p><%= subsection.description %></p>
+						</section>
+					<% } %>
+				<% }) %>
+			<% } %>
+		</section>
+	<% }) %>
+
+	<% if (otherSections.length > 0) { %>
+		<% otherSections.forEach((section) => { %>
+			<section id="<%= section.id %>" class="aboutSection">
+				<h2><%= section.title %></h2>
+				<p><%= section.description %></p>
+			</section>
+		<% }) %>
+	<% } %>
+</div>
