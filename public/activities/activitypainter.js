@@ -228,7 +228,7 @@ var ActivityPainter = {
 	paintActivityTopBar: function(activity, extraItems) {
 		return `<div class="top"><h4>${activity.activity_name}</h4>
 			<div class="activityTopActions">
-				<div class="activityDownload kebab-icon icon-download" title="${this.commun.download_tooltip || 'Download all available data for this activity.'}" onclick="PainterFactory.Painters['activity'].downloadResults('${activity.activity_id}')"><b>${this.commun.download_title || 'Download data'}</b></div>
+				<div class="activityDownload kebab-icon icon-download" title="${this.commun.download_tooltip || 'Download all available data for this activity.'}" onclick="PainterFactory.Painters['activity'].getMinioData('${activity.activity_id}')"><b>${this.commun.download_title || 'Download data'}</b></div>
 				<div class="kebab">
 					<ul class="kebab-dropdown">
 						<li class="kebab-icon icon-edit" title="${this.commun.edit_title || 'Edit'}" onclick="openEditActivityForm('${activity.activity_id}')">${this.commun.edit_title || 'Edit'}</li>
@@ -244,7 +244,6 @@ var ActivityPainter = {
 		$(`#test_${activity.session_id} .activities`).append(`<div id="activity_${activity.activity_id}" class="activity t${activity.activity_type}">
 			${this.paintActivityTopBar(activity, this.getExtraKebabItems(activity))}
 			<p class="subtitle" title="${this.description || ''}">${this.simple_name}</p>
-			<p>${this.communSpecific.result_title}:<a onclick="PainterFactory.Painters['activity'].downloadResults('${activity.activity_id}')"> ⬇️</a></p>
 			${this.paintActivityParticipantsTable(activity, participants, true)}</div>`);
 	},
 
