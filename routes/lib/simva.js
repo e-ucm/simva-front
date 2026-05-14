@@ -539,6 +539,22 @@ class Simva {
 		this.getLrsStatementsMore(`${this.apiurl}/activities/${activity_id}/lrs/statements`, more, sessionId, callback);
 	}
 
+	getSessionTestLRSData(simlet_id, session_id, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simlet_id}/sessions/${session_id}/lrs_test_statements`, sessionId, callback);
+	}
+
+	getSessionMoreTestLRSData(simlet_id, session_id, more, sessionId, callback){
+		this.getLrsStatementsMore(`${this.apiurl}/simlets/${simlet_id}/sessions/${session_id}/lrs_test_statements`, more, sessionId, callback);
+	}
+
+	getActivityTestLRSData(activity_id, sessionId, callback){
+		this.get(`${this.apiurl}/activities/${activity_id}/lrs_test_statements`, sessionId, callback);
+	}
+
+	getActivityMoreTestLRSData(activity_id, more, sessionId, callback){
+		this.getLrsStatementsMore(`${this.apiurl}/activities/${activity_id}/lrs_test_statements`, more, sessionId, callback);
+	}
+
 	setActivityTest(activity_id, payload, sessionId, callback){
 		this.post(`${this.apiurl}/activities/${activity_id}/test`, null, payload, sessionId, callback);
 	}

@@ -790,8 +790,11 @@
 		const data = $(this).closest(".test").data();
 		downloadSessionData(data[sessionDataIdKey]);
 	});
-
-
+	
+	$(document).on('click', ".sessionTestDownload", function(e) {
+		const data = $(this).closest(".test").data();
+		downloadSessionTestData(data[sessionDataIdKey]);
+	});
 	
 	let downloadSessionData = function(sessionId) {
 		console.log("downloading data for session id:", sessionId);
@@ -810,6 +813,26 @@
 			var filename = `simva-${study.simlet_name}-session-${sessionId}-data.json`;
 			Utils.openResultContent(content, 'Session data error', 'iframe_floating');
 			Utils.downloadContent(content, filename, 'Session data error');
+		});
+	}
+
+	let downloadSessionTestData = function(sessionId) {
+		console.log("downloading test data for session id:", sessionId);
+		Simva.getSessionTestLRSData(studyid, sessionId, function(error, result){
+			if(error) {
+				$.toast({
+					heading: 'Session test data error',
+					text: error.responseJSON ? error.responseJSON.message : error.message,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+				return;
+			}
+			var content = result.data;
+			var filename = `simva-${study.simlet_name}-session-${sessionId}-test-data.json`;
+			Utils.openResultContent(content, 'Session test data error', 'iframe_floating');
+			Utils.downloadContent(content, filename, 'Session test data error');
 		});
 	}
 

@@ -474,13 +474,13 @@
 				<td>${token}</td>
 				<td>${email === '-' ? '-' : `<a href="${email}">${email}</a>`}</td>
 				<td>${role}</td>
-				<td><input class="red" type="button" value="<%= t("participants.remove.title", { ns : "groups" }) %>" onclick="removeParticipant('${participant.user_id}', '${participant.username}', true)"></td>`;
+				<td><input class="red" type="button" value="<%= t("participants.remove.title", { ns : "groups" }) %>" onclick="removeParticipant('${participant.user_id}', '${participant.username}', ${participant.isToken})"></td>`;
 		} else {
 			return `<tr><td><img src="/icon/user.png"></td>
 				<td>${participant.username}</td>
 				<td>${email === '-' ? '-' : `<a href="${email}">${email}</a>`}</td>
 				<td>${role}</td>
-				<td><input class="red" type="button" value="<%= t("participants.remove.title", { ns : "groups" }) %>" onclick="removeParticipant('${participant.user_id}', '${participant.username}', true)"></td>`;
+				<td><input class="red" type="button" value="<%= t("participants.remove.title", { ns : "groups" }) %>" onclick="removeParticipant('${participant.user_id}', '${participant.username}', ${participant.isToken})"></td>`;
 		}
 	}
 

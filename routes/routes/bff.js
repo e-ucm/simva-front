@@ -1231,6 +1231,30 @@ module.exports = function(auth, config){
         }
     });
 
+    router.get('/simlets/:simletid/sessions/:sessionid/lrs_test_statements', auth, async (req, res, next) => {
+        try {
+            const data = await collectLrsStatements(
+                () => SimvaAsync.getSessionTestLRSData(req.params["simletid"], req.params["sessionid"], req.session.id),
+                (more) => SimvaAsync.getSessionMoreTestLRSData(req.params["simletid"], req.params["sessionid"], more, req.session.id)
+            );
+            res.status(200).send({ data });
+        } catch(error) {
+            next(error.response?.data || error);
+        }
+    });
+
+    router.get('/activities/:activityid/lrs_test_statements', auth, async (req, res, next) => {
+        try {
+            const data = await collectLrsStatements(
+                () => SimvaAsync.getActivityTestLRSData(req.params["activityid"], req.session.id),
+                (more) => SimvaAsync.getActivityMoreTestLRSData(req.params["activityid"], more, req.session.id)
+            );
+            res.status(200).send({ data });
+        } catch(error) {
+            next(error.response?.data || error);
+        }
+    });
+
     router.get('/activitytypes', auth, async (req, res, next) => {
         Simva.getActivityTypes(req.session.id, (error, result) => {
             if(error) {
