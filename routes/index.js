@@ -51,25 +51,18 @@ app.use('/activities', require('./routes/activities.js')(usertools.auth(1), conf
 app.use('/scheduler', require('./routes/scheduler.js')(usertools.auth(1), config));
 app.use('/archived', require('./routes/archived.js')(usertools.auth(1), config));
 
-router.get('/about', usertools.auth(0), function(req, res, next) {
-  // Defensive check: redirect to login if user is not authenticated
-  if (!req.session || !req.session.user) {
-    req.session.intendedUrl = req.originalUrl;
-    return res.redirect('/users/login');
-  }
-  
-  res.render('about', { 
-    config: config, 
-    user: req.session.user,
-    t : req.t
-   });
+router.get('/about', function(req, res, next) {
+  const isAuthenticated = !!(req.session && req.session.user);
+  res.render('about', {
+    config: config,
+    user: isAuthenticated ? req.session.user : undefined,
+    layoutTemplate: isAuthenticated ? 'layout_with_menu_and_sse' : 'layout_logout',
+    t: req.t
+  });
 });
 
 router.get('/about-page', function(req, res, next) {
-  res.render('logout_about', { 
-    config: config,
-    t: req.t
-  });
+  return res.redirect('/about');
 });
 
 router.get('/e-ucm', function(req, res, next) {
@@ -77,14 +70,6 @@ router.get('/e-ucm', function(req, res, next) {
     config: config,
     t: req.t
   });
-});
-
-router.get('/about-page', function(req, res, next) {
-  res.render('logout_about', { config: config });
-});
-
-router.get('/e-ucm', function(req, res, next) {
-  res.render('logout_e_ucm', { config: config });
 });
 
 router.get('/', usertools.auth(0), function(req, res, next) {
