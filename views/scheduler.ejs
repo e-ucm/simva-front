@@ -75,6 +75,7 @@
 		//
 		let studyId = "<%= study %>";
 		let username = "<%= user.data.username %>";
+		let currentUserId = null;
 
 		var manual = '<body style="background-color: black; color: white; font-family: sans-serif; text-align: center;"><h1>External Activity</h1><p>Ask or listen your teacher for what you have to do on this activity.</p><p>If you are allowed to complete the activity on your own, there should be a "complete activity" button above.</p></body>';
 
@@ -136,7 +137,7 @@
 			window.addEventListener('beforeunload', () => {
 				if(current_activity_id != null) {
 					console.log("Suspended");
-					Simva.setActivitySuspend(current_activity_id, username, true, "unload_page", function() {
+					Simva.setActivitySuspend(current_activity_id, currentUserId, true, "unload_page", function() {
 						console.log("Suspended in Simva");
 					});
 				}
@@ -150,7 +151,7 @@
 				console.log(`User is ${isInteracting ? 'interacting' : 'not interacting'} with the page.`);
 				previousState = isInteracting;
 				if(current_activity_id != null) {
-					Simva.setActivitySuspend(current_activity_id, username, !isInteracting, reason, function() {
+					Simva.setActivitySuspend(current_activity_id, currentUserId, !isInteracting, reason, function() {
 						console.log("OK in Simva");
 					});
 				}
@@ -165,6 +166,7 @@
 		let getUserToken = function(){
 			Simva.getCurrentUser(function(error, result) {
 				if(!error) {
+					currentUserId = result.user_id ?? currentUserId;
 					if(result.token) {
 						document.getElementById('username').innerText = result.token;
 					} else {
@@ -215,7 +217,7 @@
 							let activity = result.activities[result.next];
 							Simva.isActivityOpenable(activity.activity_id, function(error, result){
 								if(!error){
-									if(activity.user_managed){
+									if(activity.manual_user_managed){
 										$("#complete_activity").show();
 									}else{
 										$("#complete_activity").hide();
@@ -262,7 +264,7 @@
 		}
 
 		let completeActivity = function(){
-			Simva.setActivityCompletion(current_activity_id, username, true, function(){
+			Simva.setActivityCompletion(current_activity_id, currentUserId, true, function(){
 				reloadSchedule();
 			});
 		}

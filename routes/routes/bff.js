@@ -1022,7 +1022,7 @@ module.exports = function(auth, config){
     });
 
     router.post('/activities/:activityid/completion', auth, async (req, res, next) => {
-        Simva.setActivityCompletion(req.params["activityid"], req.query.user, req.body, req.session.id, (error, result) => {
+        Simva.setActivityCompletion(req.params["activityid"], req.query.user, req.body.status, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
@@ -1052,7 +1052,7 @@ module.exports = function(auth, config){
     });
 
     router.post('/activities/:activityid/suspension', auth, async (req, res, next) => {
-        Simva.setActivitySuspension(req.params["activityid"], req.body, req.session.id, (error, result) => {
+        Simva.setActivitySuspension(req.params["activityid"], req.body.user, req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {

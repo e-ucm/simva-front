@@ -476,8 +476,9 @@ class Simva {
 		this.get(`${this.apiurl}/activities/${activity_id}/suspension`, sessionId, callback);
 	}
 
-	setActivitySuspension(activity_id, body, sessionId, callback) {
-		this.post(`${this.apiurl}/activities/${activity_id}/suspension`, null, body, sessionId, callback);
+	setActivitySuspension(activity_id, user, body, sessionId, callback) {
+		const userQuery = user ? `?user=${user}` : '';
+		this.post(`${this.apiurl}/activities/${activity_id}/suspension${userQuery}`, null, body, sessionId, callback);
 	}
 
 	getActivityResultForUser(activity_id, student, sessionId, callback){
