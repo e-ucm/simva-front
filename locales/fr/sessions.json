@@ -1,0 +1,54 @@
+{
+    "title": "Sessions",
+    "no_sessions.message": "Il n'y a pas de sessions pour cette SIMLET. Essayez d'en ajouter une en utilisant le bouton en bas à droite (+)",
+
+    "createdAt": "Créé le",
+    "updatedAt": "Mis à jour le",
+    "activities": "Activités",
+    "users": "Utilisateurs",
+    "download": "Télécharger les données de la session",
+
+    "add.title": "Ajouter une session",
+        "add.submit": "Ajouter une session",
+
+    "edit.title": "Modifier le session",
+        "edit.submit": "Modifier le session",
+    
+    "name.title": "Nom",
+    "name.placeholder": "Nom du session",
+    "description.title": "Description",
+    "description.placeholder": "Description du session",
+    "tags.title": "Tags",
+        "tags.no_tags": "Aucun tag",
+        "tags.input.placeholder": "Ajouter un tag",
+        "tags.dropdown.no_tags": "Aucun tag disponible",
+        "tags.dropdown.no_matches": "Aucun tag correspondant",
+        "tags.dropdown.all_matches": "Tous les tags correspondants sont déjà dans cette session",
+        "tags.create.placeholder": "Nom du nouveau tag",
+        "tags.create": "Créer",
+        "tags.create.cancel": "Annuler",
+        "tags.edit.placeholder": "Nom du tag",
+        "tags.save": "Enregistrer",
+        "tags.edit.cancel": "Annuler",
+
+    "can_be_manually_activated": "La session peut être activée manuellement",
+
+    "settings.edit.title": "Modifier",
+    "settings.add_activity.title": "Ajouter une activité",
+
+    "settings.duplicate.title": "Dupliquer",
+        "duplicate.title": "Dupliquer la session",
+        "duplicate.submit": "Dupliquer",
+    
+    "settings.activate.title": "Activer",
+        "active.title": "Active",
+
+    "settings.pause.title": "Mettre en pause",
+        "paused.title": "En pause",
+
+    "settings.finish.title": "Terminer",
+        "finished.title": "Terminée",
+
+    "settings.delete.title": "Supprimer",
+        "delete.confirm": "Êtes-vous sûr de vouloir supprimer la session '{{session}}' de l'SIMLET '{{SIMLET}}'?\nToutes les activités et les données seront également supprimées"
+}

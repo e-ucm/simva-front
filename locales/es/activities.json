@@ -2,6 +2,19 @@
     "title": "Actividades",
     "text": "La vista de actividades está desactivada temporalmente.\nEsta pestaña está diseñada para crear \"actividades de plantilla\" para luego copiarlos en pruebas.\nEstos \"actividades de plantilla\" ayudar a la creación de múltiples casos de prueba similares con pequeñas modificaciones.\nEstará disponible en una futura versión.",
     
+    "no_activities.message": "No hay actividades en esta Sesión. Añada una utilizando el botón del menú de 3 puntos a la derecha",
+
+    "add.title": "Añadir actividad",
+        "add.new.title": "Nueva actividad",
+        "add.existing.title": "Seleccionar de las existentes",
+
+    "edit.title": "Editar actividad",
+    
+    "delete.title": "Eliminar actividad",
+    "delete.confirm": "¿Está seguro de que desea eliminar la actividad '{{activity}}' de la sesión '{{session}}' del SIMLET '{{SIMLET}}'?\nTambién se eliminarán todos los datos de la actividad",
+
+    "name.placeholder": "Nombre de la actividad",
+
     "activity.name": "Actividad por defecto",
     "activity.description": "Una actividad básica con estado de finalización y un lugar para guardar los resultados.",
     "activity.result.title":"Resultado",

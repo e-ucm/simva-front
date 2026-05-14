@@ -4,8 +4,8 @@
 			<h1 id="study_form_title"> </h1>
 		<% if (typeof archived !== 'undefined' && !archived) { %>
 			<div class="tabs" id="add_study_tabs">
-				<span id="study_name_desc_tab_button" class="tab selected" onclick="changeTab(this, 'study_form','study_name_desc_tab')"><%- t('simlet.new.tab', { ns : 'SIMLETs' }) %></span>
-				<span class="tab" onclick="changeTab(this, 'study_form','import_study_tab')"><%- t('simlet.import.tab', { ns : 'SIMLETs' }) %></span>
+				<span id="study_name_desc_tab_button" class="tab selected" onclick="changeTab(this, 'study_form','study_name_desc_tab')"><%- t('new.tab', { ns : 'SIMLETs' }) %></span>
+				<span class="tab" onclick="changeTab(this, 'study_form','import_study_tab')"><%- t('import.tab', { ns : 'SIMLETs' }) %></span>
 			</div>
 		<% } %>
 
@@ -15,11 +15,11 @@
 					<input hidden type="text" name="prevStudyName" id="prev_study_name">
 					<input hidden type="text" name="prevStudyDescription" id="prev_study_description">
 
-					<h3><%- t('simlet.name.title', { ns : 'SIMLETs' }) %></h3>
-					<input type="text" name="studyName" id="study_name" placeholder="<%- t('simlet.name.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<h3><%- t('name.title', { ns : 'SIMLETs' }) %></h3>
+					<input type="text" name="studyName" id="study_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
 					<br>
-					<h3><%- t('simlet.description.title', { ns : 'SIMLETs' }) %></h3>
-					<input type="text" name="studyDescription" id="study_description" placeholder="<%- t('simlet.description.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<h3><%- t('description.title', { ns : 'SIMLETs' }) %></h3>
+					<input type="text" name="studyDescription" id="study_description" placeholder="<%- t('description.placeholder', { ns : 'SIMLETs' }) %>" required>
 					<br><br>
 					<input type="submit" id="study_name_desc_submit" value="">
 				</form>
@@ -28,10 +28,10 @@
 			<div hidden id="import_study_tab" class="subform">
 				<form id="import_study_form">
 					<br>
-					<h3><%- t('simlet.import.input', { ns : 'SIMLETs' }) %></h3>
+					<h3><%- t('import.input', { ns : 'SIMLETs' }) %></h3>
 					<input type="file" name="exportJson">
 					<br><br>
-					<input type="submit" value="<%- t('simlet.import.submit', { ns : 'SIMLETs' }) %>">
+					<input type="submit" value="<%- t('import.submit', { ns : 'SIMLETs' }) %>">
 				</form>
 			</div>
 
@@ -112,19 +112,19 @@
 <div id="kebab_template" style="display: none;">
 	<ul class="kebab-dropdown" style="display: none;">
 		<li class="kebab-icon icon-edit">
-			<%- t('simlet.settings.edit.title', { ns : 'SIMLETs' }) %>
+			<%- t('settings.edit.title', { ns : 'SIMLETs' }) %>
 		</li>
 		<li class="kebab-icon icon-url">
-			<%- t('simlet.settings.url.title', { ns : 'SIMLETs' }) %>
+			<%- t('settings.url.title', { ns : 'SIMLETs' }) %>
 		</li>
 		<li class="kebab-icon icon-download">
-			<%- t('simlet.settings.download.title', { ns : 'SIMLETs' }) %>
+			<%- t('settings.download.title', { ns : 'SIMLETs' }) %>
 		</li>
-		<li class="kebab-icon icon-archive">
-			<%- t('simlet.settings.archive.title', { ns : 'SIMLETs' }) %>
+		<li class="kebab-icon archivationButton icon-archive">
+			<%- t('settings.archive.title', { ns : 'SIMLETs' }) %>
 		</li>
 		<li class="kebab-icon icon-delete">
-			<%- t('simlet.settings.delete.title', { ns : 'SIMLETs' }) %>
+			<%- t('settings.delete.title', { ns : 'SIMLETs' }) %>
 		</li>
 	</ul>
 </div>
@@ -346,7 +346,7 @@
 	}
 
 	const deleteStudy = function(studyid, studyname){
-		if(confirm(`<%- t('simlet.delete.confirm', { ns : 'SIMLETs', SIMLET : '${studyname}' }) %>`)){
+		if(confirm(`<%- t('delete.confirm', { ns : 'SIMLETs', SIMLET : '${studyname}' }) %>`)){
 			Simva.deleteStudy(studyid, function(error, result) {
 				if(!error && refreshFunc != null) {
 					refreshFunc();
@@ -362,7 +362,7 @@
 		const tags = Array.isArray(taggedElem.tags) ? taggedElem.tags : [];
 
 		if (tags.length === 0) {
-			return `<div class="sessionTagList"><span class="sessionTagEmpty"><%- t('sessions.tags.no_tags', { ns : 'SIMLETs' }) %></span></div>`;
+			return `<div class="sessionTagList"><span class="sessionTagEmpty"><%- t('tags.no_tags', { ns : 'sessions' }) %></span></div>`;
 		}
 		let tagsHtml = '<div class="sessionTagList">';
 		for (let i = 0; i < tags.length; i++) {
@@ -381,4 +381,5 @@
 		tagsHtml += '</div>';
 		return tagsHtml;
 	}
+	
 </script>

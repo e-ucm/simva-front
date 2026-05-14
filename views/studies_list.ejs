@@ -19,16 +19,16 @@
 				<div class="kebab"></div>
 			</div>
 			<p class="cardDescription"> 	</p>
-			<p class="cardCreationDate"><strong><%- t('simlet.card.createdAt', { ns : 'SIMLETs' }) %>: </strong> 		</p>
-			<p class="cardUpdateDate"><strong><%- t('simlet.card.updatedAt', { ns : 'SIMLETs' }) %>: </strong> 	</p>
-			<p class="carrdSessions"><strong><%- t('simlet.card.sessions', { ns : 'SIMLETs' }) %>: </strong> 	</p>
+			<p class="cardCreationDate"><strong><%- t('card.createdAt', { ns : 'SIMLETs' }) %>: </strong> 		</p>
+			<p class="cardUpdateDate"><strong><%- t('card.updatedAt', { ns : 'SIMLETs' }) %>: </strong> 	</p>
+			<p class="carrdSessions"><strong><%- t('card.sessions', { ns : 'SIMLETs' }) %>: </strong> 	</p>
 			<p>
-				<strong class="cardGroups"><%- t('simlet.card.groups', { ns : 'SIMLETs' }) %>: </strong>
+				<strong class="cardGroups"><%- t('card.groups', { ns : 'SIMLETs' }) %>: </strong>
 				&nbsp; 
-				<strong class="cardUsers"><%- t('simlet.card.users', { ns : 'SIMLETs' }) %>: </strong>
+				<strong class="cardUsers"><%- t('card.users', { ns : 'SIMLETs' }) %>: </strong>
 			</p>
 			<div class="studyTagsRow">
-				<strong><%- t('simlet.card.tags', { ns : 'SIMLETs' }) %>:</strong>
+				<strong><%- t('card.tags', { ns : 'SIMLETs' }) %>:</strong>
 				
 			</div>
 		</div>
@@ -79,7 +79,7 @@
 				};
 				reader.readAsDataURL($("#import_study_form").find('input[name="exportJson"]').get(0).files[0]);
 			}else{
-				$("#study_form_error").text("<%- t('simlet.import.upload.error', { ns : 'SIMLETs' }) %>");
+				$("#study_form_error").text("<%- t('import.upload.error', { ns : 'SIMLETs' }) %>");
 				Utils.toggleSubmit(currentform);
 			}
 
@@ -128,9 +128,9 @@
 
 		// Creating new study
 		if (studyId == null) {
-			$("#study_form_title").text("<%- t('simlet.add.title', { ns : 'SIMLETs' }) %>");
+			$("#study_form_title").text("<%- t('add.title', { ns : 'SIMLETs' }) %>");
 			$("#add_study_tabs").show();
-			$("#study_name_desc_submit").val("<%- t('simlet.new.submit', { ns : 'SIMLETs' }) %>");
+			$("#study_name_desc_submit").val("<%- t('new.submit', { ns : 'SIMLETs' }) %>");
 
 			// Open form always
 			$("#study_form").toggleClass("shown");
@@ -143,9 +143,9 @@
 		}
 		// Editing study
 		else {
-			$("#study_form_title").text("<%- t('simlet.edit.title', { ns : 'SIMLETs' }) %>");
+			$("#study_form_title").text("<%- t('edit.title', { ns : 'SIMLETs' }) %>");
 			$("#add_study_tabs").hide();
-			$("#study_name_desc_submit").val("<%- t('simlet.edit.submit', { ns : 'SIMLETs' }) %>");
+			$("#study_name_desc_submit").val("<%- t('edit.submit', { ns : 'SIMLETs' }) %>");
 
 			Simva.getStudy(studyId, function(error, result){
 				if(!error) {
@@ -247,4 +247,5 @@
 		const data = $(this).closest(".stopable").data();
 		deleteStudy(data[simletDataIdKey], data[simletDataDescriptionKey])
 	});	
+	
 </script>

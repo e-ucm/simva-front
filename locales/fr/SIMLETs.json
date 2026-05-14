@@ -4,33 +4,33 @@
     "no_simlets.message": "Vous n'avez pas encore de SIMLETs. Créez-en un en utilisant le bouton en bas à droite (+)",
     "no_archived.message": "Pas de SIMLETs archivés. Les SIMLETs archivés apparaîtront ici.",
 
-    "simlet.card.createdAt": "Crée le",
-    "simlet.card.updatedAt": "Mis à jour le",
-    "simlet.card.sessions": "Sessions",
-    "simlet.card.groups": "Groupes",
-    "simlet.card.users": "Utilisateurs",
-    "simlet.card.tags": "Tags",
+    "card.createdAt": "Crée le",
+    "card.updatedAt": "Mis à jour le",
+    "card.sessions": "Sessions",
+    "card.groups": "Groupes",
+    "card.users": "Utilisateurs",
+    "card.tags": "Tags",
 
-    "simlet.add.title": "Ajouter SIMLET",
-        "simlet.new.tab": "Ajouter un nouveau SIMLET",
-        "simlet.new.submit": "Ajouter SIMLET",
+    "add.title": "Ajouter SIMLET",
+        "new.tab": "Ajouter une nouvelle SIMLET",
+        "new.submit": "Ajouter SIMLET",
 
-        "simlet.import.tab": "Importer à partir d'un fichier existant",
-            "simlet.import.input": "Sélectionnez fichier de SIMLET exporté",
-            "simlet.import.upload.error": "Sélectionnez le fichier à charger en premier",
-            "simlet.import.submit": "Importer SIMLET",
+        "import.tab": "Importer à partir d'un fichier existant",
+            "import.input": "Sélectionnez fichier de SIMLET exporté",
+            "import.upload.error": "Sélectionnez le fichier à charger en premier",
+            "import.submit": "Importer SIMLET",
     
-    "simlet.settings.edit.title": "Modifier",
-        "simlet.edit.title": "Modifier SIMLET",
-        "simlet.edit.submit": "Modifier SIMLET",
+    "settings.edit.title": "Modifier",
+        "edit.title": "Modifier SIMLET",
+        "edit.submit": "Modifier SIMLET",
 
-    "simlet.name.title": "Nom",
-    "simlet.name.placeholder": "Nom du SIMLET",
-    "simlet.description.title": "Description",
-    "simlet.description.placeholder": "Description du SIMLET",
+    "name.title": "Nom",
+    "name.placeholder": "Nom de la SIMLET",
+    "description.title": "Description",
+    "description.placeholder": "Description de la SIMLET",
     
-    "simlet.settings.url.title": "URL settings",
-        "scheduler.shlink.generate.title": "Générer un URL réduite pour le planificateur",
+    "settings.url.title": "URL settings",
+        "scheduler.shlink.generate.title": "Générer une URL réduite pour le planificateur",
         "scheduler.shlink.generate.randomly_length.title": "Généré de manière aléatoire",
         "scheduler.shlink.generate.randomly_length.message": "Avec un longueur de : ",
         "scheduler.shlink.generate.custom_slug.title": "Utiliser un Slug personnalisé",
@@ -40,15 +40,15 @@
         "scheduler.shlink.delete.title": "Supprimer l'URL du lien du planificateur",
         "scheduler.shlink.delete.confirm": "Êtes-vous sûr de vouloir supprimer le lien court '{{shlink}}' du SIMLET '{{SIMLET}}'?",
         
-    "simlet.settings.download.title": "Télécharger",
+    "settings.download.title": "Télécharger",
         "config.download.simlet": "Télécharger la configuration du SIMLET",
         "config.download.uadventure": "Télécharger la configuration du SIMLET pour uAdventure",
         
-    "simlet.settings.archive.title": "Archiver",
-    "simlet.settings.dearchive.title": "Désarchiver",
+    "settings.archive.title": "Archiver",
+    "settings.dearchive.title": "Désarchiver",
 
-    "simlet.settings.delete.title": "Supprimer",
-        "simlet.delete.confirm": "Êtes-vous sûr de vouloir supprimer le SIMLET '{{SIMLET}}'?\nToutes les sessions, activités et données seront également supprimées",
+    "settings.delete.title": "Supprimer",
+        "delete.confirm": "Êtes-vous sûr de vouloir supprimer la SIMLET '{{SIMLET}}'?\nToutes les sessions, activités et données seront également supprimées",
 
     "edit.no_changes.message": "Aucun changement n'a été détecté !",
 
@@ -59,121 +59,9 @@
         "sessions.download.description": "Telecharger toutes les donnees disponibles pour cette session, y compris les donnees des activites.",
         "simlets.description": "Liste des SIMLETs disponibles et acces rapide pour les creer, modifier, archiver ou supprimer.",
         "sessions.tab.title": "Sessions",
-            "sessions.title": "Sessions",
-            "no_sessions.message": "Il n'y a pas de sessions pour cette SIMLET. Essayez d'en ajouter un en utilisant le bouton en bas à droite (+)",
-
-            "sessions.createdAt": "Créé le",
-            "sessions.updatedAt": "Mis à jour le",
-            "sessions.activities": "Activités",
-            "sessions.users": "Utilisateurs",
-            "sessions.download": "Télécharger les données de la session",
-
-            "sessions.add.title": "Ajouter une session",
-                "sessions.add.submit": "Ajouter une session",
-
-            "sessions.edit.title": "Modifier la session",
-                "sessions.edit.submit": "Modifier la session",
-            
-            "sessions.name.title": "Nom",
-            "sessions.name.placeholder": "Nom de la session",
-            "sessions.description.title": "Description",
-            "sessions.description.placeholder": "Description de la session",
-            "sessions.tags.title": "Tags",
-                "sessions.tags.no_tags": "Aucun tag",
-                "sessions.tags.input.placeholder": "Ajouter un tag",
-                "sessions.tags.dropdown.no_tags": "Aucun tag disponible",
-                "sessions.tags.dropdown.no_matches": "Aucun tag correspondant",
-                "sessions.tags.dropdown.all_matches": "Tous les tags correspondants sont déjà dans cette session",
-                "sessions.tags.create.placeholder": "Nom du nouveau tag",
-                "sessions.tags.create": "Créer",
-                "sessions.tags.create.cancel": "Annuler",
-                "sessions.tags.edit.placeholder": "Nom du tag",
-                "sessions.tags.save": "Enregistrer",
-                "sessions.tags.edit.cancel": "Annuler",
-
-            "sessions.can_be_manually_activated": "La session peut être activée manuellement",
-
-            "session.settings.edit.title": "Modifier",
-            "session.settings.add_activity.title": "Ajouter une activité",
-
-            "session.settings.duplicate.title": "Dupliquer",
-                "sessions.duplicate.title": "Dupliquer la session",
-                "sessions.duplicate.submit": "Dupliquer",
-            
-            "session.settings.activate.title": "Activer",
-                "sessions.active.title": "Active",
-
-            "session.settings.pause.title": "Mettre en pause",
-                "sessions.paused.title": "En pause",
-
-            "session.settings.finish.title": "Terminer",
-                "sessions.finished.title": "Terminée",
-
-            "session.settings.delete.title": "Supprimer",
-               "sessions.delete.confirm": "Êtes-vous sûr de vouloir supprimer la session '{{session}}' du SIMLET '{{SIMLET}}'?\nToutes les activités et les données seront également supprimées",
-
-            
-            "no_activities.message": "Il n'y a pas d'activités dans ce session. Ajoutez-en un en utilisant le bouton [...] à droite",
-
-            "activities.add.title": "Ajouter une activité",
-                "activities.add.new.title": "Nouvelle activité",
-                "activities.add.existing.title": "Sélectionner parmi les existantes",
-
-            "activities.edit.title": "Modifier l'activité",
-            
-            "activities.delete.title": "Supprimer l'activité",
-            "activities.delete.confirm": "Êtes-vous sûr de vouloir supprimer l'activité '{{activity}}' de la session '{{session}}' de la SIMLET '{{SIMLET}}'?\nToutes les données relatives à l'activité seront également supprimées",
-
-            "activities.placeholder": "Nom de l'activité",
-        
-        
         "users.tab.title": "Users",
-            "no_session_assigned.title": "Pas de session",
 
-            "coordinators.title": "Coordinateurs",
-            "coordinators.placeholder": "Nom d'utilisateur du coordinateur",
-            "coordinators.add.title": "Ajouter un coordinateur",
-            "coordinators.error.already_in": "Le coordinateur est déjà dans le SIMLET.",
-            "coordinators.delete.title": "Supprimer",
-            "coordinators.delete.confirm": "Êtes-vous sûr de vouloir supprimer le coordinateur '{{coordinator}}' du SIMLET '{{SIMLET}}'?",
-
-            "groups.title": "Groupes",
-            "groups.add.title": "Ajouter un groupe",
-            "groups.error.already_in": "Le groupe participe déjà au SIMLET.",
-            "groups.delete.title": "Supprimer",
-            "groups.delete.confirm": "Êtes-vous sûr de vouloir supprimer le groupe '{{group}}' du SIMLET '{{SIMLET}}'?",
-            "groups.zero_existing.message": "Vous n'avez pas de groupe. Allez dans l'onglet groupes pour en créer un.",
-            "groups.zero.message": "Vous n'avez pas de groupe. Allez dans l'onglet groupes pour en créer un.",
-
-            "allocator.title": "Allocateur",
-            "allocator.change.title": "Sélectionner le nouveau type d'allocateur",
-            "allocator.change.submit": "Changer d'Allocateur",
-            "allocator.add.title": "Ajouter un allocation",
-            "allocator.default.type": "Défaut",
-            "allocator.default.title": "Allocateur de base",
-            "allocator.default.description": "Cet allocateur vous permet d'affecter manuellement les participants aux sessions un par un. (S'il n'est pas assigné, il prendra le premier).",
-            "allocator.group.type": "Groupe",
-            "allocator.group.title": "Allocateur de Groupe",
-            "allocator.group.description": "Cet allocateur vous permet de sélectionner la branche de session à laquelle chaque groupe est affecté.",
-            "allocator.type.title": "Type",
-            "allocator.sessions.title": "Session",
-            "allocator.participants.title": "Participant",
-            "allocator.add.error": "Erreur dans l'ajout de l'allocation",
-            "allocator.add.message": "Mise à jour de l'Allocateur",
-
-            
-    "lti_platform.title": "Plate-forme LTI",
-    "lti_platform.add.title": "Ajouter un plateforme LTI",
-    "lti_platform.add.name.title": "Nom",
-    "lti_platform.add.url.title": "URL",
-    "lti_platform.add.client_id.title": "ID du Client",
-    "lti_platform.add.authentication_endpoint.title": "Point final d'authentification",
-    "lti_platform.add.accesstoken_endpoint.title": "Point final du jeton d'accès",    
-    "lti_platform.add.jkws_url.title": "URL de jKWS",
-    "lti_platform.delete.title": "Supprimer la plate-forme LTI",
-    "lti_platform.delete.confirm": "Êtes-vous sûr de vouloir supprimer cette plate-forme '{{platform}}' du SIMLET '{{SIMLET}}' ?",
-    "lti_platform.zero.message": "Il n'y a pas encore de plateformes.",
-
+        
     "scheduler.noSIMLET.title": "Vous n'avez pas encore de SIMLETs à participer.",
     "scheduler.title": "Cliquez ici pour commencer ou poursuivre votre session dans le SIMLET.",
     "scheduler.current": "Activité actuelle : ",

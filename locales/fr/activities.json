@@ -2,6 +2,19 @@
     "title": "Activités",
     "text": "L'affichage des activités est temporairement désactivé.\nCet onglet est conçu pour créer des \"modèles d'activités\" pour qu'ils soient ensuite copiés dans les tests.\nCes \"modèles d'activités\" vont aider à la création de plusieurs cas de test similaires avec de petites modifications.\nIl sera disponible dans une prochaine version.",
     
+    "no_activities.message": "Il n'y a pas d'activités dans ce session. Ajoutez-en une en utilisant le bouton [...] à droite",
+
+    "add.title": "Ajouter une activité",
+        "add.new.title": "Nouvelle activité",
+        "add.existing.title": "Sélectionner parmi les existantes",
+
+    "edit.title": "Modifier l'activité",
+    
+    "delete.title": "Supprimer l'activité",
+    "delete.confirm": "Êtes-vous sûr de vouloir supprimer l'activité '{{activity}}' de la session '{{session}}' de la SIMLET '{{SIMLET}}'?\nToutes les données relatives à l'activité seront également supprimées",
+
+    "name.placeholder": "Nom de l'activité",
+
     "activity.name": "Activité par défaut",
     "activity.description": "Une activité de base avec un état d'achèvement et un endroit où enregistrer les résultats.",    
     "activity.result.title":"Résultat",
