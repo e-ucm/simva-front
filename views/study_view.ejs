@@ -6,7 +6,7 @@
 	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 </div>-->
 <div class="simletTop">
-	<h1><%- t('single.title', { ns : 'SIMLETs' }) %>: <span id="simlet_name"></span></h1>
+	<h1 title="<%- t('single.description', { ns : 'SIMLETs' }) %>"><%- t('single.title', { ns : 'SIMLETs' }) %>: <span id="simlet_name"></span></h1>
 	<div class="simletSettings">
 		<div class="kebab">
 			
@@ -18,8 +18,8 @@
 
 <div id="study_tabs">
 	<div class="studyTabsButtons">
-		<input class="tab yellow selected" type="button" onclick="changeTab(this, 'study_tabs','sessions_tab')" value="<%- t('sessions.tab.title', { ns : 'SIMLETs' }) %>">
-		<input class="tab yellow" type="button" onclick="changeTab(this, 'study_tabs','users_tab')" value="<%- t('users.tab.title', { ns : 'SIMLETs' }) %>">
+			<input class="tab yellow selected" type="button" title="<%- t('sessions.tab.description', { ns : 'SIMLETs' }) %>" onclick="changeTab(this, 'study_tabs','sessions_tab')" value="<%- t('sessions.tab.title', { ns : 'SIMLETs' }) %>">
+			<input class="tab yellow" type="button" title="<%- t('users.tab.description', { ns : 'SIMLETs' }) %>" onclick="changeTab(this, 'study_tabs','users_tab')" value="<%- t('users.tab.title', { ns : 'SIMLETs' }) %>">
 	</div>
 	<div id="sessions_tab" class="subform studyTab selected">
 		<div id="study">
@@ -41,25 +41,25 @@
 					<div class="expandButton"></div>
 					<div class="kebab">
 						<ul class="kebab-dropdown">
-							<li class="kebab-icon icon-edit">
+							<li class="kebab-icon icon-edit" title="<%- t('session.settings.edit.title', { ns : 'SIMLETs' }) %>">
 								<%- t('session.settings.edit.title', { ns : 'SIMLETs' }) %>
 							</li>
-							<li class="kebab-icon icon-add">
+							<li class="kebab-icon icon-add" title="<%- t('session.settings.add_activity.title', { ns : 'SIMLETs' }) %>">
 								<%- t('session.settings.add_activity.title', { ns : 'SIMLETs' }) %>
 							</li>
-							<li class="kebab-icon icon-duplicate">
+							<li class="kebab-icon icon-duplicate" title="<%- t('session.settings.duplicate.title', { ns : 'SIMLETs' }) %>">
 								<%- t('session.settings.duplicate.title', { ns : 'SIMLETs' }) %>
 							</li>
-							<li class="kebab-icon icon-activate">
+							<li class="kebab-icon icon-activate" title="<%- t('session.settings.activate.title', { ns : 'SIMLETs' }) %>">
 								<%- t('session.settings.activate.title', { ns : 'SIMLETs' }) %>
 							</li>
-							<li class="kebab-icon icon-pause">
+							<li class="kebab-icon icon-pause" title="<%- t('session.settings.pause.title', { ns : 'SIMLETs' }) %>">
 								<%- t('session.settings.pause.title', { ns : 'SIMLETs' }) %>
 							</li>
-							<li class="kebab-icon icon-finish">
+							<li class="kebab-icon icon-finish" title="<%- t('session.settings.finish.title', { ns : 'SIMLETs' }) %>">
 								<%- t('session.settings.finish.title', { ns : 'SIMLETs' }) %>
 							</li>
-							<li class="kebab-icon icon-delete">
+							<li class="kebab-icon icon-delete" title="<%- t('session.settings.delete.title', { ns : 'SIMLETs' }) %>">
 								<%- t('session.settings.delete.title', { ns : 'SIMLETs' }) %>
 							</li>
 						</ul>
@@ -79,7 +79,7 @@
 							<done class="completionPercentage">		</done>% [ <doneres class="completedUsers">		</doneres> / <total class="completedTotalUsers">		</total> ]
 						</span>
 					</div>
-					<div class="sessionDownload kebab-icon icon-download">
+					<div class="sessionDownload kebab-icon icon-download" title="<%- t('sessions.download.description', { ns : 'SIMLETs' }) %>">
 						<b><%- t('sessions.download', { ns : 'SIMLETs' }) %></b>
 					</div>
 				</div>
@@ -1168,7 +1168,7 @@
 		session.data(sessionDataNameKey, test.session_name);
 
 		session.find(".sessionTitle").text(test.session_name);
-		session.find(".sessionStatusLabel").addClass(sessionClass).text(sessionStatusLabel);
+		session.find(".sessionStatusLabel").addClass(sessionClass).attr("title", sessionStatusLabel).text(sessionStatusLabel);
 
 		session.find(".sessionDescription").text(test.session_name);
 		session.find(".sessionCreateDate").after(formattedDate);

@@ -53,6 +53,11 @@
     "edit.no_changes.message": "¡No se detectan cambios!",
 
     "single.title": "SIMLET",
+        "single.description": "Informacion general y configuracion del SIMLET seleccionado.",
+        "sessions.tab.description": "Gestiona las sesiones de este SIMLET: crear, editar, supervisar el progreso y descargar datos de sesion.",
+        "users.tab.description": "Gestiona usuarios, grupos, coordinadores y sus asignaciones dentro de este SIMLET.",
+        "sessions.download.description": "Descarga todos los datos disponibles de esta sesion, incluidos los datos de actividades.",
+        "simlets.description": "Listado de SIMLETs disponibles y acceso rapido para crear, editar, archivar o eliminarlos.",
         "sessions.tab.title": "Sesiones",
             "sessions.title": "Sesiones",
             "no_sessions.message": "No hay sesiones para este SIMLET. Intente añadir una utilizando el botón inferior derecho (+)",

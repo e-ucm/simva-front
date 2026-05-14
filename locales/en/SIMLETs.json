@@ -53,6 +53,11 @@
     "edit.no_changes.message": "No changes detected!",
 
     "single.title": "SIMLET",
+        "single.description": "General information and settings for the selected SIMLET.",
+        "sessions.tab.description": "Manage sessions in this SIMLET: create, edit, monitor activity progress, and download session data.",
+        "users.tab.description": "Manage users, groups, coordinators, and related assignments in this SIMLET.",
+        "sessions.download.description": "Download all available data for this session, including activity data.",
+        "simlets.description": "List of SIMLETs available to you and quick access to create, edit, archive, or remove them.",
         "sessions.tab.title": "Sessions",
             "sessions.title": "Sessions",
             "no_sessions.message": "There are no sessions for this SIMLET. Try adding one using the button on the bottom right (+)",
