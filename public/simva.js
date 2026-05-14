@@ -92,7 +92,8 @@ var Simva = {
 	},
 
 	setRole: function(username, body, callback){
-		Utils.patch(`/bff/users/${username}`, body, callback);
+		const normalizedBody = (typeof body === 'string') ? { role: body } : body;
+		Utils.patch(`/bff/users/${username}`, normalizedBody, callback);
 	},
 
 	getUsers: function(query, callback){

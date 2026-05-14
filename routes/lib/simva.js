@@ -144,8 +144,9 @@ class Simva {
 		this.post(`${this.apiurl}/users/events`, null, data, sessionId, callback);
 	}
 
-	setRole(body, sessionId, callback){
-		this.patch(`${this.apiurl}/users/${username}`, null, null, body, sessionId, callback);
+	setRole(username, body, sessionId, callback){
+		const normalizedBody = (typeof body === 'string') ? { role: body } : body;
+		this.patch(`${this.apiurl}/users/${username}`, null, normalizedBody, sessionId, callback);
 	}
 
 	getCurrentUser(sessionId, callback){

@@ -155,7 +155,7 @@ module.exports = function(auth, config){
     });
 
     router.patch('/users/:username', auth, async (req, res, next) => {
-        Simva.setRole(req.body, req.session.id, (error, result) => {
+        Simva.setRole(req.params.username, req.body, req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
