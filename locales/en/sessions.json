@@ -1,0 +1,54 @@
+{
+    "title": "Sessions",
+    "no_sessions.message": "There are no sessions for this SIMLET. Try adding one using the button on the bottom right (+)",
+
+    "createdAt": "Created at",
+    "updatedAt": "Updated at",
+    "activities": "Activities",
+    "users": "Users",
+    "download": "Download data",
+
+    "add.title": "Add session",
+        "add.submit": "Create session",
+
+    "edit.title": "Edit session",
+        "edit.submit": "Edit session",
+    
+    "name.title": "Name",
+    "name.placeholder": "Session name",
+    "description.title": "Description",
+    "description.placeholder": "Session description",
+    "tags.title": "Tags",
+        "tags.no_tags": "No tags",
+        "tags.input.placeholder": "Type a tag to find or create it",
+        "tags.dropdown.no_tags": "No tags yet. Press + to create one",
+        "tags.dropdown.no_matches": "No matches for your search",
+        "tags.dropdown.all_matches": "All matching tags are already in this session",
+        "tags.create.placeholder": "New tag name",
+        "tags.create": "Create",
+        "tags.create.cancel": "Cancel",
+        "tags.edit.placeholder": "Tag name",
+        "tags.edit.save": "Save",
+        "tags.edit.cancel": "Cancel",
+
+    "can_be_manually_activated": "Can be manually activated",
+
+    "settings.edit.title": "Edit",
+    "settings.add_activity.title": "Add activity",
+
+    "settings.duplicate.title": "Duplicate",
+        "duplicate.title": "Duplicate session",
+        "duplicate.submit": "Duplicate",
+    
+    "settings.activate.title": "Activate",
+        "active.title": "Active",
+
+    "settings.pause.title": "Pause",
+        "paused.title": "Paused",
+
+    "settings.finish.title": "Finish",
+        "finished.title": "Finished",
+
+    "settings.delete.title": "Delete",
+        "delete.confirm": "Are you sure do you want to delete the session '{{session}}' from SIMLET '{{SIMLET}}'?\nAll the activities and data will be deleted too"
+}

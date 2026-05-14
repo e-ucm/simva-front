@@ -1,0 +1,874 @@
+<div id="study">
+    <div class="card">
+        <div class="top">
+            <h2><%- t('title', { ns : 'sessions' }) %></h2>
+        </div>
+        <div id="tests" class="tests">
+        </div>
+    </div>
+</div>
+
+<div id="session_template" style="display: none;">
+	<div class="test">
+		<div class="sessionTop" >
+			<h3 class="sessionTitle">	</h3>
+			<div class="sessionStatusLabel">	</div>
+			<div class="expandButton"></div>
+			<div class="kebab">
+				<ul class="kebab-dropdown">
+                    <li class="kebab-icon icon-edit" title="<%- t('settings.edit.title', { ns : 'sessions' }) %>">
+                        <%- t('settings.edit.title', { ns : 'sessions' }) %>
+                    </li>
+                    <li class="kebab-icon icon-add" title=" <%- t('settings.add_activity.title', { ns : 'sessions' }) %>">
+                        <%- t('settings.add_activity.title', { ns : 'sessions' }) %>
+                    </li>
+                    <li class="kebab-icon icon-duplicate" title="<%- t('settings.duplicate.title', { ns : 'sessions' }) %>">
+                        <%- t('settings.duplicate.title', { ns : 'sessions' }) %>
+                    </li>
+                    <li class="kebab-icon icon-activate" title="<%- t('settings.activate.title', { ns : 'sessions' }) %>">
+                        <%- t('settings.activate.title', { ns : 'sessions' }) %>
+                    </li>
+                    <li class="kebab-icon icon-pause" title="<%- t('settings.pause.title', { ns : 'sessions' }) %>">
+                        <%- t('settings.pause.title', { ns : 'sessions' }) %>
+                    </li>
+                    <li class="kebab-icon icon-finish" title="<%- t('settings.finish.title', { ns : 'sessions' }) %>">
+                        <%- t('settings.finish.title', { ns : 'sessions' }) %>
+                    </li>
+                    <li class="kebab-icon icon-delete" title="<%- t('settings.delete.title', { ns : 'sessions' }) %>">
+                        <%- t('settings.delete.title', { ns : 'sessions' }) %>
+                    </li>
+                    <!-- TODO: Add localization -->
+                    <li class="kebab-icon icon-tester" title="<%- t('sessions.set_tester', { ns : 'SIMLETs' }) || 'Set myself as tester in this session' %>">
+						<%- t('sessions.set_tester', { ns : 'SIMLETs' }) || 'Set myself as tester in this session' %>
+					</li>
+					<li class="kebab-icon icon-untester" title="<%- t('sessions.unset_tester', { ns : 'SIMLETs' }) || 'Unset myself as tester' %>">
+						<%- t('sessions.unset_tester', { ns : 'SIMLETs' }) || 'Unset myself as tester' %>
+					</li>
+                </ul>
+            </div>
+        </div>
+        <div class="sessionDescription" style="padding:10px;">	 </div>
+        <div class="sessionSummary">
+            <div class="sessionInfo">
+                <strong class="sessionCreateDate"><%- t('createdAt', { ns : 'sessions' }) %>: 	</strong>
+                <br>
+                <strong class="sessionActivities"><%- t('activities', { ns : 'sessions' }) %>:	</strong>  &nbsp; <strong class="sessionUsers"><%- t('users', { ns : 'sessions' }) %>:	</strong>
+            </div>
+            <div class="activityProgress sessionProgress progress">
+                <div class="done">	</div>
+                <span>
+                    <%- t('completed.title', { ns : 'activities' }) %>: 
+                    <done class="completionPercentage">		</done>% [ <doneres class="completedUsers">		</doneres> / <total class="completedTotalUsers">		</total> ]
+                </span>
+            </div>
+            <div class="sessionDownload kebab-icon icon-download">
+                <b><%- t('download', { ns : 'sessions' }) %></b>
+            </div>
+            <!-- TODO: Add localization -->
+            <div class="sessionTestDownload kebab-icon icon-download" title="<%- t('sessions.test_download.description', { ns : 'SIMLETs' }) || 'Download your own test trace data for this session.' %>" style="display:none;">
+				<b><%- t('sessions.test_download', { ns : 'SIMLETs' }) || 'Download test data' %></b>
+			</div>
+        </div>
+        <div class="sessionTags" style="margin-top: 8px;">	</div>
+        <div class="activities">
+            
+        </div>
+    </div>
+</div>
+
+<div id ="session_form_menu" class="new_element floating">
+    <div class="floater">
+        <div class="form">
+            <h1 id="session_form_title"> 	</h1>
+
+            <div class="subform selected">
+                <form id="session_form">
+                    <input hidden type="text" name="editingSessionId" id="edit_session_id">
+                    <input hidden type="text" name="prevSessionName" id="prev_session_name">
+                    <input hidden type="text" name="prevSessionDescription" id="prev_session_description">
+
+                    <h3><%- t('name.title', { ns : 'sessions' }) %></h3>
+                    <input type="text" name="sessionName" id="session_name" placeholder="<%- t('name.placeholder', { ns : 'sessions' }) %>" required>
+                    <br>
+                    <h3><%- t('description.title', { ns : 'SIMLETs' }) %></h3>
+                    <input type="text" name="sessionDescription" id="session_description" placeholder="<%- t('description.placeholder', { ns : 'sessions' }) %>" required>
+                    <h3><%- t('tags.title', { ns : 'sessions' }) %></h3>
+                    <div style="margin-top: 5px;">
+                        <div class="tagPickerArea">
+                            <div class="tagPickerRow">
+                                <div class="tagPickerInputWrap"  >
+                                    <div id="session_selected_tags" class="tagSelectedChips"></div>
+                                    <input
+                                        type="text"
+                                        id="session_tag_search"
+                                        class="tagSearchInput"
+                                        placeholder="<%- t('tags.input.placeholder', { ns : 'sessions' }) %>"
+                                        onfocus="openTagDropdown()"
+                                        oninput="renderAvailableTags()"
+                                    >
+                                    <div id="session_tag_dropdown" class="tagDropdown" style="display:none;" tabindex="-1">
+
+                                    </div>
+                                </div>
+                                <button type="button" class="tagPlusButton" onclick="toggleTagCreator()">+</button>
+                            </div>
+                        </div>
+                        <div id="session_tag_creator" class="tagCreator" style="display:none;">
+                            <input type="text" id="session_new_tag_name" placeholder="<%- t('tags.create.placeholder', { ns : 'sessions' }) %>" style="flex: 1;">
+                            <input type="color" id="session_new_tag_color" value="#3b82f6" style="width: 44px; padding: 0;">
+                            <button type="button" onclick="createAndSelectTag()"><%- t('tags.create', { ns : 'sessions' }) %></button>
+                            <button type="button" onclick="closeTagCreator()"><%- t('tags.create.cancel', { ns : 'sessions' }) %></button>
+                        </div>
+                        <div id="session_tag_editor" class="tagEditor" style="display:none;">
+                            <input hidden type="text" id="edit_tag_id">
+                            <input hidden type="text" id="prev_tag_name">
+                            <input hidden type="color" id="prev_tag_color">
+
+                            <input type="text" id="session_edit_tag_name" placeholder="<%- t('tags.edit.placeholder', { ns : 'sessions' }) %>" style="flex: 1;">
+                            <input type="color" id="session_edit_tag_color" value="#3b82f6" style="width: 44px; padding: 0;">
+                            <button type="button" onclick="saveEditingTag()"><%- t('tags.edit.save', { ns : 'sessions' }) %></button>
+                            <button type="button" onclick="closeTagEditor()"><%- t('tags.edit.cancel', { ns : 'sessions' }) %></button>
+                        </div>
+                        <span class="error" id="session_tags_error"></span>
+                    </div>
+
+                    <div id="can_be_manually_activated" >
+                        <br>
+                        <h3><%- t('can_be_manually_activated', { ns : 'sessions' }) %></h3>
+                        <input type="checkbox" name="can_be_manually_activated" checked>
+                    </div>
+                    <br>
+                    <input type="submit" id="session_submit" value="">
+                </form>
+			</div>
+			<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+			<br>
+			<span class="error" id="session_form_error"></span>
+		</div>
+	</div>
+</div>
+
+<div id="duplicate_test" class="new_element floating">
+    <div class="floater">
+        <div class="form">
+            <div id="duplicate_test_tab" class="subform selected">
+                <h1><%- t('duplicate.title', { ns : 'sessions' }) %></h1>
+                <form id="duplicate_test_form">
+                    <input hidden type="text" name="test">
+                    <input hidden type="text" name="testName">
+
+                    <!-- TODO: Add localized string for title and placeholder -->
+                    <h3>New session name</h3>
+                    <input type="text" name="name" id="duplicate_test_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
+                    <br><br>
+                    <input type="submit" value="<%- t('duplicate.submit', { ns : 'sessions' }) %>">
+                    <span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+                    <span class="error" id="duplicate_test_error"></span>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="floating_buttons">
+    <a unselectable="on" class="basic" onclick="openTestForm()" style="display: none;">+</a>
+</div>
+
+<script>
+    const sessionActiveStatus = "active";
+    const sessionPausedStatus = "inactive";
+    const sessionFinishedStatus = "terminated";
+
+    // Menus
+
+    $(document).ready(function() {
+
+        $("#session_form").on('submit', function(event) {
+			let errorbox = $('#session_form_error');
+			let currentform = this;
+			let form = Utils.getFormData($("#session_form"));
+			Utils.toggleSubmit(currentform);
+			
+			const selectedTagIds = selectedTags.map((tag) => Number(tag.tag_id));
+
+			// Creating new session
+			if (form.editingSessionId == null || form.editingSessionId == "") { 
+				Simva.addTestToStudy(studyid, { session_name: form.sessionName, session_description: form.sessionDescription, session_can_be_manually_activated: !!form.can_be_manually_activated }, function(error, result) {
+					if (error && error.responseJSON) {
+						Utils.toggleSubmit(currentform);
+						errorbox.text(error.responseJSON.message);
+					}
+					else if (error) {
+						Utils.toggleSubmit(currentform);
+						errorbox.text(error.message || error);
+					}
+					else {
+						const newSessionId = result && result.session_id ? Number(result.session_id) : null;
+						if (!newSessionId || selectedTagIds.length === 0) {
+							Utils.toggleSubmit(currentform);
+							Utils.toggleAddForm('session_form_menu');
+							reloadStudy();
+							return;
+						}
+
+						syncSessionTags(studyid, newSessionId, [], selectedTagIds, function(syncError) {
+							Utils.toggleSubmit(currentform);
+							if (syncError) {
+								errorbox.text(syncError.responseJSON ? syncError.responseJSON.message : syncError.message || syncError);
+								return;
+							}
+							Utils.toggleAddForm('session_form_menu');
+							reloadStudy();
+						});
+					}
+				});
+			}
+			// Editing session
+			else {
+				const sessionId = form.editingSessionId;
+
+				const nameChanged = form.prevSessionName != form.sessionName;
+				const descriptionChanged = form.prevSessionDescription != form.sessionDescription;
+				const tagsChanged = selectedTagIds.length !== originalTagsIds.length || selectedTagIds.some((tagId) => !originalTagsIds.includes(tagId));
+
+				if (!nameChanged && !descriptionChanged && !tagsChanged) {
+					errorbox.text("<%- t('edit.no_changes.message', { ns : 'SIMLETs' }) %>");
+					Utils.toggleSubmit(currentform);
+				}
+				else {
+					errorbox.text("");
+
+					const finishSync = function() {
+						syncSessionTags(studyid, Number(sessionId), originalTagsIds, selectedTagIds, function(syncError) {
+							Utils.toggleSubmit(currentform);
+							if (syncError) {
+								errorbox.text(syncError.responseJSON ? syncError.responseJSON.message : syncError.message || syncError);
+								return;
+							}
+							Utils.toggleAddForm('session_form_menu');
+							reloadStudy();
+						});
+					}
+					
+					if (nameChanged || descriptionChanged) {
+						Simva.updateTest("<%= study %>", Number(sessionId), { session_name : form.sessionName, session_description : form.sessionDescription }, function(error) {
+							if (error) {
+								Utils.toggleSubmit(currentform);
+								errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+								return;
+							}
+							finishSync();
+						});
+					} 
+					else {
+						finishSync();
+					}
+				}
+			}
+			return false;
+		});
+		
+		// TODO: Check
+		$("#duplicate_test_form").on('submit', function(event) {
+			let form = Utils.getFormData($("#duplicate_test_form"));
+			let errorbox = $(this).find('.error');
+			Simva.duplicateTestFromStudy(studyid, { session_name: form.name, from: form.test }, function(error, result) {
+				if (error && error.responseJSON) {
+					errorbox.text(error.responseJSON.message);
+				} else {
+					console.log(result);
+					Utils.toggleAddForm('duplicate_test');
+					reloadStudy();
+				}
+			});
+
+			return false;
+		});
+
+
+    });
+
+    const openTestForm = function(testId) {
+		let test = getTestFromTestId(testId);
+		
+		$('#session_form_error').text("");
+		$('#session_tags_error').text("");
+		$("#session_selected_tags").empty();
+		
+		$('#edit_session_id').val(testId);
+
+		// Creating new session
+		if (testId == null) {
+			$("#session_form_title").text("<%- t('add.title', { ns : 'sessions' }) %>");
+			$("#session_submit").val("<%- t('add.submit', { ns : 'sessions' }) %>");
+			$("#can_be_manually_activated").show();
+
+			$('#prev_session_name').val("");
+			$('#prev_session_description').val("");
+
+			$('#session_name').val("");
+			$('#session_description').val("");
+			
+			selectedTags = [];
+			originalTagsIds = [];
+		}
+		// Editing session
+		else {
+			$("#session_form_title").text("<%- t('edit.title', { ns : 'sessions' }) %>");
+			$("#session_submit").val("<%- t('edit.submit', { ns : 'sessions' }) %>");
+			$("#can_be_manually_activated").hide();
+
+			$('#prev_session_name').val(test.session_name);
+			$('#prev_session_description').val(test.session_description);
+
+			$('#session_name').val(test.session_name);
+			$('#session_description').val(test.session_description);
+			
+			const currentTags = Array.isArray(test.tags) ? test.tags.map(normalizeTag).filter((tag) => tag !== null) : [];
+			selectedTags = currentTags;
+			originalTagsIds = currentTags.map((tag) => Number(tag.tag_id));
+		}
+
+		closeTagCreator();
+		closeTagDropdown();
+		closeTagEditor();
+
+		updateAndRenderCurrentTags(function(loadError) {
+			$("#session_form_menu").toggleClass("shown");
+			if (loadError) {
+				$('#session_form_error').text(loadError.responseJSON ? loadError.responseJSON.message : loadError.message || loadError);
+				return;
+			}
+		});
+	}
+
+	let openEditDuplicateForm = function(testId) {
+		document.getElementById("duplicate_test_error").innerHTML = "";
+		var inputElement = document.getElementById('duplicate_test_name');
+		let test = getTestFromTestId(testId);
+		inputElement.value = test.session_name;
+		$('#duplicate_test').toggleClass('shown');
+		$('#duplicate_test input[name="test"]').val(test.session_id);
+		$('#duplicate_test span[class="error"]').val("");
+		$('#duplicate_test input[name="testName"]').val(test.session_name);
+	}
+	
+	const toggleSession = function(sessionId) {
+		$(`#test_${sessionId}`).find('.activities').toggleClass('collapsed');
+		$(`#test_${sessionId}`).find('.expandButton').toggleClass('collapsed');
+	}
+	
+    
+	// Sessions buttons shared listeners
+	
+	$(document).on('click', ".sessionTop .expandButton", function(e) {
+		const data = $(this).closest(".test").data();
+		toggleSession(data[sessionDataIdKey]);
+	});
+	
+	$(document).on('click', ".sessionTop .icon-edit", function(e) {
+		const data = $(this).closest(".test").data();
+		openTestForm(data[sessionDataIdKey]);
+	});
+
+	$(document).on('click', ".sessionTop .icon-add", function(e) {
+		const data = $(this).closest(".test").data();
+		openActivityForm(data[sessionDataIdKey]);
+	});
+
+	$(document).on('click', ".sessionTop .icon-duplicate", function(e) {
+		const data = $(this).closest(".test").data();
+		openEditDuplicateForm(data[sessionDataIdKey]);
+	});
+
+	$(document).on('click', ".sessionTop .icon-activate", function(e) {
+		const data = $(this).closest(".test").data();
+		activateTest(data[sessionDataIdKey], "active");
+	});
+	
+	$(document).on('click', ".sessionTop .icon-pause", function(e) {
+		const data = $(this).closest(".test").data();
+		activateTest(data[sessionDataIdKey], "inactive");
+	});
+
+	$(document).on('click', ".sessionTop .icon-finish", function(e) {
+		const data = $(this).closest(".test").data();
+		activateTest(data[sessionDataIdKey], "terminated");
+	});
+
+	$(document).on('click', ".sessionTop .icon-delete", function(e) {
+		const data = $(this).closest(".test").data();
+		deleteTest(data[sessionDataIdKey], data[sessionDataNameKey]);
+	});
+
+	$(document).on('click', ".sessionTop .icon-untester", function(e) {
+		const data = $(this).closest(".test").data();
+		unsetTesterForSession(data[sessionDataIdKey]);
+	});
+
+	$(document).on('click', ".sessionTop .icon-tester", function(e) {
+		const data = $(this).closest(".test").data();
+		console.log("setting tester for session id:", data[sessionDataIdKey]);
+		setTesterForSession(data[sessionDataIdKey]);
+	});
+	
+	$(document).on('click', ".sessionDownload", function(e) {
+		const data = $(this).closest(".test").data();
+		downloadSessionData(data[sessionDataIdKey]);
+	});
+	
+	$(document).on('click', ".sessionTestDownload", function(e) {
+		const data = $(this).closest(".test").data();
+		downloadSessionTestData(data[sessionDataIdKey]);
+	});
+
+
+    // Functionality
+
+    let deleteTest = function(testid, testName) {
+		if (confirm(`<%- t('delete.confirm', { ns : 'sessions', session : '${testName}', SIMLET : '${study.simlet_name}' }) %>`)) {
+			Simva.deleteTest(studyid, testid, function(error, result) {
+				reloadStudy();
+			});
+		}
+	}
+
+	const activateTest = function(testId, nextState) {
+		Simva.activateSession(studyid, testId, { activate: nextState }, function(error, result) {
+			if (!error) {
+				reloadStudy();
+			}
+		})
+	}
+	
+	let downloadSessionData = function(sessionId) {
+		console.log("downloading data for session id:", sessionId);
+		Simva.getSessionLRSData(studyid, sessionId, function(error, result){
+			if(error) {
+				$.toast({
+					heading: 'Session data error',
+					text: error.responseJSON ? error.responseJSON.message : error.message,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+				return;
+			}
+			var content = result.data;
+			var filename = `simva-${study.simlet_name}-session-${sessionId}-data.json`;
+			Utils.openResultContent(content, 'Session data error', 'iframe_floating');
+			Utils.downloadContent(content, filename, 'Session data error');
+		});
+	}
+
+	let downloadSessionTestData = function(sessionId) {
+		console.log("downloading test data for session id:", sessionId);
+		Simva.getSessionTestLRSData(studyid, sessionId, function(error, result){
+			if(error) {
+				$.toast({
+					heading: 'Session test data error',
+					text: error.responseJSON ? error.responseJSON.message : error.message,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+				return;
+			}
+			var content = result.data;
+			var filename = `simva-${study.simlet_name}-session-${sessionId}-test-data.json`;
+			Utils.openResultContent(content, 'Session test data error', 'iframe_floating');
+			Utils.downloadContent(content, filename, 'Session test data error');
+		});
+	}
+
+
+    // Render
+
+    // Add sessions programatically to avoid XSS
+	let paintTest = function(test, activities, participants) {
+		const session = $("#session_template .test").clone();
+		session.attr("id", `test_${test.session_id}`);
+		
+        const isCurrentUserParticipant = currentUser.user_id !== null && participants.some(function(p) {
+			return p.user_id === currentUser.user_id || String(p.user_id) === String(currentUser.user_id);
+		});
+		if (isCurrentUserParticipant) {
+			session.find(".sessionTestDownload").show();
+		}
+        
+		const date = new Date(test.createdAt);
+		const formattedDate = date.toLocaleDateString('en-GB');
+		
+		let userCount = participants.length;
+		let completeUserCount = 0;
+		if (activities.length > 0) {
+			if (activities[activities.length - 1].data.completion != null) {
+				for (const [key, value] of Object.entries(activities[activities.length - 1].data.completion)) {
+					if (value) {
+						completeUserCount++;
+					}
+				}
+			}
+		}
+		let lastActivityCompletion = 0;
+		if (userCount > 0) {
+			lastActivityCompletion = (completeUserCount / userCount) * 100
+		}
+		lastActivityCompletion = lastActivityCompletion.toFixed(2);
+
+		let sessionClass = test.session_status;
+		let sessionStatusLabel = "";
+		
+		if (sessionClass === sessionActiveStatus) {
+			session.find(".icon-activate").hide();
+			if (sessionStatusLabel == "") {
+				sessionStatusLabel = `<%- t('active.title', { ns : 'sessions' }) %>`;
+			}
+		}
+		if (sessionClass == sessionPausedStatus) {
+			session.find(".icon-pause").hide();
+			if (sessionStatusLabel == "") {
+				sessionStatusLabel = `<%- t('paused.title', { ns : 'sessions' }) %>`;
+			}
+		}
+		if (sessionClass == sessionFinishedStatus) {
+			session.find(".icon-finish").hide();
+			if (sessionStatusLabel == "") {
+				sessionStatusLabel = `<%- t('finished.title', { ns : 'sessions' }) %>`;
+			}
+    		session.find(".icon-activate").hide();
+    		session.find(".icon-pause").hide();
+		}
+		
+		session.data(sessionDataIdKey, test.session_id);
+		session.data(sessionDataNameKey, test.session_name);
+
+		session.find(".sessionTitle").text(test.session_name);
+		session.find(".sessionStatusLabel").addClass(sessionClass).attr("title", sessionStatusLabel).text(sessionStatusLabel);
+
+		session.find(".sessionDescription").text(test.session_name);
+		session.find(".sessionCreateDate").after(formattedDate);
+		session.find(".sessionActivities").after(test.activities.length);
+		session.find(".sessionUsers").after(userCount);
+		
+		session.find(".done").css('width', `${lastActivityCompletion}%`);
+		session.find(".completionPercentage").append(lastActivityCompletion);
+		session.find(".completedUsers").append(completeUserCount);
+		session.find(".completedTotalUsers").append(userCount);
+		
+		session.find(".sessionTags").append(renderTags(test));
+
+		$('#tests').append(session);
+		session.find(".kebab-dropdown").fadeOut(0);
+		toggleSession(test.session_id);
+	}
+    
+
+</script>
+
+<!-- TAGS -->
+<script>
+	let availableTags = [];
+	let selectedTags = [];
+	let originalTagsIds = [];
+	
+
+	// Menus
+
+	$(document).ready(function() {
+		$(document).on('click', function (e) {
+			if (!$(e.target).closest('#session_tag_search').length && !$(e.target).closest('#session_tag_dropdown').length
+				&& !$(e.target).closest('#session_selected_tags').length) {
+				closeTagDropdown();
+			}
+		});
+	});
+
+	
+	const toggleTagCreator = function() {
+		$("#session_tag_creator").toggle();
+		$("#session_tags_error").text("");
+	}
+	const closeTagCreator = function() {
+		$("#session_tag_creator").hide();
+		$("#session_tags_error").text("");
+	}
+
+	const openTagDropdown = function() {
+		$("#session_tag_dropdown").show();
+	}
+	const closeTagDropdown = function() {
+		$("#session_tag_dropdown").hide();
+	}
+
+	const openTagEditor = function(tagId) {
+		$("#session_tag_editor").show();
+		closeTagDropdown();
+		
+		const tag = getTagFromTagId(tagId);
+		$("#edit_tag_id").val(tag.tag_id);
+		$("#prev_tag_name").val(tag.tag_name);
+		$("#prev_tag_color").val(tag.tag_color);
+		
+		$("#session_edit_tag_name").val(tag.tag_name);
+		$("#session_edit_tag_color").val(tag.tag_color);
+	}
+	const closeTagEditor = function() {
+		$("#session_tag_editor").hide();
+		$("#session_tags_error").text("");
+	}
+
+
+	// Functionality
+
+	const getTagFromTagId = function(tagId) {
+		const normalizedTagId = Number(tagId);
+
+		for (let i = 0; i < availableTags.length; i++) {
+			let tag = availableTags[i];
+			if (tag.tag_id === normalizedTagId) {
+				return tag;
+			}
+		}
+		return null;
+	}
+
+	const normalizeTag = function(tag) {
+		if (!tag) {
+			return null;
+		}
+		return {
+			tag_id: Number(tag.tag_id),
+			tag_name: tag.tag_name,
+			tag_color: tag.tag_color || "#3b82f6"
+		};
+	}
+
+	const addTagToSessionAsync = function(studyId, testId, tagId) {
+		return new Promise((resolve, reject) => {
+			Simva.addTagToSession(studyId, testId, tagId, function(error, result) {
+				if (error) {
+					reject(error);
+					return;
+				}
+				resolve(result);
+			});
+		});
+	}
+
+	const deleteTagFromSessionAsync = function(studyId, testId, tagId) {
+		return new Promise((resolve, reject) => {
+			Simva.deleteTagFromSession(studyId, testId, tagId, function(error, result) {
+				if (error) {
+					reject(error);
+					return;
+				}
+				resolve(result);
+			});
+		});
+	}
+
+	const syncSessionTags = function(studyId, testId, originalTagIds, targetTagIds, callback) {
+		const toAdd = targetTagIds.filter((tagId) => !originalTagIds.includes(tagId));
+		const toDelete = originalTagIds.filter((tagId) => !targetTagIds.includes(tagId));
+
+		Promise.all([
+			...toAdd.map((tagId) => addTagToSessionAsync(studyId, testId, tagId)),
+			...toDelete.map((tagId) => deleteTagFromSessionAsync(studyId, testId, tagId))
+		])
+			.then(() => callback())
+			.catch((error) => callback(error));
+	}
+
+
+	const selectTag = function(tagId) {
+		const tag = getTagFromTagId(tagId);
+
+		if (!selectedTags.includes(tagId)) {
+			selectedTags.push(tag);
+			updateAndRenderCurrentTags();
+		}
+		$("#session_new_tag_name").val("");
+		$("session_tag_search").val("");
+		closeTagCreator();
+	}
+	
+	const unselectTag = function(tagId) {
+		const tagToUnselect = getTagFromTagId(tagId);
+		if (selectedTags.includes(tagToUnselect)) {
+			selectedTags = selectedTags.filter((tag) => tag != tagToUnselect);
+			updateAndRenderCurrentTags();
+		}
+	}
+
+	const createAndSelectTag = function() {
+		let tagName = $("#session_new_tag_name").val().trim();
+		let tagColor = $("#session_new_tag_color").val();
+		let errorBox = $('#session_tags_error');
+		errorBox.text("");
+
+		if (!tagName) {
+			errorBox.text('Tag name is required');
+			return;
+		}
+
+		Simva.createTag({ tag_name: tagName, tag_color: tagColor }, function(error, createdTag) {
+			if (error) {
+				errorBox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+				return;
+			}
+
+			const created = normalizeTag(createdTag);
+			if (created) {
+				availableTags.push(createdTag);
+				selectTag(created.tag_id);
+			}
+		});
+	}
+
+	const deleteTag = function(tagId) {
+		Simva.deleteTag(tagId, function(error, result) {
+			if (error) {
+				// TODO: show error correctly when tag cant be deleted due to being used in other session
+				// (only error has content but it shows [object Object])
+				$('#session_tags_error').text(error.responseJSON ? error.responseJSON.message : error.message || error);
+				return;
+			}
+			updateAndRenderCurrentTags();
+		});
+	}
+
+	const saveEditingTag = function() {
+		const tagId = $("#edit_tag_id").val();
+		const tagName = $("#session_edit_tag_name").val();
+		const tagColor = $("#session_edit_tag_color").val();
+
+		const nameChanged = $("#prev_tag_name").val() != tagName;
+		const colorChanged = $("#prev_tag_color").val() != tagColor;
+
+		const errorBox = $("#session_tags_error");
+
+		if (!nameChanged && !colorChanged) {
+			errorBox.text("<%- t('edit.no_changes.message', { ns : 'SIMLETs' }) %>");
+		}
+		else if ($("#session_edit_tag_name").val() == "" || $("#session_edit_tag_name").val() == null) {
+			errorBox.text('Tag name is required');
+		}
+		else {
+			Simva.updateTag(tagId, { tag_name: tagName, tag_color: tagColor }, function(error) {
+				if (error) {
+					errorBox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+					return;
+				}
+				closeTagEditor();
+
+				updateAndRenderCurrentTags(function(loadError) {
+					if (loadError) {
+						errorBox.text(loadError.responseJSON ? loadError.responseJSON.message : loadError.message || loadError);
+						return;
+					}
+					openTagDropdown();
+				});
+			});
+		}
+	}
+
+
+	const filterAvailableTagsBySearch = function() {
+		const query = $("#session_tag_search").val().trim().toLowerCase();
+		if (!query) {
+			return availableTags;
+		}
+
+		return availableTags.filter((tag) => {
+			const name = (tag.tag_name || '').toLowerCase();
+			return name.includes(query);
+		});
+	}
+
+
+	// Render
+
+	const renderAvailableTags = function() {
+		const container = $("#session_tag_dropdown");
+		container.empty();
+		const selectedIds = selectedTags.map((tag) => Number(tag.tag_id));
+		const filteredTags = filterAvailableTagsBySearch();
+		const addableTags = filteredTags.filter((tag) => !selectedIds.includes(Number(tag.tag_id)));
+
+		if (availableTags.length === 0) {
+			container.append(`<div class="tagDropdownEmpty"><%- t('tags.dropdown.no_tags', { ns : 'sessions' }) %></div>`);
+			return;
+		}
+
+		if (filteredTags.length === 0) {
+			container.append(`<div class="tagDropdownEmpty"><%- t('tags.dropdown.no_matches', { ns : 'sessions' }) %></div>`);
+			return;
+		}
+
+		if (addableTags.length === 0) {
+			container.append(`<div class="tagDropdownEmpty"><%- t('tags.dropdown.all_matches', { ns : 'sessions' }) %></div>`);
+			return;
+		}
+
+		for (let i = 0; i < addableTags.length; i++) {
+			const tag = addableTags[i];
+			const isSelected = selectedIds.includes(Number(tag.tag_id));
+			container.append(`
+				<div class="tagDropdownOption">
+					<button type="button" class="tagDropdownPick" onclick="selectTag(${tag.tag_id})">
+						<span class="tagPickerColor" style="background:${tag.tag_color};"></span>
+						<span class="tagDropdownLabel">${tag.tag_name}</span>
+					</button>
+					<button type="button" class="tagDropdownEdit" onclick="openTagEditor(${tag.tag_id})">Edit</button>
+					<button type="button" class="tagDropdownEdit" onclick="deleteTag(${tag.tag_id})">Delete</button>
+				</div>
+			`);
+		}
+	}
+
+	const renderSelectedSessionTags = function() {
+		const container = $("#session_selected_tags");
+		container.empty();
+
+		for (let i = 0; i < selectedTags.length; i++) {
+			const tag = selectedTags[i];
+			container.append(`
+				<span class="tagSelectedChip">
+					<span class="tagPickerColor" style="background:${tag.tag_color};"></span>
+					<span class="tagSelectedName">${tag.tag_name}</span>
+					<button type="button" class="tagSelectedRemove" onclick="unselectTag(${tag.tag_id})">x</button>
+				</span>
+			`);
+		}
+	}
+
+	const updateAndRenderCurrentTags = function(callback) {
+		Simva.getTags(function(error, tags) {
+			if (error && callback) {
+				callback(error);
+				return;
+			}
+			
+			availableTags = (Array.isArray(tags) ? tags : [])
+				.map(normalizeTag)
+				.filter((tag) => tag !== null)
+				.filter((tag, index, arr) => arr.findIndex((current) => Number(current.tag_id) === Number(tag.tag_id)) === index)
+				.sort((a, b) => a.tag_name.localeCompare(b.tag_name));
+			
+			selectedTags = selectedTags
+				.map((tag) => getTagFromTagId(tag.tag_id) || tag)
+				.filter((tag, index, arr) => arr.findIndex((current) => current.tag_id === tag.tag_id) === index);
+			
+
+			if (callback) {
+				callback(null, availableTags);
+			}
+
+			renderSelectedSessionTags();
+			renderAvailableTags();
+		});
+	}
+
+</script>

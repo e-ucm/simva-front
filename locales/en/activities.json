@@ -2,6 +2,19 @@
     "title": "Activities",
     "text": "Activities view is temporally disabled.\nThis tab is designed to create \"template activities\" for them later to be copied into tests.\nThese \"template activities\" help the creation of multiple test cases similar with small modifications.\nIt will be available in a future version.",
     
+    "no_activities.message": "There are no activities in this session. Add one using the 3-dot menu button on the right",
+
+    "add.title": "Add activity",
+        "add.new.title": "New activity",
+        "add.existing.title": "Select from existing",
+
+    "activities.edit.title": "Edit activity",
+    
+    "activities.delete.title": "Delete activity",
+    "activities.delete.confirm": "Are you sure do you want to delete the activity '{{activity}}' of session '{{session}}' from SIMLET '{{SIMLET}}'?\nAll the data of the activity will be deleted too",
+
+    "name.placeholder": "Activity name",
+
     "activity.name": "Default Activity",
     "activity.description": "A basic activity with completion state and a place to save results.",    
     "activity.result.title":"Result",

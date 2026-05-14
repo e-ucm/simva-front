@@ -1,11 +1,14 @@
 { 
     "title": "Groupes",
+    
     "deprecated.title": "Groupes (obsolète)",
     "deprecated.message": "Cet onglet est obsolète. Préférez la nouvelle version de la page du groupe.",
     "zero.message.title": "Vous avez encore 0 groupe. Créez-en un en utilisant le bouton en bas à droite (+).",
     "remove.confirm": "Êtes-vous sûr de vouloir supprimer le groupe '{{group}}'?\nLe groupe sera supprimé de toutes les études, tests et activités.",
     "single.title":"Groupe",
     "new.title": "Ajouter un nouveau groupe",
+    "name.title": "Nom",
+
     "name.placeholder": "Nom du groupe",
     "name.edit.title": "Modifier le nom du groupe",
     "name.edit.nochange":"Aucun changement n'a été détecté dans le nouveau nom du groupe!",
@@ -43,5 +46,69 @@
     "participants.remove.confirm" : "Êtes-vous sûr de vouloir supprimer le participant '{{participant}}' du groupe '{{group}}' ?",
     "participants.errormessage.alreadyInGroup":"Le participant '{{participant}}' est déjà dans le groupe '{{group}}'.",
     "participants.errormessage.zeroInGroup.title":"Il n'y a pas de participants dans ce groupe.",
-    "participants.errormessage.zeroInGroup.message":"Essayez d'en ajouter en utilisant le bouton à droite."
+    "participants.errormessage.zeroInGroup.message":"Essayez d'en ajouter en utilisant le bouton à droite.",
+
+    
+    "add.title": "Ajouter un groupe",
+    "add.submit": "Ajouter groupe",
+
+    "settings.edit.title": "Edit",
+        "edit.title": "Edit group",
+        "edit.submit": "Edit group",
+
+    "settings.add.title": "Add participants",
+
+    "settings.allocator.title": "Edit allocator",
+
+    "settings.download.title": "Export table to PDF",
+        "print_table.title": "Group: ",
+        "print_table.number_col.title": "No.",
+        "print_table.name_col.title": "Name",
+        "print_table.code_col.title": "Code",
+    
+    "settings.delete.title": "Delete",
+    
+    "participant.delete": "Delete",
+
+    
+    "no_session_assigned.title": "Pas de session",
+
+    "coordinators.title": "Coordinateurs",
+    "coordinators.placeholder": "Nom d'utilisateur du coordinateur",
+    "coordinators.add.title": "Ajouter un coordinateur",
+    "coordinators.error.already_in": "Le coordinateur est déjà dans le SIMLET.",
+    "coordinators.delete.title": "Supprimer",
+    "coordinators.delete.confirm": "Êtes-vous sûr de vouloir supprimer le coordinateur '{{coordinator}}' du SIMLET '{{SIMLET}}'?",
+
+    "groups.delete.title": "Supprimer",
+    "groups.delete.confirm": "Êtes-vous sûr de vouloir supprimer le groupe '{{group}}' du SIMLET '{{SIMLET}}'?",
+
+    "allocator.title": "Allocateur",
+    "allocator.change.title": "Sélectionner le nouveau type d'allocateur",
+    "allocator.change.submit": "Changer d'Allocateur",
+    "allocator.add.title": "Ajouter un allocation",
+    "allocator.default.type": "Défaut",
+    "allocator.default.title": "Allocateur de base",
+    "allocator.default.description": "Cet allocateur vous permet d'affecter manuellement les participants aux sessions un par un. (S'il n'est pas assigné, il prendra le premier).",
+    "allocator.group.type": "Groupe",
+    "allocator.group.title": "Allocateur de Groupe",
+    "allocator.group.description": "Cet allocateur vous permet de sélectionner la branche de session à laquelle chaque groupe est affecté.",
+    "allocator.type.title": "Type",
+    "allocator.sessions.title": "Session",
+    "allocator.participants.title": "Participant",
+    "allocator.add.error": "Erreur dans l'ajout de l'allocation",
+    "allocator.add.message": "Mise à jour de l'Allocateur",
+
+            
+    "lti_platform.title": "Plate-forme LTI",
+    "lti_platform.add.title": "Ajouter un plateforme LTI",
+    "lti_platform.add.name.title": "Nom",
+    "lti_platform.add.url.title": "URL",
+    "lti_platform.add.client_id.title": "ID du Client",
+    "lti_platform.add.authentication_endpoint.title": "Point final d'authentification",
+    "lti_platform.add.accesstoken_endpoint.title": "Point final du jeton d'accès",    
+    "lti_platform.add.jkws_url.title": "URL de jKWS",
+    "lti_platform.delete.title": "Supprimer la plate-forme LTI",
+    "lti_platform.delete.confirm": "Êtes-vous sûr de vouloir supprimer cette plate-forme '{{platform}}' du SIMLET '{{SIMLET}}' ?",
+    "lti_platform.zero.message": "Il n'y a pas encore de plateformes."
 }

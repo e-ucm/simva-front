@@ -1,0 +1,266 @@
+<div id="add_activity" class="new_element floating">
+    <div class="floater">
+        <div class="form">
+            <div class="tabs">
+                <span class="tab selected" onclick="changeTab(this, 'add_activity','new_activity_tab')"><%- t('add.new.title', { ns : 'activities' }) %></span>
+                <span class="tab" type="hidden" onclick="changeTab(this, 'add_activity','existing_activity_tab')"><%- t('add.existing.title', { ns : 'activities' }) %></span>
+            </div>
+            <div id="new_activity_tab" class="subform selected">
+                <form id="new_activity_form">
+                    <input type="hidden" name="test">
+                    <input type="text" name="name" placeholder="<%- t('name.placeholder', { ns : 'activities' }) %>" required>
+                    <select name="type">
+                    </select>
+                    <fieldset id="new_activity_extras">
+                    </fieldset>
+                    <input type="submit" value="<%- t('add.title', { ns : 'activities' }) %>">
+                    <span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+                    <span class="error"></span>
+                </form>
+            </div>
+            <div id="existing_activity_tab" class="subform">
+                <form id="existing_activity_form">
+                    <input type="hidden" name="test">
+                    <input type="text" name="name" placeholder="<%- t('name.placeholder', { ns : 'activities' }) %>" required>
+                    <select name="type">
+                    </select>
+                    <input disabled type="submit" value="<%- t('add.title', { ns : 'activities' }) %> (Not enabled)">
+                    <span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+                    <span class="error"></span>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="edit_activity" class="new_element floating">
+    <div class="floater">
+        <div class="form">
+            <form id="edit_activity_form">
+                <input type="hidden" name="test">
+                <input type="hidden" name="activity">
+                <input id="edit_activity_type" type="hidden" name="type">
+                <input id="edit_activity_name" type="text" name="name" placeholder="<%- t('name.placeholder', { ns : 'activities' }) %>" required>
+                </select>
+                <fieldset id="edit_activity_extras">
+                </fieldset>
+                <input type="submit" value="<%- t('edit.title', { ns : 'activities' }) %>">
+                <span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+                <span class="error" id="edit_activity_error"></span>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+
+    $(document).ready(function() {
+        let painters = Object.keys(PainterFactory.Painters);
+
+		Simva.getActivityTypes(function(error, activitytypes) {
+			for (var i = 0; i < activitytypes.length; i++) {
+				if (activitytypes[i].commun && PainterFactory.Painters["activity"]) {
+					PainterFactory.Painters["activity"].commun = activitytypes[i].commun;
+					PainterFactory.Painters["activity"].communSpecific = activitytypes[i].communSpecific;
+				}
+				if (PainterFactory.Painters[activitytypes[i].activity_type]) {
+					PainterFactory.Painters[activitytypes[i].activity_type].setUtils(activitytypes[i].activity_utils);
+					PainterFactory.Painters[activitytypes[i].activity_type].simple_name = activitytypes[i].name;
+					PainterFactory.Painters[activitytypes[i].activity_type].description = activitytypes[i].description;
+					PainterFactory.Painters[activitytypes[i].activity_type].commun = activitytypes[i].commun;
+					PainterFactory.Painters[activitytypes[i].activity_type].communSpecific = activitytypes[i].communSpecific;
+					PainterFactory.Painters[activitytypes[i].activity_type].specific = activitytypes[i].specific;
+					let row = `<option value="${activitytypes[i].activity_type}">${PainterFactory.Painters[activitytypes[i].activity_type].simple_name}</option>`;
+					$('#new_activity_form select[name="type"]').append(row);
+				}
+			}
+
+			$('#new_activity_extras').empty();
+			$('#new_activity_extras').append(`${PainterFactory.Painters["gameplay"].description}\n`);
+			PainterFactory.Painters["gameplay"].getExtraForm((error, result) => {
+				if (!error) {
+					$('#new_activity_extras').append(result);
+				}
+			});
+
+			Simva.getAllocatorTypes(function(error, allocatortypes) {
+				for (var i = 0; i < allocatortypes.length; i++) {
+					if (AllocatorFactory.Painters[allocatortypes[i].allocator_type]) {
+						AllocatorFactory.Painters[allocatortypes[i].allocator_type].simple_name = allocatortypes[i].name;
+						AllocatorFactory.Painters[allocatortypes[i].allocator_type].description = allocatortypes[i].description;
+						AllocatorFactory.Painters[allocatortypes[i].allocator_type].type_translated = allocatortypes[i].type_t;
+						AllocatorFactory.Painters[allocatortypes[i].allocator_type].add_message = allocatortypes[i].add_message;
+						AllocatorFactory.Painters[allocatortypes[i].allocator_type].add_error = allocatortypes[i].add_error;
+						AllocatorFactory.Painters[allocatortypes[i].allocator_type].type_title = allocatortypes[i].type_title;
+						AllocatorFactory.Painters[allocatortypes[i].allocator_type].participant_title = allocatortypes[i].participant_title;
+						AllocatorFactory.Painters[allocatortypes[i].allocator_type].test_title = allocatortypes[i].test_title;
+						AllocatorFactory.Painters[allocatortypes[i].allocator_type].add_title = allocatortypes[i].add_title;
+						let row = `<div class="row"><input type="radio" name="type" id="allocator_${allocatortypes[i].allocator_type}" value="${allocatortypes[i].allocator_type}"><label for="allocator_${allocatortypes[i].allocator_type}"><span class="name">${AllocatorFactory.Painters[allocatortypes[i].allocator_type].simple_name}</span><span class="description">${AllocatorFactory.Painters[allocatortypes[i].allocator_type].description}</span></label></div>`;
+						$('#change_allocator_content').append(row);
+					}
+				}
+				reloadStudy();
+			});
+		});
+
+        $('#new_activity_form select[name="type"]').on('change', function(event) {
+			$('#new_activity_extras').empty();
+			$('#new_activity_extras').append(`${PainterFactory.Painters[$(this).val()].description}\n`);
+			PainterFactory.Painters[$(this).val()].getExtraForm((error, result) => {
+				if (!error) {
+					$('#new_activity_extras').append(result);
+				}
+			});
+		});
+
+		$("#new_activity_form").on('submit', function(event) {
+			event.preventDefault();
+			let currentform = this;
+			let form = Utils.getFormData($("#new_activity_form"));
+			Utils.toggleSubmit(currentform);
+			let errorbox = $(this).find('.error');
+
+			PainterFactory.Painters[form.type].extractInformation('#new_activity_form', function(error, activity) {
+				if (error) {
+					errorbox.text(error);
+				} else {
+					Simva.addActivityToTest(studyid, form.test, activity, function(error, result) {
+						Utils.toggleSubmit(currentform);
+						if (error && error.responseJSON) {
+							errorbox.text(error.responseJSON.message);
+						} else {
+							Utils.toggleAddForm('add_activity');
+							reloadStudy();
+						}
+					});
+				}
+			});
+
+			return false;
+		});
+
+		$("#edit_activity_form").on('submit', function(event) {
+			event.preventDefault();
+			let currentform = this;
+			let form = Utils.getFormData($("#edit_activity_form"));
+			Utils.toggleSubmit(currentform);
+			let errorbox = $(this).find('.error');
+			let test = tests.filter(item => 
+				item.session_id == form.test
+			)[0];
+			if (!test || !test.completeActivities) {
+				errorbox.text("Test or activities not found");
+				Utils.toggleSubmit(currentform);
+				return false;
+			}
+			let activities = test.completeActivities;
+			let activity = activities.filter(activity => 
+				activity.activity_id == form.activity
+			)[0];
+			if (!activity) {
+				errorbox.text("Activity not found");
+				Utils.toggleSubmit(currentform);
+				return false;
+			}
+			PainterFactory.Painters[form.type].extractEditInformation('#edit_activity_form', activity, function(error, updatedActivity) {
+				if (error) {
+					errorbox.text(error);
+				} else {
+					if (Object.keys(updatedActivity).length == 0) {
+						errorbox.text("<%- t('edit.no_changes.message', { ns : 'SIMLETs' }) %>");
+						Utils.toggleSubmit(currentform);
+					} else {
+						Simva.updateActivity(studyid, form.test, form.activity, updatedActivity, function(error, result) {
+							Utils.toggleSubmit(currentform);
+							if (error && error.responseJSON) {
+								errorbox.text(error.responseJSON.message);
+							} else {
+								Utils.toggleAddForm('edit_activity');
+								reloadStudy();
+							}
+						});
+					}
+				}
+			});
+			return false;
+		});
+
+        
+    });
+
+    let openActivityForm = function(test) {
+		$('#add_activity').toggleClass('shown');
+		$('#add_activity input[name="test"]').val(test);
+	}
+
+    let openEditActivityForm = function(activityId) {
+		document.getElementById("edit_activity_error").innerHTML = "";
+		let activity= getActivityFromActivityId(activityId);
+		var inputElement = document.getElementById('edit_activity_name');
+		inputElement.value = activity.activity_name;
+		var inputElement = document.getElementById('edit_activity_type');
+		inputElement.value = activity.activity_type;
+		$('#edit_activity_extras').empty();
+		$('#edit_activity_extras').append(`${PainterFactory.Painters[activity.activity_type].description}\n`);
+		$('#edit_activity_extras').append(PainterFactory.Painters[activity.activity_type].getEditExtraForm());
+		PainterFactory.Painters[activity.activity_type].updateInputEditExtraForm(activity);
+		$('#edit_activity input[name="test"]').val(activity.session_id);
+		$('#edit_activity span[class="error"]').val("");
+		$('#edit_activity input[name="activity"]').val(activity.activity_id);
+		$('#edit_activity').toggleClass('shown');
+	}
+
+	
+    let deleteActivity = function(activityid, activityname, testid) {
+		let test = getTestFromTestId(testid);
+		let testName = test && test.session_name ? test.session_name : testid;
+		if (confirm(`<%- t('delete.confirm', { ns : 'activities', activity : '${activityname}', session: '${testName}' , SIMLET : '${study.simlet_name}' }) %>`)) {
+			Simva.deleteActivity(studyid, testid, activityid, function(error, result) {
+				reloadStudy();
+			});
+		}
+	}
+
+    let paintTestActivities = function(test, activities, participants) {
+		window.participants = participants;
+		const isCurrentUserParticipant = currentUser.user_id !== null && participants.some(function(p) {
+			return p.user_id === currentUser.user_id || String(p.user_id) === String(currentUser.user_id);
+		});
+		$(`#test_${test.session_id} .activities`).empty();
+
+		if (activities.length === 0) {
+			$(`#test_${test.session_id} .activities`).text("<%- t('no_activities.message', { ns : 'SIMLETs' }) %>");
+		} else {
+			for (var i = 0; i < activities.length; i++) {
+				switch(activities[i].activity_type) {
+					case 'rageminio':
+					case 'miniokafka':
+					case 'rageanalytics':
+					case 'limesurvey':
+					case 'gameplay':
+					case 'activity':
+					case 'manual':
+					case 'ltitool':
+					case 'imspackage':
+						PainterFactory.Painters[activities[i].activity_type].fullyPaintActivity(activities[i], participants);
+						break;
+					default:
+						ActivityPainter.fullyPaintActivity(activities[i], participants);
+						break;
+				}
+			}
+		}
+	}
+
+</script>
+
+<script type="text/javascript" src="/activities/activitypainter.js"></script>
+<script type="text/javascript" src="/activities/limesurveypainter.js"></script>
+<script type="text/javascript" src="/activities/rageanalyticspainter.js"></script>
+<script type="text/javascript" src="/activities/miniopainter.js"></script>
+<script type="text/javascript" src="/activities/rageminiopainter.js"></script>
+<script type="text/javascript" src="/activities/gameplaypainter.js"></script>
+<script type="text/javascript" src="/activities/manualpainter.js"></script>
+<script type="text/javascript" src="/activities/ltitoolpainter.js"></script>
+<script type="text/javascript" src="/activities/imspackagepainter.js"></script>

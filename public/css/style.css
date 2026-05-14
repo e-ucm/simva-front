@@ -125,6 +125,10 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	user-select: none;
 	white-space: nowrap;
 }
+body {
+  padding-bottom: 200px; /* Adjust based on button size and position */
+  margin: 0; /* Ensure no default margin interferes */
+}
 
 .content .floating_buttons a { 
 	display: inline-block; 
@@ -137,6 +141,9 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	cursor: pointer; 
 	border-radius: 30px; 
 	box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.3); 
+}
+.content .floating_buttons.users a { 
+	background-color: #6b5faa; 
 }
 
 .content .floating_buttons a.pdf { 
@@ -228,34 +235,6 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .content .top { overflow: hidden; }
 .content .top h2, .content .top h3, .content .top h4 { float: left; }
 .content .top input[type="button"] { float: right; margin-left: 10px; }
-
-.content .participants table { width: 100% }
-.content .participants table tr:nth-child(even) { background: #e8e8e8 }
-.content .participants table tr:nth-child(odd) { background: #f5f5f5 }
-.content .participants table td:first-child { width: 10%; text-align: center; }
-.content .participants table td { width: 18%; text-align: center; }
-.content .participants table input[type="button"] { width: 100%; }
-.content .participants table img { width: 30px; }
-
-.content #pdf_printable { display: none; }
-.content #pdf_printable { padding:10px }
-.content #pdf_printable table { width: 100%; position: relative; font-size: 26px; font-family: "DejaVu Sans Mono"; border: solid 2px black; border-collapse: collapse; }
-.content #pdf_printable table td { border: solid 2px black; text-align: center; }
-@page { size: A4;  margin: 4mm 4mm 4mm 4mm; }
-@media print { 
-	.content #pdf_printable { display: block; }
-	.content #group_view,
-	.header,
-	.menu { display: none; }
-	body { background-color: white; }
-	.content { 
-		padding: 0px; 
-		width: 210mm; 
-		height: 297mm; 
-	}
-	.floating_buttons { display: none; }
-	thead { display: table-header-group; }
-}
 
 .content .test { background-color: lightgray; padding: 10px; margin-top: 10px; box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3); }
 .content .test .activities { overflow-x: auto; white-space: nowrap; padding-bottom: 10px; }
@@ -476,7 +455,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	background: #38bdf8;
 	color: #ffffff;
 	font-size: 12px;
-	font-weight: 600;
+	font-weight: bold;
 }
 .tagSelectedName {
 	max-width: 160px;
@@ -488,7 +467,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	border: 0;
 	background: transparent;
 	color: #ffffff;
-	font-weight: 700;
+	font-weight: bold;
 	padding: 0;
 	cursor: pointer;
 	line-height: 1;
@@ -552,7 +531,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 }
 .tagDropdownLabel {
 	font-size: 13px;
-	font-weight: 600;
+	font-weight: bold;
 	color: #304055;
 }
 .tagDropdownEmpty {
@@ -610,8 +589,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 
 
 /* simlet title and settings section */
-.simletTop,
-.sessionTop {
+.simletTop, .sessionTop, .groupTop {
 	display: flex;
 	align-items: center;
 }
@@ -646,34 +624,6 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .studyTab { display: none; }
 .studyTab.selected { display: contents; }
 
-/* .studyTab .left {
-	width: 100%;
-	height: 100%;
-
-	display: flex;
-	justify-content: center;
-	// align-items: center;
-	gap: 1%;
-}
-.studyTab .left .graybox {
-	width: 40%;
-}
-.studyTab .left .graybox.allocator.default {
-	width: 100%;
-	justify-content: center;
-} */
-.studyTab.users.selected { display: flex; }
-.studyTab.users.selected .graybox.groups img { height: 24px }
-.content .graybox { background-color: lightgray; padding: 10px; margin-right: 10px; width: 200px; margin-bottom: 10px; box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3); }
-.content .graybox.owners { 
-	width: max-content;
-	height: max-content; 
-	justify-content: center;
-	align-items: center;
-}
-
-.content .graybox h2 { text-align: center;}
-
 
 .sessionStatusLabel {
 	/* Must be set by the leftmost element in order for the other buttons */
@@ -692,10 +642,10 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .sessionStatusLabel.active {
 	background-color: #8ec26d;
 }
-.sessionStatusLabel.paused {
+.sessionStatusLabel.inactive {
 	background-color: #fbfd68;
 }
-.sessionStatusLabel.finished {
+.sessionStatusLabel.terminated {
 	background-color: #f07667;
 }
 
@@ -713,7 +663,6 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	border-right: var(--triangleSize) solid transparent;
 	border-bottom: var(--triangleSize) solid var(--triangleColor);
 	border-top: 0px solid transparent;
-
 }
 .expandButton.collapsed {
 	border-left: var(--triangleSize) solid transparent;
@@ -721,6 +670,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	border-top: var(--triangleSize) solid var(--triangleColor);
 	border-bottom: 0px solid transparent;
 }
+
 .activities.collapsed {
 	display: none;
 }
@@ -790,6 +740,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	background-color: var(--kebabHoverColor);
 }
 .kebab .li-disabled {
+	cursor: default;
 	pointer-events: none;
 	opacity: 0.6;
 }
@@ -843,6 +794,9 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .icon-duplicate::before {
 	background-image: url("../icon/duplicate.png");
 }
+.icon-gear::before {
+	background-image: url("../icon/gear.png");
+}
 .icon-delete {
 	color: #ff3d3d;
 }
@@ -850,6 +804,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	background-image: url("../icon/trash.png");
 	filter: brightness(0) saturate(100%) invert(29%) sepia(78%) saturate(3518%) hue-rotate(344deg) brightness(122%) contrast(100%);
 }
+
 
 /* Activity cards use .top; override legacy float layout so kebab stays in top-right and dropdown is not clipped. */
 .content .test .activities .activity .top {
@@ -932,4 +887,72 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 }
 .sessionSummary .icon-download::before {
 	filter: none;
+}
+
+
+.groupTop .expandButton {
+	/* Must be set by the leftmost element in order for the other buttons */
+	margin-left: auto;
+}
+.owners.collapsed, .participants_container.collapsed { display: none; }
+.users .card { height: max-content; }
+
+.owners, .participants { 
+	table-layout:fixed;
+    width:100%;
+	overflow: auto;
+	border-collapse: collapse;
+	box-shadow: none;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 10px;
+}
+.owners thead th, .participants thead th { font-weight: bold; }
+.owners th, .owners td, .participants th, .participants td { 
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	box-sizing: border-box;
+	font-weight: normal;
+	text-align: center;
+}
+.owners table, .owners th, .owners td {
+	padding: 7px;
+	border: 5px solid white;
+}
+.participants table, .participants th, .participants td { 
+	padding: 7px;
+	border: 2px solid white; 
+}
+
+.owners tr:nth-child(even), .participants tr:nth-child(even) { background: #e8e8e8 }
+.owners tr:nth-child(odd), .participants tr:nth-child(odd) { background: #f5f5f5 }
+
+.groupTop { margin-bottom: 10px; }
+
+/* .content .participants table { width: 100% }
+.content .participants table tr:nth-child(even) { background: #e8e8e8 }
+.content .participants table tr:nth-child(odd) { background: #f5f5f5 }
+.content .participants table td:first-child { width: 10%; text-align: center; }
+.content .participants table td { width: 18%; text-align: center; }
+.content .participants table input[type="button"] { width: 100%; }
+.content .participants table img { width: 30px; }
+.edit img { height: 24px } */
+
+#pdf_printable { 
+	display: none;
+	font-size: 20px; 
+	font-family: "DejaVu Sans Mono"; 
+	text-align: center;
+	padding: 10px;
+}
+#pdf_printable h3 { margin-bottom: 10px; font-weight: normal; }
+#pdf_printable table { width: 100%; position: relative; border-collapse: collapse; }
+#pdf_printable table, #pdf_printable th, #pdf_printable td { padding: 5px; border: solid 1px black;  font-weight: normal; }
+@page { size: A4;  margin: 4mm 4mm 4mm 4mm; }
+@media print {
+	body {  background-color: white; }
+	.content { padding: 0px;  width: 210mm;  height: 297mm; }
+	.header, .menu, .content .simletTop, #study_tabs { display: none; }
+	#pdf_printable { display: contents; }
 }

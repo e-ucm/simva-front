@@ -20,10 +20,12 @@ var Utils = {
 	},
 
 	changeTab : function(tab, form, subform){
-		$(`#${form} .tab`).removeClass('selected');
-		$(`#${form} .subform`).removeClass('selected');
-		$(tab).toggleClass('selected');
-		$(`#${subform}`).toggleClass('selected');
+		// Avoid nested forms by only targeting direct .tab and .subform under form
+		$(`#${form} > div:first > .tab`).removeClass('selected');
+		$(`#${form} > .subform`).removeClass('selected');
+		
+		$(tab).addClass('selected');
+		$(`#${subform}`).addClass('selected');
 	},
 
 	post: function(url, body, callback){

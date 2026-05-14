@@ -1,10 +1,13 @@
 { 
     "title": "Grupos",
+    
     "deprecated.title": "Grupos (obsoletos)",
     "deprecated.message": "Esta pestaña ha quedado obsoleta. Por favor, prefiera utilizar la nueva versión de la página de grupo.",
     "zero.message.title": "Aún no tienes 0 grupos. Crea uno utilizando el botón inferior derecho (+).",
     "remove.confirm": "¿Está seguro de que desea eliminar el grupo '{{group}}'?\nEl grupo se retirará a todos los estudios, pruebas y actividades.",
     "single.title":"Grupo",
+    "name.title": "Nombre",
+
     "new.title": "Añadir nuevo grupo",
     "name.placeholder": "Nombre del grupo",
     "name.edit.title": "Editar nombre de grupo",
@@ -43,5 +46,69 @@
     "participants.remove.confirm" : "¿Está seguro de que desea eliminar al participante '{{participant}}' del grupo '{{group}}' ?",
     "participants.errormessage.alreadyInGroup":"El participante '{{participant}}' ya está en el grupo '{{group}}'.",
     "participants.errormessage.zeroInGroup.title":"No hay participantes en este grupo.",
-    "participants.errormessage.zeroInGroup.message":"Pruebe a añadir algunos utilizando el botón de la derecha."
+    "participants.errormessage.zeroInGroup.message":"Pruebe a añadir algunos utilizando el botón de la derecha.",
+
+
+    "add.title": "Añadir grupo",
+    "add.submit": "Añadir grupo",
+
+    "settings.edit.title": "Editar",
+        "edit.title": "Editar group",
+        "edit.submit": "Editar group",
+
+    "settings.add.title": "Añadir participantes",
+
+    "settings.allocator.title": "Editar asignador",
+
+    "settings.download.title": "Exportar tabla a PDF",
+        "print_table.title": "Grupo: ",
+        "print_table.number_col.title": "Nº",
+        "print_table.name_col.title": "Nombre",
+        "print_table.code_col.title": "Código",
+    
+    "settings.delete.title": "Eliminar",
+    
+    "participant.delete": "Eliminar",
+
+
+    "no_session_assigned.title": "Sin sesión",
+    
+    "coordinators.title": "Coordinadores",
+    "coordinators.placeholder": "Nombre de usuario del coordinador",
+    "coordinators.add.title": "Añadir coordinador",
+    "coordinators.error.already_in": "El coordinador ya está en el SIMLET.",
+    "coordinators.delete.title": "Borrar",
+    "coordinators.delete.confirm": "¿Está seguro de que desea eliminar al coordinador '{{coordinator}}' del SIMLET '{{SIMLET}}'?",
+
+    "groups.delete.title": "Borrar",
+    "groups.delete.confirm": "¿Está seguro de que desea eliminar el grupo '{{group}}' del SIMLET '{{SIMLET}}'?",
+
+    "allocator.title": "Asignador",
+    "allocator.change.title": "Seleccione el nuevo tipo de asignador",
+    "allocator.change.submit": "Cambia el Asignador",
+    "allocator.add.title": "Añadir asignacion",
+    "allocator.default.type": "Por defecto",
+    "allocator.default.title": "Asignador básico",
+    "allocator.default.description": "Este asignador le permite asignar manualmente los participantes a las Sesiones uno por uno. (Si no se asigna, se quedará con el primero)..",
+    "allocator.group.type": "Grupo",
+    "allocator.group.title": "Asignador de grupos",
+    "allocator.group.description": "Este asignador permite seleccionar a qué rama de Sesión se asigna cada grupo.",
+    "allocator.type.title": "Tipo",
+    "allocator.sessions.title": "Sesión",
+    "allocator.participants.title": "Participante",
+    "allocator.add.error": "Error al añadir la asignación",
+    "allocator.add.message": "Asignador actualizado",
+
+
+    "lti_platform.title": "Plataforma LTI",
+    "lti_platform.add.title": "Añadir plataforma LTI",
+    "lti_platform.add.name.title": "Nombre",
+    "lti_platform.add.url.title": "URL",
+    "lti_platform.add.client_id.title": "Client ID",
+    "lti_platform.add.authentication_endpoint.title": "Punto final de autenticación",
+    "lti_platform.add.accesstoken_endpoint.title": "Punto final del token de acceso",    
+    "lti_platform.add.jkws_url.title": "jKWS URL",
+    "lti_platform.delete.title": "Suprimir la plataforma LTI",
+    "lti_platform.delete.confirm": "¿Está seguro de que desea eliminar esta plataforma '{{platform}}' del SIMLET '{{SIMLET}}' ?",
+    "lti_platform.zero.message": "Aún no hay plataformas."
 }
