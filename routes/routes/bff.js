@@ -480,6 +480,16 @@ module.exports = function(auth, config){
         });
     });
 
+    router.get('/scheduler/studies', auth, async (req, res, next) => {
+        Simva.getSchedulerStudies(req.session.id, (error, result) => {
+            if(error) {
+                next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
     router.post('/studies', auth, async (req, res, next) => {
         Simva.addStudy(req.body, req.session.id, (error, result) => {
             if(error) {

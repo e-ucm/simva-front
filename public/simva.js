@@ -198,6 +198,10 @@ var Simva = {
 	getStudies: function(callback){
 		Utils.get(`/bff/studies`, callback);
 	},
+	
+	getSchedulerStudies: function(callback){
+		Utils.get(`/bff/scheduler/studies`, callback);
+	},
 
 	addStudy: function(body, callback){
 		Utils.post(`/bff/studies`, body, callback);

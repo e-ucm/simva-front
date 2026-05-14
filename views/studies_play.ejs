@@ -5,7 +5,7 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('#studies_list').html(roller);
-		Simva.getStudies(function(error, result){
+		Simva.getSchedulerStudies(function(error, result){
 			if(!error){
 				paintStudies(result);
 			}

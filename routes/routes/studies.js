@@ -117,22 +117,14 @@ module.exports = function(auth, config){
   });
 
   router.get('/', auth, function(req, res, next) {
-    if(req.session.user.data.role === 'teacher' || req.session.user.data.role === 'administrator'){
       res.render('studies_list', { 
         config: config, 
         user: req.session.user,
         t : req.t,
         archived: false
      });
-    }else{
-      res.render('studies_play', { 
-        config: config, 
-        user: req.session.user,
-        t : req.t
-       });
-    }
-    
   });
+  
   router.get('/:studyid', auth, function(req, res, next) {
     res.render('study_view', { 
       config: config, 

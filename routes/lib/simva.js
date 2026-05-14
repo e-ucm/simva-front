@@ -252,6 +252,10 @@ class Simva {
 		this.get(`${this.apiurl}/simlets`, sessionId, callback);
 	}
 
+	getSchedulerStudies(sessionId, callback){
+		this.get(`${this.apiurl}/simlets/scheduler`, sessionId, callback);
+	}
+
 	getStudyDirectPermissions(study_id, sessionId, callback){
 		this.get(`${this.apiurl}/simlets/${study_id}/permissions`, sessionId, callback);
 	}
