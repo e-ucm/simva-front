@@ -62,6 +62,12 @@
 							<li class="kebab-icon icon-delete" title="<%- t('session.settings.delete.title', { ns : 'SIMLETs' }) %>">
 								<%- t('session.settings.delete.title', { ns : 'SIMLETs' }) %>
 							</li>
+							<li class="kebab-icon icon-tester" title="<%- t('sessions.set_tester', { ns : 'SIMLETs' }) || 'Set myself as tester in this session' %>"></li>
+								<%- t('sessions.set_tester', { ns : 'SIMLETs' }) || 'Set myself as tester in this session' %>
+							</li>
+							<li class="kebab-icon icon-untester" title="<%- t('sessions.unset_tester', { ns : 'SIMLETs' }) || 'Unset myself as tester' %>"></li>
+								<%- t('sessions.unset_tester', { ns : 'SIMLETs' }) || 'Unset myself as tester' %>
+							</li>
 						</ul>
 					</div>
 				</div>
@@ -72,6 +78,7 @@
 						<br>
 						<strong class="sessionActivities"><%- t('sessions.activities', { ns : 'SIMLETs' }) %>:	</strong>  &nbsp; <strong class="sessionUsers"><%- t('sessions.users', { ns : 'SIMLETs' }) %>:	</strong>
 					</div>
+					
 					<div class="activityProgress sessionProgress progress">
 						<div class="done">	</div>
 						<span>
@@ -81,6 +88,9 @@
 					</div>
 					<div class="sessionDownload kebab-icon icon-download" title="<%- t('sessions.download.description', { ns : 'SIMLETs' }) %>">
 						<b><%- t('sessions.download', { ns : 'SIMLETs' }) %></b>
+					</div>
+					<div class="sessionTestDownload kebab-icon icon-download" title="<%- t('sessions.test_download.description', { ns : 'SIMLETs' }) || 'Download your own test trace data for this session.' %>" style="display:none;">
+						<b><%- t('sessions.test_download', { ns : 'SIMLETs' }) || 'Download test data' %></b>
 					</div>
 				</div>
 				<div class="sessionTags" style="margin-top: 8px;">	</div>
@@ -492,10 +502,22 @@
 
 <script>
 	let studyid = "<%= study %>";
+	let currentUser = null;
 	let study = null, participants = null, tests = null, allocator = null, groups = null, platforms = null;
 	
 	$(document).ready(function() {
 		reloadFunc = reloadStudy;
+		Simva.getCurrentUser((error, user) => {
+			if(!error) {
+				currentUser = user;
+			} else {
+				console.error("Error fetching current user:", error);
+				currentUser = null;
+				// Optionally, display an error message to the user
+				alert("Error fetching user information. Some features may not work properly.");
+				//reloadStudy();
+			}
+		});
 
 		const kebab = $("#kebab_template .kebab-dropdown").clone();
 		$(".simletSettings .kebab").append(kebab);
@@ -785,6 +807,17 @@
 		const data = $(this).closest(".test").data();
 		deleteTest(data[sessionDataIdKey], data[sessionDataNameKey]);
 	});
+
+	$(document).on('click', ".sessionTop .icon-untester", function(e) {
+		const data = $(this).closest(".test").data();
+		unsetTesterForSession(data[sessionDataIdKey]);
+	});
+
+	$(document).on('click', ".sessionTop .icon-tester", function(e) {
+		const data = $(this).closest(".test").data();
+		console.log("setting tester for session id:", data[sessionDataIdKey]);
+		setTesterForSession(data[sessionDataIdKey]);
+	});
 	
 	$(document).on('click', ".sessionDownload", function(e) {
 		const data = $(this).closest(".test").data();
@@ -1060,7 +1093,7 @@
 	
 		paintPlatforms(platforms);
 
-		let fullyPaintTest = function(test) {
+	let fullyPaintTest = function(test) {
 			const sessionParticipants = Array.isArray(test.completeParticipants) ? test.completeParticipants : [];
 			paintTest(test, test.completeActivities, sessionParticipants);
 			paintTestActivities(test, test.completeActivities, sessionParticipants);
@@ -1145,6 +1178,13 @@
 		const session = $("#session_template .test").clone();
 		session.attr("id", `test_${test.session_id}`);
 		
+		const isCurrentUserParticipant = currentUser.user_id !== null && participants.some(function(p) {
+			return p.user_id === currentUser.user_id || String(p.user_id) === String(currentUser.user_id);
+		});
+		if (isCurrentUserParticipant) {
+			session.find(".sessionTestDownload").show();
+		}
+		
 		const date = new Date(test.createdAt);
 		const formattedDate = date.toLocaleDateString('en-GB');
 		
@@ -1212,6 +1252,9 @@
 
 	let paintTestActivities = function(test, activities, participants) {
 		window.participants = participants;
+		const isCurrentUserParticipant = currentUser.user_id !== null && participants.some(function(p) {
+			return p.user_id === currentUser.user_id || String(p.user_id) === String(currentUser.user_id);
+		});
 		$(`#test_${test.session_id} .activities`).empty();
 
 		if (activities.length === 0) {
@@ -1799,6 +1842,91 @@
 
 		toret += '</select></td></tr>';
 		return toret;
+	}
+
+	function setTesterForSession(sessionId) {
+		const simletId = studyid;
+		const userId = currentUserId;
+
+		// 1. Find or create a group for the current user
+		Simva.getStudyGroups(simletId, function(err, groups) {
+			if (err) {
+				alert('Error fetching groups: ' + (err.responseJSON ? err.responseJSON.message : err.message));
+				return;
+			}
+			let myGroup = groups.find(g => g.group_owner_id === userId);
+			const afterGroupReady = (group) => {
+				// 2. Add user as participant if not already
+				Simva.getGroupParticipants(simletId, group.group_id, function(err, participants) {
+					if (err) {
+						alert('Error fetching group participants: ' + (err.responseJSON ? err.responseJSON.message : err.message));
+						return;
+					}
+					let alreadyParticipant = participants.some(p => p.user_id === userId);
+					const afterParticipantReady = () => {
+						// 3. Allocate/move user to selected session
+						Simva.allocateToSession(simletId, group.group_id, sessionId, {}, function(err) {
+							if (err) {
+								alert('Error allocating to session: ' + (err.responseJSON ? err.responseJSON.message : err.message));
+							} else {
+								$.toast({ heading: 'Tester set', text: 'You are now a tester in this session.', position: 'top-right', icon: 'success', stack: false });
+								reloadStudy();
+							}
+						});
+					}
+					if (!alreadyParticipant) {
+						Simva.addGroupParticipant(simletId, group.group_id, userId, function(err) {
+							if (err) {
+								alert('Error adding yourself as participant: ' + (err.responseJSON ? err.responseJSON.message : err.message));
+							} else {
+								afterParticipantReady();
+							}
+						});
+					} else {
+						afterParticipantReady();
+					}
+				});
+			}
+			if (myGroup) {
+				afterGroupReady(myGroup);
+			} else {
+				// Create a new group for the user
+				Simva.addGroup(simletId, { group_name: 'Tester ' + userId, group_owner_id: userId, group_use_new_generation: false, group_sandbox : true }, function(err, group) {
+					if (err) {
+						alert('Error creating group: ' + (err.responseJSON ? err.responseJSON.message : err.message));
+					} else {
+						afterGroupReady(group);
+					}
+				});
+			}
+		});
+	}
+
+	function unsetTesterForSession(sessionId) {
+		const simletId = studyid;
+		const userId = currentUserId;
+
+		// Find the user's group
+		Simva.getStudyGroups(simletId, function(err, groups) {
+			if (err) {
+				alert('Error fetching groups: ' + (err.responseJSON ? err.responseJSON.message : err.message));
+				return;
+			}
+			let myGroup = groups.find(g => g.group_owner_id === userId);
+			if (!myGroup) {
+				alert('No tester group found for you.');
+				return;
+			}
+			// Remove user as participant from group
+			Simva.deleteGroupParticipants(simletId, myGroup.group_id, userId, true, function(err) {
+				if (err) {
+					alert('Error removing yourself as tester: ' + (err.responseJSON ? err.responseJSON.message : err.message));
+				} else {
+					$.toast({ heading: 'Tester unset', text: 'You are no longer a tester in this session.', position: 'top-right', icon: 'success', stack: false });
+					reloadStudy();
+				}
+			});
+		});
 	}
 
 </script>

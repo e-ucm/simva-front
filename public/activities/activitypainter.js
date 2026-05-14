@@ -226,14 +226,29 @@ var ActivityPainter = {
 	},
 
 	paintActivityTopBar: function(activity, extraItems) {
+		let isCurrentUserParticipant = false;
+		const userKeys = PainterFactory.Painters["activity"].getParticipantKeys(currentUser);
+		console.log("Checking if current user is participant. User keys:", userKeys, "Participants:", participants);
+		for (let i = 0; i < participants.length; i++) {
+			const participantKeys = PainterFactory.Painters["activity"].getParticipantKeys(participants[i]);
+			if (userKeys.some(key => participantKeys.includes(key))) {
+				isCurrentUserParticipant = true;
+			}
+		}
+		console.log("painting activity with type:", currentUser, "Is current user participant:", isCurrentUserParticipant);
+		const testDownloadBtn = isCurrentUserParticipant
+			? `<li class="kebab-icon icon-download" title="${this.commun.test_download_tooltip || 'Download your own test trace data for this activity.'}" onclick="PainterFactory.Painters['activity'].getMinioTestData('${activity.activity_id}')"><b>${this.commun.test_download_title || 'Download test data'}</b></li>`
+			: '';
 		return `<div class="top"><h4>${activity.activity_name}</h4>
 			<div class="activityTopActions">
 				<div class="activityDownload kebab-icon icon-download" title="${this.commun.download_tooltip || 'Download all available data for this activity.'}" onclick="PainterFactory.Painters['activity'].getMinioData('${activity.activity_id}')"><b>${this.commun.download_title || 'Download data'}</b></div>
+				
 				<div class="kebab">
 					<ul class="kebab-dropdown">
 						<li class="kebab-icon icon-edit" title="${this.commun.edit_title || 'Edit'}" onclick="openEditActivityForm('${activity.activity_id}')">${this.commun.edit_title || 'Edit'}</li>
 						<li class="kebab-icon icon-delete" title="${this.commun.delete_title || 'Delete'}" onclick="deleteActivity('${activity.activity_id}', '${activity.activity_name}', '${activity.session_id}')">${this.commun.delete_title || 'Delete'}</li>
 						<li class="kebab-icon icon-url" title="${this.commun.tmon_title || 'T-Mon Dashboard'}" onclick="PainterFactory.Painters['activity'].getTMonUrl('${activity.activity_id}','${activity.session_id}','${activity.study}')">${this.commun.tmon_title || 'T-Mon Dashboard'}</li>
+						${testDownloadBtn}
 						${extraItems}
 					</ul>
 				</div>
@@ -833,6 +848,23 @@ var ActivityPainter = {
 			} else {
 				this.openResultContent(data.data, this.commun.result_error_downloading);
 				this.downloadContent(data.data, `full_xapi_data_${activity}.json`, this.commun.result_error_downloading);
+			}
+		});
+	},
+
+	getMinioTestData: function(activity){
+		Simva.getActivityTestLRSData(activity, (error, data) => {
+			if(error){
+				$.toast({
+					heading: this.commun.result_error_downloading,
+					text: error.message,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+			} else {
+				this.openResultContent(data.data, this.commun.result_error_downloading);
+				this.downloadContent(data.data, `test_xapi_data_${activity}.json`, this.commun.result_error_downloading);
 			}
 		});
 	},
