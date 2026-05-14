@@ -94,8 +94,8 @@
 
     "completed.title":"Completed",
     "completed.error.message":"Error setting the completion",
-    "completed.all.unset": "Unset Completion",
-    "completed.all.set": "Set Completion",
+    "completed.all.unset": "Set Completion to any",
+    "completed.all.set": "Set Completion to all",
     "completed.on": "Yes",
     "completed.off": "No",
 
