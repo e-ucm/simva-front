@@ -891,6 +891,16 @@ module.exports = function(auth, config){
         });
     });
 
+    router.patch('/studies/:studyid/tests/:testid/activities/:activityid', auth, async (req, res, next) => {
+        Simva.updateActivityInTest(req.params["studyid"], req.params["testid"], req.params["activityid"], req, req.body, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
     router.get('/activities/:activityid', auth, async (req, res, next) => {
         Simva.getActivity(req.params["activityid"], req.session.id, (error, result) => {
             if(error) {
@@ -1144,6 +1154,16 @@ module.exports = function(auth, config){
 
     router.delete('/activities/:activityid', auth, async (req, res, next) => {
         Simva.deleteActivity(req.params["activityid"], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response.data);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.delete('/studies/:studyid/tests/:testid/activities/:activityid', auth, async (req, res, next) => {
+        Simva.deleteActivityFromTest(req.params["studyid"], req.params["testid"], req.params["activityid"], req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {

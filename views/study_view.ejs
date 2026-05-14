@@ -728,7 +728,7 @@
 						errorbox.text("<%- t('edit.no_changes.message', { ns : 'SIMLETs' }) %>");
 						Utils.toggleSubmit(currentform);
 					} else {
-						Simva.updateActivity(form.activity, updatedActivity, function(error, result) {
+						Simva.updateActivity(studyid, form.test, form.activity, updatedActivity, function(error, result) {
 							Utils.toggleSubmit(currentform);
 							if (error && error.responseJSON) {
 								errorbox.text(error.responseJSON.message);
@@ -878,7 +878,7 @@
 		let test = getTestFromTestId(testid);
 		let testName = test && test.session_name ? test.session_name : testid;
 		if (confirm(`<%- t('activities.delete.confirm', { ns : 'SIMLETs', activity : '${activityname}', session: '${testName}' , SIMLET : '${study.simlet_name}' }) %>`)) {
-			Simva.deleteActivity(activityid, function(error, result) {
+			Simva.deleteActivity(studyid, testid, activityid, function(error, result) {
 				reloadStudy();
 			});
 		}

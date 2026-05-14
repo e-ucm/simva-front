@@ -239,11 +239,11 @@ var Simva = {
 		Utils.delete(`/bff/simlets/${study_id}/tests/${test_id}/tags/${tag}`, callback);
 	},
 
-	updateActivity: function(activityId, activity, callback){
+	updateActivity: function(studyId, testId, activityId, activity, callback){
 		if(activity instanceof FormData){
-			Utils.patchForm(`/bff/activities/${activityId}`, activity, callback);
+			Utils.patchForm(`/bff/studies/${studyId}/tests/${testId}/activities/${activityId}`, activity, callback);
 		} else {
-			Utils.patch(`/bff/activities/${activityId}`, activity, callback);
+			Utils.patch(`/bff/studies/${studyId}/tests/${testId}/activities/${activityId}`, activity, callback);
 		}
 	},
 
@@ -491,8 +491,8 @@ var Simva = {
 		Utils.post(`/bff/activities/${activity_id}/test`, payload, callback);
 	},
 
-	deleteActivity: function(activity_id, callback){
-		Utils.delete(`/bff/activities/${activity_id}`, callback);
+	deleteActivity: function(studyId, testId, activity_id, callback){
+		Utils.delete(`/bff/studies/${studyId}/tests/${testId}/activities/${activity_id}`, callback);
 	},
 
 	getActivityTypes: function(callback){

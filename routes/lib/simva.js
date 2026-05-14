@@ -415,6 +415,10 @@ class Simva {
 		this.patch(`${this.apiurl}/activities/${activity_id}`, req, activity, sessionId, callback);
 	}
 
+	updateActivityInTest(study_id, test_id, activity_id, req, activity, sessionId, callback){
+		this.patch(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/activities/${activity_id}`, req, activity, sessionId, callback);
+	}
+
 	getActivity(activity_id, sessionId, callback){
 		this.get(`${this.apiurl}/activities/${activity_id}`, sessionId, callback);
 	}
@@ -539,6 +543,10 @@ class Simva {
 
 	deleteActivity(activity_id, sessionId, callback){
 		this.delete(`${this.apiurl}/activities/${activity_id}`, sessionId, callback);
+	}
+
+	deleteActivityFromTest(study_id, test_id, activity_id, sessionId, callback){
+		this.delete(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/activities/${activity_id}`, sessionId, callback);
 	}
 
 	getActivityTypes(sessionId, callback){
