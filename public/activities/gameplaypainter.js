@@ -72,7 +72,14 @@ var GameplayActivityPainter = {
 		var gameplay_restarted = document.getElementById('edit_gameplay_restarted');
 		gameplay_restarted.checked = Boolean(activity.activity_can_be_restarted);
 		var gameplay_game_uri = document.getElementById('edit_gameplay_game_uri');
-		gameplay_game_uri.value = activity.game_uri || "";
+		gameplay_game_uri.value = activity.game_url || "";
+		if (activity.game_type === 'DESKTOP') {
+			let desktopTab = document.querySelector('#edit_activity_extras .tab[method="DESKTOP"]');
+			if (desktopTab) changeTab(desktopTab, 'edit_activity_extras', 'edit_gameplay_desktop');
+		} else {
+			let webTab = document.querySelector('#edit_activity_extras .tab[method="WEB"]');
+			if (webTab) changeTab(webTab, 'edit_activity_extras', 'edit_gameplay_web');
+		}
 	},
 
 	extractInformation: function(form, callback){
@@ -130,6 +137,9 @@ var GameplayActivityPainter = {
 		console.log('FormData:', formdata);
 		console.log('actualActivity:', actualActivity);
 
+		let method = $('#edit_activity_extras .tab.selected').attr('method') || 'WEB';
+		let selectedGameType = method === 'DESKTOP' ? 'DESKTOP' : 'WEB';
+
 		if(actualActivity.activity_name !== formdata.name) {
 			activity.activity_name = formdata.name;
 		}
@@ -148,19 +158,24 @@ var GameplayActivityPainter = {
 		if(actualBackup !== backup) {
 			activity.game_backup = backup;
 		}
-		let game_uri = formdata.game_uri;
-		let actualGameUri = actualActivity.game_url || (actualActivity.extra_data && actualActivity.extra_data.game_uri) || '';
-		if(actualGameUri !== game_uri) {
-			activity.game_url = game_uri;
+		if(actualActivity.game_type !== selectedGameType) {
+			activity.game_type = selectedGameType;
 		}
 
-		// Check for file upload in edit form
-		console.log('[gameplaypainter] Checking file extraction in edit');
-		let rawformdata = PainterFactory.Painters["activity"].extractFileFromEditForm(form, 'gamefile', activity, 'file', 'game_type', 'DESKTOP');
-		if(rawformdata !== undefined) {
-			console.log('[gameplaypainter] File extraction triggered in edit, returning');
-			callback(null, rawformdata); // 👈 send rawformdata for DESKTOP activities
-			return;
+		if(selectedGameType === 'DESKTOP') {
+			console.log('[gameplaypainter] Checking file extraction in edit');
+			let rawformdata = PainterFactory.Painters["activity"].extractFileFromEditForm(form, 'edit_gamefile', activity, 'file', 'game_type', 'DESKTOP');
+			if(rawformdata !== undefined) {
+				console.log('[gameplaypainter] File extraction triggered in edit, returning');
+				callback(null, rawformdata);
+				return;
+			}
+		} else {
+			let game_uri = formdata.game_uri;
+			let actualGameUri = actualActivity.game_url || '';
+			if(actualGameUri !== game_uri) {
+				activity.game_url = game_uri;
+			}
 		}
 		callback(null, activity);
 	},
