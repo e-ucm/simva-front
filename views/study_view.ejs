@@ -1846,7 +1846,7 @@
 
 	function setTesterForSession(sessionId) {
 		const simletId = studyid;
-		const userId = currentUserId;
+		const userId = currentUser.user_id;
 
 		// 1. Find or create a group for the current user
 		Simva.getStudyGroups(simletId, function(err, groups) {
@@ -1854,7 +1854,7 @@
 				alert('Error fetching groups: ' + (err.responseJSON ? err.responseJSON.message : err.message));
 				return;
 			}
-			let myGroup = groups.find(g => g.group_owner_id === userId);
+			let myGroup = groups.find(g => g.group_sandbox === true && g.group_owner_user_id === userId);
 			const afterGroupReady = (group) => {
 				// 2. Add user as participant if not already
 				Simva.getGroupParticipants(simletId, group.group_id, function(err, participants) {
@@ -1891,7 +1891,7 @@
 				afterGroupReady(myGroup);
 			} else {
 				// Create a new group for the user
-				Simva.addGroup(simletId, { group_name: 'Tester ' + userId, group_owner_id: userId, group_use_new_generation: false, group_sandbox : true }, function(err, group) {
+				Simva.addGroup(simletId, { group_name: 'Tester ' + userId, group_use_new_generation: false, group_sandbox : true }, function(err, group) {
 					if (err) {
 						alert('Error creating group: ' + (err.responseJSON ? err.responseJSON.message : err.message));
 					} else {
@@ -1904,7 +1904,7 @@
 
 	function unsetTesterForSession(sessionId) {
 		const simletId = studyid;
-		const userId = currentUserId;
+		const userId = currentUser.user_id;
 
 		// Find the user's group
 		Simva.getStudyGroups(simletId, function(err, groups) {
@@ -1912,13 +1912,13 @@
 				alert('Error fetching groups: ' + (err.responseJSON ? err.responseJSON.message : err.message));
 				return;
 			}
-			let myGroup = groups.find(g => g.group_owner_id === userId);
+			let myGroup = groups.find(g => g.group_sandbox === true && g.group_owner_user_id === userId);
 			if (!myGroup) {
 				alert('No tester group found for you.');
 				return;
 			}
 			// Remove user as participant from group
-			Simva.deleteGroupParticipants(simletId, myGroup.group_id, userId, true, function(err) {
+			Simva.deleteGroupParticipants(simletId, myGroup.group_id, userId, false, function(err, result) {
 				if (err) {
 					alert('Error removing yourself as tester: ' + (err.responseJSON ? err.responseJSON.message : err.message));
 				} else {
