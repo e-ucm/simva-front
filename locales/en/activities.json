@@ -117,5 +117,19 @@
     "storage.file.array.title":"Array",
     "storage.file.one_per_line.title":"One Trace Per Line",
 
-    "tmon.title":"Open TMon Dashboard"
+    "participant.tooltip":"Participant identifier shown as username or token.",
+    "init.tooltip":"Initialization state: whether the participant has started initialization.",
+    "init.bar.tooltip":"Initialization summary bar: initialized participants over total participants.",
+    "progress.tooltip":"Current progress percentage of the participant in this activity.",
+    "progress.bar.tooltip":"Progress summary bar: completed and in-progress participants over total participants.",
+    "completed.tooltip":"Completion state: whether the participant has completed the activity.",
+    "completed.bar.tooltip":"Completion summary bar: completed participants over total participants.",
+    "result.tooltip":"Result status and access to available result or backup data.",
+    "result.bar.tooltip":"Result summary bar: participants with partial or final results over total participants.",
+
+    "tmon.title":"Open TMon Dashboard",
+    "activity.download.title":"Download data",
+    "activity.download.tooltip":"Download all available data for this activity.",
+    "activity.edit.title":"Edit",
+    "activity.delete.title":"Delete"
 }

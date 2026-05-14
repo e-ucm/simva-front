@@ -180,20 +180,24 @@ var ManualActivityPainter = {
 		}
 	},
 
+	getExtraKebabItems: function(activity) {
+		return `<li class="kebab-icon icon-activate" title="${this.commun.completed_all_set || 'Set completion'}" onclick="PainterFactory.Painters['activity'].setCompletionForAllParticipant('${activity.activity_id}', true)">${this.commun.completed_all_set || 'Set completion'}</li>
+				<li class="kebab-icon icon-pause" title="${this.commun.completed_all_unset || 'Unset completion'}" onclick="PainterFactory.Painters['activity'].setCompletionForAllParticipant('${activity.activity_id}', false)">${this.commun.completed_all_unset || 'Unset completion'}</li>`;
+	},
+
 	paintActivity: function(activity, participants){
 		let complete=activity.manual_user_managed ? this.specific.student_complete_ok : this.specific.student_complete_nok;
+		let storageStatus = Boolean(activity.activity_trace_storage) ? 'enabled' : (this.commun.result_disabled || 'disabled');
+		let resourceType = activity.manual_ressource_type || 'WEB';
+		const topBar = PainterFactory.Painters['activity'].paintActivityTopBar.call(this, activity, this.getExtraKebabItems(activity));
 		$(`#test_${activity.session_id} .activities`).append(`<div id="activity_${activity.activity_id}" class="activity t${activity.activity_type}">
-			<div class="top"><h4>${activity.activity_name}</h4>
-			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity.activity_id}')">
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity.activity_id}', '${activity.activity_name}', '${activity.session_id}')"></div>
-			<p class="subtitle">${this.simple_name}</p>
-			<p><strong>${complete}<strong></p>
-			<p>${this.commun.storage_file_title} <a onclick="PainterFactory.Painters['activity'].getMinioData('${activity.activity_id}')" target="_blank">${this.commun.storage_file_one_per_line_title}</a></p>
-			<br>
-			<a onclick="PainterFactory.Painters['activity'].getTMonUrl('${activity.activity_id}','${activity.session_id}','${activity.study}')">
-				${this.commun.tmon_title}
-			</a>
-			<br>
+			${topBar}
+			<p class="subtitle" title="${this.description || ''}">${this.simple_name}</p>
+			<div class="activity-meta">
+				<p><strong>${complete}</strong></p>
+				<p>${this.commun.storage_title}: <i>${storageStatus}</i></p>
+				<p>${this.specific.upload_title || 'Resource type'}: <i>${resourceType}</i></p>
+			</div>
 			${PainterFactory.Painters["activity"].paintActivityParticipantsTable(activity, participants, true, false, false, false)}</div>`);
 	},
 

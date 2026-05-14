@@ -203,36 +203,30 @@ var GameplayActivityPainter = {
 		Utils.download(filename, content);
 	},
 
+	getExtraKebabItems: function(activity) {
+		const xasuItem = Boolean(activity.activity_trace_storage)
+			? `<li class="kebab-icon icon-download" title="${this.specific.xasu_title || 'Download tracker config'}" onclick="GameplayActivityPainter.downloadXasuConfig('${activity.activity_id}','${activity.study}')">${this.specific.xasu_title || 'Download tracker config'}</li>`
+			: `<li class="kebab-icon icon-download li-disabled" title="${this.specific.xasu_title || 'Download tracker config'} (${this.commun.result_disabled || 'disabled'})">${this.specific.xasu_title || 'Download tracker config'} (${this.commun.result_disabled || 'disabled'})</li>`;
+
+		const backupItem = Boolean(activity.game_backup)
+			? `<li class="kebab-icon icon-download" title="${this.communSpecific.result_title || 'Backup'}" onclick="GameplayActivityPainter.downloadBackup('${activity.activity_id}')">${this.communSpecific.result_title || 'Backup'} ⬇️</li>`
+			: `<li class="kebab-icon icon-download li-disabled" title="${this.communSpecific.result_title || 'Backup'} (${this.commun.result_disabled || 'disabled'})">${this.communSpecific.result_title || 'Backup'} (${this.commun.result_disabled || 'disabled'})</li>`;
+
+		return `<li class="kebab-icon icon-activate" title="${this.commun.completed_all_set || 'Set completion'}" onclick="PainterFactory.Painters['activity'].setCompletionForAllParticipant('${activity.activity_id}', true)">${this.commun.completed_all_set || 'Set completion'}</li>
+				<li class="kebab-icon icon-pause" title="${this.commun.completed_all_unset || 'Unset completion'}" onclick="PainterFactory.Painters['activity'].setCompletionForAllParticipant('${activity.activity_id}', false)">${this.commun.completed_all_unset || 'Unset completion'}</li>
+				${xasuItem}
+				${backupItem}`;
+	},
+
 	paintActivity: function(activity, participants){
+		const topBar = PainterFactory.Painters['activity'].paintActivityTopBar.call(this, activity, this.getExtraKebabItems(activity));
 		let activitybox = `<div id="activity_${activity.activity_id}" class="activity t${activity.activity_type}">
-			<div class="top"><h4>${activity.activity_name}</h4>
-			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity.activity_id}')">
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity.activity_id}', '${activity.activity_name}', '${activity.session_id}')"></div>
-			<p class="subtitle">${this.simple_name}</p>`;
-		activitybox += `<br>${this.commun.storage_title}:`;
-		if(Boolean(activity.activity_trace_storage)) {
-			activitybox += `<a onclick="PainterFactory.Painters['activity'].getMinioData('${activity.activity_id}')" target="_blank">${this.commun.storage_file_title} ${this.commun.storage_file_one_per_line_title}</a>
-			<br>
-			<br>
-			<a onclick="PainterFactory.Painters['activity'].getTMonUrl('${activity.activity_id}','${activity.session_id}','${activity.study}')">
-				${this.commun.tmon_title}
-			</a>
-			<br>
-			${this.specific.xasu_title}:
-			<a onclick="GameplayActivityPainter.downloadXasuConfig('${activity.activity_id}','${activity.study}')">
-				<img src="/ua.png"  width="20" height="20">
-			</a>`;
-		} else {
-			activitybox += `<i>${this.commun.result_disabled}</i>`;
-		}
-		activitybox +='<br>'
-		activitybox += `${this.communSpecific.result_title}:`
-		if(activity.game_backup){
-			activitybox += `<a onclick="GameplayActivityPainter.downloadBackup('${activity.activity_id}')"> ⬇️</a>` 
-		} else {
-			activitybox += `<i>${this.commun.result_disabled}</i>`;
-		}
-		activitybox += '</p>';
+			${topBar}
+			<p class="subtitle" title="${this.description || ''}">${this.simple_name}</p>
+			<div class="activity-meta">`;
+		activitybox += `<p>${this.commun.storage_title}: <i>${Boolean(activity.activity_trace_storage) ? (this.commun.result_enabled || 'enabled') : (this.commun.result_disabled || 'disabled')}</i></p>`;
+		activitybox += `<p>${this.communSpecific.result_title}: <i>${Boolean(activity.game_backup) ? (this.commun.result_enabled || 'enabled') : (this.commun.result_disabled || 'disabled')}</i></p>`;
+		activitybox += `</div>`;
 		activitybox += `${PainterFactory.Painters["activity"].paintActivityParticipantsTable(activity, participants, true)}</div>`;
 
 		$(`#test_${activity.session_id} .activities`).append(activitybox);

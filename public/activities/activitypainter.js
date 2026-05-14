@@ -221,41 +221,65 @@ var ActivityPainter = {
 		}
 	},
  
+	getExtraKebabItems: function(activity) {
+		return '';
+	},
+
+	paintActivityTopBar: function(activity, extraItems) {
+		return `<div class="top"><h4>${activity.activity_name}</h4>
+			<div class="activityTopActions">
+				<div class="activityDownload kebab-icon icon-download" title="${this.commun.download_tooltip || 'Download all available data for this activity.'}" onclick="PainterFactory.Painters['activity'].downloadResults('${activity.activity_id}')"><b>${this.commun.download_title || 'Download data'}</b></div>
+				<div class="kebab">
+					<ul class="kebab-dropdown">
+						<li class="kebab-icon icon-edit" title="${this.commun.edit_title || 'Edit'}" onclick="openEditActivityForm('${activity.activity_id}')">${this.commun.edit_title || 'Edit'}</li>
+						<li class="kebab-icon icon-delete" title="${this.commun.delete_title || 'Delete'}" onclick="deleteActivity('${activity.activity_id}', '${activity.activity_name}', '${activity.session_id}')">${this.commun.delete_title || 'Delete'}</li>
+						<li class="kebab-icon icon-url" title="${this.commun.tmon_title || 'T-Mon Dashboard'}" onclick="PainterFactory.Painters['activity'].getTMonUrl('${activity.activity_id}','${activity.session_id}','${activity.study}')">${this.commun.tmon_title || 'T-Mon Dashboard'}</li>
+						${extraItems}
+					</ul>
+				</div>
+			</div></div>`;
+	},
+
 	paintActivity: function(activity, participants){
 		$(`#test_${activity.session_id} .activities`).append(`<div id="activity_${activity.activity_id}" class="activity t${activity.activity_type}">
-			<div class="top"><h4>${activity.activity_name}</h4>
-			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity.activity_id}')">
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity.activity_id}', '${activity.activity_name}', '${activity.session_id}')"></div>
-			<p class="subtitle">${this.simple_name}</p>
+			${this.paintActivityTopBar(activity, this.getExtraKebabItems(activity))}
+			<p class="subtitle" title="${this.description || ''}">${this.simple_name}</p>
 			<p>${this.communSpecific.result_title}:<a onclick="PainterFactory.Painters['activity'].downloadResults('${activity.activity_id}')"> ⬇️</a></p>
 			${this.paintActivityParticipantsTable(activity, participants, true)}</div>`);
 	},
 
 	paintActivityParticipantsTable: function(activity, participants, checkbox=false, progress=true, result=true, init=true){
-		let toret = `<div id="completion_progress_${activity.activity_id}" class="progress"><div class="partial"></div><div class="done"></div><span>${this.commun.completed_title}: <done>0</done>% [ <doneres>0</doneres>/<total>0</total> ]</span></div>`;
-		if(checkbox) {
-			toret += this.paintActivityButtonCompletion(activity.activity_id);
-		}
+		const participantTooltip = this.commun.participant_tooltip || 'Participant identifier shown as username or token.';
+		const initTooltip = this.commun.init_tooltip || 'Initialization state: whether the participant has started initialization.';
+		const progressTooltip = this.commun.progress_tooltip || 'Current progress percentage of the participant in this activity.';
+		const completedTooltip = this.commun.completed_tooltip || 'Completion state: whether the participant has completed the activity.';
+		const resultTooltip = this.commun.result_tooltip || 'Result status and access to available result/backup data.';
+		const completedBarTooltip = this.commun.completed_bar_tooltip || 'Global completion summary for this activity: completed participants over total participants.';
+		const initBarTooltip = this.commun.init_bar_tooltip || 'Global initialization summary for this activity: initialized participants over total participants.';
+		const progressBarTooltip = this.commun.progress_bar_tooltip || 'Global progress summary for this activity: completed and in-progress participants over total participants.';
+		const resultBarTooltip = this.commun.result_bar_tooltip || 'Global result summary for this activity: participants with partial/final results over total participants.';
+
+		let toret = `<div id="completion_progress_${activity.activity_id}" class="progress" title="${completedBarTooltip}"><div class="partial"></div><div class="done"></div><span>${this.commun.completed_title}: <done>0</done>% [ <doneres>0</doneres>/<total>0</total> ]</span></div>`;
 		if(init) {
-			toret += `<div id="init_progress_${activity.activity_id}" class="progress"><div class="partial"></div><div class="done"></div><span>${this.commun.init_title}: <done>0</done>% [ <doneres>0</doneres>/<total>0</total> ]</span></div>`;
+			toret += `<div id="init_progress_${activity.activity_id}" class="progress" title="${initBarTooltip}"><div class="partial"></div><div class="done"></div><span>${this.commun.init_title}: <done>0</done>% [ <doneres>0</doneres>/<total>0</total> ]</span></div>`;
 		}
 		if(progress) {
-			toret += `<div id="progress_${activity.activity_id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>${this.commun.progress_title}: <done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>`;
+			toret += `<div id="progress_${activity.activity_id}" class="progress" title="${progressBarTooltip}"><div class="partial"></div><div class="done"></div><div></div><span>${this.commun.progress_title}: <done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>`;
 		}
 		if(result) {
-			toret += `<div id="result_progress_${activity.activity_id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>${this.commun.result_title}: <done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>`;
+			toret += `<div id="result_progress_${activity.activity_id}" class="progress" title="${resultBarTooltip}"><div class="partial"></div><div class="done"></div><div></div><span>${this.commun.result_title}: <done>0</done> (<partial>0</partial>) %  [ <doneres>0</doneres> (<partialres>0</partialres>) /<total>0</total> ]</span></div>`;
 		}
 		
-		toret += `<table><tr><th>${this.commun.user_title}</th>`;
+		toret += `<table><tr><th title="${participantTooltip}">${this.commun.user_title}</th>`;
 		if(init) {
-			toret += `<th>${this.commun.init_title}</th>`;
+			toret += `<th title="${initTooltip}">${this.commun.init_title}</th>`;
 		}
 		if(progress) {
-			toret += `<th>${this.commun.progress_title}</th>`;
+			toret += `<th title="${progressTooltip}">${this.commun.progress_title}</th>`;
 		}
-		toret += `<th>${this.commun.completed_title}</th>`;
+		toret += `<th title="${completedTooltip}">${this.commun.completed_title}</th>`;
 		if(result) {
-			toret += `<th>${this.commun.result_title}</th>`;
+			toret += `<th title="${resultTooltip}">${this.commun.result_title}</th>`;
 		}
 		toret += '</tr>';
 
@@ -472,7 +496,8 @@ var ActivityPainter = {
 			}
 
 			let tmpprogress = Math.round(value * 1000) / 10;
-			$(`#progress_${activity.activity_id}_${participantKey} .done`).css('width', `${tmpprogress}%` );
+			const visualTmpProgress = tmpprogress >= 100 ? 100.2 : tmpprogress;
+			$(`#progress_${activity.activity_id}_${participantKey} .done`).css('width', `${visualTmpProgress}%` );
 			$(`#progress_${activity.activity_id}_${participantKey} done`).text(tmpprogress);
 		}
 
@@ -480,7 +505,8 @@ var ActivityPainter = {
 		if(isNaN(progress)){
 			progress = 0;
 		}
-		$(`#progress_${activity.activity_id} .done`).css('width', `${progress}%` );
+		const visualProgress = progress >= 100 ? 100.2 : progress;
+		$(`#progress_${activity.activity_id} .done`).css('width', `${visualProgress}%` );
 		$(`#progress_${activity.activity_id} done`).text(progress);
 		$(`#progress_${activity.activity_id} doneres`).text(done);
 
@@ -672,7 +698,8 @@ var ActivityPainter = {
 
 		if(prevValue !== 100) {
 			var progress=result*100;
-			$(`#progress_${activityId}_${username} .done`).css('width', `${progress}%` );
+			var visualProgress = progress >= 100 ? 100.2 : progress;
+			$(`#progress_${activityId}_${username} .done`).css('width', `${visualProgress}%` );
 			$(`#progress_${activityId}_${username} done`).text(progress);
 			if(prevValue == 0 && result !== 0) {
 				var newPartialProgressRes = partialres + 1;
@@ -686,17 +713,20 @@ var ActivityPainter = {
 				$(`#progress_${activityId} doneres`).text(newProgressRes);
 				var newProgress = Math.round((newProgressRes/ users) * 1000)/10;
 				$(`#progress_${activityId} done`).text(newProgress);
-				$(`#progress_${activityId} .done`).css('width', `${newProgress}%` );
+				var visualNewProgress = newProgress >= 100 ? 100.2 : newProgress;
+				$(`#progress_${activityId} .done`).css('width', `${visualNewProgress}%` );
 			}
 		} else {
 			var progress=result*100;
-			$(`#progress_${activityId}_${username} .done`).css('width', `${progress}%` );
+			var visualProgress = progress >= 100 ? 100.2 : progress;
+			$(`#progress_${activityId}_${username} .done`).css('width', `${visualProgress}%` );
 			$(`#progress_${activityId}_${username} done`).text(progress);
 			var newProgressRes = res - 1;
 			$(`#progress_${activityId} doneres`).text(newProgressRes);
 			var newProgress = Math.round((newProgressRes/ users) * 1000)/10;
 			$(`#progress_${activityId} done`).text(newProgress);
-			$(`#progress_${activityId} .done`).css('width', `${newProgress}%` );
+			var visualNewProgress = newProgress >= 100 ? 100.2 : newProgress;
+			$(`#progress_${activityId} .done`).css('width', `${visualNewProgress}%` );
 			if(result == 0) {
 				var newPartialProgressRes = partialres - 1;
 				$(`#progress_${activityId} partialres`).text(newPartialProgressRes);
@@ -806,11 +836,6 @@ var ActivityPainter = {
 				this.downloadContent(data.data, `full_xapi_data_${activity}.json`, this.commun.result_error_downloading);
 			}
 		});
-	},
-
-	paintActivityButtonCompletion: function(activity) {
-		return `<input class="red" type="button" value="${this.commun.completed_all_unset}" onclick="PainterFactory.Painters['activity'].setCompletionForAllParticipant('${activity}', false)">
-		<input class="green" type="button" value="${this.commun.completed_all_set}" onclick="PainterFactory.Painters['activity'].setCompletionForAllParticipant('${activity}', true)">`;
 	},
 };
 

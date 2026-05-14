@@ -80,12 +80,15 @@ var ImsPackagePainter = {
 		PainterFactory.Painters["activity"].paintActivityResult(activity, activity.data.result, false, participants, "No Backup", null, null, true, "See Backup", "imspackage");
 	},
 
+	getExtraKebabItems: function(activity) {
+		return '';
+	},
+
 	paintActivity: function(activity, participants){
+		const topBar = PainterFactory.Painters['activity'].paintActivityTopBar.call(this, activity, this.getExtraKebabItems(activity));
 		let activitybox = `<div id="activity_${activity.activity_id}" class="activity t${activity.activity_type}">
-			<div class="top"><h4>${activity.activity_name}</h4>
-			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity.activity_id}')">
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity.activity_id}', '${activity.activity_name}', '${activity.session_id}')"></div>
-			<p class="subtitle">${this.simple_name}</p>`;
+			${topBar}
+			<p class="subtitle" title="${this.description || ''}">${this.simple_name}</p>`;
 		
 		activitybox += `${this.communSpecific.storage_title}: `
 		if(activity.trace_storage){

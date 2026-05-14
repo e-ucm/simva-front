@@ -117,5 +117,19 @@
     "storage.file.array.title":"Matriz",
     "storage.file.one_per_line.title":"Una Traza Por Linea",
 
-    "tmon.title":"Abrir el panel TMon"
+    "participant.tooltip":"Identificador del participante mostrado como usuario o token.",
+    "init.tooltip":"Estado de inicializacion: indica si el participante ha iniciado la actividad.",
+    "init.bar.tooltip":"Barra resumen de inicializacion: participantes inicializados sobre el total de participantes.",
+    "progress.tooltip":"Porcentaje de progreso actual del participante en esta actividad.",
+    "progress.bar.tooltip":"Barra resumen de progreso: participantes completados y en progreso sobre el total de participantes.",
+    "completed.tooltip":"Estado de completado: indica si el participante ha completado la actividad.",
+    "completed.bar.tooltip":"Barra resumen de completado: participantes completados sobre el total de participantes.",
+    "result.tooltip":"Estado del resultado y acceso a los datos de resultado o copia de seguridad.",
+    "result.bar.tooltip":"Barra resumen de resultados: participantes con resultados parciales o finales sobre el total de participantes.",
+
+    "tmon.title":"Abrir el panel TMon",
+    "activity.download.title":"Descargar datos",
+    "activity.download.tooltip":"Descargar todos los datos disponibles de esta actividad.",
+    "activity.edit.title":"Editar",
+    "activity.delete.title":"Eliminar"
 }

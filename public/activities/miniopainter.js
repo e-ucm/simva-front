@@ -72,11 +72,10 @@ var ActivityPainter = {
 	},
 
 	paintActivity: function(activity, participants){
+		const topBar = PainterFactory.Painters['activity'].paintActivityTopBar.call(this, activity, '');
 		$(`#test_${activity.session_id} .activities`).append(`<div id="activity_${activity.activity_id}" class="activity t${activity.activity_type}">
-			<div class="top"><h4>${activity.activity_name}</h4>
-			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity.activity_id}')">
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity.activity_id}', '${activity.activity_name}', '${activity.session_id}')"></div>
-			<p class="subtitle">${this.simple_name}</p>
+			${topBar}
+			<p class="subtitle" title="${this.description || ''}">${this.simple_name}</p>
 			<p>Minio: <a href="${this.utils.minio_url}${this.utils.minio_bucket}/${this.utils.topics_dir}/${this.utils.trace_topic}/_id=${activity.activity_id}/
 			" target="_blank">Open minio</a></p>
 			<div id="completion_progress_${activity.activity_id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>

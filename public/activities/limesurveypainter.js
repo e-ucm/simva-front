@@ -300,19 +300,19 @@ var LimeSurveyPainter = {
 		PainterFactory.Painters["activity"].paintActivityInit(activity, activity.data.init, participants);
 	},
 
+	getExtraKebabItems: function(activity) {
+		return `<li class="kebab-icon icon-edit" title="${this.specific.edit_title || 'Edit Survey'}" onclick="LimeSurveyPainter.openEditLimesurvey('${activity.activity_id}', '${activity.survey_id}')">${this.specific.edit_title || 'Edit Survey'}</li>`;
+	},
+
 	paintActivity: function(activity, participants){
+		const topBar = PainterFactory.Painters['activity'].paintActivityTopBar.call(this, activity, this.getExtraKebabItems(activity));
 		$(`#test_${activity.session_id} .activities`).append(`<div id="activity_${activity.activity_id}" class="activity t${activity.activity_type}">
-			<div class="top"><h4>${activity.activity_name}</h4>
-			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity.activity_id}')">
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity.activity_id}', '${activity.activity_name}', '${activity.session_id}')"></div>
-			<p class="subtitle">${this.simple_name}</p>
-			<p>${this.specific.survey_title}: <a target="_blank" href="${this.utils.url}${activity.survey_id}">${activity.survey_id}</a></p>
-			<p>${this.specific.language_title}: ${activity.survey_language}</p>
-			<p><a class="button green" onclick="LimeSurveyPainter.openEditLimesurvey('${activity.activity_id}', '${activity.survey_id}')">${this.specific.edit_title}</a></p>
-			<p><a onclick="LimeSurveyPainter.downloadBackup('${activity.activity_id}', 'full')"> ${this.specific.backup_full_title} : ⬇️</a>
-			<a onclick="LimeSurveyPainter.downloadBackup('${activity.activity_id}', 'code')"> ${this.specific.backup_code_title} : ⬇️</a></p>
-			${this.commun.storage_title} : 
-			<p>${this.commun.storage_file_title} <a onclick="PainterFactory.Painters['activity'].getMinioData('${activity.activity_id}')" target="_blank">${this.commun.storage_file_one_per_line_title}</a></p>
+			${topBar}
+			<p class="subtitle" title="${this.description || ''}">${this.simple_name}</p>
+			<div class="activity-meta">
+				<p>${this.specific.survey_title}: <a target="_blank" href="${this.utils.url}${activity.survey_id}">${activity.survey_id}</a></p>
+				<p>${this.specific.language_title}: ${activity.survey_language}</p>
+			</div>
 			${PainterFactory.Painters["activity"].paintActivityParticipantsTable(activity, participants, false)}</div>`);
 	},
 
