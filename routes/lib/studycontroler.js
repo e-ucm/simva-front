@@ -74,7 +74,7 @@ module.exports = {
     },
 
     async importStudy(newstudy, sessionid) {
-        let study=await SimvaAsync.addStudy(newstudy.name, sessionid);
+        let study=await SimvaAsync.addStudy({simlet_name: newstudy.simlet_name, simlet_description: newstudy.simlet_description}, sessionid);
         for(let i=0;i<newstudy.sessions.length;i++) {
             try {
                 await testcontroler.importTest(study.simlet_id, newstudy.sessions[i], sessionid);

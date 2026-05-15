@@ -720,6 +720,7 @@ module.exports = function(auth, config){
 
     router.post('/studies/import', auth, async (req, res, next) => {
         let newstudy = JSON.parse(atob(req.body.file));
+        newstudy.simlet_name = req.body.simlet_name;
         let sessionid = req.session.id;
         try {
             let study = await studycontroler.importStudy(newstudy, sessionid);

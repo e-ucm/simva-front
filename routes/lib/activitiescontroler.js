@@ -171,7 +171,36 @@ module.exports = {
     },
 
     async importActivity(studyid, testid, activity, sessionid) {
-        let act=await SimvaAsync.addActivityToTest(studyid, testid, null, activity, sessionid);
+        logger.debug(activity, "Importing activity");
+        activityImport = { activity_name: activity.activity_name, activity_type: activity.activity_type, activity_order: activity.activity_order, activity_description: activity.activity_description, activity_comply_with_GDPR: activity.activity_comply_with_GDPR};
+        switch(activity.activity_type) {
+            case "limesurvey":
+                if(activity.rawsurvey) {
+                    activityImport.rawsurvey = activity.rawsurvey;
+                } else {
+                    activityImport.copysurvey = activity.survey_id;
+                }
+                activityImport.activity_trace_storage = true;
+                activityImport.activity_can_be_restarted = false;
+                break;
+            case "gameplay":
+                activityImport.activity_trace_storage=activity.activity_trace_storage;
+                activityImport.activity_can_be_restarted=activity.activity_can_be_restarted;
+                activityImport.game_type = activity.game_type;
+                activityImport.game_url = activity.game_url;
+                break;
+            case "manual":
+                activityImport.manual_user_managed = activity.manual_user_managed;
+                activityImport.manual_ressource_type = activity.manual_ressource_type;
+                activityImport.manual_ressource_url = activity.manual_ressource_url;
+                activityImport.activity_trace_storage = activity.activity_trace_storage;
+                activityImport.activity_can_be_restarted = activity.activity_can_be_restarted;
+                break;
+            default:
+                logger.warn("Unknown activity type "+activity.activity_type+" for activity "+activity.activity_name);
+        }
+        logger.debug(activityImport, "Activity to import");
+        let act=await SimvaAsync.addActivityToTest(studyid, testid, null, activityImport, sessionid);
         return act;
     },
 }
