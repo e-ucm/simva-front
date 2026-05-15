@@ -337,7 +337,7 @@
 			if(!error) {
 				var studyExport = result;
 				var content = JSON.stringify(studyExport, null, 2);
-				var filename = `simva-${study.simlet_name}-export.json`;
+				var filename = `simva-${studyExport.simlet_name}-export.json`;
 
 				Utils.download(filename, content);
 			}
@@ -370,7 +370,7 @@
 
 
 	// TAGS
-							// study or sessoin
+	// study or session
 	const renderTags = function(taggedElem) {
 		const tags = Array.isArray(taggedElem.tags) ? taggedElem.tags : [];
 

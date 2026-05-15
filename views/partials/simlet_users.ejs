@@ -452,7 +452,7 @@
 		Simva.exportGroup(studyid, groupId, true, function(error, result) {
 			if (!error) {
 				const content = JSON.stringify(result, null, 2);
-				const filename = `simlet-group-${groupName || groupId}-export.json`;
+				const filename = `simlet-group-${groupName}-export.json`;
 				Utils.download(filename, content);
 			} else {
 				alert(error.responseJSON ? error.responseJSON.message : (error.message || error));
