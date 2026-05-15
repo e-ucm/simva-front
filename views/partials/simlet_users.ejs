@@ -687,7 +687,14 @@
 			if (msg.status !== 200) {
 				alert("Error removing yourself as tester: " + (msg.responseJSON ? JSON.stringify(msg.responseJSON.message) : JSON.stringify(msg.message) || JSON.stringify(msg)));
 			} else {
-				reloadStudy();
+				Simva.deleteGroup(study.simlet_id, groupId, function(err) {
+					if (err.status !== 200) {
+						alert("Error deleting tester group: " + (err.responseJSON ? JSON.stringify(err.responseJSON.message) : JSON.stringify(err.message) || JSON.stringify(err)));
+					} else {
+						$.toast({ heading: 'Tester removed', text: 'You are no longer a tester in this session.', position: 'top-right', icon: 'success', stack: false });
+						reloadStudy();
+					}
+				});
 			}
 		});
 	}
