@@ -17,7 +17,7 @@
 <%- include('partials/simlet_commons') %>
 
 <div id="study_tabs">
-	<div class="studyTabsButtons">
+	<div class="tabs studyTabsButtons">
 			<input class="tab yellow selected" type="button" title="<%- t('sessions.tab.description', { ns : 'SIMLETs' }) %>" onclick="changeTab(this, 'study_tabs','sessions_tab')" value="<%- t('sessions.tab.title', { ns : 'SIMLETs' }) %>">
 			<input class="tab yellow" type="button" title="<%- t('users.tab.description', { ns : 'SIMLETs' }) %>" onclick="changeTab(this, 'study_tabs','users_tab')" value="<%- t('users.tab.title', { ns : 'SIMLETs' }) %>">
 	</div>
@@ -175,6 +175,8 @@
 
 
 <script>
+	$(".content").addClass("floating");
+	
 	let studyid = "<%= study %>";
 	let currentUser = null;
 	let study = null, participants = null, tests = null, allocator = null, groups = null, platforms = null;
@@ -186,7 +188,8 @@
 	// Menus
 
 	$(document).ready(function() {
-		reloadFunc = reloadStudy;
+		refreshFunc = reloadStudy;
+		
 		Simva.getCurrentUser((error, user) => {
 			if(!error) {
 				currentUser = user;
@@ -270,12 +273,11 @@
 	} 
 
 
-	let toggleArchived = function() {
+	let setActive = function(active) {
 		// TEST
 		// archiveStudy();
-
-		let newActive = !(study.simlet_archived == null || study.simlet_archived);
-		Simva.updateStudy(studyid, { simlet_archived: newActive }, function(error, result) {
+		
+		Simva.updateStudy(studyid, { simlet_archived: active }, function(error, result) {
 			if (!error) {
 				reloadStudy();
 			}
@@ -379,7 +381,7 @@
 				archiveButton.addClass('li-disabled').removeAttr('onclick');
 			}
 			else {
-				archiveButton.removeClass('li-disabled').attr('onclick', 'toggleArchived()');
+				archiveButton.removeClass('li-disabled').click(() => { setActive(true); });
 			}
 		}
 		else {
@@ -387,7 +389,8 @@
 			$(".basic").hide();
 			archiveButton.addClass('icon-dearchive');
 			archiveButton.removeClass('icon-archive');
-
+			archiveButton.click(() => { setActive(false); });
+			
 			// TEST: Comment to allow dearchivation
 			// archiveButton.hide();
 		}

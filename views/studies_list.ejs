@@ -43,6 +43,8 @@
 
 
 <script type="text/javascript">
+	$(".content").addClass("floating");
+	
 	const archived = "<%= archived %>" === "true";
 	
 	$(document).ready(function() {
@@ -91,16 +93,16 @@
 		refreshStudies();
 	});
 
-	let refreshStudies = function(){
+	let refreshStudies = function() {
 		Simva.getStudies(function(error, result){
-			if(!error){
+			if (!error) {
 				paintStudies(result);
 			}
 		});
 	}
 
 	let paintStudies = function(studies) {
-		$('#studies_list').text('');
+		$('#studies_list').empty();
 		let paintedStudies = 0;
 
 		for (var i = 0; i < studies.length; i++) {

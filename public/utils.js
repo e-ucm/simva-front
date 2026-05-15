@@ -20,9 +20,11 @@ var Utils = {
 	},
 
 	changeTab : function(tab, form, subform){
-		// Remove 'selected' from all tabs in the modal
-		$(`#${form} .tab`).removeClass('selected');
-		// Add 'selected' to the clicked tab
+		// Avoid affecting nested forms by only targeting the buttons (.tab) of the first tabs header (.tabs) 
+		// under the form and the sibilings of the header that are tabs contents (.subform)
+		$(`#${form} .tabs:first .tab`).removeClass('selected');
+		$(`#${form} .tabs:first`).siblings(".subform").removeClass('selected');
+		
 		$(tab).addClass('selected');
 
 		// Hide all subforms in the modal

@@ -49,7 +49,7 @@
 			<h2><%- t('scheduler.shlink.generate.title', { ns : 'SIMLETs' }) %></h2>
             <br>
 			<div class="tabs">
-				<span class="tab selected" type="hidden" onclick="changeTab(this, 'generate_study_link','generate_study_link_length_tab')"><%- t('scheduler.shlink.generate.randomly_length.title', { ns : 'SIMLETs' }) %></span>
+				<span id="generate_link_length_tab_button" class="tab selected" type="hidden" onclick="changeTab(this, 'generate_study_link','generate_study_link_length_tab')"><%- t('scheduler.shlink.generate.randomly_length.title', { ns : 'SIMLETs' }) %></span>
 				<span class="tab" onclick="changeTab(this, 'generate_study_link','generate_study_custom_slug_link_tab')"><%- t('scheduler.shlink.generate.custom_slug.title', { ns : 'SIMLETs' }) %></span>
 			</div>
             <br>
@@ -111,19 +111,19 @@
 
 <div id="kebab_template" style="display: none;">
 	<ul class="kebab-dropdown" style="display: none;">
-		<li class="kebab-icon icon-edit">
+		<li class="kebab-icon icon-edit" title="<%- t('settings.edit.title', { ns : 'SIMLETs' }) %>">
 			<%- t('settings.edit.title', { ns : 'SIMLETs' }) %>
 		</li>
-		<li class="kebab-icon icon-url">
+		<li class="kebab-icon icon-url" title="<%- t('settings.url.title', { ns : 'SIMLETs' }) %>">
 			<%- t('settings.url.title', { ns : 'SIMLETs' }) %>
 		</li>
-		<li class="kebab-icon icon-download">
+		<li class="kebab-icon icon-download" title="<%- t('settings.download.title', { ns : 'SIMLETs' }) %>">
 			<%- t('settings.download.title', { ns : 'SIMLETs' }) %>
 		</li>
-		<li class="kebab-icon archivationButton icon-archive">
+		<li class="kebab-icon archivationButton icon-archive" title="<%- t('settings.archive.title', { ns : 'SIMLETs' }) %>">
 			<%- t('settings.archive.title', { ns : 'SIMLETs' }) %>
 		</li>
-		<li class="kebab-icon icon-delete">
+		<li class="kebab-icon icon-delete" title="<%- t('settings.delete.title', { ns : 'SIMLETs' }) %>">
 			<%- t('settings.delete.title', { ns : 'SIMLETs' }) %>
 		</li>
 	</ul>
@@ -136,20 +136,19 @@
 	}
 
     let currStudyId = null;
-	let reloadFunc = null;
 	let refreshFunc = null;
     let shlink = null;
 
     $(document).ready(function() {
-		$("#study_name_desc_tab").on("submit", function(event){
+		$("#study_name_desc_tab").on("submit", function(event) {
 			let currentform = this;
 			let form = Utils.getFormData($("#study_name_desc_form"));
 			Utils.toggleSubmit(currentform);
 
 			// Creating new study
 			if (form.editingStudyId == null || form.editingStudyId == "") {
-				Simva.addStudy({ simlet_name : form.studyName, simlet_description : form.studyDescription }, function(error, result){
-					if (error && error.responseJSON){
+				Simva.addStudy({ simlet_name : form.studyName, simlet_description : form.studyDescription }, function(error, result) {
+					if (error && error.responseJSON) {
 						Utils.toggleSubmit(currentform);
 						$("#study_form_error").text(error.responseJSON.message);
 					}
@@ -158,9 +157,9 @@
 						Utils.toggleSubmit(currentform);
 						Utils.toggleAddForm('study_form');
 						$("#study_form_error").text("");
-						Simva.getStudies(function(error, result){
-							if(!error){
-								paintStudies(result);
+						Simva.getStudies(function(error, result) {
+							if (!error && refreshFunc) {
+								refreshFunc();
 							}
 						});
 					}
@@ -174,13 +173,10 @@
 				}
 				else {
 					$('#study_form_error').text("");
-					Simva.updateStudy(form.editingStudyId, { simlet_name : form.studyName, simlet_description : form.studyDescription }, function(error, result){
+					Simva.updateStudy(form.editingStudyId, { simlet_name : form.studyName, simlet_description : form.studyDescription }, function(error, result) {
 						Utils.toggleSubmit(currentform);
 						Utils.toggleAddForm('study_form');
 
-						if (reloadFunc != null) {
-							reloadFunc();
-						}
 						if (refreshFunc != null) {
 							refreshFunc();
 						}
@@ -192,7 +188,7 @@
 		});
 
 		
-        $("#generate_study_link").on('submit', function(event){
+        $("#generate_study_link").on('submit', function(event) {
             event.preventDefault();
             let currentform = this;
 
@@ -212,7 +208,7 @@
             Utils.toggleSubmit(currentform);
             
             Simva.generateShlinkURL(currStudyId, custom_slug, length, (error, result) => {
-                if(!error) {
+                if (!error) {
                     shlink = result;
                     let shortUrl=shlink.shortUrl;
                     // Copy the text inside the text field
@@ -221,8 +217,8 @@
                     alert(shortUrl);
                     Utils.toggleAddForm('generate_study_link');
 
-					if (reloadFunc != null) {
-	                    reloadFunc();
+					if (refreshFunc != null) {
+						refreshFunc();
 					}
                     $('#generate_link_error').text("");
 
@@ -241,11 +237,13 @@
     // --- URL FORM ---
 
     const openUrlSettingsForm = function(studyId) {
+		changeTab($('#generate_link_length_tab_button'), 'study_form','study_name_desc_tab');
+
         currStudyId = studyId;
 
 		Simva.getShLink(studyId, (error, result) => {
 			$("#study_url_settings").toggleClass("shown");
-			if(!error) {
+			if (!error) {
 				shlink = result;
 				$('#shlink_url_short').val(`<%- t('scheduler.shlink.message', { ns : 'SIMLETs', shlink : '${shlink.shortUrl}' }) %>`);
 				$("#generate_shlink_url").hide();
@@ -269,25 +267,25 @@
         $('#link_length_shlink').val($('#link_length_shlink').prop("min"));
 	}
 
-	const copyShortURL = function(){
+	const copyShortURL = function() {
 		// Copy the text inside the text field
 		navigator.clipboard.writeText(shlink.shortUrl);
 		// Alert Short URL
 		alert(shlink.shortUrl);
 	}
 
-    const deleteShLink = function(){
+    const deleteShLink = function() {
 		Utils.toggleSubmit($("#generate_study_link"));
         Simva.getStudy(currStudyId, (error, result) => {
-			if(!error) {
+			if (!error) {
 				let shortCode = shlink.shortCode;
-				if(confirm(`<%- t('scheduler.shlink.delete.confirm', { ns : 'SIMLETs', shlink : '${shortCode}', SIMLET : '${result.simlet_name}' }) %>`)){
+				if (confirm(`<%- t('scheduler.shlink.delete.confirm', { ns : 'SIMLETs', shlink : '${shortCode}', SIMLET : '${result.simlet_name}' }) %>`)) {
 					Simva.deleteShLink(currStudyId, (error, result) => {
 						// TODO: Fix in SIMLET view
-						if(!error) {
+						if (!error) {
 							shlink = null;
-							if (reloadFunc != null) {
-								reloadFunc();
+							if (refreshFunc != null) {
+								refreshFunc();
 							}
 							Utils.toggleAddForm('study_url_settings');
 						}
@@ -308,7 +306,7 @@
 
 	const exportSimlet = function(studyId) {
 		Simva.exportSimlet(studyId, function(error, result) {
-			if(!error) {
+			if (!error) {
 				var content = JSON.stringify(result, null, 2);
 				var filename = `simlet-${result.simlet_name}-export.json`;
 				Utils.download(filename, content);
@@ -316,7 +314,7 @@
 		})
 	}
 
-    const downloadUAConfig = function(){
+    const downloadUAConfig = function() {
 		var content = JSON.stringify({
 			study: currStudyId,
 			host: "<%= config.api.host %>",
@@ -334,7 +332,7 @@
 
 	const downloadStudyConfig = function() {
 		Simva.exportStudyConfig(currStudyId, function(error, result) {
-			if(!error) {
+			if (!error) {
 				var studyExport = result;
 				var content = JSON.stringify(studyExport, null, 2);
 				var filename = `simva-${studyExport.simlet_name}-export.json`;
@@ -349,7 +347,7 @@
 
 	const archiveStudy = function(studyId) {
 		Simva.updateStudy(studyId, { simlet_archived: true }, function(error, result) {
-			if(!error  && refreshFunc != null) {
+			if (!error  && refreshFunc != null) {
 				refreshFunc();
 			}
 		})
