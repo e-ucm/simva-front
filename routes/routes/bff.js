@@ -545,6 +545,19 @@ module.exports = function(auth, config){
         });
     });
 
+    router.post('/studies/:studyid/tests/import', auth, async (req, res, next) => {
+        let newtest = JSON.parse(atob(req.body.file));
+        newtest.session_name = req.body.session_name;
+        let studyId = req.params['studyid'];
+        let sessionid = req.session.id;
+        try {
+            let test = await testscontroler.importTest(studyId, newtest, sessionid);
+            res.status(200).send(test);
+        } catch(error) {
+            next(error);
+        }
+    });
+
     router.get('/studies/:studyid/tests/:testid/export', auth, async (req, res, next) => {
         try {
             let test = await testscontroler.exportTest(req.params["studyid"], req.params["testid"], true, req.session.id);

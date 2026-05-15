@@ -38,7 +38,7 @@ module.exports = {
     },
 
     async importTest(studyid, newtest, sessionid) {
-        let test=await SimvaAsync.addTestToStudy(studyid, newtest.name, sessionid);
+        let test=await SimvaAsync.addTestToStudy(studyid, {session_name: newtest.session_name, session_description: newtest.session_description, session_can_be_manually_activated: newtest.session_can_be_manually_activated}, sessionid);
         test.activities = [];
         for(let i=0;i<newtest.activities.length;i++) {
             try {
