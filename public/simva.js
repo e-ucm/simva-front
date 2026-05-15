@@ -236,6 +236,14 @@ var Simva = {
 		Utils.patch(`/bff/studies/${studyId}/tests/${sessionId}`, test, callback);
 	},
 
+	setTesterForSession: function(study_id, test_id, callback){
+		Utils.post(`/bff/studies/${study_id}/tests/${test_id}/set-tester`, {}, callback);
+	},
+
+	unsetTesterForSession: function(study_id, test_id, callback){
+		Utils.post(`/bff/studies/${study_id}/tests/${test_id}/unset-tester`, {}, callback);
+	},
+
 	addTagToSession: function(study_id, test_id, tag, callback){
 		Utils.post(`/bff/simlets/${study_id}/tests/${test_id}/tags/${tag}`, {}, callback);
 	},

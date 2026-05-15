@@ -601,100 +601,26 @@
 		}
 	}
 
-    function setTesterForSession(sessionId) {
-		const simletId = studyid;
-		const userId = currentUser.user_id;
 
-		// 1. Find or create a group for the current user
-		Simva.getStudyGroups(simletId, function(err, groups) {
-			if (err) {
-				alert('Error fetching groups: ' + (err.responseJSON ? err.responseJSON.message : err.message));
-				return;
-			}
-			let myGroup = groups.find(g => g.group_sandbox === true && g.group_owner_user_id === userId);
-			const afterGroupReady = (group) => {
-				// 2. Add user as participant if not already
-				Simva.getGroupParticipants(simletId, group.group_id, function(err, participants) {
-					if (err) {
-						alert('Error fetching group participants: ' + (err.responseJSON ? err.responseJSON.message : err.message));
-						return;
-					}
-					let alreadyParticipant = participants.some(p => p.user_id === userId);
-					const afterParticipantReady = () => {
-						// 3. Allocate/move user to selected session
-						Simva.allocateToSession(simletId, group.group_id, sessionId, {}, function(err) {
-							if (err) {
-								alert('Error allocating to session: ' + (err.responseJSON ? err.responseJSON.message : err.message));
-							} else {
-								$.toast({ heading: 'Tester set', text: 'You are now a tester in this session.', position: 'top-right', icon: 'success', stack: false });
-								reloadStudy();
-							}
-						});
-					}
-					if (!alreadyParticipant) {
-						Simva.addGroupParticipant(simletId, group.group_id, userId, function(err) {
-							if (err) {
-								alert('Error adding yourself as participant: ' + (err.responseJSON ? err.responseJSON.message : err.message));
-							} else {
-								afterParticipantReady();
-							}
-						});
-					} else {
-						afterParticipantReady();
-					}
-				});
-			}
-			if (myGroup) {
-				afterGroupReady(myGroup);
-			} else {
-				// Create a new group for the user
-				Simva.addGroup(simletId, { group_name: 'Tester ' + userId, group_use_new_generation: false, group_sandbox : true }, function(err, group) {
-					if (err) {
-						alert('Error creating group: ' + (err.responseJSON ? err.responseJSON.message : err.message));
-					} else {
-						afterGroupReady(group);
-					}
-				});
-			}
-		});
-	}
+    function setTesterForSession(sessionId) {
+        Simva.setTesterForSession(studyid, sessionId, function(error, result) {
+            if (error) {
+                $.toast({ heading: 'Error', text: 'Failed to set tester.', position: 'top-right', icon: 'error', stack: false });
+            } else {
+                $.toast({ heading: 'Tester set', text: 'You are now a tester in this session.', position: 'top-right', icon: 'success', stack: false });
+				reloadStudy();
+            }
+        });
+    }
 
 	// Remove current user as tester (participant) from the session
 	function unsetTesterForSession(sessionId) {
-		// Find the group and participant for the current user in this session
-		const test = getTestFromTestId(sessionId);
-		if (!test || !Array.isArray(test.completeParticipants)) {
-			alert("Error: Session or participants not found.");
-			return;
-		}
-		// Try to find the participant object for the current user
-		const userKeys = PainterFactory.Painters['activity'].getParticipantKeys(currentUser);
-		const participant = test.completeParticipants.find(p => {
-			const keys = PainterFactory.Painters['activity'].getParticipantKeys(p);
-			return userKeys.some(key => keys.includes(key));
-		});
-		if (!participant) {
-			alert("Error: You are not a participant in this session.");
-			return;
-		}
-		// Remove from the group (assume group_id is present on participant)
-		const groupId = participant.group_id || participant.groupid || participant.group || (test.completeGroups && test.completeGroups[0] && test.completeGroups[0].group_id);
-		if (!groupId) {
-			alert("Error: Group ID not found for your participant record.");
-			return;
-		}
-		Simva.deleteGroupParticipants(study.simlet_id, groupId, participant.participant_id || participant.id || participant.user_id, false, function(msg) {
-			if (msg.status !== 200) {
-				alert("Error removing yourself as tester: " + (msg.responseJSON ? JSON.stringify(msg.responseJSON.message) : JSON.stringify(msg.message) || JSON.stringify(msg)));
+		Simva.unsetTesterForSession(studyid, sessionId, function(error, result) {
+			if (error) {
+				$.toast({ heading: 'Error', text: 'Failed to unset tester.', position: 'top-right', icon: 'error', stack: false });
 			} else {
-				Simva.deleteGroup(study.simlet_id, groupId, function(err) {
-					if (err.status !== 200) {
-						alert("Error deleting tester group: " + (err.responseJSON ? JSON.stringify(err.responseJSON.message) : JSON.stringify(err.message) || JSON.stringify(err)));
-					} else {
-						$.toast({ heading: 'Tester removed', text: 'You are no longer a tester in this session.', position: 'top-right', icon: 'success', stack: false });
-						reloadStudy();
-					}
-				});
+				$.toast({ heading: 'Tester unset', text: 'You are no longer a tester in this session.', position: 'top-right', icon: 'success', stack: false });
+				reloadStudy();
 			}
 		});
 	}

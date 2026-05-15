@@ -593,7 +593,60 @@ module.exports = function(auth, config){
         }
     });
 
+    // Set current user as tester for a session (allocate to session, create sandbox group if needed)
+    router.post('/studies/:studyid/tests/:testid/set-tester', auth, async (req, res, next) => {
+        const studyid = req.params['studyid'];
+        const testid = req.params['testid'];
+        const userId = (await SimvaAsync.getCurrentUser(req.session.id)).user_id;
+        try {
+            // 1. Find or create sandbox group for user
+            let groups = await SimvaAsync.getStudyGroups(studyid, req.session.id);
+            let myGroup = groups.find(g => g.group_sandbox === true && g.group_owner_user_id === userId);
+            if (!myGroup) {
+                myGroup = await SimvaAsync.addGroup(studyid, { group_name: 'Tester ' + userId, group_use_new_generation: false, group_sandbox: true }, req.session.id);
+            }
+            // 2. Add user as participant if not already
+            let participants = await SimvaAsync.getGroupParticipants(studyid, myGroup.group_id, req.session.id);
+            let alreadyParticipant = participants.some(p => p.user_id === userId);
+            if (!alreadyParticipant) {
+                await SimvaAsync.addGroupParticipant(studyid, myGroup.group_id, userId, req.session.id);
+            }
+            // 3. Allocate/move user to selected session
+            await SimvaAsync.allocateToSession(studyid, myGroup.group_id, testid, {}, req.session.id);
+            res.status(200).send({ message: 'Tester set', group_id: myGroup.group_id });
+        } catch (err) {
+            next(err);
+        }
+    });
 
+    // Remove current user as tester (remove from group, delete group if sandbox)
+    router.post('/studies/:studyid/tests/:testid/unset-tester', auth, async (req, res, next) => {
+        const studyid = req.params['studyid'];
+        const testid = req.params['testid'];
+        const userId = (await SimvaAsync.getCurrentUser(req.session.id)).user_id;
+        try {
+            // Find sandbox group for user
+            let groups = await SimvaAsync.getStudyGroups(studyid, req.session.id);
+            let myGroup = groups.find(g => g.group_sandbox === true && g.group_owner_user_id === userId);
+            if (!myGroup) {
+                throw new Error('Tester group not found');
+            }
+            // Find participant for user
+            let participants = await SimvaAsync.getGroupParticipants(studyid, myGroup.group_id, req.session.id);
+            let participant = participants.find(p => p.user_id === userId);
+            if (!participant) {
+                throw new Error('You are not a participant in this session.');
+            }
+            // Remove from group
+            await SimvaAsync.deleteGroupParticipant(studyid, myGroup.group_id, participant.participant_id || participant.id || participant.user_id, false, req.session.id);
+            // Delete group if sandbox
+            await SimvaAsync.deleteGroup(studyid, myGroup.group_id, req.session.id);
+            res.status(200).send({ message: 'Tester removed' });
+        } catch (err) {
+            next(err);
+        }
+    });
+    
     router.patch('/studies/:studyid/tests/:testid', auth, async (req, res, next) => {
         Simva.updateTest(req.params["studyid"], req.params["testid"], req.body, req.session.id, (error, result) => {
             if(error) {
