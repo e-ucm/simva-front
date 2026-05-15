@@ -536,25 +536,24 @@ module.exports = function(auth, config){
     * 
     */
     router.post('/studies/:studyid/tests', auth, async (req, res, next) => {
-        if(req.body.from) {
-            try {
-                let testToDuplicate=await testscontroler.exportTest(req.params["studyid"], req.body.from, false, req.session.id);
-                testToDuplicate.name = req.body.session_name;
-                let newTest=await testscontroler.importTest(req.params["studyid"], testToDuplicate, req.session.id);
-                res.status(200).send(newTest);
-            } catch(error) {
+        Simva.addTestToStudy(req.params["studyid"], req.body, req.session.id, (error, result) => {
+            if(error) {
                 next(error.response.data);
+            } else {
+                res.status(200).send(result);
             }
-        } else {
-            Simva.addTestToStudy(req.params["studyid"], req.body, req.session.id, (error, result) => {
-                if(error) {
-                    next(error.response.data);
-                } else {
-                    res.status(200).send(result);
-                }
-            });
+        });
+    });
+
+    router.get('/studies/:studyid/tests/:testid/export', auth, async (req, res, next) => {
+        try {
+            let test = await testscontroler.exportTest(req.params["studyid"], req.params["testid"], true, req.session.id);
+            res.status(200).send(test);
+        } catch(error) {
+            next(error.response.data);
         }
     });
+
 
     router.patch('/studies/:studyid/tests/:testid', auth, async (req, res, next) => {
         Simva.updateTest(req.params["studyid"], req.params["testid"], req.body, req.session.id, (error, result) => {

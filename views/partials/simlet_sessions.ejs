@@ -22,8 +22,8 @@
                     <li class="kebab-icon icon-add" title=" <%- t('settings.add_activity.title', { ns : 'sessions' }) %>">
                         <%- t('settings.add_activity.title', { ns : 'sessions' }) %>
                     </li>
-                    <li class="kebab-icon icon-duplicate" title="<%- t('settings.duplicate.title', { ns : 'sessions' }) %>">
-                        <%- t('settings.duplicate.title', { ns : 'sessions' }) %>
+                    <li class="kebab-icon icon-export" title="<%- t('settings.export.title', { ns : 'sessions' }) %>">
+                        <%- t('settings.export.title', { ns : 'sessions' }) %>
                     </li>
                     <li class="kebab-icon icon-activate" title="<%- t('settings.activate.title', { ns : 'sessions' }) %>">
                         <%- t('settings.activate.title', { ns : 'sessions' }) %>
@@ -148,28 +148,6 @@
 	</div>
 </div>
 
-<div id="duplicate_test" class="new_element floating">
-    <div class="floater">
-        <div class="form">
-            <div id="duplicate_test_tab" class="subform selected">
-                <h1><%- t('duplicate.title', { ns : 'sessions' }) %></h1>
-                <form id="duplicate_test_form">
-                    <input hidden type="text" name="test">
-                    <input hidden type="text" name="testName">
-
-                    <!-- TODO: Add localized string for title and placeholder -->
-                    <h3>New session name</h3>
-                    <input type="text" name="name" id="duplicate_test_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
-                    <br><br>
-                    <input type="submit" value="<%- t('duplicate.submit', { ns : 'sessions' }) %>">
-                    <span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-                    <span class="error" id="duplicate_test_error"></span>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
 
 <div class="floating_buttons">
     <a unselectable="on" class="basic" onclick="openTestForm()" style="display: none;">+</a>
@@ -268,25 +246,6 @@
 			}
 			return false;
 		});
-		
-		// TODO: Check
-		$("#duplicate_test_form").on('submit', function(event) {
-			let form = Utils.getFormData($("#duplicate_test_form"));
-			let errorbox = $(this).find('.error');
-			Simva.duplicateTestFromStudy(studyid, { session_name: form.name, from: form.test }, function(error, result) {
-				if (error && error.responseJSON) {
-					errorbox.text(error.responseJSON.message);
-				} else {
-					console.log(result);
-					Utils.toggleAddForm('duplicate_test');
-					reloadStudy();
-				}
-			});
-
-			return false;
-		});
-
-
     });
 
     const openTestForm = function(testId) {
@@ -343,15 +302,14 @@
 		});
 	}
 
-	let openEditDuplicateForm = function(testId) {
-		document.getElementById("duplicate_test_error").innerHTML = "";
-		var inputElement = document.getElementById('duplicate_test_name');
-		let test = getTestFromTestId(testId);
-		inputElement.value = test.session_name;
-		$('#duplicate_test').toggleClass('shown');
-		$('#duplicate_test input[name="test"]').val(test.session_id);
-		$('#duplicate_test span[class="error"]').val("");
-		$('#duplicate_test input[name="testName"]').val(test.session_name);
+	let exportTest = function(testId) {
+		Simva.exportTest(studyid, testId, function(error, result) {
+			if(!error) {
+				var content = JSON.stringify(result, null, 2);
+				var filename = `simlet-${study.simlet_name}-session-${testId}-export.json`;
+				Utils.download(filename, content);
+			}
+		})
 	}
 	
 	const toggleSession = function(sessionId) {
@@ -377,9 +335,9 @@
 		openActivityForm(data[sessionDataIdKey]);
 	});
 
-	$(document).on('click', ".sessionTop .icon-duplicate", function(e) {
+	$(document).on('click', ".sessionTop .icon-export", function(e) {
 		const data = $(this).closest(".test").data();
-		openEditDuplicateForm(data[sessionDataIdKey]);
+		exportTest(data[sessionDataIdKey]);
 	});
 
 	$(document).on('click', ".sessionTop .icon-activate", function(e) {

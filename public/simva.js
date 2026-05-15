@@ -216,8 +216,8 @@ var Simva = {
 		Utils.get(`/simlets/${study_id}/events/getPresignedUrl`, callback);
 	},
 
-	duplicateTestFromStudy: function(study_id, body, callback){
-		Utils.post(`/bff/studies/${study_id}/tests`, body, callback);
+	exportTest: function(study_id, test_id, callback){
+		Utils.get(`/bff/studies/${study_id}/tests/${test_id}/export`, callback);
 	},
 
 	getStudy: function(study_id, callback){

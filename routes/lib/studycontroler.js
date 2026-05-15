@@ -48,22 +48,24 @@ module.exports = {
                 throw e;
             }
         }
-
         return study;
     },
 
     async exportStudy(studyid, complete, sessionid) {
         let study=await SimvaAsync.getStudy(studyid, sessionid);
-        try {
-            study.allocator = await SimvaAsync.getAllocator(studyid, sessionid);
-        } catch(e) {
-            logger.warn(e);
-        }
-        let testsid = study.tests;
-        study.tests=[];
+        let testsid = study.sessions;
+        study.sessions=[];
         for(let i=0;i<testsid.length;i++) {
             try {
-                study.tests.push(await testcontroler.exportTest(studyid, testsid[i], complete, sessionid));
+                study.sessions.push(await testcontroler.exportTest(studyid, testsid[i], complete, sessionid));
+            } catch(e) {
+                logger.warn(e);
+            }
+        }
+        study.groups=await SimvaAsync.getStudyGroups(studyid, sessionid);
+        for(let i=0; i<study.groups.length; i++) {
+            try {
+                study.groups[i].participants = await SimvaAsync.getGroupParticipants(studyid, study.groups[i].group_id, sessionid);
             } catch(e) {
                 logger.warn(e);
             }
@@ -73,9 +75,9 @@ module.exports = {
 
     async importStudy(newstudy, sessionid) {
         let study=await SimvaAsync.addStudy(newstudy.name, sessionid);
-        for(let i=0;i<newstudy.tests.length;i++) {
+        for(let i=0;i<newstudy.sessions.length;i++) {
             try {
-                await testcontroler.importTest(study.simlet_id, newstudy.tests[i], sessionid);
+                await testcontroler.importTest(study.simlet_id, newstudy.sessions[i], sessionid);
             } catch(e) {
                 logger.warn(e);
             }

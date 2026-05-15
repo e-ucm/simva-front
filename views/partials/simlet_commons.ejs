@@ -306,6 +306,16 @@
 		$('#download_config').toggleClass('shown');
 	}
 
+	const exportSimlet = function(studyId) {
+		Simva.exportSimlet(studyId, function(error, result) {
+			if(!error) {
+				var content = JSON.stringify(result, null, 2);
+				var filename = `simlet-${result.simlet_name}-export.json`;
+				Utils.download(filename, content);
+			}
+		})
+	}
+
     const downloadUAConfig = function(){
 		var content = JSON.stringify({
 			study: currStudyId,

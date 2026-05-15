@@ -204,6 +204,7 @@
 		kebab.find(".icon-edit").click(() => { openEditStudyForm(studyid) });
 		kebab.find(".icon-url").click(() => { openUrlSettingsForm(studyid) });
 		kebab.find(".icon-download").click(() => { openConfigDownloadForm(studyid) });
+		kebab.find(".icon-export").click(() => { exportSimlet(studyid) });
 		kebab.find(".icon-delete").click(() => { 
 			deleteStudy(studyid, study.simlet_name) 
 			location.reload();
