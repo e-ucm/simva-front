@@ -578,33 +578,38 @@
 		});
 	}
 
+	// Remove current user as tester (participant) from the session
 	function unsetTesterForSession(sessionId) {
-		const simletId = studyid;
-		const userId = currentUser.user_id;
-
-		// Find the user's group
-		Simva.getStudyGroups(simletId, function(err, groups) {
-			if (err) {
-				alert('Error fetching groups: ' + (err.responseJSON ? err.responseJSON.message : err.message));
-				return;
+		// Find the group and participant for the current user in this session
+		const test = getTestFromTestId(sessionId);
+		if (!test || !Array.isArray(test.completeParticipants)) {
+			alert("Error: Session or participants not found.");
+			return;
+		}
+		// Try to find the participant object for the current user
+		const userKeys = PainterFactory.Painters['activity'].getParticipantKeys(currentUser);
+		const participant = test.completeParticipants.find(p => {
+			const keys = PainterFactory.Painters['activity'].getParticipantKeys(p);
+			return userKeys.some(key => keys.includes(key));
+		});
+		if (!participant) {
+			alert("Error: You are not a participant in this session.");
+			return;
+		}
+		// Remove from the group (assume group_id is present on participant)
+		const groupId = participant.group_id || participant.groupid || participant.group || (test.completeGroups && test.completeGroups[0] && test.completeGroups[0].group_id);
+		if (!groupId) {
+			alert("Error: Group ID not found for your participant record.");
+			return;
+		}
+		Simva.deleteGroupParticipants(study.simlet_id, groupId, participant.participant_id || participant.id || participant.user_id, false, function(msg) {
+			if (msg.status !== 200) {
+				alert("Error removing yourself as tester: " + (msg.responseJSON ? JSON.stringify(msg.responseJSON.message) : JSON.stringify(msg.message) || JSON.stringify(msg)));
+			} else {
+				reloadStudy();
 			}
-			let myGroup = groups.find(g => g.group_sandbox === true && g.group_owner_user_id === userId);
-			if (!myGroup) {
-				alert('No tester group found for you.');
-				return;
-			}
-			// Remove user as participant from group
-			Simva.deleteGroupParticipants(simletId, myGroup.group_id, userId, false, function(err, result) {
-				if (err) {
-					alert('Error removing yourself as tester: ' + (err.responseJSON ? err.responseJSON.message : err.message));
-				} else {
-					$.toast({ heading: 'Tester unset', text: 'You are no longer a tester in this session.', position: 'top-right', icon: 'success', stack: false });
-					reloadStudy();
-				}
-			});
 		});
 	}
-    
 	
 	// Render
 
