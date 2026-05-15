@@ -380,8 +380,11 @@
 
 	const deleteStudy = function(studyid, studyname){
 		if(confirm(`<%- t('delete.confirm', { ns : 'SIMLETs', SIMLET : '${studyname}' }) %>`)){
-			Simva.deleteStudy(studyid, function(error, result) {
-				if(!error && refreshFunc != null) {
+			Simva.deleteStudy(studyid, function(response) {
+				if(response.status !== 200) {
+					// Muestra el error real para depuración
+					alert(response || "Error eliminando el simlet");
+				} else if(refreshFunc != null) {
 					refreshFunc();
 				}
 			});
