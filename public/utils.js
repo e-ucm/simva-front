@@ -20,12 +20,15 @@ var Utils = {
 	},
 
 	changeTab : function(tab, form, subform){
-		// Avoid nested forms by only targeting direct .tab and .subform under form
-		$(`#${form} > div:first > .tab`).removeClass('selected');
-		$(`#${form} > .subform`).removeClass('selected');
-		
+		// Remove 'selected' from all tabs in the modal
+		$(`#${form} .tab`).removeClass('selected');
+		// Add 'selected' to the clicked tab
 		$(tab).addClass('selected');
-		$(`#${subform}`).addClass('selected');
+
+		// Hide all subforms in the modal
+		$(`#${form} .subform`).hide();
+		// Show the selected subform
+		$(`#${subform}`).show();
 	},
 
 	post: function(url, body, callback){

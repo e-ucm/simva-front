@@ -24,11 +24,11 @@ var GameplayActivityPainter = {
 				<span class="tab selected" method="WEB" onclick="changeTab(this, 'new_activity_extras','gameplay_web')">WEB</span>
 				<span class="tab" method="DESKTOP" onclick="changeTab(this, 'new_activity_extras','gameplay_desktop')">DESKTOP</span>
 			</div>
-			<div id="gameplay_web" class="subform selected">
+			<div id="gameplay_web" class="subform selected" style="display: block;">
 				<p><label for="gameplay_game_uri" style="width: 100%; text-align: center;">${this.specific.game_uri_title}</label><input id="gameplay_game_uri" type="text" name="game_uri">
 				<span class="info">${this.specific.game_uri_explication}</span></p>
 			</div>
-			<div id="gameplay_desktop" class="subform">
+			<div id="gameplay_desktop" class="subform" style="display: none;">
 				<label for="gamefile">${this.specific.upload_title || 'Upload game file for DESKTOP activity'}</label>
 				   <input type="file" name="file" id="gamefile" placeholder="Game file" accept=".zip">
 				<span class="info">${this.specific.upload_explication || 'Select DESKTOP tab and upload a file.'}</span>
@@ -46,11 +46,11 @@ var GameplayActivityPainter = {
 				<span class="tab selected" method="WEB" onclick="changeTab(this, 'edit_activity_extras','edit_gameplay_web')">WEB</span>
 				<span class="tab" method="DESKTOP" onclick="changeTab(this, 'edit_activity_extras','edit_gameplay_desktop')">DESKTOP</span>
 			</div>
-			<div id="edit_gameplay_web" class="subform selected">
+			<div id="edit_gameplay_web" class="subform selected" style="display: block;">
 				<p><label for="edit_gameplay_game_uri" style="width: 100%; text-align: center;">${this.specific.game_uri_title}</label><input id="edit_gameplay_game_uri" type="text" name="game_uri">
 				<span class="info">${this.specific.game_uri_explication}</span></p>
 			</div>
-			<div id="edit_gameplay_desktop" class="subform">
+			<div id="edit_gameplay_desktop" class="subform" style="display: none;">
 				<label for="edit_gamefile">${this.specific.upload_title || 'Upload game file for DESKTOP activity'}</label>
 				   <input type="file" name="file" id="edit_gamefile" placeholder="Game file" accept=".zip">
 				<span class="info">${this.specific.upload_explication || 'Select DESKTOP tab and upload a file.'}</span>

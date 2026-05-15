@@ -85,7 +85,7 @@
 				<span class="tab" onclick="changeTab(this, 'session_form_menu','import_session_tab')"><%- t('import.tab', { ns : 'sessions' }) %></span>
 			</div>
 
-			<div id="session_name_desc_tab" class="subform selected">
+			<div id="session_name_desc_tab" class="subform selected" style="display: block;">
 				<form id="session_form">
 					<input hidden type="text" name="editingSessionId" id="edit_session_id">
 					<input hidden type="text" name="prevSessionName" id="prev_session_name">
@@ -146,7 +146,7 @@
 				</form>
 			</div>
 
-			<div id="import_session_tab" class="subform" hidden>
+			<div id="import_session_tab" class="subform" style="display: none;">
 				<form id="import_session_form">
 					<h3 class="import_session_form_field session_form_name"><%- t('name.title', { ns : 'sessions' }) %></h3>
 					<input class="import_session_form_field import_session_form_name" type="text" name="sessionName" id="import_session_name" placeholder="<%- t('name.placeholder', { ns : 'sessions' }) %>" required>
@@ -162,29 +162,6 @@
 			<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 			<br>
 			<span class="error" id="session_form_error"></span>
-			<script>
-			// Hide fields in import tab, but always show name
-			$(document).ready(function() {
-				$('#add_session_tabs .tab').on('click', function() {
-					const isImport = $(this).text().includes('import.tab') || $(this).attr('onclick').includes('import_session_tab');
-					if (isImport) {
-						$('.session_form_field').not('.session_form_name').hide();
-						$('.session_form_name').show();
-						$('#import_session_tab').show();
-						$('#session_name_desc_tab').hide();
-					} else {
-						// Show only add new fields
-						$('.session_form_field').show();
-						$('#import_session_tab').hide();
-						$('#session_name_desc_tab').show();
-					}
-				});
-				// On open, ensure all fields are shown for add new
-				if ($('#session_name_desc_tab_button').hasClass('selected')) {
-					$('.session_form_field').show();
-				}
-			});
-			</script>
 		</div>
 	</div>
 </div>

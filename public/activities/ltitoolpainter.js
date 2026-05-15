@@ -26,10 +26,10 @@ var LTIToolPainter = {
 				<span id="ltitoolpainter_tab_byexising" class="tab" method="byexisting" onclick="changeTab(this, \`new_activity_extras\`,\`ltitool_byexisting\`)">Existing Tool</span>
 				<span class="tab" method="bynew" onclick="changeTab(this, \`new_activity_extras\`,\`ltitool_bynew\`)">New Tool</span>
 			</div>
-			<div id="ltitool_byexisting" class="subform">`;
+			<div id="ltitool_byexisting" class="subform selected" style="display: block;">`;
 
 		form += `</div>
-			<div id="ltitool_bynew" class="subform">
+			<div id="ltitool_bynew" class="subform" style="display: none;">
 
 			<p><label for="ltitool_name">Name</label><input id="ltitool_name" type="text" name="ltitool_name"></p>
 			<p><label for="ltitool_description">Description</label><input id="ltitool_description" type="text" name="ltitool_description"></p>

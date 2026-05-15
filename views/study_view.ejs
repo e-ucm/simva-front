@@ -22,14 +22,14 @@
 			<input class="tab yellow" type="button" title="<%- t('users.tab.description', { ns : 'SIMLETs' }) %>" onclick="changeTab(this, 'study_tabs','users_tab')" value="<%- t('users.tab.title', { ns : 'SIMLETs' }) %>">
 	</div>
 	
-	<div id="sessions_tab" class="subform studyTab selected">
+	<div id="sessions_tab" class="subform studyTab selected" style="display: block;">
 		
 		<%- include('partials/simlet_sessions') %>
 		<%- include('partials/simlet_activities') %>
 		
 	</div>
 
-	<div id="users_tab" class="subform studyTab">
+	<div id="users_tab" class="subform studyTab" style="display: none;">
 		
 		<%- include('partials/simlet_users') %>
 		

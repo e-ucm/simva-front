@@ -5,7 +5,7 @@
                 <span class="tab selected" onclick="changeTab(this, 'add_activity','new_activity_tab')"><%- t('add.new.title', { ns : 'activities' }) %></span>
                 <span class="tab" type="hidden" onclick="changeTab(this, 'add_activity','existing_activity_tab')"><%- t('add.existing.title', { ns : 'activities' }) %></span>
             </div>
-            <div id="new_activity_tab" class="subform selected">
+            <div id="new_activity_tab" class="subform selected" style="display: block;">
                 <form id="new_activity_form">
                     <input type="hidden" name="test">
                     <input type="text" name="name" placeholder="<%- t('name.placeholder', { ns : 'activities' }) %>" required>
@@ -18,7 +18,7 @@
                     <span class="error"></span>
                 </form>
             </div>
-            <div id="existing_activity_tab" class="subform">
+            <div id="existing_activity_tab" class="subform" style="display: none;">
                 <form id="existing_activity_form">
                     <input type="hidden" name="test">
                     <input type="text" name="name" placeholder="<%- t('name.placeholder', { ns : 'activities' }) %>" required>

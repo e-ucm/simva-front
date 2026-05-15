@@ -30,7 +30,7 @@
 	<div id="add_owner" class="new_element floating">
 		<div class="floater">
 			<div class="form">
-				<div id="existing_owner_tab" class="subform selected">
+				<div id="existing_owner_tab" class="subform selected" style="display: block;">
 					<h2><%= t('owners.add.title' , { ns : 'groups' }) %></h2>
 					<form id="existing_owner_form">
 						<input type="text" name="name" placeholder="<%= t('owners.add.username.placeholder' , { ns : 'groups' }) %>" required>
@@ -50,7 +50,7 @@
 	<div id="edit_group" class="new_element floating">
 		<div class="floater">
 			<div class="form">
-				<div id="edit_group_tab" class="subform selected">
+				<div id="edit_group_tab" class="subform selected" style="display: block;">
 					<h2><%= t('name.edit.title' , { ns : 'groups' }) %></h2>
 					<form id="edit_group_form">
 						<input hidden type="text" name="group">
@@ -73,14 +73,14 @@
 					<span class="tab" onclick="changeTab(this, 'add_participant','new_participant_tab')"><%= t('participants.add.new.title' , { ns : 'groups' }) %></span>
 					<span class="tab" onclick="changeTab(this, 'add_participant','batch_participant_tab')"><%= t('participants.add.batch.title' , { ns : 'groups' }) %></span>
 				</div>
-				<div id="existing_participant_tab" class="subform selected">
+				<div id="existing_participant_tab" class="subform selected" style="display: block;">
 					<form id="existing_participant_form">
 						<input type="text" name="name" placeholder="<%= t('participants.add.username.placeholder', { ns : 'groups' }) %>" required>
 						<input type="submit" value="<%= t('participants.add.existing.title' , { ns : 'groups' }) %>">
 						<span class="error"></span>
 					</form>
 				</div>
-				<div id="new_participant_tab" class="subform">
+				<div id="new_participant_tab" class="subform selected" style="display: block;">
 					<form id="new_participant_form">
 						<input type="text" name="username" placeholder="<%= t('participants.add.username.placeholder', { ns : 'groups' }) %>" value="" required>
 						<input type="email" name="email" placeholder="<%= t('participants.add.email.placeholder', { ns : 'groups' }) %>" value="" required>
@@ -93,7 +93,7 @@
 						<span class="error"></span>
 					</form>
 				</div>
-				<div id="batch_participant_tab" class="subform">
+				<div id="batch_participant_tab" class="subform" style="display: none;">
 					<form id="batch_participant_form">
 						<p><%= t('participants.add.batch.number.title' , { ns : 'groups' }) %></p>
 						<input type="number" step="1" min='1' max="100" name="amount" value="1">
@@ -497,9 +497,6 @@
 	}
 
 	let changeTab = function(tab, form, subform){
-		$(`#${form} .tab`).removeClass('selected');
-		$(`#${form} .subform`).removeClass('selected');
-		$(tab).toggleClass('selected');
-		$(`#${subform}`).toggleClass('selected');
+		Utils.changeTab(tab, form, subform);
 	}
 </script>

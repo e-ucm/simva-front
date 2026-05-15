@@ -25,11 +25,11 @@ var ManualActivityPainter = {
 				<span class="tab selected" method="WEB" onclick="changeTab(this, 'new_activity_extras','manual_web')">WEB</span>
 				<span class="tab" method="EXTERNAL" onclick="changeTab(this, 'new_activity_extras','manual_external')">EXTERNAL</span>
 			</div>
-			<div id="manual_web" class="subform selected">
+			<div id="manual_web" class="subform selected" style="display: block;">
 				<p><label for="manual_uri" style="width: 100%; text-align: center;">${this.specific.uri_title}</label><input id="manual_uri" type="text" name="uri">
 				<span class="info">${this.specific.uri_explication}</span></p>
 			</div>
-			<div id="manual_external" class="subform">
+			<div id="manual_external" class="subform" style="display: none;">
 				<label for="manualfile">${this.specific.upload_title || 'Upload file for EXTERNAL activity'}</label>
 				   <input type="file" name="file" id="manualfile" placeholder="Manual file" accept=".pdf">
 				<span class="info">${this.specific.upload_explication || 'Select EXTERNAL tab and upload a file.'}</span>
@@ -46,11 +46,11 @@ var ManualActivityPainter = {
 				<span class="tab selected" method="WEB" onclick="changeTab(this, 'edit_manual_web')">WEB</span>
 				<span class="tab" method="EXTERNAL" onclick="changeTab(this, 'edit_manual_external')">EXTERNAL</span>
 			</div>
-			<div id="edit_manual_web" class="subform selected">
+			<div id="edit_manual_web" class="subform selected" style="display: block;">
 				<p><label for="edit_manual_uri" style="width: 100%; text-align: center;">${this.specific.uri_title}</label><input id="edit_manual_uri" type="text" name="uri">
 				<span class="info">${this.specific.uri_explication}</span></p>
 			</div>
-			<div id="edit_manual_external" class="subform">
+			<div id="edit_manual_external" class="subform" style="display: none;">
 				<label for="edit_manualfile">${this.specific.upload_title || 'Upload file for EXTERNAL activity'}</label>
 				   <input type="file" name="file" id="edit_manualfile" placeholder="Manual file" accept=".pdf">
 				<span class="info">${this.specific.upload_explication || 'Select EXTERNAL tab and upload a file.'}</span>

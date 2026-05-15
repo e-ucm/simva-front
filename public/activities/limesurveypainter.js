@@ -38,18 +38,18 @@ var LimeSurveyPainter = {
 					<span class="tab" method="bynew" onclick="LimesurveyChangeTab(this, 'new_activity_extras','limesurvey_bynew')">${this.specific.new_title}</span>
 					<span class="tab" method="byupload" onclick="LimesurveyChangeTab(this, 'new_activity_extras','limesurvey_byupload')">${this.specific.upload_title}</span>
 					</div>
-					<div id="limesurvey_byid" class="subform selected">
+					<div id="limesurvey_byid" class="subform selected" style="display: block;">
 					<p>${this.specific.surveyid_title}:</p>
 					<input type="number" name="surveyid" placeholder="${this.specific.surveyid_placeholder}">
 					</div>
-					<div id="limesurvey_byexisting" class="subform">`;
+					<div id="limesurvey_byexisting" class="subform" style="display: none;">`;
 					form += '<select name="existingid" id="existingid_select"></select>';
 					form += `</div>
-					<div id="limesurvey_bynew" class="subform">
+					<div id="limesurvey_bynew" class="subform" style="display: none;">
 						<p>${this.specific.new_message}</p>
 						<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">${this.specific.title}</a></p>
 					</div>
-					<div id="limesurvey_byupload" class="subform">
+					<div id="limesurvey_byupload" class="subform" style="display: none;">
 						<p>${this.specific.upload_message}</p>
 						<input type="file" name="lss" placeholder="Activity name">
 					</div>`
@@ -413,10 +413,7 @@ PainterFactory.addPainter(LimeSurveyPainter);
 // Patch: Update survey list when switching to 'limesurvey_byexisting' tab
 LimesurveyChangeTab = function(tab, form, subform){
 	console.log(`Changing to tab: ${subform}`);
-	$(`#${form} .tab`).removeClass('selected');
-	$(`#${form} .subform`).removeClass('selected');
-	$(tab).toggleClass('selected');
-	$(`#${subform}`).toggleClass('selected');
+	Utils.changeTab(tab, form, subform);
 	// Add survey list update logic for limesurvey_byexisting
 	if(subform === 'limesurvey_byexisting'){
 		Simva.getSurveyList((error, result) => {
