@@ -77,73 +77,114 @@
 </div>
 
 <div id ="session_form_menu" class="new_element floating">
-    <div class="floater">
-        <div class="form">
-            <h1 id="session_form_title"> 	</h1>
-
-            <div class="subform selected">
-                <form id="session_form">
-                    <input hidden type="text" name="editingSessionId" id="edit_session_id">
-                    <input hidden type="text" name="prevSessionName" id="prev_session_name">
-                    <input hidden type="text" name="prevSessionDescription" id="prev_session_description">
-
-                    <h3><%- t('name.title', { ns : 'sessions' }) %></h3>
-                    <input type="text" name="sessionName" id="session_name" placeholder="<%- t('name.placeholder', { ns : 'sessions' }) %>" required>
-                    <br>
-                    <h3><%- t('description.title', { ns : 'SIMLETs' }) %></h3>
-                    <input type="text" name="sessionDescription" id="session_description" placeholder="<%- t('description.placeholder', { ns : 'sessions' }) %>" required>
-                    <h3><%- t('tags.title', { ns : 'sessions' }) %></h3>
-                    <div style="margin-top: 5px;">
-                        <div class="tagPickerArea">
-                            <div class="tagPickerRow">
-                                <div class="tagPickerInputWrap"  >
-                                    <div id="session_selected_tags" class="tagSelectedChips"></div>
-                                    <input
-                                        type="text"
-                                        id="session_tag_search"
-                                        class="tagSearchInput"
-                                        placeholder="<%- t('tags.input.placeholder', { ns : 'sessions' }) %>"
-                                        onfocus="openTagDropdown()"
-                                        oninput="renderAvailableTags()"
-                                    >
-                                    <div id="session_tag_dropdown" class="tagDropdown" style="display:none;" tabindex="-1">
-
-                                    </div>
-                                </div>
-                                <button type="button" class="tagPlusButton" onclick="toggleTagCreator()">+</button>
-                            </div>
-                        </div>
-                        <div id="session_tag_creator" class="tagCreator" style="display:none;">
-                            <input type="text" id="session_new_tag_name" placeholder="<%- t('tags.create.placeholder', { ns : 'sessions' }) %>" style="flex: 1;">
-                            <input type="color" id="session_new_tag_color" value="#3b82f6" style="width: 44px; padding: 0;">
-                            <button type="button" onclick="createAndSelectTag()"><%- t('tags.create', { ns : 'sessions' }) %></button>
-                            <button type="button" onclick="closeTagCreator()"><%- t('tags.create.cancel', { ns : 'sessions' }) %></button>
-                        </div>
-                        <div id="session_tag_editor" class="tagEditor" style="display:none;">
-                            <input hidden type="text" id="edit_tag_id">
-                            <input hidden type="text" id="prev_tag_name">
-                            <input hidden type="color" id="prev_tag_color">
-
-                            <input type="text" id="session_edit_tag_name" placeholder="<%- t('tags.edit.placeholder', { ns : 'sessions' }) %>" style="flex: 1;">
-                            <input type="color" id="session_edit_tag_color" value="#3b82f6" style="width: 44px; padding: 0;">
-                            <button type="button" onclick="saveEditingTag()"><%- t('tags.edit.save', { ns : 'sessions' }) %></button>
-                            <button type="button" onclick="closeTagEditor()"><%- t('tags.edit.cancel', { ns : 'sessions' }) %></button>
-                        </div>
-                        <span class="error" id="session_tags_error"></span>
-                    </div>
-
-                    <div id="can_be_manually_activated" >
-                        <br>
-                        <h3><%- t('can_be_manually_activated', { ns : 'sessions' }) %></h3>
-                        <input type="checkbox" name="can_be_manually_activated" checked>
-                    </div>
-                    <br>
-                    <input type="submit" id="session_submit" value="">
-                </form>
+	<div class="floater">
+		<div class="form">
+			<h1 id="session_form_title"></h1>
+			<div class="tabs" id="add_session_tabs">
+				<span id="session_name_desc_tab_button" class="tab" onclick="changeTab(this, 'session_form_menu','session_name_desc_tab')"><%- t('add.new.tab', { ns : 'sessions' }) %></span>
+				<span class="tab" onclick="changeTab(this, 'session_form_menu','import_session_tab')"><%- t('import.tab', { ns : 'sessions' }) %></span>
 			</div>
+
+			<div id="session_name_desc_tab" class="subform selected">
+				<form id="session_form">
+					<input hidden type="text" name="editingSessionId" id="edit_session_id">
+					<input hidden type="text" name="prevSessionName" id="prev_session_name">
+					<input hidden type="text" name="prevSessionDescription" id="prev_session_description">
+
+					<h3 class="session_form_field session_form_name"><%- t('name.title', { ns : 'sessions' }) %></h3>
+					<input class="session_form_field session_form_name" type="text" name="sessionName" id="session_name" placeholder="<%- t('name.placeholder', { ns : 'sessions' }) %>" required>
+					<br class="session_form_field session_form_name">
+					<h3 class="session_form_field" id="session_description_label"><%- t('description.title', { ns : 'SIMLETs' }) %></h3>
+					<input class="session_form_field" type="text" name="sessionDescription" id="session_description" placeholder="<%- t('description.placeholder', { ns : 'sessions' }) %>" required>
+					<h3 class="session_form_field" id="session_tags_label"><%- t('tags.title', { ns : 'sessions' }) %></h3>
+					<div class="session_form_field" id="session_tags_area" style="margin-top: 5px;">
+						<div class="tagPickerArea">
+							<div class="tagPickerRow">
+								<div class="tagPickerInputWrap"  >
+									<div id="session_selected_tags" class="tagSelectedChips"></div>
+									<input
+										type="text"
+										id="session_tag_search"
+										class="tagSearchInput"
+										placeholder="<%- t('tags.input.placeholder', { ns : 'sessions' }) %>"
+										onfocus="openTagDropdown()"
+										oninput="renderAvailableTags()"
+									>
+									<div id="session_tag_dropdown" class="tagDropdown" style="display:none;" tabindex="-1">
+
+									</div>
+								</div>
+								<button type="button" class="tagPlusButton" onclick="toggleTagCreator()">+</button>
+							</div>
+						</div>
+						<div id="session_tag_creator" class="tagCreator" style="display:none;">
+							<input type="text" id="session_new_tag_name" placeholder="<%- t('tags.create.placeholder', { ns : 'sessions' }) %>" style="flex: 1;">
+							<input type="color" id="session_new_tag_color" value="#3b82f6" style="width: 44px; padding: 0;">
+							<button type="button" onclick="createAndSelectTag()"><%- t('tags.create', { ns : 'sessions' }) %></button>
+							<button type="button" onclick="closeTagCreator()"><%- t('tags.create.cancel', { ns : 'sessions' }) %></button>
+						</div>
+						<div id="session_tag_editor" class="tagEditor" style="display:none;">
+							<input hidden type="text" id="edit_tag_id">
+							<input hidden type="text" id="prev_tag_name">
+							<input hidden type="color" id="prev_tag_color">
+
+							<input type="text" id="session_edit_tag_name" placeholder="<%- t('tags.edit.placeholder', { ns : 'sessions' }) %>" style="flex: 1;">
+							<input type="color" id="session_edit_tag_color" value="#3b82f6" style="width: 44px; padding: 0;">
+							<button type="button" onclick="saveEditingTag()"><%- t('tags.edit.save', { ns : 'sessions' }) %></button>
+							<button type="button" onclick="closeTagEditor()"><%- t('tags.edit.cancel', { ns : 'sessions' }) %></button>
+						</div>
+						<span class="error" id="session_tags_error"></span>
+					</div>
+
+					<div class="session_form_field" id="can_be_manually_activated" >
+						<br>
+						<h3><%- t('can_be_manually_activated', { ns : 'sessions' }) %></h3>
+						<input type="checkbox" name="can_be_manually_activated" checked>
+					</div>
+					<br class="session_form_field">
+					<input class="session_form_field" type="submit" id="session_submit" value="">
+				</form>
+			</div>
+
+			<div id="import_session_tab" class="subform" hidden>
+				<form id="import_session_form">
+					<h3 class="import_session_form_field session_form_name"><%- t('name.title', { ns : 'sessions' }) %></h3>
+					<input class="import_session_form_field import_session_form_name" type="text" name="sessionName" id="import_session_name" placeholder="<%- t('name.placeholder', { ns : 'sessions' }) %>" required>
+					<br class="import_session_form_field import_session_form_name">
+					<br>
+					<h3><%- t('import.input', { ns : 'sessions' }) %></h3>
+					<input type="file" name="jsonFile" accept=".json" required>
+					<br><br>
+					<input class="import_session_form_field" type="submit" id="import_session_submit" value="<%- t('import.submit', { ns : 'sessions' }) %>">
+				</form>
+			</div>
+
 			<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 			<br>
 			<span class="error" id="session_form_error"></span>
+			<script>
+			// Hide fields in import tab, but always show name
+			$(document).ready(function() {
+				$('#add_session_tabs .tab').on('click', function() {
+					const isImport = $(this).text().includes('import.tab') || $(this).attr('onclick').includes('import_session_tab');
+					if (isImport) {
+						$('.session_form_field').not('.session_form_name').hide();
+						$('.session_form_name').show();
+						$('#import_session_tab').show();
+						$('#session_name_desc_tab').hide();
+					} else {
+						// Show only add new fields
+						$('.session_form_field').show();
+						$('#import_session_tab').hide();
+						$('#session_name_desc_tab').show();
+					}
+				});
+				// On open, ensure all fields are shown for add new
+				if ($('#session_name_desc_tab_button').hasClass('selected')) {
+					$('.session_form_field').show();
+				}
+			});
+			</script>
 		</div>
 	</div>
 </div>
@@ -161,8 +202,46 @@
     // Menus
 
     $(document).ready(function() {
+		$('#import_session_form').on('submit', function(event) {
+			event.preventDefault();
+			let currentform = this;
+			let form = Utils.getFormData($(this));
+			Utils.toggleSubmit(currentform);
+			let errorbox = $('#session_form_error');
+			// Check for file
+			const fileInput = $(this).find('input[name="jsonFile"]').get(0);
+			if(fileInput && fileInput.files[0]){
+				var reader = new FileReader();
+				reader.onload = function(){
+					try {
+						let raw = reader.result;
+						// Always extract base64 payload from data URL
+						raw = raw.substr(raw.indexOf(',') + 1);
+						var newTest = raw;
+						Simva.importTestConfig(studyid, {file: newTest, session_name: form.sessionName}, function(importError, result) {
+							Utils.toggleSubmit(currentform);
+							if (importError) {
+								errorbox.text(importError.responseJSON ? importError.responseJSON.message : importError.message || importError);
+								return;
+							}
+							Utils.toggleAddForm('session_form_menu');
+							reloadStudy();
+						});
+					} catch (parseError) {
+						console.error('Import error:', parseError);
+						Utils.toggleSubmit(currentform);
+						errorbox.text("<%- t('import.error.invalid_file', { ns : 'sessions' }) %> " + (parseError.message ? (': ' + parseError.message) : ''));
+					}
+				};
+				reader.readAsDataURL(fileInput.files[0]);
+			} else {
+				errorbox.text("<%- t('import.upload.error', { ns : 'sessions' }) %>");
+				Utils.toggleSubmit(currentform);
+			}
+			return false;
+		});
 
-        $("#session_form").on('submit', function(event) {
+        $('#session_form').on('submit', function(event) {
 			let errorbox = $('#session_form_error');
 			let currentform = this;
 			let form = Utils.getFormData($("#session_form"));
@@ -171,7 +250,7 @@
 			const selectedTagIds = selectedTags.map((tag) => Number(tag.tag_id));
 
 			// Creating new session
-			if (form.editingSessionId == null || form.editingSessionId == "") { 
+			if (form.editingSessionId == null || form.editingSessionId == "") {
 				Simva.addTestToStudy(studyid, { session_name: form.sessionName, session_description: form.sessionDescription, session_can_be_manually_activated: !!form.can_be_manually_activated }, function(error, result) {
 					if (error && error.responseJSON) {
 						Utils.toggleSubmit(currentform);
@@ -200,7 +279,7 @@
 							reloadStudy();
 						});
 					}
-				});
+				});	
 			}
 			// Editing session
 			else {

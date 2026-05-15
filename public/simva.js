@@ -212,6 +212,10 @@ var Simva = {
 	   Utils.post(`/bff/studies/${study_id}/tests`, body, callback);
 	},
 
+	importTestConfig: function(study_id, newSession, callback){
+		Utils.post(`/bff/studies/${study_id}/tests/import`, newSession, callback);
+	},
+
 	getStudyEventsPresignedUrl: function(study_id, callback){
 		Utils.get(`/simlets/${study_id}/events/getPresignedUrl`, callback);
 	},

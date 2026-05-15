@@ -47,42 +47,44 @@
 	
 	$(document).ready(function() {
 		refreshFunc = refreshStudies;
-		
-		// TODO: Test
-		$("#import_study_form").on('submit', function(event) {
-			let currentform = this;
-			let form = Utils.getFormData($("#import_study_form"));
-			Utils.toggleSubmit(currentform);
 
-			if($("#import_study_form").find('input[name="exportJson"]').get(0).files[0]){
+		$("#import_study_form").on('submit', function(event) {
+			event.preventDefault();
+			let currentform = this;
+			let form = Utils.getFormData($(this));
+			Utils.toggleSubmit(currentform);
+			let errorbox = $("#study_form_error");
+			// Check for file presence
+			const fileInput = $(this).find('input[name="jsonFile"]').get(0);
+			if(fileInput && fileInput.files[0]){
 				var reader = new FileReader();
-				var input = event.target;
 				reader.onload = function(){
-					let raw = reader.result;
-					raw = raw.substr(raw.indexOf(',') + 1);
-					var newStudy = raw;
-					Simva.importStudyConfig({file : newStudy}, function(error, result) {
+					try {
+						let raw = reader.result;
+						// Always extract base64 payload from data URL
+						raw = raw.substr(raw.indexOf(',') + 1);
+						var newStudy = raw;
+						Simva.importStudyConfig({file: newStudy, simlet_name: form.studyName}, function(error, result) {
+							Utils.toggleSubmit(currentform);
+							if(!error) {
+								Utils.toggleAddForm('study_form');
+								$('#studies_list').html(roller);
+								refreshStudies();
+							}
+							else {
+								$("#study_form_error").text(error);
+							}
+						});
+					} catch (e) {
 						Utils.toggleSubmit(currentform);
-						if(!error) {
-							Utils.toggleAddForm('study_form');
-							$('#studies_list').html(roller);
-							Simva.getStudies(function(error, result){
-								if(!error){
-									paintStudies(result);
-								}
-							});
-						}
-						else {
-							$("#study_form_error").text(error);
-						}
-					});
+						$("#study_form_error").text(e.message);
+					}
 				};
-				reader.readAsDataURL($("#import_study_form").find('input[name="exportJson"]').get(0).files[0]);
+				reader.readAsDataURL(fileInput.files[0]);
 			}else{
 				$("#study_form_error").text("<%- t('import.upload.error', { ns : 'SIMLETs' }) %>");
 				Utils.toggleSubmit(currentform);
 			}
-
 			return false;
 		});
 

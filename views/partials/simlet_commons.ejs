@@ -2,42 +2,65 @@
 	<div class="floater">
 		<div class="form">
 			<h1 id="study_form_title"> </h1>
-		<% if (typeof archived !== 'undefined' && !archived) { %>
+			<% if (typeof archived !== 'undefined' && !archived) { %>
 			<div class="tabs" id="add_study_tabs">
-				<span id="study_name_desc_tab_button" class="tab selected" onclick="changeTab(this, 'study_form','study_name_desc_tab')"><%- t('new.tab', { ns : 'SIMLETs' }) %></span>
+				<span id="study_name_desc_tab_button" class="tab" onclick="changeTab(this, 'study_form','study_name_desc_tab')"><%- t('new.tab', { ns : 'SIMLETs' }) %></span>
 				<span class="tab" onclick="changeTab(this, 'study_form','import_study_tab')"><%- t('import.tab', { ns : 'SIMLETs' }) %></span>
-			</div>
-		<% } %>
-
-			<div id="study_name_desc_tab" class="subform selected">
+			</div>		<% } %>
+			<div id="study_name_desc_tab" class="subform">
 				<form id="study_name_desc_form">
 					<input hidden type="text" name="editingStudyId" id="edit_study_id">
 					<input hidden type="text" name="prevStudyName" id="prev_study_name">
 					<input hidden type="text" name="prevStudyDescription" id="prev_study_description">
-
-					<h3><%- t('name.title', { ns : 'SIMLETs' }) %></h3>
-					<input type="text" name="studyName" id="study_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
-					<br>
-					<h3><%- t('description.title', { ns : 'SIMLETs' }) %></h3>
-					<input type="text" name="studyDescription" id="study_description" placeholder="<%- t('description.placeholder', { ns : 'SIMLETs' }) %>" required>
-					<br><br>
-					<input type="submit" id="study_name_desc_submit" value="">
+					<h3 class="study_form_name"><%- t('name.title', { ns : 'SIMLETs' }) %></h3>
+					<input class="study_form_name" type="text" name="studyName" id="study_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<br class="study_form_name">
+					<h3 class="study_form_field"><%- t('description.title', { ns : 'SIMLETs' }) %></h3>
+					<input class="study_form_field" type="text" name="studyDescription" id="study_description" placeholder="<%- t('description.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<br class="study_form_field"><br class="study_form_field">
+					<input class="study_form_field" type="submit" id="study_name_desc_submit" value="">
 				</form>
 			</div>
 
 			<div hidden id="import_study_tab" class="subform">
 				<form id="import_study_form">
+					<h3 class="import_study_form_name"><%- t('name.title', { ns : 'SIMLETs' }) %></h3>
+					<input class="import_study_form_name" type="text" name="studyName" id="study_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<br class="import_study_form_name">
 					<br>
 					<h3><%- t('import.input', { ns : 'SIMLETs' }) %></h3>
-					<input type="file" name="exportJson">
+					<input class="import_study_form_field" type="file" name="jsonFile" accept=".json" required>
 					<br><br>
-					<input type="submit" value="<%- t('import.submit', { ns : 'SIMLETs' }) %>">
+					<input class="import_study_form_field" type="submit" value="<%- t('import.submit', { ns : 'SIMLETs' }) %>">
 				</form>
 			</div>
 
 			<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 			<br>
 			<span class="error" id="study_form_error"></span>
+			<script>
+			// Hide fields in import tab, but always show name
+			$(document).ready(function() {
+				$('#add_study_tabs .tab').on('click', function() {
+					const isImport = $(this).text().includes('import.tab') || $(this).attr('onclick').includes('import_study_tab');
+					if (isImport) {
+						$('.study_form_field').not('.study_form_name').hide();
+						$('.study_form_name').show();
+						$('#import_study_tab').show();
+						$('#study_name_desc_tab').hide();
+					} else {
+						// Show only add new fields
+						$('.study_form_field').show();
+						$('#import_study_tab').hide();
+						$('#study_name_desc_tab').show();
+					}
+				});
+				// On open, ensure all fields are shown for add new
+				if ($('#study_name_desc_tab_button').hasClass('selected')) {
+					$('.study_form_field').show();
+				}
+			});
+			</script>
 		</div>
 	</div>
 </div>
