@@ -297,6 +297,19 @@ module.exports = function(auth, config){
         });
     });
 
+    router.post('/simlets/:simlet_id/groups/import', auth, async (req, res, next) => {
+        let newgroup = JSON.parse(atob(req.body.file));
+        newgroup.group_name = req.body.group_name;
+        let simlet_id = req.params['simlet_id'];
+        let sessionid = req.session.id;
+        try {
+            let group = await groupcontroler.importGroup(simlet_id, newgroup, sessionid);
+            res.status(200).send(group);
+        } catch(error) {
+            next(error);
+        }
+    });
+
     router.patch('/simlets/:simlet_id/groups/:groupid', auth, async (req, res, next) => {
         Simva.updateGroup(req.params['simlet_id'], req.params['groupid'], req.body, req.session.id, (error, result) => {
             if(error) {
@@ -313,6 +326,19 @@ module.exports = function(auth, config){
         let sessionid = req.session.id;
         try {
             let group = await groupcontroler.getCompleteGroup(simlet_id, groupid, sessionid);
+            res.status(200).send(group);
+        } catch(error) {
+            next(error);
+        }
+    });
+
+    router.get('/simlets/:simlet_id/groups/:groupid/export', auth, async (req, res, next) => {
+        let simlet_id = req.params['simlet_id'];
+        let groupid = req.params['groupid'];
+        let complete = req.query.complete === 'true';
+        let sessionid = req.session.id;
+        try {
+            let group = await groupcontroler.exportGroup(simlet_id, groupid, complete, sessionid);
             res.status(200).send(group);
         } catch(error) {
             next(error);

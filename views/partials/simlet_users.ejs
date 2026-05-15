@@ -35,9 +35,12 @@
                         <li class="kebab-icon icon-gear">
                             <%- t('settings.allocator.title', { ns : 'groups' }) %>
                         </li>
-                        <li class="kebab-icon icon-download">
-                            <%- t('settings.download.title', { ns : 'groups' }) %>
-                        </li>
+						<li class="kebab-icon icon-download">
+							<%- t('settings.download.title', { ns : 'groups' }) %>
+						</li>
+						<li class="kebab-icon icon-export">
+							<%- t('settings.export.title', { ns : 'groups' }) %>
+						</li>
                         <li class="kebab-icon icon-delete">
                             <%- t('settings.delete.title', { ns : 'groups' }) %>
                         </li>
@@ -64,16 +67,15 @@
         </div>
     </div>
 
-    <div class="card groups">
-        <div class="top">
-            <h2><%- t('title', { ns : 'groups' }) %></h2>
-        </div>
-        <div id="groups_container">
+	<div class="card groups">
+		<div class="top">
+			<h2><%- t('title', { ns : 'groups' }) %></h2>
+		</div>
+		<div id="groups_container">
             
-        </div>
-    </div>
+		</div>
+	</div>
 </div>
-
 
 <div id="add_owner" class="new_element floating">
 	<div class="floater">
@@ -99,24 +101,40 @@
 </div>
 
 <div id ="group_form_menu" class="new_element floating">
-    <div class="floater">
-        <div class="form">
-            <h1 id="group_form_title"> 	</h1>
-
-            <form id="group_form">
-                <input hidden type="text" name="editingGroupId" id="edit_group_id">
-                <input hidden type="text" name="prevGroupName" id="prev_group_name">
-
-                <h3><%- t('name.title', { ns : 'groups' }) %></h3>
-                <input type="text" name="groupName" id="group_name" placeholder="<%- t('name.placeholder', { ns : 'groups' }) %>" required>
-                <br><br>
-                <input type="submit" id="group_submit" value="">
-            </form>
-            <span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-            <br>
-            <span class="error" id="group_form_error"></span>
-        </div>
-    </div>
+	<div class="floater">
+		<div class="form">
+			<div class="tabs" id="add_group_tabs">
+				<span id="group_name_desc_tab_button" class="tab selected" onclick="changeTab(this, 'group_form_menu','group_name_desc_tab')"><%- t('add.tab', { ns : 'groups' }) %></span>
+				<span class="tab" onclick="changeTab(this, 'group_form_menu','import_group_tab')"><%- t('import.tab', { ns : 'groups' }) %></span>
+			</div>
+			<div id="group_name_desc_tab" class="subform selected" style="display: block;">
+				<h1 id="group_form_title">  </h1>
+				<form id="group_form">
+					<input hidden type="text" name="editingGroupId" id="edit_group_id">
+					<input hidden type="text" name="prevGroupName" id="prev_group_name">
+					<h3><%- t('name.title', { ns : 'groups' }) %></h3>
+					<input type="text" name="groupName" id="group_name" placeholder="<%- t('name.placeholder', { ns : 'groups' }) %>" required>
+					<br><br>
+					<input type="submit" id="group_submit" value="">
+				</form>
+				<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+				<br>
+				<span class="error" id="group_form_error"></span>
+			</div>
+			<div id="import_group_tab" class="subform" style="display: none;">
+				<form id="import_group_form_modal">
+					<h3><%- t('name.title', { ns : 'groups' }) %></h3>
+					<input type="text" name="groupName" id="import_group_name_modal" placeholder="<%- t('name.placeholder', { ns : 'groups' }) %>" required>
+					<br><br>
+					<h3><%- t('import.input', { ns : 'groups' }) %></h3>
+					<input type="file" name="jsonFile" accept=".json" required>
+					<br><br>
+					<input type="submit" value="<%- t('import.submit', { ns : 'groups' }) %>">
+				</form>
+				<span class="error" id="import_group_error_modal"></span>
+			</div>
+		</div>
+	</div>
 </div>
 
 <div id="change_allocator" class="new_element floating">
@@ -162,7 +180,7 @@
 <!-- <div id="add_platform" class="new_element floating">
 	<div class="floater">
 		<div class="form">
-			<div id="add_platform_tab" class="subform selected">
+			<div id="add_platform_tab" class="subform selected" style="display: block;">
 				<h2><%- t('lti_platforms.add.title', { ns : 'SIMLETs' }) %></h2>
 				<form id="add_platform_form">
 					<p><%- t('lti_platforms.add.name.title', { ns : 'SIMLETs' }) %>:</p>
@@ -188,13 +206,13 @@
 </div>
 -->
 
-
 <div class="floating_buttons users">
-    <a unselectable="on" class="basic" onclick="openGroupForm()" style="display: none;">+</a>
+	<a unselectable="on" class="basic" onclick="openGroupForm()" style="display: none;">+</a>
 </div>
 
 
 <script>
+
 	let currentGroupIdForAllocator = null;
 	
 	const groupDataIdKey = "groupId"
@@ -207,6 +225,46 @@
 	// Menus
 	
 	$(document).ready(function() {
+		
+		// Import group from modal tab
+		$('#import_group_form_modal').on('submit', function(event) {
+			event.preventDefault();
+			let currentform = this;
+			let form = Utils.getFormData($(this));
+			Utils.toggleSubmit(currentform);
+			let errorbox = $('#import_group_error_modal');
+			const fileInput = $(this).find('input[name="jsonFile"]').get(0);
+			if(fileInput && fileInput.files[0]){
+				var reader = new FileReader();
+				reader.onload = function(){
+					try {
+						let raw = reader.result;
+						raw = raw.substr(raw.indexOf(',') + 1);
+						var newGroup = raw;
+						Simva.importGroup(studyid, {file: newGroup, group_name: form.groupName}, function(importError, result) {
+							Utils.toggleSubmit(currentform);
+							if (importError) {
+								errorbox.text(importError.responseJSON ? importError.responseJSON.message : importError.message || importError);
+								return;
+							} else {
+								$("#group_form_menu").removeClass("shown");
+								//reloadStudy();
+							}
+						});
+					} catch (parseError) {
+						console.error('Import error:', parseError);
+						Utils.toggleSubmit(currentform);
+						errorbox.text("<%- t('import.error.invalid_file', { ns : 'groups' }) %> " + (parseError.message ? (': ' + parseError.message) : ''));
+					}
+				};
+				reader.readAsDataURL(fileInput.files[0]);
+			} else {
+				errorbox.text("<%- t('import.upload.error', { ns : 'groups' }) %>");
+				Utils.toggleSubmit(currentform);
+			}
+			return false;
+		});
+
 		$("#group_form").on('submit', function(event) {
 			let errorbox = $('#group_form_error');
 			let currentform = this;
@@ -349,7 +407,7 @@
 	});
 
     //TEST
-	changeTab(this, 'study_tabs','users_tab')
+	//changeTab(this, 'study_tabs','users_tab')
 	
     const toggleOwners = function() {
 		$(".card.coordinators").find('.expandButton').toggleClass('collapsed');
@@ -360,30 +418,48 @@
         $(`#group_box_${groupId}`).find('.participants_container').toggleClass('collapsed');
 		$(`#group_box_${groupId}`).find('.expandButton').toggleClass('collapsed');
     }
-
+	
+	// Reset tab state when opening modal
 	const openGroupForm = function(groupId) {
-		$("#group_form_menu").toggleClass("shown");
-
-		$('#edit_group_id').val(groupId);
-
-		// Creating new group
+		$("#group_form_menu").addClass("shown");
+		// Default to add tab
+		$("#add_group_tabs .tab").removeClass("selected");
+		$("#group_name_desc_tab_button").addClass("selected");
+		$("#group_name_desc_tab").show();
+		$("#import_group_tab").hide();
+		$('#edit_group_id').val(groupId || "");
+		$('#group_name').val("");
+		$('#prev_group_name').val("");
+		$('#group_form_error').text("");
+		$('#import_group_name_modal').val("");
+		$('#import_group_error_modal').text("");
+		// Fill fields for edit mode
 		if (groupId == null) {
 			$("#group_form_title").text("<%- t('add.title', { ns : 'groups' }) %>");
 			$("#group_submit").val("<%- t('add.submit', { ns : 'groups' }) %>");
-
-			$('#prev_group_name').val("");
-		}
-		// Editing group
-		else {
+		} else {
+			var group = getGroupFromGroupId(groupId);
 			$("#group_form_title").text("<%- t('edit.title', { ns : 'groups' }) %>");
 			$("#group_submit").val("<%- t('edit.submit', { ns : 'groups' }) %>");
-
-			console.log()
-			$('#prev_group_name').val(getGroupFromGroupId(groupId).group_name);
-			$('#group_name').val(getGroupFromGroupId(groupId).group_name);
+			if (group) {
+				$('#prev_group_name').val(group.group_name);
+				$('#group_name').val(group.group_name);
+			}
 		}
 	}
-	
+
+	const exportGroup = function(groupId, groupName) {
+		Simva.exportGroup(studyid, groupId, true, function(error, result) {
+			if (!error) {
+				const content = JSON.stringify(result, null, 2);
+				const filename = `simlet-group-${groupName || groupId}-export.json`;
+				Utils.download(filename, content);
+			} else {
+				alert(error.responseJSON ? error.responseJSON.message : (error.message || error));
+			}
+		});
+	}
+
 	const openOwnerForm = function() {
 		$("#add_owner").toggleClass("shown");
 		$("#owner_name").val("");
@@ -419,6 +495,11 @@
 	$(document).on('click', ".groupTop .icon-gear", function(e) {
 		const data = $(this).closest(".test").data();
 		openChangeAllocatorForm(data[groupDataIdKey], data[groupDataAllocatorKey]);
+	});
+
+	$(document).on('click', ".groupTop .icon-export", function(e) {
+		const data = $(this).closest(".test").data();
+		exportGroup(data[groupDataIdKey], data[groupDataNameKey]);
 	});
 
 	$(document).on('click', ".groupTop .icon-download", function(e) {

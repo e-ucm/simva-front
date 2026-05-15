@@ -18,6 +18,72 @@ module.exports = {
         return group;
     },
 
+    async exportGroups(simlet_id, group_ids, sessionid) {
+        const groups = [];
+        for (const group_id of group_ids) {
+            try {
+                const group = await this.exportGroup(simlet_id, group_id, true, sessionid);
+                if(!Boolean(group.group_sandbox)) {
+                    groups.push(group);
+                }
+            } catch (e) {
+                logger.warn(e);
+            }
+        }
+        return groups;
+    },
+
+    async exportGroup(simlet_id, group_id, complete, sessionid) {
+        let group = await SimvaAsync.getGroup(simlet_id, group_id, sessionid);
+        group.participants = await SimvaAsync.getGroupParticipants(simlet_id, group_id, sessionid);
+        if(complete) {
+            try {
+                group.direct_permissions = [];
+            } catch(e) {
+                logger.warn(e);
+            } 
+        }
+        return group;
+    },
+
+    async importGroups(simlet_id, groupsData, sessionid) {
+        for (const groupData of groupsData) {
+            try {
+                await this.importGroup(simlet_id, groupData, sessionid);
+            } catch (e) {
+                logger.warn(e);
+            }
+        }
+    },
+
+    async importGroup(simlet_id, groupData, sessionid) {
+        let group = await SimvaAsync.addGroup(simlet_id, { group_name: groupData.group_name, group_use_new_generation: true, group_sandbox: false }, sessionid);
+        if (groupData.participants && Array.isArray(groupData.participants)) {
+            for (const participant of groupData.participants) {
+                    if(Boolean(participant.isToken)) {
+                        try {
+                            let user = await SimvaAsync.registerGeneratedUser(simlet_id, group.group_id, participant.token, sessionid);
+                            await SimvaAsync.addGroupParticipant(simlet_id, group.group_id, user.user_id, sessionid);
+                        } catch (e) {
+                            logger.warn(e);
+                        }
+                    } else {
+                        try {
+                            let user = await SimvaAsync.getUser(participant.username, sessionid);
+                            if(user.username) {
+                                await SimvaAsync.addGroupParticipant(simlet_id, group.group_id, user.user_id, sessionid);
+                            } else {
+                                logger.warn(`User ${participant.username} not found for group ${group.group_name}`);
+                            }
+                        } catch (e) {
+                            logger.warn(e);
+                        }
+                    }
+            }
+        }
+        return group;
+    },
+
     async generateStudentUser(simlet_id, params, sessionid) {
         let username;
         if(params.username) {

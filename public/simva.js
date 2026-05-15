@@ -340,6 +340,14 @@ var Simva = {
 		Utils.get(`/bff/studies/${study_id}/groups`, callback);
 	},
 
+	exportGroup: function(simlet_id, group_id, complete, callback) {
+		Utils.get(`/bff/simlets/${simlet_id}/groups/${group_id}/export?complete=${complete}`, callback);
+	},
+
+	importGroup: function(simlet_id, groupData, callback) {
+		Utils.post(`/bff/simlets/${simlet_id}/groups/import`, groupData, callback);
+	},
+
 	addStudyGroup: function(study_id, group_id, callback){
 		Utils.post(`/bff/studies/${study_id}/groups/${group_id}`, {}, callback);
 	},

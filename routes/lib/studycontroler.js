@@ -1,4 +1,5 @@
 const logger = require('../../logger');
+const groupcontroler = require('./groupcontroler');
 const SimvaAsync = require('./simvaAsync');
 const testcontroler = require('./testscontroler');
 
@@ -62,14 +63,8 @@ module.exports = {
                 logger.warn(e);
             }
         }
-        study.groups=await SimvaAsync.getStudyGroups(studyid, sessionid);
-        for(let i=0; i<study.groups.length; i++) {
-            try {
-                study.groups[i].participants = await SimvaAsync.getGroupParticipants(studyid, study.groups[i].group_id, sessionid);
-            } catch(e) {
-                logger.warn(e);
-            }
-        }
+        let groupsid = study.groups;
+        study.groups=await groupcontroler.exportGroups(studyid, groupsid, sessionid);
         return study;
     },
 
@@ -81,6 +76,11 @@ module.exports = {
             } catch(e) {
                 logger.warn(e);
             }
+        }
+        try {
+            await groupcontroler.importGroups(study.simlet_id, newstudy.groups, sessionid);
+        } catch(e) {
+            logger.warn(e);
         }
         return study;
     },
