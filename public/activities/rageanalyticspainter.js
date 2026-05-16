@@ -213,14 +213,14 @@ var RageAnalyticsActivityPainter = {
 				let context = $('#iframe_floating iframe')[0].contentWindow.document;
 				let body = $('body', context);
 				body.html(content);
-				Utils.toggleAddForm('iframe_floating');
+				Utils.showIframeFloating();
 			}
 		})
 	},
 
 	openDashboard: function(activityId){
 		$('#iframe_floating iframe').prop('src', `${this.utils.dashboard_url}${activityId}${this.utils.dashboard_query}`);
-		Utils.toggleAddForm('iframe_floating');
+				Utils.showIframeFloating();
 	},
 }
 

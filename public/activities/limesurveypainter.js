@@ -346,7 +346,7 @@ var LimeSurveyPainter = {
 
 	openNewLimesurvey: function(){
 		$('#iframe_floating iframe').prop('src', `${this.newlimesurveyurl}`);
-		Utils.toggleAddForm('iframe_floating');
+		Utils.showIframeFloating();
 	},
 
 	openEditLimesurvey: function(activityId, surveyid){
@@ -354,7 +354,7 @@ var LimeSurveyPainter = {
 		Simva.setSurveyOwner(activityId, function(error, result){
 			let currentSrc = $('#iframe_floating iframe').prop('src');
 			$('#iframe_floating iframe').prop('src', `${currentSrc}`);
-			Utils.toggleAddForm('iframe_floating');
+			Utils.showIframeFloating();
 		});
 	},
 

@@ -846,7 +846,6 @@ var ActivityPainter = {
 					stack: false
 				});
 			} else {
-				this.openResultContent(data.data, this.commun.result_error_downloading);
 				this.downloadContent(data.data, `full_xapi_data_${activity}.json`, this.commun.result_error_downloading);
 			}
 		});
@@ -863,7 +862,6 @@ var ActivityPainter = {
 					stack: false
 				});
 			} else {
-				this.openResultContent(data.data, this.commun.result_error_downloading);
 				this.downloadContent(data.data, `test_xapi_data_${activity}.json`, this.commun.result_error_downloading);
 			}
 		});

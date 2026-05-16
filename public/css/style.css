@@ -43,10 +43,49 @@ input[type="button"]:disabled { border:1px solid lightgray; background: darkgray
 .login #login_box .small, .login #register_box .small { margin:14px 0 0 }
 .login #error, .error { width: 100%; color: red; font-size: 14px; text-align: center; }
 
-.floating { display: table; width: 100%; height: 100%; z-index: 101; }
-.floating .floater { display: table-cell; vertical-align: middle; text-align: center; width: 100%; height: 100%; }
-.floating .floater iframe { width: 90%; height: 90%; background-color: white; border: 2px black solid; }
+#iframe_floating {
+	display: none;
+	position: fixed;
+	inset: 0;
+	z-index: 9999;
+}
 
+#iframe_floating.shown {
+	display: block;
+}
+
+#iframe_floating .iframe_backdrop {
+	position: absolute;
+	inset: 0;
+	background: rgba(0,0,0,0.4);
+}
+
+#iframe_floating .floater {
+	position: absolute;
+	top: 5%;
+	left: 5%;
+	width: 90vw;
+	height: 90vh;
+	background: white;
+	z-index: 1;
+}
+
+#iframe_floating iframe {
+	width: 100%;
+	height: 100%;
+	border: none;
+}
+
+#iframe_floating_close {
+	position: absolute;
+	top: 10px;
+	right: 20px;
+	z-index: 2;
+	font-size: 2em;
+	background: rgba(255,255,255,0.8);
+	border: none;
+	cursor: pointer;
+}
 
 .login .role_selector { text-align: left; margin-bottom: 10px; }
 form .role_selector input[type="radio"] { width: 0%; display: none; }

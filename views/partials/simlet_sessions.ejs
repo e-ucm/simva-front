@@ -471,7 +471,6 @@
 			}
 			var content = result.data;
 			var filename = `simva-${study.simlet_name}-session-${sessionId}-data.json`;
-			Utils.openResultContent(content, 'Session data error', 'iframe_floating');
 			Utils.downloadContent(content, filename, 'Session data error');
 		});
 	}
@@ -491,7 +490,6 @@
 			}
 			var content = result.data;
 			var filename = `simva-${study.simlet_name}-session-${sessionId}-test-data.json`;
-			Utils.openResultContent(content, 'Session test data error', 'iframe_floating');
 			Utils.downloadContent(content, filename, 'Session test data error');
 		});
 	}

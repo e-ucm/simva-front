@@ -11,7 +11,28 @@ var Utils = {
 	},
 	
 	toggleAddForm : function(id){
-		$(`#${id}`).toggleClass('shown');
+		if (id === 'iframe_floating') {
+			this.toggleIframeFloating();
+		} else {
+			$(`#${id}`).toggleClass('shown');
+		}
+	},
+
+	showIframeFloating: function() {
+		$('#iframe_floating').css('display', 'table').addClass('shown');
+	},
+
+	hideIframeFloating: function() {
+		$('#iframe_floating').removeClass('shown').css('display', 'none');
+	},
+
+	toggleIframeFloating: function() {
+		const $el = $('#iframe_floating');
+		if ($el.hasClass('shown')) {
+			this.hideIframeFloating();
+		} else {
+			this.showIframeFloating();
+		}
 	},
 
 	toggleSubmit : function(form){
@@ -245,7 +266,7 @@ var Utils = {
 			'height': '100vh'
 		});
 
-		this.toggleAddForm(targetFloatingId);
+		this.showIframeFloating();
 	},
 
 	openResultContent: function(source, errorHeading, floatingId){
