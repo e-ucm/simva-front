@@ -37,13 +37,32 @@
                     <li class="kebab-icon icon-delete" title="<%- t('settings.delete.title', { ns : 'sessions' }) %>">
                         <%- t('settings.delete.title', { ns : 'sessions' }) %>
                     </li>
-                    <!-- TODO: Add localization -->
-                    <li class="kebab-icon icon-tester" title="<%- t('sessions.set_tester', { ns : 'SIMLETs' }) || 'Set myself as tester in this session' %>">
-						<%- t('sessions.set_tester', { ns : 'SIMLETs' }) || 'Set myself as tester in this session' %>
+					<li class="kebab-icon icon-tester" title="<%- t('sessions.set_tester', { ns : 'sessions' }) %>" onclick="resetTesterAction(this, 'set')">
+						<%- t('sessions.set_tester', { ns : 'sessions' }) %>
 					</li>
-					<li class="kebab-icon icon-untester" title="<%- t('sessions.unset_tester', { ns : 'SIMLETs' }) || 'Unset myself as tester' %>">
-						<%- t('sessions.unset_tester', { ns : 'SIMLETs' }) || 'Unset myself as tester' %>
+					<li class="kebab-icon icon-reset-tester" title="<%- t('sessions.reset_tester', { ns : 'sessions' }) %>" onclick="resetTesterAction(this, 'reset')">
+						<%- t('sessions.reset_tester', { ns : 'sessions' }) %>
 					</li>
+					<li class="kebab-icon icon-untester" title="<%- t('sessions.unset_tester', { ns : 'sessions' }) %>" onclick="resetTesterAction(this, 'unset')">
+						<%- t('sessions.unset_tester', { ns : 'sessions' }) %>
+					</li>
+				</ul>
+				<script>
+				function resetTesterAction(el, action) {
+					var $test = $(el).closest('.test');
+					var sessionId = $test.data('session-id') || $test.attr('id')?.replace('test_', '');
+					if (!sessionId) return;
+					if (action === 'set') {
+						Simva.setTesterForSession(studyid, sessionId, function() { location.reload(); });
+					} else if (action === 'unset') {
+						Simva.unsetTesterForSession(studyid, sessionId, function() { location.reload(); });
+					} else if (action === 'reset') {
+						Simva.unsetTesterForSession(studyid, sessionId, function() {
+							Simva.setTesterForSession(studyid, sessionId, function() { location.reload(); });
+						});
+					}
+				}
+				</script>
                 </ul>
             </div>
         </div>
@@ -408,7 +427,11 @@
 
 	$(document).on('click', ".sessionTop .icon-finish", function(e) {
 		const data = $(this).closest(".test").data();
-		activateTest(data[sessionDataIdKey], "terminated");
+		const sessionName = data[sessionDataNameKey] || '';
+		const confirmMsg = `<%- t('finish.confirm', { ns : 'sessions' }) %>${sessionName ? ' (' + sessionName + ')' : ''}`;
+		if (confirm(confirmMsg)) {
+			activateTest(data[sessionDataIdKey], "terminated");
+		}
 	});
 
 	$(document).on('click', ".sessionTop .icon-delete", function(e) {
@@ -440,7 +463,7 @@
 
     // Functionality
 
-    let deleteTest = function(testid, testName) {
+	let deleteTest = function(testid, testName) {
 		if (confirm(`<%- t('delete.confirm', { ns : 'sessions', session : '${testName}', SIMLET : '${study.simlet_name}' }) %>`)) {
 			Simva.deleteTest(studyid, testid, function(error, result) {
 				reloadStudy();
@@ -501,12 +524,20 @@
 	let paintTest = function(test, activities, participants) {
 		const session = $("#session_template .test").clone();
 		session.attr("id", `test_${test.session_id}`);
-		
-        const isCurrentUserParticipant = currentUser.user_id !== null && participants.some(function(p) {
+
+		const isCurrentUserParticipant = currentUser.user_id !== null && participants.some(function(p) {
 			return p.user_id === currentUser.user_id || String(p.user_id) === String(currentUser.user_id);
 		});
+		// Show/hide tester menu items based on participant status
 		if (isCurrentUserParticipant) {
+			session.find(".icon-tester").hide();
+			session.find(".icon-reset-tester").show();
+			session.find(".icon-untester").show();
 			session.find(".sessionTestDownload").show();
+		} else {
+			session.find(".icon-tester").show();
+			session.find(".icon-reset-tester").hide();
+			session.find(".icon-untester").hide();
 		}
         
 		const date = new Date(test.createdAt);

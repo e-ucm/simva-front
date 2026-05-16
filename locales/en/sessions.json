@@ -48,7 +48,16 @@
 
     "settings.finish.title": "Finish",
         "finished.title": "Finished",
+        "finish.confirm": "Are you sure you want to finish (terminate) this session? This action cannot be undone.",
+
+    "no_activities.message": "There are no activities in this session. Try adding one using the button above.",
 
     "settings.delete.title": "Delete",
-        "delete.confirm": "Are you sure do you want to delete the session '{{session}}' from SIMLET '{{SIMLET}}'?\nAll the activities and data will be deleted too"
+        "delete.confirm": "Are you sure do you want to delete the session '{{session}}' from SIMLET '{{SIMLET}}'?\nAll the activities and data will be deleted too",
+
+    "add.new.tab": "Add new",
+    "settings.export.title": "Export",
+    "sessions.set_tester": "Set myself as tester in this session",
+    "sessions.reset_tester": "Reset tester (unset and set again)",
+    "sessions.unset_tester": "Unset myself as tester"
 }

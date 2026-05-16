@@ -48,7 +48,16 @@
 
     "settings.finish.title": "Terminer",
         "finished.title": "Terminée",
+        "finish.confirm": "Êtes-vous sûr de vouloir terminer cette session ? Cette action est irréversible.",
+
+    "no_activities.message": "Il n'y a pas d'activités dans cette session. Essayez d'en ajouter une avec le bouton ci-dessus.",
 
     "settings.delete.title": "Supprimer",
-        "delete.confirm": "Êtes-vous sûr de vouloir supprimer la session '{{session}}' de l'SIMLET '{{SIMLET}}'?\nToutes les activités et les données seront également supprimées"
+        "delete.confirm": "Êtes-vous sûr de vouloir supprimer la session '{{session}}' de l'SIMLET '{{SIMLET}}'?\nToutes les activités et les données seront également supprimées",
+
+    "add.new.tab": "Ajouter nouveau",
+    "settings.export.title": "Exporter",
+    "sessions.set_tester": "Me définir comme testeur dans cette session",
+    "sessions.reset_tester": "Réinitialiser testeur (retirer et remettre)",
+    "sessions.unset_tester": "Me retirer comme testeur"
 }

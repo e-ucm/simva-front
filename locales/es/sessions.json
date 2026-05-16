@@ -48,7 +48,16 @@
 
     "settings.finish.title": "Terminar",
         "finished.title": "Terminada",
+        "finish.confirm": "¿Está seguro de que desea terminar (finalizar) esta sesión? Esta acción no se puede deshacer.",
+
+    "no_activities.message": "No hay actividades en esta sesión. Intente añadir una usando el botón de arriba.",
 
     "settings.delete.title": "Eliminar",
-        "delete.confirm": "¿Está seguro de que desea eliminar la sesión '{{session}}' del SIMLET '{{SIMLET}}'?\nTambién se eliminarán todas las actividades y datos"
+        "delete.confirm": "¿Está seguro de que desea eliminar la sesión '{{session}}' del SIMLET '{{SIMLET}}'?\nTambién se eliminarán todas las actividades y datos",
+
+    "add.new.tab": "Añadir nuevo",
+    "settings.export.title": "Exportar",
+    "sessions.set_tester": "Convertirme en tester en esta sesión",
+    "sessions.reset_tester": "Reiniciar tester",
+    "sessions.unset_tester": "Quitarme como tester"
 }
