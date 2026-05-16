@@ -67,11 +67,11 @@
 
 	<div id="add_participant" class="new_element floating">
 		<div class="floater">
-			<div class="form">
+			<div class="form" id="add_participant_form">
 				<div class="tabs">
-					<span class="tab selected" onclick="changeTab(this, 'add_participant','existing_participant_tab')"><%= t('participants.add.existing.title' , { ns : 'groups' }) %></span>
-					<span class="tab" onclick="changeTab(this, 'add_participant','new_participant_tab')"><%= t('participants.add.new.title' , { ns : 'groups' }) %></span>
-					<span class="tab" onclick="changeTab(this, 'add_participant','batch_participant_tab')"><%= t('participants.add.batch.title' , { ns : 'groups' }) %></span>
+					<span class="tab selected" onclick="changeTab(this, 'add_participant_form','existing_participant_tab')"><%= t('participants.add.existing.title' , { ns : 'groups' }) %></span>
+					<span class="tab" onclick="changeTab(this, 'add_participant_form','new_participant_tab')"><%= t('participants.add.new.title' , { ns : 'groups' }) %></span>
+					<span class="tab" onclick="changeTab(this, 'add_participant_form','batch_participant_tab')"><%= t('participants.add.batch.title' , { ns : 'groups' }) %></span>
 				</div>
 				<div id="existing_participant_tab" class="subform selected" style="display: block;">
 					<form id="existing_participant_form">

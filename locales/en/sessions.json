@@ -56,6 +56,8 @@
         "delete.confirm": "Are you sure do you want to delete the session '{{session}}' from SIMLET '{{SIMLET}}'?\nAll the activities and data will be deleted too",
 
     "add.new.tab": "Add new",
+        "import.tab": "Import session",
+
     "settings.export.title": "Export",
     "sessions.set_tester": "Set myself as tester in this session",
     "sessions.reset_tester": "Reset tester (unset and set again)",

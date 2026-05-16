@@ -50,38 +50,6 @@
 	</table>
 </div>
 
-<!-- Floating iframe for displaying activity results -->
-<!-- Floating iframe for displaying activity results -->
-<div id="iframe_floating" class="new_element floating">
-	<div class="iframe_backdrop"></div>
-
-	<div class="floater">
-		<button id="iframe_floating_close" aria-label="Close">&times;</button>
-
-		<iframe></iframe>
-	</div>
-</div>
-
-<script>
-	$(document).ready(function () {
-		$('#iframe_floating_close').on('click', function () {
-			Utils.hideIframeFloating();
-		});
-
-		// Click on backdrop closes modal
-		$('#iframe_floating .iframe_backdrop').on('click', function () {
-			Utils.hideIframeFloating();
-		});
-		
-		$(document).on('keydown', function(e) {
-			if (e.key === 'Escape') {
-				Utils.hideIframeFloating();
-			}
-		});
-	});
-</script>
-
-
 <!-- SSE -->
 <script type="text/javascript">
 	if (true)  {
@@ -254,7 +222,7 @@
 		$("#study_form_title").text("<%- t('edit.title', { ns : 'SIMLETs' }) %>")
 		$("#study_name_desc_submit").val("<%- t('edit.submit', { ns : 'SIMLETs' }) %>")
 
-		$("#study_form").toggleClass("shown");
+		Utils.toggleAddForm('study_form');
 
 		$('#prev_study_name').val(study.simlet_name);
 		$('#prev_study_description').val(study.simlet_description);

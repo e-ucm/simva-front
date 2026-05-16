@@ -14,7 +14,13 @@ var Utils = {
 		if (id === 'iframe_floating') {
 			this.toggleIframeFloating();
 		} else {
-			$(`#${id}`).toggleClass('shown');
+			const $modal = $('#iframe_floating');
+			const form = $(`#${id}`);
+			//form.toggleClass("shown");
+			$modal.find('.iframe_content')
+				.empty()
+				.append(form.html());
+			this.toggleIframeFloating();
 		}
 	},
 
@@ -41,17 +47,37 @@ var Utils = {
 	},
 
 	changeTab : function(tab, form, subform){
-		// Avoid affecting nested forms by only targeting the buttons (.tab) of the first tabs header (.tabs) 
-		// under the form and the sibilings of the header that are tabs contents (.subform)
-		$(`#${form} .tabs:first .tab`).removeClass('selected');
-		$(`#${form} .tabs:first`).siblings(".subform").removeClass('selected');
-		
+		// Support both string id and direct element reference for form
+		let $form;
+		if (typeof form === 'string') {
+			$form = $(`#${form}`);
+		} else {
+			$form = $(form);
+		}
+		// Find the first .tabs header inside the form or container
+		const $tabsHeader = $form.find('.tabs').first();
+		$tabsHeader.find('.tab').removeClass('selected');
 		$(tab).addClass('selected');
 
-		// Hide all subforms in the modal
-		$(`#${form} .subform`).hide();
-		// Show the selected subform
-		$(`#${subform}`).show();
+		// Hide all .subform elements inside the form/container
+		$form.find('.subform').each(function() {
+			$(this).hide().removeClass('selected');
+			if (this.hasAttribute('hidden')) {
+				this.removeAttribute('hidden');
+			}
+			this.style.display = 'none';
+		});
+
+		// Show and select the requested subform by id (must be inside the form/container)
+		let $targetSubform = $form.find(`#${subform}`);
+		if ($targetSubform.length === 0) {
+			// fallback: try global if not found inside form
+			$targetSubform = $(`#${subform}`);
+		}
+		$targetSubform.show().addClass('selected');
+		if ($targetSubform.length > 0) {
+			$targetSubform[0].style.display = 'block';
+		}
 	},
 
 	post: function(url, body, callback){

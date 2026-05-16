@@ -1,9 +1,9 @@
 <div id="add_activity" class="new_element floating">
     <div class="floater">
-        <div class="form">
+        <div class="form" id="add_activity_form">
             <div class="tabs">
-                <span class="tab selected" onclick="changeTab(this, 'add_activity','new_activity_tab')"><%- t('add.new.title', { ns : 'activities' }) %></span>
-                <span class="tab" type="hidden" onclick="changeTab(this, 'add_activity','existing_activity_tab')"><%- t('add.existing.title', { ns : 'activities' }) %></span>
+                <span class="tab selected" onclick="changeTab(this, 'add_activity_form','new_activity_tab')"><%- t('add.new.title', { ns : 'activities' }) %></span>
+                <span class="tab" type="hidden" onclick="changeTab(this, 'add_activity_form','existing_activity_tab')"><%- t('add.existing.title', { ns : 'activities' }) %></span>
             </div>
             <div id="new_activity_tab" class="subform selected" style="display: block;">
                 <form id="new_activity_form">
@@ -104,14 +104,18 @@
 			});
 		});
 
-        $('#new_activity_form select[name="type"]').on('change', function(event) {
+		// Use event delegation to ensure the handler works even if the form is re-rendered
+		$(document).on('change', '#new_activity_form select[name="type"]', function(event) {
 			$('#new_activity_extras').empty();
-			$('#new_activity_extras').append(`${PainterFactory.Painters[$(this).val()].description}\n`);
-			PainterFactory.Painters[$(this).val()].getExtraForm((error, result) => {
-				if (!error) {
-					$('#new_activity_extras').append(result);
-				}
-			});
+			var type = $(this).val();
+			if (PainterFactory.Painters[type]) {
+				$('#new_activity_extras').append(`${PainterFactory.Painters[type].description}\n`);
+				PainterFactory.Painters[type].getExtraForm((error, result) => {
+					if (!error) {
+						$('#new_activity_extras').append(result);
+					}
+				});
+			}
 		});
 
 		$("#new_activity_form").on('submit', function(event) {
@@ -190,11 +194,12 @@
     });
 
     let openActivityForm = function(test) {
-		$('#add_activity').toggleClass('shown');
+		Utils.toggleAddForm('add_activity');
 		$('#add_activity input[name="test"]').val(test);
 	}
 
     let openEditActivityForm = function(activityId) {
+		Utils.toggleAddForm('edit_activity');
 		document.getElementById("edit_activity_error").innerHTML = "";
 		let activity= getActivityFromActivityId(activityId);
 		var inputElement = document.getElementById('edit_activity_name');
@@ -208,7 +213,7 @@
 		$('#edit_activity input[name="test"]').val(activity.session_id);
 		$('#edit_activity span[class="error"]').val("");
 		$('#edit_activity input[name="activity"]').val(activity.activity_id);
-		$('#edit_activity').toggleClass('shown');
+		Utils.toggleAddForm('edit_activity');
 	}
 
 	

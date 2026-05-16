@@ -56,6 +56,8 @@
         "delete.confirm": "¿Está seguro de que desea eliminar la sesión '{{session}}' del SIMLET '{{SIMLET}}'?\nTambién se eliminarán todas las actividades y datos",
 
     "add.new.tab": "Añadir nuevo",
+        "import.tab": "Importar sesión",
+
     "settings.export.title": "Exportar",
     "sessions.set_tester": "Convertirme en tester en esta sesión",
     "sessions.reset_tester": "Reiniciar tester",

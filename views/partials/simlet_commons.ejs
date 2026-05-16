@@ -1,11 +1,11 @@
 <div id ="study_form" class="new_element floating">
 	<div class="floater">
-		<div class="form">
+		<div class="form" id="study_form_form">
 			<h1 id="study_form_title"> </h1>
 			<% if (typeof archived !== 'undefined' && !archived) { %>
 			<div class="tabs" id="add_study_tabs">
-				<span id="study_name_desc_tab_button" class="tab" onclick="changeTab(this, 'study_form','study_name_desc_tab')"><%- t('new.tab', { ns : 'SIMLETs' }) %></span>
-				<span class="tab" onclick="changeTab(this, 'study_form','import_study_tab')"><%- t('import.tab', { ns : 'SIMLETs' }) %></span>
+				<span id="study_name_desc_tab_button" class="tab selected" onclick="changeTab(this, 'study_form_form','study_name_desc_tab')"><%- t('new.tab', { ns : 'SIMLETs' }) %></span>
+				<span class="tab" onclick="changeTab(this, 'study_form_form','import_study_tab')"><%- t('import.tab', { ns : 'SIMLETs' }) %></span>
 			</div>		<% } %>
 			<div id="study_name_desc_tab" class="subform selected" style="display: block;">
 				<form id="study_name_desc_form">
@@ -129,10 +129,43 @@
 	</ul>
 </div>
 
+
+<!-- Floating iframe for displaying activity results -->
+<div id="iframe_floating" class="new_element floating">
+	<div class="iframe_backdrop"></div>
+
+	<div class="floater">
+		<button id="iframe_floating_close" aria-label="Close">
+			&times;
+		</button>
+	</div>
+	<div class="iframe_content"></div>
+</div>
+
+
+<script>
+	$(document).ready(function () {
+		$('#iframe_floating_close').on('click', function () {
+			Utils.hideIframeFloating();
+		});
+
+		// Click on backdrop closes modal
+		$('#iframe_floating .iframe_backdrop').on('click', function () {
+			Utils.hideIframeFloating();
+		});
+		
+		$(document).on('keydown', function(e) {
+			if (e.key === 'Escape') {
+				Utils.hideIframeFloating();
+			}
+		});
+	});
+</script>
+
 <script type="text/javascript" src="/kebabs.js"></script>
 <script>
 	const changeTab = function(tab, form, subform) {
-		Utils.changeTab(tab, form, subform)
+		Utils.changeTab(tab, form, subform);
 	}
 
     let currStudyId = null;
@@ -237,12 +270,12 @@
     // --- URL FORM ---
 
     const openUrlSettingsForm = function(studyId) {
-		changeTab($('#generate_link_length_tab_button'), 'study_form','study_name_desc_tab');
+		changeTab($('#generate_link_length_tab_button'), 'study_form_form','study_name_desc_tab');
 
         currStudyId = studyId;
 
 		Simva.getShLink(studyId, (error, result) => {
-			$("#study_url_settings").toggleClass("shown");
+			Utils.toggleAddForm('study_url_settings');
 			if (!error) {
 				shlink = result;
 				$('#shlink_url_short').val(`<%- t('scheduler.shlink.message', { ns : 'SIMLETs', shlink : '${shlink.shortUrl}' }) %>`);
@@ -260,8 +293,8 @@
 	}
 
     const openGenerateLinkForm = function() {
-        $("#study_url_settings").toggleClass("shown");
-        $("#generate_study_link").toggleClass("shown");
+        Utils.toggleAddForm('study_url_settings');
+        Utils.toggleAddForm('generate_study_link');
         $('#generate_link_error').text("");
         $('#custom_slug_shlink').val("");
         $('#link_length_shlink').val($('#link_length_shlink').prop("min"));
@@ -301,7 +334,7 @@
 
     const openConfigDownloadForm = function(studyId) {
         currStudyId = studyId;
-		$('#download_config').toggleClass('shown');
+		Utils.toggleAddForm('download_config');
 	}
 
 	const exportSimlet = function(studyId) {

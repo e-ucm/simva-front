@@ -102,10 +102,10 @@
 
 <div id ="group_form_menu" class="new_element floating">
 	<div class="floater">
-		<div class="form">
+		<div class="form" id="group_form">
 			<div class="tabs" id="add_group_tabs">
-				<span id="group_name_desc_tab_button" class="tab selected" onclick="changeTab(this, 'group_form_menu','group_name_desc_tab')"><%- t('add.tab', { ns : 'groups' }) %></span>
-				<span class="tab" onclick="changeTab(this, 'group_form_menu','import_group_tab')"><%- t('import.tab', { ns : 'groups' }) %></span>
+				<span id="group_name_desc_tab_button" class="tab selected" onclick="changeTab(this, 'group_form','group_name_desc_tab')"><%- t('add.tab', { ns : 'groups' }) %></span>
+				<span class="tab" onclick="changeTab(this, 'group_form','import_group_tab')"><%- t('import.tab', { ns : 'groups' }) %></span>
 			</div>
 			<div id="group_name_desc_tab" class="subform selected" style="display: block;">
 				<h1 id="group_form_title">  </h1>
@@ -421,7 +421,7 @@
 	
 	// Reset tab state when opening modal
 	const openGroupForm = function(groupId) {
-		$("#group_form_menu").addClass("shown");
+		Utils.toggleAddForm("group_form_menu");
 		// Default to add tab
 		$("#add_group_tabs .tab").removeClass("selected");
 		$("#group_name_desc_tab_button").addClass("selected");
@@ -461,7 +461,7 @@
 	}
 
 	const openOwnerForm = function() {
-		$("#add_owner").toggleClass("shown");
+		Utils.toggleAddForm('add_owner');
 		$("#owner_name").val("");
 	}
     
@@ -476,7 +476,7 @@
 	let toggleAllocatorForm = function() {
 		$('#edit_allocator_title').html(AllocatorFactory.Painters[allocator.allocator_type].getFormTitle());
 		$('#edit_allocator_content').html(AllocatorFactory.Painters[allocator.allocator_type].getFormContent());
-		$('#edit_allocator').toggleClass('shown');
+		Utils.toggleAddForm('edit_allocator');
 	}
 
 

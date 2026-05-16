@@ -124,7 +124,7 @@
 
 
 	const openStudyForm = function(studyId) {
-		changeTab($('#study_name_desc_tab_button'), 'study_form','study_name_desc_tab');
+		changeTab($('#study_name_desc_tab_button'), 'study_form_form','study_name_desc_tab');
 
 		$('#study_form_error').text("");
 		$('#edit_study_id').val(studyId);
@@ -136,7 +136,7 @@
 			$("#study_name_desc_submit").val("<%- t('new.submit', { ns : 'SIMLETs' }) %>");
 
 			// Open form always
-			$("#study_form").toggleClass("shown");
+			Utils.toggleAddForm("study_form");
 
 			$('#prev_study_name').val("");
 			$('#prev_study_description').val("");
@@ -153,7 +153,7 @@
 			Simva.getStudy(studyId, function(error, result){
 				if(!error) {
 					// Open form only if edit is possible
-					$("#study_form").toggleClass("shown");
+					Utils.toggleAddForm('study_form');
 
 					$('#prev_study_name').val(result.simlet_name);
 					$('#prev_study_description').val(result.simlet_description);
