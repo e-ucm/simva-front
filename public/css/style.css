@@ -42,100 +42,137 @@ input[type="button"]:disabled { border:1px solid lightgray; background: darkgray
 .login #login_box input, .login #register_box form input { width:100% }
 .login #login_box .small, .login #register_box .small { margin:14px 0 0 }
 .login #error, .error { width: 100%; color: red; font-size: 14px; text-align: center; }
+
+/* Force flex regardless of .new_element base styles */
 #iframe_floating {
-	display: none;
-	position: fixed;
-	inset: 0;
-	z-index: 9999;
+    display: none !important;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
 }
 
 #iframe_floating.shown {
-	display: block;
+    display: flex !important;       /* override whatever sets display:table */
+    justify-content: center;
+    align-items: center;
 }
 
 #iframe_floating .iframe_backdrop {
-	position: absolute;
-	inset: 0;
-	background: rgba(0,0,0,0.5);
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 0;
 }
 
 #iframe_floating .floater {
-	position: absolute;
-	top: 5%;
-	left: 5%;
-	width: 90vw;
-	height: 90vh;
-	background: white;
-	border-radius: 8px;
-	overflow: hidden;
-	display: flex;
-	flex-direction: column;
+    position: relative;
+    z-index: 1;
+    width: min(90vw, 800px);
+    height: auto;
+    max-height: 90vh;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;           /* back to hidden — clips content correctly */
+    display: flex;
+    flex-direction: column;
 }
 
 #iframe_floating .iframe_content {
-	flex: 1;
-	overflow-y: auto;
-	padding: 20px;
+    height: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    /* Push content down so it doesn't render under the close button */
+    padding: 48px 20px 20px 20px;
 }
 
+/* Remove the scrollbar on the floater's outer wrapper */
+#iframe_floating .floater::-webkit-scrollbar { display: none; }
+
+/* The nested .new_element inside iframe_content must fill its parent */
 #iframe_floating .iframe_content > .new_element {
-	display: flex !important;
-	justify-content: center;
-	align-items: flex-start;
-	width: 100%;
-	height: 100%;
-	background: transparent;
-	box-shadow: none;
+    flex: 1;
+    display: flex !important;   /* override the display:none from .new_element base */
+    flex-direction: column;
+    position: static;           /* not fixed/absolute — stays in flow */
+    background: none;           /* remove the rgba overlay background */
+    width: 100%;
+    height: 100%;
 }
 
-/* Make the form fill the iframe modal */
-#iframe_floating .iframe_content > .new_element {
-	width: 100%;
-	height: 100%;
-	display: flex !important;
-	justify-content: center;
-	align-items: flex-start;
-	background: transparent;
-	box-shadow: none;
-	overflow: auto;
-}
-#iframe_floating .iframe_content > .new_element .form {
-	width: 100%;
-	height: 100%;
-	margin: 0;
-	box-shadow: none;
-	border-radius: 0;
-	background: white;
-	padding: 32px 24px;
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
-	align-items: center;
-	overflow-y: auto;
-}
-@media (max-width: 600px) {
-	#iframe_floating .iframe_content > .new_element .form {
-		padding: 10px;
-	}
+.new_element {
+    display: none;
+    position: relative;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.4);
+    transition: all 0.2s;
 }
 
-@media (max-width: 600px) {
-	#iframe_floating .iframe_content > .new_element .form {
-		max-width: 95vw;
-		margin: 10px auto;
-		padding: 10px;
-	}
+.new_element .form {
+    cursor: default;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: white;
+    min-width: 320px;
+    min-height: 100px;
+    max-width: 95vw;
+    max-height: 95vh;
+    box-shadow: 0 2px 24px rgba(0, 0, 0, 0.25);
+    border-radius: 8px;
+    padding: 24px;          /* add padding so content isn't flush to edges */
 }
+
+.new_element .form input  { width: 100%; }
+.new_element .form select { width: 100%; }
+
+.tabs { width: 100%; display: flex; }
+
+.tab {
+    flex: 1;
+    display: flex;
+    height: auto;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: black;
+    background-color: lightgray;
+    padding: 10px;
+    border: 1px solid white;
+    cursor: pointer;
+}
+
+.tab.selected {
+    color: white;
+    background-color: #f0913f;
+    cursor: default;
+    font-weight: 700;
+}
+
+.subform { display: none; }
+.subform.selected { display: block; }
 
 #iframe_floating_close {
-	position: absolute;
-	top: 10px;
-	right: 15px;
-	z-index: 10;
-	font-size: 2rem;
-	border: none;
-	background: none;
-	cursor: pointer;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 10;
+    font-size: 1.4rem;
+    line-height: 1;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 4px;
+    background: none;
+    cursor: pointer;
+    color: #666;
+}
+
+#iframe_floating_close:hover {
+    background: rgba(0, 0, 0, 0.08);
 }
 
 .login .role_selector { text-align: left; margin-bottom: 10px; }
@@ -256,66 +293,6 @@ body {
 	border-radius: 30px; 
 	box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.3); 
 }
-
-.content .new_element.shown {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100vw;
-	height: 100vh;
-	z-index: 9999;
-	background: rgba(0,0,0,0.4);
-}
-.content .new_element {
-	display: none;
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100vw;
-	height: 100vh;
-	z-index: 9999;
-	background: rgba(0,0,0,0.4);
-	transition: all 0.2s;
-}
-.content .new_element .form {
-	cursor: default;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	background: white;
-	padding: 32px 24px;
-	min-width: 320px;
-	min-height: 100px;
-	max-width: 95vw;
-	max-height: 95vh;
-	box-shadow: 0 2px 24px rgba(0,0,0,0.25);
-	border-radius: 8px;
-}
-
-.content .new_element form input { width:100% }
-.content .new_element form select { width:100% }
-
-.content .new_element .tabs { width: 100%; display: flex; }
-.content .new_element .tab {
-	flex: 1;
-	display: flex;
-	height: auto;
-	justify-content: center;
-	align-items: center;
-	text-align: center;
- 	color: black;
- 	background-color: lightgray;
- 	padding: 10px;
- 	border: 1px solid white;
- 	cursor: pointer;
- }
-.content .new_element .tab.selected { color: white; background-color: #f0913f; cursor: default; font-weight: 700; }
-.content .new_element .subform { display: none; }
-.content .new_element .subform.selected { display: block; }
 
 .content .left { float: left; display: inline-block; }
 

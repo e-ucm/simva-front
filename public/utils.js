@@ -10,26 +10,32 @@ var Utils = {
 	    return indexed_array;
 	},
 	
-	toggleAddForm : function(id){
+	toggleAddForm: function(id) {
 		if (id === 'iframe_floating') {
 			this.toggleIframeFloating();
 		} else {
 			const $modal = $('#iframe_floating');
 			const form = $(`#${id}`);
-			//form.toggleClass("shown");
+
+			// Grab the deepest .form content, skipping .new_element/.floater wrappers
+			const formContent = form.is('.new_element')
+				? form.find('.form').first().parent() 
+				: form;
+
 			$modal.find('.iframe_content')
 				.empty()
-				.append(form.html());
+				.append(formContent.html());
+
 			this.toggleIframeFloating();
 		}
 	},
 
 	showIframeFloating: function() {
-		$('#iframe_floating').css('display', 'table').addClass('shown');
+		$('#iframe_floating').addClass('shown');
 	},
 
 	hideIframeFloating: function() {
-		$('#iframe_floating').removeClass('shown').css('display', 'none');
+		$('#iframe_floating').removeClass('shown');
 	},
 
 	toggleIframeFloating: function() {
