@@ -33,6 +33,10 @@ class SSEClientManager {
             } else {
                 console.error('SSE Error:', JSON.stringify(event, null, 2));
                 this.closeConnection();
+                location.reload();
+                setTimeout(() => {
+                    location.reload();
+                }, 5000); // Reload the page to attempt reconnection
             }
         };
 
