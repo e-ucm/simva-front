@@ -1013,8 +1013,8 @@ module.exports = function(auth, config){
         });
     });
 
-    router.patch('/limesurvey/surveys/:surveyid/owner', auth, async (req, res, next) => {
-        Simva.setSurveyOwner(req.params["surveyid"], req.session.id, (error, result) => {
+    router.patch('/limesurvey/surveys/:activityid/owner', auth, async (req, res, next) => {
+        Simva.setSurveyOwner(req.params["activityid"], req.session.id, (error, result) => {
             if(error) {
                 next(error.response.data);
             } else {
@@ -1023,8 +1023,8 @@ module.exports = function(auth, config){
         });
     });
 
-    router.get('/limesurvey/surveys/:surveyid/languages', auth, async (req, res, next) => {
-        Simva.getSurveyLanguages(req.params["surveyid"], req.session.id, (error, result) => {
+    router.get('/limesurvey/surveys/:activityid/languages', auth, async (req, res, next) => {
+        Simva.getSurveyLanguages(req.params["activityid"], req.session.id, (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {

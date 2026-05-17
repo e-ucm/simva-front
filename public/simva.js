@@ -465,10 +465,13 @@ var Simva = {
 	},
 
 	getActivityResultForUser : function(activity_id, student, callback){
-		Utils.get(`/bff/activities/${activity_id}/result?users=${student}`, callback);
+		Utils.get(`/bff/activities/${activity_id}/result?users=${student}&type=full`, callback);
 	},
 
 	getActivityResultWithTypeForUser : function(activity_id, type, student, callback){
+		if(type === undefined) {
+			type = 'full';
+		}
 		Utils.get(`/bff/activities/${activity_id}/result?users=${student}&type=${type}`, callback);
 	},
 
@@ -477,6 +480,9 @@ var Simva = {
 	},
 
 	getActivityResultWithType: function(activity_id, type, callback){
+		if(type === undefined) {
+			type = 'full';
+		}
 		Utils.get(`/bff/activities/${activity_id}/result?type=${type}`, callback);
 	},
 

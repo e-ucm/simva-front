@@ -483,19 +483,19 @@ class Simva {
 	}
 
 	getActivityResultForUser(activity_id, student, sessionId, callback){
-		this.get(`${this.apiurl}/activities/${activity_id}/result?users=${student}&type=backup`, sessionId, callback);
+		this.get(`${this.apiurl}/activities/${activity_id}/result?users=${student}&type=full`, sessionId, callback);
 	}
 
 	getActivityResultWithTypeForUser (activity_id, type, student, sessionId, callback){
-		this.get(`${this.apiurl}/activities/${activity_id}/result?users=${student}&type=backup&all=${type}`, sessionId, callback);
+		this.get(`${this.apiurl}/activities/${activity_id}/result?users=${student}&type=${type}`, sessionId, callback);
 	}
 
 	getActivityResult(activity_id, sessionId, callback){
-		this.get(`${this.apiurl}/activities/${activity_id}/result?type=backup`, sessionId, callback);
+		this.get(`${this.apiurl}/activities/${activity_id}/result?type=full`, sessionId, callback);
 	}
 
 	getActivityResultWithType(activity_id, type, sessionId, callback){
-		this.get(`${this.apiurl}/activities/${activity_id}/result?all=${type}`, sessionId, callback);
+		this.get(`${this.apiurl}/activities/${activity_id}/result?type=${type}`, sessionId, callback);
 	}
 
 	getActivityHasResult(activity_id, sessionId, callback){
