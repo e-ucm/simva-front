@@ -227,7 +227,7 @@
 	$(document).ready(function() {
 		
 		// Import group from modal tab
-		$('#import_group_form_modal').on('submit', function(event) {
+		$(document).on('submit', '#import_group_form_modal', function(event) {
 			event.preventDefault();
 			let currentform = this;
 			let form = Utils.getFormData($(this));
@@ -265,10 +265,10 @@
 			return false;
 		});
 
-		$("#group_form").on('submit', function(event) {
+		$(document).on('submit', "#group_form", function(event) {
 			let errorbox = $('#group_form_error');
 			let currentform = this;
-			let form = Utils.getFormData($("#group_form"));
+			let form = Utils.getFormData($(this));
 			Utils.toggleSubmit(currentform);
 			
 			// Creating new group
@@ -312,9 +312,9 @@
 			return false;
 		});
 		
-		$("#existing_owner_form").on('submit', function(event) {
+		$(document).on('submit', "#existing_owner_form", function(event) {
 			event.preventDefault();
-			let form = Utils.getFormData($("#existing_owner_form"));
+			let form = Utils.getFormData($(this));
 			let errorbox = $(this).find('.error');
 			const owners = study.direct_permissions || study.owners || [];
 
@@ -356,9 +356,9 @@
 			return false;
 		});
 
-		// $("#add_group_form").on('submit', function(event) {
+		// $(document).on('submit', "#add_group_form", function(event) {
 		// 	event.preventDefault();
-		// 	let form = Utils.getFormData($("#add_group_form"));
+		// 	let form = Utils.getFormData($(this));
 		// 	let errorbox = $(this).find('.error');
 
 		// 	if (study.groups.indexOf(form.group) !== -1) {
@@ -377,9 +377,9 @@
 		// 	return false;
 		// });
 
-		$("#add_platform_form").on('submit', function(event) {
+		$(document).on('submit', "#add_platform_form", function(event) {
 			event.preventDefault();
-			let form = Utils.getFormData($("#add_platform_form"));
+			let form = Utils.getFormData($(this));
 			let errorbox = $(this).find('.error');
 
 			let platform = {

@@ -45,12 +45,12 @@
 
 <div id="generate_study_link" class="new_element floating">
 	<div class="floater">
-		<div class="form">
+		<div class="form" id="generate_study_link_form">
 			<h2><%- t('scheduler.shlink.generate.title', { ns : 'SIMLETs' }) %></h2>
             <br>
 			<div class="tabs">
-				<span id="generate_link_length_tab_button" class="tab selected" type="hidden" onclick="changeTab(this, 'generate_study_link','generate_study_link_length_tab')"><%- t('scheduler.shlink.generate.randomly_length.title', { ns : 'SIMLETs' }) %></span>
-				<span class="tab" onclick="changeTab(this, 'generate_study_link','generate_study_custom_slug_link_tab')"><%- t('scheduler.shlink.generate.custom_slug.title', { ns : 'SIMLETs' }) %></span>
+				<span id="generate_link_length_tab_button" class="tab selected" type="hidden" onclick="changeTab(this, 'generate_study_link_form','generate_study_link_length_tab')"><%- t('scheduler.shlink.generate.randomly_length.title', { ns : 'SIMLETs' }) %></span>
+				<span class="tab" onclick="changeTab(this, 'generate_study_link_form','generate_study_custom_slug_link_tab')"><%- t('scheduler.shlink.generate.custom_slug.title', { ns : 'SIMLETs' }) %></span>
 			</div>
             <br>
 
@@ -140,7 +140,7 @@
     let shlink = null;
 
     $(document).ready(function() {
-		$("#study_name_desc_tab").on("submit", function(event) {
+		$(document).on('submit', "#study_name_desc_tab", function(event) {
 			let currentform = this;
 			let form = Utils.getFormData($("#study_name_desc_form"));
 			Utils.toggleSubmit(currentform);
@@ -188,7 +188,7 @@
 		});
 
 		
-        $("#generate_study_link").on('submit', function(event) {
+        $(document).on('submit',"#generate_study_link", function(event) {
             event.preventDefault();
             let currentform = this;
 
@@ -235,7 +235,6 @@
 
 
     // --- URL FORM ---
-
     const openUrlSettingsForm = function(studyId) {
 		changeTab($('#generate_link_length_tab_button'), 'study_form_form','study_name_desc_tab');
 

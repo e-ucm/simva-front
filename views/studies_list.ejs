@@ -50,7 +50,7 @@
 	$(document).ready(function() {
 		refreshFunc = refreshStudies;
 
-		$("#import_study_form").on('submit', function(event) {
+		$(document).on('submit', "#import_study_form", function(event) {
 			event.preventDefault();
 			let currentform = this;
 			let form = Utils.getFormData($(this));

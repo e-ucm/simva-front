@@ -183,9 +183,9 @@
 	});
 
 	$(document).ready(function() {
-		$("#existing_owner_form").on('submit', function(event){
+		$(document).on('submit', "#existing_owner_form", function(event){
 			event.preventDefault();
-			let form = Utils.getFormData($("#existing_owner_form"));
+			let form = Utils.getFormData($(this));
 			let errorbox = $(this).find('.error');
 
 			// Check if owner already exists
@@ -228,10 +228,10 @@
 			return false;
 		});
 
-		$("#edit_group_form").on('submit', function(event){
+		$(document).on('submit',"#edit_group_form", function(event){
 			event.preventDefault();
 			let currentform = this;
-			let form = Utils.getFormData($("#edit_group_form"));
+			let form = Utils.getFormData($(this));
 			Utils.toggleSubmit(currentform);
 			let errorbox = $(this).find('.error');
 			if(form.name == form.groupName) {
@@ -249,9 +249,9 @@
 			return false;
 		});
 
-		$("#existing_participant_form").on('submit', function(event){
+		$(document).on('submit', "#existing_participant_form", function(event){
 			event.preventDefault();
-			let form = Utils.getFormData($("#existing_participant_form"));
+			let form = Utils.getFormData($(this));
 			let errorbox = $(this).find('.error');
 
 			for (var i = 0; i < group.participants.length; i++) {
@@ -291,9 +291,9 @@
 			return false;
 		});
 
-		$("#new_participant_form").on('submit', function(event){
+		$(document).on('submit', "#new_participant_form", function(event){
 			event.preventDefault();
-			let form = Utils.getFormData($("#new_participant_form"));
+			let form = Utils.getFormData($(this));
 			let errorbox = $(this).find('.error');
 
 			Simva.register(group.simlet_id, groupid, form.username.toLowerCase(), form.email, form.password, form.role, function(error, result){
@@ -309,11 +309,11 @@
 			return false;
 		});
 
-		$("#batch_participant_form").on('submit', function(event){
+		$(document).on('submit', "#batch_participant_form", function(event){
 			event.preventDefault();
 			let currentform = this;
 			Utils.toggleSubmit(currentform);
-			let form = Utils.getFormData($("#batch_participant_form"));
+			let form = Utils.getFormData($(this));
 			let errorbox = $(this).find('.error');
 
 			Simva.generateAndRegister(group.simlet_id, groupid, form.algorithm, form.length, form.amount, (error, generated) => {

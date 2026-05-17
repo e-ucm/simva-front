@@ -118,10 +118,10 @@
 			}
 		});
 
-		$("#new_activity_form").on('submit', function(event) {
+		$(document).on('submit', "#new_activity_form", function(event) {
 			event.preventDefault();
 			let currentform = this;
-			let form = Utils.getFormData($("#new_activity_form"));
+			let form = Utils.getFormData($(this));
 			Utils.toggleSubmit(currentform);
 			let errorbox = $(this).find('.error');
 
@@ -144,10 +144,10 @@
 			return false;
 		});
 
-		$("#edit_activity_form").on('submit', function(event) {
+		$(document).on('submit', "#edit_activity_form", function(event) {
 			event.preventDefault();
 			let currentform = this;
-			let form = Utils.getFormData($("#edit_activity_form"));
+			let form = Utils.getFormData($(this));
 			Utils.toggleSubmit(currentform);
 			let errorbox = $(this).find('.error');
 			let test = tests.filter(item => 

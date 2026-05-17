@@ -25,9 +25,9 @@
 		});
 	});
 	$(document).ready(function() {
-		$("#role_selection").on('submit', function(event){
+		$(document).on('submit', "#role_selection", function(event){
 			event.preventDefault();
-			let form = Utils.getFormData($("#role_form"));
+			let form = Utils.getFormData($(this));
 			username = "<%= user.data.username %>"
 			Simva.setRole(username, form.role, function(error, result){
 				if(error && error.responseJSON){

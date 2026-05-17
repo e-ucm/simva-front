@@ -198,7 +198,7 @@
     // Menus
 
     $(document).ready(function() {
-		$('#import_session_form').on('submit', function(event) {
+		$(document).on('submit','#import_session_form', function(event) {
 			event.preventDefault();
 			let currentform = this;
 			let form = Utils.getFormData($(this));
@@ -237,10 +237,10 @@
 			return false;
 		});
 
-        $('#session_form').on('submit', function(event) {
+        $(document).on('submit','#session_form', function(event) {
 			let errorbox = $('#session_form_error');
 			let currentform = this;
-			let form = Utils.getFormData($("#session_form"));
+			let form = Utils.getFormData($(this));
 			Utils.toggleSubmit(currentform);
 			
 			const selectedTagIds = selectedTags.map((tag) => Number(tag.tag_id));

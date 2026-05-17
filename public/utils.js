@@ -11,8 +11,12 @@ var Utils = {
 	},
 	
 	toggleAddForm: function(id) {
-		if (id === 'iframe_floating') {
-			this.toggleIframeFloating();
+		const $el = $('#iframe_floating');
+		if ($el.hasClass('shown')) {
+			this.hideIframeFloating();
+		} else {
+			if (id === 'iframe_floating') {
+			this.showIframeFloating();
 		} else {
 			const $modal = $('#iframe_floating');
 			const form = $(`#${id}`);
@@ -26,7 +30,8 @@ var Utils = {
 				.empty()
 				.append(formContent.html());
 
-			this.toggleIframeFloating();
+			this.showIframeFloating();
+		};
 		}
 	},
 
@@ -36,15 +41,6 @@ var Utils = {
 
 	hideIframeFloating: function() {
 		$('#iframe_floating').removeClass('shown');
-	},
-
-	toggleIframeFloating: function() {
-		const $el = $('#iframe_floating');
-		if ($el.hasClass('shown')) {
-			this.hideIframeFloating();
-		} else {
-			this.showIframeFloating();
-		}
 	},
 
 	toggleSubmit : function(form){

@@ -17,9 +17,9 @@
 			}
 		});
 
-		$("#new_group_form").on('submit', function(event){
+		$(document).on('submit',"#new_group_form", function(event){
 			event.preventDefault();
-			let form = Utils.getFormData($("#new_group_form"));
+			let form = Utils.getFormData($(this));
 			const simlet_id = form.simlet_id;
 			
 			if(!simlet_id) {
@@ -49,10 +49,10 @@
 			return false;
 		});
 
-		$("#edit_group_form").on('submit', function(event){
+		$(document).on('submit',"#edit_group_form", function(event){
 			event.preventDefault();
 			let currentform = this;
-			let form = Utils.getFormData($("#edit_group_form"));
+			let form = Utils.getFormData($(this));
 			Utils.toggleSubmit(currentform);
 			let formData = new FormData();
 			let errorbox = $(this).find('.error');
