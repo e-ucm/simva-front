@@ -222,13 +222,13 @@
 		$("#study_form_title").text("<%- t('edit.title', { ns : 'SIMLETs' }) %>")
 		$("#study_name_desc_submit").val("<%- t('edit.submit', { ns : 'SIMLETs' }) %>")
 
-		Utils.toggleAddForm('study_form');
-
 		$('#prev_study_name').val(study.simlet_name);
 		$('#prev_study_description').val(study.simlet_description);
 
 		$('#study_name').val(study.simlet_name);
 		$('#study_description').val(study.simlet_description);
+		
+		Utils.toggleAddForm('study_form');
 	}
 
 

@@ -50,7 +50,11 @@
 
     
     "add.title": "Add group",
-    "add.submit": "Add group",
+        "add.tab":"Add group",
+            "add.submit": "Add group",
+        "import.tab": "Import group",
+        "import.input": "Import file of group",
+                "import.submit": "Import group",
 
     "settings.edit.title": "Edit",
         "edit.title": "Edit group",

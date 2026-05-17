@@ -50,11 +50,15 @@
 
 
     "add.title": "Añadir grupo",
-    "add.submit": "Añadir grupo",
+        "add.tab":"Añadir grupo",
+            "add.submit": "Añadir grupo",
+        "import.tab": "Importar grupo",
+        "import.input": "Fichero de importación de grupo",
+            "import.submit": "Importar grupo",
 
     "settings.edit.title": "Editar",
-        "edit.title": "Editar group",
-        "edit.submit": "Editar group",
+        "edit.title": "Editar grupo",
+        "edit.submit": "Editar grupo",
 
     "settings.add.title": "Añadir participantes",
 
