@@ -100,8 +100,8 @@
 		<div class="form" id="session_form_form">
 			<h1 id="session_form_title"></h1>
 			<div class="tabs" id="add_session_tabs">
-				<span id="session_name_desc_tab_button" class="tab selected" onclick="changeTab(this, 'session_form_form','session_name_desc_tab')"><%- t('add.new.tab', { ns : 'sessions' }) %></span>
-				<span class="tab" onclick="changeTab(this, 'session_form_form','import_session_tab')"><%- t('import.tab', { ns : 'sessions' }) %></span>
+				<span id="session_name_desc_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'session_form_form','session_name_desc_tab')"><%- t('add.new.tab', { ns : 'sessions' }) %></span>
+				<span class="tab" onclick="Utils.changeTab(this, 'session_form_form','import_session_tab')"><%- t('import.tab', { ns : 'sessions' }) %></span>
 			</div>
 
 			<div id="session_name_desc_tab" class="subform selected" style="display: block;">
@@ -114,7 +114,8 @@
 					<input class="session_form_field session_form_name" type="text" name="sessionName" id="session_name" placeholder="<%- t('name.placeholder', { ns : 'sessions' }) %>" required>
 					<br class="session_form_field session_form_name">
 					<h3 class="session_form_field" id="session_description_label"><%- t('description.title', { ns : 'SIMLETs' }) %></h3>
-					<input class="session_form_field" type="text" name="sessionDescription" id="session_description" placeholder="<%- t('description.placeholder', { ns : 'sessions' }) %>" required>
+					<textarea maxlength="100" class="session_form_field" type="text" name="sessionDescription" id="session_description" placeholder="<%- t('description.placeholder', { ns : 'sessions' }) %>" required></textarea>
+					<!-- <input class="session_form_field" type="text" name="sessionDescription" id="session_description" placeholder="<%- t('description.placeholder', { ns : 'sessions' }) %>" required> -->
 					<h3 class="session_form_field" id="session_tags_label"><%- t('tags.title', { ns : 'sessions' }) %></h3>
 					<div class="session_form_field" id="session_tags_area" style="margin-top: 5px;">
 						<div class="tagPickerArea">
@@ -170,7 +171,6 @@
 					<h3 class="import_session_form_field session_form_name"><%- t('name.title', { ns : 'sessions' }) %></h3>
 					<input class="import_session_form_field import_session_form_name" type="text" name="sessionName" id="import_session_name" placeholder="<%- t('name.placeholder', { ns : 'sessions' }) %>" required>
 					<br class="import_session_form_field import_session_form_name">
-					<br>
 					<h3><%- t('import.input', { ns : 'sessions' }) %></h3>
 					<input type="file" name="jsonFile" accept=".json" required>
 					<br><br>
@@ -324,10 +324,13 @@
     });
 
     const openTestForm = function(testId) {
-		// changeTab($('#session_name_desc_tab_button'), 'session_form_form','session_name_desc_tab');
+		Utils.changeTab($('#session_name_desc_tab_button'), 'session_form_form','session_name_desc_tab');
 
 		let test = getTestFromTestId(testId);
 		
+		// Open form always
+		Utils.toggleAddForm('session_form_menu');
+
 		$('#session_form_error').text("");
 		$('#session_tags_error').text("");
 		$("#session_selected_tags").empty();
@@ -336,6 +339,9 @@
 
 		// Creating new session
 		if (testId == null) {
+			// Show the add new/import tabs
+			$("#add_session_tabs").show();
+
 			$("#session_form_title").text("<%- t('add.title', { ns : 'sessions' }) %>");
 			$("#session_submit").val("<%- t('add.submit', { ns : 'sessions' }) %>");
 			$("#can_be_manually_activated").show();
@@ -351,6 +357,9 @@
 		}
 		// Editing session
 		else {
+			// Show the add new/import tabs (only the name/description/tags tab is needed when editing session)
+			$("#add_session_tabs").hide();
+
 			$("#session_form_title").text("<%- t('edit.title', { ns : 'sessions' }) %>");
 			$("#session_submit").val("<%- t('edit.submit', { ns : 'sessions' }) %>");
 			$("#can_be_manually_activated").hide();
@@ -371,15 +380,6 @@
 		closeTagEditor();
 
 		updateAndRenderCurrentTags(function(loadError) {
-			// Open form always and show the add new/import tabs only if creating new session
-			// (only the name/description/tags tab is needed when editing session)
-			Utils.toggleAddForm('session_form_menu');
-			if (testId == null) {
-				$("#add_session_tabs").show();
-			}
-			else {
-				$("#add_session_tabs").hide();
-			}
 			if (loadError) {
 				$('#session_form_error').text(loadError.responseJSON ? loadError.responseJSON.message : loadError.message || loadError);
 				return;
@@ -588,6 +588,7 @@
 				sessionStatusLabel = `<%- t('paused.title', { ns : 'sessions' }) %>`;
 			}
 		} else if (sessionClass == sessionFinishedStatus) {
+			// TODO: hide delete button?
 			// Hide all action, add, and tester buttons
 			session.find(".icon-activate").hide();
 			session.find(".icon-pause").hide();
@@ -601,6 +602,10 @@
 			}
 		}
 		
+		if (study.simlet_archived) {
+			session.find(".icon-delete").hide();
+		}
+
 		session.data(sessionDataIdKey, test.session_id);
 		session.data(sessionDataNameKey, test.session_name);
 

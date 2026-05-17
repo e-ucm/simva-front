@@ -13,6 +13,7 @@
         "add.submit": "Crear sesión",
         
         "import.tab": "Importar sesión",
+        "import.input": "Seleccione un fichero de sesión exportada",
         "import.submit": "Importar sesión",
     
     "edit.title": "Editar sesión",

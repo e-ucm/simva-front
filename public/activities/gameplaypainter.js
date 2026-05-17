@@ -21,8 +21,8 @@ var GameplayActivityPainter = {
 	getExtraForm: function (callback) {
 		callback(null, `<div class="gameplay_activity">
 			<div class="gameplay_tabs">
-				<span class="tab selected" method="WEB" onclick="changeTab(this, 'new_activity_extras','gameplay_web')">WEB</span>
-				<span class="tab" method="DESKTOP" onclick="changeTab(this, 'new_activity_extras','gameplay_desktop')">DESKTOP</span>
+				<span class="tab selected" method="WEB" onclick="Utils.changeTab(this, 'new_activity_extras','gameplay_web')">WEB</span>
+				<span class="tab" method="DESKTOP" onclick="Utils.changeTab(this, 'new_activity_extras','gameplay_desktop')">DESKTOP</span>
 			</div>
 			<div id="gameplay_web" class="subform selected" style="display: block;">
 				<p><label for="gameplay_game_uri" style="width: 100%; text-align: center;">${this.specific.game_uri_title}</label><input id="gameplay_game_uri" type="text" name="game_uri">
@@ -43,8 +43,8 @@ var GameplayActivityPainter = {
 	getEditExtraForm: function () {
 		return `<div class="gameplay_activity">
 			<div class="gameplay_tabs">
-				<span class="tab selected" method="WEB" onclick="changeTab(this, 'edit_activity_extras','edit_gameplay_web')">WEB</span>
-				<span class="tab" method="DESKTOP" onclick="changeTab(this, 'edit_activity_extras','edit_gameplay_desktop')">DESKTOP</span>
+				<span class="tab selected" method="WEB" onclick="Utils.changeTab(this, 'edit_activity_extras','edit_gameplay_web')">WEB</span>
+				<span class="tab" method="DESKTOP" onclick="Utils.changeTab(this, 'edit_activity_extras','edit_gameplay_desktop')">DESKTOP</span>
 			</div>
 			<div id="edit_gameplay_web" class="subform selected" style="display: block;">
 				<p><label for="edit_gameplay_game_uri" style="width: 100%; text-align: center;">${this.specific.game_uri_title}</label><input id="edit_gameplay_game_uri" type="text" name="game_uri">
@@ -75,10 +75,10 @@ var GameplayActivityPainter = {
 		gameplay_game_uri.value = activity.game_url || "";
 		if (activity.game_type === 'DESKTOP') {
 			let desktopTab = document.querySelector('#edit_activity_extras .tab[method="DESKTOP"]');
-			if (desktopTab) changeTab(desktopTab, 'edit_activity_extras', 'edit_gameplay_desktop');
+			if (desktopTab) Utils.changeTab(desktopTab, 'edit_activity_extras', 'edit_gameplay_desktop');
 		} else {
 			let webTab = document.querySelector('#edit_activity_extras .tab[method="WEB"]');
-			if (webTab) changeTab(webTab, 'edit_activity_extras', 'edit_gameplay_web');
+			if (webTab) Utils.changeTab(webTab, 'edit_activity_extras', 'edit_gameplay_web');
 		}
 	},
 

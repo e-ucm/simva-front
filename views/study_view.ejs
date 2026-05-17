@@ -18,8 +18,8 @@
 
 <div id="study_tabs">
 	<div class="tabs studyTabsButtons">
-			<input class="tab yellow selected" type="button" title="<%- t('sessions.tab.description', { ns : 'SIMLETs' }) %>" onclick="changeTab(this, 'study_tabs','sessions_tab')" value="<%- t('sessions.tab.title', { ns : 'SIMLETs' }) %>">
-			<input class="tab yellow" type="button" title="<%- t('users.tab.description', { ns : 'SIMLETs' }) %>" onclick="changeTab(this, 'study_tabs','users_tab')" value="<%- t('users.tab.title', { ns : 'SIMLETs' }) %>">
+			<input class="tab yellow selected" type="button" title="<%- t('sessions.tab.description', { ns : 'SIMLETs' }) %>" onclick="Utils.changeTab(this, 'study_tabs','sessions_tab')" value="<%- t('sessions.tab.title', { ns : 'SIMLETs' }) %>">
+			<input class="tab yellow" type="button" title="<%- t('users.tab.description', { ns : 'SIMLETs' }) %>" onclick="Utils.changeTab(this, 'study_tabs','users_tab')" value="<%- t('users.tab.title', { ns : 'SIMLETs' }) %>">
 	</div>
 	
 	<div id="sessions_tab" class="subform studyTab selected" style="display: block;">
@@ -202,7 +202,7 @@
 
 		const kebab = $("#kebab_template .kebab-dropdown").clone();
 		$(".simletSettings .kebab").append(kebab);
-		kebab.find(".icon-edit").click(() => { openEditStudyForm(studyid) });
+		kebab.find(".icon-edit").click(() => { openStudyForm(studyid) });
 		kebab.find(".icon-url").click(() => { openUrlSettingsForm(studyid) });
 		kebab.find(".icon-download").click(() => { openConfigDownloadForm(studyid) });
 		kebab.find(".icon-export").click(() => { exportSimlet(studyid) });
@@ -215,7 +215,9 @@
 	
 	});
 
-	const openEditStudyForm = function() {
+	const openStudyForm = function() {
+		Utils.toggleAddForm('study_form');
+
 		$('#study_form_error').text("");
 		$('#edit_study_id').val(studyid);
 		
@@ -224,11 +226,10 @@
 
 		$('#prev_study_name').val(study.simlet_name);
 		$('#prev_study_description').val(study.simlet_description);
-
+		
 		$('#study_name').val(study.simlet_name);
 		$('#study_description').val(study.simlet_description);
 		
-		Utils.toggleAddForm('study_form');
 	}
 
 
@@ -237,7 +238,7 @@
 	let getTestFromTestId = function(testId) {
 		for (let i = 0; i < tests.length; i++) {
 			let test = tests[i];
-			if (test.session_id === testId) {
+			if (test.session_id === Number(testId)) {
 				return test;
 			}
 		}
@@ -252,7 +253,7 @@
 			}
 			for (let j = 0; j < test.completeActivities.length; j++) {
 				let activity = test.completeActivities[j];
-				if (activity.activity_id === activityId) {
+				if (activity.activity_id === Number(activityId)) {
 					return activity;
 				}
 			}
@@ -328,17 +329,11 @@
 
 	let paintStudy = function(study, participants, tests, allocator, groups, allgroups, platforms) {
 		$('#simlet_name').text(study.simlet_name);
-
-		paintOwners(study.direct_permissions);
-
+		$("#simlet_tags").remove();
+		$(".simletTop").after($(renderTags(study)).attr("id", "simlet_tags"));
+		
 		paintArchived(!study.simlet_archived);
-
-		paintGroups(groups, tests, participants);
-
-		paintAddGroup(allgroups);
-	
-		paintPlatforms(platforms);
-
+		
 		let fullyPaintTest = function(test) {
 			const sessionParticipants = Array.isArray(test.completeParticipants) ? test.completeParticipants : [];
 			paintTest(test, test.completeActivities, sessionParticipants);
@@ -358,6 +353,14 @@
 				toggleSession(tests[0].session_id);
 			}
 		}
+
+		paintOwners(study.direct_permissions);
+
+		paintGroups(groups, tests, participants);
+
+		paintAddGroup(allgroups);
+	
+		paintPlatforms(platforms);
 	}
 
 	let paintArchived = function(active) {

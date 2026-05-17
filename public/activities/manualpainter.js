@@ -22,8 +22,8 @@ var ManualActivityPainter = {
 	getExtraForm: function (callback) {
 		callback(null, `<div class="manual_activity">
 			<div class="manual_tabs">
-				<span class="tab selected" method="WEB" onclick="changeTab(this, 'new_activity_extras','manual_web')">WEB</span>
-				<span class="tab" method="EXTERNAL" onclick="changeTab(this, 'new_activity_extras','manual_external')">EXTERNAL</span>
+				<span class="tab selected" method="WEB" onclick="Utils.changeTab(this, 'new_activity_extras','manual_web')">WEB</span>
+				<span class="tab" method="EXTERNAL" onclick="Utils.changeTab(this, 'new_activity_extras','manual_external')">EXTERNAL</span>
 			</div>
 			<div id="manual_web" class="subform selected" style="display: block;">
 				<p><label for="manual_uri" style="width: 100%; text-align: center;">${this.specific.uri_title}</label><input id="manual_uri" type="text" name="uri">
@@ -43,8 +43,8 @@ var ManualActivityPainter = {
 	getEditExtraForm: function () {
 		return `<div class="manual_activity">
 			<div class="manual_tabs">
-				<span class="tab selected" method="WEB" onclick="changeTab(this, 'edit_manual_web')">WEB</span>
-				<span class="tab" method="EXTERNAL" onclick="changeTab(this, 'edit_manual_external')">EXTERNAL</span>
+				<span class="tab selected" method="WEB" onclick="Utils.changeTab(this, 'edit_manual_web')">WEB</span>
+				<span class="tab" method="EXTERNAL" onclick="Utils.changeTab(this, 'edit_manual_external')">EXTERNAL</span>
 			</div>
 			<div id="edit_manual_web" class="subform selected" style="display: block;">
 				<p><label for="edit_manual_uri" style="width: 100%; text-align: center;">${this.specific.uri_title}</label><input id="edit_manual_uri" type="text" name="uri">

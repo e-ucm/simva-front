@@ -2,8 +2,8 @@
     <div class="floater">
         <div class="form" id="add_activity_form">
             <div class="tabs">
-                <span class="tab selected" onclick="changeTab(this, 'add_activity_form','new_activity_tab')"><%- t('add.new.title', { ns : 'activities' }) %></span>
-                <span class="tab" type="hidden" onclick="changeTab(this, 'add_activity_form','existing_activity_tab')"><%- t('add.existing.title', { ns : 'activities' }) %></span>
+                <span class="tab selected" onclick="Utils.changeTab(this, 'add_activity_form','new_activity_tab')"><%- t('add.new.title', { ns : 'activities' }) %></span>
+                <span class="tab" type="hidden" onclick="Utils.changeTab(this, 'add_activity_form','existing_activity_tab')"><%- t('add.existing.title', { ns : 'activities' }) %></span>
             </div>
             <div id="new_activity_tab" class="subform selected" style="display: block;">
                 <form id="new_activity_form">
@@ -199,9 +199,9 @@
 	}
 
     let openEditActivityForm = function(activityId) {
+		let activity = getActivityFromActivityId(activityId);
 		Utils.toggleAddForm('edit_activity');
 		document.getElementById("edit_activity_error").innerHTML = "";
-		let activity= getActivityFromActivityId(activityId);
 		var inputElement = document.getElementById('edit_activity_name');
 		inputElement.value = activity.activity_name;
 		var inputElement = document.getElementById('edit_activity_type');
@@ -213,7 +213,7 @@
 		$('#edit_activity input[name="test"]').val(activity.session_id);
 		$('#edit_activity span[class="error"]').val("");
 		$('#edit_activity input[name="activity"]').val(activity.activity_id);
-		Utils.toggleAddForm('edit_activity');
+
 	}
 
 	
@@ -255,6 +255,12 @@
 						break;
 				}
 			}
+		}
+
+		// Block activity deletion when SIMLET is archived
+		// TODO: hide more buttons?
+		if (test.session_status == sessionFinishedStatus) {
+			$(".activityTopActions").find(".kebab-dropdown").find(".icon-delete").hide();
 		}
 	}
 

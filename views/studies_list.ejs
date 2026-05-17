@@ -15,7 +15,7 @@
 	<a class="stopable">
 		<div class="selectable card third">
 			<div class="simletCardTitle">
-				<h1></h1>
+				<h1 class="cardTitle"></h1>
 				<div class="kebab"></div>
 			</div>
 			<p class="cardDescription"> 	</p>
@@ -128,7 +128,7 @@
 
 
 	const openStudyForm = function(studyId) {
-		// changeTab($('#study_name_desc_tab_button'), 'study_form_form','study_name_desc_tab');
+		Utils.changeTab($('#study_name_desc_tab_button'), 'study_form_form','study_name_desc_tab');
 
 		$('#study_form_error').text("");
 		$('#edit_study_id').val(studyId);
@@ -171,7 +171,7 @@
 
 	
 	// Add cards programatically to avoid XSS
-	const addSimletCard = function(study, usercount) {
+	const addSimletCard = function(study) {
 		const card = $("#simlet_card_template .stopable").clone();
 		card.data(simletDataIdKey, study.simlet_id);
 		card.data(simletDataNameKey, study.simlet_name);
@@ -215,6 +215,12 @@
 		card.find(".carrdSessions").append(study.sessions.length);
 		card.find(".cardGroups").after(study.groups.length);
 		card.find(".studyTagsRow").append(renderTags(study));
+		
+		Simva.getStudyParticipants(study.simlet_id, function(error, result) {
+			if (!error) {
+				card.find(".cardUsers").after(result.length);
+			}
+		});
 		
 		$('#studies_list').append(card);
 	}

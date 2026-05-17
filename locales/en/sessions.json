@@ -13,6 +13,7 @@
         "add.submit": "Create session",
 
         "import.tab": "Import session",
+        "import.input": "Select exported session file",
         "import.submit": "Import session",
 
     "edit.title": "Edit session",

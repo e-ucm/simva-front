@@ -20,13 +20,13 @@ body { background-color: #fff6ec }
 body.black { background-color: #171717; }
 ul, ol, dl { list-style: none }
 a, img, input, select, textarea, fieldset { border: 0; outline: 0; font-family: sans-serif; }
-textarea { 	resize: none }
+textarea { 	resize: vertical; width: 100%; max-height: 5rem; }
 img { border: 0; user-drag: none; -moz-user-drag: none; 	-webkit-user-drag: none; user-select: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none }
 hr { margin: 10px 0 0; border: 1px solid #000 }
 thead { display: table-header-group; }
 .hidden { display: none; }
 
-input[type="text"], input[type="email"], input[type="password"], input[type="file"], input[type="date"], input[type="time"], input[type="number"], select { padding:6px; font-size:15px; border: 1px solid black; }
+input[type="text"], input[type="email"], input[type="password"], input[type="file"], input[type="date"], input[type="time"], input[type="number"], select, textarea { padding:6px; font-size:15px; border: 1px solid black; }
 .button, 		input[type="submit"], 		 input[type="button"] 		 { width:auto; border:0; padding:6px; background:#f0913f; font-size:15px; color:#fff; cursor:pointer; }
 .button.orange, input[type="submit"].orange, input[type="button"].orange { border:1px solid #0B617D; background:#0B617D }
 .button.violet, input[type="submit"].violet, input[type="button"].violet { border:1px solid #6b5faa; background:#6b5faa }
@@ -256,6 +256,14 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	word-wrap: break-word;   /* Breaks long words to fit */
 	white-space: normal;    /* Allows text to wrap */
 	box-sizing: border-box;  /* Includes padding in width/height */
+}
+.cardTitle {
+	max-width: 95%;
+	display: -webkit-box;
+	/* -webkit-line-clamp: 1; */
+	-webkit-box-orient: vertical;
+	/* overflow: hidden;
+	text-overflow: ellipsis; */
 }
 .cardDescription {
 	padding: 10px;
@@ -887,7 +895,7 @@ body {
 .icon-dearchive::before {
 	background-image: url("../icon/dearchive.png");
 }
-.icon-download::before {
+.icon-download::before, .icon-export::before {
 	background-image: url("../icon/download.png");
 }
 .icon-add::before {
@@ -1046,15 +1054,6 @@ body {
 .owners tr:nth-child(odd), .participants tr:nth-child(odd) { background: #f5f5f5 }
 
 .groupTop { margin-bottom: 10px; }
-
-/* .content .participants table { width: 100% }
-.content .participants table tr:nth-child(even) { background: #e8e8e8 }
-.content .participants table tr:nth-child(odd) { background: #f5f5f5 }
-.content .participants table td:first-child { width: 10%; text-align: center; }
-.content .participants table td { width: 18%; text-align: center; }
-.content .participants table input[type="button"] { width: 100%; }
-.content .participants table img { width: 30px; }
-.edit img { height: 24px } */
 
 #pdf_printable { 
 	display: none;

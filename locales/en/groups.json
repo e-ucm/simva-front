@@ -70,6 +70,8 @@
         "print_table.name_col.title": "Name",
         "print_table.code_col.title": "Code",
     
+    "settings.export.title": "Export",
+    
     "settings.delete.title": "Delete",
     
     "participant.delete": "Delete",

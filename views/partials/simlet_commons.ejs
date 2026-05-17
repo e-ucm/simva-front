@@ -4,8 +4,8 @@
 			<h1 id="study_form_title"> </h1>
 			<% if (typeof archived !== 'undefined' && !archived) { %>
 			<div class="tabs" id="add_study_tabs">
-				<span id="study_name_desc_tab_button" class="tab selected" onclick="changeTab(this, 'study_form_form','study_name_desc_tab')"><%- t('new.tab', { ns : 'SIMLETs' }) %></span>
-				<span class="tab" onclick="changeTab(this, 'study_form_form','import_study_tab')"><%- t('import.tab', { ns : 'SIMLETs' }) %></span>
+				<span id="study_name_desc_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'study_form_form','study_name_desc_tab')"><%- t('new.tab', { ns : 'SIMLETs' }) %></span>
+				<span class="tab" onclick="Utils.changeTab(this, 'study_form_form','import_study_tab')"><%- t('import.tab', { ns : 'SIMLETs' }) %></span>
 			</div>		<% } %>
 			<div id="study_name_desc_tab" class="subform selected" style="display: block;">
 				<form id="study_name_desc_form">
@@ -16,7 +16,8 @@
 					<input class="study_form_name" type="text" name="studyName" id="study_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
 					<br class="study_form_name">
 					<h3 class="study_form_field"><%- t('description.title', { ns : 'SIMLETs' }) %></h3>
-					<input class="study_form_field" type="text" name="studyDescription" id="study_description" placeholder="<%- t('description.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<textarea maxlength="100" class="study_form_field" name="studyDescription" id="study_description" placeholder="<%- t('description.placeholder', { ns : 'SIMLETs' }) %>" required></textarea>
+					<!-- <input class="study_form_field" type="text" name="studyDescription" id="study_description" placeholder="<%- t('description.placeholder', { ns : 'SIMLETs' }) %>" required> -->
 					<br class="study_form_field"><br class="study_form_field">
 					<input class="study_form_field" type="submit" id="study_name_desc_submit" value="">
 				</form>
@@ -49,8 +50,8 @@
 			<h2><%- t('scheduler.shlink.generate.title', { ns : 'SIMLETs' }) %></h2>
             <br>
 			<div class="tabs">
-				<span id="generate_link_length_tab_button" class="tab selected" type="hidden" onclick="changeTab(this, 'generate_study_link_form','generate_study_link_length_tab')"><%- t('scheduler.shlink.generate.randomly_length.title', { ns : 'SIMLETs' }) %></span>
-				<span class="tab" onclick="changeTab(this, 'generate_study_link_form','generate_study_custom_slug_link_tab')"><%- t('scheduler.shlink.generate.custom_slug.title', { ns : 'SIMLETs' }) %></span>
+				<span id="generate_link_length_tab_button" class="tab selected" type="hidden" onclick="Utils.changeTab(this, 'generate_study_link_form','generate_study_link_length_tab')"><%- t('scheduler.shlink.generate.randomly_length.title', { ns : 'SIMLETs' }) %></span>
+				<span class="tab" onclick="Utils.changeTab(this, 'generate_study_link_form','generate_study_custom_slug_link_tab')"><%- t('scheduler.shlink.generate.custom_slug.title', { ns : 'SIMLETs' }) %></span>
 			</div>
             <br>
 
@@ -102,7 +103,7 @@
 	<div class="floater">
 		<div class="form">
 			<input class="yellow" type="button" value="<%- t('config.download.simlet', { ns : 'SIMLETs' }) %>" onclick="downloadStudyConfig()">
-			<br><br>
+			<br>
 			<input class="yellow" type="button" value="<%- t('config.download.uadventure', { ns : 'SIMLETs' }) %>" onclick="downloadUAConfig()">
 		</div>
 	</div>
@@ -132,10 +133,6 @@
 <script>
 
 	// --- UTILITIEs --- 
-	
-	const changeTab = function(tab, form, subform) {
-		Utils.changeTab(tab, form, subform);
-	}
 	
 	/**
 	 * Format the raw date to show it in YY/MM/DD format on the user's timezone
@@ -278,7 +275,7 @@
 
     // --- URL FORM ---
     const openUrlSettingsForm = function(studyId) {
-		// changeTab($('#generate_link_length_tab_button'), 'study_form_form','study_name_desc_tab');
+		Utils.changeTab($('#generate_link_length_tab_button'), 'study_form_form','study_name_desc_tab');
 
         currStudyId = studyId;
 
@@ -322,7 +319,6 @@
 				let shortCode = shlink.shortCode;
 				if (confirm(`<%- t('scheduler.shlink.delete.confirm', { ns : 'SIMLETs', shlink : '${shortCode}', SIMLET : '${result.simlet_name}' }) %>`)) {
 					Simva.deleteShLink(currStudyId, (error, result) => {
-						// TODO: Fix in SIMLET view
 						if (!error) {
 							shlink = null;
 							if (refreshFunc != null) {
