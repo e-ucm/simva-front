@@ -43,7 +43,7 @@
     "limesurvey.existing.title":"Existing Survey",
     "limesurvey.existing.zero.message":"You don't have surveys.",
     "limesurvey.new.title":"New Survey",
-    "limesurvey.new.message":"Click to open LimeSurvey",
+    "limesurvey.new.description":"Click to open LimeSurvey",
     "limesurvey.new.after.message":"After creating new, you have to select from existing.",
     "limesurvey.upload.title":"Upload LSS",
     "limesurvey.upload.message":"Select LLS file",

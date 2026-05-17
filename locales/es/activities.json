@@ -43,7 +43,7 @@
     "limesurvey.existing.title":"Encuesta existente",
     "limesurvey.existing.zero.message":"No tienes encuestas.",
     "limesurvey.new.title":"Nueva encuesta",
-    "limesurvey.new.message":"Haz clic para abrir LimeSurvey",
+    "limesurvey.new.description":"Haz clic para abrir LimeSurvey",
     "limesurvey.new.after.message":"Después de crear una nueva, tiene que seleccionar una de las existentes.",
     "limesurvey.upload.title":"Cargar LSS",
     "limesurvey.upload.message":"Seleccionar archivo LLS",

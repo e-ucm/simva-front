@@ -43,7 +43,7 @@
     "limesurvey.existing.title":"Enquête existante",
     "limesurvey.existing.zero.message":"Vous n'avez pas d'enquêtes.",
     "limesurvey.new.title":"Nouvelle enquête",
-    "limesurvey.new.message":"Cliquer pour ouvrir LimeSurvey",
+    "limesurvey.new.description":"Cliquer pour ouvrir LimeSurvey",
     "limesurvey.new.after.message":"Après avoir créé un nouveau enquête sur LimeSurvey, vous devez le sélectionner parmi les enquêtes existantes.",
     "limesurvey.upload.title":"Charger LSS",
     "limesurvey.upload.message":"Sélectionner le fichier LLS",

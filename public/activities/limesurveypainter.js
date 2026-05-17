@@ -29,8 +29,7 @@ var LimeSurveyPainter = {
 			if(!error) {
 				console.log(result);
 				if(result.isLimesurveyUserAdmin == false) {
-					form+=`<p>${this.specific.new_message}</p>
-						<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">${this.specific.title}</a></p>`
+					form+=`<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">${this.specific.new_description}</a></p>`
 				} else {
 					form += `<div name="limesurvey_tabs" class="tabs">
 					<span class="tab selected" method="byid" onclick="LimesurveyChangeTab(this, 'new_activity_extras','limesurvey_byid')">${this.specific.surveyid_title}</span>
@@ -46,8 +45,7 @@ var LimeSurveyPainter = {
 					form += '<select name="existingid" id="existingid_select"></select>';
 					form += `</div>
 					<div id="limesurvey_bynew" class="subform" style="display: none;">
-						<p>${this.specific.new_message}</p>
-						<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">${this.specific.title}</a></p>
+						<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">${this.specific.new_description}</a></p>
 					</div>
 					<div id="limesurvey_byupload" class="subform" style="display: none;">
 						<p>${this.specific.upload_message}</p>
@@ -55,8 +53,7 @@ var LimeSurveyPainter = {
 					</div>`
 				}
 			} else {
-				form+=`<p>${this.specific.new_message}</p>
-					<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">${this.specific.title}</a></p>`
+				form+=`<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">${this.specific.new_description}</a></p>`
 			};
 			callback(null, form);
 		});	
@@ -345,6 +342,7 @@ var LimeSurveyPainter = {
 	},
 
 	openNewLimesurvey: function(){
+		Utils.hideIframeFloating();
 		$('#iframe_floating iframe').prop('src', `${this.newlimesurveyurl}`);
 		Utils.showIframeFloating();
 	},
