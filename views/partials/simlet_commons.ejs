@@ -74,8 +74,7 @@
 					<input type="submit" value="<%- t('scheduler.shlink.generate.submit', { ns : 'SIMLETs' }) %>">
 				</form>
 			</div>
-
-            <span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+			<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
             <span class="error" id="generate_link_error"></span>
 		</div>
 	</div>
@@ -187,27 +186,17 @@
 			return false;
 		});
 
-		
-        $(document).on('submit',"#generate_study_link", function(event) {
+        $(document).on('submit',"#generate_study_custom_slug_link_form", function(event) {
             event.preventDefault();
             let currentform = this;
 
             let custom_slug = null;
-            let length = null;
             
-            let form = Utils.getFormData($("#generate_study_custom_slug_link_form"));
-            if (form.custom_slug != "" && $("#generate_study_custom_slug_link_tab").hasClass("selected")) {
-                custom_slug = form.custom_slug;
-            } 
-            else {
-                form = Utils.getFormData($("#generate_study_link_length_form"));
-                if (form.link_length_shlink != "") {
-                    length = form.link_length_shlink;
-                }
-            }
+            let form = Utils.getFormData($(this));
+            custom_slug = form.custom_slug;
             Utils.toggleSubmit(currentform);
             
-            Simva.generateShlinkURL(currStudyId, custom_slug, length, (error, result) => {
+            Simva.generateShlinkURL(currStudyId, custom_slug, null, (error, result) => {
                 if (!error) {
                     shlink = result;
                     let shortUrl=shlink.shortUrl;
@@ -224,15 +213,48 @@
 
                 } 
                 else {
-                    $('#generate_link_error').text(error);
+                    $('#generate_link_error').text(error.message);
                 }
                 Utils.toggleSubmit(currentform);
             });
 
             return false;
         });
-    });
+    
+		$(document).on('submit',"#generate_study_link_length_form", function(event) {
+        	event.preventDefault();
+        	let currentform = this;
 
+        	let length = null;
+            
+       		form = Utils.getFormData($(this));
+        	if (form.link_length_shlink != "") {
+            	length = form.link_length_shlink;
+        	}
+        	Utils.toggleSubmit(currentform);
+            
+            Simva.generateShlinkURL(currStudyId, null, length, (error, result) => {
+                if (!error) {
+                    shlink = result;
+                    let shortUrl=shlink.shortUrl;
+                    // Copy the text inside the text field
+                    navigator.clipboard.writeText(shortUrl);
+                    // Alert Short URL
+                    alert(shortUrl);
+                    Utils.toggleAddForm('generate_study_link');
+					if (refreshFunc != null) {
+						refreshFunc();
+					}
+                    $('#generate_link_error').text("");
+                } 
+                else {
+                    $('#generate_link_error').text(error.message);
+                }
+                Utils.toggleSubmit(currentform);
+            });
+            return false;
+        });
+	});
 
     // --- URL FORM ---
     const openUrlSettingsForm = function(studyId) {
