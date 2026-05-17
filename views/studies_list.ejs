@@ -181,32 +181,28 @@
 		card.find(".kebab").append(kebab);
 		if (archived) {
 			kebab.find(".icon-archive").hide();
-		}
-
-		// Disable archive button if not all sessions are finished
-		if (!archived) {
-			if(study.simlet_archived == archived) {
-				const total = study.sessions.length;
-				if (total > 0) {
-					let completed = 0;
-					let allSessionsFinished = true;
-					study.sessions.forEach(testid => {
-						Simva.getStudyTest(study.simlet_id, testid, function(error, result) {
-							if (!error) {
-								if (result != null) {
-									let prev = allSessionsFinished;
-									allSessionsFinished = allSessionsFinished && (result.session_status == "finished" || result.session_status == "inactive");
-								}
-							}
-							completed++;
-							if (completed == total && !allSessionsFinished) {
-								kebab.find(".icon-archive").addClass('li-disabled').removeAttr('onclick');
-							}
-						});
+		} else {
+			// Disable archive button if not all sessions are finished
+			const total = study.sessions.length;
+			if (total > 0) {
+				let completed = 0;
+				let allSessionsFinished = true;
+				study.sessions.forEach(testid => {
+					Simva.getStudyTest(study.simlet_id, testid, function(error, result) {
+						if (!error) {
+							let prev = allSessionsFinished;
+							allSessionsFinished = allSessionsFinished && (result.session_status == "terminated" || result.session_status == "inactive");
+						}
+						completed++;
+						if (completed == total && !allSessionsFinished) {
+							kebab.find(".icon-archive").addClass('li-disabled').removeAttr('onclick');
+						} else if (completed == total && allSessionsFinished) {
+							kebab.find(".icon-archive").removeClass('li-disabled');
+						}
 					});
-				} else {
-					kebab.find(".icon-archive").addClass('li-disabled').removeAttr('onclick');
-				}
+				});
+			} else {
+				kebab.find(".icon-archive").removeClass('li-disabled');
 			}
 		}
 

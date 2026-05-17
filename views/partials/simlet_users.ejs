@@ -524,7 +524,7 @@
 	$(document).on('click', ".participants .red", function(e) {
 		const groupData = $(this).closest(".test").data();
 		const userData = $(this).closest("tr").data();
-		console.log(groupData, userData)
+		//console.log(groupData, userData)
 		deleteParticipant(userData[userDataIdKey], userData[userDataNameKey], groupData[groupDataIdKey], groupData[groupDataNameKey], true)
 	});
 
