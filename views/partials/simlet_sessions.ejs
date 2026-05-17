@@ -547,7 +547,7 @@
 		}
         
 		const date = new Date(test.createdAt);
-		const formattedDate = date.toLocaleDateString('en-GB');
+		const formattedDate = date.toLocaleDateString(currentlanguageCode);
 		
 		let userCount = participants.length;
 		let completeUserCount = 0;

@@ -1,4 +1,6 @@
 <script type="text/javascript">
+	let currentlanguageCode=null;
+
 	<% if (typeof includeTMonApi !== 'undefined' && includeTMonApi) { %>
 		Simva.setTMonURL("<%= config.tmon.url %>");
 		Simva.setTMonFile("<%= config.tmon.file %>");
@@ -63,7 +65,6 @@
 			$(this).parent().removeClass('shown');
 		});
 
-		var currentlanguageCode;
 		const dropdown = document.getElementById('language-dropdown');
 		const langBtn = document.getElementById('lang-btn');
 

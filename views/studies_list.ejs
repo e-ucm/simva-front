@@ -208,8 +208,12 @@
 
 		card.find(".simletCardTitle h1").text(study.simlet_name);
 		card.find(".cardDescription").text(study.simlet_description);
-		card.find(".cardCreationDate").append(study.createdAt);
-		card.find(".cardUpdateDate").append(study.updatedAt);
+		const createdDate = new Date(study.createdAt);
+		const formattedDate = createdDate.toLocaleDateString(currentlanguageCode);
+		card.find(".cardCreationDate").append(formattedDate);
+		const updatedDate = new Date(study.updatedAt);
+		const formattedUpdatedDate = updatedDate.toLocaleDateString(currentlanguageCode);
+		card.find(".cardUpdateDate").append(formattedUpdatedDate);
 		card.find(".carrdSessions").append(study.sessions.length);
 		card.find(".cardGroups").after(study.groups.length);
 		card.find(".studyTagsRow").append(renderTags(study));
