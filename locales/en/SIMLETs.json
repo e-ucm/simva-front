@@ -38,17 +38,18 @@
         "scheduler.shlink.message": "Copy short URL: {{shlink}}",
         "scheduler.shlink.custom_slug.placeholder": "Custom slug",
         "scheduler.shlink.delete.title": "Delete Scheduler Shlink URL",
-        "scheduler.shlink.delete.confirm": "Are you sure do you want to delete the short link '{{shlink}}' from SIMLET '{{SIMLET}}'?",
+        "scheduler.shlink.delete.confirm": "Are you sure you want to delete the short link '{{shlink}}' from SIMLET '{{SIMLET}}'?",
         
     "settings.download.title": "Download config",
         "config.download.simlet": "Export SIMLET to .json",
         "config.download.uadventure": "Download uAdventure config",
         
     "settings.archive.title": "Archive",
+        "archive.confirm": "Are you sure you want to archive the SIMLET '{{SIMLET}}'?\nThis action can't be reverted and the SIMLET will move to the archived tab ",
     "settings.dearchive.title": "Dearchive",
 
     "settings.delete.title": "Delete",
-        "delete.confirm": "Are you sure do you want to delete the SIMLET '{{SIMLET}}'?\nAll the Sessions, activities and data will be deleted too",
+        "delete.confirm": "Are you sure you want to delete the SIMLET '{{SIMLET}}'?\nAll the Sessions, activities and data will be deleted too",
 
     "edit.no_changes.message": "No changes detected!",
 

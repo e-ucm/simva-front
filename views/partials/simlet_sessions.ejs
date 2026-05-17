@@ -97,11 +97,11 @@
 
 <div id ="session_form_menu" class="new_element floating">
 	<div class="floater">
-		<div class="form" id="session_form">
+		<div class="form" id="session_form_form">
 			<h1 id="session_form_title"></h1>
 			<div class="tabs" id="add_session_tabs">
-				<span id="session_name_desc_tab_button" class="tab selected" onclick="changeTab(this, 'session_form','session_name_desc_tab')"><%- t('add.new.tab', { ns : 'sessions' }) %></span>
-				<span class="tab" onclick="changeTab(this, 'session_form','import_session_tab')"><%- t('import.tab', { ns : 'sessions' }) %></span>
+				<span id="session_name_desc_tab_button" class="tab selected" onclick="changeTab(this, 'session_form_form','session_name_desc_tab')"><%- t('add.new.tab', { ns : 'sessions' }) %></span>
+				<span class="tab" onclick="changeTab(this, 'session_form_form','import_session_tab')"><%- t('import.tab', { ns : 'sessions' }) %></span>
 			</div>
 
 			<div id="session_name_desc_tab" class="subform selected" style="display: block;">
@@ -324,6 +324,8 @@
     });
 
     const openTestForm = function(testId) {
+		// changeTab($('#session_name_desc_tab_button'), 'session_form_form','session_name_desc_tab');
+
 		let test = getTestFromTestId(testId);
 		
 		$('#session_form_error').text("");
@@ -369,18 +371,20 @@
 		closeTagEditor();
 
 		updateAndRenderCurrentTags(function(loadError) {
+			// Open form always and show the add new/import tabs only if creating new session
+			// (only the name/description/tags tab is needed when editing session)
 			Utils.toggleAddForm('session_form_menu');
+			if (testId == null) {
+				$("#add_session_tabs").show();
+			}
+			else {
+				$("#add_session_tabs").hide();
+			}
 			if (loadError) {
 				$('#session_form_error').text(loadError.responseJSON ? loadError.responseJSON.message : loadError.message || loadError);
 				return;
 			}
 		});
-		// Always reset to 'Add new' tab when opening
-		// Remove 'selected' from all tabs and subforms
-		$('#add_session_tabs .tab').removeClass('selected');
-		$('#session_name_desc_tab_button').addClass('selected');
-		$('#session_name_desc_tab').addClass('selected').show()[0].style.display = 'block';
-		$('#import_session_tab').removeClass('selected').hide()[0].style.display = 'none';
 	}
 
 	let exportTest = function(testId) {
@@ -545,9 +549,6 @@
 			session.find(".icon-reset-tester").hide();
 			session.find(".icon-untester").hide();
 		}
-        
-		const date = new Date(test.createdAt);
-		const formattedDate = date.toLocaleDateString(currentlanguageCode);
 		
 		let userCount = participants.length;
 		let completeUserCount = 0;
@@ -607,7 +608,7 @@
 		session.find(".sessionStatusLabel").addClass(sessionClass).attr("title", sessionStatusLabel).text(sessionStatusLabel);
 
 		session.find(".sessionDescription").text(test.session_name);
-		session.find(".sessionCreateDate").after(formattedDate);
+		session.find(".sessionCreateDate").after(getFormattedDate(test.createdAt, currentlanguageCode));
 		session.find(".sessionActivities").after(test.activities.length);
 		session.find(".sessionUsers").after(userCount);
 		

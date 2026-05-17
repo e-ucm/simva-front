@@ -9,7 +9,11 @@
     "download": "Download data",
 
     "add.title": "Add session",
+        "add.new.tab": "Add new",
         "add.submit": "Create session",
+
+        "import.tab": "Import session",
+        "import.submit": "Import session",
 
     "edit.title": "Edit session",
         "edit.submit": "Edit session",
@@ -53,10 +57,7 @@
     "no_activities.message": "There are no activities in this session. Try adding one using the button above.",
 
     "settings.delete.title": "Delete",
-        "delete.confirm": "Are you sure do you want to delete the session '{{session}}' from SIMLET '{{SIMLET}}'?\nAll the activities and data will be deleted too",
-
-    "add.new.tab": "Add new",
-        "import.tab": "Import session",
+        "delete.confirm": "Are you sure you want to delete the session '{{session}}' from SIMLET '{{SIMLET}}'?\nAll the activities and data will be deleted too",
 
     "settings.export.title": "Export",
     "sessions.set_tester": "Set myself as tester in this session",

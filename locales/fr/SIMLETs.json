@@ -45,6 +45,7 @@
         "config.download.uadventure": "Télécharger la configuration du SIMLET pour uAdventure",
         
     "settings.archive.title": "Archiver",
+        "archive.confirm": "",
     "settings.dearchive.title": "Désarchiver",
 
     "settings.delete.title": "Supprimer",

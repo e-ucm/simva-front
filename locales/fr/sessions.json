@@ -9,8 +9,12 @@
     "download": "Télécharger les données de la session",
 
     "add.title": "Ajouter une session",
+        "add.new.tab": "Ajouter nouveau",
         "add.submit": "Ajouter une session",
-
+    
+        "import.tab": "Importer une session",
+        "import.submit": "Importer une session",
+    
     "edit.title": "Modifier le session",
         "edit.submit": "Modifier le session",
     
@@ -54,10 +58,7 @@
 
     "settings.delete.title": "Supprimer",
         "delete.confirm": "Êtes-vous sûr de vouloir supprimer la session '{{session}}' de l'SIMLET '{{SIMLET}}'?\nToutes les activités et les données seront également supprimées",
-
-    "add.new.tab": "Ajouter nouveau",
-        "import.tab": "Importer une session",
-
+    
     "settings.export.title": "Exporter",
     "sessions.set_tester": "Me définir comme testeur dans cette session",
     "sessions.reset_tester": "Réinitialiser testeur (retirer et remettre)",

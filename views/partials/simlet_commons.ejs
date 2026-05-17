@@ -130,8 +130,28 @@
 
 <script type="text/javascript" src="/kebabs.js"></script>
 <script>
+
+	// --- UTILITIEs --- 
+	
 	const changeTab = function(tab, form, subform) {
 		Utils.changeTab(tab, form, subform);
+	}
+	
+	/**
+	 * Format the raw date to show it in YY/MM/DD format on the user's timezone
+	 * 
+	 * @param rawDate {Number} - date epoch
+	 * @param currentlanguageCode {string} - language the user is currently using 
+	 * @returns {string} string with the formatted date
+	*/
+	const getFormattedDate = function(rawDate, currentlanguageCode) {
+		const date = new Date(rawDate);
+		const yy = String(date.getFullYear()).slice(-2).padStart(2, '0');
+		const mm = String(date.getMonth() + 1).padStart(2, '0');
+		const dd = String(date.getDate()).padStart(2, '0');
+		return `${yy}/${mm}/${dd}`;
+		// Date format depends on the localization and may not be YY/MM/DD
+		// return date.toLocaleDateString(currentlanguageCode);
 	}
 
     let currStudyId = null;
@@ -258,7 +278,7 @@
 
     // --- URL FORM ---
     const openUrlSettingsForm = function(studyId) {
-		changeTab($('#generate_link_length_tab_button'), 'study_form_form','study_name_desc_tab');
+		// changeTab($('#generate_link_length_tab_button'), 'study_form_form','study_name_desc_tab');
 
         currStudyId = studyId;
 
@@ -366,12 +386,15 @@
 
 	// --- ARCHIVE/DELETE ---
 
-	const archiveStudy = function(studyId) {
-		Simva.updateStudy(studyId, { simlet_archived: true }, function(error, result) {
-			if (!error  && refreshFunc != null) {
-				refreshFunc();
-			}
-		})
+	const archiveStudy = function(studyId, studyname) {
+		if(confirm(`<%- t('archive.confirm', { ns : 'SIMLETs', SIMLET : '${studyname}' }) %>`)){
+			Simva.updateStudy(studyId, { simlet_archived: true }, function(error, result) {
+				if (!error  && refreshFunc != null) {
+					refreshFunc();
+				}
+			});
+		}
+		
 	}
 
 	const deleteStudy = function(studyid, studyname){
@@ -388,8 +411,14 @@
 	}
 
 
-	// TAGS
-	// study or session
+	// --- TAGS --- 
+
+	/**
+	 * Create the html element containing all the tags
+	 * 
+	 * @param taggedElem {Object} - study or session to get the tags from
+	 * @returns {string} string with the html elements needed to render the tags
+	*/
 	const renderTags = function(taggedElem) {
 		const tags = Array.isArray(taggedElem.tags) ? taggedElem.tags : [];
 

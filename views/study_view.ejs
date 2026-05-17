@@ -273,13 +273,14 @@
 
 	let setActive = function(active) {
 		// TEST
-		// archiveStudy();
-		
-		Simva.updateStudy(studyid, { simlet_archived: active }, function(error, result) {
-			if (!error) {
-				reloadStudy();
-			}
-		})
+		// archiveStudy(studyid, study.simlet_name);
+		if(confirm(`<%- t('archive.confirm', { ns : 'SIMLETs', SIMLET : '${study.simlet_name}' }) %>`)){
+			Simva.updateStudy(studyid, { simlet_archived: active }, function(error, result) {
+				if (!error) {
+					reloadStudy();
+				}
+			});
+		}
 	}
 	
 	let reloadStudy = function() {

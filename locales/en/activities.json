@@ -11,7 +11,7 @@
     "activities.edit.title": "Edit activity",
     
     "activities.delete.title": "Delete activity",
-    "activities.delete.confirm": "Are you sure do you want to delete the activity '{{activity}}' of session '{{session}}' from SIMLET '{{SIMLET}}'?\nAll the data of the activity will be deleted too",
+    "activities.delete.confirm": "Are you sure you want to delete the activity '{{activity}}' of session '{{session}}' from SIMLET '{{SIMLET}}'?\nAll the data of the activity will be deleted too",
 
     "name.placeholder": "Activity name",
 

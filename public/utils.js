@@ -16,22 +16,22 @@ var Utils = {
 			this.hideIframeFloating();
 		} else {
 			if (id === 'iframe_floating') {
-			this.showIframeFloating();
-		} else {
-			const $modal = $('#iframe_floating');
-			const form = $(`#${id}`);
+				this.showIframeFloating();
+			} else {
+				const $modal = $('#iframe_floating');
+				const form = $(`#${id}`);
 
-			// Grab the deepest .form content, skipping .new_element/.floater wrappers
-			const formContent = form.is('.new_element')
-				? form.find('.form').first().parent() 
-				: form;
+				// Grab the deepest .form content, skipping .new_element/.floater wrappers
+				const formContent = form.is('.new_element')
+					? form.find('.form').first().parent() 
+					: form;
 
-			$modal.find('.iframe_content')
-				.empty()
-				.append(formContent.html());
+				$modal.find('.iframe_content')
+					.empty()
+					.append(formContent.html());
 
-			this.showIframeFloating();
-		};
+				this.showIframeFloating();
+			};
 		}
 	},
 
@@ -49,17 +49,15 @@ var Utils = {
 	},
 
 	changeTab : function(tab, form, subform){
-		// Support both string id and direct element reference for form
-		let $form;
-		if (typeof form === 'string') {
-			$form = $(`#${form}`);
-		} else {
-			$form = $(form);
-		}
+		// Support both string id and direct element reference
+		let $form = typeof form === 'string' ? $(`#${form}`) : $(form);
+		let $tab = typeof tab === 'string' ? $(`#${tab}`) : $(tab);
+		let $subform = typeof subform === 'string' ? $(`#${subform}`) : $(subform);
+		
 		// Find the first .tabs header inside the form or container
 		const $tabsHeader = $form.find('.tabs').first();
 		$tabsHeader.find('.tab').removeClass('selected');
-		$(tab).addClass('selected');
+		$tab.addClass('selected');
 
 		// Hide all .subform elements inside the form/container
 		$form.find('.subform').each(function() {
@@ -71,10 +69,10 @@ var Utils = {
 		});
 
 		// Show and select the requested subform by id (must be inside the form/container)
-		let $targetSubform = $form.find(`#${subform}`);
+		let $targetSubform = $form.find($subform);
 		if ($targetSubform.length === 0) {
 			// fallback: try global if not found inside form
-			$targetSubform = $(`#${subform}`);
+			$targetSubform = $($subform);
 		}
 		$targetSubform.show().addClass('selected');
 		if ($targetSubform.length > 0) {

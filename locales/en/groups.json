@@ -4,7 +4,7 @@
     "deprecated.title": "Groups (Deprecated)",
     "deprecated.message": "This tab has been deprecated. Please prefer use the new group page version.",
     "zero.message.title": "You have 0 groups yet. Create one using the bottom right (+) button.",
-    "remove.confirm": "Are you sure do you want to delete the group '{{group}}'?\nGroup will be removed to all the studies, tests and activities.",
+    "remove.confirm": "Are you sure you want to delete the group '{{group}}'?\nGroup will be removed to all the studies, tests and activities.",
     "single.title":"Group",
     "new.title": "Add new group",
     "name.title": "Name",
@@ -16,7 +16,7 @@
     "owners.add.title": "Add owner",
     "owners.add.username.placeholder": "Owner username",
     "owners.remove.title" : "Delete",
-    "owners.remove.confirm" : "Are you sure do you want to delete the owner '{{owner}}' of group '{{group}}' ?",
+    "owners.remove.confirm" : "Are you sure you want to delete the owner '{{owner}}' of group '{{group}}' ?",
     "participants.title": "Participants",
     "participants.username.title": "Username",
     "participants.isToken.title": "isToken",
@@ -43,7 +43,7 @@
     "participants.add.email.placeholder": "email@example.com",
     "participants.add.password.placeholder": "Password",
     "participants.remove.title": "Delete",
-    "participants.remove.confirm" : "Are you sure do you want to delete the participant '{{participant}}' of group '{{group}}' ?",
+    "participants.remove.confirm" : "Are you sure you want to delete the participant '{{participant}}' of group '{{group}}' ?",
     "participants.errormessage.alreadyInGroup":"The participant '{{participant}}' is already in the group '{{group}}'.",
     "participants.errormessage.zeroInGroup.title":"There are no participants in this group.",
     "participants.errormessage.zeroInGroup.message":"Try adding some using the button on the right.",
@@ -82,10 +82,10 @@
     "coordinators.add.title": "Add coordinator",
     "coordinators.error.already_in": "The coordinator is already in the SIMLET.",
     "coordinators.delete.title": "Delete",
-    "coordinators.delete.confirm": "Are you sure do you want to delete the coordinator '{{owner}}' from SIMLET '{{SIMLET}}'?",
+    "coordinators.delete.confirm": "Are you sure you want to delete the coordinator '{{owner}}' from SIMLET '{{SIMLET}}'?",
 
     "groups.delete.title": "Delete",
-    "groups.delete.confirm": "Are you sure do you want to delete the group '{{group}}' from SIMLET '{{SIMLET}}'?",
+    "groups.delete.confirm": "Are you sure you want to delete the group '{{group}}' from SIMLET '{{SIMLET}}'?",
     
     "allocator.title": "Allocator",
     "allocator.change.title": "Select the new allocator type",
@@ -113,7 +113,7 @@
     "lti_platform.add.accesstoken_endpoint.title": "Access Token Endpoint",    
     "lti_platform.add.jkws_url.title": "jKWS URL",
     "lti_platform.delete.title": "Delete LTI Platform",
-    "lti_platform.delete.confirm": "Are you sure do you want to delete this platform '{{platform}}' from SIMLET '{{SIMLET}}' ?",
+    "lti_platform.delete.confirm": "Are you sure you want to delete this platform '{{platform}}' from SIMLET '{{SIMLET}}' ?",
     "lti_platform.zero.message": "There are no platforms yet."
 
 }
