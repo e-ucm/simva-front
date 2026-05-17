@@ -43,7 +43,6 @@ input[type="button"]:disabled { border:1px solid lightgray; background: darkgray
 .login #login_box .small, .login #register_box .small { margin:14px 0 0 }
 .login #error, .error { width: 100%; color: red; font-size: 14px; text-align: center; }
 
-/* Force flex regardless of .new_element base styles */
 #iframe_floating {
     display: none !important;
     position: fixed;
@@ -52,7 +51,7 @@ input[type="button"]:disabled { border:1px solid lightgray; background: darkgray
 }
 
 #iframe_floating.shown {
-    display: flex !important;       /* override whatever sets display:table */
+    display: flex !important;
     justify-content: center;
     align-items: center;
 }
@@ -67,37 +66,68 @@ input[type="button"]:disabled { border:1px solid lightgray; background: darkgray
 #iframe_floating .floater {
     position: relative;
     z-index: 1;
-    width: min(90vw, 800px);
-    height: auto;
-    max-height: 90vh;
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;           /* back to hidden — clips content correctly */
+    width: calc(100vw - 32px);      /* 16px border each side */
     display: flex;
     flex-direction: column;
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+
+    /* Default: auto height for forms */
+    height: auto;
+    max-height: calc(100vh - 32px); /* 16px border top and bottom */
+}
+
+/* Iframe mode: fixed height so iframe can fill it */
+#iframe_floating.is-iframe .floater {
+    height: calc(100vh - 32px);
 }
 
 #iframe_floating .iframe_content {
-    height: auto;
-    overflow-y: auto;
-    overflow-x: hidden;
-    /* Push content down so it doesn't render under the close button */
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;              /* prevents flex overflow */
+    overflow: hidden;
+
+    /* Default: padding for forms */
     padding: 48px 20px 20px 20px;
 }
 
-/* Remove the scrollbar on the floater's outer wrapper */
-#iframe_floating .floater::-webkit-scrollbar { display: none; }
+/* Iframe mode: no padding, fill edge to edge */
+#iframe_floating.is-iframe .iframe_content {
+    padding: 0;
+}
 
-/* The nested .new_element inside iframe_content must fill its parent */
+/* The injected form wrapper */
 #iframe_floating .iframe_content > .new_element {
     flex: 1;
-    display: flex !important;   /* override the display:none from .new_element base */
+    display: flex !important;
     flex-direction: column;
-    position: static;           /* not fixed/absolute — stays in flow */
-    background: none;           /* remove the rgba overlay background */
+    position: static;
+    background: none;
     width: 100%;
     height: 100%;
 }
+
+/* The iframe itself */
+#iframe_floating .iframe_content .iframe {
+    flex: 1;
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* Loader fills the space too */
+#iframe_floating .iframe_content .iframe_loader {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#iframe_floating .floater::-webkit-scrollbar { display: none; }
 
 .new_element {
     display: none;

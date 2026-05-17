@@ -10,6 +10,52 @@ var Utils = {
 	    return indexed_array;
 	},
 	
+	toggleIframeInFloating: function(url) {
+		const $el = $('#iframe_floating');
+		if ($el.hasClass('shown')) {
+			this.hideIframeFloating();
+		} else {
+			const self = this;
+			const $content = $el.find('.iframe_content').empty();
+
+			// Switch to iframe mode
+			$el.addClass('is-iframe');
+
+			const $iframe = $('<iframe class="iframe" frameborder="0"></iframe>')
+				.css('display', 'none');
+
+			const $loader = $(`
+				<div class="iframe_loader">
+					<div class="lds-roller"><div></div><div></div><div></div>
+					<div></div><div></div><div></div><div></div><div></div></div>
+				</div>
+			`);
+
+			$content.append($loader).append($iframe);
+
+			$iframe.on('load', function() {
+				$loader.remove();
+				$iframe.css('display', 'block');
+			});
+
+			$iframe.attr('src', url);
+			self.showIframeFloating();
+		}
+	},
+
+	toggleHTMLInFloating: function(html) {
+		const $el = $('#iframe_floating');
+		if ($el.hasClass('shown')) {
+			this.hideIframeFloating();
+		} else {
+			const $modal = $('#iframe_floating');
+			$modal.find('.iframe_content')
+					.empty()
+					.append(html);
+			this.showIframeFloating();
+		}
+	},
+
 	toggleAddForm: function(id) {
 		const $el = $('#iframe_floating');
 		if ($el.hasClass('shown')) {
@@ -40,7 +86,9 @@ var Utils = {
 	},
 
 	hideIframeFloating: function() {
-		$('#iframe_floating').removeClass('shown');
+		$('#iframe_floating').removeClass('shown is-iframe');
+		$('#iframe_floating').find('.iframe_content')
+							.empty();
 	},
 
 	toggleSubmit : function(form){
@@ -276,28 +324,12 @@ var Utils = {
 			.replace(/>/g, '&gt;');
 
 		const renderedContent = `<pre style="padding: 20px; background-color: #f0f0f0; color: #333; font-family: monospace; white-space: pre-wrap; word-wrap: break-word;">${stringifyres}</pre>`;
-		const targetFloatingId = floatingId || 'iframe_floating';
-		const iframe = $(`#${targetFloatingId} iframe`)[0];
-		if(!iframe || !iframe.contentWindow || !iframe.contentWindow.document) {
-			return;
-		}
-
-		const context = iframe.contentWindow.document;
-		const body = $('body', context);
-		body.html(renderedContent);
-		body.css({
-			'margin': '0',
-			'padding': '0',
-			'overflow': 'auto',
-			'height': '100vh'
-		});
-
-		this.showIframeFloating();
+		Utils.toggleHTMLInFloating(renderedContent);
 	},
 
-	openResultContent: function(source, errorHeading, floatingId){
+	openResultContent: function(source){
 		if(!this.isDownloadUrl(source)) {
-			this.displayResultInFloatingFrame(source, floatingId);
+			this.displayResultInFloatingFrame(source);
 			return;
 		}
 
@@ -309,12 +341,12 @@ var Utils = {
 				return response.text();
 			})
 			.then((content) => {
-				this.displayResultInFloatingFrame(content, floatingId);
+				this.displayResultInFloatingFrame(content);
 			})
 			.catch((error) => {
 				if(errorHeading && typeof $ !== 'undefined' && $.toast) {
 					$.toast({
-						heading: errorHeading,
+						heading: error.message,
 						text: error.message,
 						position: 'top-right',
 						icon: 'error',

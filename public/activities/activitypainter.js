@@ -100,14 +100,6 @@ var ActivityPainter = {
 		Utils.downloadContent(source, filename, errorHeading);
 	},
 
-	displayResultInFloatingFrame: function(content){
-		Utils.displayResultInFloatingFrame(content, 'iframe_floating');
-	},
-
-	openResultContent: function(source, errorHeading){
-		Utils.openResultContent(source, errorHeading, 'iframe_floating');
-	},
-
 	getExtraForm: function (callback) {
 		callback(null, '');
 	},
@@ -755,14 +747,14 @@ var ActivityPainter = {
 		Simva.getActivityResultForUser(activity, user, (error, result) => {
 			if(error){
 				$.toast({
-					heading: this.commun.result_error_loading,
+					heading: error.message,
 					text: error.message,
 					position: 'top-right',
 					icon: 'error',
 					stack: false
 				});
 			} else {
-				this.openResultContent(result[user], this.commun.result_error_loading);
+				Utils.openResultContent(result[user], this.commun.result_error_loading);
 			}
 		});
 	},
@@ -816,7 +808,7 @@ var ActivityPainter = {
 	getTMonUrl: function(activityId, testId, studyId) {
 		let url = `${Simva.tmonUrl}/${studyId}/${testId}/${activityId}/${Simva.TMonFile}/dashboard/`;
 		// Open the generated URL in a new tab
-       	window.open(url, '_blank'); 
+       	Utils.toggleIframeInFloating(url); 
 	},
 
 	setCompletionForAllParticipant(activityid, status) {
