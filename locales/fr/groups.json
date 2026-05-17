@@ -64,11 +64,11 @@
 
     "settings.allocator.title": "Edit allocator",
 
-    "settings.download.title": "",
-        "print_table.title": "",
-        "print_table.number_col.title": "",
-        "print_table.name_col.title": "",
-        "print_table.code_col.title": "",
+    "settings.download.title": "Exporter le groupe en PDF",
+        "print_table.title": "Groupe : ",
+        "print_table.number_col.title": "No.",
+        "print_table.name_col.title": "Nom",
+        "print_table.code_col.title": "Code",
 
     "settings.export.title": "Exporter",
     
