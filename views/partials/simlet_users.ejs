@@ -103,12 +103,12 @@
 <div id ="group_form_menu" class="new_element floating">
 	<div class="floater">
 		<div class="form" id="group_form">
+			<h1 id="group_form_title">  </h1>
 			<div class="tabs" id="add_group_tabs">
 				<span id="group_name_desc_tab_button" class="tab selected" onclick="changeTab(this, 'group_form','group_name_desc_tab')"><%- t('add.tab', { ns : 'groups' }) %></span>
 				<span class="tab" onclick="changeTab(this, 'group_form','import_group_tab')"><%- t('import.tab', { ns : 'groups' }) %></span>
 			</div>
 			<div id="group_name_desc_tab" class="subform selected" style="display: block;">
-				<h1 id="group_form_title">  </h1>
 				<form id="group_form">
 					<input hidden type="text" name="editingGroupId" id="edit_group_id">
 					<input hidden type="text" name="prevGroupName" id="prev_group_name">
@@ -150,20 +150,6 @@
         </div>
     </div>
 </div>
-
-<!-- <div id="edit_allocator" class="new_element floating">
-    <div class="floater">
-        <div class="form">
-            <h2 id="edit_allocator_title"></h2>
-            <form id="edit_allocator_form">
-                <div id="edit_allocator_content">
-                </div>
-                <span class="error"></span>
-            </form>
-        </div>
-    </div>
-</div> -->
-
 
 <!-- TODO PLATFORMS -->
 <!--  <% if (config.lti.enabled == 'true') { %>
@@ -438,6 +424,7 @@
 			$("#group_form_title").text("<%- t('add.title', { ns : 'groups' }) %>");
 			$("#group_submit").val("<%- t('add.submit', { ns : 'groups' }) %>");
 		} else {
+			$("#add_group_tabs").hide();
 			var group = getGroupFromGroupId(groupId);
 			$("#group_form_title").text("<%- t('edit.title', { ns : 'groups' }) %>");
 			$("#group_submit").val("<%- t('edit.submit', { ns : 'groups' }) %>");
@@ -468,17 +455,13 @@
 	
 	let openChangeAllocatorForm = function(groupId, currentAllocatorType) {
 		currentGroupIdForAllocator = groupId;
+		let currentGroup=groups.find(g => g.group_id == groupId);
+		console.log("Current group for allocator change:", currentGroup.group_allocator_type);
+		let form = $('#change_allocator_form');
 		$('#change_allocator_form input:radio[name=type]').prop('checked', false);
-		$(`#allocator_${currentAllocatorType}`).prop('checked', true);
+		$(`#allocator_${currentGroup.group_allocator_type}`).prop('checked', true);
 		Utils.toggleAddForm('change_allocator');
 	}
-
-	let toggleAllocatorForm = function() {
-		$('#edit_allocator_title').html(AllocatorFactory.Painters[allocator.allocator_type].getFormTitle());
-		$('#edit_allocator_content').html(AllocatorFactory.Painters[allocator.allocator_type].getFormContent());
-		Utils.toggleAddForm('edit_allocator');
-	}
-
 
 	// Groups buttons shared listeners
 
@@ -494,7 +477,7 @@
 
 	$(document).on('click', ".groupTop .icon-gear", function(e) {
 		const data = $(this).closest(".test").data();
-		openChangeAllocatorForm(data[groupDataIdKey], data[groupDataAllocatorKey]);
+		openChangeAllocatorForm(data[groupDataIdKey]);
 	});
 
 	$(document).on('click', ".groupTop .icon-export", function(e) {
@@ -685,18 +668,6 @@
 	// Add group programatically to avoid XSS
 	
 	let addGroupBox = function(group) {
-		// let deleteDisabled = (group.link && group.link.type) ? ' disabled' : '';
-		// let box = `<div class="graybox allocator default" id="group_box_${group.group_id}">
-		// 	<h3>${group.group_name}</h3>
-		// 	<input class="red" type="button" value="<%- t('groups.delete.title', { ns : 'groups' }) %>" onclick="deleteGroup('${group.group_id}', '${group.group_name}')"${deleteDisabled}>
-		// 	<div class="allocator-section">
-		// 		<h4><%- t('allocator.title', { ns : 'groups' }) %></h4>
-		// 		<span class="edit"><img src="/icon/gear.png" onclick="openChangeAllocatorForm('${group.group_id}', '${group.group_allocator_type || 'default'}')"></span>
-		// 		<div id="allocator_content_${group.group_id}">
-		// 		</div>
-		// 	</div>
-		// </div>`;
-
 		const box = $("#group_template .test").clone();
 		box.attr("id", `group_box_${group.group_id}`);
 		box.data(groupDataIdKey, group.group_id);

@@ -184,35 +184,31 @@
 		}
 
 		// Disable archive button if not all sessions are finished
-		Simva.getStudy(study.simlet_id, function(error, result) {
-			if (!error) {
-				card.find(".cardUsers").after(result.participants.length);
-
-				if (!archived) {
-					if(study.simlet_archived == archived) {
-					const total = result.sessions.length;
-						if (total > 0) {
-							let completed = 0;
-							let allSessionsFinished = true;
-							result.sessions.forEach(testid => {
-								Simva.getStudyTest(study.simlet_id, testid, function(error, result) {
-									if (!error) {
-										if (result != null) {
-											let prev = allSessionsFinished;
-											allSessionsFinished = allSessionsFinished && (result.session_status == "finished" || result.session_status == "inactive");
-										}
-									}
-									completed++;
-									if (completed == total && !allSessionsFinished) {
-										kebab.find(".icon-archive").addClass('li-disabled').removeAttr('onclick');
-									}
-								});
-							});
-						}
-					}
+		if (!archived) {
+			if(study.simlet_archived == archived) {
+				const total = study.sessions.length;
+				if (total > 0) {
+					let completed = 0;
+					let allSessionsFinished = true;
+					study.sessions.forEach(testid => {
+						Simva.getStudyTest(study.simlet_id, testid, function(error, result) {
+							if (!error) {
+								if (result != null) {
+									let prev = allSessionsFinished;
+									allSessionsFinished = allSessionsFinished && (result.session_status == "finished" || result.session_status == "inactive");
+								}
+							}
+							completed++;
+							if (completed == total && !allSessionsFinished) {
+								kebab.find(".icon-archive").addClass('li-disabled').removeAttr('onclick');
+							}
+						});
+					});
+				} else {
+					kebab.find(".icon-archive").addClass('li-disabled').removeAttr('onclick');
 				}
-			} 
-		});
+			}
+		}
 
 		card.find(".simletCardTitle h1").text(study.simlet_name);
 		card.find(".cardDescription").text(study.simlet_description);
