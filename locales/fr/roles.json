@@ -7,5 +7,6 @@
     "student":"Étudiant",
     "choose.title":"Choisir ce rôle",
     "contactadmin.title":"Contact Administrateur",
-    "contactadmin.message" : "Veuillez contacter votre administrateur SIMVA à l'adresse suivante {{ email }} pour lui attribuer un nouveau rôle."
+    "contactadmin.message" : "Veuillez contacter votre administrateur SIMVA à l'adresse suivante {{ email }} pour lui attribuer un nouveau rôle.",
+    "not_defined": "Non défini"
 }

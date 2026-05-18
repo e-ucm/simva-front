@@ -69,14 +69,14 @@
 		<div class="floater">
 			<div class="form" id="add_participant_form">
 				<div class="tabs">
-					<span class="tab selected" onclick="changeTab(this, 'add_participant_form','existing_participant_tab')"><%= t('participants.add.existing.title' , { ns : 'groups' }) %></span>
-					<span class="tab" onclick="changeTab(this, 'add_participant_form','new_participant_tab')"><%= t('participants.add.new.title' , { ns : 'groups' }) %></span>
-					<span class="tab" onclick="changeTab(this, 'add_participant_form','batch_participant_tab')"><%= t('participants.add.batch.title' , { ns : 'groups' }) %></span>
+					<span class="tab selected" onclick="changeTab(this, 'add_participant_form','existing_participant_tab')"><%= t('participants.add.existing.tab' , { ns : 'groups' }) %></span>
+					<span class="tab" onclick="changeTab(this, 'add_participant_form','new_participant_tab')"><%= t('participants.add.new.tab' , { ns : 'groups' }) %></span>
+					<span class="tab" onclick="changeTab(this, 'add_participant_form','batch_participant_tab')"><%= t('participants.add.batch.tab' , { ns : 'groups' }) %></span>
 				</div>
 				<div id="existing_participant_tab" class="subform selected" style="display: block;">
 					<form id="existing_participant_form">
 						<input type="text" name="name" placeholder="<%= t('participants.add.username.placeholder', { ns : 'groups' }) %>" required>
-						<input type="submit" value="<%= t('participants.add.existing.title' , { ns : 'groups' }) %>">
+						<input type="submit" value="<%= t('participants.add.existing.tab' , { ns : 'groups' }) %>">
 						<span class="error"></span>
 					</form>
 				</div>
@@ -89,7 +89,7 @@
 							<input id="teacher_role" type="radio" name="role" value="teacher"><label for="teacher_role"><%= t('teacher' , { ns : 'roles' }) %></label>
 							<input id="student_role" type="radio" name="role" value="student" checked><label for="student_role"><%= t('student' , { ns : 'roles' }) %></label>
 						</div>
-						<input type="submit" value="<%= t('participants.add.new.title' , { ns : 'groups' }) %>">
+						<input type="submit" value="<%= t('participants.add.new.tab' , { ns : 'groups' }) %>">
 						<span class="error"></span>
 					</form>
 				</div>
@@ -105,7 +105,7 @@
 						</select>
 						<p><%= t('participants.add.batch.length.title' , { ns : 'groups' }) %></p>
 						<input type="number" step="1" min='4' max="10" name="length" value="4">
-						<input type="submit" value="<%= t('participants.add.batch.title' , { ns : 'groups' }) %>">
+						<input type="submit" value="<%= t('participants.add.batch.tab' , { ns : 'groups' }) %>">
 						<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 						<span class="error"></span>
 					</form>
@@ -375,7 +375,7 @@
 	}
 
 	let removeParticipant = function(participant_id, participant, removeKeycloak=false){
-		if(confirm(`<%- t('participants.remove.confirm', { ns: 'groups',  participant : '${participant}', group : '${group.group_name}' }) %>`)){
+		if(confirm(`<%- t('participants.delete.confirm', { ns: 'groups',  participant : '${participant}', group : '${group.group_name}' }) %>`)){
 			Simva.deleteGroupParticipants(simletid, groupid, participant_id, removeKeycloak, function(error, result){
 				if(!error){
 					reloadGroup();
@@ -438,9 +438,9 @@
 
 	let participantHeader = function(){
 		if(newGeneration) {
-			return `<tr><th></th><th><%= t("participants.username.title", { ns : "groups" }) %></th><th><%= t("participants.isToken.title", { ns : "groups" }) %></th><th><%= t("participants.token.title", { ns : "groups" }) %></th><th><%= t("participants.email.title", { ns : "groups" }) %></th><th><%= t("participants.role.title", { ns : "groups" }) %></th><th></th></tr>`;
+			return `<tr><th></th><th><%= t("participants.table.username.title", { ns : "groups" }) %></th><th><%= t("participants.table.isToken.title", { ns : "groups" }) %></th><th><%= t("participants.table.token.title", { ns : "groups" }) %></th><th><%= t("participants.table.email.title", { ns : "groups" }) %></th><th><%= t("participants.table.role.title", { ns : "groups" }) %></th><th></th></tr>`;
 		} else {
-			return `<tr><th></th><th><%= t("participants.username.title", { ns : "groups" }) %></th><th><%= t("participants.email.title", { ns : "groups" }) %></th><th><%= t("participants.role.title", { ns : "groups" }) %></th><th></th></tr>`;
+			return `<tr><th></th><th><%= t("participants.table.username.title", { ns : "groups" }) %></th><th><%= t("participants.table.email.title", { ns : "groups" }) %></th><th><%= t("participants.table.role.title", { ns : "groups" }) %></th><th></th></tr>`;
 		}
 	}
 
@@ -462,10 +462,10 @@
 			let isToken="";
 			let token="";
 			if(participant.isToken) {
-				isToken = `<%= t("participants.isToken.ok", { ns : "groups" }) %>`;
+				isToken = `<%= t("participants.isToken.true", { ns : "groups" }) %>`;
 				token = participant.token;
 			} else {
-				isToken = `<%= t("participants.isToken.nok", { ns : "groups" }) %>`;
+				isToken = `<%= t("participants.isToken.false", { ns : "groups" }) %>`;
 				token = "-";
 			}
 			return `<tr><td><img src="/icon/user.png"></td>

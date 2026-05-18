@@ -92,75 +92,58 @@ var DefaultAllocatorPainter = {
 		this.addAllocation(groupId);
 	},
 
-	paintAllocator: function(allocator){
-		this.allocator = allocator;
-
-		let topaint = `<p class="subtitle italic">${this.type_title}: <span id="allocator_type">${this.type_translated}</span></p>
-			<p class="subtitle justified">${this.description}</p>
-			<table id="allocator_participants" class="allocations">`;
-
-		if(allocator.allocations){
-			let keys = Object.keys(allocator.allocations);
-
-			for (var i = 0; i < keys.length; i++) {
-				let userId = keys[i];
-				let participant = this.participants.find(p => p.user_id == userId);
-				let displayUser = (allocator.data && allocator.data.displayparticipants && allocator.data.displayparticipants[userId]) 
-					|| (participant ? participant.username : userId);
-				topaint += this.generateRow({user_id: userId, displayUser: displayUser, test: allocator.allocations[userId]});
-			}
-		}
-
-		topaint += '</table><input class="violet" type="button" value="Add Allocation" onclick="toggleAllocatorForm()">';
-
-		$('#allocator_content').html(topaint);
-	},
-
 	paintAllocatorForGroup: function(group, selector){
 		this.allocator = group;
 
-		let topaint = `<p class="subtitle italic">${this.type_title}: <span>${this.type_translated}</span></p>
+		let topaint = `
+			<p class="subtitle italic">${this.type_title}: <span>${this.type_translated}</span></p>
 			<p class="subtitle justified">${this.description}</p>
-			<table class="allocations">`;
+		`;
+		$(selector).html(topaint);
 
 		// Get participants for this specific group
 		let groupParticipants = this.participants.filter(p => group.participants && group.participants.includes(p.user_id));
 
 		if(groupParticipants.length > 0){
+			// Find the users table and add a cell in the header before the last one 
+			const table = $(selector).siblings(".participants_container").find(".participants");
+			let row = $(table.find("thead tr")).first();
+			row.find('th:last').before(`<th>${this.test_title}</th>`);
+
 			for (var i = 0; i < groupParticipants.length; i++) {
 				let participant = groupParticipants[i];
+
+				// Get the allocated session for this user from allocations
 				let allocatedTest = (group.allocations && group.allocations[participant.user_id]) 
 					? group.allocations[participant.user_id] 
 					: (this.tests.length > 0 ? this.tests[0].session_id : null);
-				let displayUser = participant.isToken ? participant.token : participant.username;
-				topaint += this.generateRowForGroup({
-					user_id: participant.user_id, 
-					displayUser: displayUser, 
-					test: allocatedTest,
-					group_id: group.group_id
-				});
+
+				// Add a cell in the table before the last column with the session selector for the user row 
+				row = $(table.find("tbody tr")).eq(i)
+				row.find('td:last').before(`<td>
+					${this.generateUserGroupSelector({
+							user_id: participant.user_id, 
+							test: allocatedTest,
+							group_id: group.group_id
+						})
+					}
+				</td>`);
 			}
-		} else {
-			topaint += '<tr><td colspan="2">No participants in this group</td></tr>';
 		}
-
-		topaint += '</table>';
-
-		$(selector).html(topaint);
 	},
 
-	generateRowForGroup: function(allocation){
-		let topaint = `<tr><td>${allocation.displayUser}</td>
-			<td><select id="allocation_${allocation.group_id}_${allocation.user_id}"
+	generateUserGroupSelector: function(allocation){
+		let topaint = `<select id="allocation_${allocation.group_id}_${allocation.user_id}"
 			onchange="DefaultAllocatorPainter.updateAllocationForGroup('${allocation.group_id}', '${allocation.user_id}')">`;
 
+		// Add all the sessions to the selector
 		for (var i = 0; i < this.tests.length; i++) {
 			let selected = (this.tests[i].session_id === allocation.test ? 'selected' : '');
 			topaint += `<option value="${this.tests[i].session_id}" ${selected}> 
 			${this.tests[i].session_name}</option>`;
 		}
 
-		topaint += '</select></td></tr>';
+		topaint += '</select>';
 		return topaint;
 	},
 
@@ -201,64 +184,6 @@ var DefaultAllocatorPainter = {
 		});
 	},
 
-	generateRow: function(allocation){
-		let groupId = this.findGroupForParticipant(allocation.user_id);
-		let topaint = `<tr><td>${allocation.displayUser}</td>
-			<td><select id="allocation_${allocation.user_id}"
-			onchange="DefaultAllocatorPainter.updateAllocation('${allocation.user_id}', '${groupId}')">`;
-
-		for (var i = 0; i < this.tests.length; i++) {
-			let selected = (this.tests[i].session_id === allocation.test ? 'selected' : '');
-			topaint += `<option value="${this.tests[i].session_id}" ${selected}> 
-			${this.tests[i].session_name}</option>`;
-		}
-
-		return topaint;
-	},
-
-	updateAllocation: function(userId, groupId){
-		let previous = this.allocator.allocations[userId];
-		let tmp = this;
-		const selectedTest = $(`#allocation_${userId}`).val();
-		const participantId = parseInt(userId, 10);
-
-		if (Number.isNaN(participantId)) {
-			$.toast({
-				heading: tmp.add_error,
-				text: 'Invalid participant id',
-				position: 'top-right',
-				icon: 'error',
-				stack: false
-			});
-			return;
-		}
-
-		if(this.allocator.allocations){
-			this.allocator.allocations[userId] = $(`#allocation_${userId}`).val();
-			Simva.allocateToSession(tmp.study.simlet_id, groupId, selectedTest, { participant_id: participantId }, function(error, result){
-				if(error){
-					tmp.allocator.allocations[userId] = previous;
-					$(`#allocation_${userId}`).val(previous);
-
-					$.toast({
-						heading: tmp.add_error,
-						text: error.message,
-						position: 'top-right',
-						icon: 'error',
-						stack: false
-					});
-				}else{
-					$.toast({
-						heading: tmp.add_message,
-						position: 'top-right',
-						icon: 'success',
-						stack: false
-					});
-					reloadStudy();
-				}
-			});
-		}
-	},
 
 	addAllocation: function(groupId){
 		let tmp = this;
