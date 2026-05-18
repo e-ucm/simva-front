@@ -1441,12 +1441,16 @@ module.exports = function(auth, config){
                         case 'manual':
 							communSpecific['result_file_prefix'] = req.t(`${element.activity_type}.result.file.prefix`, { ns : 'activities' } );
                             communSpecific['result_title'] = req.t(`${element.activity_type}.result.title`, { ns : 'activities' } );
+                            communSpecific['result_description'] = req.t(`${element.activity_type}.result.description`, { ns : 'activities' } );
                             communSpecific['result_zero'] = req.t(`${element.activity_type}.result.zero`, { ns : 'activities' } );
                             communSpecific['result_view_partial_value'] = req.t(`${element.activity_type}.result.view.partial`, { ns : 'activities' } );
                             communSpecific['result_view_final_value'] = req.t(`${element.activity_type}.result.view.final`, { ns : 'activities' } );
                             communSpecific['storage_title'] = req.t(`${element.activity_type}.storage.title`, { ns : 'activities' } );
+                            communSpecific['storage_description'] = req.t(`${element.activity_type}.storage.description`, { ns : 'activities' } );
                             communSpecific['storage_file_suffix_array'] = req.t(`${element.activity_type}.storage.file.array.suffix`, { ns : 'activities' } );
                             communSpecific['storage_file_suffix_one_per_line'] = req.t(`${element.activity_type}.storage.file.one_per_line.suffix`, { ns : 'activities' } );
+                            communSpecific['restarted_title'] = req.t(`${element.activity_type}.restarted.title`, { ns : 'activities' } );
+                            communSpecific['restarted_description'] = req.t(`${element.activity_type}.restarted.description`, { ns : 'activities' } );
                             break;
 						default:
 							break; 
@@ -1461,7 +1465,7 @@ module.exports = function(auth, config){
                             specific['new_title'] = req.t(`${element.activity_type}.new.title`, { ns : 'activities' } );
                             specific['new_description'] = req.t(`${element.activity_type}.new.description`, { ns : 'activities' } );
                             specific['upload_title'] = req.t(`${element.activity_type}.upload.title`, { ns : 'activities' } );
-                            specific['upload_message'] = req.t(`${element.activity_type}.upload.message`, { ns : 'activities' } );
+                            specific['upload_description'] = req.t(`${element.activity_type}.upload.description`, { ns : 'activities' } );
                             specific['language_title'] = req.t(`${element.activity_type}.language.title`, { ns : 'activities' } );
                             specific['survey_title'] = req.t(`${element.activity_type}.survey.title`, { ns : 'activities' } );
                             specific['edit_title'] = req.t(`${element.activity_type}.edit.title`, { ns : 'activities' } );
@@ -1470,17 +1474,31 @@ module.exports = function(auth, config){
                             specific['backup_code_title'] = req.t(`${element.activity_type}.backup.code.title`, { ns : 'activities' } );
 							break;
 						case 'gameplay':
-                            specific['xapi_by_game_title'] = req.t(`${element.activity_type}.xapi_by_game.title`, { ns : 'activities' } );
                             specific['game_uri_title'] = req.t(`${element.activity_type}.game_uri.title`, { ns : 'activities' } );
-                            specific['game_uri_explication'] = req.t(`${element.activity_type}.game_uri.explication`, { ns : 'activities' } );
+                            specific['game_uri_description'] = req.t(`${element.activity_type}.game_uri.description`, { ns : 'activities' } );
                             specific['xasu_title'] = req.t(`${element.activity_type}.xasu.title`, { ns : 'activities' } );
+                            specific['upload_title'] = req.t(`${element.activity_type}.upload.title`, { ns : 'activities' } );
+                            specific['upload_description'] = req.t(`${element.activity_type}.upload.description`, { ns : 'activities' } );
+                            specific['xapi_by_game_title'] = req.t(`${element.activity_type}.xapi_by_game.title`, { ns : 'activities' } );
+                            specific['xapi_by_game_description'] = req.t(`${element.activity_type}.xapi_by_game.description`, { ns : 'activities' } );
+                            specific['web_title'] = req.t(`${element.activity_type}.web.title`, { ns : 'activities' } );
+                            specific['web_description'] = req.t(`${element.activity_type}.web.description`, { ns : 'activities' } );
+                            specific['desktop_title'] = req.t(`${element.activity_type}.desktop.title`, { ns : 'activities' } );
+                            specific['desktop_description'] = req.t(`${element.activity_type}.desktop.description`, { ns : 'activities' } );
 							break;
                         case 'manual':
                             specific['student_complete_title'] = req.t(`${element.activity_type}.student_complete.title`, { ns : 'activities' } );
+                            specific['student_complete_description'] = req.t(`${element.activity_type}.student_complete.description`, { ns : 'activities' } );
                             specific['student_complete_ok'] = req.t(`${element.activity_type}.student_complete.ok`, { ns : 'activities' } );
                             specific['student_complete_nok'] = req.t(`${element.activity_type}.student_complete.nok`, { ns : 'activities' } );
                             specific['uri_title'] = req.t(`${element.activity_type}.uri.title`, { ns : 'activities' } );
-                            specific['uri_explication'] = req.t(`${element.activity_type}.uri.explication`, { ns : 'activities' } );
+                            specific['uri_description'] = req.t(`${element.activity_type}.uri.description`, { ns : 'activities' } );
+                            specific['upload_title'] = req.t(`${element.activity_type}.upload.title`, { ns : 'activities' } );
+                            specific['upload_description'] = req.t(`${element.activity_type}.upload.description`, { ns : 'activities' } );
+                            specific['web_title'] = req.t(`${element.activity_type}.web.title`, { ns : 'activities' } );
+                            specific['web_description'] = req.t(`${element.activity_type}.web.description`, { ns : 'activities' } );
+                            specific['external_title'] = req.t(`${element.activity_type}.external.title`, { ns : 'activities' } );
+                            specific['external_description'] = req.t(`${element.activity_type}.external.description`, { ns : 'activities' } );
 							break;
                         case 'imspackage':
                             specific['package_title'] = req.t(`${element.activity_type}.package.title`, { ns : 'activities' } );
