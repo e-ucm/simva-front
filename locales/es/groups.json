@@ -1,8 +1,6 @@
 { 
     "title": "Grupos",
     
-    "deprecated.title": "Grupos (obsoletos)",
-    "deprecated.message": "Esta pestaña ha quedado obsoleta. Por favor, prefiera utilizar la nueva versión de la página de grupo.",
     "zero.message.title": "Aún no tienes 0 grupos. Crea uno utilizando el botón inferior derecho (+).",
     "remove.confirm": "¿Está seguro de que desea eliminar el grupo '{{group}}'?\nEl grupo se retirará a todos los estudios, pruebas y actividades.",
     "single.title":"Grupo",
@@ -48,6 +46,9 @@
     "participants.errormessage.zeroInGroup.title":"No hay participantes en este grupo.",
     "participants.errormessage.zeroInGroup.message":"Pruebe a añadir algunos utilizando el botón de la derecha.",
 
+    "deprecated.title": "Usar versión obsoleta de generación de código",
+    "deprecated.message": "/!\\ Este grupo utiliza la versión obsoleta de generación de códigos.",
+    "deprecated.tooltip": "/!\\ Este grupo utilizará la versión obsoleta de generación de códigos.",
 
     "add.title": "Añadir grupo",
         "add.tab":"Añadir grupo",

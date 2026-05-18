@@ -47,6 +47,8 @@
                     </ul>
                 </div>
             </div>
+			<div class="deprecated_generation">
+            </div>
             <div class="allocatorContent">
             </div>
             <div class="participants_container">
@@ -114,6 +116,9 @@
 					<input hidden type="text" name="prevGroupName" id="prev_group_name">
 					<h3><%- t('name.title', { ns : 'groups' }) %></h3>
 					<input type="text" name="groupName" id="group_name" placeholder="<%- t('name.placeholder', { ns : 'groups' }) %>" required>
+
+					<h3><%- t('deprecated.title', { ns : 'groups' }) %></h3>
+					<input type="checkbox" name="group_use_deprecated_generation" id="group_use_deprecated_generation" title="<%- t('deprecated.tooltip', { ns : 'groups' }) %>"><label for="group_use_deprecated_generation" ><%- t('deprecated.title', { ns : 'groups' }) %></label>
 					<br><br>
 					<input type="submit" id="group_submit" value="">
 				</form>
@@ -364,11 +369,8 @@
 			
 			// Creating new group
 			if (form.editingGroupId == null || form.editingGroupId == "") { 
-				// TEST
-				form.group_sandbox = false;
-				let newGeneration = true;
-
-				Simva.addGroup(studyid, { group_name : form.groupName, group_sandbox : Boolean(form.group_sandbox), group_use_new_generation : newGeneration }, function(error, result) {
+				let newGeneration = !Boolean(form.group_use_deprecated_generation);
+				Simva.addGroup(studyid, { group_name : form.groupName, group_sandbox : false, group_use_new_generation : newGeneration }, function(error, result) {
 					if (error && error.responseJSON) {
 						Utils.toggleSubmit(currentform);
 						errorbox.text(error.responseJSON.message);
@@ -769,6 +771,9 @@
 		} 
         else {
 			for (var i = 0; i < groups.length; i++) {
+				if(Boolean(groups[i].group_sandbox)) {
+					continue;
+				}
 				addGroupBox(groups[i])
 				paintAllocator(groups[i], tests, groups, participants);
 			}
@@ -798,6 +803,11 @@
 		box.find(".allocatorContent").attr("id", `allocator_content_${group.group_id}`);
 
 		box.find(".groupTitle").text(group.group_name);
+		if(Boolean(group.group_use_new_generation)) {
+			box.find(".deprecated_generation").remove();
+		} else {
+			box.find(".deprecated_generation").html("<p><%- t('deprecated.message', { ns : 'groups' }) %></p>");
+		}
 		const table = box.find(".participants");
         
 		if (group.participants.length == 0) {

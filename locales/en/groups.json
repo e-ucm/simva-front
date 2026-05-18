@@ -1,8 +1,6 @@
 { 
     "title": "Groups",
 
-    "deprecated.title": "Groups (Deprecated)",
-    "deprecated.message": "This tab has been deprecated. Please prefer use the new group page version.",
     "zero.message.title": "You have 0 groups yet. Create one using the bottom right (+) button.",
     "remove.confirm": "Are you sure you want to delete the group '{{group}}'?\nGroup will be removed to all the studies, tests and activities.",
     "single.title":"Group",
@@ -48,6 +46,9 @@
     "participants.errormessage.zeroInGroup.title":"There are no participants in this group.",
     "participants.errormessage.zeroInGroup.message":"Try adding some using the button on the right.",
 
+    "deprecated.title": "Use deprecated version of token generation",
+    "deprecated.message": "/!\\ This group use the deprecated version of token generation.",
+    "deprecated.tooltip": "/!\\ This group will use the deprecated version of token generation.",
     
     "add.title": "Add group",
         "add.tab":"Add group",

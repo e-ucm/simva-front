@@ -1,8 +1,6 @@
 { 
     "title": "Groupes",
-    
-    "deprecated.title": "Groupes (obsolète)",
-    "deprecated.message": "Cet onglet est obsolète. Préférez la nouvelle version de la page du groupe.",
+
     "zero.message.title": "Vous avez encore 0 groupe. Créez-en un en utilisant le bouton en bas à droite (+).",
     "remove.confirm": "Êtes-vous sûr de vouloir supprimer le groupe '{{group}}'?\nLe groupe sera supprimé de toutes les études, tests et activités.",
     "single.title":"Groupe",
@@ -47,8 +45,11 @@
     "participants.errormessage.alreadyInGroup":"Le participant '{{participant}}' est déjà dans le groupe '{{group}}'.",
     "participants.errormessage.zeroInGroup.title":"Il n'y a pas de participants dans ce groupe.",
     "participants.errormessage.zeroInGroup.message":"Essayez d'en ajouter en utilisant le bouton à droite.",
-
     
+    "deprecated.title": "Utiliser la version obsolète de génération de code",
+    "deprecated.message": "/!\\ Ce groupe utilise la version obsolète de génération de code.",
+    "deprecated.tooltip": "/!\\ Ce groupe utilisera la version obsolète de génération de code.",
+
     "add.title": "Ajouter un groupe",
         "add.tab":"Ajouter un groupe",
             "add.submit": "Ajouter le groupe",
