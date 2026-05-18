@@ -37,32 +37,16 @@
                     <li class="kebab-icon icon-delete" title="<%- t('settings.delete.title', { ns : 'sessions' }) %>">
                         <%- t('settings.delete.title', { ns : 'sessions' }) %>
                     </li>
-					<li class="kebab-icon icon-tester" title="<%- t('sessions.set_tester', { ns : 'sessions' }) %>" onclick="resetTesterAction(this, 'set')">
+					<li class="kebab-icon icon-tester" title="<%- t('sessions.set_tester', { ns : 'sessions' }) %>">
 						<%- t('sessions.set_tester', { ns : 'sessions' }) %>
 					</li>
-					<li class="kebab-icon icon-reset-tester" title="<%- t('sessions.reset_tester', { ns : 'sessions' }) %>" onclick="resetTesterAction(this, 'reset')">
+					<li class="kebab-icon icon-reset-tester" title="<%- t('sessions.reset_tester', { ns : 'sessions' }) %>">
 						<%- t('sessions.reset_tester', { ns : 'sessions' }) %>
 					</li>
-					<li class="kebab-icon icon-untester" title="<%- t('sessions.unset_tester', { ns : 'sessions' }) %>" onclick="resetTesterAction(this, 'unset')">
+					<li class="kebab-icon icon-untester" title="<%- t('sessions.unset_tester', { ns : 'sessions' }) %>">
 						<%- t('sessions.unset_tester', { ns : 'sessions' }) %>
 					</li>
 				</ul>
-				<script>
-				function resetTesterAction(el, action) {
-					var $test = $(el).closest('.test');
-					var sessionId = $test.data('session-id') || $test.attr('id')?.replace('test_', '');
-					if (!sessionId) return;
-					if (action === 'set') {
-						Simva.setTesterForSession(studyid, sessionId, function() { location.reload(); });
-					} else if (action === 'unset') {
-						Simva.unsetTesterForSession(studyid, sessionId, function() { location.reload(); });
-					} else if (action === 'reset') {
-						Simva.unsetTesterForSession(studyid, sessionId, function() {
-							Simva.setTesterForSession(studyid, sessionId, function() { location.reload(); });
-						});
-					}
-				}
-				</script>
                 </ul>
             </div>
         </div>
@@ -454,11 +438,57 @@
 		unsetTesterForSession(data[sessionDataIdKey]);
 	});
 
+	$(document).on('click', ".sessionTop .icon-reset-tester", function(e) {
+		const data = $(this).closest(".test").data();
+		resetTesterForSession(data[sessionDataIdKey]);
+	});
+
 	$(document).on('click', ".sessionTop .icon-tester", function(e) {
 		const data = $(this).closest(".test").data();
 		console.log("setting tester for session id:", data[sessionDataIdKey]);
 		setTesterForSession(data[sessionDataIdKey]);
 	});
+
+	function setTesterForSession(sessionId) {
+        Simva.setTesterForSession(studyid, sessionId, function(error, result) {
+            if (error) {
+                $.toast({ heading: 'Error', text: 'Failed to set tester.', position: 'top-right', icon: 'error', stack: false });
+            } else {
+                $.toast({ heading: 'Tester set', text: 'You are now a tester in this session.', position: 'top-right', icon: 'success', stack: false });
+				reloadStudy();
+            }
+        });
+    }
+
+	// Remove current user as tester (participant) from the session
+	function unsetTesterForSession(sessionId) {
+		Simva.unsetTesterForSession(studyid, sessionId, function(error, result) {
+			if (error) {
+				$.toast({ heading: 'Error', text: 'Failed to unset tester.', position: 'top-right', icon: 'error', stack: false });
+			} else {
+				$.toast({ heading: 'Tester unset', text: 'You are no longer a tester in this session.', position: 'top-right', icon: 'success', stack: false });
+				//reloadStudy();
+			}
+		});
+	}
+
+	function resetTesterForSession(sessionId) {
+		Simva.unsetTesterForSession(studyid, sessionId, function(error, result) {
+			if (error) {
+				$.toast({ heading: 'Error', text: 'Failed to reset tester.', position: 'top-right', icon: 'error', stack: false });
+			} else {
+				Simva.setTesterForSession(studyid, sessionId, function(setError, setResult) {
+					if (setError) {
+						$.toast({ heading: 'Error', text: 'Failed to reset tester.', position: 'top-right', icon: 'error', stack: false });
+					} else {
+						$.toast({ heading: 'Tester reset', text: 'Your tester data has been reset for this session.', position: 'top-right', icon: 'success', stack: false });
+						reloadStudy();
+					}
+				});
+			}
+		});
+	}
+	
 	
 	$(document).on('click', ".sessionDownload", function(e) {
 		const data = $(this).closest(".test").data();

@@ -307,7 +307,7 @@ var LimeSurveyPainter = {
 			${topBar}
 			<p class="subtitle" title="${this.description || ''}">${this.simple_name}</p>
 			<div class="activity-meta">
-				<p>${this.specific.survey_title}: <a target="_blank" href="${this.utils.url}${activity.survey_id}">${activity.survey_id}</a></p>
+				<p>${this.specific.survey_title}: <a onclick="LimeSurveyPainter.openEditLimesurvey('${activity.activity_id}', '${activity.survey_id}')">${activity.survey_id}</a></p>
 				<p>${this.specific.language_title}: ${activity.survey_language}</p>
 			</div>
 			${PainterFactory.Painters["activity"].paintActivityParticipantsTable(activity, participants, false)}</div>`);

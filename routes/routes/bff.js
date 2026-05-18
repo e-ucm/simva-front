@@ -597,13 +597,16 @@ module.exports = function(auth, config){
     router.post('/studies/:studyid/tests/:testid/set-tester', auth, async (req, res, next) => {
         const studyid = req.params['studyid'];
         const testid = req.params['testid'];
-        const userId = (await SimvaAsync.getCurrentUser(req.session.id)).user_id;
+        const user = await SimvaAsync.getCurrentUser(req.session.id);
+        const userId = user.user_id;
+        const username = user.username;
+        const groupName = `tester_${studyid}_${userId}_${username}`;
         try {
             // 1. Find or create sandbox group for user
             let groups = await SimvaAsync.getStudyGroups(studyid, req.session.id);
-            let myGroup = groups.find(g => g.group_sandbox === true && g.group_owner_user_id === userId);
+            let myGroup = groups.find(g => g.group_sandbox === true && g.group_name === groupName);
             if (!myGroup) {
-                myGroup = await SimvaAsync.addGroup(studyid, { group_name: 'Tester ' + userId, group_use_new_generation: false, group_sandbox: true }, req.session.id);
+                myGroup = await SimvaAsync.addGroup(studyid, { group_name: groupName, group_use_new_generation: false, group_sandbox: true }, req.session.id);
             }
             // 2. Add user as participant if not already
             let participants = await SimvaAsync.getGroupParticipants(studyid, myGroup.group_id, req.session.id);
@@ -623,11 +626,14 @@ module.exports = function(auth, config){
     router.post('/studies/:studyid/tests/:testid/unset-tester', auth, async (req, res, next) => {
         const studyid = req.params['studyid'];
         const testid = req.params['testid'];
-        const userId = (await SimvaAsync.getCurrentUser(req.session.id)).user_id;
+        const user = await SimvaAsync.getCurrentUser(req.session.id);
+        const userId = user.user_id;
+        const username = user.username;
         try {
             // Find sandbox group for user
             let groups = await SimvaAsync.getStudyGroups(studyid, req.session.id);
-            let myGroup = groups.find(g => g.group_sandbox === true && g.group_owner_user_id === userId);
+            const groupName = `tester_${studyid}_${userId}_${username}`;
+            let myGroup = groups.find(g => g.group_sandbox === true && g.group_name === groupName);
             if (!myGroup) {
                 throw new Error('Tester group not found');
             }

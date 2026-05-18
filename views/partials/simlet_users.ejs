@@ -715,31 +715,6 @@
 		}
 	}
 
-
-    function setTesterForSession(sessionId) {
-        Simva.setTesterForSession(studyid, sessionId, function(error, result) {
-            if (error) {
-                $.toast({ heading: 'Error', text: 'Failed to set tester.', position: 'top-right', icon: 'error', stack: false });
-            } else {
-                $.toast({ heading: 'Tester set', text: 'You are now a tester in this session.', position: 'top-right', icon: 'success', stack: false });
-				reloadStudy();
-            }
-        });
-    }
-
-	// Remove current user as tester (participant) from the session
-	function unsetTesterForSession(sessionId) {
-		Simva.unsetTesterForSession(studyid, sessionId, function(error, result) {
-			if (error) {
-				$.toast({ heading: 'Error', text: 'Failed to unset tester.', position: 'top-right', icon: 'error', stack: false });
-			} else {
-				$.toast({ heading: 'Tester unset', text: 'You are no longer a tester in this session.', position: 'top-right', icon: 'success', stack: false });
-				reloadStudy();
-			}
-		});
-	}
-	
-
 	// Render
 
 	let paintAddGroup = function(groups) {
