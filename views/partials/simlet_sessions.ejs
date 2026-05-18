@@ -312,6 +312,7 @@
     });
 
     const openTestForm = function(testId) {
+		// Always open form in the create/edit common tab
 		Utils.changeTab($('#session_name_desc_tab_button'), 'session_form_form','session_name_desc_tab');
 
 		let test = getTestFromTestId(testId);

@@ -139,8 +139,7 @@ var DefaultAllocatorPainter = {
 		// Add all the sessions to the selector
 		for (var i = 0; i < this.tests.length; i++) {
 			let selected = (this.tests[i].session_id === allocation.test ? 'selected' : '');
-			topaint += `<option value="${this.tests[i].session_id}" ${selected}> 
-			${this.tests[i].session_name}</option>`;
+			topaint += `<option value="${this.tests[i].session_id}" ${selected}> ${this.tests[i].session_name}</option>`;
 		}
 
 		topaint += '</select>';

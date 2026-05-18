@@ -29,7 +29,7 @@ var GameplayActivityPainter = {
 			<p><label for="gameplay_restarted"><b>${this.communSpecific.restarted_title}</b></label><input title="${this.communSpecific.restarted_description}" id="gameplay_restarted" type="checkbox" name="restarted"></p>
 			<p><label for="gameplay_restarted"><i>${this.communSpecific.restarted_description}</i></label></p>
 			<div class="tabs" class="gameplay_tabs">
-				<span class="tab selected" method="WEB" title="${this.specific.web_description}" onclick="Utils.changeTab(this, 'gameplay_activity','gameplay_web')">${this.specific.web_title}</span>
+				<span id="gameplay_web_tab_button" class="tab selected" method="WEB" title="${this.specific.web_description}" onclick="Utils.changeTab(this, 'gameplay_activity','gameplay_web')">${this.specific.web_title}</span>
 				<span class="tab" method="DESKTOP" title="${this.specific.desktop_description}" onclick="Utils.changeTab(this, 'gameplay_activity','gameplay_desktop')">${this.specific.desktop_title}</span>
 			</div>
 			<div id="gameplay_web" class="subform selected" style="display: block;">

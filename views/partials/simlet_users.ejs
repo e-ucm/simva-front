@@ -526,6 +526,7 @@
     }
 	
 	const openGroupForm = function(groupId) {
+		// Always open form in the create/edit common tab
 		Utils.changeTab($('#group_name_desc_tab_button'), 'group_form','group_name_desc_tab');
 		Utils.toggleAddForm("group_form_menu");
 
@@ -558,6 +559,7 @@
 
 	const openParticipantForm = function(groupId) {
 		editingGroupId = groupId;
+		// Always open form in the add existing participant tab
 		Utils.changeTab($('#existing_participant_tab_button'), 'add_participant_form','existing_participant_tab');
 		Utils.toggleAddForm("add_participant");
 	}
@@ -820,6 +822,7 @@
 			box.find(".participants_container").append("<p><%- t('participants.no_users.message', { ns : 'groups' }) %></p>")
 		}
 		else {
+			// console.log(study.participants, group.participants)
 			study.participants.forEach(function(participant) {
 				if (group.participants.includes(participant.user_id) && participant.group_id == group.group_id) {
 					let role = participant.role === "teacher" ? `<%- t('teacher', { ns : 'roles' }) %>` : `<%- t('student', { ns : 'roles' }) %>`

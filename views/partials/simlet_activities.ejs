@@ -2,7 +2,7 @@
     <div class="floater">
         <div class="form" id="add_activity_form">
             <div class="tabs">
-                <span class="tab selected" onclick="Utils.changeTab(this, 'add_activity_form','new_activity_tab')"><%- t('add.new.title', { ns : 'activities' }) %></span>
+                <span id="new_activity_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'add_activity_form','new_activity_tab')"><%- t('add.new.title', { ns : 'activities' }) %></span>
 				<span class="tab" type="hidden" onclick="Utils.changeTab(this, 'add_activity_form','import_activity_tab')"><%- t('import.title', { ns : 'activities' }) %></span>
                 <!--<span class="tab" type="hidden" onclick="Utils.changeTab(this, 'add_activity_form','existing_activity_tab')"><%- t('add.existing.title', { ns : 'activities' }) %></span>-->
             </div>
@@ -247,7 +247,11 @@
     });
 
     let openActivityForm = function(test) {
+		// Always open form in the new activity tab and the gameplay web tab
+		Utils.changeTab($('#new_activity_tab_button'), 'add_activity_form','new_activity_tab');
+		Utils.changeTab($('#gameplay_web_tab_button'), 'gameplay_tabs','gameplay_web');
 		Utils.toggleAddForm('add_activity');
+		
 		$('#new_activity_form input[name="test"]').val(test);
 		$('#import_activity_form input[name="test"]').val(test);
 		$('#existing_activity_form span[class="test"]').val(test);

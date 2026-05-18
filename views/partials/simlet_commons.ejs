@@ -275,7 +275,8 @@
 
     // --- URL FORM ---
     const openUrlSettingsForm = function(studyId) {
-		Utils.changeTab($('#generate_link_length_tab_button'), 'study_form_form','study_name_desc_tab');
+		// Always open form in the generate random link with length tab
+		Utils.changeTab($('#generate_link_length_tab_button'), 'generate_study_link_form','generate_study_link_length_tab');
 
         currStudyId = studyId;
 
