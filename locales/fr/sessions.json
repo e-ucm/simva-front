@@ -61,7 +61,9 @@
         "delete.confirm": "Êtes-vous sûr de vouloir supprimer la session '{{session}}' de l'SIMLET '{{SIMLET}}'?\nToutes les activités et les données seront également supprimées",
     
     "settings.export.title": "Exporter",
-    "sessions.set_tester": "Me définir comme testeur dans cette session",
-    "sessions.reset_tester": "Réinitialiser testeur (retirer et remettre)",
-    "sessions.unset_tester": "Me retirer comme testeur"
+    "set_tester.title": "Me définir comme testeur dans cette session",
+    "reset_tester.title": "Réinitialiser testeur (retirer et remettre)",
+    "unset_tester.title": "Me retirer comme testeur",
+    "test_download.title": "Télécharger les données de test",
+    "test_download.description": "Télécharger vos propres données de trace de test pour cette session."
 }

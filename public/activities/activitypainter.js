@@ -229,17 +229,17 @@ var ActivityPainter = {
 		}
 		console.log("painting activity with type:", currentUser, "Is current user participant:", isCurrentUserParticipant);
 		const testDownloadBtn = isCurrentUserParticipant
-			? `<li class="kebab-icon icon-download" title="${this.commun.test_download_tooltip || 'Download your own test trace data for this activity.'}" onclick="PainterFactory.Painters['activity'].getMinioTestData('${activity.activity_id}')"><b>${this.commun.test_download_title || 'Download test data'}</b></li>`
+			? `<li class="kebab-icon icon-download" title="${this.commun.test_download_tooltip}" onclick="PainterFactory.Painters['activity'].getMinioTestData('${activity.activity_id}')"><b>${this.commun.test_download_title}</b></li>`
 			: '';
 		return `<div class="top"><h4>${activity.activity_name}</h4>
 			<div class="activityTopActions">
-				<div class="activityDownload kebab-icon icon-download" title="${this.commun.download_tooltip || 'Download all available data for this activity.'}" onclick="PainterFactory.Painters['activity'].getMinioData('${activity.activity_id}')"><b>${this.commun.download_title || 'Download data'}</b></div>
+				<div class="activityDownload kebab-icon icon-download" title="${this.commun.download_tooltip}" onclick="PainterFactory.Painters['activity'].getMinioData('${activity.activity_id}')"><b>${this.commun.download_title}</b></div>
 				
 				<div class="kebab">
 					<ul class="kebab-dropdown">
-						<li class="kebab-icon icon-edit" title="${this.commun.edit_title || 'Edit'}" onclick="openEditActivityForm('${activity.activity_id}')">${this.commun.edit_title || 'Edit'}</li>
-						<li class="kebab-icon icon-delete" title="${this.commun.delete_title || 'Delete'}" onclick="deleteActivity('${activity.activity_id}', '${activity.activity_name}', '${activity.session_id}')">${this.commun.delete_title || 'Delete'}</li>
-						<li class="kebab-icon icon-url" title="${this.commun.tmon_title || 'T-Mon Dashboard'}" onclick="PainterFactory.Painters['activity'].getTMonUrl('${activity.activity_id}','${activity.session_id}','${activity.study}')">${this.commun.tmon_title || 'T-Mon Dashboard'}</li>
+						<li class="kebab-icon icon-edit" title="${this.commun.edit_title}" onclick="openEditActivityForm('${activity.activity_id}')">${this.commun.edit_title}</li>
+						<li class="kebab-icon icon-delete" title="${this.commun.delete_title}" onclick="deleteActivity('${activity.activity_id}', '${activity.activity_name}', '${activity.session_id}')">${this.commun.delete_title}</li>
+						<li class="kebab-icon icon-url" title="${this.commun.tmon_title}" onclick="PainterFactory.Painters['activity'].getTMonUrl('${activity.activity_id}','${activity.session_id}','${activity.study}')">${this.commun.tmon_title}</li>
 						${testDownloadBtn}
 						${extraItems}
 					</ul>
@@ -250,20 +250,20 @@ var ActivityPainter = {
 	paintActivity: function(activity, participants){
 		$(`#test_${activity.session_id} .activities`).append(`<div id="activity_${activity.activity_id}" class="activity t${activity.activity_type}">
 			${this.paintActivityTopBar(activity, this.getExtraKebabItems(activity))}
-			<p class="subtitle" title="${this.description || ''}">${this.simple_name}</p>
+			<p class="subtitle" title="${this.description}">${this.simple_name}</p>
 			${this.paintActivityParticipantsTable(activity, participants, true)}</div>`);
 	},
 
 	paintActivityParticipantsTable: function(activity, participants, checkbox=false, progress=true, result=true, init=true){
-		const participantTooltip = this.commun.participant_tooltip || 'Participant identifier shown as username or token.';
-		const initTooltip = this.commun.init_tooltip || 'Initialization state: whether the participant has started initialization.';
-		const progressTooltip = this.commun.progress_tooltip || 'Current progress percentage of the participant in this activity.';
-		const completedTooltip = this.commun.completed_tooltip || 'Completion state: whether the participant has completed the activity.';
-		const resultTooltip = this.commun.result_tooltip || 'Result status and access to available result/backup data.';
-		const completedBarTooltip = this.commun.completed_bar_tooltip || 'Global completion summary for this activity: completed participants over total participants.';
-		const initBarTooltip = this.commun.init_bar_tooltip || 'Global initialization summary for this activity: initialized participants over total participants.';
-		const progressBarTooltip = this.commun.progress_bar_tooltip || 'Global progress summary for this activity: completed and in-progress participants over total participants.';
-		const resultBarTooltip = this.commun.result_bar_tooltip || 'Global result summary for this activity: participants with partial/final results over total participants.';
+		const participantTooltip = this.commun.participant_tooltip;
+		const initTooltip = this.commun.init_bar_tooltip;
+		const progressTooltip = this.commun.progress_tooltip;
+		const completedTooltip = this.commun.completed_tooltip;
+		const resultTooltip = this.commun.result_tooltip;
+		const completedBarTooltip = this.commun.completed_bar_tooltip;
+		const initBarTooltip = this.commun.init_bar_tooltip;
+		const progressBarTooltip = this.commun.progress_bar_tooltip;
+		const resultBarTooltip = this.commun.result_bar_tooltip;
 
 		let toret = `<div id="completion_progress_${activity.activity_id}" class="progress" title="${completedBarTooltip}"><div class="partial"></div><div class="done"></div><span>${this.commun.completed_title}: <done>0</done>% [ <doneres>0</doneres>/<total>0</total> ]</span></div>`;
 		if(init) {

@@ -8,9 +8,9 @@
         "add.new.title": "Nouvelle activité",
         "add.existing.title": "Sélectionner parmi les existantes",
 
-    "edit.title": "Modifier l'activité",
+    "edit.title": "Modifier",
     
-    "delete.title": "Supprimer l'activité",
+    "delete.title": "Supprimer",
     "delete.confirm": "Êtes-vous sûr de vouloir supprimer l'activité '{{activity}}' de la session '{{session}}' de la SIMLET '{{SIMLET}}'?\nToutes les données relatives à l'activité seront également supprimées",
 
     "name.placeholder": "Nom de l'activité",
@@ -131,18 +131,18 @@
     "storage.file.one_per_line.title":"Une trace par ligne",
 
     "participant.tooltip":"Identifiant du participant affiche en tant que nom d'utilisateur ou jeton.",
-    "init.tooltip":"Etat d'initialisation: indique si le participant a commence l'activite.",
+    "init.tooltip":"Etat d'initialisation: indique si le participant a commencé l'activité.",
     "init.bar.tooltip":"Barre de resume d'initialisation: participants initialises sur le total des participants.",
-    "progress.tooltip":"Pourcentage de progression actuel du participant dans cette activite.",
+    "progress.tooltip":"Pourcentage de progression actuel du participant dans cette activité.",
     "progress.bar.tooltip":"Barre de resume de progression: participants termines et en cours sur le total des participants.",
-    "completed.tooltip":"Etat d'achevement: indique si le participant a termine l'activite.",
-    "completed.bar.tooltip":"Barre de resume d'achevement: participants ayant termine sur le total des participants.",
+    "completed.tooltip":"Etat d'achevement: indique si le participant a termine l'activité.",
+    "completed.bar.tooltip":"Barre de resumé d'achevement: participants ayant termine sur le total des participants.",
     "result.tooltip":"Etat du resultat et acces aux donnees de resultat ou de sauvegarde.",
-    "result.bar.tooltip":"Barre de resume des resultats: participants avec des resultats partiels ou finaux sur le total des participants.",
+    "result.bar.tooltip":"Barre de resumé des resultats: participants avec des resultats partiels ou finaux sur le total des participants.",
 
     "tmon.title":"Tableau de bord TMon",
-    "activity.download.title":"Telecharger les donnees",
-    "activity.download.tooltip":"Telecharger toutes les donnees disponibles pour cette activite.",
-    "activity.edit.title":"Modifier",
-    "activity.delete.title":"Supprimer"
+    "download.title":"Telecharger les donnees",
+    "download.tooltip":"Telecharger toutes les donnees disponibles pour cette activité.",
+    "test_download.title":"Telecharger les données de test",
+    "test_download.tooltip":"Telecharger les donneés de test disponibles pour cette activité."
 }

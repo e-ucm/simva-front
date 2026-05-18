@@ -8,10 +8,10 @@
         "add.new.title": "New activity",
         "add.existing.title": "Select from existing",
 
-    "activities.edit.title": "Edit activity",
+    "edit.title": "Edit",
     
-    "activities.delete.title": "Delete activity",
-    "activities.delete.confirm": "Are you sure you want to delete the activity '{{activity}}' of session '{{session}}' from SIMLET '{{SIMLET}}'?\nAll the data of the activity will be deleted too",
+    "delete.title": "Delete",
+    "delete.confirm": "Are you sure you want to delete the activity '{{activity}}' of session '{{session}}' from SIMLET '{{SIMLET}}'?\nAll the data of the activity will be deleted too",
 
     "name.placeholder": "Activity name",
 
@@ -141,8 +141,8 @@
     "result.bar.tooltip":"Result summary bar: participants with partial or final results over total participants.",
 
     "tmon.title":"Open TMon Dashboard",
-    "activity.download.title":"Download data",
-    "activity.download.tooltip":"Download all available data for this activity.",
-    "activity.edit.title":"Edit",
-    "activity.delete.title":"Delete"
+    "download.title":"Download data",
+    "download.tooltip":"Download all available data for this activity.",
+    "test_download.title":"Download test data",
+    "test_download.tooltip":"Download available test data for this activity."
 }

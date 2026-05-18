@@ -8,9 +8,9 @@
         "add.new.title": "Nueva actividad",
         "add.existing.title": "Seleccionar de las existentes",
 
-    "edit.title": "Editar actividad",
+    "edit.title": "Editar",
     
-    "delete.title": "Eliminar actividad",
+    "delete.title": "Eliminar",
     "delete.confirm": "¿Está seguro de que desea eliminar la actividad '{{activity}}' de la sesión '{{session}}' del SIMLET '{{SIMLET}}'?\nTambién se eliminarán todos los datos de la actividad",
 
     "name.placeholder": "Nombre de la actividad",
@@ -141,8 +141,8 @@
     "result.bar.tooltip":"Barra resumen de resultados: participantes con resultados parciales o finales sobre el total de participantes.",
 
     "tmon.title":"Abrir el panel TMon",
-    "activity.download.title":"Descargar datos",
-    "activity.download.tooltip":"Descargar todos los datos disponibles de esta actividad.",
-    "activity.edit.title":"Editar",
-    "activity.delete.title":"Eliminar"
+    "download.title":"Descargar datos",
+    "download.tooltip":"Descargar todos los datos disponibles de esta actividad.",
+    "test_download.title":"Descargar datos de prueba",
+    "test_download.tooltip":"Descargar datos de prueba disponibles para esta actividad."
 }
