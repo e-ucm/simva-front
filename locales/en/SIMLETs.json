@@ -1,6 +1,8 @@
 { 
     "title": "SIMLETs",
+    "description": "SIMLETs are the core of SIMVA, allowing you to create and manage your own simulations. A SIMLET is a container for all the elements of a simulation, including sessions, activities, users, and groups. You can create new SIMLETs, edit existing ones, archive those you no longer need, and manage their settings and content.",
     "archived.title": "Archived SIMLETs",
+    "archived.description": "List of SIMLETs that have been archived. You can dearchive them to make them active again.",
     "no_simlets.message": "You have no SIMLETs yet. Create one using the button on the bottom right (+)",
     "no_archived.message": "There are no archived SIMLETS",
 
@@ -62,7 +64,11 @@
         "sessions.tab.title": "Sessions",
         "users.tab.title": "Users",
 
-        
+    "tester.play.title": "Play SIMLET as tester",
+    "tester.play.description": "Play the SIMLET as a tester to experience it as a participant would. This allows you to verify that the activities and flow are working as intended before sharing it with others.",
+    "play.title": "Play SIMLET",
+    "play.description": "Play to participate in a SIMLET",
+
     "scheduler.noSIMLET.title": "You have no SIMLETs yet to participate",
     "scheduler.title": "Click here to start or continue your session in the SIMLET",
     "scheduler.current": "Current Activity: ",

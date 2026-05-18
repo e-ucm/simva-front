@@ -1,6 +1,8 @@
 { 
     "title": "SIMLETs",
+    "description": "Los SIMLETs son el núcleo de SIMVA, permitiéndote crear y gestionar tus propias simulaciones. Un SIMLET es un contenedor para todos los elementos de una simulación, incluyendo sesiones, actividades, usuarios y grupos. Puedes crear nuevos SIMLETs, editar los existentes, archivar aquellos que ya no necesites y gestionar su configuración y contenido.",
     "archived.title": "SIMLETs archivados",
+    "archived.description": "Lista de SIMLETs que han sido archivados. Puedes desarchivarlos para volver a activarlos.",
     "no_simlets.message": "Aún no tiene SIMLETs. Cree uno utilizando el botón inferior derecho (+)",
     "no_archived.message": "No hay SIMLETs archivados",
     

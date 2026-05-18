@@ -1,5 +1,6 @@
 {
     "title": "About",
+    "description": "Welcome to the SIMVA front-end! This section provides an overview of the platform, its main features, and a guide to help you navigate through the interface. Whether you're a teacher, student, researcher, or developer, you'll find useful information to get started and make the most of SIMVA.",
     "text": "This section collects navigation help, tutorials, and short explanations for SIMVA.\nUse the steps below to move through the main pages. Some options only appear for teachers, coordinators, or administrators.",
     "header.logout.title": "Header guide for visitors",
     "header.logout.description": "This is the top bar shown before login. It gives access to the public pages and the login button.",

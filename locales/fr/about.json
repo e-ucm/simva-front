@@ -1,5 +1,6 @@
 {
     "title": "À propos de",
+    "description": "Bienvenue sur le front-end de SIMVA ! Cette section fournit une vue d'ensemble de la plateforme, de ses principales fonctionnalités et un guide pour vous aider à naviguer dans l'interface. Que vous soyez enseignant, étudiant, chercheur ou développeur, vous trouverez des informations utiles pour commencer et tirer le meilleur parti de SIMVA.",
     "text": "Cette section regroupe l'aide à la navigation, les tutoriels et de courtes explications sur SIMVA.\nUtilisez les étapes ci-dessous pour parcourir les pages principales. Certaines options n'apparaissent que pour les enseignants, les coordinateurs ou les administrateurs.",
     "header.logout.title": "Guide de l'en-tête pour les visiteurs",
     "header.logout.description": "Il s'agit de la barre du haut avant connexion. Elle donne accès aux pages publiques et au bouton de connexion.",
