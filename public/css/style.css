@@ -260,10 +260,10 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .cardTitle {
 	max-width: 95%;
 	display: -webkit-box;
-	/* -webkit-line-clamp: 1; */
+	-webkit-line-clamp: 1;
 	-webkit-box-orient: vertical;
-	/* overflow: hidden;
-	text-overflow: ellipsis; */
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 .cardDescription {
 	padding: 10px;

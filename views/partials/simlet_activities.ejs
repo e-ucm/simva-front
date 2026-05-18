@@ -312,10 +312,13 @@
 			}
 		}
 
-		// Block activity deletion when SIMLET is archived
-		// TODO: hide more buttons?
+		// Block activity changes when SIMLET is archived
 		if (test.session_status == sessionFinishedStatus) {
 			$(".activityTopActions").find(".kebab-dropdown").find(".icon-delete").hide();
+			$(".activityTopActions").find(".kebab-dropdown").find(".icon-activate").hide();
+			$(".activityTopActions").find(".kebab-dropdown").find(".icon-pause").hide();
+
+			$($(".activity").find("table")).find("input:checkbox").prop("disabled", true);
 		}
 	}
 

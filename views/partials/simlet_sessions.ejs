@@ -619,7 +619,6 @@
 				sessionStatusLabel = `<%- t('paused.title', { ns : 'sessions' }) %>`;
 			}
 		} else if (sessionClass == sessionFinishedStatus) {
-			// TODO: hide delete button?
 			// Hide all action, add, and tester buttons
 			session.find(".icon-activate").hide();
 			session.find(".icon-pause").hide();

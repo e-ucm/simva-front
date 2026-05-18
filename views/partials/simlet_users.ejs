@@ -645,7 +645,7 @@
 	$(document).on('click', ".participants .red", function(e) {
 		const groupData = $(this).closest(".test").data();
 		const userData = $(this).closest("tr").data();
-		deleteParticipant(userData[userDataIdKey], userData[userDataNameKey], groupData[groupDataIdKey], groupData[groupDataNameKey], true)
+		deleteParticipant(userData[userDataIdKey], userData[userDataNameKey], groupData[groupDataIdKey], groupData[groupDataNameKey])
 	});
 
 	
@@ -683,9 +683,10 @@
 		}
 	}
 
-	let deleteParticipant = function(participant_id, participant, group_id, group, removeKeycloak=false){
+	let deleteParticipant = function(participant_id, participant, group_id, group){
 		if(confirm(`<%- t('participants.delete.confirm', { ns : 'groups',  participant : '${participant}', group : '${group}' }) %>`)) {
-			Simva.deleteGroupParticipants(studyid, group_id, participant_id, removeKeycloak, function(response) {
+			// A participant will only be removed from keycloak if it's been generated as a token
+			Simva.deleteGroupParticipants(studyid, group_id, participant_id, getParticipantFromParticipantId(participant_id).isToken, function(response) {
 				if (response.status === 200) {
 					reloadStudy();
 				}
@@ -693,7 +694,6 @@
 		}
 	}
 	
-	// TODO: TEST
 	let deletePlatform = function(platform) {
 		if (confirm(`<%- t('lti_platform.delete.confirm', { ns : 'groups', platform : '${platform}', SIMLET : '${study.simlet_name}' }) %>`)) {
 			Simva.removePlatform(platform, function(error, result) {
@@ -720,6 +720,7 @@
 			Utils.toggleAddForm('change_allocator');
 		}
 	}
+
 
 	// Render
 
@@ -822,12 +823,13 @@
 			study.participants.forEach(function(participant) {
 				if (group.participants.includes(participant.user_id) && participant.group_id == group.group_id) {
 					let role = participant.role === "teacher" ? `<%- t('teacher', { ns : 'roles' }) %>` : `<%- t('student', { ns : 'roles' }) %>`
-					
+					let isToken = participant.isToken ? `<%- t('participants.isToken.true', { ns : 'groups' }) %>` : `<%- t('participants.isToken.false', { ns : 'groups' }) %>`
+					let token = participant.token == null ? "-" : participant.token
 					let newRow = $(`
 						<tr>
 							<td>${participant.username}</td>
-							<td>${participant.isToken}</td>
-							<td>${participant.token}</td>
+							<td>${isToken}</td>
+							<td>${token}</td>
 							<td><a href="${participant.email}">${participant.email}</a></td>
 							<td>${role}</td>
 							<td><input class="red" type="button" value="<%- t('participant.delete.title', { ns : 'groups' }) %>"></td>
