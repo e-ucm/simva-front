@@ -1,8 +1,7 @@
 <div class="menu">
 	<ul>
 		<li><a href="/"><span><img src="/icon/home.png"></span> <span><%= t('home.title') %></span></a></li>
-			<li><a href="/scheduler/"><span><img src="/icon/study.png"></span> <span>Play <%= t('title', { ns : 'SIMLETs' }) %></span></a></li>
-		<% if(user.data.role === 'teacher' || user.data.role === 'administrator'){ %>
+		<% if(user.data.role === 'teacher' || user.data.role === 'administrator') { %>
 			<li><a href="/simlets/"><span><img src="/icon/study.png"></span> <span><%= t('title', { ns : 'SIMLETs' }) %></span></a></li>
 			<% if(config.activities.enabled == 'true') {  %>
 				<li><a href="/activities/"><span><img src="/icon/survey.png"></span> <span><%= t('title', { ns : 'activities' }) %></span></a></li>  
@@ -13,6 +12,8 @@
 			<% if(config.lti.enabled == 'true'){ %>
 				<li><a href="/lti-platform/"><span><img src="/icon/survey.png"></span> <span><%= t('LTIPlatfrom') %></span></a></li>
 			<% } %>
+		<% } else { %>
+			<li><a href="/scheduler/"><span><img src="/icon/study.png"></span> <span>Play <%= t('title', { ns : 'SIMLETs' }) %></span></a></li>
 		<% } %>
 		<li><a href="/about"><span><img src="/icon/info.png"></span> <span><%= t('title', { ns : 'about'}) %></span></a></li>
 	</ul>
