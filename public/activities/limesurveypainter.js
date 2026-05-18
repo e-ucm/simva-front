@@ -363,23 +363,7 @@ var LimeSurveyPainter = {
 					stack: false
 				});
 			}else{
-				let stringifyres=JSON.stringify(result[user], null, 2);
-
-				// Create a pre-formatted text element with styling
-				let content = `<pre style="padding: 20px; background-color: #f0f0f0; color: #333; font-family: monospace; white-space: pre-wrap; word-wrap: break-word;">${stringifyres}</pre>`;
-            
-				let context = $('#iframe_floating iframe')[0].contentWindow.document;
-				let body = $('body', context);
-				
-				// Set the content and ensure proper styling
-				body.html(content);
-				body.css({
-					'margin': '0',
-					'padding': '0',
-					'overflow': 'auto',
-					'height': '100vh'
-				});
-				Utils.toggleAddForm('iframe_floating');
+				Utils.openResultContent(result[user], this.commun.result_error_loading);
 			}
 		})
 	},

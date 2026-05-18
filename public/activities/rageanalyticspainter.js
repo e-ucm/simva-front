@@ -209,11 +209,7 @@ var RageAnalyticsActivityPainter = {
 					stack: false
 				});
 			}else{
-				let content = `<div style="padding: 20px;">${result[user]}</div>`;
-				let context = $('#iframe_floating iframe')[0].contentWindow.document;
-				let body = $('body', context);
-				body.html(content);
-				Utils.showIframeFloating();
+				Utils.openResultContent(result[user], this.commun.result_error_loading);
 			}
 		})
 	},
