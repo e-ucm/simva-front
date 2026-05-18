@@ -3,11 +3,13 @@
         <div class="form" id="add_activity_form">
             <div class="tabs">
                 <span class="tab selected" onclick="Utils.changeTab(this, 'add_activity_form','new_activity_tab')"><%- t('add.new.title', { ns : 'activities' }) %></span>
-                <span class="tab" type="hidden" onclick="Utils.changeTab(this, 'add_activity_form','existing_activity_tab')"><%- t('add.existing.title', { ns : 'activities' }) %></span>
+				<span class="tab" type="hidden" onclick="Utils.changeTab(this, 'add_activity_form','import_activity_tab')"><%- t('import.title', { ns : 'activities' }) %></span>
+                <!--<span class="tab" type="hidden" onclick="Utils.changeTab(this, 'add_activity_form','existing_activity_tab')"><%- t('add.existing.title', { ns : 'activities' }) %></span>-->
             </div>
             <div id="new_activity_tab" class="subform selected" style="display: block;">
                 <form id="new_activity_form">
                     <input type="hidden" name="test">
+					<h3><%- t('name.placeholder', { ns : 'activities' }) %></h3>
                     <input type="text" name="name" placeholder="<%- t('name.placeholder', { ns : 'activities' }) %>" required>
                     <select name="type">
                     </select>
@@ -18,9 +20,22 @@
                     <span class="error"></span>
                 </form>
             </div>
+			<div id="import_activity_tab" class="subform" style="display: none;">
+                <form id="import_activity_form">
+                    <input type="hidden" name="test">
+					<h3><%- t('name.placeholder', { ns : 'activities' }) %></h3>
+                    <input type="text" name="name" placeholder="<%- t('name.placeholder', { ns : 'activities' }) %>" required>
+                    <h3><%- t('import.message', { ns : 'activities' }) %></h3>
+					<input name="jsonFile" type="file" accept=".json" required>
+                    <input type="submit" value="<%- t('import.title', { ns : 'activities' }) %>">
+                    <span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+                    <span class="error"></span>
+                </form>
+            </div>
             <div id="existing_activity_tab" class="subform" style="display: none;">
                 <form id="existing_activity_form">
                     <input type="hidden" name="test">
+					<h3><%- t('name.placeholder', { ns : 'activities' }) %></h3>
                     <input type="text" name="name" placeholder="<%- t('name.placeholder', { ns : 'activities' }) %>" required>
                     <select name="type">
                     </select>
@@ -118,6 +133,44 @@
 			}
 		});
 
+		$(document).on('submit', "#import_activity_form", function(event) {
+			let currentform = this;
+			let form = Utils.getFormData($(this));
+			Utils.toggleSubmit(currentform);
+			let errorbox = $('#import_activity_form .error');
+			const fileInput = $(this).find('input[name="jsonFile"]').get(0);
+			if(fileInput && fileInput.files[0]){
+				var reader = new FileReader();
+				reader.onload = function(){
+					try {
+						let raw = reader.result;
+						raw = raw.substr(raw.indexOf(',') + 1);
+						var newActivity = raw;
+						Simva.importActivity(studyid, form.test, {file: newActivity, activity_name: form.name}, function(importError, result) {
+							Utils.toggleSubmit(currentform);
+							if (importError) {
+								errorbox.text(importError.responseJSON ? importError.responseJSON.message : importError.message || importError);
+								return;
+							} else {
+								$("#add_activity").removeClass("shown");
+								reloadStudy();
+							}
+						});
+					} catch (parseError) {
+						console.error('Import error:', parseError);
+						Utils.toggleSubmit(currentform);
+						errorbox.text("<%- t('import.error.invalid_file', { ns : 'activities' }) %> " + (parseError.message ? (': ' + parseError.message) : ''));
+					}
+				};
+				reader.readAsDataURL(fileInput.files[0]);
+				Utils.toggleAddForm('add_activity');
+			} else {
+				errorbox.text("<%- t('import.upload.error', { ns : 'activities' }) %>");
+				Utils.toggleSubmit(currentform);
+			}
+			return false;
+		});
+
 		$(document).on('submit', "#new_activity_form", function(event) {
 			event.preventDefault();
 			let currentform = this;
@@ -195,7 +248,9 @@
 
     let openActivityForm = function(test) {
 		Utils.toggleAddForm('add_activity');
-		$('#add_activity input[name="test"]').val(test);
+		$('#new_activity_form input[name="test"]').val(test);
+		$('#import_activity_form input[name="test"]').val(test);
+		$('#existing_activity_form span[class="test"]').val(test);
 	}
 
     let openEditActivityForm = function(activityId) {

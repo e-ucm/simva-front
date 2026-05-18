@@ -530,6 +530,14 @@ var Simva = {
 		Utils.delete(`/bff/studies/${studyId}/tests/${testId}/activities/${activity_id}`, callback);
 	},
 
+	exportActivity: function(activity_id, study_id, test_id, callback){
+		Utils.get(`/bff/studies/${study_id}/tests/${test_id}/activities/${activity_id}/export`, callback);
+	},
+
+	importActivity: function(study_id, test_id, activityData, callback){
+		Utils.post(`/bff/studies/${study_id}/tests/${test_id}/activities/import`, activityData, callback);
+	},
+
 	getActivityTypes: function(callback){
 		Utils.get(`/bff/activitytypes`, callback);
 	},

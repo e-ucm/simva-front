@@ -12,7 +12,13 @@
     
     "delete.title": "Delete",
     "delete.confirm": "Are you sure you want to delete the activity '{{activity}}' of session '{{session}}' from SIMLET '{{SIMLET}}'?\nAll the data of the activity will be deleted too",
-
+    
+    "export.title": "Export",
+    "import.title": "Import",
+    "import.message": "Select the file to import",
+    "import.upload.error": "Select the file to upload first",
+    "import.error.invalid_file": "Invalid file",
+    
     "name.placeholder": "Activity name",
 
     "activity.name": "Default Activity",

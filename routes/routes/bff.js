@@ -1,3 +1,4 @@
+const activitiescontroler = require('../lib/activitiescontroler');
 const SimvaAsync = require('../lib/simvaAsync');
 const usertools = require('../lib/usertools');
 
@@ -945,6 +946,34 @@ module.exports = function(auth, config){
         });
     });
 
+    router.get('/studies/:studyid/tests/:testid/activities/:activityid/export', auth, async (req, res, next) => {
+        let complete = req.query.complete === 'true';
+        let studyId = req.params['studyid'];
+        let testId = req.params['testid'];
+        let activityId = req.params['activityid'];
+        let sessionid = req.session.id;
+        try {
+            let activity = await activitiescontroler.exportCompleteActivity(studyId, testId, activityId, complete, sessionid);
+            res.status(200).send(activity);
+        } catch(error) {
+            next(error.response.data);
+        }
+    });
+
+    router.post('/studies/:studyid/tests/:testid/activities/import', auth, async (req, res, next) => {
+        let newactivity = JSON.parse(atob(req.body.file));
+        newactivity.activity_name = req.body.activity_name;
+        let studyId = req.params['studyid'];
+        let testId = req.params['testid'];
+        let sessionid = req.session.id;
+        try {
+            let activity = await activitiescontroler.importActivity(studyId, testId, newactivity, sessionid);
+            res.status(200).send(activity);
+        } catch(error) {
+            next(error);
+        }
+    });
+
     router.get('/studies/:studyid/participants', auth, async (req, res, next) => {
         Simva.getStudyParticipants(req.params["studyid"], req.session.id, (error, result) => {
             if(error) {
@@ -980,13 +1009,12 @@ module.exports = function(auth, config){
     * 
     */
     router.post('/studies/:studyid/tests/:testid/activities', auth, async (req, res, next) => {
-        Simva.addActivityToTest(req.params["studyid"], req.params["testid"], req, req.body, req.session.id, (error, result) => {
-            if(error) {
-                next(error.response.data);
-            } else {
-                res.status(200).send(result);
-            }
-        });
+        try {
+            let activity = await activitiescontroler.addActivityToTest(req.params["studyid"], req.params["testid"], req, req.body, req.session.id);
+            res.status(200).send(activity);
+        } catch(error) {
+            next(error.response.data);
+        }
     });
 
     router.patch('/studies/:studyid/tests/:testid/activities/:activityid', auth, async (req, res, next) => {
@@ -1396,6 +1424,10 @@ module.exports = function(auth, config){
                 commun['init_title'] = req.t(`init.title`, { ns : 'activities' } );
                 commun['init_on'] = req.t(`init.on`, { ns : 'activities' } );
                 commun['init_off'] = req.t(`init.off`, { ns : 'activities' } );
+                commun['export_title'] = req.t(`export.title`, { ns : 'activities' } );
+                commun['import_title'] = req.t(`import.title`, { ns : 'activities' } );
+                commun['import_message'] = req.t(`import.message`, { ns : 'activities' } );
+                commun['import_error'] = req.t(`import.error`, { ns : 'activities' } );
 
                 result.forEach(element => {
                     element['description'] = req.t(`${element.activity_type}.description`, { ns : 'activities' } );

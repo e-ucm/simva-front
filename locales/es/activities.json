@@ -12,7 +12,14 @@
     
     "delete.title": "Eliminar",
     "delete.confirm": "¿Está seguro de que desea eliminar la actividad '{{activity}}' de la sesión '{{session}}' del SIMLET '{{SIMLET}}'?\nTambién se eliminarán todos los datos de la actividad",
-
+    
+    "export.title": "Exportar",
+    "import.title": "Importar",
+    "import.message": "Seleccione el archivo a importar",
+    "import.error": "Seleccione el archivo a importar primero",
+    "import.upload.error": "Seleccione el archivo a subir primero",
+    "import.error.invalid_file": "Archivo inválido",
+    
     "name.placeholder": "Nombre de la actividad",
 
     "activity.name": "Actividad por defecto",

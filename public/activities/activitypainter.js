@@ -240,6 +240,7 @@ var ActivityPainter = {
 						<li class="kebab-icon icon-edit" title="${this.commun.edit_title}" onclick="openEditActivityForm('${activity.activity_id}')">${this.commun.edit_title}</li>
 						<li class="kebab-icon icon-delete" title="${this.commun.delete_title}" onclick="deleteActivity('${activity.activity_id}', '${activity.activity_name}', '${activity.session_id}')">${this.commun.delete_title}</li>
 						<li class="kebab-icon icon-url" title="${this.commun.tmon_title}" onclick="PainterFactory.Painters['activity'].getTMonUrl('${activity.activity_id}','${activity.session_id}','${activity.study}')">${this.commun.tmon_title}</li>
+						<li class="kebab-icon icon-export" title="${this.commun.export_title}" onclick="PainterFactory.Painters['activity'].exportActivity('${activity.activity_id}','${activity.session_id}','${activity.study}')">${this.commun.export_title}</li>
 						${testDownloadBtn}
 						${extraItems}
 					</ul>
@@ -809,6 +810,22 @@ var ActivityPainter = {
 		let url = `${Simva.tmonUrl}/${studyId}/${testId}/${activityId}/${Simva.TMonFile}/dashboard/`;
 		// Open the generated URL in a new tab
        	Utils.toggleIframeInFloating(url); 
+	},
+
+	exportActivity: function(activityId, testId, studyId) {
+		Simva.exportActivity(activityId, testId, studyId, (error, result) => {
+			if(error){
+				$.toast({
+					heading: this.commun.export_error,
+					text: error.message,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+			} else {
+				this.downloadContent(JSON.stringify(result, null, 2), `activity_export_${activityId}.json`, this.commun.export_error);
+			}
+		});
 	},
 
 	setCompletionForAllParticipant(activityid, status) {
