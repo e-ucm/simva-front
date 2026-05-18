@@ -913,6 +913,18 @@ body {
 .icon-gear::before {
 	background-image: url("../icon/gear.png");
 }
+.icon-play::before {
+	background-image: url("../icon/play.png");
+}
+.icon-reset-tester::before {
+	background-image: url("../icon/reset.png");
+}
+.icon-tester::before {
+	background-image: url("../icon/tester.png");
+}
+.icon-untester::before {
+	background-image: url("../icon/erase.png");
+}
 .icon-delete {
 	color: #ff3d3d;
 }

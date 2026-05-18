@@ -17,6 +17,7 @@ module.exports = function(auth, config){
         config: config,
         user: req.session.user,
         study: req.params['studyid'],
+        testMode: req.query.testMode === 'true',
         t : req.t
     });
   });
