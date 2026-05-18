@@ -20,45 +20,55 @@ var ManualActivityPainter = {
 	},
 
 	getExtraForm: function (callback) {
-		callback(null, `<div class="manual_activity">
-			<div class="manual_tabs">
-				<span class="tab selected" method="WEB" onclick="Utils.changeTab(this, 'new_activity_extras','manual_web')">WEB</span>
-				<span class="tab" method="EXTERNAL" onclick="Utils.changeTab(this, 'new_activity_extras','manual_external')">EXTERNAL</span>
+		callback(null, `<div id="manual_activity" name="manual_activity" class="manual_activity">
+			<p><label for="manual_user_managed"><b>${this.specific.student_complete_title}</b></label><input id="manual_user_managed" type="checkbox" name="user_managed"></p>
+			<p><label for="manual_user_managed"><i>${this.specific.student_complete_description}</i></label></p>
+			<p><label for="manual_storage"><b>${this.communSpecific.storage_title}</b></label><input id="manual_storage" type="checkbox" name="storage"></p>
+			<p><label for="manual_storage"><i>${this.communSpecific.storage_description}</i></label></p>
+			<p><label for="manual_restarted"><b>${this.communSpecific.restarted_title}</b></label><input id="manual_restarted" type="checkbox" name="restarted"></p>
+			<p><label for="manual_restarted"><i>${this.communSpecific.restarted_description}</i></label></p>
+			<div class="tabs" id="manual_tabs">
+				<span class="tab selected" method="WEB" title="${this.specific.web_description}" onclick="Utils.changeTab(this, 'manual_activity','manual_web')">${this.specific.web_title}</span>
+				<span class="tab" method="EXTERNAL" title="${this.specific.external_description}" onclick="Utils.changeTab(this, 'manual_activity','manual_external')">${this.specific.external_title}</span>
 			</div>
 			<div id="manual_web" class="subform selected" style="display: block;">
+				<p><i>${this.specific.web_description}</i></p>
 				<p><label for="manual_uri" style="width: 100%; text-align: center;">${this.specific.uri_title}</label><input id="manual_uri" type="text" name="uri">
-				<span class="info">${this.specific.uri_explication}</span></p>
+				<span class="info">${this.specific.uri_description}</span></p>
 			</div>
 			<div id="manual_external" class="subform" style="display: none;">
-				<label for="manualfile">${this.specific.upload_title || 'Upload file for EXTERNAL activity'}</label>
-				   <input type="file" name="file" id="manualfile" placeholder="Manual file" accept=".pdf">
-				<span class="info">${this.specific.upload_explication || 'Select EXTERNAL tab and upload a file.'}</span>
+				<p><i>${this.specific.external_description}</i></p>
 			</div>
-			<p><label for="manual_user_managed">${this.specific.student_complete_title}</label><input id="manual_user_managed" type="checkbox" name="user_managed"></p>
-			<p><label for="manual_storage">${this.commun.storage_title}</label><input id="manual_storage" type="checkbox" name="storage"></p>
-			<p><label for="manual_restarted">${this.communSpecific.restarted_title}</label><input id="manual_restarted" type="checkbox" name="restarted"></p>
 		</div>`);
+		//<label for="manualfile">${this.specific.upload_title || 'Upload file for EXTERNAL activity'}</label>
+		//   <input type="file" name="file" id="manualfile" placeholder="Manual file" accept=".pdf">
+		//<span class="info">${this.specific.upload_description || 'Select EXTERNAL tab and upload a file.'}</span>
 	},
 
 	getEditExtraForm: function () {
-		return `<div class="manual_activity">
-			<div class="manual_tabs">
-				<span class="tab selected" method="WEB" onclick="Utils.changeTab(this, 'edit_manual_web')">WEB</span>
-				<span class="tab" method="EXTERNAL" onclick="Utils.changeTab(this, 'edit_manual_external')">EXTERNAL</span>
+		return `<div id="edit_manual_activity" name="edit_manual_activity" class="manual_activity">
+			<p><label for="edit_manual_user_managed"><b>${this.specific.student_complete_title}</b></label><input id="edit_manual_user_managed" type="checkbox" name="user_managed"></p>
+			<p><label for="edit_manual_user_managed"><i>${this.specific.student_complete_description}</i></label></p>
+			<p><label for="edit_manual_storage"><b>${this.communSpecific.storage_title}</b></label><input id="edit_manual_storage" type="checkbox" name="storage"></p>
+			<p><label for="edit_manual_storage"><i>${this.communSpecific.storage_description}</i></label></p>
+			<p><label for="edit_manual_restarted"><b>${this.communSpecific.restarted_title}</b></label><input id="edit_manual_restarted" type="checkbox" name="restarted"></p>
+			<p><label for="edit_manual_restarted"><i>${this.communSpecific.restarted_description}</i></label></p>
+			<div class="tabs" id="edit_manual_tabs">
+				<span class="tab selected" method="WEB" title="${this.specific.web_description}" onclick="Utils.changeTab(this, 'edit_manual_activity','edit_manual_web')">${this.specific.web_title}</span>
+				<span class="tab" method="EXTERNAL" title="${this.specific.external_description}" onclick="Utils.changeTab(this, 'edit_manual_activity','edit_manual_external')">${this.specific.external_title}</span>
 			</div>
 			<div id="edit_manual_web" class="subform selected" style="display: block;">
+				<p><i>${this.specific.web_description}</i></p>
 				<p><label for="edit_manual_uri" style="width: 100%; text-align: center;">${this.specific.uri_title}</label><input id="edit_manual_uri" type="text" name="uri">
-				<span class="info">${this.specific.uri_explication}</span></p>
+				<span class="info">${this.specific.uri_description}</span></p>
 			</div>
 			<div id="edit_manual_external" class="subform" style="display: none;">
-				<label for="edit_manualfile">${this.specific.upload_title || 'Upload file for EXTERNAL activity'}</label>
-				   <input type="file" name="file" id="edit_manualfile" placeholder="Manual file" accept=".pdf">
-				<span class="info">${this.specific.upload_explication || 'Select EXTERNAL tab and upload a file.'}</span>
+				<p><i>${this.specific.external_description}</i></p>
 			</div>
-			<p><label for="edit_manual_user_managed">${this.specific.student_complete_title}</label><input id="edit_manual_user_managed" type="checkbox" name="user_managed"></p>
-			<p><label for="edit_manual_storage">${this.commun.storage_title}</label><input id="edit_manual_storage" type="checkbox" name="storage"></p>
-			<p><label for="edit_manual_restarted">${this.communSpecific.restarted_title}</label><input id="edit_manual_restarted" type="checkbox" name="restarted"></p>
 		</div>`;
+		//<label for="edit_manualfile">${this.specific.upload_title || 'Upload file for EXTERNAL activity'}</label>
+		//	<input type="file" name="file" id="edit_manualfile" placeholder="Manual file" accept=".pdf">
+		//<span class="info">${this.specific.upload_description || 'Select EXTERNAL tab and upload a file.'}</span>
 	},
 
 	updateInputEditExtraForm(activity) {

@@ -48,7 +48,7 @@ var LimeSurveyPainter = {
 						<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">${this.specific.new_description}</a></p>
 					</div>
 					<div id="limesurvey_byupload" class="subform" style="display: none;">
-						<p>${this.specific.upload_message}</p>
+						<p>${this.specific.upload_description}</p>
 						<input type="file" name="lss" placeholder="Activity name">
 					</div>`
 				}

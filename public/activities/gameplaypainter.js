@@ -19,47 +19,60 @@ var GameplayActivityPainter = {
 	},
 
 	getExtraForm: function (callback) {
-		callback(null, `<div class="gameplay_activity">
-			<div class="gameplay_tabs">
-				<span class="tab selected" method="WEB" onclick="Utils.changeTab(this, 'new_activity_extras','gameplay_web')">WEB</span>
-				<span class="tab" method="DESKTOP" onclick="Utils.changeTab(this, 'new_activity_extras','gameplay_desktop')">DESKTOP</span>
+		let form = `<div id="gameplay_activity" name="gameplay_activity" class="gameplay_activity">
+			<p><label for="gameplay_trace_storage"><b>${this.communSpecific.storage_title}</b></label><input title="${this.communSpecific.storage_description}" id="gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
+			<p><label for="gameplay_trace_storage"><i>${this.communSpecific.storage_description}</i></label></p>
+			<p><label for="gameplay_backup"><b>${this.communSpecific.result_title}</b></label><input title="${this.communSpecific.result_description}" id="gameplay_backup" type="checkbox" name="backup" checked></p>
+			<p><label for="gameplay_backup"><i>${this.communSpecific.result_description}</i></label></p>
+			<p><label for="gameplay_scorm_xAPI"><b>${this.specific.xapi_by_game_title}</b></label><input title="${this.specific.xapi_by_game_description}" id="gameplay_scorm_xAPI" type="checkbox" name="scorm_xapi"></p>
+			<p><label for="gameplay_scorm_xAPI"><i>${this.specific.xapi_by_game_description}</i></label></p>
+			<p><label for="gameplay_restarted"><b>${this.communSpecific.restarted_title}</b></label><input title="${this.communSpecific.restarted_description}" id="gameplay_restarted" type="checkbox" name="restarted"></p>
+			<p><label for="gameplay_restarted"><i>${this.communSpecific.restarted_description}</i></label></p>
+			<div class="tabs" class="gameplay_tabs">
+				<span class="tab selected" method="WEB" title="${this.specific.web_description}" onclick="Utils.changeTab(this, 'gameplay_activity','gameplay_web')">${this.specific.web_title}</span>
+				<span class="tab" method="DESKTOP" title="${this.specific.desktop_description}" onclick="Utils.changeTab(this, 'gameplay_activity','gameplay_desktop')">${this.specific.desktop_title}</span>
 			</div>
 			<div id="gameplay_web" class="subform selected" style="display: block;">
+				<p><i>${this.specific.web_description}</i></p>
 				<p><label for="gameplay_game_uri" style="width: 100%; text-align: center;">${this.specific.game_uri_title}</label><input id="gameplay_game_uri" type="text" name="game_uri">
-				<span class="info">${this.specific.game_uri_explication}</span></p>
+				<span class="info">${this.specific.game_uri_description}</span></p>
 			</div>
 			<div id="gameplay_desktop" class="subform" style="display: none;">
-				<label for="gamefile">${this.specific.upload_title || 'Upload game file for DESKTOP activity'}</label>
-				   <input type="file" name="file" id="gamefile" placeholder="Game file" accept=".zip">
-				<span class="info">${this.specific.upload_explication || 'Select DESKTOP tab and upload a file.'}</span>
+				<p><i>${this.specific.desktop_description}</i></p>
 			</div>
-			<p><label for="gameplay_trace_storage">${this.commun.storage_title}</label><input id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
-			<p><label for="gameplay_backup">${this.communSpecific.result_title}</label><input id="gameplay_backup" type="checkbox" name="backup" checked></p>
-			<p><label for="gameplay_scorm_xAPI">${this.specific.xapi_by_game_title}</label><input id="gameplay_scorm_xAPI" type="checkbox" name="scorm_xapi"></p>
-			<p><label for="gameplay_restarted">${this.communSpecific.restarted_title}</label><input id="gameplay_restarted" type="checkbox" name="restarted"></p>
-		</div>`);
+		</div>`;
+			//	<label for="gamefile">${this.specific.upload_title || 'Upload game file for DESKTOP activity'}</label>
+			//	   <input type="file" name="file" id="gamefile" placeholder="Game file" accept=".zip">
+			//	<span class="info">${this.specific.upload_description || 'Select DESKTOP tab and upload a file.'}</span>
+		callback(null, form);
 	},
 
 	getEditExtraForm: function () {
-		return `<div class="gameplay_activity">
-			<div class="gameplay_tabs">
-				<span class="tab selected" method="WEB" onclick="Utils.changeTab(this, 'edit_activity_extras','edit_gameplay_web')">WEB</span>
-				<span class="tab" method="DESKTOP" onclick="Utils.changeTab(this, 'edit_activity_extras','edit_gameplay_desktop')">DESKTOP</span>
+		return `<div id="edit_gameplay_activity" name="edit_gameplay_activity" class="gameplay_activity">
+			<p><label for="edit_gameplay_trace_storage"><b>${this.commun.storage_title}</b></label><input title="${this.commun.storage_description}" id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
+			<p><label for="edit_gameplay_trace_storage"><i>${this.commun.storage_description}</i></label></p>
+			<p><label for="edit_gameplay_backup"><b>${this.communSpecific.result_title}</b></label><input title="${this.communSpecific.result_description}" id="edit_gameplay_backup" type="checkbox" name="backup" checked></p>
+			<p><label for="edit_gameplay_backup"><i>${this.communSpecific.result_description}</i></label></p>
+			<p><label for="edit_gameplay_scorm_xAPI"><b>${this.specific.xapi_by_game_title}</b></label><input title="${this.specific.xapi_by_game_description}" id="edit_gameplay_scorm_xAPI" type="checkbox" name="scorm_xapi" checked></p>
+			<p><label for="edit_gameplay_scorm_xAPI"><i>${this.specific.xapi_by_game_description}</i></label></p>
+			<p><label for="edit_gameplay_restarted"><b>${this.communSpecific.restarted_title}</b></label><input title="${this.communSpecific.restarted_description}" id="edit_gameplay_restarted" type="checkbox" name="restarted"></p>
+			<p><label for="edit_gameplay_restarted"><i>${this.communSpecific.restarted_description}</i></label></p>
+			<div id="edit_gameplay_tabs" class="tabs">
+				<span class="tab selected" method="WEB" title="${this.specific.web_title}" onclick="Utils.changeTab(this, 'edit_gameplay_activity','edit_gameplay_web')">${this.specific.web_title}</span>
+				<span class="tab" method="DESKTOP" title="${this.specific.desktop_title}" onclick="Utils.changeTab(this, 'edit_gameplay_activity','edit_gameplay_desktop')">${this.specific.desktop_title}</span>
 			</div>
 			<div id="edit_gameplay_web" class="subform selected" style="display: block;">
+				<p><i>${this.specific.web_description}</i></p>
 				<p><label for="edit_gameplay_game_uri" style="width: 100%; text-align: center;">${this.specific.game_uri_title}</label><input id="edit_gameplay_game_uri" type="text" name="game_uri">
-				<span class="info">${this.specific.game_uri_explication}</span></p>
+				<span class="info">${this.specific.game_uri_description}</span></p>
 			</div>
 			<div id="edit_gameplay_desktop" class="subform" style="display: none;">
-				<label for="edit_gamefile">${this.specific.upload_title || 'Upload game file for DESKTOP activity'}</label>
-				   <input type="file" name="file" id="edit_gamefile" placeholder="Game file" accept=".zip">
-				<span class="info">${this.specific.upload_explication || 'Select DESKTOP tab and upload a file.'}</span>
+				<p><i>${this.specific.desktop_description}</i></p>
 			</div>
-			<p><label for="edit_gameplay_trace_storage">${this.commun.storage_title}</label><input id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
-			<p><label for="edit_gameplay_backup">${this.communSpecific.result_title}</label><input id="edit_gameplay_backup" type="checkbox" name="backup" checked></p>
-			<p><label for="edit_gameplay_scorm_xAPI">${this.specific.xapi_by_game_title}</label><input id="edit_gameplay_scorm_xAPI" type="checkbox" name="scorm_xapi" checked></p>
-			<p><label for="edit_gameplay_restarted">${this.communSpecific.restarted_title}</label><input id="edit_gameplay_restarted" type="checkbox" name="restarted"></p>
 		</div>`;
+		//<label for="edit_gamefile">${this.specific.upload_title || 'Upload game file for DESKTOP activity'}</label>
+		//  <input type="file" name="file" id="edit_gamefile" placeholder="Game file" accept=".zip">
+		//<span class="info">${this.specific.upload_explication || 'Select DESKTOP tab and upload a file.'}</span>
 	},
 
 	updateInputEditExtraForm(activity) {
