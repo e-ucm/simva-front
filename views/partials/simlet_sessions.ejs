@@ -139,11 +139,13 @@
 						<span class="error" id="session_tags_error"></span>
 					</div>
 
+					<!--
 					<div class="session_form_field" id="can_be_manually_activated" >
 						<br>
 						<h3><%- t('can_be_manually_activated', { ns : 'sessions' }) %></h3>
 						<input type="checkbox" name="can_be_manually_activated" checked>
 					</div>
+					-->
 					<br class="session_form_field">
 					<input class="session_form_field" type="submit" id="session_submit" value="">
 				</form>
@@ -230,7 +232,7 @@
 
 			// Creating new session
 			if (form.editingSessionId == null || form.editingSessionId == "") {
-				Simva.addTestToStudy(studyid, { session_name: form.sessionName, session_description: form.sessionDescription, session_can_be_manually_activated: !!form.can_be_manually_activated }, function(error, result) {
+				Simva.addTestToStudy(studyid, { session_name: form.sessionName, session_description: form.sessionDescription, session_can_be_manually_activated: true }, function(error, result) {
 					if (error && error.responseJSON) {
 						Utils.toggleSubmit(currentform);
 						errorbox.text(error.responseJSON.message);
