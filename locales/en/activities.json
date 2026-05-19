@@ -53,6 +53,7 @@
     "limesurvey.new.after.message":"After creating new, you have to select from existing.",
     "limesurvey.upload.title":"Upload LSS",
     "limesurvey.upload.message":"Select LLS file",
+    "limesurvey.upload.description":"Upload a LSS file to create a new survey within the survey activity.",
     "limesurvey.upload.error":"Select the file to upload first",
     "limesurvey.language.title": "Survey Language",
     "limesurvey.survey.title": "Survey",

@@ -118,14 +118,14 @@ var GameplayActivityPainter = {
 				activity.game_type = "DESKTOP";
 				console.log('[gameplaypainter] DESKTOP case');
 				// Only for desktop games
-				let rawformdata = PainterFactory.Painters["activity"].extractFileFromEditForm(form, 'gamefile', activity, 'file', 'game_type', 'DESKTOP');
-				if(rawformdata !== undefined) {
-					console.log('[gameplaypainter] File extraction triggered, returning');
-					callback(null, rawformdata); // 👈 send rawformdata for DESKTOP activities
-					return;
-				} else {
+				//let rawformdata = PainterFactory.Painters["activity"].extractFileFromEditForm(form, 'gamefile', activity, 'file', 'game_type', 'DESKTOP');
+				//if(rawformdata !== undefined) {
+				//	console.log('[gameplaypainter] File extraction triggered, returning');
+				//	callback(null, rawformdata); // 👈 send rawformdata for DESKTOP activities
+				//	return;
+				//} else {
 					callback(null, activity);
-				}
+				//}
 				break;
 			default:
 				console.log('[gameplaypainter] Default case, game_uri:', formdata.game_uri);

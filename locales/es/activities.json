@@ -54,6 +54,7 @@
     "limesurvey.new.after.message":"Después de crear una nueva, tiene que seleccionar una de las existentes.",
     "limesurvey.upload.title":"Cargar LSS",
     "limesurvey.upload.message":"Seleccionar archivo LLS",
+    "limesurvey.upload.description":"Cargar un archivo LSS para crear una nueva encuesta dentro de la actividad de encuesta.",
     "limesurvey.upload.error":"Seleccione primero el archivo que desea cargar",
     "limesurvey.language.title": "Idioma de la encuesta",
     "limesurvey.survey.title": "Encuesta",

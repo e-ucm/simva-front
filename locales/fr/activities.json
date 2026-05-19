@@ -54,6 +54,7 @@
     "limesurvey.new.after.message":"Après avoir créé un nouveau enquête sur LimeSurvey, vous devez le sélectionner parmi les enquêtes existantes.",
     "limesurvey.upload.title":"Charger LSS",
     "limesurvey.upload.message":"Sélectionner le fichier LLS",
+    "limesurvey.upload.description":"Sélectionner un fichier LSS pour créer une nouvelle enquête au sein de l'activité d'enquête.",
     "limesurvey.upload.error":"Sélectionnez le fichier à charger en premier",
     "limesurvey.language.title": "Langue de l'enquête",
     "limesurvey.survey.title": "Enquête",
