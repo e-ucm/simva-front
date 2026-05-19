@@ -205,7 +205,7 @@ var ImsPackagePainter = {
 		Simva.getActivityResultForUser(activity, user, function(error, result){
 			if(error){
 				$.toast({
-					heading: this.commun.result_error_loading,
+					heading: 'Error loading the result',
 					text: error.message,
 					position: 'top-right',
 					icon: 'error',

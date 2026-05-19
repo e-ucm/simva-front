@@ -755,7 +755,7 @@ var ActivityPainter = {
 					stack: false
 				});
 			} else {
-				Utils.openResultContent(result[user], this.commun.result_error_loading);
+				Utils.openResultContent(result[user], 'Error loading the result');
 			}
 		});
 	},
