@@ -61,12 +61,8 @@ var LimeSurveyPainter = {
 
 	getEditExtraForm: function () {
 		let form=`${this.specific.survey_title}`;
-		if(this.utils.surveys.length > 1){
-			form += '<select name="existingid" id="existing_survey_list"></select>';
-		} else  {
-			form += '<p>${this.specific.survey.only_one.message}You don\'t have any other surveys.</p>'
-		}
-		form+=`${this.specific.language_title}`;
+		form += '<select name="existingid" id="existing_survey_list"></select>';
+		form+=`<h3>${this.specific.language_title}</h3>`;
 		form += '<select name="language" id="language_list"></select>';
 		return form;
 	},
@@ -100,7 +96,7 @@ var LimeSurveyPainter = {
 				if(!error) {
 					// Step 1: Get the select element
 					var selectElement = document.getElementById('existing_survey_list');
-					this.utils = result;
+					this.utils.surveys = result;
 					this.utils.surveys.forEach((survey) => {
 						// Step 3: Create a new option element
 						var option = document.createElement('option');
@@ -112,7 +108,6 @@ var LimeSurveyPainter = {
 						// Step 5: Append the option to the select element
 						selectElement.appendChild(option);
 					});
-
 					// Set a specific option as selected
 					selectElement.value=activity.survey_id;
 				}

@@ -143,14 +143,8 @@ module.exports = {
         if (!myGroup) {
             throw new Error('Tester group not found');
         }
-        // Find participant for user
-        let participants = await SimvaAsync.getGroupParticipants(studyid, myGroup.group_id, sessionid);
-        let participant = participants.find(p => p.user_id === userId);
-        if (!participant) {
-            throw new Error('You are not a participant in this session.');
-        }
         // Remove from group
-        await SimvaAsync.deleteGroupParticipant(studyid, myGroup.group_id, participant.participant_id || participant.id || participant.user_id, false, sessionid);
+        await SimvaAsync.deleteGroupParticipant(studyid, myGroup.group_id, userId, false, sessionid);
         // Delete group if sandbox
         await SimvaAsync.deleteGroup(studyid, myGroup.group_id, sessionid);
         return;

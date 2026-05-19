@@ -233,7 +233,7 @@
 							if (error && error.responseJSON) {
 								errorbox.text(error.responseJSON.message);
 							} else {
-								Utils.toggleAddForm('edit_activity');
+								Utils.toggleAddForm('iframe_floating');
 								reloadStudy();
 							}
 						});
@@ -269,9 +269,9 @@
 		$('#edit_activity_extras').append(`${PainterFactory.Painters[activity.activity_type].description}\n`);
 		$('#edit_activity_extras').append(PainterFactory.Painters[activity.activity_type].getEditExtraForm());
 		PainterFactory.Painters[activity.activity_type].updateInputEditExtraForm(activity);
-		$('#edit_activity input[name="test"]').val(activity.session_id);
-		$('#edit_activity span[class="error"]').val("");
-		$('#edit_activity input[name="activity"]').val(activity.activity_id);
+		$('#edit_activity_form input[name="test"]').val(activity.session_id);
+		$('#edit_activity_form span[class="error"]').text("");
+		$('#edit_activity_form input[name="activity"]').val(activity.activity_id);
 
 	}
 
