@@ -87,7 +87,7 @@ module.exports = function(auth, config){
         let participantid = req.params['participantid'];
         Simva.addGroupParticipant(simletid, groupid, participantid, req.session.id, (error, result) => {
             if(error) {
-                    next(error.response.data);
+                    next(error.response?.data || error);
                 } else {
                     res.status(200).send(result);
                 }
@@ -127,7 +127,7 @@ module.exports = function(auth, config){
         } else {
             Simva.register(simletid, groupid, req.body.username, req.body.email, req.body.password, req.body.role, req.session.id, (error, result) => {
                 if(error) {
-                    next(error.response.data);
+                    next(error.response?.data || error);
                 } else {
                     res.status(200).send(result);
                 }
@@ -139,7 +139,7 @@ module.exports = function(auth, config){
         if(req.query.username) {
             Simva.getUser(req.query.username, req.session.id, (error, result) => {
                 if(error) {
-                    next(error.response.data);
+                    next(error.response?.data || error);
                 } else {
                     res.status(200).send(result);
                 }
@@ -147,7 +147,7 @@ module.exports = function(auth, config){
         } else {
             Simva.getUsers(req.query.search, req.session.id, (error, result) => {
                 if(error) {
-                    next(error.response.data);
+                    next(error.response?.data || error);
                 } else {
                     res.status(200).send(result);
                 }
@@ -158,7 +158,7 @@ module.exports = function(auth, config){
     router.patch('/users/:username', auth, async (req, res, next) => {
         Simva.setRole(req.params.username, req.body, req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -168,7 +168,7 @@ module.exports = function(auth, config){
     router.get('/users/me', auth, async (req, res, next) => {
         Simva.getCurrentUser(req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 let name={username : result.username, user_id : result.user_id};
                 if(result.isToken) {
@@ -203,7 +203,7 @@ module.exports = function(auth, config){
     router.get('/users/islimesurveyadmin', auth, async (req, res, next) => {
         Simva.islimesurveyadmin(req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -217,7 +217,7 @@ module.exports = function(auth, config){
     router.get('/tasklist', auth, async (req, res, next) => {
         Simva.addToTaskList(req.body, req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -232,7 +232,7 @@ module.exports = function(auth, config){
         if(req.query.use_new_generation) {
             Simva.getGroupsWithVersion(req.query.use_new_generation === 'true', req.session.id, (error, result) => {
                 if(error) {
-                    next(error.response.data);
+                    next(error.response?.data || error);
                 } else {
                     res.status(200).send(result);
                 }
@@ -240,7 +240,7 @@ module.exports = function(auth, config){
         } else {
             Simva.getGroups(req.session.id, (error, result) => {
                 if(error) {
-                    next(error.response.data);
+                    next(error.response?.data || error);
                 } else {
                     res.status(200).send(result);
                 }
@@ -500,7 +500,7 @@ module.exports = function(auth, config){
     router.get('/studies', auth, async (req, res, next) => {
         Simva.getStudies(req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -510,7 +510,7 @@ module.exports = function(auth, config){
     router.get('/scheduler/studies', auth, async (req, res, next) => {
         Simva.getSchedulerStudies(req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -520,7 +520,7 @@ module.exports = function(auth, config){
     router.post('/studies', auth, async (req, res, next) => {
         Simva.addStudy(req.body, req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -541,7 +541,7 @@ module.exports = function(auth, config){
     router.patch('/studies/:studyid', auth, async (req, res, next) => {
         Simva.updateStudy(req.params['studyid'], req.body, req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -551,7 +551,7 @@ module.exports = function(auth, config){
     router.delete('/studies/:studyid', auth, async (req, res, next) => {
         Simva.deleteStudy(req.params['studyid'], req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -565,7 +565,7 @@ module.exports = function(auth, config){
     router.post('/studies/:studyid/tests', auth, async (req, res, next) => {
         Simva.addTestToStudy(req.params["studyid"], req.body, req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -590,7 +590,7 @@ module.exports = function(auth, config){
             let test = await testscontroler.exportTest(req.params["studyid"], req.params["testid"], true, req.session.id);
             res.status(200).send(test);
         } catch(error) {
-            next(error.response.data);
+            next(error.response?.data || error);
         }
     });
 
@@ -641,7 +641,7 @@ module.exports = function(auth, config){
     router.patch('/studies/:studyid/tests/:testid', auth, async (req, res, next) => {
         Simva.updateTest(req.params["studyid"], req.params["testid"], req.body, req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -651,7 +651,7 @@ module.exports = function(auth, config){
     router.delete('/studies/:studyid/tests/:testid', auth, async (req, res, next) => {
         Simva.deleteTest(req.params["studyid"], req.params["testid"], req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -661,7 +661,7 @@ module.exports = function(auth, config){
     router.post('/simlets/:studyid/tests/:testid/tags/:tag', auth, async (req, res, next) => {
         Simva.addTagToSession(req.params["studyid"], req.params["testid"], req.params["tag"], req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -671,7 +671,7 @@ module.exports = function(auth, config){
     router.delete('/simlets/:studyid/tests/:testid/tags/:tag', auth, async (req, res, next) => {
         Simva.deleteTagFromSession(req.params["studyid"], req.params["testid"], req.params["tag"], req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -682,7 +682,7 @@ module.exports = function(auth, config){
         // Merge fields from multipart form
         Simva.updateActivity(req.params["activityid"], req, req.body, req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -696,7 +696,7 @@ module.exports = function(auth, config){
     router.get('/studies/:studyid/allocator', auth, async (req, res, next) => {
         Simva.getAllocator(req.params["studyid"], req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -756,7 +756,7 @@ module.exports = function(auth, config){
     router.patch('/studies/:studyid/allocator', auth, async (req, res, next) => {
         Simva.updateAllocator(req.params["studyid"], req.body, req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -770,7 +770,7 @@ module.exports = function(auth, config){
     router.get('/studies/:studyid/tests', auth, async (req, res, next) => {
         Simva.getStudyTests(req.params["studyid"], req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -803,7 +803,7 @@ module.exports = function(auth, config){
     router.get('/studies/:studyid/tests/:testid', auth, async (req, res, next) => {
         Simva.getStudyTest(req.params["studyid"], req.params["testid"], req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -893,7 +893,7 @@ module.exports = function(auth, config){
     router.get('/studies/:studyid/groups', auth, async (req, res, next) => {
         Simva.getStudyGroups(req.params["studyid"], req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -923,7 +923,7 @@ module.exports = function(auth, config){
     router.get('/studies/:studyid/tests/:testid/activities', auth, async (req, res, next) => {
         Simva.getTestActivities(req.params["studyid"], req.params["testid"], req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -940,7 +940,7 @@ module.exports = function(auth, config){
             let activity = await activitiescontroler.exportCompleteActivity(studyId, testId, activityId, complete, sessionid);
             res.status(200).send(activity);
         } catch(error) {
-            next(error.response.data);
+            next(error.response?.data || error);
         }
     });
 
@@ -961,7 +961,7 @@ module.exports = function(auth, config){
     router.get('/studies/:studyid/participants', auth, async (req, res, next) => {
         Simva.getStudyParticipants(req.params["studyid"], req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -971,7 +971,7 @@ module.exports = function(auth, config){
     router.get('/studies/:studyid/schedule', auth, async (req, res, next) => {
         Simva.getStudySchedule(req.params["studyid"], req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -981,7 +981,7 @@ module.exports = function(auth, config){
     router.post('/studies/:studyid/tests/:testid/activate', auth, async (req, res, next) => {
         Simva.activateSession(req.params["studyid"], req.params["testid"], req.body, req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -994,71 +994,74 @@ module.exports = function(auth, config){
     */
     router.post('/studies/:studyid/tests/:testid/activities', auth, async (req, res, next) => {
         try {
-            let activity = await activitiescontroler.addActivityToTest(req.params["studyid"], req.params["testid"], req, req.body, req.session.id);
+            let activity = await SimvaAsync.addActivityToTest(req.params["studyid"], req.params["testid"], req, req.body, req.session.id);
             res.status(200).send(activity);
         } catch(error) {
-            next(error.response.data);
+            next(error.response?.data || error);
         }
     });
 
     router.patch('/studies/:studyid/tests/:testid/activities/:activityid', auth, async (req, res, next) => {
-        Simva.updateActivityInTest(req.params["studyid"], req.params["testid"], req.params["activityid"], req, req.body, req.session.id, (error, result) => {
-            if(error) {
-                next(error.response.data);
-            } else {
-                res.status(200).send(result);
-            }
-        });
+        try {
+            let activity = await SimvaAsync.updateActivityInTest(req.params["studyid"], req.params["testid"], req.params["activityid"], req, req.body, req.session.id);
+            res.status(200).send(activity);
+        } catch(error) {
+            next(error.response?.data || error);
+        };
     });
 
     router.get('/activities/:activityid', auth, async (req, res, next) => {
-        Simva.getActivity(req.params["activityid"], req.session.id, (error, result) => {
-            if(error) {
-                next(error.response.data);
-            } else {
-                res.status(200).send(result);
-            }
-        });
+        try {
+            let activity = await SimvaAsync.getActivity(req.params["activityid"], req.session.id);
+            res.status(200).send(activity);
+        } catch(error) {
+            next(error.response?.data || error);
+        }
     });
 
     router.get('/activities/:activityid/export', auth, async (req, res, next) => {
-        Simva.exportActivity(req.params["activityid"], req.query.complete === 'true', req.session.id, (error, result) => {
-            if(error) {
-                next(error.response?.data || error);
-            } else {
-                res.status(200).send(result);
-            }
-        });
+        try {
+            let result = await SimvaAsync.exportActivity(req.params["activityid"], req.query.complete === 'true', req.session.id);
+            res.status(200).send(result);
+        } catch(error) {
+            next(error.response?.data || error);
+        }
     });
 
     router.patch('/limesurvey/surveys/:activityid/owner', auth, async (req, res, next) => {
-        Simva.setSurveyOwner(req.params["activityid"], req.session.id, (error, result) => {
-            if(error) {
-                next(error.response.data);
-            } else {
-                res.status(200).send(result);
-            }
-        });
+        try {
+            let result = await SimvaAsync.setSurveyOwner(req.params["activityid"], req.session.id);
+            res.status(200).send(result);
+        } catch(error) {
+            next(error.response?.data || error);
+        }
     });
 
     router.get('/limesurvey/surveys/:activityid/languages', auth, async (req, res, next) => {
-        Simva.getSurveyLanguages(req.params["activityid"], req.session.id, (error, result) => {
-            if(error) {
-                next(error.response?.data || error);
-            } else {
-                res.status(200).send(result);
-            }
-        });
+        try {
+            let result = await SimvaAsync.getSurveyLanguages(req.params["activityid"], req.session.id);
+            res.status(200).send(result);
+        } catch(error) {
+            next(error.response?.data || error);
+        }
     });
 
     router.get('/activities/:activityid/open', auth, async (req, res, next) => {
-        Simva.openActivity(req.params["activityid"], req.session.id, (error, result) => {
-            if(error) {
-                next(error.response?.data || error);
-            } else {
-                res.status(200).send(result);
-            }
-        });
+        try {
+            let result = await SimvaAsync.openActivity(req.params["activityid"], req.session.id);
+            res.status(200).send(result);
+        } catch(error) {
+            next(error.response?.data || error);
+        }
+    });
+
+    router.get('/activities/:activityid/open', auth, async (req, res, next) => {
+        try {
+            let result = await SimvaAsync.openActivity(req.params["activityid"], req.session.id);
+            res.status(200).send(result);
+        } catch(error) {
+            next(error.response?.data || error);
+        }
     });
 
     router.get('/activities/:activityid/initialized', auth, async (req, res, next) => {
@@ -1094,7 +1097,7 @@ module.exports = function(auth, config){
     router.get('/limesurvey/surveys', auth, async (req, res, next) => {
         Simva.getSurveyList(req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -1104,7 +1107,7 @@ module.exports = function(auth, config){
     router.get('/activities/:activityid/progress', auth, async (req, res, next) => {
         Simva.getActivityProgress(req.params["activityid"], req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -1114,7 +1117,7 @@ module.exports = function(auth, config){
     router.get('/activities/:activityid/completion', auth, async (req, res, next) => {
         Simva.getActivityCompletion(req.params["activityid"], req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -1124,7 +1127,7 @@ module.exports = function(auth, config){
     router.get('/activities/:activityid/suspension', auth, async (req, res, next) => {
         Simva.getActivitySuspension(req.params["activityid"], req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -1134,7 +1137,7 @@ module.exports = function(auth, config){
     router.post('/activities/:activityid/completion', auth, async (req, res, next) => {
         Simva.setActivityCompletion(req.params["activityid"], req.query.user, req.body.status, req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -1144,7 +1147,7 @@ module.exports = function(auth, config){
     router.post('/activities/:activityid/completion/multi', auth, async (req, res, next) => {
         Simva.setMultiActivityCompletion(req.params["activityid"], req.body, req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -1154,7 +1157,7 @@ module.exports = function(auth, config){
     router.post('/activities/:activityid/multicompletion', auth, async (req, res, next) => {
         Simva.setMultiActivityCompletion(req.params["activityid"], req.body, req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -1164,7 +1167,7 @@ module.exports = function(auth, config){
     router.post('/activities/:activityid/suspension', auth, async (req, res, next) => {
         Simva.setActivitySuspension(req.params["activityid"], req.body.user, req.body, req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -1176,7 +1179,7 @@ module.exports = function(auth, config){
             if(req.query.users) {
                 Simva.getActivityResultWithTypeForUser(req.params["activityid"], req.query.type, req.query.users, req.session.id, (error, result) => {
                     if(error) {
-                        next(error.response.data);
+                        next(error.response?.data || error);
                     } else {
                         res.status(200).send(result);
                     }
@@ -1184,7 +1187,7 @@ module.exports = function(auth, config){
             } else {
                 Simva.getActivityResultWithType(req.params["activityid"], req.query.type, req.session.id, (error, result) => {
                     if(error) {
-                        next(error.response.data);
+                        next(error.response?.data || error);
                     } else {
                         res.status(200).send(result);
                     }
@@ -1194,7 +1197,7 @@ module.exports = function(auth, config){
             if(req.query.users) {
                 Simva.getActivityResultForUser(req.params["activityid"], req.query.users, req.session.id, (error, result) => {
                     if(error) {
-                        next(error.response.data);
+                        next(error.response?.data || error);
                     } else {
                         res.status(200).send(result);
                     }
@@ -1202,7 +1205,7 @@ module.exports = function(auth, config){
             } else {
                 Simva.getActivityResult(req.params["activityid"], req.session.id, (error, result) => {
                     if(error) {
-                        next(error.response.data);
+                        next(error.response?.data || error);
                     } else {
                         res.status(200).send(result);
                     }
@@ -1215,7 +1218,7 @@ module.exports = function(auth, config){
     router.get('/activities/:activityid/hasresult', auth, async (req, res, next) => {
         Simva.getActivityHasResult(req.params["activityid"], req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -1225,7 +1228,7 @@ module.exports = function(auth, config){
     router.get('/activities/:activityid/target', auth, async (req, res, next) => {
         Simva.getActivityTarget(req.params["activityid"], req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -1235,7 +1238,7 @@ module.exports = function(auth, config){
     router.get('/activities/:activityid/openable', auth, async (req, res, next) => {
         Simva.isActivityOpenable(req.params["activityid"], req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -1245,7 +1248,7 @@ module.exports = function(auth, config){
     router.get('/activities/:activityid/presignedurl', auth, async (req, res, next) => {
         Simva.getMinioDataUrl(req.params["activityid"], req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -1265,7 +1268,7 @@ module.exports = function(auth, config){
     router.delete('/activities/:activityid', auth, async (req, res, next) => {
         Simva.deleteActivity(req.params["activityid"], req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -1275,7 +1278,7 @@ module.exports = function(auth, config){
     router.delete('/studies/:studyid/tests/:testid/activities/:activityid', auth, async (req, res, next) => {
         Simva.deleteActivityFromTest(req.params["studyid"], req.params["testid"], req.params["activityid"], req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -1368,7 +1371,7 @@ module.exports = function(auth, config){
     router.get('/activitytypes', auth, async (req, res, next) => {
         Simva.getActivityTypes(req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 commun={};
                 commun['completed_title'] = req.t(`completed.title`, { ns : 'activities' } );
@@ -1500,7 +1503,7 @@ module.exports = function(auth, config){
     router.get('/allocatortypes', auth, async (req, res, next) => {
         Simva.getAllocatorTypes(req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 logger.info("Allocator types before i18n processing:", result);
                 result.forEach(element => {
@@ -1526,7 +1529,7 @@ module.exports = function(auth, config){
     router.get('/lti/tools', auth, async (req, res, next) => {
         Simva.getLtiTools(req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -1536,7 +1539,7 @@ module.exports = function(auth, config){
     router.post('/lti/tools', auth, async (req, res, next) => {
         Simva.addLtiTool(req.body, req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -1546,7 +1549,7 @@ module.exports = function(auth, config){
     router.delete('/lti/tools/:toolid', auth, async (req, res, next) => {
         Simva.deleteLtiTool(req.params["toolid"], req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -1560,7 +1563,7 @@ module.exports = function(auth, config){
         }
         Simva.getLtiPlatforms(studyid, req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -1570,7 +1573,7 @@ module.exports = function(auth, config){
     router.post('/lti/platforms', auth, async (req, res, next) => {
         Simva.addLtiPlatform(req.body, req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
@@ -1580,7 +1583,7 @@ module.exports = function(auth, config){
     router.delete('/lti/platforms/:platformid', auth, async (req, res, next) => {
         Simva.removePlatform(req.params["platformid"], req.session.id, (error, result) => {
             if(error) {
-                next(error.response.data);
+                next(error.response?.data || error);
             } else {
                 res.status(200).send(result);
             }
