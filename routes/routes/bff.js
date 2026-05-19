@@ -601,23 +601,23 @@ module.exports = function(auth, config){
         const user = await SimvaAsync.getCurrentUser(req.session.id);
         const userId = user.user_id;
         const username = user.username;
-        const groupName = `tester_${studyid}_${userId}_${username}`;
         try {
-            // 1. Find or create sandbox group for user
-            let groups = await SimvaAsync.getStudyGroups(studyid, req.session.id);
-            let myGroup = groups.find(g => g.group_sandbox === true && g.group_name === groupName);
-            if (!myGroup) {
-                myGroup = await SimvaAsync.addGroup(studyid, { group_name: groupName, group_use_new_generation: false, group_sandbox: true }, req.session.id);
-            }
-            // 2. Add user as participant if not already
-            let participants = await SimvaAsync.getGroupParticipants(studyid, myGroup.group_id, req.session.id);
-            let alreadyParticipant = participants.some(p => p.user_id === userId);
-            if (!alreadyParticipant) {
-                await SimvaAsync.addGroupParticipant(studyid, myGroup.group_id, userId, req.session.id);
-            }
-            // 3. Allocate/move user to selected session
-            await SimvaAsync.allocateToSession(studyid, myGroup.group_id, testid, {}, req.session.id);
-            res.status(200).send({ message: 'Tester set', group_id: myGroup.group_id });
+            const group = await groupcontroler.setTesterGroup(studyid, testid, userId, username, req.session.id);
+            res.status(200).send({ message: 'Tester set', group_id: group.group_id });
+        } catch (err) {
+            next(err);
+        }
+    });
+
+    router.post('/studies/:studyid/tests/:testid/reset-tester', auth, async (req, res, next) => {
+        const studyid = req.params['studyid'];
+        const testid = req.params['testid'];
+        const user = await SimvaAsync.getCurrentUser(req.session.id);
+        const userId = user.user_id;
+        const username = user.username;
+        try {
+            const group = await groupcontroler.resetTesterGroup(studyid, testid, userId, username, req.session.id);
+            res.status(200).send({ message: 'Tester reset', group_id: group.group_id });
         } catch (err) {
             next(err);
         }
@@ -631,23 +631,7 @@ module.exports = function(auth, config){
         const userId = user.user_id;
         const username = user.username;
         try {
-            // Find sandbox group for user
-            let groups = await SimvaAsync.getStudyGroups(studyid, req.session.id);
-            const groupName = `tester_${studyid}_${userId}_${username}`;
-            let myGroup = groups.find(g => g.group_sandbox === true && g.group_name === groupName);
-            if (!myGroup) {
-                throw new Error('Tester group not found');
-            }
-            // Find participant for user
-            let participants = await SimvaAsync.getGroupParticipants(studyid, myGroup.group_id, req.session.id);
-            let participant = participants.find(p => p.user_id === userId);
-            if (!participant) {
-                throw new Error('You are not a participant in this session.');
-            }
-            // Remove from group
-            await SimvaAsync.deleteGroupParticipant(studyid, myGroup.group_id, participant.participant_id || participant.id || participant.user_id, false, req.session.id);
-            // Delete group if sandbox
-            await SimvaAsync.deleteGroup(studyid, myGroup.group_id, req.session.id);
+            await groupcontroler.unsetTesterGroup(studyid, testid, userId, username, req.session.id);
             res.status(200).send({ message: 'Tester removed' });
         } catch (err) {
             next(err);

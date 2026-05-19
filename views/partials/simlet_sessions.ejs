@@ -43,8 +43,8 @@
 					<li class="kebab-icon icon-reset-tester" title="<%- t('reset_tester.title', { ns : 'sessions' }) %>">
 						<%- t('reset_tester.title', { ns : 'sessions' }) %>
 					</li>
-					<li class="sessionTestDownload kebab-icon icon-download" title="<%- t('test_download.description', { ns : 'sessions' }) %>" style="display:none;">
-						<b><%- t('test_download.title', { ns : 'sessions' }) %></b>
+					<li class="kebab-icon icon-test-download" title="<%- t('test_download.description', { ns : 'sessions' }) %>" style="display:none;">
+						<%- t('test_download.title', { ns : 'sessions' }) %>
 					</li>
 					<li class="kebab-icon icon-untester" title="<%- t('unset_tester.title', { ns : 'sessions' }) %>">
 						<%- t('unset_tester.title', { ns : 'sessions' }) %>
@@ -67,10 +67,10 @@
                     <done class="completionPercentage">		</done>% [ <doneres class="completedUsers">		</doneres> / <total class="completedTotalUsers">		</total> ]
                 </span>
             </div>
-			<div class="sessionTestLauch kebab-icon icon-play" onclick="Utils.toggleIframeInFloating(`/scheduler/${study.simlet_id}?testMode=true`)" title="<%- t('play.description', { ns : 'SIMLETs' }) %>" style="display:none;">
+			<div class="kebab-icon icon-play" id="sessionTestLauch" onclick="Utils.toggleIframeInFloating(`/scheduler/${study.simlet_id}?testMode=true`)" title="<%- t('play.description', { ns : 'SIMLETs' }) %>" style="display:none;">
 				<b><%- t('play.title', { ns : 'SIMLETs' }) %></b>
 			</div>
-            <div class="sessionDownload kebab-icon icon-download" title="<%- t('download.description', { ns : 'sessions' }) %>">
+            <div class="kebab-icon icon-download" id="sessionDownload" title="<%- t('download.description', { ns : 'sessions' }) %>">
                 <b><%- t('download', { ns : 'sessions' }) %></b>
             </div>
         </div>
@@ -453,8 +453,13 @@
 		console.log("setting tester for session id:", data[sessionDataIdKey]);
 		setTesterForSession(data[sessionDataIdKey]);
 	});
+
+	$(document).on('click', ".icon-download", function(e) {
+		const data = $(this).closest(".test").data();
+		downloadSessionData(data[sessionDataIdKey]);
+	});
 	
-	$(document).on('click', ".sessionTop .icon-download", function(e) {
+	$(document).on('click', ".sessionTop .icon-test-download", function(e) {
 		const data = $(this).closest(".test").data();
 		downloadSessionTestData(data[sessionDataIdKey]);
 	});
@@ -477,32 +482,21 @@
 				$.toast({ heading: 'Error', text: 'Failed to unset tester.', position: 'top-right', icon: 'error', stack: false });
 			} else {
 				$.toast({ heading: 'Tester unset', text: 'You are no longer a tester in this session.', position: 'top-right', icon: 'success', stack: false });
-				reloadStudy();
+				//reloadStudy();
 			}
 		});
 	}
 
 	function resetTesterForSession(sessionId) {
-		Simva.unsetTesterForSession(studyid, sessionId, function(error, result) {
+		Simva.resetTesterForSession(studyid, sessionId, function(error, result) {
 			if (error) {
 				$.toast({ heading: 'Error', text: 'Failed to reset tester.', position: 'top-right', icon: 'error', stack: false });
 			} else {
-				Simva.setTesterForSession(studyid, sessionId, function(setError, setResult) {
-					if (setError) {
-						$.toast({ heading: 'Error', text: 'Failed to reset tester.', position: 'top-right', icon: 'error', stack: false });
-					} else {
-						$.toast({ heading: 'Tester reset', text: 'Your tester data has been reset for this session.', position: 'top-right', icon: 'success', stack: false });
-						reloadStudy();
-					}
-				});
+				$.toast({ heading: 'Tester reset', text: 'Your tester data has been reset for this session.', position: 'top-right', icon: 'success', stack: false });
+				reloadStudy();
 			}
 		});
 	}
-	
-	$(document).on('click', ".sessionDownload", function(e) {
-		const data = $(this).closest(".test").data();
-		downloadSessionData(data[sessionDataIdKey]);
-	});
 
 
     // Functionality
@@ -577,14 +571,14 @@
 			session.find(".icon-tester").hide();
 			session.find(".icon-reset-tester").show();
 			session.find(".icon-untester").show();
-			session.find(".sessionTestLauch").show();
-			session.find(".sessionTestDownload").show();
+			session.find("#sessionTestLauch").show();
+			session.find(".icon-test-download").show();
 		} else {
 			session.find(".icon-tester").show();
 			session.find(".icon-reset-tester").hide();
 			session.find(".icon-untester").hide();
-			session.find(".sessionTestLauch").hide();
-			session.find(".sessionTestDownload").hide();
+			session.find("#sessionTestLauch").hide();
+			session.find(".icon-test-download").hide();
 		}
 		
 		let userCount = participants.length;

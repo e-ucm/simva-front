@@ -244,6 +244,10 @@ var Simva = {
 		Utils.post(`/bff/studies/${study_id}/tests/${test_id}/unset-tester`, {}, callback);
 	},
 
+	resetTesterForSession: function(study_id, test_id, callback){
+		Utils.post(`/bff/studies/${study_id}/tests/${test_id}/reset-tester`, {}, callback);
+	},
+
 	addTagToSession: function(study_id, test_id, tag, callback){
 		Utils.post(`/bff/simlets/${study_id}/tests/${test_id}/tags/${tag}`, {}, callback);
 	},

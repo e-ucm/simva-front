@@ -83,5 +83,5 @@ module.exports = {
             logger.warn(e);
         }
         return study;
-    },
+    }
 }

@@ -922,6 +922,9 @@ body {
 .icon-tester::before {
 	background-image: url("../icon/tester.png");
 }
+.icon-test-download::before {
+	background-image: url("../icon/test-download.png");
+}
 .icon-untester::before {
 	background-image: url("../icon/erase.png");
 }

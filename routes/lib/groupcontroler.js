@@ -114,5 +114,50 @@ module.exports = {
                 throw new Error(`Failed after ${maxRetries} retries: ${e.message}`);
             }
         }
+    },
+
+    async setTesterGroup(studyid, testid, userId, username, sessionid) {
+        // 1. Find or create sandbox group for user
+       let groups = await SimvaAsync.getStudyGroups(studyid, sessionid);
+       const groupName = `tester_${studyid}_${userId}_${username}`;
+       let myGroup = groups.find(g => g.group_sandbox === true && g.group_name === groupName);
+       if (!myGroup) {
+           myGroup = await SimvaAsync.addGroup(studyid, { group_name: groupName, group_use_new_generation: false, group_sandbox: true }, sessionid);
+       }
+       // 2. Add user as participant if not already
+       let participants = await SimvaAsync.getGroupParticipants(studyid, myGroup.group_id, sessionid);
+       let alreadyParticipant = participants.some(p => p.user_id === userId);
+       if (!alreadyParticipant) {
+           await SimvaAsync.addGroupParticipant(studyid, myGroup.group_id, userId, sessionid);
+       }
+       // 3. Allocate/move user to selected session
+       await SimvaAsync.allocateToSession(studyid, myGroup.group_id, testid, {}, sessionid);
+       return myGroup;
+    },
+
+    async unsetTesterGroup(studyid, testid, userId, username, sessionid) {
+        // Find sandbox group for user
+        let groups = await SimvaAsync.getStudyGroups(studyid, sessionid);
+        const groupName = `tester_${studyid}_${userId}_${username}`;
+        let myGroup = groups.find(g => g.group_sandbox === true && g.group_name === groupName);
+        if (!myGroup) {
+            throw new Error('Tester group not found');
+        }
+        // Find participant for user
+        let participants = await SimvaAsync.getGroupParticipants(studyid, myGroup.group_id, sessionid);
+        let participant = participants.find(p => p.user_id === userId);
+        if (!participant) {
+            throw new Error('You are not a participant in this session.');
+        }
+        // Remove from group
+        await SimvaAsync.deleteGroupParticipant(studyid, myGroup.group_id, participant.participant_id || participant.id || participant.user_id, false, sessionid);
+        // Delete group if sandbox
+        await SimvaAsync.deleteGroup(studyid, myGroup.group_id, sessionid);
+        return;
+    },
+
+    async resetTesterGroup(studyid, testid, userId, username, sessionid) {
+        await this.unsetTesterGroup(studyid, testid, userId, username, sessionid);
+        return await this.setTesterGroup(studyid, testid, userId, username, sessionid);
     }
 }
