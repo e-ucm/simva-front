@@ -44,37 +44,48 @@ class UserTools {
 	auth(level){
 		var pre=this.preTabs(level);
 		var tmp=this;
-		return function(req, res, next) {
-		  let simvaToken = userClientsListManager.getJWT(req.session.id);
-		  if (req.session && req.session.user && req.session.user.jwt){
-			tmp.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(req.session.id), (error, result) => {
-				if(error) {
-					req.session.intendedUrl=`${req.originalUrl}`;
-					res.redirect(`${pre}users/login`); 
-				} else {
-					logger.debug("auth() - Token OK");
-					return next();
-				}
-			});
-		  } else if(simvaToken){
-			logger.info("auth() - New token");
-			let session = req.session;
-			// Ensure req.session.user exists before setting properties
-			if (!session.user) {
-			  session.user = {};
-			}
-			let profile = tmp.getProfileFromJWT(simvaToken);
-			session.user.data = profile;
-			session.user.jwt = simvaToken;
-			userClientsListManager.addClient(session);
-			req.session.user.jwt = simvaToken;
-			logger.info("auth() - New token done");
-			return next();
-		  }else{
-			req.session.intendedUrl=`${req.originalUrl}`;
-			res.redirect(`${pre}users/login`);
-		  }
-		};
+			 return function(req, res, next) {
+				 let simvaToken = userClientsListManager.getJWT(req.session.id);
+				 // Helper: detect if this is a /bff request
+				 const isBff = req.originalUrl && req.originalUrl.startsWith('/bff');
+				 if (req.session && req.session.user && req.session.user.jwt){
+					 tmp.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(req.session.id), (error, result) => {
+							 if(error) {
+								 req.session.intendedUrl=`${req.originalUrl}`;
+								 if (isBff) {
+									 // For BFF, send a frontend redirect page (not a backend redirect)
+									 return res.status(401).send({ frontendRedirect: '/auth-expired.html' });
+								 } else {
+									 return res.redirect(`${pre}users/login`);
+								 }
+							 } else {
+								 logger.debug("auth() - Token OK");
+								 return next();
+							 }
+					 });
+				 } else if(simvaToken){
+					 logger.info("auth() - New token");
+					 let session = req.session;
+					 // Ensure req.session.user exists before setting properties
+					 if (!session.user) {
+						 session.user = {};
+					 }
+					 let profile = tmp.getProfileFromJWT(simvaToken);
+					 session.user.data = profile;
+					 session.user.jwt = simvaToken;
+					 userClientsListManager.addClient(session);
+					 req.session.user.jwt = simvaToken;
+					 logger.info("auth() - New token done");
+					 return next();
+				 }else{
+					 req.session.intendedUrl=`${req.originalUrl}`;
+					 if (isBff) {
+						 return res.status(401).send({ frontendRedirect: '/auth-expired.html' });
+					 } else {
+						 return res.redirect(`${pre}users/login`);
+					 }
+				 }
+			 };
 	}
 
 	async getRefreshSessionsList() {

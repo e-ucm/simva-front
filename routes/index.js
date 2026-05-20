@@ -114,7 +114,7 @@ app.use((err, req, res, next) => {
   logger.info(`Error ${status} (${msg}) on ${req.method} ${req.url} with payload ${req.body}.`);
   logger.error(err);
 
-  if (!req.user) {
+  if (!req.session.user) {
     return res.redirect('/users/login');
   }
   
