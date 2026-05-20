@@ -49,8 +49,8 @@ var GameplayActivityPainter = {
 
 	getEditExtraForm: function () {
 		return `<div id="edit_gameplay_activity" name="edit_gameplay_activity" class="gameplay_activity">
-			<p><label for="edit_gameplay_trace_storage"><b>${this.commun.storage_title}</b></label><input title="${this.commun.storage_description}" id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
-			<p><label for="edit_gameplay_trace_storage"><i>${this.commun.storage_description}</i></label></p>
+			<p><label for="edit_gameplay_trace_storage"><b>${this.communSpecific.storage_title}</b></label><input title="${this.commun.storage_description}" id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
+			<p><label for="edit_gameplay_trace_storage"><i>${this.communSpecific.storage_description}</i></label></p>
 			<p><label for="edit_gameplay_backup"><b>${this.communSpecific.result_title}</b></label><input title="${this.communSpecific.result_description}" id="edit_gameplay_backup" type="checkbox" name="backup" checked></p>
 			<p><label for="edit_gameplay_backup"><i>${this.communSpecific.result_description}</i></label></p>
 			<p><label for="edit_gameplay_scorm_xAPI"><b>${this.specific.xapi_by_game_title}</b></label><input title="${this.specific.xapi_by_game_description}" id="edit_gameplay_scorm_xAPI" type="checkbox" name="scorm_xapi" checked></p>
