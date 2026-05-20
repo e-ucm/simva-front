@@ -67,8 +67,8 @@
                     <done class="completionPercentage">		</done>% [ <doneres class="completedUsers">		</doneres> / <total class="completedTotalUsers">		</total> ]
                 </span>
             </div>
-			<div class="kebab-icon icon-play" id="sessionTestLauch" onclick="Utils.toggleIframeInFloating(`/scheduler/${study.simlet_id}?testMode=true`)" title="<%- t('play.description', { ns : 'SIMLETs' }) %>" style="display:none;">
-				<b><%- t('play.title', { ns : 'SIMLETs' }) %></b>
+			<div class="kebab-icon icon-play" id="sessionTestLauch" onclick="Utils.toggleIframeInFloating(`/scheduler/${study.simlet_id}?testMode=true`)" title="<%- t('play.description', { ns : 'SIMLETs' }) %>">
+				<b><%- t('play', { ns : 'sessions' }) %></b>
 			</div>
             <div class="kebab-icon icon-download" id="sessionDownload" title="<%- t('download.description', { ns : 'sessions' }) %>">
                 <b><%- t('download', { ns : 'sessions' }) %></b>
@@ -175,7 +175,10 @@
 
 
 <div class="floating_buttons">
-    <a unselectable="on" class="basic" onclick="openTestForm()" style="display: none;">+</a>
+    <div unselectable="on" class="basic" onclick="openTestForm()">
+		<img src="../icon/study.png" style="filter: brightness(0) saturate(100%);">
+		<span>+</span>
+	</div>
 </div>
 
 <script>

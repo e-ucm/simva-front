@@ -216,7 +216,10 @@ form .role_selector label {
 	background-color: #ffc695; 
 }
 form .role_selector input[type="radio"]:checked+label { font-weight: bold; background-color: #de6700; color: white; }
-.form h3 { margin-top: 10px; margin-bottom: 5px; }
+.form h3, .form input[type="submit"] { margin-top: 10px; margin-bottom: 5px; }
+.form .char-count { display: block; margin-left: auto; margin-right: 0px; margin-top: 5px; }
+.form .char-count.orange { color: rgb(255, 196, 0); }
+.form .char-count.red { color: red; }
 
 .header { width: 100%; background-color: #ff8f22; height: 50px; overflow: hidden; box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.3); padding: 10px; position: fixed; z-index: 100; }
 .header.black { background-color: black; color: white; }
@@ -296,40 +299,38 @@ body {
   margin: 0; /* Ensure no default margin interferes */
 }
 
-.content .floating_buttons a { 
-	display: inline-block; 
-	width: 60px; 
-	height: 60px; 
+.content .floating_buttons .basic { 
+	/* display: inline-block;  */
+	width: 80px; 
+	height: 80px; 
 	background-color: #ff8f22; 
 	font-size: 55px; 
 	text-align: center; 
 	margin-left: 10px; 
 	cursor: pointer; 
-	border-radius: 30px; 
+	border-radius: 40px; 
 	box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.3); 
-}
-.content .floating_buttons.users a { 
-	background-color: #6b5faa; 
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative; 
 }
 
-.content .floating_buttons a.pdf { 
-	padding-top: 17px; 
-	color: white; 
-	font-weight: bold; 
-	background-color: red; 
-	font-size: 22px; 
-}
-
-.content .floating_buttons a img { 
+.content .floating_buttons .basic img { 
 	display: block; 
-	width: 60px; 
-	height: 60px; 
-	background-color: #ff8f22; 
-	font-size: 55px; 
-	text-align: center; 
-	cursor: pointer; 
-	border-radius: 30px; 
-	box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.3); 
+	width: 60%; 
+	height: 60%; 
+	object-fit: contain;
+	text-align: center;
+	transform: translate(-5%, 0%);
+}
+.content .floating_buttons .basic span { 
+	position: absolute;
+	font-size: 20;
+	color: white;
+	-webkit-text-stroke: 2px black;
+	transform: translate(45%, -25%);
 }
 
 .content .left { float: left; display: inline-block; }
@@ -720,14 +721,7 @@ body {
 	align-items: center;
 }
 
-.studyTabsButtons {
-	/* display: flex; 
-	justify-content: center; 
-	align-items: center; 
-	gap: 5px; */
-
-	padding: 10px;
-}
+.studyTabsButtons {	padding: 10px; }
 .studyTabsButtons .yellow {
 	color: black;
 	background-color: lightgray;
@@ -742,7 +736,7 @@ body {
 
 
 .sessionStatusLabel {
-	/* Must be set by the leftmost element in order for the other buttons */
+	/* Must be set by the leftmost element in order for the other buttons to appear correctly aligned to the right */
 	margin-left: auto;
 
 	margin-right: 10px;
@@ -798,21 +792,31 @@ body {
 	margin-top: 5px;
 }
 .sessionInfo {
-	width: 30%;
+	width: 25%;
 }
 .sessionProgress.progress {
+	display: flex;
+	justify-content: center;
 	width: 40%;
 	height: 20px;
 	border: 1px solid black;
 	margin: 0;
+	
 }
 .sessionProgress.progress span {
 	top: 3px;
 }
-.sessionDownload {
-	margin-right: 15px;
+#sessionTestLauch {
+	/* Must be set by the leftmost element in order for the other buttons to appear correctly aligned to the right */
 	margin-left: auto;
+}
+#sessionDownload {
+	margin-left: 20px;
+	margin-right: 15px;
 	cursor: pointer;
+}
+#sessionTestLauch.icon-play::before {
+	filter: none;
 }
 
 .kebab {
@@ -878,6 +882,7 @@ body {
 	height: var(--iconSize);
 	margin-right: var(--iconMargin);
 
+	/* Change icon color from black to white */
 	filter: invert(100%) sepia(4%) saturate(0%) hue-rotate(193deg) brightness(103%) contrast(102%);
 }
 .icon-archive::before {
@@ -933,7 +938,12 @@ body {
 }
 .icon-delete::before {
 	background-image: url("../icon/trash.png");
+	/* Change icon color from black to #ff3d3d */
 	filter: brightness(0) saturate(100%) invert(29%) sepia(78%) saturate(3518%) hue-rotate(344deg) brightness(122%) contrast(100%);
+}
+.activityDownload.kebab-icon.icon-download {
+	/* Change icon color from black to white */
+	filter: brightness(0) saturate(100%) invert(97%) sepia(97%) saturate(13%) hue-rotate(202deg) brightness(103%) contrast(104%);
 }
 
 
@@ -976,6 +986,7 @@ body {
 	line-height: 1;
 }
 
+/* Remove color change to show black icon */
 .content .test .activities .activity .activityDownload.icon-download::before {
 	filter: none;
 }
@@ -1022,7 +1033,7 @@ body {
 
 
 .groupTop .expandButton {
-	/* Must be set by the leftmost element in order for the other buttons */
+	/* Must be set by the leftmost element in order for the other buttons to appear correctly aligned to the right */
 	margin-left: auto;
 }
 .owners.collapsed, .participants_container.collapsed { display: none; }
