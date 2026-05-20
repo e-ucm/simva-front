@@ -178,11 +178,14 @@ var GameplayActivityPainter = {
 
 		if(selectedGameType === 'DESKTOP') {
 			console.log('[gameplaypainter] Checking file extraction in edit');
+			activity.game_url = null; // Ensure game_url is null for DESKTOP activities
 			let rawformdata = PainterFactory.Painters["activity"].extractFileFromEditForm(form, 'edit_gamefile', activity, 'file', 'game_type', 'DESKTOP');
 			if(rawformdata !== undefined) {
 				console.log('[gameplaypainter] File extraction triggered in edit, returning');
 				callback(null, rawformdata);
 				return;
+			} else {
+				console.log('[gameplaypainter] No file extracted in edit, proceeding with other changes');
 			}
 		} else {
 			let game_uri = formdata.game_uri;
