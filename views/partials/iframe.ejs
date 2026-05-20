@@ -13,16 +13,16 @@
 		$('#iframe_floating_close').on('click', function () {
 			Utils.hideIframeFloating();
 		});
-
-		// Click on backdrop closes modal
-		$('#iframe_floating .iframe_backdrop').on('click', function () {
-			Utils.hideIframeFloating();
-		});
 		
-		$(document).on('keydown', function(e) {
-			if (e.key === 'Escape') {
-				Utils.hideIframeFloating();
-			}
-		});
+		// Click on backdrop closes modal
+		//$('#iframe_floating .iframe_backdrop').on('click', function () {
+		//	Utils.hideIframeFloating();
+		//});
+		//
+		//$(document).on('keydown', function(e) {
+		//	if (e.key === 'Escape') {
+		//		Utils.hideIframeFloating();
+		//	}
+		//});
 	});
 </script>
