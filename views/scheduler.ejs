@@ -145,15 +145,43 @@
 		});
 
 		// Function to update the user interaction state and notify the server if changed
+		let suspendTimeout = null;
+		let SUSPEND_DELAY_MS = 15000; // 15 seconds
+		let lastSuspendReason = null;
+
 		let updateUserInteractionState = function(reason) {
 			const isInteracting = isUserInteractingFunc();
 			if (isInteracting !== previousState) {
 				console.log(`User is ${isInteracting ? 'interacting' : 'not interacting'} with the page.`);
-				previousState = isInteracting;
-				if(current_activity_id != null) {
-					Simva.setActivitySuspend(current_activity_id, currentUserId, !isInteracting, reason, function() {
-						console.log("OK in Simva");
-					});
+				if (current_activity_id != null) {
+					if (!isInteracting) {
+						// User stopped interacting: start suspend timer
+						if (suspendTimeout) clearTimeout(suspendTimeout);
+						lastSuspendReason = reason;
+						suspendTimeout = setTimeout(function() {
+							// Only send suspend if still not interacting
+							if (!isUserInteractingFunc()) {
+								Simva.setActivitySuspend(current_activity_id, currentUserId, true, lastSuspendReason, function() {
+									console.log("OK in Simva (delayed suspend)");
+									previousState=false;
+								});
+							}
+							clearTimeout(suspendTimeout);
+							suspendTimeout = null;
+						}, SUSPEND_DELAY_MS);
+					} else {
+						// User resumed interaction: cancel suspend timer and unsuspend immediately
+						if (suspendTimeout) {
+							clearTimeout(suspendTimeout);
+							suspendTimeout = null;
+						} else {
+							Simva.setActivitySuspend(current_activity_id, currentUserId, false, reason, function() {
+								console.log("OK in Simva (unsuspend)");
+								previousState=true;
+							});
+						}
+						
+					}
 				}
 			}
 		}
