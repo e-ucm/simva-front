@@ -761,7 +761,7 @@
 				<td>${permissions}</td>
 				<td><input class="red" type="button" value="<%- t('coordinators.delete.title', { ns : 'groups' }) %>"
 		`;
-		if (owner.isCurrentUser) {
+		if (owner.isCurrentUser || owner.permission.toLowerCase() === "full") {
 			toret += ' disabled="disabled"';
 		} else {
 			toret += ` onclick="deleteOwner('${owner.user_id}', '${owner.username}')"`
