@@ -7,8 +7,10 @@
             "coordinators.delete.confirm": "Êtes-vous sûr de vouloir supprimer le coordinateur '{{owner}}' du SIMLET '{{SIMLET}}'?",
             
         "coordinators.add.title": "Ajouter un coordinateur",
+            "coordinators.name.title": "Nom",
             "coordinators.name.placeholder": "Nom d'utilisateur du coordinateur",
             "coordinators.permission.placeholder": "",
+            "coordinators.permission.title": "",
             "coordinators.permissions.full": "",
             "coordinators.permissions.read": "",
             "coordinators.permissions.write": "",

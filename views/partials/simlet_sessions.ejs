@@ -97,10 +97,9 @@
 					<input hidden type="text" name="prevSessionDescription" id="prev_session_description">
 
 					<h3 class="session_form_field session_form_name"><%- t('name.title', { ns : 'sessions' }) %></h3>
-					<input class="session_form_field session_form_name" type="text" name="sessionName" id="session_name" placeholder="<%- t('name.placeholder', { ns : 'sessions' }) %>" required>
-					<br class="session_form_field session_form_name">
+					<input class="session_form_field session_form_name name_field" type="text" name="sessionName" id="session_name" placeholder="<%- t('name.placeholder', { ns : 'sessions' }) %>" required>
 					<h3 class="session_form_field" id="session_description_label"><%- t('description.title', { ns : 'SIMLETs' }) %></h3>
-					<textarea maxlength="100" class="session_form_field" type="text" name="sessionDescription" id="session_description" placeholder="<%- t('description.placeholder', { ns : 'sessions' }) %>" required></textarea>
+					<textarea class="session_form_field description_field" type="text" name="sessionDescription" id="session_description" placeholder="<%- t('description.placeholder', { ns : 'sessions' }) %>" required></textarea>
 					<!-- <input class="session_form_field" type="text" name="sessionDescription" id="session_description" placeholder="<%- t('description.placeholder', { ns : 'sessions' }) %>" required> -->
 					<h3 class="session_form_field" id="session_tags_label"><%- t('tags.title', { ns : 'sessions' }) %></h3>
 					<div class="session_form_field" id="session_tags_area" style="margin-top: 5px;">
@@ -124,7 +123,7 @@
 							</div>
 						</div>
 						<div id="session_tag_creator" class="tagCreator" style="display:none;">
-							<input type="text" id="session_new_tag_name" placeholder="<%- t('tags.create.placeholder', { ns : 'sessions' }) %>" style="flex: 1;">
+							<input type="text" class="tag_name_field" id="session_new_tag_name" placeholder="<%- t('tags.create.placeholder', { ns : 'sessions' }) %>" style="flex: 1;">
 							<input type="color" id="session_new_tag_color" value="#3b82f6" style="width: 44px; padding: 0;">
 							<button type="button" onclick="createAndSelectTag()"><%- t('tags.create', { ns : 'sessions' }) %></button>
 							<button type="button" onclick="closeTagCreator()"><%- t('tags.create.cancel', { ns : 'sessions' }) %></button>
@@ -134,7 +133,7 @@
 							<input hidden type="text" id="prev_tag_name">
 							<input hidden type="color" id="prev_tag_color">
 
-							<input type="text" id="session_edit_tag_name" placeholder="<%- t('tags.edit.placeholder', { ns : 'sessions' }) %>" style="flex: 1;">
+							<input type="text" class="tag_name_field" id="session_edit_tag_name" placeholder="<%- t('tags.edit.placeholder', { ns : 'sessions' }) %>" style="flex: 1;">
 							<input type="color" id="session_edit_tag_color" value="#3b82f6" style="width: 44px; padding: 0;">
 							<button type="button" onclick="saveEditingTag()"><%- t('tags.edit.save', { ns : 'sessions' }) %></button>
 							<button type="button" onclick="closeTagEditor()"><%- t('tags.edit.cancel', { ns : 'sessions' }) %></button>
@@ -157,8 +156,7 @@
 			<div id="import_session_tab" class="subform" style="display: none;">
 				<form id="import_session_form">
 					<h3 class="import_session_form_field session_form_name"><%- t('name.title', { ns : 'sessions' }) %></h3>
-					<input class="import_session_form_field import_session_form_name" type="text" name="sessionName" id="import_session_name" placeholder="<%- t('name.placeholder', { ns : 'sessions' }) %>" required>
-					<br class="import_session_form_field import_session_form_name">
+					<input class="import_session_form_field import_session_form_name name_field" type="text" name="sessionName" id="import_session_name" placeholder="<%- t('name.placeholder', { ns : 'sessions' }) %>" required>
 					<h3><%- t('import.input', { ns : 'sessions' }) %></h3>
 					<input type="file" name="jsonFile" accept=".json" required>
 					<br><br>
@@ -359,6 +357,7 @@
 			$('#prev_session_name').val(test.session_name);
 			$('#prev_session_description').val(test.session_description);
 
+			// Must manually trigger the input event when changing input values programatically to update the remaining count
 			$('#session_name').val(test.session_name);
 			$('#session_description').val(test.session_description);
 			
@@ -671,10 +670,16 @@
 	let selectedTags = [];
 	let originalTagsIds = [];
 	
+	const tagNameFieldClass = "tag_name_field";
+	const MAX_TAG_NAME_LENGTH = 20;
 
 	// Menus
 
 	$(document).ready(function() {
+		// Add counter to all tag name fields (dclared in simlet_commons.ejs)
+		addInputCharCountToClass(tagNameFieldClass, MAX_TAG_NAME_LENGTH);
+
+		
 		$(document).on('click', function (e) {
 			if (!$(e.target).closest('#session_tag_search').length && !$(e.target).closest('#session_tag_dropdown').length
 				&& !$(e.target).closest('#session_selected_tags').length) {
@@ -687,6 +692,10 @@
 	const toggleTagCreator = function() {
 		$("#session_tag_creator").toggle();
 		$("#session_tags_error").text("");
+		
+		if ($("#session_tag_creator").is(":visible")) {
+			closeTagEditor();
+		}
 	}
 	const closeTagCreator = function() {
 		$("#session_tag_creator").hide();
@@ -703,6 +712,7 @@
 	const openTagEditor = function(tagId) {
 		$("#session_tag_editor").show();
 		closeTagDropdown();
+		closeTagCreator();
 		
 		const tag = getTagFromTagId(tagId);
 		$("#edit_tag_id").val(tag.tag_id);

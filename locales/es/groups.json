@@ -7,7 +7,9 @@
             "coordinators.delete.confirm": "¿Está seguro de que desea eliminar al coordinador '{{coordinator}}' del SIMLET '{{SIMLET}}'?",
             
         "coordinators.add.title": "Añadir coordinador",
+            "coordinators.name.title": "Nombre",
             "coordinators.name.placeholder": "Nombre de usuario del coordinador",
+            "coordinators.permission.title": "Permisos",
             "coordinators.permission.placeholder": "Seleccione los permisos",
             "coordinators.permissions.full": "Completos",
             "coordinators.permissions.read": "Lectura",

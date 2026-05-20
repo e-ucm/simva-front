@@ -10,7 +10,7 @@
                 <form id="new_activity_form">
                     <input type="hidden" name="test">
 					<h3><%- t('name.placeholder', { ns : 'activities' }) %></h3>
-                    <input type="text" name="name" placeholder="<%- t('name.placeholder', { ns : 'activities' }) %>" required>
+                    <input type="text" class="name_field" name="name" placeholder="<%- t('name.placeholder', { ns : 'activities' }) %>" required>
                     <select name="type">
                     </select>
                     <fieldset id="new_activity_extras">
@@ -24,7 +24,7 @@
                 <form id="import_activity_form">
                     <input type="hidden" name="test">
 					<h3><%- t('name.placeholder', { ns : 'activities' }) %></h3>
-                    <input type="text" name="name" placeholder="<%- t('name.placeholder', { ns : 'activities' }) %>" required>
+                    <input type="text" class="name_field" name="name" placeholder="<%- t('name.placeholder', { ns : 'activities' }) %>" required>
                     <h3><%- t('import.message', { ns : 'activities' }) %></h3>
 					<input name="jsonFile" type="file" accept=".json" required>
                     <input type="submit" value="<%- t('import.title', { ns : 'activities' }) %>">
@@ -36,7 +36,7 @@
                 <form id="existing_activity_form">
                     <input type="hidden" name="test">
 					<h3><%- t('name.placeholder', { ns : 'activities' }) %></h3>
-                    <input type="text" name="name" placeholder="<%- t('name.placeholder', { ns : 'activities' }) %>" required>
+                    <input type="text" class="name_field" name="name" placeholder="<%- t('name.placeholder', { ns : 'activities' }) %>" required>
                     <select name="type">
                     </select>
                     <input disabled type="submit" value="<%- t('add.title', { ns : 'activities' }) %> (Not enabled)">
@@ -255,6 +255,9 @@
 		$('#new_activity_form input[name="test"]').val(test);
 		$('#import_activity_form input[name="test"]').val(test);
 		$('#existing_activity_form span[class="test"]').val(test);
+
+		$('#new_activity_form input[name="name"]').val("");
+		$('#gameplay_game_uri').val("");
 	}
 
     let openEditActivityForm = function(activityId) {

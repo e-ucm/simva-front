@@ -13,26 +13,22 @@
 					<input hidden type="text" name="prevStudyName" id="prev_study_name">
 					<input hidden type="text" name="prevStudyDescription" id="prev_study_description">
 					<h3 class="study_form_name"><%- t('name.title', { ns : 'SIMLETs' }) %></h3>
-					<input class="study_form_name" type="text" name="studyName" id="study_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
-					<br class="study_form_name">
+					<input type="text" class="study_form_name name_field" name="studyName" id="study_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
 					<h3 class="study_form_field"><%- t('description.title', { ns : 'SIMLETs' }) %></h3>
-					<textarea maxlength="100" class="study_form_field" name="studyDescription" id="study_description" placeholder="<%- t('description.placeholder', { ns : 'SIMLETs' }) %>" required></textarea>
-					<!-- <input class="study_form_field" type="text" name="studyDescription" id="study_description" placeholder="<%- t('description.placeholder', { ns : 'SIMLETs' }) %>" required> -->
-					<br class="study_form_field"><br class="study_form_field">
-					<input class="study_form_field" type="submit" id="study_name_desc_submit" value="">
+					<textarea class="study_form_field description_field" name="studyDescription" id="study_description" placeholder="<%- t('description.placeholder', { ns : 'SIMLETs' }) %>" required></textarea>
+					<br>
+					<input type="submit" class="study_form_field"id="study_name_desc_submit" value="">
 				</form>
 			</div>
 
 			<div hidden id="import_study_tab" class="subform" style="display: none;">
 				<form id="import_study_form">
 					<h3 class="import_study_form_name"><%- t('name.title', { ns : 'SIMLETs' }) %></h3>
-					<input class="import_study_form_name" type="text" name="studyName" id="study_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
-					<br class="import_study_form_name">
-					<br>
+					<input type="text" class="import_study_form_name name_field" name="studyName" id="study_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
 					<h3><%- t('import.input', { ns : 'SIMLETs' }) %></h3>
-					<input class="import_study_form_field" type="file" name="jsonFile" accept=".json" required>
+					<input type="file" class="import_study_form_field" name="jsonFile" accept=".json" required>
 					<br><br>
-					<input class="import_study_form_field" type="submit" value="<%- t('import.submit', { ns : 'SIMLETs' }) %>">
+					<input type="submit" class="import_study_form_field" value="<%- t('import.submit', { ns : 'SIMLETs' }) %>">
 				</form>
 			</div>
 
@@ -129,9 +125,25 @@
 	</ul>
 </div>
 
+<div id="char_count_template" style="display: none;">
+	<span class="char-count"></span>
+</div>
+
 <script type="text/javascript" src="/kebabs.js"></script>
 <script>
+	const nameFieldClass = "name_field";
+	const descriptionFieldClass = "description_field";
+	const MAX_NAME_LENGTH = 40;
+	const MAX_DESC_LENGTH = 100;
+	const START_WARNING_PERCENTAGE = 30;
+	let classesWithCharCount = new Set();
+	let classesWithCharCountStr = "";
 
+	let currStudyId = null;
+	let refreshFunc = null;
+    let shlink = null;
+
+	
 	// --- UTILITIEs --- 
 	
 	/**
@@ -151,11 +163,87 @@
 		// return date.toLocaleDateString(currentlanguageCode);
 	}
 
-    let currStudyId = null;
-	let refreshFunc = null;
-    let shlink = null;
+	const addInputCharCountToClass = function(className, maxLength) {
+		// Store the class and update the string with all the classes that must be checked when updating input value
+		classesWithCharCount.add(`.${className}`);
+		classesWithCharCountStr = Array.from(classesWithCharCount).join(", ");
 
+		// Shared listener. Will be triggered when text changes
+		$(document).on('input', `.${className}`, function() {
+			updateCharCount($(this).next(".char-count"), $(this).val().length, maxLength);
+		});
+
+		// Add a character counter after every instance of the class
+		$(`.${className}`).each(function(index) {
+			const counter = $("#char_count_template .char-count").clone();
+
+			// Add the input element classes to the counter so it can appear in floating forms
+			counter.addClass($(this).attr("class"));
+			// Remove the className so the counter doesn't get added to the current iteration
+			counter.removeClass(className);
+
+			// Add the counter after the element and set its text to 0/maxLength
+			$(this).after(counter);
+			$(counter).text(`${0}/${maxLength}`);
+		});
+
+		// Set the max length of every form instance of the class
+		$(`.${className}`).prop("maxLength", maxLength);
+
+	}
+	
+	// When changing an input value programatically, the 'input' event must be triggered manually with .trigger('input')
+	// To avoid having to do this every time an input field with a character counter changes its value programatically,
+	// the input elements setter is defined via $.valHooks (however the setter will change for all the elements of the same type) 
+	$.valHooks.input = {
+		set: function(elem, value) {
+			checkAndUpdateCharCount(elem, value);
+			// Return undefined for default behavior
+			return undefined;
+		}
+	};
+	$.valHooks.textarea = {
+		set: function(elem, value) {
+			checkAndUpdateCharCount(elem, value);
+			// Return undefined for default behavior
+			return undefined;
+		}
+	};
+
+	const checkAndUpdateCharCount = function(elem, value) {
+		// Only update the character count if the element has the custom name field class
+		if ($(elem).is(classesWithCharCountStr)) {
+			updateCharCount($(elem).next(".char-count"), value.length, $(elem).prop("maxLength"));
+		}
+	}
+	const updateCharCount = function(countTextElem, count, maxLength) {
+		$(countTextElem).text(`${count}/${maxLength}`);
+
+		// Show the text in red if there are no characters left 
+		if (maxLength - count == 0) {
+			$(countTextElem).addClass("red");
+		}
+		// Show the text in orange if there are more than 0 but less than the START_WARNING_PERCENTAGE of characters left 
+		else if ((maxLength - count) <= maxLength * (START_WARNING_PERCENTAGE / 100)) {
+			$(countTextElem).removeClass("red");
+			$(countTextElem).addClass("orange");
+		}
+		// Show the text normally
+		else {
+			$(countTextElem).removeClass("red");
+			$(countTextElem).removeClass("orange");
+		}
+	}
+
+    
+	// --- MENUS ---
+	
     $(document).ready(function() {
+		// Add counter to all name and description fields (must be done after
+		// loading everything to ensure all elements get their counter added)
+		addInputCharCountToClass(nameFieldClass, MAX_NAME_LENGTH);
+		addInputCharCountToClass(descriptionFieldClass, MAX_DESC_LENGTH);
+		
 		$(document).on('submit', "#study_name_desc_tab", function(event) {
 			let currentform = this;
 			let form = Utils.getFormData($("#study_name_desc_form"));
@@ -272,6 +360,7 @@
             return false;
         });
 	});
+
 
     // --- URL FORM ---
     const openUrlSettingsForm = function(studyId) {

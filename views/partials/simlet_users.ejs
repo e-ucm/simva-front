@@ -83,10 +83,10 @@
 	<div class="floater">
 		<div class="form">
             <h2><%- t('coordinators.add.title', { ns : 'groups' }) %></h2>
-            <br>
             <form id="existing_owner_form">
-                <input type="text" id="owner_name" name="name" placeholder="<%- t('coordinators.name.placeholder', { ns : 'groups' }) %>" required>
-                <br><br>
+				<h3><%- t('coordinators.name.title', { ns : 'groups' }) %></h3>
+                <input type="text" class="name_field" id="owner_name" name="name" placeholder="<%- t('coordinators.name.placeholder', { ns : 'groups' }) %>" required>
+				<h3><%- t('coordinators.permission.title', { ns : 'groups' }) %></h3>
                 <select name="permission" required>
                     <option value=""><%- t('coordinators.permission.placeholder', { ns : 'groups' }) %></option>
                     <option value="READ"><%- t('coordinators.permissions.read', { ns : 'groups' }) %></option>
@@ -115,7 +115,7 @@
 					<input hidden type="text" name="editingGroupId" id="edit_group_id">
 					<input hidden type="text" name="prevGroupName" id="prev_group_name">
 					<h3><%- t('groups.name.title', { ns : 'groups' }) %></h3>
-					<input type="text" name="groupName" id="group_name" placeholder="<%- t('groups.name.placeholder', { ns : 'groups' }) %>" required>
+					<input type="text" class="name_field" name="groupName" id="group_name" placeholder="<%- t('groups.name.placeholder', { ns : 'groups' }) %>" required>
 					<h3><%- t('deprecated.title', { ns : 'groups' }) %></h3>
 					<input type="checkbox" name="group_use_deprecated_generation" id="group_use_deprecated_generation" title="<%- t('deprecated.tooltip', { ns : 'groups' }) %>"><label for="group_use_deprecated_generation" ><%- t('deprecated.title', { ns : 'groups' }) %></label>
 					<br><br>
@@ -128,7 +128,7 @@
 			<div id="import_group_tab" class="subform" style="display: none;">
 				<form id="import_group_form_modal">
 					<h3><%- t('groups.name.title', { ns : 'groups' }) %></h3>
-					<input type="text" name="groupName" id="import_group_name_modal" placeholder="<%- t('groups.name.placeholder', { ns : 'groups' }) %>" required>
+					<input type="text" class="name_field" name="groupName" id="import_group_name_modal" placeholder="<%- t('groups.name.placeholder', { ns : 'groups' }) %>" required>
 					<br>
 					<h3><%- t('groups.import.input', { ns : 'groups' }) %></h3>
 					<input type="file" name="jsonFile" accept=".json" required>
@@ -151,9 +151,9 @@
 			</div>
 			<div id="existing_participant_tab" class="subform selected" style="display: block;">
 				<form id="existing_participant_form">
-					<br>
-					<input type="text" name="name" placeholder="<%= t('participants.username.placeholder', { ns : 'groups' }) %>" required>
 					<br><br>
+					<input type="text" class="name_field" name="name" placeholder="<%= t('participants.username.placeholder', { ns : 'groups' }) %>" required>
+					<br>
 					<input type="submit" value="<%= t('participants.add.existing.submit' , { ns : 'groups' }) %>">
 					<br><br>
 					<span class="error"></span>
@@ -162,12 +162,12 @@
 			<div id="new_participant_tab" class="subform" style="display: none;">
 				<form id="new_participant_form">
 					<br>
-					<input type="text" name="username" placeholder="<%= t('participants.username.placeholder', { ns : 'groups' }) %>" value="" required>
-					<br><br>
-					<input type="email" name="email" placeholder="<%= t('participants.add.new.email.placeholder', { ns : 'groups' }) %>" value="" required>
-					<br><br>
-					<input type="password" name="password" placeholder="<%= t('participants.add.new.password.placeholder', { ns : 'groups' }) %>" required>
-					<br><br>
+					<input type="text" class="name_field" name="username" placeholder="<%= t('participants.username.placeholder', { ns : 'groups' }) %>" value="" required>
+					<br>
+					<input type="email" class="name_field" name="email" placeholder="<%= t('participants.add.new.email.placeholder', { ns : 'groups' }) %>" value="" required>
+					<br>
+					<input type="password" class="name_field" name="password" placeholder="<%= t('participants.add.new.password.placeholder', { ns : 'groups' }) %>" required>
+					<br>
 					<div class="role_selector">
 						<input id="teacher_role" type="radio" name="role" value="teacher"><label for="teacher_role"><%= t('teacher' , { ns : 'roles' }) %></label>
 						<input id="student_role" type="radio" name="role" value="student" checked><label for="student_role"><%= t('student' , { ns : 'roles' }) %></label>
@@ -777,20 +777,25 @@
 
 	let paintGroups = function(groups, tests, participants) {
 		$('#groups_container').html('');
-		if (groups.length == 0) {
-			$('#groups_container').append("<p><%- t('groups.no_groups.message', { ns : 'groups' }) %></p>");
-		} 
-        else {
+		
+		let painted = 0;
+		if (groups.length > 0) {
 			for (var i = 0; i < groups.length; i++) {
 				if(Boolean(groups[i].group_sandbox)) {
 					continue;
 				}
 				addGroupBox(groups[i])
 				paintAllocator(groups[i], tests, groups, participants);
+				painted++;
 			}
-            if (groups.length == 1) {
+            if (groups.length == 1 && painted > 0) {
 			    toggleGroup(groups[0].group_id);
             }
+		} 
+        
+		// If there are no groups painted (either because there are none or all of them are sandbox), add the message
+		if (painted == 0) {
+			$('#groups_container').append("<p><%- t('groups.no_groups.message', { ns : 'groups' }) %></p>");
 		}
 		
 		// Block user addition/deletion when SIMLET is archived

@@ -1,22 +1,9 @@
-body, div, p, h1, h2, h3, ul, li, form { margin: 0px; padding: 0px; }
-
-/* About page sections styling */
-.about_page { padding: 60px 20px 20px 20px !important; width: 100% !important; }
-.about_page h1 { display: block !important; margin: 20px 0 30px 0 !important; padding: 0 !important; font-size: 2.2em !important; color: #ff8f22 !important; font-weight: bold !important; }
-.aboutSections { padding: 20px; max-width: 1200px; margin: 0 auto; display: block !important; }
-.aboutSections h1 { margin: 20px 0 30px 0; padding: 0; font-size: 2.2em; color: #ff8f22; font-weight: bold; }
-.aboutSection { margin-bottom: 30px; border-bottom: 2px solid #ddd; padding: 15px 0 20px 0; display: block !important; scroll-margin-top: 60px; }
-.aboutSection:last-child { border-bottom: none; }
-.aboutSection h2 { margin: 20px 0 15px 0; padding: 0; font-size: 1.8em; font-weight: bold; color: #ff8f22; }
-.aboutSection h3 { margin: 15px 0 15px 0; padding: 0; font-size: 1.4em; font-weight: bold; color: #0B617D; }
-.aboutSection p { margin: 10px 0; padding: 0; line-height: 1.6; color: #333; }
-.aboutSubSection { margin-left: 20px; margin-top: 15px; margin-bottom: 15px; padding: 15px; background-color: #f9f9f9; border-left: 4px solid #ff8f22; display: block !important; }
-.aboutSubSection h4 { margin: 0 0 10px 0; padding: 0; font-size: 1.1em; font-weight: bold; color: #0B617D; }
-.aboutSubSection p { margin: 0; padding: 0; line-height: 1.5; color: #444; }
+html { --themeOrangeColor: #ff8f22; }
 
 * { margin: 0px; padding: 0px; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box }
 html, body { font-family: sans-serif; margin: 0; height: 100%; width: 100% }
 body { background-color: #fff6ec }
+body, div, p, h1, h2, h3, ul, li, form { margin: 0px; padding: 0px; }
 body.black { background-color: #171717; }
 ul, ol, dl { list-style: none }
 a, img, input, select, textarea, fieldset { border: 0; outline: 0; font-family: sans-serif; }
@@ -26,6 +13,23 @@ hr { margin: 10px 0 0; border: 1px solid #000 }
 thead { display: table-header-group; }
 .hidden { display: none; }
 
+
+/* About page sections styling */
+.about_page { padding: 60px 20px 20px 20px !important; width: 100% !important; }
+.about_page h1 { display: block !important; margin: 20px 0 30px 0 !important; padding: 0 !important; font-size: 2.2em !important; color: var(--themeOrangeColor) !important; font-weight: bold !important; }
+.aboutSections { padding: 20px; max-width: 1200px; margin: 0 auto; display: block !important; }
+.aboutSections h1 { margin: 20px 0 30px 0; padding: 0; font-size: 2.2em; color: var(--themeOrangeColor); font-weight: bold; }
+.aboutSection { margin-bottom: 30px; border-bottom: 2px solid #ddd; padding: 15px 0 20px 0; display: block !important; scroll-margin-top: 60px; }
+.aboutSection:last-child { border-bottom: none; }
+.aboutSection h2 { margin: 20px 0 15px 0; padding: 0; font-size: 1.8em; font-weight: bold; color: var(--themeOrangeColor); }
+.aboutSection h3 { margin: 15px 0 15px 0; padding: 0; font-size: 1.4em; font-weight: bold; color: #0B617D; }
+.aboutSection p { margin: 10px 0; padding: 0; line-height: 1.6; color: #333; }
+.aboutSubSection { margin-left: 20px; margin-top: 15px; margin-bottom: 15px; padding: 15px; background-color: #f9f9f9; border-left: 4px solid var(--themeOrangeColor); display: block !important; }
+.aboutSubSection h4 { margin: 0 0 10px 0; padding: 0; font-size: 1.1em; font-weight: bold; color: #0B617D; }
+.aboutSubSection p { margin: 0; padding: 0; line-height: 1.5; color: #444; }
+
+
+/* Input elements */
 input[type="text"], input[type="email"], input[type="password"], input[type="file"], input[type="date"], input[type="time"], input[type="number"], select, textarea { padding:6px; font-size:15px; border: 1px solid black; }
 .button, 		input[type="submit"], 		 input[type="button"] 		 { width:auto; border:0; padding:6px; background:#f0913f; font-size:15px; color:#fff; cursor:pointer; }
 .button.orange, input[type="submit"].orange, input[type="button"].orange { border:1px solid #0B617D; background:#0B617D }
@@ -35,6 +39,7 @@ input[type="text"], input[type="email"], input[type="password"], input[type="fil
 .button.red, 	input[type="submit"].red, 	 input[type="button"].red 	 { border:0px solid #f64e4e; background:#f64e4e }
 .button.black, 	input[type="submit"].black,  input[type="button"].black  { border:1px solid #2b2e31; background:#2b2e31 }
 input[type="button"]:disabled { border:1px solid lightgray; background: darkgray; color: gray; cursor: default; }
+
 
 .login { background:#332d26; } .login #login_box, .login #register_box { width:260px; background:#fff6ec; padding:20px; display: inline-block; }
 .login #login_box img, .login #register_box img { width:100% }
@@ -216,11 +221,11 @@ form .role_selector label {
 }
 form .role_selector input[type="radio"]:checked+label { font-weight: bold; background-color: #de6700; color: white; }
 .form h3, .form input[type="submit"] { margin-top: 10px; margin-bottom: 5px; }
-.form .char-count { display: block; margin-left: auto; margin-right: 0px; margin-top: 5px; }
+.form .char-count { display: flex; justify-content: flex-end; margin-right: 10px; margin-top: 5px; }
 .form .char-count.orange { color: rgb(255, 196, 0); }
 .form .char-count.red { color: red; }
 
-.header { width: 100%; background-color: #ff8f22; height: 50px; overflow: hidden; box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.3); padding: 10px; position: fixed; z-index: 100; }
+.header { width: 100%; background-color: var(--themeOrangeColor); height: 50px; overflow: hidden; box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.3); padding: 10px; position: fixed; z-index: 100; }
 .header.black { background-color: black; color: white; }
 .header .left { float: left; display: table; height: 100%; }
 .header .left .logo img { height: 30px; width: auto; }
@@ -302,7 +307,7 @@ body {
 	/* display: inline-block;  */
 	width: 80px; 
 	height: 80px; 
-	background-color: #ff8f22; 
+	background-color: var(--themeOrangeColor); 
 	font-size: 55px; 
 	text-align: center; 
 	margin-left: 10px; 
@@ -808,6 +813,7 @@ body {
 #sessionTestLauch {
 	/* Must be set by the leftmost element in order for the other buttons to appear correctly aligned to the right */
 	margin-left: auto;
+	cursor: pointer;
 }
 #sessionDownload {
 	margin-left: 20px;
