@@ -298,4 +298,170 @@ const otherSections = [];
 			</section>
 		<% }) %>
 	<% } %>
+
+	<section id="xapi-dashboard-info" class="aboutSection">
+		<h2><%= t('xapi.dashboard.title', { ns: 'about' }) %></h2>
+		<p><%= t('xapi.dashboard.intro', { ns: 'about' }) %></p>
+		<img src="/public/images/dashboard-example.png" alt="<%= t('xapi.dashboard.image.alt', { ns: 'about' }) %>" style="max-width:100%;margin:1em 0;"/>
+
+		<h3><%= t('xapi.dashboard.backend.title', { ns: 'about' }) %></h3>
+		<p><%= t('xapi.dashboard.backend.desc', { ns: 'about' }) %></p>
+		<pre style="background:#f8f8f8;padding:1em;overflow-x:auto;">
+{
+	"actor": {
+		"account": {
+			"homePage" : "...",
+			"name" : "fybu"
+		}
+	},
+	"verb": {
+		"id": "http://adlnet.gov/exapi/verbs/initialized"
+	},
+	"object" : {
+		"definition" : {
+			"type" : "https://w3id.org/xapi/seriousgames/activity-types/level"
+		},
+		"id" : "..."
+	},
+	"result" : ...,
+	"context": {
+		"contextActivities": {
+			"category": [{"id": "https://w3id.org/xapi/serious-game"}],
+		},
+		"registration": "18c01bd5-a384-42ad-a96a-9572d4674b87"
+	},
+	"id": "ad48cb27-0536-4b22-a0fb-6c4f80c57d5a",
+	"timestamp" : "2024-06-09T19:32:57.369Z",
+	"stored" : "2024-06-09T19:41:23.456Z"
+}
+		</pre>
+
+		<h3><%= t('xapi.dashboard.activitytypes.title', { ns: 'about' }) %></h3>
+		<table class="aboutTable">
+			<thead>
+				<tr><th><%= t('xapi.dashboard.activitytypes.col1', { ns: 'about' }) %></th><th><%= t('xapi.dashboard.activitytypes.col2', { ns: 'about' }) %></th></tr>
+			</thead>
+			<tbody>
+				<tr><td><%= t('xapi.dashboard.activitytypes.game', { ns: 'about' }) %></td><td>https://w3id.org/xapi/seriousgames/activity-types/serious-game</td></tr>
+				<tr><td><%= t('xapi.dashboard.activitytypes.limesurvey', { ns: 'about' }) %></td><td>http://adlnet.gov/expapi/activities/assessment</td></tr>
+				<tr><td><%= t('xapi.dashboard.activitytypes.manual', { ns: 'about' }) %></td><td>http://adlnet.gov/expapi/activities/???</td></tr>
+			</tbody>
+		</table>
+
+		<h3><%= t('xapi.dashboard.visibledata.title', { ns: 'about' }) %></h3>
+		<p><%= t('xapi.dashboard.visibledata.desc', { ns: 'about' }) %></p>
+
+		<h4><%= t('xapi.dashboard.initialized.title', { ns: 'about' }) %></h4>
+		<p><%= t('xapi.dashboard.initialized.desc', { ns: 'about' }) %></p>
+		<pre style="background:#f8f8f8;padding:1em;overflow-x:auto;">
+{
+	"actor": {
+		"account": {
+			"homePage" : "...",
+			"name" : "fybu"
+		}
+	},
+	"verb": {
+		"id": "http://adlnet.gov/exapi/verbs/initialized"
+	},
+	"object" : {
+		"definition" : {
+			"type" : "https://w3id.org/xapi/seriousgames/activity-types/serious-game"
+		},
+		"id" : "..."
+	},
+	"context":  {
+		"contextActivities": {
+			"category": [{"id": "https://w3id.org/xapi/serious-game"}],
+		},
+		"registration": "18c01bd5-a384-42ad-a96a-9572d4674b87"
+	},
+	"id": "b9785111-8b19-4193-80a0-48c044846f01",
+	"timestamp" : "2024-06-09T19:05:12.245Z",
+	"stored" : "2024-06-09T19:06:23.192Z"
+}
+		</pre>
+
+		<h4><%= t('xapi.dashboard.progress.title', { ns: 'about' }) %></h4>
+		<p><%= t('xapi.dashboard.progress.desc', { ns: 'about' }) %></p>
+		<table class="aboutTable">
+			<thead>
+				<tr><th><%= t('xapi.dashboard.progress.col1', { ns: 'about' }) %></th><th><%= t('xapi.dashboard.progress.col2', { ns: 'about' }) %></th></tr>
+			</thead>
+			<tbody>
+				<tr><td><%= t('xapi.dashboard.activitytypes.game', { ns: 'about' }) %></td><td>result.extensions['https://w3id.org/xapi/seriousgames/extensions/progress']</td></tr>
+				<tr><td><%= t('xapi.dashboard.activitytypes.limesurvey', { ns: 'about' }) %></td><td>result.score.scaled</td></tr>
+				<tr><td><%= t('xapi.dashboard.activitytypes.manual', { ns: 'about' }) %></td><td>result.score.scaled</td></tr>
+			</tbody>
+		</table>
+		<pre style="background:#f8f8f8;padding:1em;overflow-x:auto;">
+{
+	"actor": {
+		"account": {
+			"homePage" : "...",
+			"name" : "fybu"
+		}
+	},
+	"verb": {
+		"id": "http://adlnet.gov/exapi/verbs/progressed"
+	},
+	"object" : {
+		"definition" : {
+			"type" : "https://w3id.org/xapi/seriousgames/activity-types/serious-game"
+		},
+		"id" : "..."
+	},
+	"result" : {
+			"extensions": {
+					 "https://w3id.org/xapi/seriousgames/extensions/progress": 0.2
+			},
+	},
+	"context":  {
+		"contextActivities": {
+			"category": [{"id": "https://w3id.org/xapi/serious-game"}],
+		},
+		"registration": "18c01bd5-a384-42ad-a96a-9572d4674b87"
+	},
+	"id": "e6eed9de-f68e-4120-8116-758dd2ef244e",
+	"timestamp" : "2024-06-09T19:06:21.590Z",
+	"stored" : "2024-06-09T19:08:15.186Z"
+}
+		</pre>
+
+		<h4><%= t('xapi.dashboard.completed.title', { ns: 'about' }) %></h4>
+		<p><%= t('xapi.dashboard.completed.desc', { ns: 'about' }) %></p>
+		<pre style="background:#f8f8f8;padding:1em;overflow-x:auto;">
+{
+	"actor": {
+		"account": {
+			"homePage" : "...",
+			"name" : "fybu"
+		}
+	},
+	"verb": {
+		"id": "http://adlnet.gov/exapi/verbs/completed"
+	},
+	"object" : {
+		"definition" : {
+			"type" : "https://w3id.org/xapi/seriousgames/activity-types/serious-game"
+		},
+		"id" : "..."
+	},
+	"result" : {
+		 "success": true,
+		 "completion": true
+	},
+	"context": {
+		"contextActivities": {
+			"category": [{"id": "https://w3id.org/xapi/serious-game"}],
+		},
+		"registration": "18c01bd5-a384-42ad-a96a-9572d4674b87"
+	},
+	"id": "5b35fb12-7ac7-48c7-bba1-9933df95970a",
+	"timestamp" : "2024-06-09T19:50:12.621Z",
+	"stored" : "2024-06-09T19:53:01.708Z"
+}
+		</pre>
+	</section>
 </div>
+

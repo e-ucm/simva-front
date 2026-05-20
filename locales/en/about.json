@@ -99,5 +99,26 @@
     "group.description": "A Group is a set of participants used to organize assignments and allocation rules across sessions.",
     
     "users.title": "Users",
-    "users.description": "Users, groups, and coordinators define who participates in the Simlet and how participants are assigned to sessions."
+    "users.description": "Users, groups, and coordinators define who participates in the Simlet and how participants are assigned to sessions.",
+    "xapi.dashboard.title": "xAPI Data for SIMVA Dashboards",
+    "xapi.dashboard.intro": "For each session within a SIMLET, there are different dashboards that represent real-time tracking data for its activities. The following image shows an example of these dashboards.",
+    "xapi.dashboard.image.alt": "Example of SIMVA dashboards for session activities",
+    "xapi.dashboard.backend.title": "Backend xAPI Tracking",
+    "xapi.dashboard.backend.desc": "In the backend, we track the xAPI traces for the dashboards. For example:",
+    "xapi.dashboard.activitytypes.title": "Activity Types and xAPI Object Types",
+    "xapi.dashboard.activitytypes.col1": "Activity Type",
+    "xapi.dashboard.activitytypes.col2": "Object definition type in xAPI traces",
+    "xapi.dashboard.activitytypes.game": "Game-play activity",
+    "xapi.dashboard.activitytypes.limesurvey": "LimeSurvey activity",
+    "xapi.dashboard.activitytypes.manual": "Manual Activity",
+    "xapi.dashboard.visibledata.title": "Dashboard Data and xAPI Traces",
+    "xapi.dashboard.visibledata.desc": "In the following lines, we are defining the visible data on the dashboards with its corresponding tracked xAPI traces.",
+    "xapi.dashboard.initialized.title": "Initialized",
+    "xapi.dashboard.initialized.desc": "This represents whether the participant has started the activity or not. Its value could be 'true' or 'false'. The default value is 'false', and it will become 'true' when the participant initialises the activity. This means that in the backend the SIMVA server has received an xAPI trace with the verb id: 'http://adlnet.gov/expapi/verbs/initialized'.",
+    "xapi.dashboard.progress.title": "Progress",
+    "xapi.dashboard.progress.desc": "This represents the percentage of activity completion. Its value is between 0% and 100% both included. If the activity is not initialized yet, the progress default value is '-', while if it is initialized but with no progress the progress value is '0%'. If it is fully completed, the progress value is '100%'. This means that in the backend the SIMVA server has received an xAPI trace with the verb id: 'http://adlnet.gov/expapi/verbs/progressed', and also the result value scaled between 0 and 1 (both included) from the result label shown in the table:",
+    "xapi.dashboard.progress.col1": "Activity Type",
+    "xapi.dashboard.progress.col2": "Result label displayed in xAPI traces",
+    "xapi.dashboard.completed.title": "Completed",
+    "xapi.dashboard.completed.desc": "This represents whether the participant has completed the activity or not. Its value could be 'true' or 'false'. The default value is 'false', and it will become 'true' when the participant completes the activity. This means that in the backend the SIMVA server has received an xAPI trace with the verb id: 'http://adlnet.gov/expapi/verbs/completed', and also the result completion value has to be set to 'true'."
 }

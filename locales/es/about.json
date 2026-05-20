@@ -99,5 +99,27 @@
     "group.description": "Un grupo es un conjunto de participantes utilizados para organizar asignaciones y reglas de distribución entre sesiones.",
     
     "users.title": "Usuarios",
-    "users.description": "Los usuarios, grupos y coordinadores definen quién participa en el SIMLET y cómo se asignan los participantes a las sesiones."
+    "users.description": "Los usuarios, grupos y coordinadores definen quién participa en el SIMLET y cómo se asignan los participantes a las sesiones.",
+    "xapi.dashboard.title": "Datos xAPI para Paneles de SIMVA",
+    "xapi.dashboard.intro": "Para cada sesión dentro de un SIMLET, hay diferentes paneles que representan datos de seguimiento en tiempo real para sus actividades. La siguiente imagen muestra un ejemplo de estos paneles.",
+    "xapi.dashboard.image.alt": "Ejemplo de paneles de SIMVA para actividades de sesión",
+    "xapi.dashboard.backend.title": "Seguimiento xAPI en el Backend",
+    "xapi.dashboard.backend.desc": "En el backend, rastreamos los rastros xAPI para los paneles. Por ejemplo:",
+    "xapi.dashboard.activitytypes.title": "Tipos de Actividad y Tipos de Objeto xAPI",
+    "xapi.dashboard.activitytypes.col1": "Tipo de Actividad",
+    "xapi.dashboard.activitytypes.col2": "Tipo de definición de objeto en rastros xAPI",
+    "xapi.dashboard.activitytypes.game": "Actividad de juego",
+    "xapi.dashboard.activitytypes.limesurvey": "Actividad de LimeSurvey",
+    "xapi.dashboard.activitytypes.manual": "Actividad Manual",
+    "xapi.dashboard.visibledata.title": "Datos del Panel y Rastros xAPI Correspondientes",
+    "xapi.dashboard.visibledata.desc": "En las siguientes líneas, estamos definiendo los datos visibles en los paneles con sus correspondientes rastros xAPI rastreados.",
+    "xapi.dashboard.initialized.title": "Inicializado",
+    "xapi.dashboard.initialized.desc": "Esto representa si el participante ha comenzado la actividad o no. Su valor puede ser 'true' o 'false'. El valor predeterminado es 'false', y se volverá 'true' cuando el participante inicialice la actividad. Esto significa que en el backend el servidor SIMVA ha recibido un rastro xAPI con el id del verbo: 'http://adlnet.gov/expapi/verbs/initialized'.",
+    "xapi.dashboard.progress.title": "Progreso",
+    "xapi.dashboard.progress.desc": "Esto representa el porcentaje de finalización de la actividad. Su valor está entre 0% y 100% ambos incluidos. Si la actividad no está inicializada aún, el valor predeterminado del progreso es '-', mientras que si está inicializada pero sin progreso, el valor del progreso es '0%'. Si está completamente finalizada, el valor del progreso es '100%'. Esto significa que en el backend el servidor SIMVA ha recibido un rastro xAPI con el id del verbo: 'http://adlnet.gov/expapi/verbs/progressed', y también el valor del resultado escalado entre 0 y 1 (ambos incluidos) desde la etiqueta de resultado mostrada en la tabla:",
+    "xapi.dashboard.progress.col1": "Tipo de Actividad",
+    "xapi.dashboard.progress.col2": "Etiqueta de resultado mostrada en rastros xAPI para el progreso",
+    "xapi.dashboard.completed.title": "Completado",
+    "xapi.dashboard.completed.desc": "Esto representa si el participante ha completado la actividad o no. Su valor puede ser 'true' o 'false'. El valor predeterminado es 'false', y se volverá 'true' cuando el participante complete la actividad. Esto significa que en el backend el servidor SIMVA ha recibido un rastro xAPI con el id del verbo: 'http://adlnet.gov/expapi/verbs/completed', y también el valor del resultado de finalización tiene que ser establecido a 'true'."
+
 }
