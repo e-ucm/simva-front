@@ -113,6 +113,11 @@ app.use((err, req, res, next) => {
   const msg = err.error || err.message;
   logger.info(`Error ${status} (${msg}) on ${req.method} ${req.url} with payload ${req.body}.`);
   logger.error(err);
+
+  if (!req.user) {
+    return res.redirect('/users/login');
+  }
+  
   res.status(status).send({ message: msg });
 });
 
