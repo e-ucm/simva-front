@@ -116,6 +116,7 @@ var GameplayActivityPainter = {
 		switch(method){
 			case 'DESKTOP':
 				activity.game_type = "DESKTOP";
+				activity.game_url = null;
 				console.log('[gameplaypainter] DESKTOP case');
 				// Only for desktop games
 				//let rawformdata = PainterFactory.Painters["activity"].extractFileFromEditForm(form, 'gamefile', activity, 'file', 'game_type', 'DESKTOP');

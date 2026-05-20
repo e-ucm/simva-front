@@ -104,6 +104,8 @@ var ManualActivityPainter = {
 			case 'EXTERNAL':
 				// Only for EXTERNAL manual activities
 				console.log('[manualpainter] EXTERNAL case, checking file extraction');
+				activity.manual_ressource_type = 'EXTERNAL';
+				activity.manual_ressource_url = null;
 				//let rawformdata = PainterFactory.Painters["activity"].extractFileFromEditForm(form, 'manualfile', callback, activity, 'file', 'manual_ressource_type', 'EXTERNAL');
 				//if(rawformdata !== undefined) {
 				//	console.log('[manualpainter] File extraction triggered, returning');
