@@ -15,7 +15,7 @@
 					<h3 class="study_form_name"><%- t('name.title', { ns : 'SIMLETs' }) %></h3>
 					<input type="text" class="study_form_name name_field" name="studyName" id="study_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
 					<h3 class="study_form_field"><%- t('description.title', { ns : 'SIMLETs' }) %></h3>
-					<textarea class="study_form_field description_field" name="studyDescription" id="study_description" placeholder="<%- t('description.placeholder', { ns : 'SIMLETs' }) %>" required></textarea>
+					<textarea class="study_form_field description_field" name="studyDescription" id="study_description" placeholder="<%- t('description.placeholder', { ns : 'SIMLETs' }) %>"></textarea>
 					<br>
 					<input type="submit" class="study_form_field"id="study_name_desc_submit" value="">
 				</form>
@@ -155,7 +155,7 @@
 	*/
 	const getFormattedDate = function(rawDate, currentlanguageCode) {
 		const date = new Date(rawDate);
-		const yy = String(date.getFullYear()).slice(-2).padStart(2, '0');
+		const yy = String(date.getFullYear()).slice(-4).padStart(4, '0');
 		const mm = String(date.getMonth() + 1).padStart(2, '0');
 		const dd = String(date.getDate()).padStart(2, '0');
 		return `${yy}/${mm}/${dd}`;

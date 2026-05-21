@@ -235,7 +235,7 @@
 
 	// Functionality
 
-	let getTestFromTestId = function(testId) {
+	const getTestFromTestId = function(testId) {
 		for (let i = 0; i < tests.length; i++) {
 			let test = tests[i];
 			if (test.session_id === Number(testId)) {
@@ -245,7 +245,7 @@
 		return null;
 	}
 
-	let getActivityFromActivityId = function(activityId) {
+	const getActivityFromActivityId = function(activityId) {
 		for (let i = 0; i < tests.length; i++) {
 			let test = tests[i];
 			if (!test.completeActivities) {
@@ -281,8 +281,17 @@
 		return null;
 	}
 
+	const getLatestCreatedSession = function() {
+		const sorted = tests.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+		return sorted[0];
+	}
 
-	let setActive = function(active) {
+	const getLatestUpdatedSession = function() {
+		const sorted = tests.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+		return sorted[0];
+	}
+
+	const setActive = function(active) {
 		// TEST
 		// archiveStudy(studyid, study.simlet_name);
 		if(confirm(`<%- t('archive.confirm', { ns : 'SIMLETs', SIMLET : '${study.simlet_name}' }) %>`)){

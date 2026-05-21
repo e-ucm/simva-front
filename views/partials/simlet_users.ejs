@@ -116,9 +116,10 @@
 					<input hidden type="text" name="prevGroupName" id="prev_group_name">
 					<h3><%- t('groups.name.title', { ns : 'groups' }) %></h3>
 					<input type="text" class="name_field" name="groupName" id="group_name" placeholder="<%- t('groups.name.placeholder', { ns : 'groups' }) %>" required>
-					<h3><%- t('deprecated.title', { ns : 'groups' }) %></h3>
-					<input type="checkbox" name="group_use_deprecated_generation" id="group_use_deprecated_generation" title="<%- t('deprecated.tooltip', { ns : 'groups' }) %>"><label for="group_use_deprecated_generation" ><%- t('deprecated.title', { ns : 'groups' }) %></label>
-					<br><br>
+					<!-- TEST -->
+					<!-- <h3><%- t('deprecated.title', { ns : 'groups' }) %></h3> -->
+					<!-- <input type="checkbox" name="group_use_deprecated_generation" id="group_use_deprecated_generation" title="<%- t('deprecated.tooltip', { ns : 'groups' }) %>"><label for="group_use_deprecated_generation" ><%- t('deprecated.title', { ns : 'groups' }) %></label> -->
+					<!-- <br><br> -->
 					<input type="submit" id="group_submit" value="<%- t('groups.add.new.submit', { ns : 'groups' }) %>">
 				</form>
 				<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
@@ -129,7 +130,6 @@
 				<form id="import_group_form_modal">
 					<h3><%- t('groups.name.title', { ns : 'groups' }) %></h3>
 					<input type="text" class="name_field" name="groupName" id="import_group_name_modal" placeholder="<%- t('groups.name.placeholder', { ns : 'groups' }) %>" required>
-					<br>
 					<h3><%- t('groups.import.input', { ns : 'groups' }) %></h3>
 					<input type="file" name="jsonFile" accept=".json" required>
 					<br><br>
@@ -144,14 +144,15 @@
 <div id="add_participant" class="new_element floating">
 	<div class="floater">
 		<div class="form" id="add_participant_form">
+			<h1><%= t('groups.settings.add.title' , { ns : 'groups' }) %></h1>
 			<div class="tabs">
 				<span id="existing_participant_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'add_participant_form','existing_participant_tab')"><%= t('participants.add.existing.tab' , { ns : 'groups' }) %></span>
 				<span class="tab" onclick="Utils.changeTab(this, 'add_participant_form','new_participant_tab')"><%= t('participants.add.new.tab' , { ns : 'groups' }) %></span>
-				<span class="tab" onclick="Utils.changeTab(this, 'add_participant_form','batch_participant_tab')"><%= t('participants.add.batch.tab' , { ns : 'groups' }) %></span>
+				<span id="add_batch_tab_button" class="tab" onclick="Utils.changeTab(this, 'add_participant_form','batch_participant_tab')"><%= t('participants.add.batch.tab' , { ns : 'groups' }) %></span>
 			</div>
 			<div id="existing_participant_tab" class="subform selected" style="display: block;">
 				<form id="existing_participant_form">
-					<br><br>
+					<br>
 					<input type="text" class="name_field" name="name" placeholder="<%= t('participants.username.placeholder', { ns : 'groups' }) %>" required>
 					<br>
 					<input type="submit" value="<%= t('participants.add.existing.submit' , { ns : 'groups' }) %>">
@@ -365,7 +366,7 @@
 			return false;
 		});
 
-		// Create new group
+		// Create/edit group
 		$(document).on('submit', "#group_form", function(event) {
 			let errorbox = $('#group_form_error');
 			let currentform = this;
@@ -381,9 +382,14 @@
 						errorbox.text(error.responseJSON.message);
 					}
 					else {
-						Utils.toggleSubmit(currentform);
-						Utils.toggleAddForm('group_form_menu');
-						reloadStudy();
+						// Fake a wait time and open the add participants form in the batch tab
+						setTimeout(() => {	
+							Utils.toggleSubmit(currentform);
+							Utils.toggleAddForm('group_form_menu');
+							openParticipantForm(result.group_id);
+							Utils.changeTab($('#add_batch_tab_button'), 'add_participant_form','batch_participant_tab');
+							// reloadStudy();
+						}, 500);
 					}
 				});
 			}

@@ -221,6 +221,7 @@ form .role_selector label {
 }
 form .role_selector input[type="radio"]:checked+label { font-weight: bold; background-color: #de6700; color: white; }
 .form h3, .form input[type="submit"] { margin-top: 10px; margin-bottom: 5px; }
+.form h1 { margin-bottom: 10px; }
 .form .char-count { display: flex; justify-content: flex-end; margin-right: 10px; margin-top: 5px; }
 .form .char-count.orange { color: rgb(255, 196, 0); }
 .form .char-count.red { color: red; }

@@ -99,7 +99,7 @@
 					<h3 class="session_form_field session_form_name"><%- t('name.title', { ns : 'sessions' }) %></h3>
 					<input class="session_form_field session_form_name name_field" type="text" name="sessionName" id="session_name" placeholder="<%- t('name.placeholder', { ns : 'sessions' }) %>" required>
 					<h3 class="session_form_field" id="session_description_label"><%- t('description.title', { ns : 'SIMLETs' }) %></h3>
-					<textarea class="session_form_field description_field" type="text" name="sessionDescription" id="session_description" placeholder="<%- t('description.placeholder', { ns : 'sessions' }) %>" required></textarea>
+					<textarea class="session_form_field description_field" type="text" name="sessionDescription" id="session_description" placeholder="<%- t('description.placeholder', { ns : 'sessions' }) %>"></textarea>
 					<!-- <input class="session_form_field" type="text" name="sessionDescription" id="session_description" placeholder="<%- t('description.placeholder', { ns : 'sessions' }) %>" required> -->
 					<h3 class="session_form_field" id="session_tags_label"><%- t('tags.title', { ns : 'sessions' }) %></h3>
 					<div class="session_form_field" id="session_tags_area" style="margin-top: 5px;">
@@ -644,7 +644,7 @@
 		session.find(".sessionTitle").text(test.session_name);
 		session.find(".sessionStatusLabel").addClass(sessionClass).attr("title", sessionStatusLabel).text(sessionStatusLabel);
 
-		session.find(".sessionDescription").text(test.session_name);
+		session.find(".sessionDescription").text(test.session_description);
 		session.find(".sessionCreateDate").after(getFormattedDate(test.createdAt, currentlanguageCode));
 		session.find(".sessionActivities").after(test.activities.length);
 		session.find(".sessionUsers").after(userCount);
