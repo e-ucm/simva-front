@@ -116,7 +116,7 @@ var GameplayActivityPainter = {
 		switch(method){
 			case 'DESKTOP':
 				activity.game_type = "DESKTOP";
-				activity.game_url = null;
+				activity.game_url = "";
 				console.log('[gameplaypainter] DESKTOP case');
 				// Only for desktop games
 				//let rawformdata = PainterFactory.Painters["activity"].extractFileFromEditForm(form, 'gamefile', activity, 'file', 'game_type', 'DESKTOP');
@@ -134,7 +134,7 @@ var GameplayActivityPainter = {
 				if(formdata.game_uri !== ''){
 					activity.game_url = formdata.game_uri;
 				} else {
-					activity.game_url = null;
+					activity.game_url = "";
 				}
 				callback(null, activity);
 				break;
@@ -178,7 +178,7 @@ var GameplayActivityPainter = {
 
 		if(selectedGameType === 'DESKTOP') {
 			console.log('[gameplaypainter] Checking file extraction in edit');
-			activity.game_url = null; // Ensure game_url is null for DESKTOP activities
+			activity.game_url = ""; // Ensure game_url is null for DESKTOP activities
 			let rawformdata = PainterFactory.Painters["activity"].extractFileFromEditForm(form, 'edit_gamefile', activity, 'file', 'game_type', 'DESKTOP');
 			if(rawformdata !== undefined) {
 				console.log('[gameplaypainter] File extraction triggered in edit, returning');
@@ -242,17 +242,28 @@ var GameplayActivityPainter = {
 	},
 
 	paintActivity: function(activity, participants){
-		const topBar = PainterFactory.Painters['activity'].paintActivityTopBar.call(this, activity, this.getExtraKebabItems(activity));
-		let activitybox = `<div id="activity_${activity.activity_id}" class="activity t${activity.activity_type}">
-			${topBar}
-			<p class="subtitle" title="${this.description || ''}">${this.simple_name}</p>
-			<div class="activity-meta">`;
-		activitybox += `<p>${this.commun.storage_title}: <i>${Boolean(activity.activity_trace_storage) ? (this.commun.result_enabled || 'enabled') : (this.commun.result_disabled || 'disabled')}</i></p>`;
-		activitybox += `<p>${this.communSpecific.result_title}: <i>${Boolean(activity.game_backup) ? (this.commun.result_enabled || 'enabled') : (this.commun.result_disabled || 'disabled')}</i></p>`;
-		activitybox += `</div>`;
-		activitybox += `${PainterFactory.Painters["activity"].paintActivityParticipantsTable(activity, participants, true)}</div>`;
+		   const topBar = PainterFactory.Painters['activity'].paintActivityTopBar.call(this, activity, this.getExtraKebabItems(activity));
+		   let urlOrType = '';
+		   if (activity.game_type === 'WEB') {
+			   urlOrType = `<p><b>URL :</b> <span>${activity.game_url ? activity.game_url : '-'}</span></p>`;
+		   } else {
+			   urlOrType = `<p><b>Type :</b> <span>Desktop</span></p>`;
+		   }
+		   let activitybox = `<div id="activity_${activity.activity_id}" class="activity t${activity.activity_type}">
+			   ${topBar}
+			   <p class="subtitle" title="${this.description || ''}">${this.simple_name} - ${activity.game_type == 'DESKTOP' ? this.specific.desktop_title : this.specific.web_title}</p>
+			   <div class="activity-meta">
+		   			<div>
+		   				${urlOrType}
+					</div>
+				   <div>
+					   <p>${this.commun.storage_title}: <i>${Boolean(activity.activity_trace_storage) ? (this.commun.result_enabled || 'enabled') : (this.commun.result_disabled || 'disabled')}</i>	- 	${this.communSpecific.result_title}: <i>${Boolean(activity.game_backup) ? (this.commun.result_enabled || 'enabled') : (this.commun.result_disabled || 'disabled')}</i></p>
+				   </div>
+			   </div>
+			   ${PainterFactory.Painters["activity"].paintActivityParticipantsTable(activity, participants, true)}
+		   </div>`;
 
-		$(`#test_${activity.session_id} .activities`).append(activitybox);
+		   $(`#test_${activity.session_id} .activities`).append(activitybox);
 	},
 
 	updateActivityResult: function(activityId, username, backup) {

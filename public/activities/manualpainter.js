@@ -197,19 +197,33 @@ var ManualActivityPainter = {
 	},
 
 	paintActivity: function(activity, participants){
-		let complete=activity.manual_user_managed ? this.specific.student_complete_ok : this.specific.student_complete_nok;
-		let storageStatus = Boolean(activity.activity_trace_storage) ? 'enabled' : (this.commun.result_disabled || 'disabled');
+		let complete = activity.manual_user_managed ? this.specific.student_complete_ok : this.specific.student_complete_nok;
+		let storageStatus = Boolean(activity.activity_trace_storage) ? (this.commun.result_enabled || 'enabled') : (this.commun.result_disabled || 'disabled');
 		let resourceType = activity.manual_ressource_type || 'WEB';
 		const topBar = PainterFactory.Painters['activity'].paintActivityTopBar.call(this, activity, this.getExtraKebabItems(activity));
-		$(`#test_${activity.session_id} .activities`).append(`<div id="activity_${activity.activity_id}" class="activity t${activity.activity_type}">
+		let urlOrType = '';
+		if (resourceType === 'WEB') {
+			urlOrType = `<p><b>URL :</b> <span>${activity.manual_ressource_url ? activity.manual_ressource_url : '-'}</span></p>`;
+		} else {
+			urlOrType = `<p><b>Type :</b> <span>${this.specific.external_title}</span></p>`;
+		}
+		let activitybox = `<div id="activity_${activity.activity_id}" class="activity t${activity.activity_type}">
 			${topBar}
-			<p class="subtitle" title="${this.description || ''}">${this.simple_name}</p>
+			<p class="subtitle" title="${this.description || ''}">${this.simple_name} - ${resourceType === 'EXTERNAL' ? this.specific.external_title : this.specific.web_title}</p>
 			<div class="activity-meta">
-				<p><strong>${complete}</strong></p>
-				<p>${this.commun.storage_title}: <i>${storageStatus}</i></p>
-				<p>${this.specific.upload_title || 'Resource type'}: <i>${resourceType}</i></p>
+				<div>
+					<p><strong>${complete}</strong></p>
+				</div>
+				<div>
+					<p>${this.commun.storage_title}: <i>${storageStatus}</i>
+				</div>
+				<div>
+					${urlOrType}
+				</div>
 			</div>
-			${PainterFactory.Painters["activity"].paintActivityParticipantsTable(activity, participants, true, false, false, false)}</div>`);
+			${PainterFactory.Painters["activity"].paintActivityParticipantsTable(activity, participants, true, false, false, false)}
+		</div>`;
+		$(`#test_${activity.session_id} .activities`).append(activitybox);
 	},
 
 	updateActivityCompletion: function(activityId, username, completion) {

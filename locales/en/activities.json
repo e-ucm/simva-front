@@ -23,7 +23,10 @@
     
     "name.placeholder": "Activity name",
     "activity.type.title": "Activity type",
+    "type.title": "Type",
 
+    "activity.type.select": "Select an activity type",
+    "activity.type.select_required": "Activity type is required",
     "activity.name": "Default Activity",
     "activity.description": "A basic activity with completion state and a place to save results.",    
     "activity.result.title": "Result",

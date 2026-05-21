@@ -79,30 +79,26 @@
         let painters = Object.keys(PainterFactory.Painters);
 
 		Simva.getActivityTypes(function(error, activitytypes) {
-			for (var i = 0; i < activitytypes.length; i++) {
-				if (activitytypes[i].commun && PainterFactory.Painters["activity"]) {
-					PainterFactory.Painters["activity"].commun = activitytypes[i].commun;
-					PainterFactory.Painters["activity"].communSpecific = activitytypes[i].communSpecific;
-				}
-				if (PainterFactory.Painters[activitytypes[i].activity_type]) {
-					PainterFactory.Painters[activitytypes[i].activity_type].setUtils(activitytypes[i].activity_utils);
-					PainterFactory.Painters[activitytypes[i].activity_type].simple_name = activitytypes[i].name;
-					PainterFactory.Painters[activitytypes[i].activity_type].description = activitytypes[i].description;
-					PainterFactory.Painters[activitytypes[i].activity_type].commun = activitytypes[i].commun;
-					PainterFactory.Painters[activitytypes[i].activity_type].communSpecific = activitytypes[i].communSpecific;
-					PainterFactory.Painters[activitytypes[i].activity_type].specific = activitytypes[i].specific;
-					let row = `<option value="${activitytypes[i].activity_type}">${PainterFactory.Painters[activitytypes[i].activity_type].simple_name}</option>`;
-					$('#new_activity_form select[name="type"]').append(row);
-				}
-			}
 
+			   // Add a default 'no selected' option
+			   $('#new_activity_form select[name="type"]').append('<option value="" selected disabled hidden><%- t("activity.type.select", { ns : "activities" }) %></option>');
+			   for (var i = 0; i < activitytypes.length; i++) {
+				   if (activitytypes[i].commun && PainterFactory.Painters["activity"]) {
+					   PainterFactory.Painters["activity"].commun = activitytypes[i].commun;
+					   PainterFactory.Painters["activity"].communSpecific = activitytypes[i].communSpecific;
+				   }
+				   if (PainterFactory.Painters[activitytypes[i].activity_type]) {
+					   PainterFactory.Painters[activitytypes[i].activity_type].setUtils(activitytypes[i].activity_utils);
+					   PainterFactory.Painters[activitytypes[i].activity_type].simple_name = activitytypes[i].name;
+					   PainterFactory.Painters[activitytypes[i].activity_type].description = activitytypes[i].description;
+					   PainterFactory.Painters[activitytypes[i].activity_type].commun = activitytypes[i].commun;
+					   PainterFactory.Painters[activitytypes[i].activity_type].communSpecific = activitytypes[i].communSpecific;
+					   PainterFactory.Painters[activitytypes[i].activity_type].specific = activitytypes[i].specific;
+					   let row = `<option value="${activitytypes[i].activity_type}">${PainterFactory.Painters[activitytypes[i].activity_type].simple_name}</option>`;
+					   $('#new_activity_form select[name="type"]').append(row);
+				   }
+			   }
 			$('#new_activity_extras').empty();
-			$('#new_activity_extras').append(`${PainterFactory.Painters["gameplay"].description}\n`);
-			PainterFactory.Painters["gameplay"].getExtraForm((error, result) => {
-				if (!error) {
-					$('#new_activity_extras').append(result);
-				}
-			});
 
 			Simva.getAllocatorTypes(function(error, allocatortypes) {
 				for (var i = 0; i < allocatortypes.length; i++) {
@@ -177,42 +173,49 @@
 		});
 
 		$(document).on('submit', "#new_activity_form", function(event) {
-			event.preventDefault();
-			let currentform = this;
-			let form = Utils.getFormData($(this));
-			Utils.toggleSubmit(currentform);
-			let errorbox = $(this).find('.error');
+			   event.preventDefault();
+			   let currentform = this;
+			   let form = Utils.getFormData($(this));
+			   Utils.toggleSubmit(currentform);
+			   let errorbox = $(this).find('.error');
 
-			const addActivity = function() {
-				PainterFactory.Painters[form.type].extractInformation('#new_activity_form', function(error, activity) {
-					if (error) {
-						errorbox.text(error);
-					} else {
-						Simva.addActivityToTest(studyid, form.test, activity, function(error, result) {
-							Utils.toggleSubmit(currentform);
-							if (error && error.responseJSON) {
-								errorbox.text(error.responseJSON.message);
-							} else {
-								Utils.toggleAddForm('add_activity');
-								reloadStudy();
-							}
-						});
-					}
-				});
-			}
-			
-			// If the activity is a web activity with no url, show a message asking confirmation
-			const closestWebTab = $(this).find("[method='WEB']");
-			if (closestWebTab.length > 0 && closestWebTab.is(".selected") && (form.game_uri == "" || form.game_uri == null)) {
-				if (confirm(`<%- t('add.new.web.no_url_message', { ns : 'activities' }) %>`)) {
-					addActivity();
-				}
-			}
-			else {
-				addActivity();
-			}			
+			   // Require the user to select a type
+			   if (!form.type) {
+				   errorbox.text('<%- t('activity.type.select_required', { ns : 'activities' }) %>');
+				   Utils.toggleSubmit(currentform);
+				   return false;
+			   }
 
-			return false;
+			   const addActivity = function() {
+				   PainterFactory.Painters[form.type].extractInformation('#new_activity_form', function(error, activity) {
+					   if (error) {
+						   errorbox.text(error);
+					   } else {
+						   Simva.addActivityToTest(studyid, form.test, activity, function(error, result) {
+							   Utils.toggleSubmit(currentform);
+							   if (error && error.responseJSON) {
+								   errorbox.text(error.responseJSON.message);
+							   } else {
+								   Utils.toggleAddForm('add_activity');
+								   reloadStudy();
+							   }
+						   });
+					   }
+				   });
+			   }
+
+			   // If the activity is a web activity with no url, show a message asking confirmation
+			   const closestWebTab = $(this).find("[method='WEB']");
+			   if (closestWebTab.length > 0 && closestWebTab.is(".selected") && (form.game_uri == "" || form.game_uri == null)) {
+				   if (confirm(`<%- t('add.new.web.no_url_message', { ns : 'activities' }) %>`)) {
+					   addActivity();
+				   }
+			   }
+			   else {
+				   addActivity();
+			   }
+
+			   return false;
 		});
 
 		$(document).on('submit', "#edit_activity_form", function(event) {

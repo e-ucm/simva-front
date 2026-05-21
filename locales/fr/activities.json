@@ -23,8 +23,11 @@
     "import.error.invalid_file": "Fichier invalide",
     
     "name.placeholder": "Nom de l'activité",
-    "activity.type.title": "",
+    "activity.type.title": "Type d'activité",
+    "type.title": "Type",
 
+    "activity.type.select": "Sélectionner un type d'activité",
+    "activity.type.select_required": "Le type d'activité est requis",
     "activity.name": "Activité par défaut",
     "activity.description": "Une activité de base avec un état d'achèvement et un endroit où enregistrer les résultats.",    
     "activity.result.title": "Résultat",

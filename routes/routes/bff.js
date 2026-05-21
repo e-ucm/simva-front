@@ -1392,6 +1392,7 @@ module.exports = function(auth, config){
                 commun['storage_error_downloading'] = req.t(`storage.error.downloading`, { ns : 'activities' } );
                 commun['progress_title'] = req.t(`progress.title`, { ns : 'activities' } );
                 commun['user_title'] = req.t(`participant.title`, { ns : 'activities' } );
+                commun['type_title'] = req.t(`type.title`, { ns : 'activities' } );
                 commun['participant_tooltip'] = req.t(`participant.tooltip`, { ns : 'activities' } );
                 commun['init_tooltip'] = req.t(`init.tooltip`, { ns : 'activities' } );
                 commun['progress_tooltip'] = req.t(`progress.tooltip`, { ns : 'activities' } );

@@ -24,7 +24,10 @@
     
     "name.placeholder": "Nombre de la actividad",
     "activity.type.title": "Tipo de actividad",
+    "type.title": "Tipo",
 
+    "activity.type.select": "Seleccione un tipo de actividad",
+    "activity.type.select_required": "El tipo de actividad es obligatorio",
     "activity.name": "Actividad por defecto",
     "activity.description": "Una actividad básica con estado de finalización y un lugar para guardar los resultados.",
     "activity.result.title": "Resultado",
