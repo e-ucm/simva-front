@@ -6,6 +6,7 @@
 
     "add.title": "Ajouter une activité",
         "add.new.title": "Nouvelle activité",
+            "add.new.web.no_url_message": "",
         "add.existing.title": "Sélectionner parmi les existantes",
 
     "edit.title": "Modifier",

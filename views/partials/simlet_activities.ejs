@@ -178,21 +178,33 @@
 			Utils.toggleSubmit(currentform);
 			let errorbox = $(this).find('.error');
 
-			PainterFactory.Painters[form.type].extractInformation('#new_activity_form', function(error, activity) {
-				if (error) {
-					errorbox.text(error);
-				} else {
-					Simva.addActivityToTest(studyid, form.test, activity, function(error, result) {
-						Utils.toggleSubmit(currentform);
-						if (error && error.responseJSON) {
-							errorbox.text(error.responseJSON.message);
-						} else {
-							Utils.toggleAddForm('add_activity');
-							reloadStudy();
-						}
-					});
+			const addActivity = function() {
+				PainterFactory.Painters[form.type].extractInformation('#new_activity_form', function(error, activity) {
+					if (error) {
+						errorbox.text(error);
+					} else {
+						Simva.addActivityToTest(studyid, form.test, activity, function(error, result) {
+							Utils.toggleSubmit(currentform);
+							if (error && error.responseJSON) {
+								errorbox.text(error.responseJSON.message);
+							} else {
+								Utils.toggleAddForm('add_activity');
+								reloadStudy();
+							}
+						});
+					}
+				});
+			}
+			
+			// If the activity is a gameplay web activity with no url, show a message asking confirmation
+			if (form.type == "gameplay" && $(this).find("[method='WEB']").is(".selected") && (form.game_uri == "" || form.game_uri == null)) {
+				if (confirm(`<%- t('add.new.web.no_url_message', { ns : 'activities' }) %>`)) {
+					addActivity();
 				}
-			});
+			}
+			else {
+				addActivity();
+			}			
 
 			return false;
 		});

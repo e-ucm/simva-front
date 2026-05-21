@@ -382,6 +382,13 @@
 						errorbox.text(error.responseJSON.message);
 					}
 					else {
+						// TODO: Automatically allocate group to latest created session
+						// Simva.allocateToSession(studyid, result.group_id, getLatestCreatedSession().session_id, {}, function(error, result){
+						// 	if(!error){
+						// 		console.log(result)
+						// 	}
+						// });
+
 						// Fake a wait time and open the add participants form in the batch tab
 						setTimeout(() => {	
 							Utils.toggleSubmit(currentform);

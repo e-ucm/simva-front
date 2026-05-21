@@ -6,6 +6,7 @@
 
     "add.title": "Add activity",
         "add.new.title": "New activity",
+            "add.new.web.no_url_message": "You're about to create a web activity with no URL. Are you sure you want to continue? (You will be able to change the URL later)",
         "add.existing.title": "Select from existing",
 
     "edit.title": "Edit",

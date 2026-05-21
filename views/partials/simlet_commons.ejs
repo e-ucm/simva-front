@@ -147,7 +147,7 @@
 	// --- UTILITIEs --- 
 	
 	/**
-	 * Format the raw date to show it in YY/MM/DD format on the user's timezone
+	 * Format the raw date to show it in YYYY/MM/DD format on the user's timezone
 	 * 
 	 * @param rawDate {Number} - date epoch
 	 * @param currentlanguageCode {string} - language the user is currently using 
@@ -155,10 +155,10 @@
 	*/
 	const getFormattedDate = function(rawDate, currentlanguageCode) {
 		const date = new Date(rawDate);
-		const yy = String(date.getFullYear()).slice(-4).padStart(4, '0');
+		const yyyy = String(date.getFullYear()).slice(-4).padStart(4, '0');
 		const mm = String(date.getMonth() + 1).padStart(2, '0');
 		const dd = String(date.getDate()).padStart(2, '0');
-		return `${yy}/${mm}/${dd}`;
+		return `${yyyy}/${mm}/${dd}`;
 		// Date format depends on the localization and may not be YY/MM/DD
 		// return date.toLocaleDateString(currentlanguageCode);
 	}
