@@ -1,4 +1,6 @@
 { 
+    "users.add.title": "Añadir usuarios",
+    
     "coordinators.title": "Coordinadores",
         "coordinators.table.username.title": "Nombre de usuario",
         "coordinators.table.permissions.title": "Permisos",

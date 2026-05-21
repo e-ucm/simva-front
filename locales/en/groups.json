@@ -1,11 +1,13 @@
 { 
+    "users.add.title": "Add users",
+    
     "coordinators.title": "Coordinators",
         "coordinators.table.username.title": "Username",
         "coordinators.table.permissions.title": "Permissions",
 
         "coordinators.delete.title": "Delete",
             "coordinators.delete.confirm": "Are you sure you want to delete the coordinator '{{owner}}' from SIMLET '{{SIMLET}}'?",
-            
+        
         "coordinators.add.title": "Add coordinator",
             "coordinators.name.title": "Username",
             "coordinators.name.placeholder": "Coordinator username",
