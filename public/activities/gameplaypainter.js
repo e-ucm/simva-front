@@ -297,12 +297,28 @@ var GameplayActivityPainter = {
 		} 
 		else 
 		{
-			Simva.getActivityResult(activity, (error, result) => {
+			Simva.getMinioDataUrl(activity, (error, result) => {
 				if(error) {
-					toastParams.text = error.message;
-					$.toast(toastParams);
+					Simva.getActivityResult(activity, (error, result) => {
+						if(error) {
+							toastParams.text = error.message;
+							$.toast(toastParams);
+						} else {
+							let hasResults = false;
+							for(const participant in result) {
+								if(result.hasOwnProperty(participant) && result[participant] != null) {
+									Utils.downloadContent(result[participant], `${this.communSpecific.result_file_prefix}_${activity}_${participant}.json`);
+									hasResults = true;
+								};
+							}
+							if(!hasResults) {
+								Utils.download(`${this.communSpecific.result_file_prefix}_${activity}.json`, JSON.stringify(result,null,2));
+							}
+						}
+					});
 				} else {
-					Utils.download(`${this.communSpecific.result_file_prefix}_${activity}.json`, JSON.stringify(result, null, 2));
+					console.log('Minio URL for backup:', result);
+					Utils.downloadContent(result.url, `${this.communSpecific.result_file_prefix}_${activity}.json`, this.commun.result_error_downloading);
 				}
 			});
 		}
