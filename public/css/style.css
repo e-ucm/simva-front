@@ -145,7 +145,11 @@ input[type="button"]:disabled { border:1px solid lightgray; background: darkgray
     cursor: default;
     overflow: auto;
     flex-direction: column;
-    justify-content: center;
+	/* 
+		justify-content: center makes elements unreachable by the scrollbar 
+		when width is too small.  margin: auto needs to be used instead
+	*/
+    /* justify-content: center; */ 
     align-items: center;
     background: white;
     min-width: 320px;
@@ -157,7 +161,7 @@ input[type="button"]:disabled { border:1px solid lightgray; background: darkgray
     padding: 24px;          /* add padding so content isn't flush to edges */
 }
 
-.new_element .subform { width: 90%; }
+.new_element .subform { width: 90%;  margin: auto; }
 .new_element .form input  { width: 100%; }
 .new_element .form select { width: 100%; }
 
@@ -172,13 +176,13 @@ form .role_selector label {
 }
 
 form .role_selector input[type="radio"]:checked+label { font-weight: bold; background-color: #de6700; color: white; }
+.form select:invalid { color: #999; }
+.form select option { color: black; }
 .form h3, .form input[type="submit"] { margin-top: 10px; margin-bottom: 5px; }
 .form h1 { margin-bottom: 10px; text-align: center; }
 .form .char-count { display: flex; justify-content: flex-end; margin-right: 10px; margin-top: 5px; }
 .form .char-count.orange { color: rgb(255, 196, 0); }
 .form .char-count.red { color: red; }
-.form fieldset { margin-top: 15px; }
-.form fieldset p { padding: 5px; }
 .new_element .form .yellow, .new_element .form .blue, .new_element .form .red, .new_element .form .green { 
 	margin-top:10px;
 	margin-bottom:10px;
@@ -381,7 +385,10 @@ body {
 .content .test .activities table { display: table; overflow: hidden; }
 .content .test .activities.collapsed table { display: none; }
 .content .test .activities .activity { vertical-align: top; background-color: gray; width: 250px; padding: 10px; margin-top: 10px; box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3); display: inline-block; margin-right: 10px; }
+.subform select.activityTypeSelector { flex: 1; }
+
 .content .test .activities .activity.tactivity { background-color: gray; }
+
 .content .test .activities .activity.tlimesurvey { 
 	background-color: #3f8446; 
 	width: 500px; 
@@ -483,9 +490,21 @@ body {
 .content .test .activities .activity .progress span, .activityProgress.progress span { float: left; width: 100%; position: absolute; top: 7px; left: 0px; text-align: center; font-size: 12px; font-weight: bold; }
 .content .test .activities .activity a { font-weight: bold; cursor: pointer; }
 
-.content .new_element form .gameplay_activity label { width: 50%; display: inline-block; text-align: left; }
-.content .new_element form .gameplay_activity input[type="checkbox"] { width: 50%; }
+#new_activity_form fieldset { margin-top: 15px; }
+#new_activity_form fieldset p { padding: 5px; }
+#new_activity_form fieldset p label i { width: 50%; margin-bottom: 5px; }
 .content .new_element form .gameplay_activity .info { font-size: 14px; font-style: italic; }
+#new_activity_form fieldset p:has(input[type="checkbox"]) {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+}
+#new_activity_form fieldset p:has(input[type="checkbox"]) input[type="checkbox"] {
+	--checkboxSize: 15x;
+	width: var(--checkboxSize);
+	height: var(--checkboxSize);
+	justify-self: center;
+}
+
 /*
 .menu { background-color: #332d26; color: white; width: 200px; height: 100%; position: fixed; top: 50px; padding: 10px; }
 .menu ul { }

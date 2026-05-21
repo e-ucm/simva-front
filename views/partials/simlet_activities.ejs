@@ -14,7 +14,7 @@
                     <input type="text" class="name_field" name="name" placeholder="<%- t('name.placeholder', { ns : 'activities' }) %>" required>
 					<div style="width: 100%; display: flex; align-items: center; gap: 10px;">
 						<b><%- t('activity.type.title', { ns : 'activities' }) %></b>
-						<select name="type" style="flex: 1;">
+						<select class="activityTypeSelector" name="type" required>
 	                    </select>
 					</div>
                     <fieldset id="new_activity_extras">
@@ -269,8 +269,10 @@
 
 	const openNewActivityTab = function() {
 		Utils.changeTab($('#new_activity_tab_button'), 'add_activity_form','new_activity_tab');
-		// Always open form in the gameplay web tab
-		Utils.changeTab($('#gameplay_web_tab_button'), 'gameplay_activity','gameplay_web');
+
+		// Hide the activity type info and select the placeholder option
+		$("#new_activity_form").find("fieldset").empty();
+		$(".activityTypeSelector option").eq(0).prop("selected", true);
 	}
 
     let openActivityForm = function(test) {
@@ -312,7 +314,6 @@
 		const activity = getActivityFromActivityId(activityId);
 
 		$("#downloadFormTitle").text(`<%- t('single.title', { ns : 'activities' }) %>: ${activity.activity_name}`);
-		console.log(activity)
 
 		const session = getTestFromTestId(activity.session_id);
 
