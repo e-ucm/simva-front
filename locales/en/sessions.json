@@ -11,6 +11,7 @@
 
     "add.title": "Add session",
         "add.new.tab": "Add new",
+        "status.title": "Initial status",
         "add.submit": "Create session",
 
         "import.tab": "Import session",

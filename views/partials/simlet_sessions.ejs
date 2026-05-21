@@ -100,8 +100,12 @@
 					<input class="session_form_field session_form_name name_field" type="text" name="sessionName" id="session_name" placeholder="<%- t('name.placeholder', { ns : 'sessions' }) %>" required>
 					<h3 class="session_form_field" id="session_description_label"><%- t('description.title', { ns : 'SIMLETs' }) %></h3>
 					<textarea class="session_form_field description_field" type="text" name="sessionDescription" id="session_description" placeholder="<%- t('description.placeholder', { ns : 'sessions' }) %>"></textarea>
-					<!-- <input class="session_form_field" type="text" name="sessionDescription" id="session_description" placeholder="<%- t('description.placeholder', { ns : 'sessions' }) %>" required> -->
-					<h3 class="session_form_field" id="session_tags_label"><%- t('tags.title', { ns : 'sessions' }) %></h3>
+					<h3 class="session_form_field" id="session_status_title"><%- t('status.title', { ns : 'sessions' }) %></h3>
+					<select id="session_status_selector" name="sessionStatus">
+						<option value="active"><%- t('active.title', { ns : 'sessions' }) %></option>
+						<option value="inactive"><%- t('paused.title', { ns : 'sessions' }) %></option>
+					</select>
+					<h3 class="session_form_field"><%- t('tags.title', { ns : 'sessions' }) %></h3>
 					<div class="session_form_field" id="session_tags_area" style="margin-top: 5px;">
 						<div class="tagPickerArea">
 							<div class="tagPickerRow">
@@ -236,7 +240,7 @@
 
 			// Creating new session
 			if (form.editingSessionId == null || form.editingSessionId == "") {
-				Simva.addTestToStudy(studyid, { session_name: form.sessionName, session_description: form.sessionDescription, session_can_be_manually_activated: true }, function(error, result) {
+				Simva.addTestToStudy(studyid, { session_name: form.sessionName, session_description: form.sessionDescription, session_can_be_manually_activated: true, session_status: form.sessionStatus }, function(error, result) {
 					if (error && error.responseJSON) {
 						Utils.toggleSubmit(currentform);
 						errorbox.text(error.responseJSON.message);
@@ -333,6 +337,8 @@
 			$("#add_session_tabs").show();
 
 			$("#session_form_title").text("<%- t('add.title', { ns : 'sessions' }) %>");
+			$("#session_status_title").show();
+			$("#session_status_selector").show();
 			$("#session_submit").val("<%- t('add.submit', { ns : 'sessions' }) %>");
 			$("#can_be_manually_activated").show();
 
@@ -351,6 +357,8 @@
 			$("#add_session_tabs").hide();
 
 			$("#session_form_title").text("<%- t('edit.title', { ns : 'sessions' }) %>");
+			$("#session_status_title").hide();
+			$("#session_status_selector").hide();
 			$("#session_submit").val("<%- t('edit.submit', { ns : 'sessions' }) %>");
 			$("#can_be_manually_activated").hide();
 
