@@ -1,5 +1,6 @@
 {
     "title": "Sessions",
+    "single.title": "Session",
     "no_sessions.message": "Il n'y a pas de sessions pour cette SIMLET. Essayez d'en ajouter une en utilisant le bouton en bas à droite (+)",
 
     "createdAt": "Créé le",
@@ -7,7 +8,11 @@
     "activities": "Activités",
     "users": "Utilisateurs",
     "play": "Jouer le SIMLET",
-    "download": "Télécharger les données de la session",
+    "download.title": "Télécharger données",
+        "download.session.title": "Télécharger les données de la session",
+        "download.test.title": "Télécharger les données de test",
+            "download.test.description": "Télécharger vos propres données de trace de test pour cette session.",
+    "download.description": "",
 
     "add.title": "Ajouter une session",
         "add.new.tab": "Ajouter nouveau",
@@ -65,7 +70,5 @@
     "settings.export.title": "Exporter",
     "set_tester.title": "Me définir comme testeur dans cette session",
     "reset_tester.title": "Réinitialiser testeur (retirer et remettre)",
-    "unset_tester.title": "Me retirer comme testeur",
-    "test_download.title": "Télécharger les données de test",
-    "test_download.description": "Télécharger vos propres données de trace de test pour cette session."
+    "unset_tester.title": "Me retirer comme testeur"
 }

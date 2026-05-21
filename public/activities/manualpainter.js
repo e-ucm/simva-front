@@ -29,7 +29,7 @@ var ManualActivityPainter = {
 				<span class="tab selected" method="WEB" title="${this.specific.web_description}" onclick="Utils.changeTab(this, 'manual_activity','manual_web')">${this.specific.web_title}</span>
 				<span class="tab" method="EXTERNAL" title="${this.specific.external_description}" onclick="Utils.changeTab(this, 'manual_activity','manual_external')">${this.specific.external_title}</span>
 			</div>
-			<div id="manual_web" class="subform selected" style="display: block;">
+			<div id="manual_web" class="subform selected">
 				<p><i>${this.specific.web_description}</i></p>
 				<p><label for="manual_uri" style="width: 100%; text-align: center;">${this.specific.uri_title}</label><input id="manual_uri" type="text" name="uri">
 				<span class="info">${this.specific.uri_description}</span></p>
@@ -56,7 +56,7 @@ var ManualActivityPainter = {
 				<span class="tab selected" method="WEB" title="${this.specific.web_description}" onclick="Utils.changeTab(this, 'edit_manual_activity','edit_manual_web')">${this.specific.web_title}</span>
 				<span class="tab" method="EXTERNAL" title="${this.specific.external_description}" onclick="Utils.changeTab(this, 'edit_manual_activity','edit_manual_external')">${this.specific.external_title}</span>
 			</div>
-			<div id="edit_manual_web" class="subform selected" style="display: block;">
+			<div id="edit_manual_web" class="subform selected">
 				<p><i>${this.specific.web_description}</i></p>
 				<p><label for="edit_manual_uri" style="width: 100%; text-align: center;">${this.specific.uri_title}</label><input id="edit_manual_uri" type="text" name="uri">
 				<span class="info">${this.specific.uri_description}</span></p>

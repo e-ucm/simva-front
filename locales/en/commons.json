@@ -1,7 +1,7 @@
 {
     "title": "SIMVA - A SIMple VAlidator",
-    "login.title":"Login",
-    "logout.title":"Logout",
+    "login.title": "Login",
+    "logout.title": "Logout",
     "home.title": "Home",
     "home.description": "Welcome to SIMVA! This is the main dashboard where you can access all the features of the platform. Use the menu to navigate through different sections, such as SIMLETs, activities, and user management. Whether you're a teacher, student, or researcher, you'll find everything you need to create and manage your simulations here.",
     "welcome.user.text": "Welcome {{username}}!\n",

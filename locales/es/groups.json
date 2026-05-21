@@ -22,7 +22,7 @@
 
     "groups.title": "Grupos",
         "groups.no_groups.message": "Aún no tiene grupos. Cree uno utilizando el botón inferior derecho (+)",
-        "participants.no_users.message":"No hay participantes en este grupo. Añada algunos utilizando el botón de el menú de 3 puntos a la derecha",
+        "participants.no_users.message": "No hay participantes en este grupo. Añada algunos utilizando el botón de el menú de 3 puntos a la derecha",
 
         "participants.table.username.title": "Nombre de usuario",
         "participants.table.isToken.title": "Es código",
@@ -46,7 +46,7 @@
         "groups.name.placeholder": "Nombre del grupo",
         
         "groups.add.title": "Añadir grupo",
-            "groups.add.new.tab":"Añadir nuevo",
+            "groups.add.new.tab": "Añadir nuevo",
                 "groups.add.new.submit": "Crear grupo",
                 "deprecated.title": "Usar versión obsoleta de generación de código",
                 "deprecated.message": "/!\\ Este grupo utiliza la versión obsoleta de generación de códigos.",
@@ -61,14 +61,14 @@
         "groups.settings.groups.edit.title": "Editar",
             "groups.edit.title": "Editar grupo",
             "groups.edit.submit": "Editar grupo",
-            "groups.edit.no_changes.message":"No se han detectado cambios en el nombre del nuevo grupo",
+            "groups.edit.no_changes.message": "No se han detectado cambios en el nombre del nuevo grupo",
 
         "groups.settings.add.title": "Añadir participantes",
             "participants.username.placeholder": "Nombre de usuario del participante",
             
             "participants.add.existing.tab": "Añadir existente",
                 "participants.add.existing.submit": "Añadir usuario",
-                "participants.errormessage.alreadyInGroup":"El participante '{{participant}}' ya está en el grupo '{{group}}'",
+                "participants.errormessage.alreadyInGroup": "El participante '{{participant}}' ya está en el grupo '{{group}}'",
 
             "participants.add.new.tab": "Añadir nuevo",
                 "participants.add.new.email.placeholder": "email@ejemplo.com",

@@ -43,9 +43,6 @@
 					<li class="kebab-icon icon-reset-tester" title="<%- t('reset_tester.title', { ns : 'sessions' }) %>">
 						<%- t('reset_tester.title', { ns : 'sessions' }) %>
 					</li>
-					<li class="kebab-icon icon-test-download" title="<%- t('test_download.description', { ns : 'sessions' }) %>" style="display:none;">
-						<%- t('test_download.title', { ns : 'sessions' }) %>
-					</li>
 					<li class="kebab-icon icon-untester" title="<%- t('unset_tester.title', { ns : 'sessions' }) %>">
 						<%- t('unset_tester.title', { ns : 'sessions' }) %>
 					</li>
@@ -70,7 +67,7 @@
 				<b><%- t('play', { ns : 'sessions' }) %></b>
 			</div>
             <div class="kebab-icon icon-download" id="sessionDownload" title="<%- t('download.description', { ns : 'sessions' }) %>">
-                <b><%- t('download', { ns : 'sessions' }) %></b>
+                <b><%- t('download.title', { ns : 'sessions' }) %></b>
             </div>
         </div>
         <div class="sessionTags" style="margin-top: 8px;">	</div>
@@ -89,7 +86,7 @@
 				<span class="tab" onclick="Utils.changeTab(this, 'session_form_form','import_session_tab')"><%- t('import.tab', { ns : 'sessions' }) %></span>
 			</div>
 
-			<div id="session_name_desc_tab" class="subform selected" style="display: block;">
+			<div id="session_name_desc_tab" class="subform selected">
 				<form id="session_form">
 					<input hidden type="text" name="editingSessionId" id="edit_session_id">
 					<input hidden type="text" name="prevSessionName" id="prev_session_name">
@@ -186,6 +183,8 @@
     const sessionActiveStatus = "active";
     const sessionPausedStatus = "inactive";
     const sessionFinishedStatus = "terminated";
+
+	let downloadSessionId = null;
 
     // Menus
 
@@ -400,6 +399,21 @@
 		$(`#test_${sessionId}`).find('.expandButton').toggleClass('collapsed');
 	}
 	
+	const openSessionDownloadForm = function(sessionId) {
+		Utils.toggleAddForm('download_data_menu');
+		Utils.changeTab(null, 'download_data_form','download_session_data');
+		
+        downloadSessionId = sessionId;
+		const session = getTestFromTestId(sessionId);
+
+		$("#downloadFormTitle").text(`<%- t('single.title', { ns : 'sessions' }) %>: ${session.session_name}`);
+
+		// Show test download button based on participant status
+		$("#session_test_data_download").hide();
+		if (isCurrentUserParticipant(session.completeParticipants)) {
+			$("#session_test_data_download").show();
+		}
+	}
     
 	// Sessions buttons shared listeners
 	
@@ -463,15 +477,73 @@
 		setTesterForSession(data[sessionDataIdKey]);
 	});
 
-	$(document).on('click', ".icon-download", function(e) {
+	$(document).on('click', ".sessionSummary .icon-download", function(e) {
 		const data = $(this).closest(".test").data();
-		downloadSessionData(data[sessionDataIdKey]);
+		openSessionDownloadForm(data[sessionDataIdKey]);
 	});
 	
-	$(document).on('click', ".sessionTop .icon-test-download", function(e) {
-		const data = $(this).closest(".test").data();
-		downloadSessionTestData(data[sessionDataIdKey]);
-	});
+	
+	// Functionality
+
+	const isCurrentUserParticipant = function(participants) {
+		return currentUser.user_id !== null && participants.some(function(p) {
+			return p.user_id === currentUser.user_id || String(p.user_id) === String(currentUser.user_id);
+		});
+	}
+
+	let deleteTest = function(testId, testName) {
+		if (confirm(`<%- t('delete.confirm', { ns : 'sessions', session : '${testName}', SIMLET : '${study.simlet_name}' }) %>`)) {
+			Simva.deleteTest(studyid, testId, function(error, result) {
+				reloadStudy();
+			});
+		}
+	}
+
+	const activateTest = function(testId, nextState) {
+		Simva.activateSession(studyid, testId, { activate: nextState }, function(error, result) {
+			if (!error) {
+				reloadStudy();
+			}
+		})
+	}
+	
+	let downloadSessionData = function() {
+		console.log("downloading data for session id:", downloadSessionId);
+		Simva.getSessionLRSData(studyid, downloadSessionId, function(error, result){
+			if(error) {
+				$.toast({
+					heading: 'Session data error',
+					text: error.responseJSON ? error.responseJSON.message : error.message,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+				return;
+			}
+			var content = result.data;
+			var filename = `simva-${study.simlet_name}-session-${downloadSessionId}-data.json`;
+			Utils.downloadContent(content, filename, 'Session data error');
+		});
+	}
+
+	let downloadSessionTestData = function() {
+		console.log("downloading test data for session id:", downloadSessionId);
+		Simva.getSessionTestLRSData(studyid, downloadSessionId, function(error, result){
+			if(error) {
+				$.toast({
+					heading: 'Session test data error',
+					text: error.responseJSON ? error.responseJSON.message : error.message,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+				return;
+			}
+			var content = result.data;
+			var filename = `simva-${study.simlet_name}-session-${downloadSessionId}-test-data.json`;
+			Utils.downloadContent(content, filename, 'Session test data error');
+		});
+	}
 
 	function setTesterForSession(sessionId) {
         Simva.setTesterForSession(studyid, sessionId, function(error, result) {
@@ -508,63 +580,6 @@
 	}
 
 
-    // Functionality
-
-	let deleteTest = function(testid, testName) {
-		if (confirm(`<%- t('delete.confirm', { ns : 'sessions', session : '${testName}', SIMLET : '${study.simlet_name}' }) %>`)) {
-			Simva.deleteTest(studyid, testid, function(error, result) {
-				reloadStudy();
-			});
-		}
-	}
-
-	const activateTest = function(testId, nextState) {
-		Simva.activateSession(studyid, testId, { activate: nextState }, function(error, result) {
-			if (!error) {
-				reloadStudy();
-			}
-		})
-	}
-	
-	let downloadSessionData = function(sessionId) {
-		console.log("downloading data for session id:", sessionId);
-		Simva.getSessionLRSData(studyid, sessionId, function(error, result){
-			if(error) {
-				$.toast({
-					heading: 'Session data error',
-					text: error.responseJSON ? error.responseJSON.message : error.message,
-					position: 'top-right',
-					icon: 'error',
-					stack: false
-				});
-				return;
-			}
-			var content = result.data;
-			var filename = `simva-${study.simlet_name}-session-${sessionId}-data.json`;
-			Utils.downloadContent(content, filename, 'Session data error');
-		});
-	}
-
-	let downloadSessionTestData = function(sessionId) {
-		console.log("downloading test data for session id:", sessionId);
-		Simva.getSessionTestLRSData(studyid, sessionId, function(error, result){
-			if(error) {
-				$.toast({
-					heading: 'Session test data error',
-					text: error.responseJSON ? error.responseJSON.message : error.message,
-					position: 'top-right',
-					icon: 'error',
-					stack: false
-				});
-				return;
-			}
-			var content = result.data;
-			var filename = `simva-${study.simlet_name}-session-${sessionId}-test-data.json`;
-			Utils.downloadContent(content, filename, 'Session test data error');
-		});
-	}
-
-
     // Render
 
     // Add sessions programatically to avoid XSS
@@ -572,22 +587,17 @@
 		const session = $("#session_template .test").clone();
 		session.attr("id", `test_${test.session_id}`);
 
-		const isCurrentUserParticipant = currentUser.user_id !== null && participants.some(function(p) {
-			return p.user_id === currentUser.user_id || String(p.user_id) === String(currentUser.user_id);
-		});
 		// Show/hide tester menu items based on participant status
-		if (isCurrentUserParticipant) {
+		if (isCurrentUserParticipant(participants)) {
 			session.find(".icon-tester").hide();
 			session.find(".icon-reset-tester").show();
 			session.find(".icon-untester").show();
 			session.find("#sessionTestLauch").show();
-			session.find(".icon-test-download").show();
 		} else {
 			session.find(".icon-tester").show();
 			session.find(".icon-reset-tester").hide();
 			session.find(".icon-untester").hide();
 			session.find("#sessionTestLauch").hide();
-			session.find(".icon-test-download").hide();
 		}
 		
 		let userCount = participants.length;

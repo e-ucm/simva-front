@@ -1,12 +1,12 @@
 {
-    "selection.title":"Selección de papel Simva",
+    "selection.title": "Selección de papel Simva",
     "admin": "Administrador",
     "researcher": "Investigador",
     "teacher": "Profesor",
     "teachingAssistant": "Asistente de enseñanza",
-    "student":"Estudiante",
-    "choose.title":"Elija esta papel",
-    "contactadmin.title":"Contacto Administrador",
+    "student": "Estudiante",
+    "choose.title": "Elija esta papel",
+    "contactadmin.title": "Contacto Administrador",
     "contactadmin.message" : "Póngase en contacto con su administrador de SIMVA en {{ email }} atribuir un nuevo papel.",
     "not_defined": "Indefinido"
 }

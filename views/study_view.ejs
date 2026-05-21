@@ -18,15 +18,35 @@
 
 <div id="study_tabs">
 	<div class="tabs studyTabsButtons">
-			<input class="tab yellow selected" type="button" title="<%- t('sessions.tab.description', { ns : 'SIMLETs' }) %>" onclick="Utils.changeTab(this, 'study_tabs','sessions_tab')" value="<%- t('sessions.tab.title', { ns : 'SIMLETs' }) %>">
-			<input class="tab yellow" type="button" title="<%- t('users.tab.description', { ns : 'SIMLETs' }) %>" onclick="Utils.changeTab(this, 'study_tabs','users_tab')" value="<%- t('users.tab.title', { ns : 'SIMLETs' }) %>">
+		<input class="tab yellow selected" type="button" title="<%- t('sessions.tab.description', { ns : 'SIMLETs' }) %>" onclick="Utils.changeTab(this, 'study_tabs','sessions_tab')" value="<%- t('sessions.tab.title', { ns : 'SIMLETs' }) %>">
+		<input class="tab yellow" type="button" title="<%- t('users.tab.description', { ns : 'SIMLETs' }) %>" onclick="Utils.changeTab(this, 'study_tabs','users_tab')" value="<%- t('users.tab.title', { ns : 'SIMLETs' }) %>">
 	</div>
 	
-	<div id="sessions_tab" class="subform studyTab selected" style="display: block;">
+	<div id="sessions_tab" class="subform studyTab selected">
 		
 		<%- include('partials/simlet_sessions') %>
 		<%- include('partials/simlet_activities') %>
 		
+		<div id="download_data_menu" class="new_element floating">
+			<div class="floater">
+				<div class="form" id="download_data_form">
+					<h1 id="downloadFormTitle">	</h1>
+					<div id="download_session_data" class="subform selected">
+						<!-- onClick functions declared on simlet_sessions.ejs -->
+						<input class="yellow" type="button" value="<%- t('download.session.title', { ns : 'sessions' }) %>" onclick="downloadSessionData()">
+						<input class="yellow" id="session_test_data_download" type="button" title="<%- t('download.test.description', { ns : 'sessions' }) %>" value="<%- t('download.test.title', { ns : 'sessions' }) %>" onclick="downloadSessionTestData()">
+					</div>
+
+					<div id="download_activity_data" class="subform">
+						<!-- onClick functions declared on simlet_activities.ejs -->
+						<input class="yellow" type="button" value="<%- t('download.activity.title', { ns : 'activities' }) %>" onclick="downloadActivityData()">
+						<input class="yellow" id="activity_test_data_download" type="button" title="<%- t('download.test.description', { ns : 'activities' }) %>" value="<%- t('download.test.title', { ns : 'sessions' }) %>" onclick="downloadActivityTestData()">
+						<input class="yellow" id="xasu_download" type="button" value="<%- t('download.xasu.title', { ns : 'activities' }) %>" onclick="downloadActivityXasuConfig()">
+						<input class="yellow" id="backup_download" type="button" value="<%- t('download.backup.title', { ns : 'activities' }) %>" onclick="downloadActivityBackup()">
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 
 	<div id="users_tab" class="subform studyTab" style="display: none;">
@@ -35,6 +55,7 @@
 		
 	</div>
 </div>
+
 
 <div id="pdf_printable">
 	<h3 id="printable_group_name">	</h3>
@@ -203,8 +224,8 @@
 		const kebab = $("#kebab_template .kebab-dropdown").clone();
 		$(".simletSettings .kebab").append(kebab);
 		kebab.find(".icon-edit").click(() => { openStudyForm(studyid) });
-		kebab.find(".icon-url").click(() => { openUrlSettingsForm(studyid) });
-		kebab.find(".icon-download").click(() => { openConfigDownloadForm(studyid) });
+		kebab.find(".icon-url").click(() => { openUrlSettingsForm(studyid, study.simlet_name) });
+		kebab.find(".icon-download").click(() => { openConfigDownloadForm(studyid, study.simlet_name) });
 		kebab.find(".icon-export").click(() => { exportSimlet(studyid) });
 		kebab.find(".icon-delete").click(() => { 
 			deleteStudy(studyid, study.simlet_name) 

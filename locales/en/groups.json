@@ -22,7 +22,7 @@
         
     "groups.title": "Groups",
         "groups.no_groups.message": "You have 0 groups yet. Create one using the bottom right (+) button",
-        "participants.no_users.message":"There are no participants in this group. Add some using the 3-dot menu on the right",
+        "participants.no_users.message": "There are no participants in this group. Add some using the 3-dot menu on the right",
 
         "participants.table.username.title": "Username",
         "participants.table.isToken.title": "Is token",
@@ -46,7 +46,7 @@
         "groups.name.placeholder": "Group name",
         
         "groups.add.title": "Add group",
-            "groups.add.new.tab":"Add new group",
+            "groups.add.new.tab": "Add new group",
                 "groups.add.new.submit": "Add new group",
                 "deprecated.title": "Use deprecated version of token generation",
                 "deprecated.message": "/!\\ This group use the deprecated version of token generation.",
@@ -61,14 +61,14 @@
         "groups.settings.groups.edit.title": "Edit",
             "groups.edit.title": "Edit group",
             "groups.edit.submit": "Edit group",
-            "groups.edit.no_changes.message":"No changes detected in new group name!",
+            "groups.edit.no_changes.message": "No changes detected in new group name!",
 
         "groups.settings.add.title": "Add participants",
             "participants.username.placeholder": "Participant username",
             
             "participants.add.existing.tab": "Add existing",
                 "participants.add.existing.submit": "Add existing",
-                "participants.errormessage.alreadyInGroup":"The participant '{{participant}}' is already in the group '{{group}}'",
+                "participants.errormessage.alreadyInGroup": "The participant '{{participant}}' is already in the group '{{group}}'",
 
             "participants.add.new.tab": "Add new",
                 "participants.add.new.email.placeholder": "email@example.com",

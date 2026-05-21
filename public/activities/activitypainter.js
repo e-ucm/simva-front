@@ -218,41 +218,30 @@ var ActivityPainter = {
 	},
 
 	paintActivityTopBar: function(activity, extraItems) {
-		let isCurrentUserParticipant = false;
-		const userKeys = PainterFactory.Painters["activity"].getParticipantKeys(currentUser);
-		console.log("Checking if current user is participant. User keys:", userKeys, "Participants:", participants);
-		for (let i = 0; i < participants.length; i++) {
-			const participantKeys = PainterFactory.Painters["activity"].getParticipantKeys(participants[i]);
-			if (userKeys.some(key => participantKeys.includes(key))) {
-				isCurrentUserParticipant = true;
-			}
-		}
-		console.log("painting activity with type:", currentUser, "Is current user participant:", isCurrentUserParticipant);
-		const testDownloadBtn = isCurrentUserParticipant
-			? `<li class="kebab-icon icon-download" title="${this.commun.test_download_tooltip}" onclick="PainterFactory.Painters['activity'].getMinioTestData('${activity.activity_id}')"><b>${this.commun.test_download_title}</b></li>`
-			: '';
 		return `<div class="top"><h4>${activity.activity_name}</h4>
 			<div class="activityTopActions">
-				<div class="activityDownload kebab-icon icon-download" title="${this.commun.download_tooltip}" onclick="PainterFactory.Painters['activity'].getMinioData('${activity.activity_id}')"><b>${this.commun.download_title}</b></div>
+				<div class="activityDownload kebab-icon icon-download" title="${this.commun.download_tooltip}" onclick="openActivityDownloadForm(${activity.activity_id})"><b>${this.commun.download_title}</b></div>
 				
 				<div class="kebab">
 					<ul class="kebab-dropdown">
 						<li class="kebab-icon icon-edit" title="${this.commun.edit_title}" onclick="openEditActivityForm('${activity.activity_id}')">${this.commun.edit_title}</li>
-						<li class="kebab-icon icon-delete" title="${this.commun.delete_title}" onclick="deleteActivity('${activity.activity_id}', '${activity.activity_name}', '${activity.session_id}')">${this.commun.delete_title}</li>
-						<li class="kebab-icon icon-url" title="${this.commun.tmon_title}" onclick="PainterFactory.Painters['activity'].getTMonUrl('${activity.activity_id}','${activity.session_id}','${activity.study}')">${this.commun.tmon_title}</li>
 						<li class="kebab-icon icon-export" title="${this.commun.export_title}" onclick="PainterFactory.Painters['activity'].exportActivity('${activity.activity_id}','${activity.session_id}','${activity.study}')">${this.commun.export_title}</li>
-						${testDownloadBtn}
+						<li class="kebab-icon icon-url" title="${this.commun.tmon_title}" onclick="PainterFactory.Painters['activity'].getTMonUrl('${activity.activity_id}','${activity.session_id}','${activity.study}')">${this.commun.tmon_title}</li>
 						${extraItems}
+						<li class="kebab-icon icon-delete" title="${this.commun.delete_title}" onclick="deleteActivity('${activity.activity_id}', '${activity.activity_name}', '${activity.session_id}')">${this.commun.delete_title}</li>
 					</ul>
 				</div>
 			</div></div>`;
 	},
 
 	paintActivity: function(activity, participants){
-		$(`#test_${activity.session_id} .activities`).append(`<div id="activity_${activity.activity_id}" class="activity t${activity.activity_type}">
-			${this.paintActivityTopBar(activity, this.getExtraKebabItems(activity))}
-			<p class="subtitle" title="${this.description}">${this.simple_name}</p>
-			${this.paintActivityParticipantsTable(activity, participants, true)}</div>`);
+		$(`#test_${activity.session_id} .activities`).append(`
+			<div id="activity_${activity.activity_id}" class="activity t${activity.activity_type}">
+				${this.paintActivityTopBar(activity, this.getExtraKebabItems(activity))}
+				<p class="subtitle" title="${this.description}">${this.simple_name}</p>
+				${this.paintActivityParticipantsTable(activity, participants, true)}
+			</div>
+		`);
 	},
 
 	paintActivityParticipantsTable: function(activity, participants, checkbox=false, progress=true, result=true, init=true){

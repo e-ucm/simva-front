@@ -35,7 +35,7 @@ var Utils = {
 
 			$iframe.on('load', function() {
 				$loader.remove();
-				$iframe.css('display', 'block');
+				// $iframe.css('display', 'block');
 			});
 
 			$iframe.attr('src', url);
@@ -124,7 +124,7 @@ var Utils = {
 		}
 		$targetSubform.show().addClass('selected');
 		if ($targetSubform.length > 0) {
-			$targetSubform[0].style.display = 'block';
+			// $targetSubform[0].style.display = 'block';
 		}
 	},
 

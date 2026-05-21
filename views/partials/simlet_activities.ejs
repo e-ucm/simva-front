@@ -2,17 +2,17 @@
     <div class="floater">
         <div class="form" id="add_activity_form">
             <div class="tabs">
-                <span id="new_activity_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'add_activity_form','new_activity_tab')"><%- t('add.new.title', { ns : 'activities' }) %></span>
+                <span id="new_activity_tab_button" class="tab selected" onclick="openNewActivityTab()"><%- t('add.new.title', { ns : 'activities' }) %></span>
 				<span class="tab" type="hidden" onclick="Utils.changeTab(this, 'add_activity_form','import_activity_tab')"><%- t('import.title', { ns : 'activities' }) %></span>
                 <!--<span class="tab" type="hidden" onclick="Utils.changeTab(this, 'add_activity_form','existing_activity_tab')"><%- t('add.existing.title', { ns : 'activities' }) %></span>-->
             </div>
 			<!-- TODO: Combine add new and edit existing tabs to share elements -->
-            <div id="new_activity_tab" class="subform selected" style="display: block;">
+            <div id="new_activity_tab" class="subform selected">
                 <form id="new_activity_form">
                     <input type="hidden" name="test">
 					<h3><%- t('name.placeholder', { ns : 'activities' }) %></h3>
                     <input type="text" class="name_field" name="name" placeholder="<%- t('name.placeholder', { ns : 'activities' }) %>" required>
-					<div style="display: flex; align-items: center; gap: 10px;">
+					<div style="width: 100%; display: flex; align-items: center; gap: 10px;">
 						<b><%- t('activity.type.title', { ns : 'activities' }) %></b>
 						<select name="type" style="flex: 1;">
 	                    </select>
@@ -72,7 +72,8 @@
 </div>
 
 <script>
-
+	let downloadActivityId = null;
+    // Menus
 
     $(document).ready(function() {
         let painters = Object.keys(PainterFactory.Painters);
@@ -263,10 +264,15 @@
         
     });
 
-    let openActivityForm = function(test) {
-		// Always open form in the new activity tab and the gameplay web tab
+	const openNewActivityTab = function() {
 		Utils.changeTab($('#new_activity_tab_button'), 'add_activity_form','new_activity_tab');
-		Utils.changeTab($('#gameplay_web_tab_button'), 'gameplay_tabs','gameplay_web');
+		// Always open form in the gameplay web tab
+		Utils.changeTab($('#gameplay_web_tab_button'), 'gameplay_activity','gameplay_web');
+	}
+
+    let openActivityForm = function(test) {
+		// Always open form in the new activity 
+		openNewActivityTab();
 		Utils.toggleAddForm('add_activity');
 		
 		$('#new_activity_form input[name="test"]').val(test);
@@ -295,7 +301,42 @@
 
 	}
 
+	const openActivityDownloadForm = function(activityId) {
+		Utils.toggleAddForm('download_data_menu');
+		Utils.changeTab(null, 'download_data_form','download_activity_data');
+		
+        downloadActivityId = activityId;
+		const activity = getActivityFromActivityId(activityId);
+
+		$("#downloadFormTitle").text(`<%- t('single.title', { ns : 'activities' }) %>: ${activity.activity_name}`);
+		console.log(activity)
+
+		const session = getTestFromTestId(activity.session_id);
+
+		// Show test download button based on participant status
+		$("#activity_test_data_download").hide();
+		if (isCurrentUserParticipant(session.completeParticipants)) {
+			$("#activity_test_data_download").show();
+		}
+
+		$("#xasu_download").hide();
+		$("#backup_download").hide();
+
+		if (activity.activity_type == "gameplay") {
+			if (activity.game_type != "WEB" && activity.activity_trace_storage) {
+				$("#xasu_download").show();
+			}
+			if (activity.game_backup) {
+				$("#backup_download").show();
+			}
+		}
+	}
+
+	// TODO: add shared listeners
+
 	
+	// Functionality
+
     let deleteActivity = function(activityid, activityname, testid) {
 		let test = getTestFromTestId(testid);
 		let testName = test && test.session_name ? test.session_name : testid;
@@ -306,6 +347,25 @@
 		}
 	}
 
+	const downloadActivityData = function () {
+		PainterFactory.Painters['activity'].getMinioData(downloadActivityId);
+	}
+
+	const downloadActivityTestData = function() {
+		PainterFactory.Painters['activity'].getMinioTestData(downloadActivityId);
+	}
+
+	const downloadActivityXasuConfig = function() {
+		GameplayActivityPainter.downloadXasuConfig(downloadActivityId, studyid);
+	}
+
+	const downloadActivityBackup = function() {
+		GameplayActivityPainter.downloadBackup(downloadActivityId);
+	}
+
+	
+	// Render
+	
     let paintTestActivities = function(test, activities, participants) {
 		window.participants = participants;
 		const isCurrentUserParticipant = currentUser.user_id !== null && participants.some(function(p) {

@@ -37,7 +37,7 @@ var LimeSurveyPainter = {
 					<span class="tab" method="bynew" onclick="LimesurveyChangeTab(this, 'new_activity_extras','limesurvey_bynew')">${this.specific.new_title}</span>
 					<span class="tab" method="byupload" onclick="LimesurveyChangeTab(this, 'new_activity_extras','limesurvey_byupload')">${this.specific.upload_title}</span>
 					</div>
-					<div id="limesurvey_byid" class="subform selected" style="display: block;">
+					<div id="limesurvey_byid" class="subform selected">
 					<p>${this.specific.surveyid_title}:</p>
 					<input type="number" name="surveyid" placeholder="${this.specific.surveyid_placeholder}">
 					</div>

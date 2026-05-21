@@ -23,7 +23,7 @@
     "groups.title": "Groups",
         "groups.no_groups.message": "You have 0 groups yet. Create one using the bottom right (+) button",
 
-        "participants.no_users.message":"Il n'y a pas de participants dans ce groupe. Essayez d'en ajouter en utilisant le bouton [...] à droite.",
+        "participants.no_users.message": "Il n'y a pas de participants dans ce groupe. Essayez d'en ajouter en utilisant le bouton [...] à droite.",
 
         "participants.table.username.title": "Nom d'utilisateur",
         "participants.table.isToken.title": "Est un jeton",
@@ -47,7 +47,7 @@
         "groups.name.placeholder": "Nom du groupe",
         
         "groups.add.title": "Ajouter un groupe",
-            "groups.add.new.tab":"Ajouter un groupe",
+            "groups.add.new.tab": "Ajouter un groupe",
                 "groups.add.new.submit": "Ajouter le groupe",
                 "deprecated.title": "Utiliser la version obsolète de génération de code",
                 "deprecated.message": "/!\\ Ce groupe utilise la version obsolète de génération de code.",
@@ -62,13 +62,13 @@
         "groups.settings.groups.edit.title": "Modifier",
             "groups.edit.title": "Modifier groupe",
             "groups.edit.submit": "Modifier groupe",
-            "groups.edit.no_changes.message":"Aucun changement n'a été détecté avec groupe nom !",
+            "groups.edit.no_changes.message": "Aucun changement n'a été détecté avec groupe nom !",
         "groups.settings.add.title": "Ajouter des participants",
             "participants.username.placeholder": "Nom d'utilisateur du participant",
             
             "participants.add.existing.tab": "Ajouter existant",
                 "participants.add.existing.submit": "Ajouter existant",
-                "participants.errormessage.alreadyInGroup":"Le participant '{{participant}}' est déjà dans le groupe '{{group}}'.",
+                "participants.errormessage.alreadyInGroup": "Le participant '{{participant}}' est déjà dans le groupe '{{group}}'.",
 
             "participants.add.new.tab": "Ajouter un nouveau",
                 "participants.add.new.email.placeholder": "email@example.com",

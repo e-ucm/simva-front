@@ -83,30 +83,12 @@
 		<div class="form" id="group_form">
 			<h1 id="users_form_title">  </h1>
 			<div class="tabs" id="add_group_tabs">
-				<span id="owners_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'group_form','owner_tab')"><%- t('coordinators.add.title', { ns : 'groups' }) %></span>
-				<span id="group_name_desc_tab_button" class="tab" onclick="Utils.changeTab(this, 'group_form','group_name_desc_tab')"><%- t('groups.add.new.tab', { ns : 'groups' }) %></span>
+				<span id="group_name_desc_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'group_form','group_name_desc_tab')"><%- t('groups.add.new.tab', { ns : 'groups' }) %></span>
 				<span class="tab" onclick="Utils.changeTab(this, 'group_form','import_group_tab')"><%- t('groups.import.tab', { ns : 'groups' }) %></span>
+				<span id="owners_tab_button" class="tab" onclick="Utils.changeTab(this, 'group_form','owner_tab')"><%- t('coordinators.add.title', { ns : 'groups' }) %></span>
 			</div>
 
-			<div id="owner_tab" class="subform selected" style="display: block;">
-				<form id="existing_owner_form">
-					<h3><%- t('coordinators.name.title', { ns : 'groups' }) %></h3>
-					<input type="text" class="name_field" id="owner_name" name="name" placeholder="<%- t('coordinators.name.placeholder', { ns : 'groups' }) %>" required>
-					<h3><%- t('coordinators.permission.title', { ns : 'groups' }) %></h3>
-					<select name="permission" required>
-						<option value=""><%- t('coordinators.permission.placeholder', { ns : 'groups' }) %></option>
-						<option value="READ"><%- t('coordinators.permissions.read', { ns : 'groups' }) %></option>
-						<option value="WRITE"><%- t('coordinators.permissions.write', { ns : 'groups' }) %></option>
-					</select>
-					<br><br>
-					<input type="submit" value="<%- t('coordinators.add.title', { ns : 'groups' }) %>">
-					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<br><br>
-					<span class="error" id="owner_form_error"></span>
-				</form>
-			</div>
-
-			<div id="group_name_desc_tab" class="subform selected" style="display: block;">
+			<div id="group_name_desc_tab" class="subform selected">
 				<form id="group_form">
 					<input hidden type="text" name="editingGroupId" id="edit_group_id">
 					<input hidden type="text" name="prevGroupName" id="prev_group_name">
@@ -133,6 +115,25 @@
 				</form>
 				<span class="error" id="import_group_error_modal"></span>
 			</div>
+
+			<div id="owner_tab" class="subform">
+				<form id="existing_owner_form">
+					<h3><%- t('coordinators.name.title', { ns : 'groups' }) %></h3>
+					<input type="text" class="name_field" id="owner_name" name="name" placeholder="<%- t('coordinators.name.placeholder', { ns : 'groups' }) %>" required>
+					<h3><%- t('coordinators.permission.title', { ns : 'groups' }) %></h3>
+					<select name="permission" required>
+						<option value=""><%- t('coordinators.permission.placeholder', { ns : 'groups' }) %></option>
+						<option value="READ"><%- t('coordinators.permissions.read', { ns : 'groups' }) %></option>
+						<option value="WRITE"><%- t('coordinators.permissions.write', { ns : 'groups' }) %></option>
+					</select>
+					<br><br>
+					<input type="submit" value="<%- t('coordinators.add.title', { ns : 'groups' }) %>">
+					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+					<br><br>
+					<span class="error" id="owner_form_error"></span>
+				</form>
+			</div>
+
 		</div>
 	</div>
 </div>
@@ -146,7 +147,7 @@
 				<span class="tab" onclick="Utils.changeTab(this, 'add_participant_form','new_participant_tab')"><%= t('participants.add.new.tab' , { ns : 'groups' }) %></span>
 				<span id="add_batch_tab_button" class="tab" onclick="Utils.changeTab(this, 'add_participant_form','batch_participant_tab')"><%= t('participants.add.batch.tab' , { ns : 'groups' }) %></span>
 			</div>
-			<div id="existing_participant_tab" class="subform selected" style="display: block;">
+			<div id="existing_participant_tab" class="subform selected">
 				<form id="existing_participant_form">
 					<br>
 					<input type="text" class="name_field" name="name" placeholder="<%= t('participants.username.placeholder', { ns : 'groups' }) %>" required>
@@ -228,7 +229,7 @@
 <!-- <div id="add_platform" class="new_element floating">
 	<div class="floater">
 		<div class="form">
-			<div id="add_platform_tab" class="subform selected" style="display: block;">
+			<div id="add_platform_tab" class="subform selected">
 				<h2><%- t('lti_platforms.add.title', { ns : 'SIMLETs' }) %></h2>
 				<form id="add_platform_form">
 					<p><%- t('lti_platforms.add.name.title', { ns : 'SIMLETs' }) %>:</p>
@@ -378,7 +379,7 @@
 						errorbox.text(error.responseJSON.message);
 					}
 					else {
-						// TODO: Automatically allocate group to latest created session
+						// Automatically allocate group to latest created session
 						let sessionId = getLatestCreatedSession().session_id;
 						if(sessionId){
 							Simva.allocateToSession(studyid, result.group_id, sessionId, {}, function(error, result){
@@ -541,8 +542,8 @@
     }
 	
 	const openAddUsersForm = function() {
-		// Always open form in the add owner tab
-		Utils.changeTab($('#owners_tab_button'), 'group_form','owner_tab');
+		// Always open form in the create/edit common tab
+		Utils.changeTab($('#group_name_desc_tab_button'), 'group_form','group_name_desc_tab');
 		Utils.toggleAddForm("users_form_menu");
 
 		// Reset tab state when opening modal

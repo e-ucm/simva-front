@@ -7,7 +7,7 @@
 				<span id="study_name_desc_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'study_form_form','study_name_desc_tab')"><%- t('new.tab', { ns : 'SIMLETs' }) %></span>
 				<span class="tab" onclick="Utils.changeTab(this, 'study_form_form','import_study_tab')"><%- t('import.tab', { ns : 'SIMLETs' }) %></span>
 			</div>		<% } %>
-			<div id="study_name_desc_tab" class="subform selected" style="display: block;">
+			<div id="study_name_desc_tab" class="subform selected">
 				<form id="study_name_desc_form">
 					<input hidden type="text" name="editingStudyId" id="edit_study_id">
 					<input hidden type="text" name="prevStudyName" id="prev_study_name">
@@ -39,6 +39,24 @@
 	</div>
 </div>
 
+<div id="study_url_settings" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<h1 class="formSimletTitle">		</h1>
+			<div id="edit_url_tab" class="subform selected">
+				<p id="generate_shlink_url" >
+					<input type="button" class="blue" value="<%- t('scheduler.shlink.generate.title', { ns : 'SIMLETs' }) %>" onclick="openGenerateLinkForm()">
+				</p>
+				<p id="shlink_url">
+					<input type="button" class="green" id="shlink_url_short" onclick="copyShortURL()" style="white-space: normal; word-wrap: break-word;">
+				</p>
+				<p id="delete_shlink_url" >
+					<input type="button" class="red" value="<%- t('scheduler.shlink.delete.title', { ns : 'SIMLETs' }) %>" onclick="deleteShLink()">
+				</p>
+			</div>
+		</div>
+	</div>
+</div>
 
 <div id="generate_study_link" class="new_element floating">
 	<div class="floater">
@@ -51,7 +69,7 @@
 			</div>
             <br>
 
-			<div id="generate_study_link_length_tab" class="subform selected" style="display: block;">
+			<div id="generate_study_link_length_tab" class="subform selected">
 				<form id="generate_study_link_length_form">
 					<h3><%- t('scheduler.shlink.generate.randomly_length.title', { ns : 'SIMLETs' }) %></h3>
 					<input hidden type="text" name="study">
@@ -77,29 +95,12 @@
 	</div>
 </div>
 
-<div id="study_url_settings" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<div id="edit_url_tab" class="subform selected" style="display: block;">
-				<p id="generate_shlink_url" >
-					<input type="button" class="blue" value="<%- t('scheduler.shlink.generate.title', { ns : 'SIMLETs' }) %>" onclick="openGenerateLinkForm()">
-				</p>
-				<p id="shlink_url">
-					<input type="button" class="green" id="shlink_url_short" onclick="copyShortURL()" style="white-space: normal; word-wrap: break-word;">
-				</p>
-				<p id="delete_shlink_url" >
-					<input type="button" class="red" value="<%- t('scheduler.shlink.delete.title', { ns : 'SIMLETs' }) %>" onclick="deleteShLink()">
-				</p>
-			</div>
-		</div>
-	</div>
-</div>
 
 <div id="download_config" class="new_element floating">
 	<div class="floater">
 		<div class="form">
+			<h1 class="formSimletTitle">		</h1>
 			<input class="yellow" type="button" value="<%- t('config.download.simlet', { ns : 'SIMLETs' }) %>" onclick="downloadStudyConfig()">
-			<br><br>
 			<input class="yellow" type="button" value="<%- t('config.download.uadventure', { ns : 'SIMLETs' }) %>" onclick="downloadUAConfig()">
 		</div>
 	</div>
@@ -363,9 +364,11 @@
 
 
     // --- URL FORM ---
-    const openUrlSettingsForm = function(studyId) {
+    const openUrlSettingsForm = function(studyId, studyName) {
 		// Always open form in the generate random link with length tab
 		Utils.changeTab($('#generate_link_length_tab_button'), 'generate_study_link_form','generate_study_link_length_tab');
+
+		$(".formSimletTitle").text(`<%- t('single.title', { ns : 'SIMLETs' }) %>: ${studyName}`);
 
         currStudyId = studyId;
 
@@ -426,9 +429,10 @@
 
     // --- DOWNLOAD FORM ---
 
-    const openConfigDownloadForm = function(studyId) {
+    const openConfigDownloadForm = function(studyId, studyName) {
         currStudyId = studyId;
 		Utils.toggleAddForm('download_config');
+		$(".formSimletTitle").text(`<%- t('single.title', { ns : 'SIMLETs' }) %>: ${studyName}`);
 	}
 
 	const exportSimlet = function(studyId) {

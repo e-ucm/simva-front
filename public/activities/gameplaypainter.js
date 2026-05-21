@@ -32,7 +32,7 @@ var GameplayActivityPainter = {
 				<span id="gameplay_web_tab_button" class="tab selected" method="WEB" title="${this.specific.web_description}" onclick="Utils.changeTab(this, 'gameplay_activity','gameplay_web')">${this.specific.web_title}</span>
 				<span class="tab" method="DESKTOP" title="${this.specific.desktop_description}" onclick="Utils.changeTab(this, 'gameplay_activity','gameplay_desktop')">${this.specific.desktop_title}</span>
 			</div>
-			<div id="gameplay_web" class="subform selected" style="display: block;">
+			<div id="gameplay_web" class="subform selected">
 				<p><i>${this.specific.web_description}</i></p>
 				<p><label for="gameplay_game_uri" style="width: 100%; text-align: center;">${this.specific.game_uri_title}</label><input id="gameplay_game_uri" type="text" name="game_uri">
 				<span class="info">${this.specific.game_uri_description}</span></p>
@@ -61,7 +61,7 @@ var GameplayActivityPainter = {
 				<span class="tab selected" method="WEB" title="${this.specific.web_title}" onclick="Utils.changeTab(this, 'edit_gameplay_activity','edit_gameplay_web')">${this.specific.web_title}</span>
 				<span class="tab" method="DESKTOP" title="${this.specific.desktop_title}" onclick="Utils.changeTab(this, 'edit_gameplay_activity','edit_gameplay_desktop')">${this.specific.desktop_title}</span>
 			</div>
-			<div id="edit_gameplay_web" class="subform selected" style="display: block;">
+			<div id="edit_gameplay_web" class="subform selected">
 				<p><i>${this.specific.web_description}</i></p>
 				<p><label for="edit_gameplay_game_uri" style="width: 100%; text-align: center;">${this.specific.game_uri_title}</label><input id="edit_gameplay_game_uri" type="text" name="game_uri">
 				<span class="info">${this.specific.game_uri_description}</span></p>
@@ -236,18 +236,9 @@ var GameplayActivityPainter = {
 	},
 
 	getExtraKebabItems: function(activity) {
-		const xasuItem = Boolean(activity.activity_trace_storage)
-			? `<li class="kebab-icon icon-download" title="${this.specific.xasu_title || 'Download tracker config'}" onclick="GameplayActivityPainter.downloadXasuConfig('${activity.activity_id}','${activity.study}')">${this.specific.xasu_title || 'Download tracker config'}</li>`
-			: `<li class="kebab-icon icon-download li-disabled" title="${this.specific.xasu_title || 'Download tracker config'} (${this.commun.result_disabled || 'disabled'})">${this.specific.xasu_title || 'Download tracker config'} (${this.commun.result_disabled || 'disabled'})</li>`;
-
-		const backupItem = Boolean(activity.game_backup)
-			? `<li class="kebab-icon icon-download" title="${this.communSpecific.result_title || 'Backup'}" onclick="GameplayActivityPainter.downloadBackup('${activity.activity_id}')">${this.communSpecific.result_title || 'Backup'} ⬇️</li>`
-			: `<li class="kebab-icon icon-download li-disabled" title="${this.communSpecific.result_title || 'Backup'} (${this.commun.result_disabled || 'disabled'})">${this.communSpecific.result_title || 'Backup'} (${this.commun.result_disabled || 'disabled'})</li>`;
-
 		return `<li class="kebab-icon icon-activate" title="${this.commun.completed_all_set || 'Set completion'}" onclick="PainterFactory.Painters['activity'].setCompletionForAllParticipant('${activity.activity_id}', true)">${this.commun.completed_all_set || 'Set completion'}</li>
 				<li class="kebab-icon icon-pause" title="${this.commun.completed_all_unset || 'Unset completion'}" onclick="PainterFactory.Painters['activity'].setCompletionForAllParticipant('${activity.activity_id}', false)">${this.commun.completed_all_unset || 'Unset completion'}</li>
-				${xasuItem}
-				${backupItem}`;
+		`;
 	},
 
 	paintActivity: function(activity, participants){
