@@ -87,11 +87,11 @@
     "gameplay.desktop.title":"Juego de escritorio",
     "gameplay.desktop.description":"La actividad de juego se basa en un juego de escritorio lanzado en la máquina del usuario, y los datos de interacción se recopilan a través de declaraciones xAPI enviadas desde el juego a SIMVA.",
 
-    "gameplay.xapi_by_game.title":"xAPI Gestión de datos por juego",
-    "gameplay.xapi_by_game.description":"Activar la gestión de datos xAPI por juego, lo que permite diferenciar los datos de interacción según el juego específico jugado, facilitando el análisis y la comprensión del rendimiento de los participantes en diferentes contextos de juego.",
+    "gameplay.xapi_by_game.title":"Gestión de datos xAPI básicos por juego",
+    "gameplay.xapi_by_game.description":"Activar la gestión de datos xAPI basicos (initializado la actividad, suspended/resumed, terminated la actividad) directamente por el juego.",
     "gameplay.game_uri.title":"URI del juego",
     "gameplay.game_uri.description": "La URI del juego a lanzar en la actividad de juego, que puede ser un juego web lanzado en un iframe o un juego de escritorio lanzado fuera de SIMVA, y los datos de interacción se recopilan a través de declaraciones xAPI enviadas desde el juego a SIMVA.",
-    "gameplay.xasu.title":"Configuracion de Xasu",
+    "gameplay.xasu.title":"Configuración de Xasu",
     "gameplay.xasu.description":"Configurar Xasu para la recopilación de datos xAPI, incluyendo parámetros como endpoint y claves de autenticación, para asegurar una integración fluida y segura de los datos de interacción de los participantes durante la actividad de juego.",
 
     "manual.name": "Actividad manual",

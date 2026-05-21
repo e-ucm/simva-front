@@ -78,8 +78,8 @@
     "gameplay.storage.file.array.suffix":"gameplay_traces_data_as_array",
     "gameplay.storage.file.one_per_line.suffix":"gameplay_traces_data_one_per_line",
     
-    "gameplay.xapi_by_game.title":"xAPI Data Management By Game",
-    "gameplay.xapi_by_game.description":"Enable the collection and management of top xAPI data associated with each game played during the gameplay activity.",
+    "gameplay.xapi_by_game.title":"Basic xAPI Data Management By Game",
+    "gameplay.xapi_by_game.description":"Enable the management of basic xAPI data (activity initialized, suspended/resumed, activity terminated) directly by the game.",
     "gameplay.game_uri.title":"Game URI",
     "gameplay.game_uri.description":"The URI of the game being played can be specified to launch the game that collects xAPI data.",
     "gameplay.xasu.title":"Xasu Config",

@@ -79,8 +79,8 @@
     "gameplay.storage.file.array.suffix":"trace_de_jeu_en_table",
     "gameplay.storage.file.one_per_line.suffix":"trace_de_jeu_en_une_par_ligne",
     
-    "gameplay.xapi_by_game.title":"Gestion des données xAPI par jeu",
-    "gameplay.xapi_by_game.description":"Activer la gestion des données xAPI par jeu, permettant de différencier les données d'interaction en fonction du jeu spécifique joué, ce qui facilite l'analyse et la compréhension des performances des participants dans différents contextes de jeu.",
+    "gameplay.xapi_by_game.title":"Gestion des données xAPI basiques par jeu",
+    "gameplay.xapi_by_game.description":"Activer la gestion des données xAPI basiques (initialisation de l'activité, suspendue/reprise, activité terminée) directement par le jeu, ce qui permet de différencier les données d'interaction en fonction du jeu spécifique joué, facilitant ainsi l'analyse et la compréhension des performances des participants dans différents contextes de jeu.",
     "gameplay.game_uri.title":"URI du jeu",
     "gameplay.game_uri.description":"L'URI du jeu à lancer dans l'activité de jeu, qui peut être un jeu web lancé dans une iframe ou un jeu de bureau lancé en dehors de SIMVA, et les données d'interaction sont collectées via des déclarations xAPI envoyées du jeu à SIMVA.",
     "gameplay.xasu.title":"Configuration de Xasu",
