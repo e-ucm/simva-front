@@ -6,13 +6,17 @@
 				<span class="tab" type="hidden" onclick="Utils.changeTab(this, 'add_activity_form','import_activity_tab')"><%- t('import.title', { ns : 'activities' }) %></span>
                 <!--<span class="tab" type="hidden" onclick="Utils.changeTab(this, 'add_activity_form','existing_activity_tab')"><%- t('add.existing.title', { ns : 'activities' }) %></span>-->
             </div>
+			<!-- TODO: Combine add new and edit existing tabs to share elements -->
             <div id="new_activity_tab" class="subform selected" style="display: block;">
                 <form id="new_activity_form">
                     <input type="hidden" name="test">
 					<h3><%- t('name.placeholder', { ns : 'activities' }) %></h3>
                     <input type="text" class="name_field" name="name" placeholder="<%- t('name.placeholder', { ns : 'activities' }) %>" required>
-                    <select name="type">
-                    </select>
+					<div style="display: flex; align-items: center; gap: 10px;">
+						<b><%- t('activity.type.title', { ns : 'activities' }) %></b>
+						<select name="type" style="flex: 1;">
+	                    </select>
+					</div>
                     <fieldset id="new_activity_extras">
                     </fieldset>
                     <input type="submit" value="<%- t('add.title', { ns : 'activities' }) %>">
@@ -196,8 +200,9 @@
 				});
 			}
 			
-			// If the activity is a gameplay web activity with no url, show a message asking confirmation
-			if (form.type == "gameplay" && $(this).find("[method='WEB']").is(".selected") && (form.game_uri == "" || form.game_uri == null)) {
+			// If the activity is a web activity with no url, show a message asking confirmation
+			const closestWebTab = $(this).find("[method='WEB']");
+			if (closestWebTab.length > 0 && closestWebTab.is(".selected") && (form.game_uri == "" || form.game_uri == null)) {
 				if (confirm(`<%- t('add.new.web.no_url_message', { ns : 'activities' }) %>`)) {
 					addActivity();
 				}

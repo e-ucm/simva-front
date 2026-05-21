@@ -22,6 +22,7 @@
     "import.error.invalid_file": "Archivo inválido",
     
     "name.placeholder": "Nombre de la actividad",
+    "activity.type.title": "Tipo de actividad",
 
     "activity.name": "Actividad por defecto",
     "activity.description": "Una actividad básica con estado de finalización y un lugar para guardar los resultados.",
