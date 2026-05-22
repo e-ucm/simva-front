@@ -781,7 +781,6 @@ body {
 .sessionStatusLabel {
 	/* Must be set by the leftmost element in order for the other buttons to appear correctly aligned to the right */
 	margin-left: auto;
-
 	margin-right: 10px;
 	width: 100px;
 	height: max-content;
@@ -804,6 +803,7 @@ body {
 	width: 0;
 	height: 0;
 
+	margin-left: 10px;
 	margin-right: 5px;
 
 	border-left: var(--triangleSize) solid transparent;
@@ -1135,6 +1135,9 @@ body {
 	margin: 0;
 	vertical-align: top;
 }
+.sessionTop .tooltipLine {
+	margin-left: auto;
+}
 
 .tooltip {
 	position: relative;
@@ -1147,14 +1150,13 @@ body {
 	font-weight: normal;
 }
 .tooltip .tooltiptext {
-	/* Position the tooltip */
-	position: absolute;
+	position: fixed;
 	z-index: 9999;
 
 	background-color: #332d26e7;
 	color: #fff;
 	
-	text-align: center;
+	text-align: left;
 	border-radius: 6px;
 	padding: 15px;
 
@@ -1163,6 +1165,7 @@ body {
 	max-width: 40vw;
 	white-space: normal;
 	word-wrap: break-word;
+	overflow-y: auto;
 	
 	visibility: hidden;
 	opacity: 0;

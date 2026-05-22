@@ -2,7 +2,15 @@
 <div class="users">
     <div class="card coordinators">
         <div class="groupTop">
-            <h2><%- t('coordinators.title', { ns : 'groups' }) %></h2>
+			<div class="tooltipLine">
+	            <h2><%- t('coordinators.title', { ns : 'groups' }) %></h2>
+				<div class="tooltip">
+					&#x1F6C8;
+					<span class="tooltiptext">
+						<%= t('coordinator.description', { ns : 'about' }) %>
+					</span>
+				</div>
+			</div>
             <div class="expandButton" onclick="toggleOwners()"></div>
         </div>
         <table class="owners" id="owners">
@@ -49,6 +57,15 @@
             </div>
             <div class="allocatorContent">
             </div>
+			<div class="tooltipLine">
+				<h3><%- t('participants.title', { ns : 'groups' }) %></h3>
+				<div class="tooltip">
+					&#x1F6C8;
+					<span class="tooltiptext">
+						<%= t('participant.description', { ns : 'about' }) %>
+					</span>
+				</div>
+			</div>
             <div class="participants_container">
                 <table class="participants">
                     <thead>
@@ -69,7 +86,15 @@
 
 	<div class="card groups">
 		<div class="top">
-			<h2><%- t('groups.title', { ns : 'groups' }) %></h2>
+			<div class="tooltipLine">
+				<h2><%- t('groups.title', { ns : 'groups' }) %></h2>
+				<div class="tooltip">
+					&#x1F6C8;
+					<span class="tooltiptext">
+						<%= t('group.description', { ns : 'about' }) %>
+					</span>
+				</div>
+			</div>
 		</div>
 		<div id="groups_container">
             
@@ -120,7 +145,15 @@
 				<form id="existing_owner_form">
 					<h3><%- t('coordinators.name.title', { ns : 'groups' }) %></h3>
 					<input type="text" class="name_field" id="owner_name" name="name" placeholder="<%- t('coordinators.name.placeholder', { ns : 'groups' }) %>" required>
-					<h3><%- t('coordinators.permission.title', { ns : 'groups' }) %></h3>
+					<div class="tooltipLine">
+						<h3><%- t('coordinators.permission.title', { ns : 'groups' }) %></h3>
+						<div class="tooltip">
+							&#x1F6C8;
+							<span class="tooltiptext">
+								<%= t('coordinator.description', { ns : 'about' }) %>
+							</span>
+						</div>
+					</div>
 					<select name="permission" required>
 						<option value=""><%- t('coordinators.permission.placeholder', { ns : 'groups' }) %></option>
 						<option value="READ"><%- t('coordinators.permissions.read', { ns : 'groups' }) %></option>

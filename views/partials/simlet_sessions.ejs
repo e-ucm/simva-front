@@ -1,7 +1,15 @@
 <div id="study">
     <div class="card">
         <div class="top">
-            <h2><%- t('title', { ns : 'sessions' }) %></h2>
+			<div class="tooltipLine">
+				<h2><%- t('title', { ns : 'sessions' }) %></h2>
+				<div class="tooltip">
+					&#x1F6C8;
+					<span class="tooltiptext">
+						<%= t('session.description', { ns : 'about' }) %>
+					</span>
+				</div>
+			</div>
         </div>
         <div id="tests" class="tests">
         </div>
@@ -12,7 +20,20 @@
 	<div class="test">
 		<div class="sessionTop" >
 			<h3 class="sessionTitle">	</h3>
-			<div class="sessionStatusLabel">	</div>
+			<div class="tooltipLine">
+				<div class="tooltip">
+					&#x1F6C8;
+					<span class="tooltiptext">
+						<%- t('status.description', { ns : 'sessions' }) %>
+						<ul>
+							<li><%- t('active.description', { ns : 'sessions' }) %></li>
+							<li><%- t('paused.description', { ns : 'sessions' }) %></li>
+							<li><%- t('finished.description', { ns : 'sessions' }) %></li>
+						</ul>
+					</span>
+				</div>
+				<div class="sessionStatusLabel">	</div>
+			</div>
 			<div class="expandButton"></div>
 			<div class="kebab">
 				<ul class="kebab-dropdown">
@@ -71,6 +92,16 @@
             </div>
         </div>
         <div class="sessionTags" style="margin-top: 8px;">	</div>
+		<br>
+		<div class="tooltipLine">
+			<h3><%- t('title', { ns : 'activities' }) %></h3>
+			<div class="tooltip">
+				&#x1F6C8;
+				<span class="tooltiptext">
+					<%= t('activity.description', { ns : 'about' }) %>
+				</span>
+			</div>
+		</div>
         <div class="activities">
             
         </div>

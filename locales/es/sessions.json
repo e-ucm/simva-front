@@ -62,13 +62,16 @@
         "finished.title": "Terminada",
         "finish.confirm": "¿Está seguro de que desea terminar (finalizar) esta sesión? Esta acción no se puede deshacer",
 
-    "no_activities.message": "No hay actividades en esta sesión. Intente añadir una usando el botón de arriba",
-
     "settings.delete.title": "Eliminar",
         "delete.confirm": "¿Está seguro de que desea eliminar la sesión '{{session}}' del SIMLET '{{SIMLET}}'?\nTambién se eliminarán todas las actividades y datos",
 
     "settings.export.title": "Exportar",
     "set_tester.title": "Convertirme en tester en esta sesión",
     "reset_tester.title": "Reiniciar tester",
-    "unset_tester.title": "Quitarme como tester"
-    }
+    "unset_tester.title": "Quitarme como tester",
+
+    "status.description": "Dependiendo de su estado, una sesión se comportará de manera diferente:",
+        "active.description": "Una sesión activa recibirá datos, sus actividades pueden ser modificadas, y puede ser pausada en cualquier momento",
+        "paused.description": "Una sesión pausada no recibirá datos, pero es posible modificar sus actividades o reactivarla en cualquier momento",
+        "finished.description": "Una sesión terminada ya no podrá recibir datos, modificar sus actividades, o ser reactivada"
+}

@@ -62,13 +62,16 @@
         "finished.title": "Finished",
         "finish.confirm": "Are you sure you want to finish (terminate) this session? This action cannot be undone",
 
-    "no_activities.message": "There are no activities in this session. Try adding one using the button above",
-
     "settings.delete.title": "Delete",
         "delete.confirm": "Are you sure you want to delete the session '{{session}}' from SIMLET '{{SIMLET}}'?\nAll the activities and data will be deleted too",
 
     "settings.export.title": "Export",
     "set_tester.title": "Set myself as tester in this session",
     "reset_tester.title": "Reset tester (unset and set again)",
-    "unset_tester.title": "Unset myself as tester"
+    "unset_tester.title": "Unset myself as tester",
+
+    "status.description": "Depending on its status, a session will behave differently:",
+        "active.description": "An active session will receive data, its activities can be modified, and it can be paused at any time",
+        "paused.description": "A paused session won't receive any data, but it's posible to modify its activities or be reactivated at any time",
+        "finished.description": "A finished session will no longer be able to receive data, have its activities modified, nor be reactivated"
 }

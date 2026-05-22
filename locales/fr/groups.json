@@ -25,6 +25,8 @@
 
         "participants.no_users.message": "Il n'y a pas de participants dans ce groupe. Essayez d'en ajouter en utilisant le bouton [...] à droite.",
 
+        "participants.title": "Participants",
+        
         "participants.table.username.title": "Nom d'utilisateur",
         "participants.table.isToken.title": "Est un jeton",
         "participants.isToken.true": "Oui",

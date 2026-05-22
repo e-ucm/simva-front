@@ -7,7 +7,11 @@
 	<div class="tooltip">
 		&#x1F6C8;
 		<span class="tooltiptext">
-			<%= t('description', { ns : 'SIMLETs' }) %>
+			<% if (typeof archived !== 'undefined' && !archived) { %>
+				<%= t('description', { ns : 'SIMLETs' }) %>
+			<% } else { %>
+				<%= t('archived_simlet.description', { ns : 'about' }) %>
+			<% } %>
 		</span>
 	</div>
 </div>

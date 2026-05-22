@@ -23,6 +23,8 @@
     "groups.title": "Grupos",
         "groups.no_groups.message": "Aún no tiene grupos. Cree uno utilizando el botón inferior derecho (+)",
         "participants.no_users.message": "No hay participantes en este grupo. Añada algunos utilizando el botón de el menú de 3 puntos a la derecha",
+        
+        "participants.title": "Participantes",
 
         "participants.table.username.title": "Nombre de usuario",
         "participants.table.isToken.title": "Es código",
