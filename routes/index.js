@@ -59,10 +59,6 @@ router.get('/about', function(req, res, next) {
   });
 });
 
-router.get('/about-page', function(req, res, next) {
-  return res.redirect('/about');
-});
-
 router.get('/e-ucm', function(req, res, next) {
   res.render('logout_e_ucm', { 
     config: config,

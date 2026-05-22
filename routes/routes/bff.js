@@ -14,13 +14,13 @@ module.exports = function(auth, redirectToLogin, config){
     const testscontroler = require('../lib/testscontroler');
     const axios = require('axios');
     
-    router.get('/languages/:lng', auth, redirectToLogin, (req, res, next) => {
+    router.get('/languages/:lng', (req, res, next) => {
         const lng = req.params["lng"];  // Get the new language from query parameters
         res.cookie('i18next', lng, { maxAge: 900000, httpOnly: true });  // Set the new language in a cookie
         res.status(200).send({ message : "Language updated" });
     });
 
-    router.get('/languages/', auth, redirectToLogin, (req, res, next) => {
+    router.get('/languages/', (req, res, next) => {
         const displayNames = new Intl.DisplayNames([req.cookies.i18next], { type: 'language' });
         res.status(200).send({ current : req.cookies.i18next, default: defaultLanguage, languages : 
             config.i18n.languages.map(
