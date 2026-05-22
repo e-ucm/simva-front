@@ -81,7 +81,7 @@
 		Simva.getActivityTypes(function(error, activitytypes) {
 
 			   // Add a default 'no selected' option
-			   $('#new_activity_form select[name="type"]').append('<option value="" selected disabled hidden><%- t("activity.type.select", { ns : "activities" }) %></option>');
+			   $('#new_activity_form select[name="type"]').append("<option value=\"\" selected disabled hidden><%- t('activity.type.select', { ns : 'activities' }) %></option>");
 			   for (var i = 0; i < activitytypes.length; i++) {
 				   if (activitytypes[i].commun && PainterFactory.Painters["activity"]) {
 					   PainterFactory.Painters["activity"].commun = activitytypes[i].commun;
