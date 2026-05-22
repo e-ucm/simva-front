@@ -278,7 +278,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	white-space: normal;    /* Allows text to wrap */
 	box-sizing: border-box;  /* Includes padding in width/height */
 }
-.cardTitle {
+.card .cardTitle, .card .sessionTagList {
 	max-width: 95%;
 	display: -webkit-box;
 	-webkit-line-clamp: 1;
@@ -286,7 +286,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
-.cardDescription {
+.card .cardDescription {
 	padding: 10px;
 	height: 3em;
 	display: -webkit-box;

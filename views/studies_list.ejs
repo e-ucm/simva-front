@@ -140,12 +140,11 @@
 	}
 
 
-	const openStudyForm = function(studyId) {
+	const openStudyForm = function(studyId) {		
 		// Always open form in the create/edit common tab
 		Utils.changeTab($('#study_name_desc_tab_button'), 'study_form_form','study_name_desc_tab');
 
 		$('#study_form_error').text("");
-		$('#edit_study_id').val(studyId);
 
 		// Creating new study
 		if (studyId == null) {
@@ -168,6 +167,8 @@
 				if(!error) {
 					// Open form only if edit is possible and hide the add new/import tabs (only the name/description tab is needed)
 					Utils.toggleAddForm('study_form');
+					$('#edit_study_id').val(studyId);
+
 					$("#add_study_tabs").hide();
 					
 					$("#study_form_title").text("<%- t('edit.title', { ns : 'SIMLETs' }) %>");
