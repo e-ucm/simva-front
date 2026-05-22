@@ -413,8 +413,8 @@
 					}
 					else {
 						// Automatically allocate group to latest created session
-						let sessionId = getLatestCreatedSession().session_id;
-						if(sessionId){
+						let session = getLatestCreatedSession();
+						if(session && session.session_id){
 							Simva.allocateToSession(studyid, result.group_id, sessionId, {}, function(error, result){
 								if(!error){
 									console.log(result)
@@ -668,7 +668,12 @@
 		if (group != null) {
 			study.participants.forEach(function(participant) {
 				if (group.participants.includes(participant.user_id)) {
-					usernames.push(participant.username)
+					if (participant.isToken) {
+						usernames.push(participant.token)
+					}
+					else {
+						usernames.push(participant.username)
+					}
 				}
 			});
 		}
@@ -828,6 +833,7 @@
 		$('#groups_container').html('');
 		
 		let painted = 0;
+		let firstPaintedId = null;
 		if (groups.length > 0) {
 			for (var i = 0; i < groups.length; i++) {
 				if(Boolean(groups[i].group_sandbox)) {
@@ -836,9 +842,11 @@
 				addGroupBox(groups[i])
 				paintAllocator(groups[i], tests, groups, participants);
 				painted++;
+				firstPaintedId = groups[i].group_id;
 			}
-            if (groups.length == 1 && painted > 0) {
-			    toggleGroup(groups[0].group_id);
+			// Automatically expand the group if there's only one
+            if (painted == 1) {
+			    toggleGroup(firstPaintedId);
             }
 		} 
         

@@ -389,6 +389,7 @@
 			for (var i = 0; i < tests.length; i++) {
 				fullyPaintTest(tests[i]);
 			}
+			// Automatically expand the session if there's only one
 			if (tests.length == 1) {
 				toggleSession(tests[0].session_id);
 			}

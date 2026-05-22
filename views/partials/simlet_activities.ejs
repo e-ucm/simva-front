@@ -378,7 +378,7 @@
 		$(`#test_${test.session_id} .activities`).empty();
 
 		if (activities.length === 0) {
-			$(`#test_${test.session_id} .activities`).text("<%- t('no_activities.message', { ns : 'sessions' }) %>");
+			$(`#test_${test.session_id} .activities`).text("<%- t('no_activities.message', { ns : 'activities' }) %>");
 		} else {
 			for (var i = 0; i < activities.length; i++) {
 				switch(activities[i].activity_type) {
