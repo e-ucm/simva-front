@@ -1,4 +1,4 @@
-module.exports = function(auth, config){
+module.exports = function(auth, redirectToLogin, config){
     var express = require('express'),
     router = express.Router();
     const logger = require('../../logger');
@@ -11,7 +11,7 @@ module.exports = function(auth, config){
      * To get presigned url for others page events
      * 
     */
-    router.get('/getPresignedUrl', auth, async (req, res, next) => {
+    router.get('/getPresignedUrl', auth, redirectToLogin, async (req, res, next) => {
         const options = {
             username: req.session.user.data.username,
             sessionID: req.session.id
@@ -27,7 +27,7 @@ module.exports = function(auth, config){
         }
     });
 
-    router.get('/', async function(req, res, next) {
+    router.get('/', auth, redirectToLogin, async function(req, res, next) {
         // Extract the token from the query parameters
         const ts = req.query.ts;
         const signature = req.query.signature;

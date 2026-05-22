@@ -1,10 +1,10 @@
-module.exports = function(auth, config){
+module.exports = function(auth, redirectToLogin, config){
 
   var express = require('express'),
   router = express.Router();
   const logger = require('../../logger');
 
-  router.get('/', auth, function(req, res, next) {
+  router.get('/', auth, redirectToLogin, function(req, res, next) {
   	   res.render('studies_play', { 
          config: config,
          user: req.session.user,
@@ -12,7 +12,7 @@ module.exports = function(auth, config){
       });
   });
 
-  router.get('/:studyid', auth, function(req, res, next) {
+  router.get('/:studyid', auth, redirectToLogin, function(req, res, next) {
     res.render('scheduler', { 
         config: config,
         user: req.session.user,

@@ -1,4 +1,4 @@
-module.exports = function(auth, config){
+module.exports = function(auth, redirectToLogin, config){
   var express = require('express'),
   router = express.Router();
   const logger = require('../../logger');
@@ -73,7 +73,7 @@ module.exports = function(auth, config){
    * To get presigned url for schedule events
    * 
    */
-  router.get('/:studyid/schedule/events/getPresignedUrl', async (req, res, next) => {
+  router.get('/:studyid/schedule/events/getPresignedUrl', auth, redirectToLogin, async (req, res, next) => {
     try {
         const me = await SimvaAsync.getCurrentUser(req.session.id);
         const userId = me?.user_id ?? resolveUserIdFromSession(req.session.user);
@@ -96,7 +96,7 @@ module.exports = function(auth, config){
    * To get presigned url for schedule events
    * 
    */
-  router.get('/:studyid/events/getPresignedUrl', async (req, res, next) => {
+  router.get('/:studyid/events/getPresignedUrl', auth, redirectToLogin, async (req, res, next) => {
     try {
         const me = await SimvaAsync.getCurrentUser(req.session.id);
         const userId = me?.user_id ?? resolveUserIdFromSession(req.session.user);
@@ -116,7 +116,7 @@ module.exports = function(auth, config){
     }
   });
 
-  router.get('/', auth, function(req, res, next) {
+  router.get('/', auth, redirectToLogin, function(req, res, next) {
       res.render('studies_list', { 
         config: config, 
         user: req.session.user,
@@ -125,7 +125,7 @@ module.exports = function(auth, config){
      });
   });
   
-  router.get('/:studyid', auth, function(req, res, next) {
+  router.get('/:studyid', auth, redirectToLogin, function(req, res, next) {
     res.render('study_view', { 
       config: config, 
       user: req.session.user, 

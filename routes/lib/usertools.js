@@ -88,6 +88,19 @@ class UserTools {
 			 };
 	}
 
+	redirectToLogin(level) {
+		var pre=this.preTabs(level);
+		return function(req, res, next) {
+			// Defensive check: redirect to login if user is not authenticated
+			if (!req.session || !req.session.user || !req.session.user.data) {
+				req.session.intendedUrl = req.originalUrl;
+				return res.redirect(`${pre}users/login`);
+			} else {
+				return next();
+			}
+		}
+	}
+
 	async getRefreshSessionsList() {
         let sessionsToSend = [];
         for (let [sessionId, sessionData] of userClientsListManager.sessions) {

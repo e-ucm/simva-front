@@ -1,8 +1,8 @@
-module.exports = function(auth, config){
+module.exports = function(auth, redirectToLogin, config){
     var express = require('express'),
     router = express.Router();
 
-    router.get('/', auth, function(req, res, next) {
+    router.get('/', auth, redirectToLogin, function(req, res, next) {
         if(req.session.user.data.role === 'teacher' || req.session.user.data.role === 'administrator'){
             res.render('studies_list', { 
                 config: config, 

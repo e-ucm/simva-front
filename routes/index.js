@@ -41,15 +41,13 @@ app.use(middleware.handle(i18next));
 
 router = express.Router();
 app.use('/', router);
-app.use('/users', require('./routes/users.js')(usertools.auth(1), config));
-app.use('/bff', require('./routes/bff.js')(usertools.auth(1), config));
-app.use('/events', require('./routes/events.js')(usertools.auth(1), config));
-app.use('/simlets', require('./routes/studies.js')(usertools.auth(1), config));
-app.use('/groups', require('./routes/groups.js')(usertools.auth(1), config));
-app.use('/previous-groups', require('./routes/previous-groups.js')(usertools.auth(1), config));
-app.use('/activities', require('./routes/activities.js')(usertools.auth(1), config));
-app.use('/scheduler', require('./routes/scheduler.js')(usertools.auth(1), config));
-app.use('/archived', require('./routes/archived.js')(usertools.auth(1), config));
+app.use('/users', require('./routes/users.js')(usertools.auth(1), usertools.redirectToLogin(1), config));
+app.use('/bff', require('./routes/bff.js')(usertools.auth(1), usertools.redirectToLogin(1), config));
+app.use('/events', require('./routes/events.js')(usertools.auth(1), usertools.redirectToLogin(1), config));
+app.use('/simlets', require('./routes/studies.js')(usertools.auth(1), usertools.redirectToLogin(1), config));
+app.use('/activities', require('./routes/activities.js')(usertools.auth(1), usertools.redirectToLogin(1), config));
+app.use('/scheduler', require('./routes/scheduler.js')(usertools.auth(1), usertools.redirectToLogin(1), config));
+app.use('/archived', require('./routes/archived.js')(usertools.auth(1), usertools.redirectToLogin(1), config));
 
 router.get('/about', function(req, res, next) {
   const isAuthenticated = !!(req.session && req.session.user);
@@ -72,13 +70,7 @@ router.get('/e-ucm', function(req, res, next) {
   });
 });
 
-router.get('/', usertools.auth(0), function(req, res, next) {
-  // Defensive check: redirect to login if user is not authenticated
-  if (!req.session || !req.session.user || !req.session.user.data) {
-    req.session.intendedUrl = req.originalUrl;
-    return res.redirect('/users/login');
-  }
-  
+router.get('/', usertools.auth(0), usertools.redirectToLogin(0), function(req, res, next) {
   if(req.session.user.data.role == 'teacher' || req.session.user.data.role == 'administrator' || req.session.user.data.role == 'lrsmanager'){
     res.render('home', { 
       config: config, 
@@ -113,6 +105,10 @@ app.use((err, req, res, next) => {
   const msg = err.error || err.message;
   logger.info(`Error ${status} (${msg}) on ${req.method} ${req.url} with payload ${req.body}.`);
   logger.error(err);
+  
+  if(res.frontendRedirect) {
+    return res.redirect(res.frontendRedirect);
+  }
 
   if (!req.session.user) {
     return res.redirect('/users/login');
