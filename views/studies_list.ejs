@@ -2,7 +2,16 @@
 
 <% extend('layout_with_menu_and_sse') %>
 
-<h1 title="<%- t('simlets.description', { ns : 'SIMLETs' }) %>"><%- t('title', { ns : 'SIMLETs' }) %></h1>
+<div class="tooltipLine">
+	<h1><%- t('title', { ns : 'SIMLETs' }) %></h1>
+	<div class="tooltip">
+		&#x1F6C8;
+		<span class="tooltiptext">
+			<%= t('description', { ns : 'SIMLETs' }) %>
+		</span>
+	</div>
+</div>
+
 <div id="studies_list">
 	<div style="width: 100%; text-align: center; padding: 200px;">
 		<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>

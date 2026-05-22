@@ -268,6 +268,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .content { padding: 60px 10px 10px 185px; }
 .content.floating { padding-bottom: 80px ;}
 
+.content h1 { margin-bottom: 5px; }
 .content .card { padding: 10px; background-color: white; box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3); margin-bottom: 10px; margin-right: 5px; display: flow-root; position: relative; }
 .content .card.third { min-width: 370px; width: 32%; display: inline-block; }
 .content .card .delete { float: right; position: absolute; top: 10px; right: 10px; }
@@ -1127,4 +1128,50 @@ body {
 	.content { padding: 0px;  width: 210mm;  height: 297mm; }
 	.header, .menu, .content .simletTop, .sessionTagList, #study_tabs { display: none; }
 	#pdf_printable { display: contents; }
+}
+
+.tooltipLine * {
+	display: inline-block;
+	margin: 0;
+	vertical-align: top;
+}
+
+.tooltip {
+	position: relative;
+	display: inline-block;
+	border-bottom: 1px dotted black;
+	font-weight: bold;
+	color: blue;
+}
+.tooltiptext {
+	font-weight: normal;
+}
+.tooltip .tooltiptext {
+	/* Position the tooltip */
+	position: absolute;
+	z-index: 9999;
+
+	background-color: #332d26e7;
+	color: #fff;
+	
+	text-align: center;
+	border-radius: 6px;
+	padding: 15px;
+
+	width: max-content;
+	min-width: auto;
+	max-width: 40vw;
+	white-space: normal;
+	word-wrap: break-word;
+	
+	visibility: hidden;
+	opacity: 0;
+	transition: opacity 0.2s, visibility 0.2s;
+	transition-delay: 0s, 0.2s;
+}
+
+.tooltip:hover .tooltiptext {
+	visibility: visible;
+	opacity: 1;
+	transition-delay: 0s;
 }
