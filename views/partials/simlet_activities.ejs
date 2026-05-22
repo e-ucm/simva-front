@@ -181,7 +181,7 @@
 
 			   // Require the user to select a type
 			   if (!form.type) {
-				   errorbox.text('<%- t('activity.type.select_required', { ns : 'activities' }) %>');
+				   errorbox.text("<%- t('activity.type.select_required', { ns : 'activities' }) %>");
 				   Utils.toggleSubmit(currentform);
 				   return false;
 			   }
