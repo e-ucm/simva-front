@@ -21,8 +21,7 @@ var Utils = {
 			// Switch to iframe mode
 			$el.addClass('is-iframe');
 
-			const $iframe = $('<iframe class="iframe" frameborder="0"></iframe>')
-				.css('display', 'none');
+			const $iframe = $('<iframe class="iframe" frameborder="0"></iframe>');
 
 			const $loader = $(`
 				<div class="iframe_loader">
@@ -35,7 +34,6 @@ var Utils = {
 
 			$iframe.on('load', function() {
 				$loader.remove();
-				// $iframe.css('display', 'block');
 			});
 
 			$iframe.attr('src', url);
