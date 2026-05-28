@@ -826,7 +826,7 @@ body {
 	border-bottom: 0px solid transparent;
 }
 
-.activities.collapsed {
+.tooltipLine.collapsed, .activities.collapsed {
 	display: none;
 }
 
@@ -1093,6 +1093,7 @@ body {
 	margin-right: auto;
 	margin-bottom: 10px;
 }
+.participants { margin-top: 10px; }
 .owners thead th, .participants thead th { font-weight: bold; }
 .owners th, .owners td, .participants th, .participants td { 
 	white-space: nowrap;

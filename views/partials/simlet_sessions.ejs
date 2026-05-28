@@ -93,7 +93,7 @@
         </div>
         <div class="sessionTags" style="margin-top: 8px;">	</div>
 		<br>
-		<div class="tooltipLine">
+		<div class="tooltipLine activitiesTitle">
 			<h3><%- t('title', { ns : 'activities' }) %></h3>
 			<div class="tooltip">
 				&#x1F6C8;
@@ -427,6 +427,7 @@
 	}
 	
 	const toggleSession = function(sessionId) {
+		$(`#test_${sessionId}`).find('.tooltipLine.activitiesTitle ').toggleClass('collapsed');
 		$(`#test_${sessionId}`).find('.activities').toggleClass('collapsed');
 		$(`#test_${sessionId}`).find('.expandButton').toggleClass('collapsed');
 	}

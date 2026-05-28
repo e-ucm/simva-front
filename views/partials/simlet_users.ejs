@@ -57,7 +57,8 @@
             </div>
             <div class="allocatorContent">
             </div>
-			<div class="tooltipLine">
+			<strong class="groupParticipantsCount"><%- t('participants.title', { ns : 'groups' }) %>: 	</strong>
+			<div class="tooltipLine participantsTitle" style="margin-top: 15px;">
 				<h3><%- t('participants.title', { ns : 'groups' }) %></h3>
 				<div class="tooltip">
 					&#x1F6C8;
@@ -223,11 +224,11 @@
 					<input type="number" step="1" min='4' max="10" name="length" value="4">
 					<br><br>
 					<input type="submit" value="<%= t('participants.add.batch.tab' , { ns : 'groups' }) %>">
-					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 					<br><br>
 					<span class="error"></span>
 				</form>
 			</div>
+			<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 		</div>
 	</div>
 </div>
@@ -570,6 +571,7 @@
 	}
 
     const toggleGroup = function(groupId) {
+		$(`#group_box_${groupId}`).find('.tooltipLine.participantsTitle ').toggleClass('collapsed');
         $(`#group_box_${groupId}`).find('.participants_container').toggleClass('collapsed');
 		$(`#group_box_${groupId}`).find('.expandButton').toggleClass('collapsed');
     }
@@ -691,7 +693,7 @@
 				</tr>
 			`
 		}
-		$("#printable_table").append(rows);
+		$("#printable_table tbody").append(rows);
 
 		window.print();
 	});
@@ -871,6 +873,8 @@
 		box.data(groupDataIdKey, group.group_id);
 		box.data(groupDataNameKey, group.group_name);
 		box.data(groupDataAllocatorKey, (group.group_allocator_type || 'default'));
+
+		box.find(".groupParticipantsCount").after(group.participants.length);
 
 		box.find(".allocatorContent").attr("id", `allocator_content_${group.group_id}`);
 
