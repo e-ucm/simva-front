@@ -1,0 +1,17 @@
+<div class="menu">
+	<ul>
+		<li><a href="/" title="<%= t('home.description') %>"><span><img src="/icon/home.png"></span> <span><%= t('home.title') %></span></a></li>
+		<% if(user.data.role === 'teacher' || user.data.role === 'administrator') { %>
+			<li><a href="/simlets/" title="<%- t('simlets.description', { ns : 'SIMLETs' }) %>"><span><img src="/icon/study.png"></span> <span><%= t('title', { ns : 'SIMLETs' }) %></span></a></li>
+			<% if(config.activities.enabled == 'true') {  %>
+				<li><a href="/activities/" title="<%= t('description', { ns : 'activities' }) %>"><span><img src="/icon/survey.png"></span> <span><%= t('title', { ns : 'activities' }) %></span></a></li>  
+			<% } %>
+			<li><a href="/archived/" title="<%= t('archived.description', { ns : 'SIMLETs' }) %>"><span><img src="/icon/documents.png"></span> <span><%= t('archived.title', { ns : 'SIMLETs' }) %></span></a></li>
+			<li><a href="/scheduler/" title="<%= t('play.description', { ns : 'SIMLETs' }) %>"><span><img src="/icon/play.png" style="filter: brightness(0) saturate(100%) invert(95%) sepia(92%) saturate(33%) hue-rotate(30deg) brightness(106%) contrast(100%);"></span> <span><%= t('play.title', { ns : 'SIMLETs' }) %></span></a></li>
+			<% if(config.lti.enabled == 'true'){ %>
+				<li><a href="/lti-platform/" title="<%= t('LTIPlatfrom') %>"><span><img src="/icon/survey.png"></span> <span><%= t('LTIPlatfrom') %></span></a></li>
+			<% } %>
+		<% } %>
+		<li><a href="/about" title="<%= t('description', { ns : 'about'}) %>"><span><img src="/icon/info.png"></span> <span><%= t('title', { ns : 'about'}) %></span></a></li>
+	</ul>
+</div>

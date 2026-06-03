@@ -1,28 +1,43 @@
 {
   "name": "simva-front",
   "description": "Simva, AKA Simple Validator, AKA SurveyManager is the evolution of a tool created to integrate and ease the task of validating serious games using pre-post surveys as a control point. This version allows to create more complex studies with more variety of activities and different allocations.",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "scripts": {
-    "start": "node bin/www",
-    "dev": "nodemon --inspect=0.0.0.0:9229 bin/www"
+    "start": "pm2-runtime ecosystem.config.js",
+    "dev": "pm2-runtime ecosystem.config.js",
+    "dev:profiling": "pm2-runtime ecosystem.config.js",
+    "dev:clinic:doctor": "clinic doctor $CLINIC_ARGS -- pm2-runtime ecosystem.config.js",
+    "dev:clinic:bubbleprof": "clinic bubbleprof $CLINIC_ARGS -- pm2-runtime ecosystem.config.js",
+    "dev:clinic:flame": "clinic flame $CLINIC_ARGS -- pm2-runtime ecosystem.config.js",
+    "dev:clinic:heapprofiler": "clinic heapprofiler $CLINIC_ARGS -- pm2-runtime ecosystem.config.js"
   },
   "dependencies": {
+    "axios": "^1.7.4",
+    "base58-universal": "^2.0.0",
     "body-parser": "1.20.3",
-    "cookie-parser": "1.3.5",
+    "connect-mongo": "3",
+    "cookie-parser": "^1.4.7",
     "ejs": "^3.1.10",
-    "express": "4.21.0",
+    "express": "^4.21.2",
     "express-ejs-extend": "^0.0.1",
     "express-fileupload": "1.4.0",
-    "express-session": "1.15.6",
+    "express-session": "^1.18.1",
     "html": "^1.0.0",
+    "i18next": "^25.3.2",
+    "i18next-fs-backend": "^2.6.0",
+    "i18next-http-middleware": "^3.7.4",
     "jsonwebtoken": "^9.0.0",
-    "mongoose": "^5.7.8",
-    "connect-mongo": "3",
+    "kafkajs": "^2.2.4",
+    "ms": "^2.1.3",
+    "multer": "^2.1.1",
+    "node-cron": "3.0.3",
     "passport": "^0.6.0",
     "passport-keycloak-oauth2-oidc": "^1.0.3",
-    "axios": "^1.7.4"
+    "pino": "^9.6.0",
+    "pm2": "^6.0.14"
   },
   "devDependencies": {
-    "nodemon": "^3.1.4"
+    "nodemon": "^3.1.9",
+    "pino-pretty": "^13.0.0"
   }
 }

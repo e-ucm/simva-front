@@ -1,0 +1,27 @@
+<div id="iframe_floating" class="new_element floating">
+	<div class="iframe_backdrop"></div>
+	<div class="floater">
+		<button id="iframe_floating_close" aria-label="Close">&times;</button>
+		<div class="iframe_content">
+		</div>
+	</div>
+</div>
+
+<script>
+	$(document).ready(function () {
+		$('#iframe_floating_close').on('click', function () {
+			Utils.hideIframeFloating();
+		});
+		
+		// Click on backdrop closes modal
+		//$('#iframe_floating .iframe_backdrop').on('click', function () {
+		//	Utils.hideIframeFloating();
+		//});
+		//
+		$(document).on('keydown', function(e) {
+			if (e.key === 'Escape') {
+				Utils.hideIframeFloating();
+			}
+		});
+	});
+</script>

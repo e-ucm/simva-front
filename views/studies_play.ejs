@@ -1,41 +1,16 @@
 <%# views/studies_list.ejs %>
  
-<% extend('layout_with_menu') %>
+<% extend('layout_with_menu_and_sse') %>
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		$("#new_study_form").on('submit', function(event){
-			event.preventDefault();
-			let form = Utils.getFormData($("#new_study_form"));
-
-			Simva.addStudy(form.name, function(error, result){
-				if(error && error.responseJSON){
-					$("#error").text(error.responseJSON.message);
-				}else{
-					toggleAddForm();
-					$('#studies_list').html(roller);
-					Simva.getStudies(function(error, result){
-						if(!error){
-							paintStudies(result);
-						}
-					});
-				}
-			});
-
-			return false;
-		});
-
 		$('#studies_list').html(roller);
-		Simva.getStudies(function(error, result){
+		Simva.getSchedulerStudies(function(error, result){
 			if(!error){
 				paintStudies(result);
 			}
 		});
 	});
-
-	let toggleAddForm = function(){
-		$('#new_study').toggleClass('shown');
-	}
 
 	let paintStudies = function(studies){
 		$('#studies_list').text('');
@@ -44,18 +19,18 @@
 				$('#studies_list').append(toCard(studies[i]));
 			}
 		}else{
-			$('#studies_list').text('You have no studies yet. Create one using the bottom right (+) button.');
+			$('#studies_list').text("<%- t('scheduler.noSIMLET.title', { ns : 'SIMLETs' }) %>");
 		}
 	}
 
 	let toCard = function(study){
-		return `<a href="/scheduler/${study._id}"><div class="selectable card third">
-			<h1>Study: ${study.name}</h1>
-			<p>Click here to start or continue your session in the study.</p>
+		return `<a href="/scheduler/${study.simlet_id}"><div class="selectable card third">
+			<h1><%- t('single.title', { ns : 'SIMLETs' }) %>: ${study.simlet_name}</h1>
+			<p><%- t('scheduler.title', { ns : 'SIMLETs' }) %></p>
 			</div></a>`;
 	}
 </script>
-<h1>Studies</h1>
+<h1><%- t('title', { ns : 'SIMLETs' }) %></h1>
 <div id="studies_list">
 	<div style="width: 100%; text-align: center; padding: 200px;">
 		<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>

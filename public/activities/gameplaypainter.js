@@ -9,76 +9,214 @@ if(!PainterFactory){
 
 var GameplayActivityPainter = {
 	supportedType: 'gameplay',
-	simpleName: 'Gameplay activity',
-
+	simple_name: 'Gameplay activity',
+	commun : {},
+	communSpecific : {},
+	specific : {},
 	utils: {},
 	setUtils: function(utils){
 		this.utils = utils;
 	},
 
-	getExtraForm: function () {
-		return `<div class="gameplay_activity"><p><label for="gameplay_trace_storage">Trace Storage</label><input id="gameplay_trace_storage" type="checkbox" name="trace_storage"></p>
-			 <p><label for="gameplay_backup">Backup</label><input id="gameplay_backup" type="checkbox" name="backup" checked></p>
-			 <p><label for="gameplay_game_uri" style="width: 100%; text-align: center;">Game URI (optional)</label><input id="gameplay_game_uri" type="text" name="game_uri">
-			 <span class="info">Game URI can include tags: {authToken}, {username}, and {activityId}</p></div>`;
-			 //<p><label for="gameplay_realtime">Realtime</label><input id="gameplay_realtime" type="checkbox" name="realtime"></p>
+	getExtraForm: function (callback) {
+		let form = `<div id="gameplay_activity" name="gameplay_activity" class="gameplay_activity">
+			<p><label for="gameplay_trace_storage"><b>${this.communSpecific.storage_title}</b></label><input title="${this.communSpecific.storage_description}" id="gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
+			<p><label for="gameplay_trace_storage"><i>${this.communSpecific.storage_description}</i></label></p>
+			<p><label for="gameplay_backup"><b>${this.communSpecific.result_title}</b></label><input title="${this.communSpecific.result_description}" id="gameplay_backup" type="checkbox" name="backup" checked></p>
+			<p><label for="gameplay_backup"><i>${this.communSpecific.result_description}</i></label></p>
+			<p><label for="gameplay_scorm_xAPI"><b>${this.specific.xapi_by_game_title}</b></label><input title="${this.specific.xapi_by_game_description}" id="gameplay_scorm_xAPI" type="checkbox" name="scorm_xapi"></p>
+			<p><label for="gameplay_scorm_xAPI"><i>${this.specific.xapi_by_game_description}</i></label></p>
+			<p><label for="gameplay_restarted"><b>${this.communSpecific.restarted_title}</b></label><input title="${this.communSpecific.restarted_description}" id="gameplay_restarted" type="checkbox" name="restarted"></p>
+			<p><label for="gameplay_restarted"><i>${this.communSpecific.restarted_description}</i></label></p>
+			<div class="tabs" class="gameplay_tabs">
+				<span id="gameplay_web_tab_button" class="tab selected" method="WEB" title="${this.specific.web_description}" onclick="Utils.changeTab(this, 'gameplay_activity','gameplay_web')">${this.specific.web_title}</span>
+				<span class="tab" method="DESKTOP" title="${this.specific.desktop_description}" onclick="Utils.changeTab(this, 'gameplay_activity','gameplay_desktop')">${this.specific.desktop_title}</span>
+			</div>
+			<div id="gameplay_web" class="subform selected">
+				<p><i>${this.specific.web_description}</i></p>
+				<p><label for="gameplay_game_uri" style="width: 100%; text-align: center;">${this.specific.game_uri_title}</label><input id="gameplay_game_uri" type="text" name="game_uri">
+				<span class="info">${this.specific.game_uri_description}</span></p>
+			</div>
+			<div id="gameplay_desktop" class="subform" style="display: none;">
+				<p><i>${this.specific.desktop_description}</i></p>
+			</div>
+		</div>`;
+			//	<label for="gamefile">${this.specific.upload_title || 'Upload game file for DESKTOP activity'}</label>
+			//	   <input type="file" name="file" id="gamefile" placeholder="Game file" accept=".zip">
+			//	<span class="info">${this.specific.upload_description || 'Select DESKTOP tab and upload a file.'}</span>
+		callback(null, form);
+	},
+
+	getEditExtraForm: function () {
+		return `<div id="edit_gameplay_activity" name="edit_gameplay_activity" class="gameplay_activity">
+			<p><label for="edit_gameplay_trace_storage"><b>${this.communSpecific.storage_title}</b></label><input title="${this.commun.storage_description}" id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
+			<p><label for="edit_gameplay_trace_storage"><i>${this.communSpecific.storage_description}</i></label></p>
+			<p><label for="edit_gameplay_backup"><b>${this.communSpecific.result_title}</b></label><input title="${this.communSpecific.result_description}" id="edit_gameplay_backup" type="checkbox" name="backup" checked></p>
+			<p><label for="edit_gameplay_backup"><i>${this.communSpecific.result_description}</i></label></p>
+			<p><label for="edit_gameplay_scorm_xAPI"><b>${this.specific.xapi_by_game_title}</b></label><input title="${this.specific.xapi_by_game_description}" id="edit_gameplay_scorm_xAPI" type="checkbox" name="scorm_xapi" checked></p>
+			<p><label for="edit_gameplay_scorm_xAPI"><i>${this.specific.xapi_by_game_description}</i></label></p>
+			<p><label for="edit_gameplay_restarted"><b>${this.communSpecific.restarted_title}</b></label><input title="${this.communSpecific.restarted_description}" id="edit_gameplay_restarted" type="checkbox" name="restarted"></p>
+			<p><label for="edit_gameplay_restarted"><i>${this.communSpecific.restarted_description}</i></label></p>
+			<div id="edit_gameplay_tabs" class="tabs">
+				<span class="tab selected" method="WEB" title="${this.specific.web_title}" onclick="Utils.changeTab(this, 'edit_gameplay_activity','edit_gameplay_web')">${this.specific.web_title}</span>
+				<span class="tab" method="DESKTOP" title="${this.specific.desktop_title}" onclick="Utils.changeTab(this, 'edit_gameplay_activity','edit_gameplay_desktop')">${this.specific.desktop_title}</span>
+			</div>
+			<div id="edit_gameplay_web" class="subform selected">
+				<p><i>${this.specific.web_description}</i></p>
+				<p><label for="edit_gameplay_game_uri" style="width: 100%; text-align: center;">${this.specific.game_uri_title}</label><input id="edit_gameplay_game_uri" type="text" name="game_uri">
+				<span class="info">${this.specific.game_uri_description}</span></p>
+			</div>
+			<div id="edit_gameplay_desktop" class="subform" style="display: none;">
+				<p><i>${this.specific.desktop_description}</i></p>
+			</div>
+		</div>`;
+		//<label for="edit_gamefile">${this.specific.upload_title || 'Upload game file for DESKTOP activity'}</label>
+		//  <input type="file" name="file" id="edit_gamefile" placeholder="Game file" accept=".zip">
+		//<span class="info">${this.specific.upload_explication || 'Select DESKTOP tab and upload a file.'}</span>
+	},
+
+	updateInputEditExtraForm(activity) {
+		var gameplay_trace_storage = document.getElementById('edit_gameplay_trace_storage');
+		gameplay_trace_storage.checked = Boolean(activity.activity_trace_storage);
+		var gameplay_backup = document.getElementById('edit_gameplay_backup');
+		gameplay_backup.checked = Boolean(activity.game_backup);
+		var gameplay_scorm_xAPI = document.getElementById('edit_gameplay_scorm_xAPI');
+		gameplay_scorm_xAPI.checked = Boolean(activity.game_scorm_xapi);
+		var gameplay_restarted = document.getElementById('edit_gameplay_restarted');
+		gameplay_restarted.checked = Boolean(activity.activity_can_be_restarted);
+		var gameplay_game_uri = document.getElementById('edit_gameplay_game_uri');
+		gameplay_game_uri.value = activity.game_url || "";
+		if (activity.game_type === 'DESKTOP') {
+			let desktopTab = document.querySelector('#edit_activity_extras .tab[method="DESKTOP"]');
+			if (desktopTab) Utils.changeTab(desktopTab, 'edit_activity_extras', 'edit_gameplay_desktop');
+		} else {
+			let webTab = document.querySelector('#edit_activity_extras .tab[method="WEB"]');
+			if (webTab) Utils.changeTab(webTab, 'edit_activity_extras', 'edit_gameplay_web');
+		}
 	},
 
 	extractInformation: function(form, callback){
 		let activity = {};
-
 		let jform = $(form);
 		let formdata = Utils.getFormData(jform);
+		let method = $('#new_activity_extras .tab.selected').attr('method');
 
-		activity.name = formdata.name;
-		activity.type = this.supportedType;
+		console.log('[gameplaypainter] extractInformation called');
+		console.log('Form:', form);
+		console.log('FormData:', formdata);
+		console.log('Method:', method);
 
-		activity.trace_storage = formdata.trace_storage === 'on';
-		activity.realtime = formdata.realtime === 'on';
-		activity.backup = formdata.backup === 'on';
-		if(formdata.game_uri !== ''){
-			activity.game_uri = formdata.game_uri;
+		activity.activity_name = formdata.name;
+		activity.activity_type = this.supportedType;
+		activity.activity_trace_storage = formdata.trace_storage === 'on';
+		activity.game_backup = formdata.backup === 'on';
+		activity.game_scorm_xapi = formdata.scorm_xapi === 'on';
+		activity.activity_can_be_restarted = formdata.restarted === 'on';
+
+		switch(method){
+			case 'DESKTOP':
+				activity.game_type = "DESKTOP";
+				activity.game_url = "";
+				console.log('[gameplaypainter] DESKTOP case');
+				// Only for desktop games
+				//let rawformdata = PainterFactory.Painters["activity"].extractFileFromEditForm(form, 'gamefile', activity, 'file', 'game_type', 'DESKTOP');
+				//if(rawformdata !== undefined) {
+				//	console.log('[gameplaypainter] File extraction triggered, returning');
+				//	callback(null, rawformdata); // 👈 send rawformdata for DESKTOP activities
+				//	return;
+				//} else {
+					callback(null, activity);
+				//}
+				break;
+			default:
+				console.log('[gameplaypainter] Default case, game_uri:', formdata.game_uri);
+				activity.game_type = 'WEB';
+				if(formdata.game_uri !== ''){
+					activity.game_url = formdata.game_uri;
+				} else {
+					activity.game_url = "";
+				}
+				callback(null, activity);
+				break;
+		}
+	},
+
+	extractEditInformation: function(form, actualActivity, callback){
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+		let activity = {};
+
+		console.log('[gameplaypainter] extractEditInformation called');
+		console.log('Form:', form);
+		console.log('FormData:', formdata);
+		console.log('actualActivity:', actualActivity);
+
+		let method = $('#edit_activity_extras .tab.selected').attr('method') || 'WEB';
+		let selectedGameType = method === 'DESKTOP' ? 'DESKTOP' : 'WEB';
+
+		if(actualActivity.activity_name !== formdata.name) {
+			activity.activity_name = formdata.name;
+		}
+		const actualTraceStorage = actualActivity.activity_trace_storage;
+		let trace_storage = formdata.trace_storage === 'on';
+		if(actualTraceStorage !== trace_storage) {
+			activity.activity_trace_storage = trace_storage;
+		}
+		const actualScormXapiByGame = actualActivity.game_scorm_xapi;
+		let scorm_xapi_by_game = formdata.scorm_xapi === 'on';
+		if(actualScormXapiByGame !== scorm_xapi_by_game) {
+			activity.game_scorm_xapi = scorm_xapi_by_game;
+		}
+		const actualBackup = actualActivity.game_backup;
+		let backup = formdata.backup === 'on';
+		if(actualBackup !== backup) {
+			activity.game_backup = backup;
+		}
+		if(actualActivity.game_type !== selectedGameType) {
+			activity.game_type = selectedGameType;
 		}
 
+		if(selectedGameType === 'DESKTOP') {
+			console.log('[gameplaypainter] Checking file extraction in edit');
+			activity.game_url = ""; // Ensure game_url is null for DESKTOP activities
+			let rawformdata = PainterFactory.Painters["activity"].extractFileFromEditForm(form, 'edit_gamefile', activity, 'file', 'game_type', 'DESKTOP');
+			if(rawformdata !== undefined) {
+				console.log('[gameplaypainter] File extraction triggered in edit, returning');
+				callback(null, rawformdata);
+				return;
+			} else {
+				console.log('[gameplaypainter] No file extracted in edit, proceeding with other changes');
+			}
+		} else {
+			let game_uri = formdata.game_uri;
+			let actualGameUri = actualActivity.game_url || '';
+			if(actualGameUri !== game_uri) {
+				activity.game_url = game_uri;
+			}
+		}
 		callback(null, activity);
 	},
 
-	fullyPaintActivity: function(activity){
+	fullyPaintActivity: function(activity, participants){
 		this.paintActivity(activity, participants);
-		let tmp = this;
-
-		Simva.isActivityOpenable(activity._id, function(error, result){
-
-			activity.isOpenable = result.openable;
-			if(activity.isOpenable){
-				Simva.getActivityTarget(activity._id, function(error, result){
-					activity.tmp.result = result;
-					tmp.paintActivityTargets(activity, result);
-				});
-			}
-
-			tmp.updateParticipants(activity);
-			
-		});
+		this.updateParticipants(activity, participants);
 	},
 
-	updateParticipants: function(activity){
-		let tmp = this;
-		activity.tmp = {};
-
-		Simva.getActivityCompletion(activity._id, function(error, result){
-			tmp.paintActivityCompletion(activity, result);
-		});
-
-		Simva.getActivityHasResult(activity._id, function(error, result){
-			tmp.paintActivityResult(activity, result);
-		});
+	updateParticipants: function(activity, participants){
+		if(activity.data.openable){
+			PainterFactory.Painters["activity"].paintActivityTargets(activity, activity.data.target, participants);
+		}
+		PainterFactory.Painters["activity"].paintActivityCompletion(activity, activity.data.completion, true, participants);
+		PainterFactory.Painters["activity"].paintActivityInit(activity, activity.data.init, participants);
+		PainterFactory.Painters["activity"].paintActivityProgress(activity, activity.data.progress, participants);
+		PainterFactory.Painters["activity"].paintActivityResult(activity, activity.data.hasresult, false, participants, this.communSpecific.result_zero, null,this.communSpecific.result_view_partial_value, true, this.communSpecific.result_view_final_value);
 	},
 	
-	downloadXasuConfig: function(activityId){
+	downloadXasuConfig: function(activityId, studyId){
 		var content = JSON.stringify({
 			online: true,
 			simva :true,
+			homepage:`${Simva.url}`,
 			lrs_endpoint : `${Simva.apiurl}/activities/${activityId}`,
 			auth_protocol : "oauth2",
 			auth_parameters : {
@@ -86,201 +224,63 @@ var GameplayActivityPainter = {
        			auth_endpoint : `${Simva.ssoUrl}/realms/${Simva.ssoRealm}/protocol/openid-connect/auth`, 
         		token_endpoint : `${Simva.ssoUrl}/realms/${Simva.ssoRealm}/protocol/openid-connect/token`,
         		client_id : "simva-plugin",
-        		code_challenge_method : "S256"
+        		code_challenge_method : "S256",
+				simva_user_token:"true",
+    			login_hint: studyId
 			}
 		}, null, 2);
 
 		var filename = "tracker_config.json";
 
-		var blob = new Blob([content], {
-		 type: "text/plain;charset=utf-8"
-		});
-
 		Utils.download(filename, content);
 	},
 
+	getExtraKebabItems: function(activity) {
+		return `<li class="kebab-icon icon-activate" title="${this.commun.completed_all_set || 'Set completion'}" onclick="PainterFactory.Painters['activity'].setCompletionForAllParticipant('${activity.activity_id}', true)">${this.commun.completed_all_set || 'Set completion'}</li>
+				<li class="kebab-icon icon-pause" title="${this.commun.completed_all_unset || 'Unset completion'}" onclick="PainterFactory.Painters['activity'].setCompletionForAllParticipant('${activity.activity_id}', false)">${this.commun.completed_all_unset || 'Unset completion'}</li>
+		`;
+	},
+
 	paintActivity: function(activity, participants){
-		let activitybox = `<div id="activity_${activity._id}" class="activity t${activity.type}">
-			<div class="top"><h4>${activity.name}</h4>
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
-			<p class="subtitle">${this.simpleName}</p>`;
+		   const topBar = PainterFactory.Painters['activity'].paintActivityTopBar.call(this, activity, this.getExtraKebabItems(activity));
+		   let urlOrType = '';
+		   if (activity.game_type === 'WEB') {
+			   urlOrType = `<p><b>URL :</b> <span>${activity.game_url ? activity.game_url : '-'}</span></p>`;
+		   } else {
+			   urlOrType = `<p><b>Type :</b> <span>Desktop</span></p>`;
+		   }
+		   let activitybox = `<div id="activity_${activity.activity_id}" class="activity t${activity.activity_type}">
+			   ${topBar}
+			   <p class="subtitle" title="${this.description || ''}">${this.simple_name} - ${activity.game_type == 'DESKTOP' ? this.specific.desktop_title : this.specific.web_title}</p>
+			   <div class="activity-meta">
+		   			<div>
+		   				${urlOrType}
+					</div>
+				   <div>
+					   <p>${this.commun.storage_title}: <i>${Boolean(activity.activity_trace_storage) ? (this.commun.result_enabled || 'enabled') : (this.commun.result_disabled || 'disabled')}</i>	- 	${this.communSpecific.result_title}: <i>${Boolean(activity.game_backup) ? (this.commun.result_enabled || 'enabled') : (this.commun.result_disabled || 'disabled')}</i></p>
+				   </div>
+			   </div>
+			   ${PainterFactory.Painters["activity"].paintActivityParticipantsTable(activity, participants, true)}
+		   </div>`;
 
-		
-		/*
-		activitybox += 'Realtime: ';
-		if(activity.extra_data.config.realtime){
-			activitybox += `<a href="${this.utils.dashboard_url}${activity.extra_data.analytics.activity._id}${this.utils.dashboard_query}" target="_blank">Dashboard</a>`;
-		}else{
-			activitybox += '<i>Disabled</i>';
-		}
-		activitybox += '<br>'
-		*/
-		activitybox += '<p>Trace Storage: '
-		if(activity.extra_data.config.trace_storage) {
-			activitybox += `<a onclick="GameplayActivityPainter.getMinioData('${activity._id}')" target="_blank">Download Data</a>
-			<br>
-			XASU Config:
-			<a onclick="GameplayActivityPainter.downloadXasuConfig('${activity._id}')">
-				<img src="/ua.png"  width="20" height="20">
-			</a>`;
-		} else {
-			activitybox += '<i>Disabled</i>';
-		}
-		activitybox +='<br>'
-		activitybox += 'Backup: '
-		if(activity.extra_data.config.backup){
-			activitybox += `<a onclick="GameplayActivityPainter.downloadBackup('${activity._id}')"> ⬇️</a>` 
-		} else {
-			activitybox += '<i>Disabled</i>';
-		}
-		activitybox += '</p>';		
-		activitybox += `<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>`
-		if(activity.extra_data.config.backup){
-			activitybox += `<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>`
-		}
-		activitybox += `${this.paintActivityParticipantsTable(activity, participants)}</div>`;
-
-		$(`#test_${activity.test} .activities`).append(activitybox);
+		   $(`#test_${activity.session_id} .activities`).append(activitybox);
 	},
 
-	paintActivityParticipantsTable: function(activity, participants){
-		let toret = '<table><tr><th>User</th><th>Completed</th>';
-		if(activity.extra_data.config.realtime){
-			toret += '<th>Progress</th><th>Traces</th>';
-		}
-		toret += '<th>Backup</th></tr>';
-
-		for (var i = 0; i < participants.length; i++) {
-			if(!AllocatorFactory.Painters[allocator.type].isAllocatedToActivity(participants[i].username, activity)){
-				continue;
-			}
-
-			toret += '<tr>';
-
-			if(activity.isOpenable || (activity.extra_data.game_uri && activity.extra_data.game_uri !== '') ){
-				toret += `<td><a id="${activity._id}_" ${participants[i].username}_target"class="targeturl" target="_blank" href="">
-				${participants[i].username}</a></td>`;
-			}else{
-				toret += `<td>${participants[i].username}</td>`;
-			}
-
-			toret += `<td id="completion_${activity._id}_${participants[i].username}">---</td>`;
-
-			if(activity.extra_data.config.realtime){
-				toret += `<td id="progress_${activity._id}_${participants[i].username}" class="progress"><div class="partial"></div><div class="done"></div><span><done>0</done>%</span></td>
-						<td id="traces_${activity._id}_${participants[i].username}">---</td>`;
-			}else{
-				toret += ''
-			}
-			
-			if(activity.extra_data.config.backup){
-				toret += `<td id="backup_${activity._id}_${participants[i].username}">---</td></tr>`;
-			}else{
-				toret += '<td><i>Disabled</i></td>';
-			}
-		}
-
-		toret += '</table>';
-
-		return toret;
+	updateActivityResult: function(activityId, username, backup) {
+		PainterFactory.Painters["activity"].updateActivityResult(activityId, username,backup, true, this.communSpecific.result_zero, null,this.communSpecific.result_view_partial_value, "true", this.communSpecific.result_view_final_value,"PainterFactory.Painters['activity']");
 	},
 
-	paintActivityCompletion: function(activity, status){
-		let usernames = Object.keys(status);
-
-		let done = 0;
-
-		for (var i = 0; i < usernames.length; i++) {
-			if(status[usernames[i]]){
-				done++;
-			}
-
-			let completion = `<span>${status[usernames[i]]}</span>`
-			$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
-			$(`#completion_${activity._id}_${usernames[i]}`).empty();
-			$(`#completion_${activity._id}_${usernames[i]}`).append(completion);
-		}
-
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
-
-		if(isNaN(progress)){
-			progress = 0;
-		}
-
-		$(`#completion_progress_${activity._id} .done`).css('width', `${progress}%` );
-		$(`#completion_progress_${activity._id} done`).text(progress);
+	updateActivityCompletion: function(activityId, username, completion) {
+		PainterFactory.Painters["activity"].updateActivityCompletion(activityId, username, completion, true);
 	},
 
-	paintActivityResult: function(activity, results){
-		let usernames = Object.keys(results);
-
-		let done = 0, partial = 0;
-
-		for (var i = 0; i < usernames.length; i++) {
-			let status = results[usernames[i]];
-			let traces = '<span>No traces</span>';
-			let backup = '<span><i>Disabled</i></span>';
-			if(activity.extra_data.config.backup){
-				backup = '<span>No backup</span>';
-			}
-
-			if(status){
-				done++;
-
-				let tmpprogress = 0; 
-				if(status){
-					if(activity.extra_data.config.backup && results[usernames[i]]){
-						backup = `<span >
-						<a onclick="GameplayActivityPainter.downloadBackup('${activity._id}',
-						'${usernames[i]}')">Download</a>
-						</span>`;
-					}
-					
-				}
-				/*
-				tmpprogress = (tmpprogress * 1000) / 10;
-				$(`#progress_${activity._id}_${usernames[i]} .done`).css('width', `${tmpprogress}%` );
-				$(`#progress_${activity._id}_${usernames[i]} done`).text(tmpprogress);*/
-			}
-
-
-			/*$(`traces_${activity._id}_${usernames[i]}`).addClass(status && status.realtime ? 'green' : 'red');
-			$(`#traces_${activity._id}_${usernames[i]}`).empty();
-			$(`#traces_${activity._id}_${usernames[i]}`).append(traces);*/
-
-			$(`#backup_${activity._id}_${usernames[i]}`).addClass(status ? 'green' : 'red');
-			$(`#backup_${activity._id}_${usernames[i]}`).empty();
-			$(`#backup_${activity._id}_${usernames[i]}`).append(backup);
-		}
-
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
-		if(isNaN(progress)){
-			progress = 0;
-		}
-		$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
-		$(`#result_progress_${activity._id} done`).text(progress);
-
-		/*
-		let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
-		if(isNaN(partialprogress)){
-			partialprogress = 0;
-		}
-		$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
-		$(`#result_progress_${activity._id} partial`).text(partialprogress);*/
+	updateActivityProgress: function(activityId, username, result) {
+		PainterFactory.Painters["activity"].updateActivityProgress(activityId, username,result);
 	},
-
-	paintActivityTargets: function(activity, results){
-		let usernames = Object.keys(results);
-
-		let done = 0, partial = 0;
-		
-		for (var i = 0; i < usernames.length; i++) {
-			$(`#${activity._id}_${usernames[i]}_target`).attr('href', results[usernames[i]]);
-		}
-	},
+	
 	downloadBackup: function(activity, user){
 		var toastParams = {
-			heading: 'Error loading the result',
+			heading: this.commun.result_error_downloading,
 			position: 'top-right',
 			icon: 'error',
 			stack: false
@@ -292,80 +292,38 @@ var GameplayActivityPainter = {
 					toastParams.text = error.message;
 					$.toast(toastParams);
 				}else{
-					var filename = `${activity}_${user}.json`;
+					var filename = `${this.communSpecific.result_file_prefix}_${activity}_${user}.json`;
 					Utils.download(filename, result[user]);
 				}
 			});
 		} 
 		else 
 		{
-			Simva.downloadActivityResult(activity);
-		}
-
-	},
-	
-	openTraces: function(activity, user){
-		Simva.getActivityResultForUser(activity, user, function(error, result){
-			if(error){
-				$.toast({
-					heading: 'Error loading the result',
-					text: error.message,
-					position: 'top-right',
-					icon: 'error',
-					stack: false
-				});
-			}else{
-
-				let printAnalysisRecursive = function(analysis){
-					let block = '<div>';
-					let keys = Object.keys(analysis);
-
-					for (var i = keys.length - 1; i >= 0; i--) {
-						if(typeof analysis[keys[i]] === 'object'){
-							block += `<p>${keys[i]}</p>`;
-							block += printAnalysisRecursive(analysis[keys[i]]);
-						}else{
-							block += `<p>${keys[i]}: ${analysis[keys[i]]}</p>`;
+			Simva.getMinioDataUrl(activity, (error, result) => {
+				if(error) {
+					Simva.getActivityResult(activity, (error, result) => {
+						if(error) {
+							toastParams.text = error.message;
+							$.toast(toastParams);
+						} else {
+							let hasResults = false;
+							for(const participant in result) {
+								if(result.hasOwnProperty(participant) && result[participant] != null) {
+									Utils.downloadContent(result[participant], `${this.communSpecific.result_file_prefix}_${activity}_${participant}.json`);
+									hasResults = true;
+								};
+							}
+							if(!hasResults) {
+								Utils.download(`${this.communSpecific.result_file_prefix}_${activity}.json`, JSON.stringify(result,null,2));
+							}
 						}
-					}
-					
-					block += '</div>';
-
-					return block;
+					});
+				} else {
+					console.log('Minio URL for backup:', result);
+					Utils.downloadContent(result.url, `${this.communSpecific.result_file_prefix}_${activity}.json`, this.commun.result_error_downloading);
 				}
-
-
-				let content = `<link href="/css/style.css" rel="stylesheet" type="text/css"><div style="padding: 20px;" class="analysis">${printAnalysisRecursive(result[user].realtime)}</div>`;
-				let context = $('#iframe_floating iframe')[0].contentWindow.document;
-				let body = $('body', context);
-				body.html(content);
-				toggleAddForm('iframe_floating');
-			}
-		})
-	},
-
-	getMinioData: function(activity){
-		Simva.getMinioDataUrl(activity, function(error, result){
-			console.log("Callback triggered");
-			if(error){
-				console.log("Error:", error);  // Log the error object for better visibility
-				$.toast({
-					heading: 'Error loading the result',
-					text: error.message,
-					position: 'top-right',
-					icon: 'error',
-					stack: false
-				});
-			}else{
-				console.log("Result:", result);  // Log the entire result for debugging
-       			let url = result.url;
-
-       			// Open the generated URL in a new tab
-       			window.open(url, '_blank');
-
-       			// If you still want to show a message or update the UI in some way, you can do it here
-			}
-		})
+			});
+		}
 	},
 }
 

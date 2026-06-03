@@ -1,0 +1,22 @@
+<%# views/layout_with_menu_and_sse.ejs %>
+<!DOCTYPE html>
+<html>
+<head>
+	<%- include('partials/layout_head_assets') %>
+	<%- include('partials/layout_common_script', {
+		includeSimvaBase: true,
+		includeUserToken: true,
+		includeSSE: true
+	}) %>
+</head>
+<body>
+	<%- include('partials/header_authenticated') %>
+	<%- include('partials/menu_main') %>
+	<%- include('partials/iframe') %>
+
+	<div class="content">
+		<%- include('partials/iframe') %>
+		<%- content %>
+	</div>
+</body>
+</html>

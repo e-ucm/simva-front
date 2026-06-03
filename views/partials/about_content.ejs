@@ -1,0 +1,467 @@
+<%
+function getLocaleText(key, ns) {
+	const value = t(key, { ns, defaultValue: key });
+	if (value === key) {
+		return '';
+	}
+	return value;
+}
+
+// Core sections in order
+const coreSection = {
+	id: 'simva',
+	title: getLocaleText('simva.title', 'about'),
+	description: getLocaleText('simva.description', 'about'),
+	subsections: [
+		{
+			id: 'simva-frontend',
+			title: getLocaleText('simva.frontend.title', 'about'),
+			description: getLocaleText('simva.frontend.description', 'about'),
+		},
+		{
+			id: 'simva-roles',
+			title: getLocaleText('simva.roles.title', 'about'),
+			description: getLocaleText('simva.roles.description', 'about'),
+		},
+	]
+};
+
+const simletSection = {
+	id: 'simlet',
+	title: getLocaleText('simlet.title', 'about'),
+	description: getLocaleText('simlet.description', 'about'),
+	subsections: [
+		{
+			id: 'archived-simlet',
+			title: getLocaleText('archived_simlet.title', 'about'),
+			description: getLocaleText('archived_simlet.description', 'about'),
+		},
+	]
+};
+
+const sessionSection = {
+	id: 'session',
+	title: getLocaleText('session.title', 'about'),
+	description: getLocaleText('session.description', 'about'),
+};
+
+const isAuthenticated = typeof user !== 'undefined' && !!user;
+
+const headerTutorialSection = {
+	id: 'tutorial-header',
+	title: isAuthenticated ? getLocaleText('header.login.title', 'about') : getLocaleText('header.logout.title', 'about'),
+	description: isAuthenticated ? getLocaleText('header.login.description', 'about') : getLocaleText('header.logout.description', 'about'),
+	note: isAuthenticated ? getLocaleText('header.login.note', 'about') : getLocaleText('header.logout.note', 'about'),
+	steps: isAuthenticated ? [
+		{
+			id: 'tutorial-login-language',
+			title: getLocaleText('header.login.language.title', 'about'),
+			description: getLocaleText('header.login.language.description', 'about'),
+		},
+		{
+			id: 'tutorial-login-account',
+			title: getLocaleText('header.login.account.title', 'about'),
+			description: getLocaleText('header.login.account.description', 'about'),
+		},
+		{
+			id: 'tutorial-login-logout',
+			title: getLocaleText('header.login.logout.title', 'about'),
+			description: getLocaleText('header.login.logout.description', 'about'),
+		},
+	] : [
+		{
+			id: 'tutorial-logout-language',
+			title: getLocaleText('header.logout.language.title', 'about'),
+			description: getLocaleText('header.logout.language.description', 'about'),
+		},
+		{
+			id: 'tutorial-logout-about',
+			title: getLocaleText('header.logout.about.title', 'about'),
+			description: getLocaleText('header.logout.about.description', 'about'),
+		},
+		{
+			id: 'tutorial-logout-research',
+			title: getLocaleText('header.logout.research.title', 'about'),
+			description: getLocaleText('header.logout.research.description', 'about'),
+		},
+		{
+			id: 'tutorial-logout-contact',
+			title: getLocaleText('header.logout.contact.title', 'about'),
+			description: getLocaleText('header.logout.contact.description', 'about'),
+		},
+		{
+			id: 'tutorial-logout-login',
+			title: getLocaleText('header.logout.login.title', 'about'),
+			description: getLocaleText('header.logout.login.description', 'about'),
+		},
+	]
+};
+
+const menuTutorialSection = {
+	id: 'tutorial-menu',
+	title: getLocaleText('menu.title', 'about'),
+	description: getLocaleText('menu.description', 'about'),
+	note: getLocaleText('menu.note', 'about'),
+	steps: [
+		{
+			id: 'tutorial-menu-home',
+			title: getLocaleText('menu.home.title', 'about'),
+			description: getLocaleText('menu.home.description', 'about'),
+		},
+		{
+			id: 'tutorial-menu-play',
+			title: getLocaleText('menu.play.title', 'about'),
+			description: getLocaleText('menu.play.description', 'about'),
+		},
+		{
+			id: 'tutorial-menu-simlets',
+			title: getLocaleText('menu.simlets.title', 'about'),
+			description: getLocaleText('menu.simlets.description', 'about'),
+		},
+		{
+			id: 'tutorial-menu-groups',
+			title: getLocaleText('menu.groups.title', 'about'),
+			description: getLocaleText('menu.groups.description', 'about'),
+		},
+		{
+			id: 'tutorial-menu-archived',
+			title: getLocaleText('menu.archived.title', 'about'),
+			description: getLocaleText('menu.archived.description', 'about'),
+		},
+		{
+			id: 'tutorial-menu-about',
+			title: getLocaleText('menu.about.title', 'about'),
+			description: getLocaleText('menu.about.description', 'about'),
+		},
+	]
+};
+
+const tutorialSections = isAuthenticated ? [headerTutorialSection, menuTutorialSection] : [headerTutorialSection];
+
+const rolesSection = {
+	id: 'roles',
+	title: 'Roles and Permissions',
+	subsections: [
+		{
+			id: 'supervisor',
+			title: getLocaleText('supervisor.title', 'about'),
+			description: getLocaleText('supervisor.description', 'about'),
+		},
+		{
+			id: 'coordinator',
+			title: getLocaleText('coordinator.title', 'about'),
+			description: getLocaleText('coordinator.description', 'about'),
+		},
+		{
+			id: 'participant',
+			title: getLocaleText('participant.title', 'about'),
+			description: getLocaleText('participant.description', 'about'),
+		},
+	]
+};
+
+const gameSection = {
+	id: 'games',
+	title: 'Games Integration',
+	subsections: [
+		{
+			id: 'gameclient',
+			title: getLocaleText('gameclient.title', 'about'),
+			description: getLocaleText('gameclient.description', 'about'),
+		},
+	]
+};
+
+const activitySection = {
+	id: 'activity',
+	title: getLocaleText('activity.title', 'about'),
+	description: getLocaleText('activity.description', 'about'),
+	typesTitle: getLocaleText('activity.types.title', 'about'),
+	subsections: [
+		{
+			id: 'limesurvey',
+			title: getLocaleText('limesurvey.title', 'about'),
+			description: getLocaleText('limesurvey.description', 'about'),
+		},
+		{
+			id: 'gameplay',
+			title: getLocaleText('gameplay.title', 'about'),
+			description: getLocaleText('gameplay.description', 'about'),
+		},
+		{
+			id: 'manual',
+			title: getLocaleText('manual.title', 'about'),
+			description: getLocaleText('manual.description', 'about'),
+		},
+	]
+};
+
+const templateSection = {
+	id: 'templates',
+	title: 'Activity Definitions',
+	subsections: [
+		{
+			id: 'activitytemplate',
+			title: getLocaleText('activitytemplate.title', 'about'),
+			description: getLocaleText('activitytemplate.description', 'about'),
+		},
+		{
+			id: 'activityinstance',
+			title: getLocaleText('activityinstance.title', 'about'),
+			description: getLocaleText('activityinstance.description', 'about'),
+		},
+	]
+};
+
+const managementSection = {
+	id: 'management',
+	title: 'Session Management',
+	subsections: [
+		{
+			id: 'manualcompletion',
+			title: getLocaleText('manualcompletion.title', 'about'),
+			description: getLocaleText('manualcompletion.description', 'about'),
+		},
+		{
+			id: 'dashboard',
+			title: getLocaleText('dashboard.title', 'about'),
+			description: getLocaleText('dashboard.description', 'about'),
+		},
+	]
+};
+
+const usersSection = {
+	id: 'users',
+	title: getLocaleText('users.title', 'about'),
+	description: getLocaleText('users.description', 'about'),
+};
+
+const groupSection = {
+	id: 'group',
+	title: getLocaleText('group.title', 'about'),
+	description: getLocaleText('group.description', 'about'),
+};
+
+// Build main sections with filters
+const mainSections = [...tutorialSections, coreSection, simletSection, sessionSection, activitySection, groupSection, rolesSection, gameSection, managementSection ] //usersSection, templateSection]
+	.filter((section) => section.title || (section.subsections && section.subsections.some(s => s.title && s.description)));
+
+const otherSections = [];
+%>
+
+<div class="aboutSections">
+<h1><%= t('title', { ns : 'about'}) %></h1>
+	<% mainSections.forEach((section) => { %>
+		<section id="<%= section.id %>" class="aboutSection">
+			<% if (section.title) { %>
+				<h2><%= section.title %></h2>
+			<% } %>
+			<% if (section.description) { %>
+				<p><%= section.description %></p>
+			<% } %>
+			<% if (section.steps && section.steps.length > 0) { %>
+				<ol class="aboutTutorialSteps">
+					<% section.steps.forEach((step) => { %>
+						<% if (step.title && step.description) { %>
+							<li id="<%= step.id %>">
+								<p><a href="<%= step.href %>"><%= step.title %></a></p>
+								<p><%= step.description %></p>
+							</li>
+						<% } %>
+					<% }) %>
+				</ol>
+				<% if (section.note) { %>
+					<p><%= section.note %></p>
+				<% } %>
+			<% } %>
+			<% if (section.subsections && section.subsections.length > 0) { %>
+				<% if (section.typesTitle) { %>
+					<h3><%= section.typesTitle %></h3>
+				<% } %>
+				<% section.subsections.forEach((subsection) => { %>
+					<% if (subsection.title && subsection.description) { %>
+						<section id="<%= subsection.id %>" class="aboutSubSection">
+							<h4><%= subsection.title %></h4>
+							<p><%= subsection.description %></p>
+						</section>
+					<% } %>
+				<% }) %>
+			<% } %>
+		</section>
+	<% }) %>
+
+	<% if (otherSections.length > 0) { %>
+		<% otherSections.forEach((section) => { %>
+			<section id="<%= section.id %>" class="aboutSection">
+				<h2><%= section.title %></h2>
+				<p><%= section.description %></p>
+			</section>
+		<% }) %>
+	<% } %>
+
+	<section id="xapi-dashboard-info" class="aboutSection">
+		<h2><%= t('xapi.dashboard.title', { ns: 'about' }) %></h2>
+		<p><%= t('xapi.dashboard.intro', { ns: 'about' }) %></p>
+		<img src="/images/dashboard-example.png" alt="<%= t('xapi.dashboard.image.alt', { ns: 'about' }) %>" style="max-width:100%;margin:1em 0;"/>
+
+		<h3><%= t('xapi.dashboard.backend.title', { ns: 'about' }) %></h3>
+		<p><%= t('xapi.dashboard.backend.desc', { ns: 'about' }) %></p>
+		<pre style="background:#f8f8f8;padding:1em;overflow-x:auto;">
+{
+	"actor": {
+		"account": {
+			"homePage" : "...",
+			"name" : "fybu"
+		}
+	},
+	"verb": {
+		"id": "http://adlnet.gov/exapi/verbs/initialized"
+	},
+	"object" : {
+		"definition" : {
+			"type" : "https://w3id.org/xapi/seriousgames/activity-types/level"
+		},
+		"id" : "..."
+	},
+	"result" : ...,
+	"context": {
+		"contextActivities": {
+			"category": [{"id": "https://w3id.org/xapi/serious-game"}],
+		},
+		"registration": "18c01bd5-a384-42ad-a96a-9572d4674b87"
+	},
+	"id": "ad48cb27-0536-4b22-a0fb-6c4f80c57d5a",
+	"timestamp" : "2024-06-09T19:32:57.369Z",
+	"stored" : "2024-06-09T19:41:23.456Z"
+}
+		</pre>
+
+		<h3><%= t('xapi.dashboard.activitytypes.title', { ns: 'about' }) %></h3>
+		<table class="aboutTable">
+			<thead>
+				<tr><th><%= t('xapi.dashboard.activitytypes.col1', { ns: 'about' }) %></th><th><%= t('xapi.dashboard.activitytypes.col2', { ns: 'about' }) %></th></tr>
+			</thead>
+			<tbody>
+				<tr><td><%= t('xapi.dashboard.activitytypes.game', { ns: 'about' }) %></td><td>https://w3id.org/xapi/seriousgames/activity-types/serious-game</td></tr>
+				<tr><td><%= t('xapi.dashboard.activitytypes.limesurvey', { ns: 'about' }) %></td><td>http://adlnet.gov/expapi/activities/assessment</td></tr>
+				<tr><td><%= t('xapi.dashboard.activitytypes.manual', { ns: 'about' }) %></td><td>http://adlnet.gov/expapi/activities/???</td></tr>
+			</tbody>
+		</table>
+
+		<h3><%= t('xapi.dashboard.visibledata.title', { ns: 'about' }) %></h3>
+		<p><%= t('xapi.dashboard.visibledata.desc', { ns: 'about' }) %></p>
+
+		<h4><%= t('xapi.dashboard.initialized.title', { ns: 'about' }) %></h4>
+		<p><%= t('xapi.dashboard.initialized.desc', { ns: 'about' }) %></p>
+		<pre style="background:#f8f8f8;padding:1em;overflow-x:auto;">
+{
+	"actor": {
+		"account": {
+			"homePage" : "...",
+			"name" : "fybu"
+		}
+	},
+	"verb": {
+		"id": "http://adlnet.gov/exapi/verbs/initialized"
+	},
+	"object" : {
+		"definition" : {
+			"type" : "https://w3id.org/xapi/seriousgames/activity-types/serious-game"
+		},
+		"id" : "..."
+	},
+	"context":  {
+		"contextActivities": {
+			"category": [{"id": "https://w3id.org/xapi/serious-game"}],
+		},
+		"registration": "18c01bd5-a384-42ad-a96a-9572d4674b87"
+	},
+	"id": "b9785111-8b19-4193-80a0-48c044846f01",
+	"timestamp" : "2024-06-09T19:05:12.245Z",
+	"stored" : "2024-06-09T19:06:23.192Z"
+}
+		</pre>
+
+		<h4><%= t('xapi.dashboard.progress.title', { ns: 'about' }) %></h4>
+		<p><%= t('xapi.dashboard.progress.desc', { ns: 'about' }) %></p>
+		<table class="aboutTable">
+			<thead>
+				<tr><th><%= t('xapi.dashboard.progress.col1', { ns: 'about' }) %></th><th><%= t('xapi.dashboard.progress.col2', { ns: 'about' }) %></th></tr>
+			</thead>
+			<tbody>
+				<tr><td><%= t('xapi.dashboard.activitytypes.game', { ns: 'about' }) %></td><td>result.extensions['https://w3id.org/xapi/seriousgames/extensions/progress']</td></tr>
+				<tr><td><%= t('xapi.dashboard.activitytypes.limesurvey', { ns: 'about' }) %></td><td>result.score.scaled</td></tr>
+				<tr><td><%= t('xapi.dashboard.activitytypes.manual', { ns: 'about' }) %></td><td>result.score.scaled</td></tr>
+			</tbody>
+		</table>
+		<pre style="background:#f8f8f8;padding:1em;overflow-x:auto;">
+{
+	"actor": {
+		"account": {
+			"homePage" : "...",
+			"name" : "fybu"
+		}
+	},
+	"verb": {
+		"id": "http://adlnet.gov/exapi/verbs/progressed"
+	},
+	"object" : {
+		"definition" : {
+			"type" : "https://w3id.org/xapi/seriousgames/activity-types/serious-game"
+		},
+		"id" : "..."
+	},
+	"result" : {
+			"extensions": {
+					 "https://w3id.org/xapi/seriousgames/extensions/progress": 0.2
+			},
+	},
+	"context":  {
+		"contextActivities": {
+			"category": [{"id": "https://w3id.org/xapi/serious-game"}],
+		},
+		"registration": "18c01bd5-a384-42ad-a96a-9572d4674b87"
+	},
+	"id": "e6eed9de-f68e-4120-8116-758dd2ef244e",
+	"timestamp" : "2024-06-09T19:06:21.590Z",
+	"stored" : "2024-06-09T19:08:15.186Z"
+}
+		</pre>
+
+		<h4><%= t('xapi.dashboard.completed.title', { ns: 'about' }) %></h4>
+		<p><%= t('xapi.dashboard.completed.desc', { ns: 'about' }) %></p>
+		<pre style="background:#f8f8f8;padding:1em;overflow-x:auto;">
+{
+	"actor": {
+		"account": {
+			"homePage" : "...",
+			"name" : "fybu"
+		}
+	},
+	"verb": {
+		"id": "http://adlnet.gov/exapi/verbs/completed"
+	},
+	"object" : {
+		"definition" : {
+			"type" : "https://w3id.org/xapi/seriousgames/activity-types/serious-game"
+		},
+		"id" : "..."
+	},
+	"result" : {
+		 "success": true,
+		 "completion": true
+	},
+	"context": {
+		"contextActivities": {
+			"category": [{"id": "https://w3id.org/xapi/serious-game"}],
+		},
+		"registration": "18c01bd5-a384-42ad-a96a-9572d4674b87"
+	},
+	"id": "5b35fb12-7ac7-48c7-bba1-9933df95970a",
+	"timestamp" : "2024-06-09T19:50:12.621Z",
+	"stored" : "2024-06-09T19:53:01.708Z"
+}
+		</pre>
+	</section>
+</div>
+

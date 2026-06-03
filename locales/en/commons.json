@@ -1,0 +1,16 @@
+{
+    "title": "SIMVA - A SIMple VAlidator",
+    "login.title": "Login",
+    "logout.title": "Logout",
+    "home.title": "Home",
+    "home.description": "Welcome to SIMVA! This is the main dashboard where you can access all the features of the platform. Use the menu to navigate through different sections, such as SIMLETs, activities, and user management. Whether you're a teacher, student, or researcher, you'll find everything you need to create and manage your simulations here.",
+    "welcome.user.text": "Welcome {{username}}!\n",
+    "welcome.teacher.text": "This is the main view of Simva.\nYou can go to Activities to create survey activities, gameplay activities, and other types of custom activities required to build an study.\nUse the Studies tab to create an study where a set of activities can be set up for an evaluation to be performed.\nTo manage Users and Groups, use the Groups tab where groups of users and users themselves can be created in order to allow them to participate in the studies.\nTo get more information visit:",
+    "welcome.student.text": "This is the main view of Simva.\nUse the Studies tab to access to a created study where you will perform an evaluation composed by a set of activities.",
+    "contact.title": "Contact",
+    "QA.title": "Q&A",
+    "GDPR.title": "GDPR", 
+    "github.title" : "GitHub", 
+    "eUCMResearch.title": "e-UCM Research",
+    "moreprojects.title" : "More projects"
+}

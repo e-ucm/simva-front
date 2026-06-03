@@ -5,759 +5,437 @@
 <!--<div id="roller" style="width: 100%; text-align: center; padding: 200px;">
 	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 </div>-->
-<h1>Study: <span id="study_name"></span></h1>
-<div id="study">
-	<div class="left">
-		<div class="graybox owners">
-			<h2>Owners</h2>
-			<p></p>
-			<table id="owners">
-			</table>
-			<input class="violet" type="button" value="Add owner" onclick="toggleAddForm('add_owner')">
-		</div>
-
-		<div class="graybox groups">
-			<h2>Groups</h2>
-			<p></p>
-			<table id="groups">
-			</table>
-			<input class="violet" type="button" value="Add Group" onclick="toggleAddForm('add_group')">
-		</div>
-
-		<div class="graybox allocator default">
-			<h2>Allocator</h2> 
-			<span class="edit"><img src="/icon/gear.png" onclick="toggleAddForm('change_allocator')"></span>
-			<div id="allocator_content">
-				
-			</div>
-		</div>
-		<% if(config.lti.enabled == 'true'){ %>
-		<div class="graybox lti_platforms default">
-			<h2>LTI Platforms</h2>
-			<p></p>
-			<table id="lti_platforms">
-			</table>
-			<input class="violet" type="button" value="Add Platform" onclick="toggleAddForm('add_platform')">
-		</div>
-		<% } %>
-	</div>
-	<div class="card">
-		<div class="top">
-			<h2>Tests</h2>
-			<input class="violet" type="button" value="Add Test" onclick="toggleAddForm('add_test')">
-		</div>
-		<div id="tests" class="tests">
-		</div>
-	</div>
-</div>
-<div id="add_group" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<div id="add_group_tab" class="subform selected">
-				<h2>Add group</h2>
-				<form id="add_group_form">
-					<select id="group_select" name="group">
-					</select>
-					<input type="submit" value="Add">
-					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<span class="error"></span>
-				</form>
-			</div>
+<div class="simletTop">
+	<h1 title="<%- t('single.description', { ns : 'SIMLETs' }) %>"><%- t('single.title', { ns : 'SIMLETs' }) %>: <span id="simlet_name"></span></h1>
+	<div class="simletSettings">
+		<div class="kebab">
+			
 		</div>
 	</div>
 </div>
 
-<div id="add_platform" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<div id="add_platform_tab" class="subform selected">
-				<h2>Add LTI Platform</h2>
-				<form id="add_platform_form">
-					<p>Name:</p>
-					<input type="text" name="name" placeholder="imsglobal">
-					<p>UTL:</p>
-					<input type="text" name="url" placeholder="https://lti-ri.imsglobal.org/platforms/2056">
-					<p>Client ID:</p>
-					<input type="text" name="clientId" placeholder="lti-test">
-					<p>Authentication Endpoint:</p>
-					<input type="text" name="authenticationEndpoint" placeholder="https://lti-ri.imsglobal.org/platforms/2056/authorizations/new">
-					<p>Accesstoken Endpoint:</p>
-					<input type="text" name="accesstokenEndpoint" placeholder="https://lti-ri.imsglobal.org/platforms/2056/access_tokens">
-					<p>JWKS URL:</p>
-					<input type="text" name="jkwsUrl" placeholder="https://lti-ri.imsglobal.org/platforms/2056/platform_keys/1952.json">
+<%- include('partials/simlet_commons') %>
 
-					<input type="submit" value="Add">
-					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<span class="error"></span>
-				</form>
-			</div>
-		</div>
+<div id="study_tabs">
+	<div class="tabs studyTabsButtons">
+		<input class="tab yellow selected" type="button" title="<%- t('sessions.tab.description', { ns : 'SIMLETs' }) %>" onclick="Utils.changeTab(this, 'study_tabs','sessions_tab')" value="<%- t('sessions.tab.title', { ns : 'SIMLETs' }) %>">
+		<input class="tab yellow" type="button" title="<%- t('users.tab.description', { ns : 'SIMLETs' }) %>" onclick="Utils.changeTab(this, 'study_tabs','users_tab')" value="<%- t('users.tab.title', { ns : 'SIMLETs' }) %>">
 	</div>
-</div>
+	
+	<div id="sessions_tab" class="subform studyTab selected">
+		
+		<%- include('partials/simlet_sessions') %>
+		<%- include('partials/simlet_activities') %>
+		
+		<div id="download_data_menu" class="new_element floating">
+			<div class="floater">
+				<div class="form" id="download_data_form">
+					<h1 id="downloadFormTitle">	</h1>
+					<div id="download_session_data" class="subform selected">
+						<!-- onClick functions declared on simlet_sessions.ejs -->
+						<input class="yellow" type="button" value="<%- t('download.session.title', { ns : 'sessions' }) %>" onclick="downloadSessionData()">
+						<input class="yellow" id="session_test_data_download" type="button" title="<%- t('download.test.description', { ns : 'sessions' }) %>" value="<%- t('download.test.title', { ns : 'sessions' }) %>" onclick="downloadSessionTestData()">
+					</div>
 
-<div id="change_allocator" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<h2>Select the new allocator</h2>
-			<form id="change_allocator_form">
-				<div id="change_allocator_content">
+					<div id="download_activity_data" class="subform">
+						<!-- onClick functions declared on simlet_activities.ejs -->
+						<input class="yellow" type="button" value="<%- t('download.activity.title', { ns : 'activities' }) %>" onclick="downloadActivityData()">
+						<input class="yellow" id="activity_test_data_download" type="button" title="<%- t('download.test.description', { ns : 'activities' }) %>" value="<%- t('download.test.title', { ns : 'sessions' }) %>" onclick="downloadActivityTestData()">
+						<input class="yellow" id="xasu_download" type="button" value="<%- t('download.xasu.title', { ns : 'activities' }) %>" onclick="downloadActivityXasuConfig()">
+						<input class="yellow" id="backup_download" type="button" value="<%- t('download.backup.title', { ns : 'activities' }) %>" onclick="downloadActivityBackup()">
+					</div>
 				</div>
-				<input type="button" value="Change Allocator" onclick="changeAllocator()">
-				<span class="error"></span>
-			</form>
-		</div>
-	</div>
-</div>
-
-<div id="edit_allocator" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<h2 id="edit_allocator_title"></h2>
-			<form id="edit_allocator_form">
-				<div id="edit_allocator_content">
-				</div>
-				<span class="error"></span>
-			</form>
-		</div>
-	</div>
-</div>
-
-<div id="add_owner" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<div id="existing_owner_tab" class="subform selected">
-				<h2>Add owner</h2>
-				<form id="existing_owner_form">
-					<input type="text" name="name" placeholder="Owner username" required>
-					<input type="submit" value="Add">
-					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<span class="error"></span>
-				</form>
 			</div>
 		</div>
 	</div>
-</div>
 
-<div id="add_test" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<div id="add_test_tab" class="subform selected">
-				<h2>Add Test</h2>
-				<form id="add_test_form">
-					<input type="text" name="name" placeholder="Test name" required>
-					<input type="submit" value="Add">
-					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<span class="error"></span>
-				</form>
-			</div>
-		</div>
+	<div id="users_tab" class="subform studyTab" style="display: none;">
+		
+		<%- include('partials/simlet_users') %>
+		
 	</div>
 </div>
 
-<div id="add_activity" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<div class="tabs">
-				<span class="tab selected" onclick="changeTab(this, 'add_activity','new_activity_tab')">Add new activity</span>
-				<span class="tab" type="hidden" onclick="changeTab(this, 'add_activity','existing_activity_tab')">Select from existing</span>
-			</div>
-			<div id="new_activity_tab" class="subform selected">
-				<form id="new_activity_form">
-					<input type="hidden" name="test">
-					<input type="text" name="name" placeholder="Activity name" required>
-					<select name="type">
-					</select>
-					<fieldset id="new_activity_extras">
-					</fieldset>
-					<input type="submit" value="Add">
-					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<span class="error"></span>
-				</form>
-			</div>
-			<div id="existing_activity_tab" class="subform">
-				<form id="existing_activity_form">
-					<input type="hidden" name="test">
-					<input type="text" name="name" placeholder="Activity name" required>
-					<select name="type">
-					</select>
-					<input disabled type="submit" value="Add (Not enabled)">
-					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<span class="error"></span>
-				</form>
-			</div>
-		</div>
-	</div>
+
+<div id="pdf_printable">
+	<h3 id="printable_group_name">	</h3>
+	<table id="printable_table">
+		<thead>
+			<th style="width: 6%;"><%- t('print_table.number_col.title', { ns : 'groups' }) %></th>
+			<th style="width: 46%;"><%- t('print_table.name_col.title', { ns : 'groups' }) %></th>
+			<th style="width: 46%;" colspan="4"><%- t('print_table.code_col.title', { ns : 'groups' }) %></th>
+		</thead>
+		<tbody>
+
+		</tbody>
+	</table>
 </div>
 
-<div id="iframe_floating" class="new_element floating">
-	<div class="floater">
-		<iframe src=""></iframe>
-	</div>
-</div>
-
-<div class="floating_buttons">
-	<a unselectable="on" class="basic" onclick="downloadUAConfig()"><img src="/ua.png"></a>
-</div>
-
+<!-- SSE -->
 <script type="text/javascript">
-	let studyid = "<%= study %>";
-	let study = null, participants = null, tests = null, allocator = null, groups = null, platforms = null;
+	if (true)  {
+		// Create an instance of SSEClientManager
+		Simva.getStudyEventsPresignedUrl('<%= study %>', function(error, result) {
+			if (!error) {
+				const presignedUrl = result.url;
+				const sseClient = new SSEClientManager(presignedUrl);
 
-	$(document).ready(function() {
-		let painters = Object.keys(PainterFactory.Painters);
+				// Listen for general messages (default "message" event)
+				sseClient.on('message', (data) => {
+					console.debug('New message from server:', data);
+					// Update UI or process data here
+				});
 
-		Simva.getActivityTypes(function(error, activitytypes){
-			for (var i = 0; i < activitytypes.length; i++) {
-				if(PainterFactory.Painters[activitytypes[i].type]){
-					PainterFactory.Painters[activitytypes[i].type].setUtils(activitytypes[i].utils);
-					PainterFactory.Painters[activitytypes[i].type].simpleName = activitytypes[i].name;
-					PainterFactory.Painters[activitytypes[i].type].description = activitytypes[i].description;
+				// Listen for connection open event
+				sseClient.on('open', () => {
+					console.log('Connection to SSE server established.');
+				});
 
-					let row = `<option value="${activitytypes[i].type}">${PainterFactory.Painters[activitytypes[i].type].simpleName}</option>`;
-					$('#new_activity_form select[name="type"]').append(row);
-				}
-			}
-		})
+				const resolveParticipantKey = (activityId, data) => {
+					const candidates = [data.userId, data.user_id, data.participant_id, data.username, data.user]
+						.filter((candidate) => candidate !== undefined && candidate !== null)
+						.map((candidate) => String(candidate));
 
-		Simva.getAllocatorTypes(function(error, allocatortypes){
-			for (var i = 0; i < allocatortypes.length; i++) {
-				if(AllocatorFactory.Painters[allocatortypes[i].type]){
-					AllocatorFactory.Painters[allocatortypes[i].type].simpleName = allocatortypes[i].name;
-					AllocatorFactory.Painters[allocatortypes[i].type].description = allocatortypes[i].description;
+					for (const candidate of candidates) {
+						if (
+							document.getElementById(`progress_${activityId}_${candidate}`) ||
+							document.getElementById(`completion_${activityId}_${candidate}`) ||
+							document.getElementById(`result_${activityId}_${candidate}`) ||
+							document.getElementById(`init_${activityId}_${candidate}`)
+						) {
+							return candidate;
+						}
+					}
 
-					let row = `<div class="row"><input type="radio" name="type" id="allocator_${allocatortypes[i].type}" value="${allocatortypes[i].type}"><label for="allocator_${allocatortypes[i].type}"><span class="name">${AllocatorFactory.Painters[allocatortypes[i].type].simpleName}</span><span class="description">${AllocatorFactory.Painters[allocatortypes[i].type].description}</span></label></div>`;
-					$('#change_allocator_content').append(row);
-				}
-			}
-		})
+					return candidates[0];
+				};
 
-		$('#new_activity_form select[name="type"]').on('change', function(event){
-			$('#new_activity_extras').empty();
-			$('#new_activity_extras').append(PainterFactory.Painters[$(this).val()].getExtraForm());
-		});
-
-		$("#existing_owner_form").on('submit', function(event){
-			event.preventDefault();
-			let form = Utils.getFormData($("#existing_owner_form"));
-			let errorbox = $(this).find('.error');
-
-			for (var i = 0; i < study.owners.length; i++) {
-				if(study.owners[i] == form.name){
-					errorbox.text('The owner is already in the study.');
-					return false;
-				}
-			}
-
-			study.owners.push(form.name);
-
-			Simva.updateStudy(study, function(error, result){
-				if(error && error.responseJSON){
-					errorbox.text(error.responseJSON.message);
-				}else{
-					reloadStudy();
-					toggleAddForm('add_owner');
-				}
-			});
-
-			return false;
-		});
-
-		$("#add_group_form").on('submit', function(event){
-			event.preventDefault();
-			let form = Utils.getFormData($("#add_group_form"));
-			let errorbox = $(this).find('.error');
-
-			if(study.groups.indexOf(form.group) !== -1){
-				errorbox.text('The group is already in the study');
-			}else{
-				study.groups.push(form.group);
-				Simva.updateStudy(study, function(error, result){
-					if(error && error.responseJSON){
-						errorbox.text(error.responseJSON.message);
-					}else{
-						toggleAddForm('add_group');
-						reloadStudy();
+				// Handle custom event types from the server (if applicable)
+				// Example: You might send events like "activity_initialized" from the server
+				sseClient.triggerEvent('activity_initialized');
+				sseClient.on('activity_initialized', (data) => {
+					const activityType = data.activity_type;
+					const activityId = data.activity_id;
+					const participantKey = resolveParticipantKey(activityId, data);
+					if (activityType == "gameplay") {
+						PainterFactory.Painters[activityType].updateActivityProgress(activityId, participantKey, 0);
+					}
+					if (activityType == "limesurvey") {
+						PainterFactory.Painters[activityType].updateActivityResult(activityId, participantKey, "Started");
 					}
 				});
-			}
 
-			return false;
-		});
+				// Handle custom event types from the server (if applicable)
+				// Example: You might send events like "activity_progressed" from the server
+				sseClient.triggerEvent('activity_progressed');
+				sseClient.on('activity_progressed', (data) => {
+					const activityType = data.activity_type;
+					const activityId = data.activity_id;
+					const participantKey = resolveParticipantKey(activityId, data);
+					const val = data.progress ?? data.value;
+					if (activityType == "gameplay") {
+						PainterFactory.Painters[activityType].updateActivityProgress(activityId, participantKey, val);
+					}
+					if (activityType == "limesurvey") {
+						PainterFactory.Painters[activityType].updateActivityProgress(activityId, participantKey, val);
+					}
+				});
 
-		$("#add_platform_form").on('submit', function(event){
-			event.preventDefault();
-			let form = Utils.getFormData($("#add_platform_form"));
-			let errorbox = $(this).find('.error');
+				// Handle custom event types from the server (if applicable)
+				// Example: You might send events like "activity_completed" from the server
+				sseClient.triggerEvent('activity_completed');
+				sseClient.on('activity_completed', (data) => {
+					const activityType = data.activity_type;
+					const activityId = data.activity_id;
+					const participantKey = resolveParticipantKey(activityId, data);
+					const status = data.status ?? data.value ?? true;
+					if (activityType == "gameplay") {
+						PainterFactory.Painters[activityType].updateActivityCompletion(activityId, participantKey, status);
+					}
+					if (activityType == "manual") {
+						PainterFactory.Painters[activityType].updateActivityCompletion(activityId, participantKey, status);
+					}
+					if (activityType == "limesurvey") {
+						PainterFactory.Painters[activityType].updateActivityCompletion(activityId, participantKey, status);
+						PainterFactory.Painters[activityType].updateActivityResult(activityId, participantKey, "Completed");
+					}
+					if (activityType == "activity") {
+						PainterFactory.Painters[activityType].updateActivityCompletion(activityId, participantKey, status, true);
+					}
+				});
 
-			let platform = {
-				url: form.url,
-				name: form.name,
-				clientId: form.clientId,
-				authenticationEndpoint: form.authenticationEndpoint,
-				accesstokenEndpoint: form.accesstokenEndpoint,
-				authConfig: { "method": "JWK_SET", "key": form.jkwsUrl },
-				studyId: studyid
-			}
+				sseClient.triggerEvent('ping');
+				sseClient.on('ping', (data) => {
+					console.debug('ping:', data);
+				});
 
-			Simva.addLtiPlatform(platform, function(error, result){
-				if(error && error.responseJSON){
-					errorbox.text(error.responseJSON.message);
-				}else{
-					toggleAddForm('add_platform');
-					reloadStudy();
-					Simva.updateStudy(study, function(error, result){
-						reloadStudy();
-					});
-				}
-			});
-
-			return false;
-		});
-		
-		$("#add_test_form").on('submit', function(event){
-			event.preventDefault();
-			let form = Utils.getFormData($("#add_test_form"));
-			let errorbox = $(this).find('.error');
-
-			Simva.addTestToStudy(studyid, form.name, function(error, result){
-				if(error && error.responseJSON){
-					errorbox.text(error.responseJSON.message);
-				}else{
-					toggleAddForm('add_test');
-					reloadStudy();
-				}
-			});
-
-			return false;
-		});
-
-		$("#new_activity_form").on('submit', function(event){
-			event.preventDefault();
-			let currentform = this;
-			let form = Utils.getFormData($("#new_activity_form"));
-			toggleSubmit(currentform);
-			let errorbox = $(this).find('.error');
-
-			PainterFactory.Painters[form.type].extractInformation('#new_activity_form', function(error, activity){
-				if(error){
-					errorbox.text(error);
-				}else{
-					Simva.addActivityToTest(studyid, form.test, activity, function(error, result){
-						toggleSubmit(currentform);
-						if(error && error.responseJSON){
-							errorbox.text(error.responseJSON.message);
-						}else{
-							toggleAddForm('add_activity');
-							reloadStudy();
-							Simva.updateStudy(study, function(error, result){
-								reloadStudy();
-							});
+				sseClient.triggerEvent('refresh_auth');
+				sseClient.on('refresh_auth', (data) => {
+					console.debug('refresh_auth:', data);
+					Simva.refreshAuth((error, data) => {
+						if (error) {
+							console.error(error);
+						} else {
+							console.debug(data);
 						}
 					});
-				}
-			});
+				});
 
-			return false;
-		});
-
-		loadAddGroups();
-		Simva.getStudy("<%= study %>", function(error, study){
-			if(!error) {
-				Simva.updateStudy(study, function(error, result){
-					reloadStudy();
+				// Close the SSE connection when it's no longer needed
+				window.addEventListener('beforeunload', () => {
+					if (sseClient) {
+						sseClient.closeConnection(); // Call closeConnection method
+					}
 				});
 			}
 		});
+	}
+</script>
+
+
+<script>
+	$(".content").addClass("floating");
+	
+	let studyid = "<%= study %>";
+	let currentUser = null;
+	let study = null, participants = null, tests = null, allocator = null, groups = null, platforms = null;
+	
+	const sessionDataIdKey = "sessionId"
+	const sessionDataNameKey = "sessionName"
+
+
+	// Menus
+
+	$(document).ready(function() {
+		refreshFunc = reloadStudy;
+		
+		Simva.getCurrentUser((error, user) => {
+			if(!error) {
+				currentUser = user;
+			} else {
+				console.error("Error fetching current user:", error);
+				currentUser = null;
+				// Optionally, display an error message to the user
+				alert("Error fetching user information. Some features may not work properly.");
+				//reloadStudy();
+			}
+		});
+
+		const kebab = $("#kebab_template .kebab-dropdown").clone();
+		$(".simletSettings .kebab").append(kebab);
+		kebab.find(".icon-edit").click(() => { openStudyForm(studyid) });
+		kebab.find(".icon-url").click(() => { openUrlSettingsForm(studyid, study.simlet_name) });
+		kebab.find(".icon-download").click(() => { openConfigDownloadForm(studyid, study.simlet_name) });
+		kebab.find(".icon-export").click(() => { exportSimlet(studyid) });
+		kebab.find(".icon-delete").click(() => { 
+			deleteStudy(studyid, study.simlet_name) 
+			location.reload();
+		});
+		$("#add_study_tabs").remove();
+		$("#import_study_tab").remove();
+	
 	});
 
-	let downloadUAConfig = function(){
-		var content = JSON.stringify({
-			study: study._id,
-			host: "<%= config.api.host %>",
-			protocol: "<%= config.api.protocol %>",
-			port: "<%= config.api.port %>",
-			url: "<%= config.api.url %>",			
-			sso: "<%= config.sso.url %>/realms/<%= config.sso.realm %>/protocol/openid-connect", 
-    		client_id: "uadventure"
-		}, null, 2);
+	const openStudyForm = function() {
+		Utils.toggleAddForm('study_form');
 
-		var filename = "simva.conf";
+		$('#study_form_error').text("");
+		$('#edit_study_id').val(studyid);
+		
+		$("#study_form_title").text("<%- t('edit.title', { ns : 'SIMLETs' }) %>")
+		$("#study_name_desc_submit").val("<%- t('edit.submit', { ns : 'SIMLETs' }) %>")
 
-		var blob = new Blob([content], {
-		 type: "text/plain;charset=utf-8"
-		});
-
-		Utils.download(filename, content);
+		$('#prev_study_name').val(study.simlet_name);
+		$('#prev_study_description').val(study.simlet_description);
+		
+		$('#study_name').val(study.simlet_name);
+		$('#study_description').val(study.simlet_description);
+		
 	}
 
-	let toggleAllocatorForm = function(){
-		$('#edit_allocator_title').html(AllocatorFactory.Painters[allocator.type].getFormTitle());
-		$('#edit_allocator_content').html(AllocatorFactory.Painters[allocator.type].getFormContent());
-		$('#edit_allocator').toggleClass('shown');
-	}
-
-	let toggleTest = function(id){
-		$(`#test_${id}`).find('.activities').toggleClass('collapsed');
-	}
-
-	let toggleSubmit = function(form){
-		$(form).find('input[type="submit"]').toggle();
-		$(form).find('.loader').toggle();
-	}
-
-	let changeTab = function(tab, form, subform){
-		$(`#${form} .tab`).removeClass('selected');
-		$(`#${form} .subform`).removeClass('selected');
-		$(tab).toggleClass('selected');
-		$(`#${subform}`).toggleClass('selected');
-	}
-
-	let reloadStudy = function(){
-		Simva.getStudy(studyid, function(error, result){
-
-			if(!error){
-				study = result;
-
-				let tocomplete = 6, done = 0;
-				let completed = function(){
-					done++
-
-					if(done === tocomplete){
-						paintStudy(study, participants, tests, allocator, groups, platforms);
-					}
-				}
-
-				let errorhappened = function(error){
-					// paint the errors
-				}
-
-				Simva.getStudyParticipants(studyid, function(error, result){
-					if(!error){
-						participants = result;
-						completed();
-					}
-				});
-
-				Simva.getStudyTests(studyid, function(error, result){
-					if(!error){
-						tests = result;
-						completed();
-					}
-				});
-
-				Simva.getAllocator(studyid, function(error, result){
-					if(!error){
-						allocator = result;
-						completed();
-					}
-				});
-
-				Simva.getStudyGroups(studyid, function(error, result){
-					if(!error){
-						groups = result;
-						completed();
-					}
-				});
-
-				Simva.getGroups(function(error, result){
-					if(!error){
-						allgroups = result;
-						completed();
-					}
-				});
-
-				Simva.getLtiPlatforms(studyid, function(error, result){
-					if(!error){
-						platforms = result;
-						completed();
-					}
-				});
-			}
-		});
-	}
-
-	let loadAddGroups = function(){
-		Simva.getGroups(function(error, result){
-			if(!error){
-				paintAddGroup(result);
-			}
-		});
-	}
 
 	// Functionality
 
-	let removeGroup = function(group){
-		let toremove = -1;
-		for (var i = 0; i < study.groups.length; i++) {
-			if(study.groups[i] === group){
-				toremove = i;
-				break;
+	const getTestFromTestId = function(testId) {
+		for (let i = 0; i < tests.length; i++) {
+			let test = tests[i];
+			if (test.session_id === Number(testId)) {
+				return test;
 			}
 		}
-
-		study.groups.splice(i, 1);
-
-		Simva.updateStudy(study, function(error, result){
-			reloadStudy();
-		});
+		return null;
 	}
 
-	let removePlatform = function(platform){
-		Simva.removePlatform(platform, function(error, result){
-			reloadStudy();
-		});
-	}
-
-	let removeOwner = function(owner){
-		let toremove = -1;
-		for (var i = 0; i < study.owners.length; i++) {
-			if(study.owners[i] === owner){
-				toremove = i;
-				break;
+	const getActivityFromActivityId = function(activityId) {
+		for (let i = 0; i < tests.length; i++) {
+			let test = tests[i];
+			if (!test.completeActivities) {
+				continue;
 			}
-		}
-
-		study.owners.splice(i, 1);
-
-		Simva.updateStudy(study, function(error, result){
-			reloadStudy();
-		});
-	}
-
-	let deleteTest = function(test){
-
-		if(confirm("Are you sure do you want to delete the test?\nAll the activities and data will be deleted too.")){
-			let toremove = -1;
-			for (var i = 0; i < study.tests.length; i++) {
-				if(study.tests[i] === test){
-					toremove = i;
-					break;
+			for (let j = 0; j < test.completeActivities.length; j++) {
+				let activity = test.completeActivities[j];
+				if (activity.activity_id === Number(activityId)) {
+					return activity;
 				}
 			}
-
-			study.tests.splice(i, 1);
-
-			Simva.updateStudy(study, function(error, result){
-				reloadStudy();
-			});
 		}
+		return null;
 	}
 
-	let deleteActivity = function(activity){
-
-		if(confirm("Are you sure do you want to delete the test?\nAll the activities and data will be deleted too.")){
-			Simva.deleteActivity(activity, function(error, result){
-				reloadStudy();
-			});
-		}
-	}
-
-	let openActivityForm = function(test){
-		$('#add_activity').toggleClass('shown');
-		$('#add_activity input[name="test"]').val(test);
-	}
-
-	let toggleAddForm = function(id){
-		$(`#${id}`).toggleClass('shown');
-	}
-
-	// Main Paint functions
-
-	let paintStudy = function(study, participants, tests, allocator, groups, platforms){
-		$('#study_name').text(study.name);
-
-		paintOwners(study.owners);
-
-		paintAllocator(allocator, tests, groups, participants);
-
-		paintGroups(groups);
-	
-		paintPlatforms(platforms);
-
-		let fullyPaintTest = function(test){
-			paintTest(test);
-
-			Simva.getTestActivities(studyid, test._id, function(error, result){
-				paintTestActivities(test, result, participants);
-			});
-		}
-
-		$('#tests').empty();
-		if(tests.length === 0){
-			$('#tests').append('<p>There are no tests for this study. Try adding one using the button on the right.</p>');
-		}else{
-			for (var i = 0; i < tests.length; i++) {
-				fullyPaintTest(tests[i]);
+	const getGroupFromGroupId = function (groupId) {
+		for (let i = 0; i < groups.length; i++) {
+			let group = groups[i];
+			if (group.group_id === groupId) {
+				return group;
 			}
 		}
-	}
+		return null;
+	} 
 
-	let paintAddGroup = function(groups){
-		$('#group_select').empty('');
-		if(groups.length == 0){
-			$('#group_select').append('<p>You dont have any group. Go to groups tab to create one.</p>');
-		}else{
-			for (var i = 0; i < groups.length; i++) {
-				$('#group_select').append(addGroupRow(groups[i]));
+	const getParticipantFromParticipantId = function(participantId) {
+		for (let i = 0; i < study.participants.length; i++) {
+			let participant = study.participants[i];
+			if (participant.user_id === participantId) {
+				return participant;
 			}
 		}
+		return null;
 	}
 
-	let paintOwners = function(owners){
-		$('#owners').html('');
-		for (var i = 0; i < owners.length; i++) {
-			$('#owners').append(ownerRow(owners[i]));
-		}
+	const getLatestCreatedSession = function() {
+		const sorted = tests.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+		return sorted[0];
 	}
 
-	let paintGroups = function(groups){
-		$('#groups').html('');
-		if(groups.length == 0){
-			$('#groups').append('<p>There are no groups yet.</p>');
-		}else{
-			for (var i = 0; i < groups.length; i++) {
-				$('#groups').append(groupRow(groups[i]));
-			}
-		}
+	const getLatestUpdatedSession = function() {
+		const sorted = tests.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+		return sorted[0];
 	}
 
-	let paintPlatforms = function(platforms){
-		$('#lti_platforms').html('');
-		if(platforms.length == 0){
-			$('#lti_platforms').append('<p>There are no platforms yet.</p>');
-		}else{
-			for (var i = 0; i < platforms.length; i++) {
-				$('#lti_platforms').append(platformRow(platforms[i]));
-			}
-		}
-	}
-
-	let paintAllocator = function(allocator, tests, groups, participants){
-		AllocatorFactory.Painters[allocator.type].setTests(tests);
-		AllocatorFactory.Painters[allocator.type].setGroups(groups);
-		AllocatorFactory.Painters[allocator.type].setStudy(study);
-		AllocatorFactory.Painters[allocator.type].setParticipants(participants);
-
-		AllocatorFactory.Painters[allocator.type].paintAllocator(allocator);
-
-		$(`#allocator_${allocator.type}`).prop('checked',true);
-	}
-
-	let changeAllocator = function(){
-		let type = $('#change_allocator_form input:radio[name=type]:checked').val();
-
-		if(allocator.type !== type){
-			Simva.updateAllocator(study._id, { type: type }, function(error, result){
-				if(error){
-					$('#change_allocator_form .error').val(error.message);
-				}else{
-					toggleAddForm('change_allocator');
+	const setActive = function(active) {
+		// TEST
+		// archiveStudy(studyid, study.simlet_name);
+		if(confirm(`<%- t('archive.confirm', { ns : 'SIMLETs', SIMLET : '${study.simlet_name}' }) %>`)){
+			Simva.updateStudy(studyid, { simlet_archived: active }, function(error, result) {
+				if (!error) {
 					reloadStudy();
 				}
 			});
-		}else{
-			toggleAddForm('change_allocator');
 		}
 	}
+	
+	let reloadStudy = function() {
+		Simva.getStudy(studyid, function(error, result) {
+			if (!error) {
+				study = result;
 
-	let paintTest = function(test){
-		$('#tests').append(`<div id="test_${test._id}" class="test">
-			<div class="top"><h3>${test.name}</h3><input class="violet" type="button" value="Expand/Collapse" onclick="toggleTest('${test._id}')">
-			<input class="green" type="button" value="Add activity" onclick="openActivityForm('${test._id}')">
-			<input class="red" type="button" value="Delete" onclick="deleteTest('${test._id}')"></div>
-			<div class="activities collapsed">${roller}</div>`);
-	}
+				let tocomplete = 6, done = 0;
+				let completed = function() {
+					done++
 
-	let paintTestActivities = function(test, activities, participants){
-		$(`#test_${test._id} .activities`).empty();
-
-		if(activities.length === 0){
-			$(`#test_${test._id} .activities`).text('There are no activities in this test. Add one using the button on the right.');
-		}else{
-			for (var i = 0; i < activities.length; i++) {
-				switch(activities[i].type){
-					case 'rageminio':
-					case 'miniokafka':
-					case 'rageanalytics':
-					case 'limesurvey':
-					case 'gameplay':
-					case 'activity':
-					case 'manual':
-					case 'ltitool':
-					case 'imspackage':
-						PainterFactory.Painters[activities[i].type].fullyPaintActivity(activities[i]);
-						break;
-					default:
-						ActivityPainter.fullyPaintActivity(activities[i]);
-						break;
+					if (done === tocomplete) {
+						paintStudy(study, participants, tests, allocator, groups, allgroups, platforms);
+					}
 				}
-			}
-		}
-	}
 
-
-	let ownerRow = function(owner){
-		let toret = `<tr><td>${owner}</td><td><input class="red" type="button" value="Remove"`;
-		if(owner == '<%= user.data.username %>'){
-			toret += ' disabled="disabled"';
-		}else{
-			toret += ` onclick="removeOwner('${owner}')"`
-		}
-
-		toret += '></td></tr>';
-		return toret;
-	}
-
-	let groupRow = function(group){
-		let toret = `<tr><td>${group.name}</td><td><input class="red" type="button" value="Remove"';
-		toret += ' onclick="removeGroup('${group._id}')" `
-		if(group.link && group.link.type){
-			toret += ' disabled';
-		}
-		toret += '></td></tr>';
-
-		return toret;
-	}
-
-	let platformRow = function(platform){
-		let toret = `<tr><td>${platform.name}</td><td><input class="red" type="button" value="Remove"
-		onclick="removePlatform('${platform._id}')"
-		></td></tr>`;
-		return toret;
-	}
-
-	let addGroupRow = function(group){
-		return `<option value="${group._id}">${group.name}</option>`;
-	}
-
-	let allocationRow = function(allocation, tests){
-		let toret = `<tr><td>${allocation.username}</td><td><select name="test">`;
-
-		if(tests.length > 0){
-			for (var i = 0; i < tests.length; i++) {
-				if(allocation.test == tests[i]._id){
-					toret += `<option value="${tests[i]._id}">${tests[i].name}</option>`;
-				}else{
-					toret += `<option value="${tests[i]._id}" selected>${tests[i].name}</option>`;
+				let errorhappened = function(error) {
+					// paint the errors
 				}
+
+				participants = result.participants;
+				completed();
+				tests = result.completeTests;
+				delete result.completeTests;
+				completed();
+				allocator = result.completeAllocator;
+				delete result.completeAllocator;
+				completed();
+				groups = result.completeGroups;
+				delete result.completeGroups;
+				completed();
+				allgroups = result.allgroups;
+				delete result.allgroups;
+				completed();
+				platforms = [];
+				completed();
+			} else {
+				window.location.href="/simlets";
 			}
-		}else{
-			toret += '<option>NO TESTS</option>';
-		}
+		});
+	}
+
+
+	// Render
+
+	let paintStudy = function(study, participants, tests, allocator, groups, allgroups, platforms) {
+		$('#simlet_name').text(study.simlet_name);
+		$("#simlet_tags").remove();
+		$(".simletTop").after($(renderTags(study)).attr("id", "simlet_tags"));
 		
+		paintArchived(!study.simlet_archived);
+		
+		let fullyPaintTest = function(test) {
+			const sessionParticipants = Array.isArray(test.completeParticipants) ? test.completeParticipants : [];
+			paintTest(test, test.completeActivities, sessionParticipants);
+			paintTestActivities(test, test.completeActivities, sessionParticipants);
+		}
 
-		toret += '</select></td></tr>';
-		return 
+		$('#tests').empty();
+		if (tests.length === 0) 
+		{
+			$('#tests').append("<p><%- t('no_sessions.message', { ns : 'sessions' }) %></p>");
+		} 
+		else {
+			for (var i = 0; i < tests.length; i++) {
+				fullyPaintTest(tests[i]);
+			}
+			// Automatically expand the session if there's only one
+			if (tests.length == 1) {
+				toggleSession(tests[0].session_id);
+			}
+		}
+
+		paintOwners(study.direct_permissions);
+
+		paintGroups(groups, tests, participants);
+	
+		paintPlatforms(platforms);
 	}
+
+	let paintArchived = function(active) {
+		let archiveButton = $(".archivationButton");
+		let txt = ""
+		if (active == null || active) {
+			txt = "<%- t('settings.archive.title', { ns : 'SIMLETs' }) %>"
+			$(".basic").show();
+			archiveButton.addClass('icon-archive');
+			archiveButton.removeClass('icon-dearchive');
+
+			let allSessionsFinished = true;
+			study.sessions.forEach(testid => {
+				let test = getTestFromTestId(testid);
+				if (test != null) {
+					allSessionsFinished = allSessionsFinished && test.session_status == "terminated";
+				}
+			});
+			if (!allSessionsFinished) {
+				archiveButton.addClass('li-disabled').removeAttr('onclick');
+			}
+			else {
+				archiveButton.removeClass('li-disabled').click(() => { setActive(true); });
+			}
+		}
+		else {
+			txt = "<%- t('settings.dearchive.title', { ns : 'SIMLETs' }) %>"
+			$(".basic").hide();
+			archiveButton.addClass('icon-dearchive');
+			archiveButton.removeClass('icon-archive');
+			archiveButton.click(() => { setActive(false); });
+			
+			// TEST: Comment to allow dearchivation
+			// archiveButton.hide();
+		}
+		archiveButton.text(txt);
+	}
+
 </script>
-<script type="text/javascript" src="/activities/activitypainter.js"></script>
-<script type="text/javascript" src="/activities/limesurveypainter.js"></script>
-<script type="text/javascript" src="/activities/rageanalyticspainter.js"></script>
-<script type="text/javascript" src="/activities/miniopainter.js"></script>
-<script type="text/javascript" src="/activities/rageminiopainter.js"></script>
-<script type="text/javascript" src="/activities/gameplaypainter.js"></script>
-<script type="text/javascript" src="/activities/manualpainter.js"></script>
-<script type="text/javascript" src="/activities/ltitoolpainter.js"></script>
-<script type="text/javascript" src="/activities/imspackagepainter.js"></script>
-<script type="text/javascript" src="/allocators/defaultallocatorpainter.js"></script>
-<script type="text/javascript" src="/allocators/groupallocatorpainter.js"></script>

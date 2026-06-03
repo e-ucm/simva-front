@@ -1,0 +1,127 @@
+{ 
+    "users.add.title": "Añadir usuarios",
+    
+    "coordinators.title": "Coordinadores",
+        "coordinators.table.username.title": "Nombre de usuario",
+        "coordinators.table.permissions.title": "Permisos",
+
+        "coordinators.delete.title": "Borrar",
+            "coordinators.delete.confirm": "¿Está seguro de que desea eliminar al coordinador '{{coordinator}}' del SIMLET '{{SIMLET}}'?",
+            
+        "coordinators.add.title": "Añadir coordinador",
+            "coordinators.name.title": "Nombre",
+            "coordinators.name.placeholder": "Nombre de usuario del coordinador",
+            "coordinators.permission.title": "Permisos",
+            "coordinators.permission.placeholder": "Seleccione los permisos",
+            "coordinators.permissions.full": "Completos",
+            "coordinators.permissions.read": "Lectura",
+            "coordinators.permissions.write": "Escritura",
+            "coordinators.error.already_in": "El coordinador ya está en el SIMLET",
+            "coordinators.error.permission": "",
+            "coordinators.error.not_found": "",
+
+    "groups.title": "Grupos",
+        "groups.no_groups.message": "Aún no tiene grupos. Cree uno utilizando el botón inferior derecho (+)",
+        "participants.no_users.message": "No hay participantes en este grupo. Añada algunos utilizando el botón de el menú de 3 puntos a la derecha",
+        
+        "participants.title": "Participantes",
+
+        "participants.table.username.title": "Nombre de usuario",
+        "participants.table.isToken.title": "Es código",
+        "participants.isToken.true": "Sí",
+        "participants.isToken.false": "No",
+        "participants.table.token.title": "Código",
+        "participants.table.email.title": "Correo electrónico",
+        "participants.table.role.title": "Rol",
+        "participant.delete.title": "Eliminar",
+            "participants.delete.confirm" : "¿Está seguro de que desea eliminar al participante '{{participant}}' del grupo '{{group}}'?",
+        "participants.table.sessopm.title": "Sesión",
+    
+        "allocator.type.title": "Tipo de asignador",
+        "allocator.sessions.title": "Sesión",
+        "allocator.participants.title": "Participante",
+        "allocator.add.error": "Error al añadir la asignación",
+        "allocator.add.message": "Asignador actualizado",
+        "allocator.add.title": "Añadir asignacion",
+            
+        "groups.name.title": "Nombre",
+        "groups.name.placeholder": "Nombre del grupo",
+        
+        "groups.add.title": "Añadir grupo",
+            "groups.add.new.tab": "Añadir nuevo",
+                "groups.add.new.submit": "Crear grupo",
+                "deprecated.title": "Usar versión obsoleta de generación de código",
+                "deprecated.message": "/!\\ Este grupo utiliza la versión obsoleta de generación de códigos.",
+                "deprecated.tooltip": "/!\\ Este grupo utilizará la versión obsoleta de generación de códigos.",
+
+            "groups.import.tab": "Importar grupo",
+                "groups.import.input": "Fichero de importación de grupo",
+                "groups.import.submit": "Importar grupo",
+                "groups.import.upload.error": "",
+                "groups.import.error.invalid_file": "",
+
+        "groups.settings.groups.edit.title": "Editar",
+            "groups.edit.title": "Editar grupo",
+            "groups.edit.submit": "Editar grupo",
+            "groups.edit.no_changes.message": "No se han detectado cambios en el nombre del nuevo grupo",
+
+        "groups.settings.add.title": "Añadir participantes",
+            "participants.username.placeholder": "Nombre de usuario del participante",
+            
+            "participants.add.existing.tab": "Añadir existente",
+                "participants.add.existing.submit": "Añadir usuario",
+                "participants.errormessage.alreadyInGroup": "El participante '{{participant}}' ya está en el grupo '{{group}}'",
+
+            "participants.add.new.tab": "Añadir nuevo",
+                "participants.add.new.email.placeholder": "email@ejemplo.com",
+                "participants.add.new.password.placeholder": "Contraseña",
+                "participants.add.new.groups.add.new.submit": "Crear usuario",
+
+            "participants.add.batch.tab": "Añadir tanda de códigos",
+                "participants.add.batch.number.title": "¿Cuántos?",
+                "participants.add.batch.algorithFormat": "Los participantes se añadirán con nombres de usuario aleatorios creados con:",
+                    "participants.add.batch.algorithFormat.letters": "Sólo letras",
+                    "participants.add.batch.algorithFormat.alphanumeric": "Letras y números",
+                    "participants.add.batch.algorithFormat.base58": "Alfanumérico simplificado (Base58)",
+                "participants.add.batch.length.title": "Y una longitud de:",
+                "participants.add.batch.submit": "Crear tanda",
+
+        "groups.settings.allocator.title": "Editar asignador",
+            "allocator.change.title": "Seleccione el nuevo tipo de asignador",
+
+            "allocator.default.title": "Asignador básico",
+                "allocator.default.type": "Por defecto",
+                "allocator.default.description": "Este asignador le permite asignar manualmente los participantes a las sesiones uno por uno. (Por defecto, el participante se asignará la primera sesión).",
+
+            "allocator.group.title": "Asignador de grupos",
+                "allocator.group.type": "Grupo",
+                "allocator.group.description": "Este asignador permite asignar un grupo entero a una sesión",
+            
+            "allocator.change.submit": "Cambia el Asignador",
+
+            "allocator.no_session_assigned.title": "Sin sesión",
+
+        "groups.settings.print.title": "Descargar tabla como PDF",
+            "print_table.title": "Grupo: ",
+            "print_table.number_col.title": "Nº",
+            "print_table.name_col.title": "Nombre",
+            "print_table.code_col.title": "Código",
+            
+        "groups.settings.export.title": "Exportar",
+    
+        "groups.settings.delete.title": "Eliminar",
+            "groups.delete.confirm": "¿Está seguro de que desea eliminar el grupo '{{group}}' del SIMLET '{{SIMLET}}'?\nEl grupo se retirará a todos los estudios, pruebas y actividades",
+
+
+    "lti_platform.title": "Plataforma LTI",
+    "lti_platform.add.title": "Añadir plataforma LTI",
+    "lti_platform.add.name.title": "Nombre",
+    "lti_platform.add.url.title": "URL",
+    "lti_platform.add.client_id.title": "Client ID",
+    "lti_platform.add.authentication_endpoint.title": "Punto final de autenticación",
+    "lti_platform.add.accesstoken_endpoint.title": "Punto final del token de acceso",    
+    "lti_platform.add.jkws_url.title": "jKWS URL",
+    "lti_platform.delete.title": "Suprimir la plataforma LTI",
+    "lti_platform.delete.confirm": "¿Está seguro de que desea eliminar esta plataforma '{{platform}}' del SIMLET '{{SIMLET}}'?",
+    "lti_platform.zero.message": "Aún no hay plataformas"
+}

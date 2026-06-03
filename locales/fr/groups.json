@@ -1,0 +1,127 @@
+{ 
+    "users.add.title": "",
+    
+    "coordinators.title": "Coordinateurs",
+        "coordinators.table.username.title": "Nom d'utilisateur",
+        "coordinators.table.permissions.title": "",
+
+        "coordinators.delete.title": "Supprimer",
+            "coordinators.delete.confirm": "Êtes-vous sûr de vouloir supprimer le coordinateur '{{owner}}' du SIMLET '{{SIMLET}}'?",
+            
+        "coordinators.add.title": "Ajouter un coordinateur",
+            "coordinators.name.title": "Nom",
+            "coordinators.name.placeholder": "Nom d'utilisateur du coordinateur",
+            "coordinators.permission.placeholder": "",
+            "coordinators.permission.title": "",
+            "coordinators.permissions.full": "",
+            "coordinators.permissions.read": "",
+            "coordinators.permissions.write": "",
+            "coordinators.error.already_in": "Le coordinateur est déjà dans le SIMLET.",
+            "coordinators.error.permission": "",
+            "coordinators.error.not_found": "",
+        
+    "groups.title": "Groups",
+        "groups.no_groups.message": "You have 0 groups yet. Create one using the bottom right (+) button",
+
+        "participants.no_users.message": "Il n'y a pas de participants dans ce groupe. Essayez d'en ajouter en utilisant le bouton [...] à droite.",
+
+        "participants.title": "Participants",
+        
+        "participants.table.username.title": "Nom d'utilisateur",
+        "participants.table.isToken.title": "Est un jeton",
+        "participants.isToken.true": "Oui",
+        "participants.isToken.false": "Nom",
+        "participants.table.token.title": "Jeton",
+        "participants.table.email.title": "Mail",
+        "participants.table.role.title": "Rôle",
+        "participant.delete.title": "Supprimer",
+            "participants.delete.confirm" : "Êtes-vous sûr de vouloir supprimer le participant '{{participant}}' du groupe '{{group}}' ?",
+        "participants.table.sessopm.title": "Session",
+        
+        "allocator.type.title": "Allocateur type",
+        "allocator.sessions.title": "Session",
+        "allocator.participants.title": "Participant",
+        "allocator.add.error": "Erreur dans l'ajout de l'allocation",
+        "allocator.add.message": "Mise à jour de l'Allocateur",
+        "allocator.add.title": "Ajouter un allocation",
+        
+        "groups.name.title": "Nom",
+        "groups.name.placeholder": "Nom du groupe",
+        
+        "groups.add.title": "Ajouter un groupe",
+            "groups.add.new.tab": "Ajouter un groupe",
+                "groups.add.new.submit": "Ajouter le groupe",
+                "deprecated.title": "Utiliser la version obsolète de génération de code",
+                "deprecated.message": "/!\\ Ce groupe utilise la version obsolète de génération de code.",
+                "deprecated.tooltip": "/!\\ Ce groupe utilisera la version obsolète de génération de code.",
+
+            "groups.import.tab": "Importer un groupe",
+                "groups.import.input": "Fichier d'import du groupe",
+                "groups.import.submit": "Importer le groupe",
+                "groups.import.upload.error": "Sélectionnez le fichier à charger en premier",
+                "groups.import.error.invalid_file": "",
+
+        "groups.settings.groups.edit.title": "Modifier",
+            "groups.edit.title": "Modifier groupe",
+            "groups.edit.submit": "Modifier groupe",
+            "groups.edit.no_changes.message": "Aucun changement n'a été détecté avec groupe nom !",
+        "groups.settings.add.title": "Ajouter des participants",
+            "participants.username.placeholder": "Nom d'utilisateur du participant",
+            
+            "participants.add.existing.tab": "Ajouter existant",
+                "participants.add.existing.submit": "Ajouter existant",
+                "participants.errormessage.alreadyInGroup": "Le participant '{{participant}}' est déjà dans le groupe '{{group}}'.",
+
+            "participants.add.new.tab": "Ajouter un nouveau",
+                "participants.add.new.email.placeholder": "email@example.com",
+                "participants.add.new.password.placeholder": "Mot de passe",
+                "participants.add.new.groups.add.new.submit": "Cree participant",
+
+            "participants.add.batch.tab": "Ajouter un lot de jeton",
+                "participants.add.batch.number.title": "Combien ?",
+                "participants.add.batch.algorithFormat": "Les participants seront ajoutés avec des noms d'utilisateur aléatoires créés à l'aide de :",
+                    "participants.add.batch.algorithFormat.letters": "Uniquement des lettres",
+                    "participants.add.batch.algorithFormat.alphanumeric": "Lettres et chiffres",
+                    "participants.add.batch.algorithFormat.base58": "Alphanumérique simplifié (Base58)",
+                "participants.add.batch.length.title": "Et une longueur de :",
+                "participants.add.batch.submit": "Ajouter lot",
+
+        "groups.settings.allocator.title": "Modifier allocateur",
+            "allocator.change.title": "Sélectionner le nouveau type d'allocateur",
+
+            "allocator.default.title": "Allocateur de base",
+                "allocator.default.type": "Défaut",
+                "allocator.default.description": "Cet allocateur vous permet d'affecter manuellement les participants aux sessions un par un. (S'il n'est pas assigné, il prendra le premier).",
+
+            "allocator.group.title": "Allocateur de Groupe",
+                "allocator.group.type": "Groupe",
+                "allocator.group.description": "Cet allocateur vous permet de sélectionner la branche de session à laquelle chaque groupe est affecté.",
+            
+            "allocator.change.submit": "Changer d'Allocateur",
+
+            "allocator.no_session_assigned.title": "Pas de session",
+
+        "groups.settings.print.title": "Telecharger le tableau en PDF",
+            "print_table.title": "Groupe : ",
+            "print_table.number_col.title": "No.",
+            "print_table.name_col.title": "Nom",
+            "print_table.code_col.title": "Code",
+        
+        "groups.settings.export.title": "Exporter",
+        
+        "groups.settings.delete.title": "Supprimer",
+            "groups.delete.confirm": "Êtes-vous sûr de vouloir supprimer le groupe '{{group}}' du SIMLET '{{SIMLET}}'?",
+
+
+    "lti_platform.title": "Plate-forme LTI",
+    "lti_platform.add.title": "Ajouter un plateforme LTI",
+    "lti_platform.add.name.title": "Nom",
+    "lti_platform.add.url.title": "URL",
+    "lti_platform.add.client_id.title": "ID du Client",
+    "lti_platform.add.authentication_endpoint.title": "Point final d'authentification",
+    "lti_platform.add.accesstoken_endpoint.title": "Point final du jeton d'accès",    
+    "lti_platform.add.jkws_url.title": "URL de jKWS",
+    "lti_platform.delete.title": "Supprimer la plate-forme LTI",
+    "lti_platform.delete.confirm": "Êtes-vous sûr de vouloir supprimer cette plate-forme '{{platform}}' du SIMLET '{{SIMLET}}' ?",
+    "lti_platform.zero.message": "Il n'y a pas encore de plateformes."
+}

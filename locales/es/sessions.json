@@ -1,0 +1,77 @@
+{
+    "title": "Sesiones",
+    "single.title": "Sesión",
+    "no_sessions.message": "No hay sesiones para este SIMLET. Intente añadir una utilizando el botón inferior derecho (+)",
+
+    "createdAt": "Creado el",
+    "updatedAt": "Actualizado el",
+    "activities": "Actividades",
+    "users": "Usuarios",
+    "play": "Jugar al SIMLET",
+    "download.title": "Descargar datos",
+        "download.session.title": "Descargar datos de la sesión",
+        "download.test.title": "Descargar datos de prueba",
+            "download.test.description": "Descargar tus propios datos de traza de prueba para esta sesión.",
+    "download.description": "Descarga los datos de esta sesión",
+
+    "add.title": "Añadir sesión",
+        "add.new.tab": "Añadir nuevo",
+        "status.title": "Estado inicial",
+        "add.submit": "Crear sesión",
+        
+        "import.tab": "Importar sesión",
+        "import.input": "Seleccione un fichero de sesión exportada",
+        "import.submit": "Importar sesión",
+    
+    "edit.title": "Editar sesión",
+        "edit.submit": "Editar sesión",
+    
+    "name.title": "Nombre",
+    "name.placeholder": "Nombre de la sesión",
+    "description.title": "Descipción",
+    "description.placeholder": "Descipción de la sesión",
+    "tags.title": "Etiquetas",
+        "tags.no_tags": "Sin etiquetas",
+        "tags.input.placeholder": "Escriba una etiqueta para encontrarla o créela",
+        "tags.dropdown.no_tags": "Aún no hay etiquetas. Presione + para crear una",
+        "tags.dropdown.no_matches": "No hay coincidencias para su búsqueda",
+        "tags.dropdown.all_matches": "Todas las etiquetas que coinciden ya están en esta sesión",
+        "tags.create.placeholder": "Nombre de la nueva etiqueta",
+        "tags.create": "Crear",
+        "tags.create.cancel": "Cancelar",
+        "tags.edit.placeholder": "Nombre de la etiqueta",
+        "tags.save": "Guardar",
+        "tags.edit.cancel": "Cancelar",
+
+    "can_be_manually_activated": "Se puede activar manualmente",
+
+    "settings.edit.title": "Editar",
+    "settings.add_activity.title": "Añadir actividad",
+
+    "settings.duplicate.title": "Duplicar",
+        "duplicate.title": "Duplicar Session",
+        "duplicate.submit": "Duplicar",
+    
+    "settings.activate.title": "Activar",
+        "active.title": "Activa",
+
+    "settings.pause.title": "Pausar",
+        "paused.title": "Pausada",
+
+    "settings.finish.title": "Terminar",
+        "finished.title": "Terminada",
+        "finish.confirm": "¿Está seguro de que desea terminar (finalizar) esta sesión? Esta acción no se puede deshacer",
+
+    "settings.delete.title": "Eliminar",
+        "delete.confirm": "¿Está seguro de que desea eliminar la sesión '{{session}}' del SIMLET '{{SIMLET}}'?\nTambién se eliminarán todas las actividades y datos",
+
+    "settings.export.title": "Exportar",
+    "set_tester.title": "Convertirme en tester en esta sesión",
+    "reset_tester.title": "Reiniciar tester",
+    "unset_tester.title": "Quitarme como tester",
+
+    "status.description": "Dependiendo de su estado, una sesión se comportará de manera diferente:",
+        "active.description": "Una sesión activa recibirá datos, sus actividades pueden ser modificadas, y puede ser pausada en cualquier momento",
+        "paused.description": "Una sesión pausada no recibirá datos, pero es posible modificar sus actividades o reactivarla en cualquier momento",
+        "finished.description": "Una sesión terminada ya no podrá recibir datos, modificar sus actividades, o ser reactivada"
+}

@@ -10,8 +10,10 @@ if(!PainterFactory){
 var LTIToolPainter = {
 
 	supportedType: 'ltitool',
-	simpleName: 'LTI tool activity',
-
+	simple_name: 'LTI tool activity',
+	commun : {},
+	communSpecific : {},
+	specific : {},
 	utils: {},
 	tools: [],
 
@@ -21,13 +23,13 @@ var LTIToolPainter = {
 
 	getExtraForm: function () {
 		let form = `<div class="tabs">
-				<span id="ltitoolpainter_tab_byexising" class="tab" method="byexisting" onclick="changeTab(this, \`new_activity_extras\`,\`ltitool_byexisting\`)">Existing Tool</span>
-				<span class="tab" method="bynew" onclick="changeTab(this, \`new_activity_extras\`,\`ltitool_bynew\`)">New Tool</span>
+				<span id="ltitoolpainter_tab_byexising" class="tab" method="byexisting" onclick="Utils.changeTab(this, \`new_activity_extras\`,\`ltitool_byexisting\`)">Existing Tool</span>
+				<span class="tab" method="bynew" onclick="Utils.changeTab(this, \`new_activity_extras\`,\`ltitool_bynew\`)">New Tool</span>
 			</div>
-			<div id="ltitool_byexisting" class="subform">`;
+			<div id="ltitool_byexisting" class="subform selected">`;
 
 		form += `</div>
-			<div id="ltitool_bynew" class="subform">
+			<div id="ltitool_bynew" class="subform" style="display: none;">
 
 			<p><label for="ltitool_name">Name</label><input id="ltitool_name" type="text" name="ltitool_name"></p>
 			<p><label for="ltitool_description">Description</label><input id="ltitool_description" type="text" name="ltitool_description"></p>
@@ -41,7 +43,14 @@ var LTIToolPainter = {
 		this.loadToolList(function(){});
 
 
-		return form;
+		callback(null, form);
+	},
+	
+	getEditExtraForm: function () {
+		return "";
+	},
+
+	updateInputEditExtraForm(activity) {
 	},
 
 	loadToolList: function(callback){
@@ -53,15 +62,13 @@ var LTIToolPainter = {
 			if(this.tools.length > 0){
 				form += '<select id="lti_tool_id" name="existingid" style="width: 87%">';
 				for (var i = 0; i < this.tools.length; i++) {
-					form += `<option value="${this.tools[i]._id}">${this.tools[i].name}</option>`;
+					form += `<option value="${this.tools[i]._id}">${this.tools[i].session_name}</option>`;
 				}
 
 				form += '</select><a style="width: 10%" class="button red" onclick="LTIToolPainter.deleteSelectedLtiTool()">X</a>';
 			}else{
 				form += '<p>No tools available. Create a new one.</p>'
 			}
-
-			console.log(form);
 
 			$('#ltitool_byexisting').html(form);
 
@@ -77,7 +84,7 @@ var LTIToolPainter = {
 		let method = $('#new_activity_extras .tab.selected').attr('method');
 
 		activity.name = formdata.name;
-		activity.type = this.supportedType;
+		activity.activity_type = this.supportedType;
 
 		switch(method){
 			case 'byexisting':
@@ -93,52 +100,46 @@ var LTIToolPainter = {
 		}
 	},
 
-	fullyPaintActivity: function(activity){
-		this.paintActivity(activity, participants);
-		let tmp = this;
+	extractEditInformation: function(form, actualActivity, callback){
+		let jform = $(form);
+		let formdata = Utils.getFormData(jform);
+		let activity = {};
 
-		this.updateParticipants(activity);
-		setInterval(function(){
-			tmp.updateParticipants(activity);
-		}, 5000);
+		if(actualActivity.activity_name !== formdata.name) {
+			activity.name = formdata.name;
+		}
+		callback(null, activity);
 	},
 
-	updateParticipants: function(activity){
-		let tmp = this;
-		activity.tmp = {};
+	fullyPaintActivity: function(activity, participants){
+		this.paintActivity(activity, participants);
+		this.updateParticipants(activity, participants);
+	},
 
-		Simva.getActivityCompletion(activity._id, function(error, result){
-			activity.tmp.completion = result;
-			tmp.paintActivityCompletion(activity, result);
-		});
-
-		Simva.getActivityResult(activity._id, function(error, result){
-			activity.tmp.result = result;
-			tmp.paintActivityResult(activity, result);
-		});
-
-		Simva.getActivityTarget(activity._id, function(error, result){
-			activity.tmp.result = result;
-			tmp.paintActivityTargets(activity, result);
-		});
+	updateParticipants: function(activity, participants){
+		PainterFactory.Painters["activity"].paintActivityCompletion(activity, activity.data.completion, true, participants);
+		PainterFactory.Painters["activity"].paintActivityResult(activity, activity.data.result, "true", participants);
+		if(activity.data.openable){
+			PainterFactory.Painters["activity"].paintActivityTargets(activity, activity.data.target, participants);
+		}
 	},
 
 	paintActivity: function(activity, participants){
 		let tool = { name: 'Not found' };
 		for (var i = 0; i < this.utils.tools.length; i++) {
-			if(this.utils.tools[i]._id === activity.extra_data.tool){
+			if(this.utils.tools[i]._id === activity.tool){
 				tool = this.utils.tools[i];
 				break;
 			}
 		}
 
-		$(`#test_${activity.test} .activities`).append(`<div id="activity_${activity._id}" class="activity t${activity.type}">
-			<div class="top"><h4>${activity.name}</h4>
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}')"></div>
-			<p class="subtitle">${this.simpleName}</p>
+		const topBar = PainterFactory.Painters['activity'].paintActivityTopBar.call(this, activity, '');
+		$(`#test_${activity.session_id} .activities`).append(`<div id="activity_${activity.activity_id}" class="activity t${activity.activity_type}">
+			${topBar}
+			<p class="subtitle" title="${this.description || ''}">${this.simple_name}</p>
 			<p>Tool ClientID: ${tool.client_id}</p>
-			<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>
-			<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>
+			<div id="completion_progress_${activity.activity_id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>
+			<div id="result_progress_${activity.activity_id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>
 			${this.paintActivityParticipantsTable(activity, participants)}</div>`);
 	},
 
@@ -146,14 +147,10 @@ var LTIToolPainter = {
 		let toret = '<table><tr><th>User</th><th>Completed</th><th>Result</th></tr>';
 
 		for (var i = 0; i < participants.length; i++) {
-			if(!AllocatorFactory.Painters[allocator.type].isAllocatedToActivity(participants[i].username, activity)){
-				continue;
-			}
-			
-			toret += `<tr><td><a id="${activity._id}_${participants[i].username}_target"class="targeturl" 
-			target="_blank" href="">${participants[i].username}</a></td>
-			<td id="completion_${activity._id}_${participants[i].username}">---</td>
-			<td id="result_${activity._id}_${participants[i].username}">---</td>`;
+			const participantKey = PainterFactory.Painters["activity"].getParticipantKey(participants[i]);
+			toret += `<tr><td>${PainterFactory.Painters["activity"].paintUsernameOrToken(activity, participants[i])}</td>`;
+			toret += `<td id="completion_${activity.activity_id}_${participantKey}">---</td>
+			<td id="result_${activity.activity_id}_${participantKey}">---</td>`;
 		}
 
 		toret += '</table>';
@@ -161,46 +158,54 @@ var LTIToolPainter = {
 		return toret;
 	},
 
-	paintActivityCompletion: function(activity, status){
-		let usernames = Object.keys(status);
+	paintActivityCompletion: function(activity, status, participants=[]){
+		let total = participants.length;
+		if(!status) {
+			return;
+		}
 
 		let done = 0;
 
-		for (var i = 0; i < usernames.length; i++) {
-			if(status[usernames[i]]){
+		for (var i = 0; i < participants.length; i++) {
+			const participantKey = PainterFactory.Painters["activity"].getParticipantKey(participants[i]);
+			if(status[participantKey]){
 				done++;
 			}
 
-			let completion = `<span>${status[usernames[i]]}</span>`
-			$(`#completion_${activity._id}_${usernames[i]}`).removeClass();
-			$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
-			$(`#completion_${activity._id}_${usernames[i]}`).empty();
-			$(`#completion_${activity._id}_${usernames[i]}`).append(completion);
+			let completion = `<span>${status[participantKey]}</span>`
+			$(`#completion_${activity.activity_id}_${participantKey}`).removeClass();
+			$(`#completion_${activity.activity_id}_${participantKey}`).addClass(!status[participantKey] ? 'red' : 'green');
+			$(`#completion_${activity.activity_id}_${participantKey}`).empty();
+			$(`#completion_${activity.activity_id}_${participantKey}`).append(completion);
 		}
 
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
+		let progress = Math.round((done / total) * 1000) / 10; 
 
 		if(isNaN(progress)){
 			progress = 0;
 		}
 
-		$(`#completion_progress_${activity._id} .done`).css('width', `${progress}%` );
-		$(`#completion_progress_${activity._id} done`).text(progress);
+		$(`#completion_progress_${activity.activity_id} .done`).css('width', `${progress}%` );
+		$(`#completion_progress_${activity.activity_id} done`).text(progress);
 	},
 
-	paintActivityResult: function(activity, results){
-		let usernames = Object.keys(results);
+	paintActivityResult: function(activity, results, participants=[]){
+		let total = participants.length;
+		if(!results) {
+			return;
+		}
 
 		let done = 0, partial = 0;
 		
-		for (var i = 0; i < usernames.length; i++) {
+		for (var i = 0; i < participants.length; i++) {
+			const participantKey = PainterFactory.Painters["activity"].getParticipantKey(participants[i]);
 
 			let color = 'red';
 			let state = 'No Results';
 
-			if(results[usernames[i]]){
+			if(results[participantKey]){
 				partial++;
-				if(results[usernames[i]].submitdate){
+				if(results[participantKey].submitdate){
 					color = 'green';
 					state = 'Completed';
 					done++;
@@ -209,18 +214,18 @@ var LTIToolPainter = {
 					state = 'Started';
 				}
 
-				state =`<a onclick="LTIToolPainter.openResults('${activity._id}','${usernames[i]}')">${state}</a>`
+				state =`<a onclick="LTIToolPainter.openResults('${activity.activity_id}','${participantKey}')">${state}</a>`
 			}
 
 			let completion = `<span>${state}</span>`
-			$(`#result_${activity._id}_${usernames[i]}`).removeClass();
-			$(`#result_${activity._id}_${usernames[i]}`).addClass(color);
-			$(`#result_${activity._id}_${usernames[i]}`).empty();
-			$(`#result_${activity._id}_${usernames[i]}`).append(completion);
+			$(`#result_${activity.activity_id}_${participantKey}`).removeClass();
+			$(`#result_${activity.activity_id}_${participantKey}`).addClass(color);
+			$(`#result_${activity.activity_id}_${participantKey}`).empty();
+			$(`#result_${activity.activity_id}_${participantKey}`).append(completion);
 		}
 
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
-		let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
+		let progress = Math.round((done / total) * 1000) / 10; 
+		let partialprogress = Math.round((partial / total) * 1000) / 10;
 
 		if(isNaN(progress)){
 			progress = 0;
@@ -229,20 +234,10 @@ var LTIToolPainter = {
 			partialprogress = 0;
 		}
 
-		$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
-		$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
-		$(`#result_progress_${activity._id} done`).text(progress);
-		$(`#result_progress_${activity._id} partial`).text(partialprogress);
-	},
-
-	paintActivityTargets: function(activity, results){
-		let usernames = Object.keys(results);
-
-		let done = 0, partial = 0;
-		
-		for (var i = 0; i < usernames.length; i++) {
-			$(`#${activity._id}_${usernames[i]}_target`).attr('href', results[usernames[i]]);
-		}
+		$(`#result_progress_${activity.activity_id} .done`).css('width', `${progress}%` );
+		$(`#result_progress_${activity.activity_id} .partial`).css('width', `${partialprogress}%` );
+		$(`#result_progress_${activity.activity_id} done`).text(progress);
+		$(`#result_progress_${activity.activity_id} partial`).text(partialprogress);
 	},
 
 	openResults: function(activity, user){
@@ -256,11 +251,7 @@ var LTIToolPainter = {
 					stack: false
 				});
 			}else{
-				let content = `<div style="padding: 20px;">${JSON.stringify(result[user], null, 2)}</div>`;
-				let context = $('#iframe_floating iframe')[0].contentWindow.document;
-				let body = $('body', context);
-				body.html(content);
-				toggleAddForm('iframe_floating');
+				Utils.openResultContent(result[user], 'Error loading the result');
 			}
 		})
 	},
@@ -298,7 +289,7 @@ var LTIToolPainter = {
 					$('#ltitool_jwks_uri').val('');
 					$('#ltitool_login_uri').val('');
 					$('#ltitool_redirect_uri').val('');
-					changeTab($('#ltitoolpainter_tab_byexising'), 'new_activity_extras','ltitool_byexisting');
+					Utils.changeTab($('#ltitoolpainter_tab_byexising'), 'new_activity_extras','ltitool_byexisting');
 				});
 			}
 		});

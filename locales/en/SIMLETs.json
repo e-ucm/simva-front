@@ -1,0 +1,78 @@
+{ 
+    "title": "SIMLETs",
+    "description": "SIMLETs are the core of SIMVA, allowing you to create and manage your own simulations. A SIMLET is a container for all the elements of a simulation, including sessions, activities, users, and groups. You can create new SIMLETs, edit existing ones, archive those you no longer need, and manage their settings and content.",
+    "archived.title": "Archived SIMLETs",
+    "archived.description": "List of SIMLETs that have been archived. You can dearchive them to make them active again.",
+    "no_simlets.message": "You have no SIMLETs yet. Create one using the button on the bottom right (+)",
+    "no_archived.message": "There are no archived SIMLETS",
+
+    "card.createdAt": "Created at",
+    "card.updatedAt": "Updated at",
+    "card.sessions": "Sessions",
+    "card.groups": "Groups",
+    "card.users": "Users",
+    "card.tags": "Tags",
+
+    "add.title": "Add SIMLET",
+        "new.tab": "Add new",
+        "new.submit": "Create SIMLET",
+
+        "import.tab": "Import from existing",
+            "import.input": "Select exported SIMLET file",
+            "import.upload.error": "Select the file to upload first",
+            "import.submit": "Import SIMLET",
+    
+    "settings.edit.title": "Edit",
+        "edit.title": "Edit SIMLET",
+        "edit.submit": "Edit SIMLET",
+
+    "name.title": "Name",
+    "name.placeholder": "SIMLET name",
+    "description.title": "Description",
+    "description.placeholder": "SIMLET desciption",
+    
+    "settings.url.title": "URL settings",
+        "scheduler.shlink.generate.title": "Generate reduced URL for Scheduler",
+        "scheduler.shlink.generate.randomly_length.title": "Randomly generated",
+        "scheduler.shlink.generate.randomly_length.message": "With a length of: ",
+        "scheduler.shlink.generate.custom_slug.title": "Use a custom slug",
+        "scheduler.shlink.generate.submit": "Generate",
+        "scheduler.shlink.message": "Copy short URL: {{shlink}}",
+        "scheduler.shlink.custom_slug.placeholder": "Custom slug",
+        "scheduler.shlink.delete.title": "Delete Scheduler Shlink URL",
+        "scheduler.shlink.delete.confirm": "Are you sure you want to delete the short link '{{shlink}}' from SIMLET '{{SIMLET}}'?",
+        
+    "settings.download.title": "Download config",
+        "config.download.simlet": "Export SIMLET to .json",
+        "config.download.uadventure": "Download uAdventure config",
+        
+    "settings.archive.title": "Archive",
+        "archive.confirm": "Are you sure you want to archive the SIMLET '{{SIMLET}}'?\nThis action can't be reverted and the SIMLET will move to the archived tab ",
+    "settings.dearchive.title": "Dearchive",
+
+    "settings.delete.title": "Delete",
+        "delete.confirm": "Are you sure you want to delete the SIMLET '{{SIMLET}}'?\nAll the Sessions, activities and data will be deleted too",
+
+    "edit.no_changes.message": "No changes detected!",
+
+    "single.title": "SIMLET",
+        "single.description": "General information and settings for the selected SIMLET",
+        "sessions.tab.description": "Manage sessions in this SIMLET: create, edit, monitor activity progress, and download session data",
+        "users.tab.description": "Manage users, groups, coordinators, and related assignments in this SIMLET",
+        "sessions.download.description": "Download all available data for this session, including activity data",
+        "simlets.description": "List of SIMLETs available to you and quick access to create, edit, archive, or remove them",
+        "sessions.tab.title": "Sessions",
+        "users.tab.title": "Users",
+
+    "tester.play.title": "Play SIMLET as tester",
+    "tester.play.description": "Play the SIMLET as a tester to experience it as a participant would. This allows you to verify that the activities and flow are working as intended before sharing it with others.",
+    "play.title": "Play SIMLET",
+    "play.description": "Play to participate in a SIMLET",
+
+    "scheduler.noSIMLET.title": "You have no SIMLETs yet to participate",
+    "scheduler.title": "Click here to start or continue your session in the SIMLET",
+    "scheduler.current": "Current Activity: ",
+    "scheduler.refresh": "Refresh Page to Continue SIMLET",
+    "scheduler.complete": "Complete Activity",
+    "scheduler.exit": "Exit SIMLET"
+}
