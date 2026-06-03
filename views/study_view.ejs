@@ -5,324 +5,78 @@
 <!--<div id="roller" style="width: 100%; text-align: center; padding: 200px;">
 	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 </div>-->
-<h1><%- t('single.title', { ns : 'studies' }) %>: <span id="study_name"></span></h1><input class="yellow" type="button" value="<%- t('name.edit.title', { ns : 'studies' }) %>" onclick="openEditStudyForm('<%= study %>')">
-
-<input class="blue" type="button" value="<%- t('scheduler.shlink.generate.title', { ns : 'studies' }) %>" id="generate_shlink_url" onclick="openGenerateLinkForm()" style="visibility: hidden;"><a class="button green" id="shlink_url" onclick="copyShortURL()" style="visibility: hidden;"><span id="shlink_url_short"></span></a></h3><input class="red" type="button" value="<%- t('scheduler.shlink.delete.title', { ns : 'studies' }) %>" id="delete_shlink_url" onclick="deleteShLink()"  style="visibility: hidden;">
-
-<div id="study">
-	<div class="left">
-		<div class="graybox owners">
-			<table id="active">
-			</table>
-			<input class="violet" type="button" id="activation" value="" onclick="setActive()">
-		</div>
-
-		<div class="graybox owners">
-			<h2><%- t('owners.title', { ns : 'studies' }) %></h2>
-			<p></p>
-			<table id="owners">
-			</table>
-			<input class="violet" type="button" value="<%- t('owners.add.title', { ns : 'studies' }) %>" onclick="Utils.toggleAddForm('add_owner')">
-		</div>
-
-		<div class="graybox groups">
-			<h2><%- t('groups.title', { ns : 'studies' }) %></h2>
-			<p></p>
-			<table id="groups">
-			</table>
-			<input class="violet" type="button" value="<%- t('groups.add.title', { ns : 'studies' }) %>" onclick="Utils.toggleAddForm('add_group')">
-		</div>
-
-		<div class="graybox allocator default">
-			<h2><%- t('allocator.title', { ns : 'studies' }) %></h2> 
-			<span class="edit"><img src="/icon/gear.png" onclick="Utils.toggleAddForm('change_allocator')"></span>
-			<div id="allocator_content">
-				
-			</div>
-		</div>
-		<% if(config.lti.enabled == 'true'){ %>
-		<div class="graybox lti_platforms default">
-			<h2><%- t('lti_platform.title', { ns : 'studies' }) %></h2>
-			<p></p>
-			<table id="lti_platforms">
-			</table>
-			<input class="violet" type="button" value="<%- t('lti_platform.add.title', { ns : 'studies' }) %>" onclick="Utils.toggleAddForm('add_platform')">
-		</div>
-		<% } %>
-	</div>
-	<div class="card">
-		<div class="top">
-			<h2><%- t('tests.title', { ns : 'studies' }) %></h2>
-			<input class="violet" type="button" value="<%- t('tests.add.title', { ns : 'studies' }) %>" onclick="Utils.toggleAddForm('add_test')">
-		</div>
-		<div id="tests" class="tests">
-		</div>
-	</div>
-</div>
-<div id="add_group" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<div id="add_group_tab" class="subform selected">
-				<h2><%- t('groups.add.title', { ns : 'studies' }) %></h2>
-				<form id="add_group_form">
-					<select id="group_select" name="group">
-					</select>
-					<input type="submit" value="<%- t('groups.add.title', { ns : 'studies' }) %>">
-					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<span class="error"></span>
-				</form>
-			</div>
+<div class="simletTop">
+	<h1 title="<%- t('single.description', { ns : 'SIMLETs' }) %>"><%- t('single.title', { ns : 'SIMLETs' }) %>: <span id="simlet_name"></span></h1>
+	<div class="simletSettings">
+		<div class="kebab">
+			
 		</div>
 	</div>
 </div>
 
-<div id="add_platform" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<div id="add_platform_tab" class="subform selected">
-				<h2><%- t('lti_platforms.add.title', { ns : 'studies' }) %></h2>
-				<form id="add_platform_form">
-					<p><%- t('lti_platforms.add.name.title', { ns : 'studies' }) %>:</p>
-					<input type="text" name="name" placeholder="imsglobal">
-					<p><%- t('lti_platforms.add.url.title', { ns : 'studies' }) %>:</p>
-					<input type="text" name="url" placeholder="https://lti-ri.imsglobal.org/platforms/2056">
-					<p><%- t('lti_platforms.add.client_id.title', { ns : 'studies' }) %>:</p>
-					<input type="text" name="clientId" placeholder="lti-test">
-					<p><%- t('lti_platforms.add.authentication_endpoint.title', { ns : 'studies' }) %>:</p>
-					<input type="text" name="authenticationEndpoint" placeholder="https://lti-ri.imsglobal.org/platforms/2056/authorizations/new">
-					<p><%- t('lti_platforms.add.accesstoken_endpoint.title', { ns : 'studies' }) %>Accesstoken Endpoint:</p>
-					<input type="text" name="accesstokenEndpoint" placeholder="https://lti-ri.imsglobal.org/platforms/2056/access_tokens">
-					<p><%- t('lti_platforms.add.jkws_url.title', { ns : 'studies' }) %>:</p>
-					<input type="text" name="jkwsUrl" placeholder="https://lti-ri.imsglobal.org/platforms/2056/platform_keys/1952.json">
+<%- include('partials/simlet_commons') %>
 
-					<input type="submit" value="<%- t('lti_platforms.add.title', { ns : 'studies' }) %>">
-					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<span class="error"></span>
-				</form>
-			</div>
-		</div>
+<div id="study_tabs">
+	<div class="tabs studyTabsButtons">
+		<input class="tab yellow selected" type="button" title="<%- t('sessions.tab.description', { ns : 'SIMLETs' }) %>" onclick="Utils.changeTab(this, 'study_tabs','sessions_tab')" value="<%- t('sessions.tab.title', { ns : 'SIMLETs' }) %>">
+		<input class="tab yellow" type="button" title="<%- t('users.tab.description', { ns : 'SIMLETs' }) %>" onclick="Utils.changeTab(this, 'study_tabs','users_tab')" value="<%- t('users.tab.title', { ns : 'SIMLETs' }) %>">
 	</div>
-</div>
+	
+	<div id="sessions_tab" class="subform studyTab selected">
+		
+		<%- include('partials/simlet_sessions') %>
+		<%- include('partials/simlet_activities') %>
+		
+		<div id="download_data_menu" class="new_element floating">
+			<div class="floater">
+				<div class="form" id="download_data_form">
+					<h1 id="downloadFormTitle">	</h1>
+					<div id="download_session_data" class="subform selected">
+						<!-- onClick functions declared on simlet_sessions.ejs -->
+						<input class="yellow" type="button" value="<%- t('download.session.title', { ns : 'sessions' }) %>" onclick="downloadSessionData()">
+						<input class="yellow" id="session_test_data_download" type="button" title="<%- t('download.test.description', { ns : 'sessions' }) %>" value="<%- t('download.test.title', { ns : 'sessions' }) %>" onclick="downloadSessionTestData()">
+					</div>
 
-<div id="change_allocator" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<h2><%- t('allocator.change.title', { ns : 'studies' }) %></h2>
-			<form id="change_allocator_form">
-				<div id="change_allocator_content">
+					<div id="download_activity_data" class="subform">
+						<!-- onClick functions declared on simlet_activities.ejs -->
+						<input class="yellow" type="button" value="<%- t('download.activity.title', { ns : 'activities' }) %>" onclick="downloadActivityData()">
+						<input class="yellow" id="activity_test_data_download" type="button" title="<%- t('download.test.description', { ns : 'activities' }) %>" value="<%- t('download.test.title', { ns : 'sessions' }) %>" onclick="downloadActivityTestData()">
+						<input class="yellow" id="xasu_download" type="button" value="<%- t('download.xasu.title', { ns : 'activities' }) %>" onclick="downloadActivityXasuConfig()">
+						<input class="yellow" id="backup_download" type="button" value="<%- t('download.backup.title', { ns : 'activities' }) %>" onclick="downloadActivityBackup()">
+					</div>
 				</div>
-				<input type="button" value="<%- t('allocator.change.submit', { ns : 'studies' }) %>" onclick="changeAllocator()">
-				<span class="error"></span>
-			</form>
-		</div>
-	</div>
-</div>
-
-<div id="edit_allocator" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<h2 id="edit_allocator_title"></h2>
-			<form id="edit_allocator_form">
-				<div id="edit_allocator_content">
-				</div>
-				<span class="error"></span>
-			</form>
-		</div>
-	</div>
-</div>
-
-<div id="add_owner" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<div id="existing_owner_tab" class="subform selected">
-				<h2><%- t('owners.add.title', { ns : 'studies' }) %></h2>
-				<form id="existing_owner_form">
-					<input type="text" name="name" placeholder="<%- t('owners.placeholder', { ns : 'studies' }) %>" required>
-					<input type="submit" value="<%- t('owners.add.title', { ns : 'studies' }) %>">
-					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<span class="error"></span>
-				</form>
 			</div>
 		</div>
 	</div>
-</div>
 
-<div id="add_test" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<div id="add_test_tab" class="subform selected">
-				<h2><%- t('tests.add.title', { ns : 'studies' }) %></h2>
-				<form id="add_test_form">
-					<input type="text" name="name" placeholder="<%- t('tests.placeholder', { ns : 'studies' }) %>" required>
-					<input type="submit" value="<%- t('tests.add.title', { ns : 'studies' }) %>">
-					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<span class="error"></span>
-				</form>
-			</div>
-		</div>
+	<div id="users_tab" class="subform studyTab" style="display: none;">
+		
+		<%- include('partials/simlet_users') %>
+		
 	</div>
 </div>
 
 
-<div id="edit_study" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<div id="edit_study_tab" class="subform selected">
-				<h2><%- t('name.edit.title', { ns : 'studies' }) %></h2>
-				<form id="edit_study_form">
-					<input hidden type="text" name="study">
-					<input hidden type="text" name="studyName">
-					<input type="text" name="name" id="edit_study_name" placeholder="<%- t('name.placeholder', { ns : 'studies' }) %>" required>
-					<input type="submit" value="<%- t('name.edit.title', { ns : 'studies' }) %>">
-					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<span class="error" id="edit_study_error"></span>
-				</form>
-			</div>
-		</div>
-	</div>
+<div id="pdf_printable">
+	<h3 id="printable_group_name">	</h3>
+	<table id="printable_table">
+		<thead>
+			<th style="width: 6%;"><%- t('print_table.number_col.title', { ns : 'groups' }) %></th>
+			<th style="width: 46%;"><%- t('print_table.name_col.title', { ns : 'groups' }) %></th>
+			<th style="width: 46%;" colspan="4"><%- t('print_table.code_col.title', { ns : 'groups' }) %></th>
+		</thead>
+		<tbody>
+
+		</tbody>
+	</table>
 </div>
 
-<div id="generate_study_link" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<h2><%- t('scheduler.shlink.generate.title', { ns : 'studies' }) %></h2>
-			<div class="tabs">
-				<span class="tab selected" type="hidden" onclick="changeTab(this, 'generate_study_link','generate_study_link_length_tab')"><%- t('scheduler.shlink.generate.randomly_length.title', { ns : 'studies' }) %></span>
-				<span class="tab" onclick="changeTab(this, 'generate_study_link','generate_study_custom_slug_link_tab')"><%- t('scheduler.shlink.generate.custom_slug.title', { ns : 'studies' }) %></span>
-			</div>
-			<div id="generate_study_custom_slug_link_tab" class="subform">
-				<form id="generate_study_custom_slug_link_form">
-					<h3><%- t('scheduler.shlink.generate.custom_slug.title', { ns : 'studies' }) %></h3>
-					<input hidden type="text" name="study">
-					<input type="text" name="custom_slug" id="custom_slug_shlink" placeholder="<%- t('scheduler.shlink.custom_slug.placeholder', { ns : 'studies' }) %>" required>
-					<input type="submit" value="<%- t('scheduler.shlink.generate.submit', { ns : 'studies' }) %>">
-					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<span class="error" id="generate_link_custom_slug_error"></span>
-				</form>
-			</div>
-			<div id="generate_study_link_length_tab" class="subform selected">
-				<form id="generate_study_link_length_form">
-					<h3><%- t('scheduler.shlink.generate.randomly_length.title', { ns : 'studies' }) %></h3>
-					<input hidden type="text" name="study">
-					<p><%- t('scheduler.shlink.generate.randomly_length.message', { ns : 'studies' }) %></p>
-					<input type="number" step=1 min=4 name="link_length_shlink" id="link_length_shlink" onchange="this.value = Math.max(4, parseInt(this.value));" value=4 required>
-					<input type="submit" value="<%- t('scheduler.shlink.generate.submit', { ns : 'studies' }) %>">
-					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<span class="error" id="generate_link_error"></span>
-				</form>
-			</div>
-		</div>
-	</div>
-</div>
-
-<div id="edit_test" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<div id="edit_test_tab" class="subform selected">
-				<h2><%- t('tests.edit.title', { ns : 'studies' }) %></h2>
-				<form id="edit_test_form">
-					<input hidden type="text" name="test">
-					<input hidden type="text" name="testName">
-					<input type="text" name="name" id="edit_test_name" placeholder="<%- t('tests.placeholder', { ns : 'studies' }) %>" required>
-					<input type="submit" value="<%- t('tests.edit.title', { ns : 'studies' }) %>">
-					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<span class="error" id="edit_test_error"></span>
-				</form>
-			</div>
-		</div>
-	</div>
-</div>
-
-<div id="duplicate_test" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<div id="duplicate_test_tab" class="subform selected">
-				<h2><%- t('tests.duplicate.title', { ns : 'studies' }) %></h2>
-				<form id="duplicate_test_form">
-					<input hidden type="text" name="test">
-					<input hidden type="text" name="testName">
-					<input type="text" name="name" id="duplicate_test_name" placeholder="<%- t('tests.placeholder', { ns : 'studies' }) %>" required>
-					<input type="submit" value="<%- t('tests.duplicate.title', { ns : 'studies' }) %>">
-					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<span class="error" id="duplicate_test_error"></span>
-				</form>
-			</div>
-		</div>
-	</div>
-</div>
-
-<div id="add_activity" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<div class="tabs">
-				<span class="tab selected" onclick="changeTab(this, 'add_activity','new_activity_tab')"><%- t('activities.add.new.title', { ns : 'studies' }) %></span>
-				<span class="tab" type="hidden" onclick="changeTab(this, 'add_activity','existing_activity_tab')"><%- t('activities.add.existing.title', { ns : 'studies' }) %></span>
-			</div>
-			<div id="new_activity_tab" class="subform selected">
-				<form id="new_activity_form">
-					<input type="hidden" name="test">
-					<input type="text" name="name" placeholder="<%- t('activities.placeholder', { ns : 'studies' }) %>" required>
-					<select name="type">
-					</select>
-					<fieldset id="new_activity_extras">
-					</fieldset>
-					<input type="submit" value="<%- t('activities.add.title', { ns : 'studies' }) %>">
-					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<span class="error"></span>
-				</form>
-			</div>
-			<div id="existing_activity_tab" class="subform">
-				<form id="existing_activity_form">
-					<input type="hidden" name="test">
-					<input type="text" name="name" placeholder="<%- t('activities.placeholder', { ns : 'studies' }) %>" required>
-					<select name="type">
-					</select>
-					<input disabled type="submit" value="<%- t('activities.add.title', { ns : 'studies' }) %> (Not enabled)">
-					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<span class="error"></span>
-				</form>
-			</div>
-		</div>
-	</div>
-</div>
-
-<div id="edit_activity" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<form id="edit_activity_form">
-				<input type="hidden" name="test">
-				<input type="hidden" name="activity">
-				<input id="edit_activity_type" type="hidden" name="type">
-				<input id="edit_activity_name" type="text" name="name" placeholder="<%- t('activities.placeholder', { ns : 'studies' }) %>" required>
-				</select>
-				<fieldset id="edit_activity_extras">
-				</fieldset>
-				<input type="submit" value="<%- t('activities.edit.title', { ns : 'studies' }) %>">
-				<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-				<span class="error" id="edit_activity_error"></span>
-			</form>
-		</div>
-	</div>
-</div>
-
-
-<div id="iframe_floating" class="new_element floating">
-	<div class="floater">
-		<iframe src=""></iframe>
-	</div>
-</div>
-
-<div class="floating_buttons">
-	<a unselectable="on" class="basic" onclick="downloadStudyConfig()"><img src="/config.jpg"></a>
-	<a unselectable="on" class="basic" onclick="downloadUAConfig()"><img src="/ua.png"></a>
-</div>
-
-
+<!-- SSE -->
 <script type="text/javascript">
-	if(true)  {
+	if (true)  {
 		// Create an instance of SSEClientManager
-		Simva.getStudyEventsPresignedUrl('<%= study %>', function(error, result){
-			if(!error) {
+		Simva.getStudyEventsPresignedUrl('<%= study %>', function(error, result) {
+			if (!error) {
 				const presignedUrl = result.url;
 				const sseClient = new SSEClientManager(presignedUrl);
 
@@ -337,15 +91,37 @@
 					console.log('Connection to SSE server established.');
 				});
 
+				const resolveParticipantKey = (activityId, data) => {
+					const candidates = [data.userId, data.user_id, data.participant_id, data.username, data.user]
+						.filter((candidate) => candidate !== undefined && candidate !== null)
+						.map((candidate) => String(candidate));
+
+					for (const candidate of candidates) {
+						if (
+							document.getElementById(`progress_${activityId}_${candidate}`) ||
+							document.getElementById(`completion_${activityId}_${candidate}`) ||
+							document.getElementById(`result_${activityId}_${candidate}`) ||
+							document.getElementById(`init_${activityId}_${candidate}`)
+						) {
+							return candidate;
+						}
+					}
+
+					return candidates[0];
+				};
+
 				// Handle custom event types from the server (if applicable)
 				// Example: You might send events like "activity_initialized" from the server
 				sseClient.triggerEvent('activity_initialized');
 				sseClient.on('activity_initialized', (data) => {
-					if(data.activityType == "gameplay") {
-						PainterFactory.Painters[data.activityType].updateActivityProgress(data.activityId, data.user, 0);
+					const activityType = data.activity_type;
+					const activityId = data.activity_id;
+					const participantKey = resolveParticipantKey(activityId, data);
+					if (activityType == "gameplay") {
+						PainterFactory.Painters[activityType].updateActivityProgress(activityId, participantKey, 0);
 					}
-					if(data.activityType == "limesurvey") {
-						PainterFactory.Painters[data.activityType].updateActivityResult(data.activityId, data.user, "Started");
+					if (activityType == "limesurvey") {
+						PainterFactory.Painters[activityType].updateActivityResult(activityId, participantKey, "Started");
 					}
 				});
 
@@ -353,11 +129,15 @@
 				// Example: You might send events like "activity_progressed" from the server
 				sseClient.triggerEvent('activity_progressed');
 				sseClient.on('activity_progressed', (data) => {
-					if(data.activityType == "gameplay") {
-						PainterFactory.Painters[data.activityType].updateActivityProgress(data.activityId, data.user, data.val);
+					const activityType = data.activity_type;
+					const activityId = data.activity_id;
+					const participantKey = resolveParticipantKey(activityId, data);
+					const val = data.progress ?? data.value;
+					if (activityType == "gameplay") {
+						PainterFactory.Painters[activityType].updateActivityProgress(activityId, participantKey, val);
 					}
-					if(data.activityType == "limesurvey") {
-						PainterFactory.Painters[data.activityType].updateActivityProgress(data.activityId, data.user, data.val);
+					if (activityType == "limesurvey") {
+						PainterFactory.Painters[activityType].updateActivityProgress(activityId, participantKey, val);
 					}
 				});
 
@@ -365,18 +145,22 @@
 				// Example: You might send events like "activity_completed" from the server
 				sseClient.triggerEvent('activity_completed');
 				sseClient.on('activity_completed', (data) => {
-					if(data.activityType == "gameplay") {
-						PainterFactory.Painters[data.activityType].updateActivityCompletion(data.activityId, data.user, data.status);
+					const activityType = data.activity_type;
+					const activityId = data.activity_id;
+					const participantKey = resolveParticipantKey(activityId, data);
+					const status = data.status ?? data.value ?? true;
+					if (activityType == "gameplay") {
+						PainterFactory.Painters[activityType].updateActivityCompletion(activityId, participantKey, status);
 					}
-					if(data.activityType == "manual") {
-						PainterFactory.Painters[data.activityType].updateActivityCompletion(data.activityId, data.user, data.status);
+					if (activityType == "manual") {
+						PainterFactory.Painters[activityType].updateActivityCompletion(activityId, participantKey, status);
 					}
-					if(data.activityType == "limesurvey") {
-						PainterFactory.Painters[data.activityType].updateActivityCompletion(data.activityId, data.user, "true");
-						PainterFactory.Painters[data.activityType].updateActivityResult(data.activityId, data.user, "Completed");
+					if (activityType == "limesurvey") {
+						PainterFactory.Painters[activityType].updateActivityCompletion(activityId, participantKey, status);
+						PainterFactory.Painters[activityType].updateActivityResult(activityId, participantKey, "Completed");
 					}
-					if(data.activityType == "activity") {
-						PainterFactory.Painters[data.activityType].updateActivityCompletion(data.activityId, data.user, data.status, true);
+					if (activityType == "activity") {
+						PainterFactory.Painters[activityType].updateActivityCompletion(activityId, participantKey, status, true);
 					}
 				});
 
@@ -389,7 +173,7 @@
 				sseClient.on('refresh_auth', (data) => {
 					console.debug('refresh_auth:', data);
 					Simva.refreshAuth((error, data) => {
-						if(error) {
+						if (error) {
 							console.error(error);
 						} else {
 							console.debug(data);
@@ -407,430 +191,154 @@
 		});
 	}
 </script>
-<script type="text/javascript">
+
+
+<script>
+	$(".content").addClass("floating");
+	
 	let studyid = "<%= study %>";
+	let currentUser = null;
 	let study = null, participants = null, tests = null, allocator = null, groups = null, platforms = null;
 	
+	const sessionDataIdKey = "sessionId"
+	const sessionDataNameKey = "sessionName"
+
+
+	// Menus
+
 	$(document).ready(function() {
-		let painters = Object.keys(PainterFactory.Painters);
-
-		Simva.getActivityTypes(function(error, activitytypes){
-			for (var i = 0; i < activitytypes.length; i++) {
-				if(PainterFactory.Painters[activitytypes[i].type]){
-					PainterFactory.Painters[activitytypes[i].type].setUtils(activitytypes[i].utils);
-					PainterFactory.Painters[activitytypes[i].type].simple_name = activitytypes[i].name;
-					PainterFactory.Painters[activitytypes[i].type].description = activitytypes[i].description;
-					PainterFactory.Painters[activitytypes[i].type].commun = activitytypes[i].commun;
-					PainterFactory.Painters[activitytypes[i].type].communSpecific = activitytypes[i].communSpecific;
-					PainterFactory.Painters[activitytypes[i].type].specific = activitytypes[i].specific;
-					//switch(activitytypes[i].type){
-					//	case 'rageminio':
-					//		break;
-					//	case 'miniokafka':
-					//		break;
-					//	case 'rageanalytics':
-					//		break;
-					//	case 'limesurvey':
-					//		break;
-					//	case 'gameplay':
-					//		break;
-					//	case 'activity':
-					//		break;
-					//	case 'manual':
-					//		break;
-					//	case 'ltitool':
-					//		break;
-					//	case 'imspackage':
-					//		break;
-					//	default:
-					//		break;
-					//}
-					let row = `<option value="${activitytypes[i].type}">${PainterFactory.Painters[activitytypes[i].type].simple_name}</option>`;
-					$('#new_activity_form select[name="type"]').append(row);
-				}
-			}
-			$('#new_activity_extras').append(`${PainterFactory.Painters["activity"].description}\n`);
-
-			Simva.getAllocatorTypes(function(error, allocatortypes){
-				for (var i = 0; i < allocatortypes.length; i++) {
-					if(AllocatorFactory.Painters[allocatortypes[i].type]){
-						AllocatorFactory.Painters[allocatortypes[i].type].simple_name = allocatortypes[i].name;
-						AllocatorFactory.Painters[allocatortypes[i].type].description = allocatortypes[i].description;
-						AllocatorFactory.Painters[allocatortypes[i].type].type_translated = allocatortypes[i].type_t;
-						AllocatorFactory.Painters[allocatortypes[i].type].add_message = allocatortypes[i].add_message;
-						AllocatorFactory.Painters[allocatortypes[i].type].add_error = allocatortypes[i].add_error;
-						AllocatorFactory.Painters[allocatortypes[i].type].type_title = allocatortypes[i].type_title;
-						AllocatorFactory.Painters[allocatortypes[i].type].participant_title = allocatortypes[i].participant_title;
-						AllocatorFactory.Painters[allocatortypes[i].type].test_title = allocatortypes[i].test_title;
-						AllocatorFactory.Painters[allocatortypes[i].type].add_title = allocatortypes[i].add_title;
-						let row = `<div class="row"><input type="radio" name="type" id="allocator_${allocatortypes[i].type}" value="${allocatortypes[i].type}"><label for="allocator_${allocatortypes[i].type}"><span class="name">${AllocatorFactory.Painters[allocatortypes[i].type].simple_name}</span><span class="description">${AllocatorFactory.Painters[allocatortypes[i].type].description}</span></label></div>`;
-						$('#change_allocator_content').append(row);
-					}
-				}
-				reloadStudy();
-			});
-		})
-
-		$('#new_activity_form select[name="type"]').on('change', function(event){
-			$('#new_activity_extras').empty();
-			$('#new_activity_extras').append(`${PainterFactory.Painters[$(this).val()].description}\n`);
-			PainterFactory.Painters[$(this).val()].getExtraForm((error, result) => {
-				console.log(result);
-				if(!error) {
-					$('#new_activity_extras').append(result);
-				}
-			});
-		});
-
-		$("#existing_owner_form").on('submit', function(event){
-			event.preventDefault();
-			let form = Utils.getFormData($("#existing_owner_form"));
-			let errorbox = $(this).find('.error');
-
-			for (var i = 0; i < study.owners.length; i++) {
-				if(study.owners[i] == form.name){
-					errorbox.text("<%- t('owners.error.already_in', { ns : 'studies' }) %>");
-					return false;
-				}
-			}
-
-			study.owners.push(form.name);
-
-			Simva.updateStudy(study, function(error, result){
-				if(error && error.responseJSON){
-					errorbox.text(error.responseJSON.message);
-				}else{
-					reloadStudy();
-					Utils.toggleAddForm('add_owner');
-				}
-			});
-
-			return false;
-		});
-
-		$("#add_group_form").on('submit', function(event){
-			event.preventDefault();
-			let form = Utils.getFormData($("#add_group_form"));
-			let errorbox = $(this).find('.error');
-
-			if(study.groups.indexOf(form.group) !== -1){
-				errorbox.text("<%- t('groups.error.already_in', { ns : 'studies' }) %>");
-			}else{
-				study.groups.push(form.group);
-				Simva.updateStudy(study, function(error, result){
-					if(error && error.responseJSON){
-						errorbox.text(error.responseJSON.message);
-					}else{
-						Utils.toggleAddForm('add_group');
-						reloadStudy();
-					}
-				});
-			}
-
-			return false;
-		});
-
-		$("#add_platform_form").on('submit', function(event){
-			event.preventDefault();
-			let form = Utils.getFormData($("#add_platform_form"));
-			let errorbox = $(this).find('.error');
-
-			let platform = {
-				url: form.url,
-				name: form.name,
-				clientId: form.clientId,
-				authenticationEndpoint: form.authenticationEndpoint,
-				accesstokenEndpoint: form.accesstokenEndpoint,
-				authConfig: { "method": "JWK_SET", "key": form.jkwsUrl },
-				studyId: studyid
-			}
-
-			Simva.addLtiPlatform(platform, function(error, result){
-				if(error && error.responseJSON){
-					errorbox.text(error.responseJSON.message);
-				}else{
-					Utils.toggleAddForm('add_platform');
-					reloadStudy();
-				}
-			});
-
-			return false;
-		});
+		refreshFunc = reloadStudy;
 		
-		$("#add_test_form").on('submit', function(event){
-			event.preventDefault();
-			let form = Utils.getFormData($("#add_test_form"));
-			let errorbox = $(this).find('.error');
-
-			Simva.addTestToStudy(studyid, form.name, function(error, result){
-				if(error && error.responseJSON){
-					errorbox.text(error.responseJSON.message);
-				}else{
-					Utils.toggleAddForm('add_test');
-					reloadStudy();
-				}
-			});
-
-			return false;
-		});
-
-		$("#duplicate_test_form").on('submit', function(event){
-			event.preventDefault();
-			let form = Utils.getFormData($("#duplicate_test_form"));
-			let errorbox = $(this).find('.error');
-
-			Simva.duplicateTestFromStudy(studyid, form.name, form.test, function(error, result){
-				if(error && error.responseJSON){
-					errorbox.text(error.responseJSON.message);
-				}else{
-					console.log(result);
-					Utils.toggleAddForm('duplicate_test');
-					reloadStudy();
-				}
-			});
-
-			return false;
-		});
-
-		$("#new_activity_form").on('submit', function(event){
-			event.preventDefault();
-			let currentform = this;
-			let form = Utils.getFormData($("#new_activity_form"));
-			Utils.toggleSubmit(currentform);
-			let errorbox = $(this).find('.error');
-
-			PainterFactory.Painters[form.type].extractInformation('#new_activity_form', function(error, activity){
-				if(error){
-					errorbox.text(error);
-				}else{
-					Simva.addActivityToTest(studyid, form.test, activity, function(error, result){
-						Utils.toggleSubmit(currentform);
-						if(error && error.responseJSON){
-							errorbox.text(error.responseJSON.message);
-						}else{
-							Utils.toggleAddForm('add_activity');
-							reloadStudy();
-						}
-					});
-				}
-			});
-
-			return false;
-		});
-
-		$("#edit_activity_form").on('submit', function(event){
-			event.preventDefault();
-			let currentform = this;
-			let form = Utils.getFormData($("#edit_activity_form"));
-			Utils.toggleSubmit(currentform);
-			let errorbox = $(this).find('.error');
-			let activities = tests.filter(item => 
-				item._id === form.test
-			)[0].completeActivities;
-			let activity = activities.filter(activity => 
-				activity._id === form.activity
-			)[0];
-			PainterFactory.Painters[form.type].extractEditInformation('#edit_activity_form', activity, function(error, updatedActivity){
-				if(error){
-					errorbox.text(error);
-				}else{
-					if(Object.keys(updatedActivity).length == 0) {
-						errorbox.text("No changes detected !");
-						Utils.toggleSubmit(currentform);
-					} else {
-						updatedActivity.id = form.activity;
-						Simva.updateActivity(updatedActivity, function(error, result){
-							Utils.toggleSubmit(currentform);
-							if(error && error.responseJSON){
-								errorbox.text(error.responseJSON.message);
-							}else{
-								Utils.toggleAddForm('edit_activity');
-								reloadStudy();
-							}
-						});
-					}
-				}
-			});
-			return false;
-		});
-
-		$("#edit_test_form").on('submit', function(event){
-			event.preventDefault();
-			let currentform = this;
-			let form = Utils.getFormData($("#edit_test_form"));
-			Utils.toggleSubmit(currentform);
-			let errorbox = $(this).find('.error');
-			if(form.name == form.testName) {
-				errorbox.text("<%- t('name.edit.no_change', { ns : 'studies' }) %>");
-				Utils.toggleSubmit(currentform);
+		Simva.getCurrentUser((error, user) => {
+			if(!error) {
+				currentUser = user;
 			} else {
-				var test = { id : form.test , name : form.name};
-				Simva.updateTest("<%= study %>", test, function(error, result){
-					Utils.toggleSubmit(currentform);
-					if(error && error.responseJSON){
-						errorbox.text(error.responseJSON.message);
-					}else{
-						Utils.toggleAddForm('edit_test');
-						reloadStudy();
-					}
-				});
+				console.error("Error fetching current user:", error);
+				currentUser = null;
+				// Optionally, display an error message to the user
+				alert("Error fetching user information. Some features may not work properly.");
+				//reloadStudy();
 			}
-			return false;
 		});
 
-		$("#edit_study_form").on('submit', function(event){
-			event.preventDefault();
-			let currentform = this;
-			let form = Utils.getFormData($("#edit_study_form"));
-			Utils.toggleSubmit(currentform);
-			let errorbox = $(this).find('.error');
-			if(form.name == form.studyName) {
-				errorbox.text("<%- t('name.edit.no_change', { ns : 'studies' }) %>");
-				Utils.toggleSubmit(currentform);
-			} else {
-				study.name = form.name;
-				Simva.updateStudy(study, function(error, result){	
-					Utils.toggleSubmit(currentform);
-					Utils.toggleAddForm('edit_study');
-					reloadStudy();
-				});
-			}
-			return false;
+		const kebab = $("#kebab_template .kebab-dropdown").clone();
+		$(".simletSettings .kebab").append(kebab);
+		kebab.find(".icon-edit").click(() => { openStudyForm(studyid) });
+		kebab.find(".icon-url").click(() => { openUrlSettingsForm(studyid, study.simlet_name) });
+		kebab.find(".icon-download").click(() => { openConfigDownloadForm(studyid, study.simlet_name) });
+		kebab.find(".icon-export").click(() => { exportSimlet(studyid) });
+		kebab.find(".icon-delete").click(() => { 
+			deleteStudy(studyid, study.simlet_name) 
+			location.reload();
 		});
-
-		$("#generate_study_link").on('submit', function(event){
-			event.preventDefault();
-			let currentform = this;
-			let errorbox = $(this).find('.error');
-			let url=`<%= config.simva.url %>/scheduler/${studyid}`;
-			let custom_slug=null;
-			let length=null;
-			let form = Utils.getFormData($("#generate_study_custom_slug_link_form"));
-			if(form.custom_slug != "") {
-				custom_slug=form.custom_slug;
-			} else {
-				form = Utils.getFormData($("#generate_study_link_length_form"));
-				if(form.link_length_shlink != "") {
-					length=form.link_length_shlink;
-				}
-			}
-			Utils.toggleSubmit(currentform);
-			
-			Simva.generateShlinkURL(url, "study", `scheduler_${studyid}`, custom_slug, length, (error, result) => {
-				if(!error) {
-					let shortUrl=result.shortUrl;
-					study.shlink=result;
-					study.shlink.domain="<%= config.shlink.apihost %>";
-					Simva.updateStudy(study, (error, result) => {
-						if(!error) {
-							// Copy the text inside the text field
-							navigator.clipboard.writeText(shortUrl);
-							// Alert Short URL
-							alert(shortUrl);
-							Utils.toggleSubmit(currentform);
-							Utils.toggleAddForm('generate_study_link');
-							reloadStudy();
-						} else {
-							errorbox.text(error);
-							Utils.toggleSubmit(currentform);
-						}
-					})
-				} else {
-					errorbox.text(error);
-					Utils.toggleSubmit(currentform);
-				}
-			});
-			return false;
-		});
+		$("#add_study_tabs").remove();
+		$("#import_study_tab").remove();
+	
 	});
 
-	copyShortURL = function(){
-		if(study.shlink) {
-			let shortUrl=study.shlink.shortUrl;
-			// Copy the text inside the text field
-			navigator.clipboard.writeText(shortUrl);
-			// Alert Short URL
-			alert(shortUrl);
+	const openStudyForm = function() {
+		Utils.toggleAddForm('study_form');
+
+		$('#study_form_error').text("");
+		$('#edit_study_id').val(studyid);
+		
+		$("#study_form_title").text("<%- t('edit.title', { ns : 'SIMLETs' }) %>")
+		$("#study_name_desc_submit").val("<%- t('edit.submit', { ns : 'SIMLETs' }) %>")
+
+		$('#prev_study_name').val(study.simlet_name);
+		$('#prev_study_description').val(study.simlet_description);
+		
+		$('#study_name').val(study.simlet_name);
+		$('#study_description').val(study.simlet_description);
+		
+	}
+
+
+	// Functionality
+
+	const getTestFromTestId = function(testId) {
+		for (let i = 0; i < tests.length; i++) {
+			let test = tests[i];
+			if (test.session_id === Number(testId)) {
+				return test;
+			}
+		}
+		return null;
+	}
+
+	const getActivityFromActivityId = function(activityId) {
+		for (let i = 0; i < tests.length; i++) {
+			let test = tests[i];
+			if (!test.completeActivities) {
+				continue;
+			}
+			for (let j = 0; j < test.completeActivities.length; j++) {
+				let activity = test.completeActivities[j];
+				if (activity.activity_id === Number(activityId)) {
+					return activity;
+				}
+			}
+		}
+		return null;
+	}
+
+	const getGroupFromGroupId = function (groupId) {
+		for (let i = 0; i < groups.length; i++) {
+			let group = groups[i];
+			if (group.group_id === groupId) {
+				return group;
+			}
+		}
+		return null;
+	} 
+
+	const getParticipantFromParticipantId = function(participantId) {
+		for (let i = 0; i < study.participants.length; i++) {
+			let participant = study.participants[i];
+			if (participant.user_id === participantId) {
+				return participant;
+			}
+		}
+		return null;
+	}
+
+	const getLatestCreatedSession = function() {
+		const sorted = tests.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+		return sorted[0];
+	}
+
+	const getLatestUpdatedSession = function() {
+		const sorted = tests.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+		return sorted[0];
+	}
+
+	const setActive = function(active) {
+		// TEST
+		// archiveStudy(studyid, study.simlet_name);
+		if(confirm(`<%- t('archive.confirm', { ns : 'SIMLETs', SIMLET : '${study.simlet_name}' }) %>`)){
+			Simva.updateStudy(studyid, { simlet_archived: active }, function(error, result) {
+				if (!error) {
+					reloadStudy();
+				}
+			});
 		}
 	}
-
-	deleteShLink = function(){
-		if(study.shlink) {
-			let shortCode=study.shlink.shortCode;
-			if(confirm(`<%- t('scheduler.shlink.delete.confirm', { ns : 'studies', shortCode : '${shortCode}', study : '${study.name}'  }) %>`)){
-				Simva.deleteShLink(shortCode, (error, result) => {
-					if(!error) {
-						study.shlink=null;
-						Simva.updateStudy(study, (error, result) => {
-							reloadStudy();
-						});
-					}
-				});
-			}
-			
-		}
-	}
-
-	let downloadUAConfig = function(){
-		var content = JSON.stringify({
-			study: study._id,
-			host: "<%= config.api.host %>",
-			protocol: "<%= config.api.protocol %>",
-			port: "<%= config.api.port %>",
-			url: "<%= config.simva.url %>",			
-			sso: "<%= config.sso.url %>/realms/<%= config.sso.realm %>/protocol/openid-connect", 
-    		client_id: "uadventure"
-		}, null, 2);
-
-		var filename = "simva.conf";
-
-		Utils.download(filename, content);
-	}
-
-	let downloadStudyConfig = function() {
-		Simva.exportStudyConfig(study._id, function(error, result) {
-			if(!error){
-				var studyExport = result;
-				var content = JSON.stringify(studyExport, null, 2);
-				var filename = `simva-${study.name}-export.json`;
-
-				Utils.download(filename, content);
-			}
-		})
-	}
-
-	let toggleAllocatorForm = function(){
-		$('#edit_allocator_title').html(AllocatorFactory.Painters[allocator.type].getFormTitle());
-		$('#edit_allocator_content').html(AllocatorFactory.Painters[allocator.type].getFormContent());
-		$('#edit_allocator').toggleClass('shown');
-	}
-
-	let toggleTest = function(id){
-		$(`#test_${id}`).find('.activities').toggleClass('collapsed');
-	}
-
-	let changeTab = function(tab, form, subform){
-		$(`#${form} .tab`).removeClass('selected');
-		$(`#${form} .subform`).removeClass('selected');
-		$(tab).toggleClass('selected');
-		$(`#${subform}`).toggleClass('selected');
-	}
-
-	let reloadStudy = function(){
-		Simva.getStudy(studyid, function(error, result){
-			if(!error){
+	
+	let reloadStudy = function() {
+		Simva.getStudy(studyid, function(error, result) {
+			if (!error) {
 				study = result;
 
 				let tocomplete = 6, done = 0;
-				let completed = function(){
+				let completed = function() {
 					done++
 
-					if(done === tocomplete){
+					if (done === tocomplete) {
 						paintStudy(study, participants, tests, allocator, groups, allgroups, platforms);
 					}
 				}
 
-				let errorhappened = function(error){
+				let errorhappened = function(error) {
 					// paint the errors
 				}
 
@@ -851,418 +359,83 @@
 				platforms = [];
 				completed();
 			} else {
-				window.location.href="/studies";
+				window.location.href="/simlets";
 			}
 		});
 	}
 
-	//let loadAddGroups = function(){
-	//	Simva.getGroups(function(error, result){
-	//		if(!error){
-	//			paintAddGroup(result);
-	//		}
-	//	});
-	//}
 
-	// Functionality
+	// Render
 
-	let deleteGroup = function(groupid, groupname){
-		if(confirm(`<%- t('groups.delete.confirm', { ns : 'studies', group : '${groupname}', study : '${study.name}' }) %>`)){
-			let toremove = -1;
-			for (var i = 0; i < study.groups.length; i++) {
-				if(study.groups[i] === groupid){
-					toremove = i;
-					break;
-				}
-			}
-
-			study.groups.splice(i, 1);
-
-			Simva.updateStudy(study, function(error, result){
-				reloadStudy();
-			});
-		}
-	}
-
-	let deletePlatform = function(platform){
-		if(confirm(`<%- t('lti_platform.delete.confirm', { ns : 'studies', platform : '${platform}', study : '${study.name}' }) %>`)){
-			Simva.removePlatform(platform, function(error, result){
-				reloadStudy();
-			});
-		}
-	}
-
-	let deleteOwner = function(owner){
-		if(confirm(`<%- t('owners.delete.confirm', { ns : 'studies', owner : '${owner}', study : '${study.name}' }) %>`)){
-			let toremove = -1;
-			for (var i = 0; i < study.owners.length; i++) {
-				if(study.owners[i] === owner){
-					toremove = i;
-					break;
-				}
-			}
-
-			study.owners.splice(i, 1);
-
-			Simva.updateStudy(study, function(error, result){
-				reloadStudy();
-			});
-		}
-	}
-
-	let deleteTest = function(testid, testName) {
-		if(confirm(`<%- t('tests.delete.confirm', { ns : 'studies', test : '${testName}', study : '${study.name}' }) %>`)){
-			let toremove = -1;
-			for (var i = 0; i < study.tests.length; i++) {
-				if(study.tests[i] === testid){
-					toremove = i;
-					break;
-				}
-			}
-
-			study.tests.splice(i, 1);
-
-			Simva.updateStudy(study, function(error, result){
-				reloadStudy();
-			});
-		}
-	}
-
-	let deleteActivity = function(activityid, activityname, testid){
-		let test=getTestFromTestId(testid);
-		if(confirm(`<%- t('activities.delete.confirm', { ns : 'studies', activity : '${activityname}', test: '${test}' , study : '${study.name}' }) %>`)){
-			Simva.deleteActivity(activityid, function(error, result){
-				reloadStudy();
-			});
-		}
-	}
-
-	let openActivityForm = function(test){
-		$('#add_activity').toggleClass('shown');
-		$('#add_activity input[name="test"]').val(test);
-	}
-
-	let openEditActivityForm = function(activityId){
-		document.getElementById("edit_activity_error").innerHTML = "";
-		let activity= getActivityFromActivityId(activityId);
-		var inputElement = document.getElementById('edit_activity_name');
-		inputElement.value = activity.name;
-		var inputElement = document.getElementById('edit_activity_type');
-		inputElement.value = activity.type;
-		$('#edit_activity_extras').empty();
-		$('#edit_activity_extras').append(`${PainterFactory.Painters[activity.type].description}\n`);
-		$('#edit_activity_extras').append(PainterFactory.Painters[activity.type].getEditExtraForm());
-		PainterFactory.Painters[activity.type].updateInputEditExtraForm(activity);
-		$('#edit_activity input[name="test"]').val(activity.test);
-		$('#edit_activity span[class="error"]').val("");
-		$('#edit_activity input[name="activity"]').val(activity._id);
-		$('#edit_activity').toggleClass('shown');
-	}
-
-	let openEditDuplicateForm = function(testId){
-		document.getElementById("duplicate_test_error").innerHTML = "";
-		var inputElement = document.getElementById('duplicate_test_name');
-		let test = getTestFromTestId(testId);
-		inputElement.value = test.name;
-		$('#duplicate_test').toggleClass('shown');
-		$('#duplicate_test input[name="test"]').val(test._id);
-		$('#duplicate_test span[class="error"]').val("");
-		$('#duplicate_test input[name="testName"]').val(test.name);
-	}
-
-	let getTestFromTestId = function(testId){
-		for(let i=0; i< tests.length; i++) {
-			let test=tests[i];
-			if(test._id == testId) {
-				return test;
-			}
-		}
-		return null;
-	}
-
-	let getActivityFromActivityId = function(activityId) {
-		for(let i=0; i< tests.length; i++) {
-			let test=tests[i];
-			for(let j=0; j< test.completeActivities.length; j++) {
-				let activity=test.completeActivities[j];
-				if(activity._id == activityId) {
-					return activity;
-				}
-			}
-		}
-		return null;
-	}
-
-	let openEditTestForm = function(testId){
-		document.getElementById("edit_test_error").innerHTML = "";
-		var inputElement = document.getElementById('edit_test_name');
-		let test = getTestFromTestId(testId);
-		inputElement.value = test.name;
-		$('#edit_test').toggleClass('shown');
-		$('#edit_test input[name="test"]').val(test._id);
-		$('#edit_test span[class="error"]').val("");
-		$('#edit_test input[name="testName"]').val(test.name);
-	}
-
-	let openEditStudyForm = function(studyId){
-		document.getElementById("edit_study_error").innerHTML = "";
-		var inputElement = document.getElementById('edit_study_name');
-		inputElement.value = study.name;
-		$('#edit_study').toggleClass('shown');
-		$('#edit_study input[name="study"]').val(study._id);
-		$('#edit_study input[name="studyName"]').val(study.name);
-	}
-
-	let openGenerateLinkForm = function() {
-		document.getElementById("generate_link_error").innerHTML = "";
-		document.getElementById("generate_link_custom_slug_error").innerHTML = "";
-		var inputElement = document.getElementById('generate_study_link');
-		$('#generate_study_link input[name="study"]').val(study._id);
-		if(study.shlink) {
-			if(study.shlink.custom_slug) {
-				$('#generate_study_link input[name="custom_slug_shlink"]').val(study.shlink.custom_slug);
-			}
-		}
-		$('#generate_study_link').toggleClass('shown');
-	}
-
-	// Main Paint functions
-
-	let paintStudy = function(study, participants, tests, allocator, groups, allgroups, platforms){
-		$('#study_name').text(study.name);
-
-		if(study.shlink) {
-			$('#generate_shlink_url').text("");
-			$('#shlink_url_short').text(`<%- t('scheduler.shlink.message', { ns : 'studies', shlink : '${study.shlink.shortUrl}' }) %>`);
-			document.getElementById("generate_shlink_url").style.visibility = "hidden";
-			document.getElementById("shlink_url").style.visibility = "visible";
-			document.getElementById("delete_shlink_url").style.visibility = "visible";
-		} else {
-			document.getElementById("generate_shlink_url").style.visibility = "visible";
-			document.getElementById("shlink_url").style.visibility = "hidden";
-			document.getElementById("delete_shlink_url").style.visibility = "hidden";
-		}
-
-		paintOwners(study.owners);
-
-		paintActive(study.active);
-
-		paintAllocator(allocator, tests, groups, participants);
-
-		paintGroups(groups);
-
-		paintAddGroup(allgroups);
-	
-		paintPlatforms(platforms);
-
-		let fullyPaintTest = function(test){
-			paintTest(test);
-
-			paintTestActivities(test, test.completeActivities, participants);
-			
+	let paintStudy = function(study, participants, tests, allocator, groups, allgroups, platforms) {
+		$('#simlet_name').text(study.simlet_name);
+		$("#simlet_tags").remove();
+		$(".simletTop").after($(renderTags(study)).attr("id", "simlet_tags"));
+		
+		paintArchived(!study.simlet_archived);
+		
+		let fullyPaintTest = function(test) {
+			const sessionParticipants = Array.isArray(test.completeParticipants) ? test.completeParticipants : [];
+			paintTest(test, test.completeActivities, sessionParticipants);
+			paintTestActivities(test, test.completeActivities, sessionParticipants);
 		}
 
 		$('#tests').empty();
-		if(tests.length === 0){
-			$('#tests').append("<p><%- t('tests.zero.message', { ns : 'studies' }) %></p>");
-		}else{
+		if (tests.length === 0) 
+		{
+			$('#tests').append("<p><%- t('no_sessions.message', { ns : 'sessions' }) %></p>");
+		} 
+		else {
 			for (var i = 0; i < tests.length; i++) {
 				fullyPaintTest(tests[i]);
 			}
-		}
-	}
-
-	let paintAddGroup = function(groups){
-		$('#group_select').empty('');
-		if(groups.length == 0){
-			$('#group_select').append("<p><%- t('groups.zero_existing.message', { ns : 'studies' }) %></p>");
-		}else{
-			for (var i = 0; i < groups.length; i++) {
-				$('#group_select').append(addGroupRow(groups[i]));
+			// Automatically expand the session if there's only one
+			if (tests.length == 1) {
+				toggleSession(tests[0].session_id);
 			}
 		}
+
+		paintOwners(study.direct_permissions);
+
+		paintGroups(groups, tests, participants);
+	
+		paintPlatforms(platforms);
 	}
 
-	let paintActive = function(active){
-		$('#active').html('');
-		if(active == null || active == "true") {
-			$('#active').append('<h2>Active</h2>');
-			document.getElementById("activation").value="Achivate"
-		} else {
-			$('#active').append('<h2>Archived</h2>');
-			document.getElementById("activation").value="Activate"
-		}
-	}
+	let paintArchived = function(active) {
+		let archiveButton = $(".archivationButton");
+		let txt = ""
+		if (active == null || active) {
+			txt = "<%- t('settings.archive.title', { ns : 'SIMLETs' }) %>"
+			$(".basic").show();
+			archiveButton.addClass('icon-archive');
+			archiveButton.removeClass('icon-dearchive');
 
-	let setActive = function(){
-		if(study.active == null || study.active == "true") { 
-			study.active = false;
-		} else {
-			study.active = true;
-		}
-		Simva.updateStudy(study, function(error, result){
-			if(!error) {
-				reloadStudy();
-			}
-		})
-	}
-
-	let paintOwners = function(owners){
-		$('#owners').html('');
-		for (var i = 0; i < owners.length; i++) {
-			$('#owners').append(ownerRow(owners[i]));
-		}
-	}
-
-	let paintGroups = function(groups){
-		$('#groups').html('');
-		if(groups.length == 0){
-			$('#groups').append("<p><%- t('groups.zero.message', { ns : 'studies' }) %></p>");
-		}else{
-			for (var i = 0; i < groups.length; i++) {
-				$('#groups').append(groupRow(groups[i]));
-			}
-		}
-	}
-
-	let paintPlatforms = function(platforms){
-		$('#lti_platforms').html('');
-		if(platforms.length == 0){
-			$('#lti_platforms').append("<p><%- t('lti_platform.zero.message', { ns : 'studies' }) %></p>");
-		}else{
-			for (var i = 0; i < platforms.length; i++) {
-				$('#lti_platforms').append(platformRow(platforms[i]));
-			}
-		}
-	}
-
-	let paintAllocator = function(allocator, tests, groups, participants){
-		AllocatorFactory.Painters[allocator.type].setTests(tests);
-		AllocatorFactory.Painters[allocator.type].setGroups(groups);
-		AllocatorFactory.Painters[allocator.type].setStudy(study);
-		AllocatorFactory.Painters[allocator.type].setParticipants(participants);
-
-		AllocatorFactory.Painters[allocator.type].paintAllocator(allocator);
-
-		$(`#allocator_${allocator.type}`).prop('checked',true);
-	}
-
-	let changeAllocator = function(){
-		let type = $('#change_allocator_form input:radio[name=type]:checked').val();
-
-		if(allocator.type !== type){
-			Simva.updateAllocator(study._id, { type: type }, function(error, result){
-				if(error){
-					$('#change_allocator_form .error').val(error.message);
-				}else{
-					Utils.toggleAddForm('change_allocator');
-					reloadStudy();
+			let allSessionsFinished = true;
+			study.sessions.forEach(testid => {
+				let test = getTestFromTestId(testid);
+				if (test != null) {
+					allSessionsFinished = allSessionsFinished && test.session_status == "terminated";
 				}
 			});
-		}else{
-			Utils.toggleAddForm('change_allocator');
-		}
-	}
-
-	let paintTest = function(test){
-		$('#tests').append(`<div id="test_${test._id}" class="test">
-			<div class="top"><h3>${test.name}</h3><input class="violet" type="button" value="<%- t('tests.expand', { ns : 'studies' }) %>" onclick="toggleTest('${test._id}')">
-			<input class="green" type="button" value="<%- t('activities.add.title', { ns : 'studies' }) %>" onclick="openActivityForm('${test._id}')">
-			<input class="yellow" type="button" value="<%- t('tests.edit.title', { ns : 'studies' }) %>" onclick="openEditTestForm('${test._id}')">
-			<input class="red" type="button" value="<%- t('tests.delete.title', { ns : 'studies' }) %>" onclick="deleteTest('${test._id}', '${test.name}')">
-			<input class="orange" type="button" value="<%- t('tests.duplicate.title', { ns : 'studies' }) %>" onclick="openEditDuplicateForm('${test._id}')"></div>
-			<div class="activities collapsed">${roller}</div>`);
-	}
-
-	let paintTestActivities = function(test, activities, participants){
-		$(`#test_${test._id} .activities`).empty();
-
-		if(activities.length === 0){
-			$(`#test_${test._id} .activities`).text("<%- t('activities.zero.message', { ns : 'studies' }) %>");
-		}else{
-			for (var i = 0; i < activities.length; i++) {
-				switch(activities[i].type){
-					case 'rageminio':
-					case 'miniokafka':
-					case 'rageanalytics':
-					case 'limesurvey':
-					case 'gameplay':
-					case 'activity':
-					case 'manual':
-					case 'ltitool':
-					case 'imspackage':
-						PainterFactory.Painters[activities[i].type].fullyPaintActivity(activities[i]);
-						break;
-					default:
-						ActivityPainter.fullyPaintActivity(activities[i]);
-						break;
-				}
+			if (!allSessionsFinished) {
+				archiveButton.addClass('li-disabled').removeAttr('onclick');
+			}
+			else {
+				archiveButton.removeClass('li-disabled').click(() => { setActive(true); });
 			}
 		}
-	}
-
-
-	let ownerRow = function(owner){
-		let toret = `<tr><td>${owner}</td><td><input class="red" type="button" value="<%- t('owners.delete.title', { ns : 'studies' }) %>"`;
-		if(owner == '<%= user.data.username %>'){
-			toret += ' disabled="disabled"';
-		}else{
-			toret += ` onclick="deleteOwner('${owner}')"`
+		else {
+			txt = "<%- t('settings.dearchive.title', { ns : 'SIMLETs' }) %>"
+			$(".basic").hide();
+			archiveButton.addClass('icon-dearchive');
+			archiveButton.removeClass('icon-archive');
+			archiveButton.click(() => { setActive(false); });
+			
+			// TEST: Comment to allow dearchivation
+			// archiveButton.hide();
 		}
-
-		toret += '></td></tr>';
-		return toret;
+		archiveButton.text(txt);
 	}
 
-	let groupRow = function(group){
-		let toret = `<tr><td>${group.name}</td><td><input class="red" type="button" value="<%- t('groups.delete.title', { ns : 'studies' }) %>" onclick="deleteGroup('${group._id}', '${group.name}')" `
-		if(group.link && group.link.type){
-			toret += ' disabled';
-		}
-		toret += '></td></tr>';
-
-		return toret;
-	}
-
-	let platformRow = function(platform){
-		let toret = `<tr><td>${platform.name}</td><td><input class="red" type="button" value="<%- t('lti_platform.delete.title', { ns : 'studies' }) %>"
-		onclick="removePlatform('${platform._id}')"
-		></td></tr>`;
-		return toret;
-	}
-
-	let addGroupRow = function(group){
-		return `<option value="${group._id}">${group.name}</option>`;
-	}
-
-	let allocationRow = function(allocation, tests){
-		let toret = `<tr><td>${allocation.username}</td><td><select name="test">`;
-
-		if(tests.length > 0){
-			for (var i = 0; i < tests.length; i++) {
-				if(allocation.test == tests[i]._id){
-					toret += `<option value="${tests[i]._id}">${tests[i].name}</option>`;
-				}else{
-					toret += `<option value="${tests[i]._id}" selected>${tests[i].name}</option>`;
-				}
-			}
-		}else{
-			toret += "<option><%- t('tests.zero.title', { ns : 'studies' }) %></option>";
-		}
-		
-
-		toret += '</select></td></tr>';
-		return 
-	}
 </script>
-<script type="text/javascript" src="/activities/activitypainter.js"></script>
-<script type="text/javascript" src="/activities/limesurveypainter.js"></script>
-<script type="text/javascript" src="/activities/rageanalyticspainter.js"></script>
-<script type="text/javascript" src="/activities/miniopainter.js"></script>
-<script type="text/javascript" src="/activities/rageminiopainter.js"></script>
-<script type="text/javascript" src="/activities/gameplaypainter.js"></script>
-<script type="text/javascript" src="/activities/manualpainter.js"></script>
-<script type="text/javascript" src="/activities/ltitoolpainter.js"></script>
-<script type="text/javascript" src="/activities/imspackagepainter.js"></script>
-<script type="text/javascript" src="/allocators/defaultallocatorpainter.js"></script>
-<script type="text/javascript" src="/allocators/groupallocatorpainter.js"></script>

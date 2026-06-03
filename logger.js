@@ -1,61 +1,88 @@
 const pino = require('pino');
-const config = require('./config.js');
+const fs = require('fs');
 const path = require('path');
-const logsFolder =process.env.LOG_FOLDER || path.join(__dirname, '../../logs');
-var now = new Date();
-const logFile = `${logsFolder}/${now.toISOString().replace(/:/g, '-')}.log`;
-/** @type {{targets:import('pino').TransportTargetOptions[]}} */
 
-/** @type {import('pino').LoggerOptions} */
+const logsFolder = process.env.LOG_FOLDER || path.join(__dirname, '../../logs');
+
+// Ensure logs folder exists
+if (!fs.existsSync(logsFolder)) {
+  fs.mkdirSync(logsFolder, { recursive: true });
+}
+
+// Safe timestamp for filename (no colons)
+const timestamp = new Date().toISOString().replace(/:/g, '-');
+const processTag = process.env.PROCESS_TAG || '[MAIN]';
+const logFile = path.join(logsFolder, `${processTag}_${timestamp}.log`);
+
+// Base logger options
 const options = {
-    level: (process.env.LOG_LEVEL || 'info').toLowerCase(),
-    redact: {
-        paths: ['clientSecret','password', 'api.adminPassword', 'JWT.secret', 'limesurvey.adminPassword', 'sso.clientSecret', 'sso.adminPassword', 'a2.adminPassword', 'LTI.platform.mongo.password', 'LTI.platform.key'],
-        censor: '**REDACTED**'
-    },
-    customLevels: { log: 30 },
-    serializers: {
-        err: pino.stdSerializers.err,
-        req: pino.stdSerializers.req,
-        res: pino.stdSerializers.res
-    }
-}
-let targets = [
-    {
-        target: 'pino/file',
-        level: (process.env.LOG_LEVEL || 'info').toLowerCase(),
-        options: {
-            destination: logFile,
-            singleLine: true
-        }
-    }
-];
-if (process.env.NODE_ENV !== 'production') {
-targets.push(
-    {
+  base: {
+   tag: processTag
+  },
+  level: (process.env.LOG_LEVEL || 'info').toLowerCase(),
+  redact: {
+    paths: [
+      'config.clientSecret',
+      'config.password',
+      'config.api.adminPassword',
+      'config.JWT.secret',
+      'config.limesurvey.adminPassword',
+      'config.sso.clientSecret',
+      'config.sso.adminPassword',
+      'config.a2.adminPassword',
+      'config.LTI.platform.mongo.password',
+      'config.LTI.platform.key'
+    ],
+    censor: '**REDACTED**'
+  },
+  customLevels: { log: 30 },
+  serializers: {
+    err: pino.stdSerializers.err,
+    req: pino.stdSerializers.req,
+    res: pino.stdSerializers.res
+  },
+  transport:{
+    targets: [
+      {
+          target: 'pino/file',
+          level: (process.env.LOG_LEVEL || 'info').toLowerCase(),
+          options: {
+              destination: logFile,
+              singleLine: true,
+              mkdir: true
+          }
+      }
+    ]
+  }
+};
+
+if(process.env.NODE_ENV !== 'production') {
+  options.transport.targets.push(
+      {
         target: 'pino-pretty',
-        level: (process.env.LOG_LEVEL || 'info').toLowerCase(),
-        options: {
-            ignore: 'pid,hostname'
-        }
-    }
-);
+        options: { colorize: true, translateTime: 'yyyy-mm-dd HH:MM:ss', ignore: 'pid,hostname' }
+      }
+  );
 }
+// Create logger
+const logger = pino(options);
 
-
-const transport = pino.transport({
-targets: targets
-});
-
-const logger = pino(options, transport);
-
+// Global exception handlers (safe fallback)
 process.on('uncaughtException', err => {
-    logger.fatal(err, 'uncaughtException')
-    process.exitCode = 1
+  try {
+    logger.fatal(err, 'uncaughtException');
+  } catch {
+    console.error('uncaughtException', err);
+  }
+  process.exitCode = 1;
 });
 
-process.on('unhandledRejection', reason =>
-    logger.fatal(reason, 'unhandledRejection')
-);
+process.on('unhandledRejection', reason => {
+  try {
+    logger.fatal(reason, 'unhandledRejection');
+  } catch {
+    console.error('unhandledRejection', reason);
+  }
+});
 
 module.exports = logger;

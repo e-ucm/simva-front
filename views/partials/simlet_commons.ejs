@@ -1,0 +1,539 @@
+<div id ="study_form" class="new_element floating">
+	<div class="floater">
+		<div class="form" id="study_form_form">
+			<h1 id="study_form_title"> </h1>
+			<% if (typeof archived !== 'undefined' && !archived) { %>
+			<div class="tabs" id="add_study_tabs">
+				<span id="study_name_desc_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'study_form_form','study_name_desc_tab')"><%- t('new.tab', { ns : 'SIMLETs' }) %></span>
+				<span class="tab" onclick="Utils.changeTab(this, 'study_form_form','import_study_tab')"><%- t('import.tab', { ns : 'SIMLETs' }) %></span>
+			</div>		<% } %>
+			<div id="study_name_desc_tab" class="subform selected">
+				<form id="study_name_desc_form">
+					<input hidden type="text" name="editingStudyId" id="edit_study_id">
+					<input hidden type="text" name="prevStudyName" id="prev_study_name">
+					<input hidden type="text" name="prevStudyDescription" id="prev_study_description">
+					<h3 class="study_form_name"><%- t('name.title', { ns : 'SIMLETs' }) %></h3>
+					<input type="text" class="study_form_name name_field" name="studyName" id="study_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<h3 class="study_form_field"><%- t('description.title', { ns : 'SIMLETs' }) %></h3>
+					<textarea class="study_form_field description_field" name="studyDescription" id="study_description" placeholder="<%- t('description.placeholder', { ns : 'SIMLETs' }) %>"></textarea>
+					<br>
+					<input type="submit" class="study_form_field"id="study_name_desc_submit" value="">
+				</form>
+			</div>
+
+			<div hidden id="import_study_tab" class="subform" style="display: none;">
+				<form id="import_study_form">
+					<h3 class="import_study_form_name"><%- t('name.title', { ns : 'SIMLETs' }) %></h3>
+					<input type="text" class="import_study_form_name name_field" name="studyName" id="study_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<h3><%- t('import.input', { ns : 'SIMLETs' }) %></h3>
+					<input type="file" class="import_study_form_field" name="jsonFile" accept=".json" required>
+					<br><br>
+					<input type="submit" class="import_study_form_field" value="<%- t('import.submit', { ns : 'SIMLETs' }) %>">
+				</form>
+			</div>
+
+			<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+			<br>
+			<span class="error" id="study_form_error"></span>
+		</div>
+	</div>
+</div>
+
+<div id="study_url_settings" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<h1 class="formSimletTitle">		</h1>
+			<div id="edit_url_tab" class="subform selected">
+				<p id="generate_shlink_url" >
+					<input type="button" class="blue" value="<%- t('scheduler.shlink.generate.title', { ns : 'SIMLETs' }) %>" onclick="openGenerateLinkForm()">
+				</p>
+				<p id="shlink_url">
+					<input type="button" class="green" id="shlink_url_short" onclick="copyShortURL()" style="white-space: normal; word-wrap: break-word;">
+				</p>
+				<p id="delete_shlink_url" >
+					<input type="button" class="red" value="<%- t('scheduler.shlink.delete.title', { ns : 'SIMLETs' }) %>" onclick="deleteShLink()">
+				</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="generate_study_link" class="new_element floating">
+	<div class="floater">
+		<div class="form" id="generate_study_link_form">
+			<h2><%- t('scheduler.shlink.generate.title', { ns : 'SIMLETs' }) %></h2>
+            <br>
+			<div class="tabs">
+				<span id="generate_link_length_tab_button" class="tab selected" type="hidden" onclick="Utils.changeTab(this, 'generate_study_link_form','generate_study_link_length_tab')"><%- t('scheduler.shlink.generate.randomly_length.title', { ns : 'SIMLETs' }) %></span>
+				<span class="tab" onclick="Utils.changeTab(this, 'generate_study_link_form','generate_study_custom_slug_link_tab')"><%- t('scheduler.shlink.generate.custom_slug.title', { ns : 'SIMLETs' }) %></span>
+			</div>
+            <br>
+
+			<div id="generate_study_link_length_tab" class="subform selected">
+				<form id="generate_study_link_length_form">
+					<h3><%- t('scheduler.shlink.generate.randomly_length.title', { ns : 'SIMLETs' }) %></h3>
+					<input hidden type="text" name="study">
+					<p><%- t('scheduler.shlink.generate.randomly_length.message', { ns : 'SIMLETs' }) %></p>
+					<input type="number" step=1 min=4 name="link_length_shlink" id="link_length_shlink" onchange="this.value = Math.max(4, parseInt(this.value));" value=4 required>
+					<br><br>
+					<input type="submit" value="<%- t('scheduler.shlink.generate.submit', { ns : 'SIMLETs' }) %>">
+				</form>
+			</div>
+
+			<div id="generate_study_custom_slug_link_tab" class="subform" style="display: none;">
+				<form id="generate_study_custom_slug_link_form">
+					<h3><%- t('scheduler.shlink.generate.custom_slug.title', { ns : 'SIMLETs' }) %></h3>
+					<input hidden type="text" name="study">
+					<input type="text" name="custom_slug" id="custom_slug_shlink" placeholder="<%- t('scheduler.shlink.custom_slug.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<br><br>
+					<input type="submit" value="<%- t('scheduler.shlink.generate.submit', { ns : 'SIMLETs' }) %>">
+				</form>
+			</div>
+			<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+            <span class="error" id="generate_link_error"></span>
+		</div>
+	</div>
+</div>
+
+
+<div id="download_config" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<h1 class="formSimletTitle">		</h1>
+			<input class="yellow" type="button" value="<%- t('config.download.simlet', { ns : 'SIMLETs' }) %>" onclick="downloadStudyConfig()">
+			<input class="yellow" type="button" value="<%- t('config.download.uadventure', { ns : 'SIMLETs' }) %>" onclick="downloadUAConfig()">
+		</div>
+	</div>
+</div>
+
+<div id="kebab_template" style="display: none;">
+	<ul class="kebab-dropdown" style="display: none;">
+		<li class="kebab-icon icon-edit" title="<%- t('settings.edit.title', { ns : 'SIMLETs' }) %>">
+			<%- t('settings.edit.title', { ns : 'SIMLETs' }) %>
+		</li>
+		<li class="kebab-icon icon-url" title="<%- t('settings.url.title', { ns : 'SIMLETs' }) %>">
+			<%- t('settings.url.title', { ns : 'SIMLETs' }) %>
+		</li>
+		<li class="kebab-icon icon-download" title="<%- t('settings.download.title', { ns : 'SIMLETs' }) %>">
+			<%- t('settings.download.title', { ns : 'SIMLETs' }) %>
+		</li>
+		<li class="kebab-icon archivationButton icon-archive" title="<%- t('settings.archive.title', { ns : 'SIMLETs' }) %>">
+			<%- t('settings.archive.title', { ns : 'SIMLETs' }) %>
+		</li>
+		<li class="kebab-icon icon-delete" title="<%- t('settings.delete.title', { ns : 'SIMLETs' }) %>">
+			<%- t('settings.delete.title', { ns : 'SIMLETs' }) %>
+		</li>
+	</ul>
+</div>
+
+<div id="char_count_template" style="display: none;">
+	<span class="char-count"></span>
+</div>
+
+<script type="text/javascript" src="/kebabs.js"></script>
+<script type="text/javascript" src="/tooltips.js"></script>
+
+
+<script>
+	const nameFieldClass = "name_field";
+	const descriptionFieldClass = "description_field";
+	const MAX_NAME_LENGTH = 40;
+	const MAX_DESC_LENGTH = 100;
+	const START_WARNING_PERCENTAGE = 30;
+	let classesWithCharCount = new Set();
+	let classesWithCharCountStr = "";
+
+	let currStudyId = null;
+	let refreshFunc = null;
+    let shlink = null;
+
+	
+	// --- UTILITIEs --- 
+	
+	/**
+	 * Format the raw date to show it in YYYY/MM/DD format on the user's timezone
+	 * 
+	 * @param rawDate {Number} - date epoch
+	 * @param currentlanguageCode {string} - language the user is currently using 
+	 * @returns {string} string with the formatted date
+	*/
+	const getFormattedDate = function(rawDate, currentlanguageCode) {
+		const date = new Date(rawDate);
+		const yyyy = String(date.getFullYear()).slice(-4).padStart(4, '0');
+		const mm = String(date.getMonth() + 1).padStart(2, '0');
+		const dd = String(date.getDate()).padStart(2, '0');
+		return `${yyyy}/${mm}/${dd}`;
+		// Date format depends on the localization and may not be YY/MM/DD
+		// return date.toLocaleDateString(currentlanguageCode);
+	}
+
+	const addInputCharCountToClass = function(className, maxLength) {
+		// Store the class and update the string with all the classes that must be checked when updating input value
+		classesWithCharCount.add(`.${className}`);
+		classesWithCharCountStr = Array.from(classesWithCharCount).join(", ");
+
+		// Shared listener. Will be triggered when text changes
+		$(document).on('input', `.${className}`, function() {
+			updateCharCount($(this).next(".char-count"), $(this).val().length, maxLength);
+		});
+
+		// Add a character counter after every instance of the class
+		$(`.${className}`).each(function(index) {
+			const counter = $("#char_count_template .char-count").clone();
+
+			// Add the input element classes to the counter so it can appear in floating forms
+			counter.addClass($(this).attr("class"));
+			// Remove the className so the counter doesn't get added to the current iteration
+			counter.removeClass(className);
+
+			// Add the counter after the element and set its text to 0/maxLength
+			$(this).after(counter);
+			$(counter).text(`${0}/${maxLength}`);
+		});
+
+		// Set the max length of every form instance of the class
+		$(`.${className}`).prop("maxLength", maxLength);
+
+	}
+	
+	// When changing an input value programatically, the 'input' event must be triggered manually with .trigger('input')
+	// To avoid having to do this every time an input field with a character counter changes its value programatically,
+	// the input elements setter is defined via $.valHooks (however the setter will change for all the elements of the same type) 
+	$.valHooks.input = {
+		set: function(elem, value) {
+			checkAndUpdateCharCount(elem, value);
+			// Return undefined for default behavior
+			return undefined;
+		}
+	};
+	$.valHooks.textarea = {
+		set: function(elem, value) {
+			checkAndUpdateCharCount(elem, value);
+			// Return undefined for default behavior
+			return undefined;
+		}
+	};
+
+	const checkAndUpdateCharCount = function(elem, value) {
+		// Only update the character count if the element has the custom name field class
+		if ($(elem).is(classesWithCharCountStr)) {
+			updateCharCount($(elem).next(".char-count"), value.length, $(elem).prop("maxLength"));
+		}
+	}
+	const updateCharCount = function(countTextElem, count, maxLength) {
+		$(countTextElem).text(`${count}/${maxLength}`);
+
+		// Show the text in red if there are no characters left 
+		if (maxLength - count == 0) {
+			$(countTextElem).addClass("red");
+		}
+		// Show the text in orange if there are more than 0 but less than the START_WARNING_PERCENTAGE of characters left 
+		else if ((maxLength - count) <= maxLength * (START_WARNING_PERCENTAGE / 100)) {
+			$(countTextElem).removeClass("red");
+			$(countTextElem).addClass("orange");
+		}
+		// Show the text normally
+		else {
+			$(countTextElem).removeClass("red");
+			$(countTextElem).removeClass("orange");
+		}
+	}
+
+    
+	// --- MENUS ---
+	
+    $(document).ready(function() {
+		// Add counter to all name and description fields (must be done after
+		// loading everything to ensure all elements get their counter added)
+		addInputCharCountToClass(nameFieldClass, MAX_NAME_LENGTH);
+		addInputCharCountToClass(descriptionFieldClass, MAX_DESC_LENGTH);
+		
+		$(document).on('submit', "#study_name_desc_tab", function(event) {
+			let currentform = this;
+			let form = Utils.getFormData($("#study_name_desc_form"));
+			Utils.toggleSubmit(currentform);
+
+			// Creating new study
+			if (form.editingStudyId == null || form.editingStudyId == "") {
+				Simva.addStudy({ simlet_name : form.studyName, simlet_description : form.studyDescription }, function(error, result) {
+					if (error && error.responseJSON) {
+						Utils.toggleSubmit(currentform);
+						$("#study_form_error").text(error.responseJSON.message);
+					}
+					else {
+						$('#studies_list').html(roller);
+						Utils.toggleSubmit(currentform);
+						Utils.toggleAddForm('study_form');
+						$("#study_form_error").text("");
+						Simva.getStudies(function(error, result) {
+							if (!error && refreshFunc) {
+								refreshFunc();
+							}
+						});
+					}
+				});
+			}
+			// Editing study
+			else {
+				if (form.prevStudyName == form.studyName && form.prevStudyDescription == form.studyDescription) {
+					$('#study_form_error').text("<%- t('edit.no_changes.message', { ns : 'SIMLETs' }) %>");
+					Utils.toggleSubmit(currentform);
+				}
+				else {
+					$('#study_form_error').text("");
+					Simva.updateStudy(form.editingStudyId, { simlet_name : form.studyName, simlet_description : form.studyDescription }, function(error, result) {
+						Utils.toggleSubmit(currentform);
+						Utils.toggleAddForm('study_form');
+
+						if (refreshFunc != null) {
+							refreshFunc();
+						}
+					});
+				}
+			}
+
+			return false;
+		});
+
+        $(document).on('submit',"#generate_study_custom_slug_link_form", function(event) {
+            event.preventDefault();
+            let currentform = this;
+
+            let custom_slug = null;
+            
+            let form = Utils.getFormData($(this));
+            custom_slug = form.custom_slug;
+            Utils.toggleSubmit(currentform);
+            
+            Simva.generateShlinkURL(currStudyId, custom_slug, null, (error, result) => {
+                if (!error) {
+                    shlink = result;
+                    let shortUrl=shlink.shortUrl;
+                    // Copy the text inside the text field
+                    navigator.clipboard.writeText(shortUrl);
+                    // Alert Short URL
+                    alert(shortUrl);
+                    Utils.toggleAddForm('generate_study_link');
+
+					if (refreshFunc != null) {
+						refreshFunc();
+					}
+                    $('#generate_link_error').text("");
+
+                } 
+                else {
+                    $('#generate_link_error').text(error.message);
+                }
+                Utils.toggleSubmit(currentform);
+            });
+
+            return false;
+        });
+    
+		$(document).on('submit',"#generate_study_link_length_form", function(event) {
+        	event.preventDefault();
+        	let currentform = this;
+
+        	let length = null;
+            
+       		form = Utils.getFormData($(this));
+        	if (form.link_length_shlink != "") {
+            	length = form.link_length_shlink;
+        	}
+        	Utils.toggleSubmit(currentform);
+            
+            Simva.generateShlinkURL(currStudyId, null, length, (error, result) => {
+                if (!error) {
+                    shlink = result;
+                    let shortUrl=shlink.shortUrl;
+                    // Copy the text inside the text field
+                    navigator.clipboard.writeText(shortUrl);
+                    // Alert Short URL
+                    alert(shortUrl);
+                    Utils.toggleAddForm('generate_study_link');
+					if (refreshFunc != null) {
+						refreshFunc();
+					}
+                    $('#generate_link_error').text("");
+                } 
+                else {
+                    $('#generate_link_error').text(error.message);
+                }
+                Utils.toggleSubmit(currentform);
+            });
+            return false;
+        });
+	});
+
+
+    // --- URL FORM ---
+    const openUrlSettingsForm = function(studyId, studyName) {
+		// Always open form in the generate random link with length tab
+		Utils.changeTab($('#generate_link_length_tab_button'), 'generate_study_link_form','generate_study_link_length_tab');
+
+		$(".formSimletTitle").text(`<%- t('single.title', { ns : 'SIMLETs' }) %>: ${studyName}`);
+
+        currStudyId = studyId;
+
+		Simva.getShLink(studyId, (error, result) => {
+			Utils.toggleAddForm('study_url_settings');
+			if (!error) {
+				shlink = result;
+				$('#shlink_url_short').val(`<%- t('scheduler.shlink.message', { ns : 'SIMLETs', shlink : '${shlink.shortUrl}' }) %>`);
+				$("#generate_shlink_url").hide();
+				$("#shlink_url").show();
+				$("#delete_shlink_url").show();
+			} 
+			else {
+				shlink = null;
+				$("#generate_shlink_url").show();
+				$("#shlink_url").hide();
+				$("#delete_shlink_url").hide();
+			}
+		});
+	}
+
+    const openGenerateLinkForm = function() {
+        Utils.toggleAddForm('study_url_settings');
+        Utils.toggleAddForm('generate_study_link');
+        $('#generate_link_error').text("");
+        $('#custom_slug_shlink').val("");
+        $('#link_length_shlink').val($('#link_length_shlink').prop("min"));
+	}
+
+	const copyShortURL = function() {
+		// Copy the text inside the text field
+		navigator.clipboard.writeText(shlink.shortUrl);
+		// Alert Short URL
+		alert(shlink.shortUrl);
+	}
+
+    const deleteShLink = function() {
+		Utils.toggleSubmit($("#generate_study_link"));
+        Simva.getStudy(currStudyId, (error, result) => {
+			if (!error) {
+				let shortCode = shlink.shortCode;
+				if (confirm(`<%- t('scheduler.shlink.delete.confirm', { ns : 'SIMLETs', shlink : '${shortCode}', SIMLET : '${result.simlet_name}' }) %>`)) {
+					Simva.deleteShLink(currStudyId, (error, result) => {
+						if (!error) {
+							shlink = null;
+							if (refreshFunc != null) {
+								refreshFunc();
+							}
+							Utils.toggleAddForm('study_url_settings');
+						}
+						Utils.toggleSubmit($("#generate_study_link"));
+					});
+				}
+			}
+		});
+	}
+
+
+    // --- DOWNLOAD FORM ---
+
+    const openConfigDownloadForm = function(studyId, studyName) {
+        currStudyId = studyId;
+		Utils.toggleAddForm('download_config');
+		$(".formSimletTitle").text(`<%- t('single.title', { ns : 'SIMLETs' }) %>: ${studyName}`);
+	}
+
+	const exportSimlet = function(studyId) {
+		Simva.exportSimlet(studyId, function(error, result) {
+			if (!error) {
+				var content = JSON.stringify(result, null, 2);
+				var filename = `simlet-${result.simlet_name}-export.json`;
+				Utils.download(filename, content);
+			}
+		})
+	}
+
+    const downloadUAConfig = function() {
+		var content = JSON.stringify({
+			study: currStudyId,
+			host: "<%= config.api.host %>",
+			protocol: "<%= config.api.protocol %>",
+			port: "<%= config.api.port %>",
+			url: "<%= config.simva.url %>",			
+			sso: "<%= config.sso.url %>/realms/<%= config.sso.realm %>/protocol/openid-connect", 
+    		client_id: "uadventure"
+		}, null, 2);
+
+		var filename = "simva.conf";
+
+		Utils.download(filename, content);
+	}
+
+	const downloadStudyConfig = function() {
+		Simva.exportStudyConfig(currStudyId, function(error, result) {
+			if (!error) {
+				var studyExport = result;
+				var content = JSON.stringify(studyExport, null, 2);
+				var filename = `simva-${studyExport.simlet_name}-export.json`;
+
+				Utils.download(filename, content);
+			}
+		})
+	}
+
+
+	// --- ARCHIVE/DELETE ---
+
+	const archiveStudy = function(studyId, studyname) {
+		if(confirm(`<%- t('archive.confirm', { ns : 'SIMLETs', SIMLET : '${studyname}' }) %>`)){
+			Simva.updateStudy(studyId, { simlet_archived: true }, function(error, result) {
+				if (!error  && refreshFunc != null) {
+					refreshFunc();
+				}
+			});
+		}
+		
+	}
+
+	const deleteStudy = function(studyid, studyname){
+		if(confirm(`<%- t('delete.confirm', { ns : 'SIMLETs', SIMLET : '${studyname}' }) %>`)){
+			Simva.deleteStudy(studyid, function(response) {
+				if(response.status !== 200) {
+					// Muestra el error real para depuración
+					alert(response || "Error eliminando el simlet");
+				} else if(refreshFunc != null) {
+					refreshFunc();
+				}
+			});
+		}
+	}
+
+
+	// --- TAGS --- 
+
+	/**
+	 * Create the html element containing all the tags
+	 * 
+	 * @param taggedElem {Object} - study or session to get the tags from
+	 * @returns {string} string with the html elements needed to render the tags
+	*/
+	const renderTags = function(taggedElem) {
+		const tags = Array.isArray(taggedElem.tags) ? taggedElem.tags : [];
+
+		if (tags.length === 0) {
+			return `<div class="sessionTagList"><span class="sessionTagEmpty"><%- t('tags.no_tags', { ns : 'sessions' }) %></span></div>`;
+		}
+		let tagsHtml = '<div class="sessionTagList">';
+		for (let i = 0; i < tags.length; i++) {
+			const tag = tags[i] || {};
+			// const tagName = tag.tag_name || 'Tag';
+			// const tagColor = tag.tag_color || '#3b82f6';
+			const tagName = tag && tag.tag_name ? tag.tag_name : 'Tag';
+			const tagColor = tag && tag.tag_color ? tag.tag_color : '#3b82f6';
+			tagsHtml += `
+				<span class="sessionTagChip">
+					<span class="sessionTagColor" style="background:${tagColor};"></span>
+					<span class="sessionTagName">${tagName}</span>
+				</span>
+			`;
+		}
+		tagsHtml += '</div>';
+		return tagsHtml;
+	}
+	
+</script>

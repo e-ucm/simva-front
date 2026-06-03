@@ -10,7 +10,7 @@ i18next
   .init({
     debug: config.i18n.debug,
     fallbackLng: 'en', // Default language
-    ns: ['commons', 'groups', 'studies', 'activities', 'about', 'roles'],           // 👈 specify your namespace(s)
+    ns: ['commons', 'groups', 'SIMLETs', 'sessions', 'activities', 'about', 'roles'],           // 👈 specify your namespace(s)
     defaultNS: 'commons',                                                                         // 👈 set default namespace
     backend: {
       loadPath: path.join(process.cwd(), 'locales', '{{lng}}', '{{ns}}.json'), // Path to translation files

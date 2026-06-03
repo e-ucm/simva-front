@@ -1,8 +1,10 @@
 <%# views/about.ejs %>
- 
-<% extend('layout_with_menu_and_sse') %>
 
-<div class="card">
-	<h1><%= t('title', { ns : 'about'}) %></h1>
-	<p><%- t('text', { ns : 'about'}).replace(/\n/g, '<br><br>') %></p>
+<% extend(layoutTemplate || 'layout_logout') %>
+<% if (!user) { %>
+<div class="content about_page">
+	<%- include('partials/about_content') %>
 </div>
+<% } else { %>
+<%- include('partials/about_content') %>
+<% } %>

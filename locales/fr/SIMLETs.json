@@ -1,0 +1,74 @@
+{ 
+    "title": "SIMLETs",
+    "description": "Les SIMLETs sont le cœur de SIMVA, vous permettant de créer et de gérer vos propres simulations. Un SIMLET est un conteneur pour tous les éléments d'une simulation, y compris les sessions, les activités, les utilisateurs et les groupes. Vous pouvez créer de nouveaux SIMLETs, éditer ceux existants, archiver ceux dont vous n'avez plus besoin et gérer leurs paramètres et leur contenu.",
+    "archived.title": "SIMLETS Archivés",
+    "archived.description": "Liste des SIMLETs qui ont été archivés. Vous pouvez les désarchiver pour les réactiver.",
+    "no_simlets.message": "Vous n'avez pas encore de SIMLETs. Créez-en un en utilisant le bouton en bas à droite (+)",
+    "no_archived.message": "Pas de SIMLETs archivés. Les SIMLETs archivés apparaîtront ici.",
+
+    "card.createdAt": "Crée le",
+    "card.updatedAt": "Mis à jour le",
+    "card.sessions": "Sessions",
+    "card.groups": "Groupes",
+    "card.users": "Utilisateurs",
+    "card.tags": "Tags",
+
+    "add.title": "Ajouter SIMLET",
+        "new.tab": "Ajouter une nouvelle SIMLET",
+        "new.submit": "Ajouter SIMLET",
+
+        "import.tab": "Importer à partir d'un fichier existant",
+            "import.input": "Sélectionnez fichier de SIMLET exporté",
+            "import.upload.error": "Sélectionnez le fichier à charger en premier",
+            "import.submit": "Importer SIMLET",
+    
+    "settings.edit.title": "Modifier",
+        "edit.title": "Modifier SIMLET",
+        "edit.submit": "Modifier SIMLET",
+
+    "name.title": "Nom",
+    "name.placeholder": "Nom de la SIMLET",
+    "description.title": "Description",
+    "description.placeholder": "Description de la SIMLET",
+    
+    "settings.url.title": "URL settings",
+        "scheduler.shlink.generate.title": "Générer une URL réduite pour le planificateur",
+        "scheduler.shlink.generate.randomly_length.title": "Généré de manière aléatoire",
+        "scheduler.shlink.generate.randomly_length.message": "Avec un longueur de : ",
+        "scheduler.shlink.generate.custom_slug.title": "Utiliser un Slug personnalisé",
+        "scheduler.shlink.generate.submit": "Générer",
+        "scheduler.shlink.message": "Copier l'URL courte : {{shlink}}",
+        "scheduler.shlink.custom_slug.placeholder": "Slug personnalisé",
+        "scheduler.shlink.delete.title": "Supprimer l'URL du lien du planificateur",
+        "scheduler.shlink.delete.confirm": "Êtes-vous sûr de vouloir supprimer le lien court '{{shlink}}' du SIMLET '{{SIMLET}}'?",
+        
+    "settings.download.title": "Télécharger",
+        "config.download.simlet": "Télécharger la configuration du SIMLET",
+        "config.download.uadventure": "Télécharger la configuration du SIMLET pour uAdventure",
+        
+    "settings.archive.title": "Archiver",
+            "archive.confirm": "Êtes-vous sûr de vouloir archiver la SIMLET '{{SIMLET}}'?\nCette action ne peut pas être annulée et la SIMLET sera déplacée dans l'onglet archivé",
+    "settings.dearchive.title": "Désarchiver",
+
+    "settings.delete.title": "Supprimer",
+        "delete.confirm": "Êtes-vous sûr de vouloir supprimer la SIMLET '{{SIMLET}}'?\nToutes les sessions, activités et données seront également supprimées",
+
+    "edit.no_changes.message": "Aucun changement n'a été détecté !",
+
+    "single.title": "SIMLET",
+        "single.description": "Informations generales et configuration du SIMLET selectionne.",
+        "sessions.tab.description": "Gerer les sessions de ce SIMLET: creer, modifier, suivre la progression et telecharger les donnees de session.",
+        "users.tab.description": "Gerer les utilisateurs, groupes, coordinateurs et leurs affectations dans ce SIMLET.",
+        "sessions.download.description": "Telecharger toutes les donnees disponibles pour cette session, y compris les donnees des activites.",
+        "simlets.description": "Liste des SIMLETs disponibles et acces rapide pour les creer, modifier, archiver ou supprimer.",
+        "sessions.tab.title": "Sessions",
+        "users.tab.title": "Users",
+
+        
+    "scheduler.noSIMLET.title": "Vous n'avez pas encore de SIMLETs à participer.",
+    "scheduler.title": "Cliquez ici pour commencer ou poursuivre votre session dans le SIMLET.",
+    "scheduler.current": "Activité actuelle : ",
+    "scheduler.refresh": "Actualiser la page pour poursuivre le SIMLET",
+    "scheduler.complete": "Compléter Activité",
+    "scheduler.exit": "Sortir du SIMLET"
+}

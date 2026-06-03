@@ -1,8 +1,9 @@
 {
     "title": "SIMVA - Un SIMple VAlidateur",
-    "login.title":"Connexion",
-    "logout.title":"Déconnexion",
+    "login.title": "Connexion",
+    "logout.title": "Déconnexion",
     "home.title": "Accueil",
+    "home.description": "Bienvenue à SIMVA ! C'est le tableau de bord principal où vous pouvez accéder à toutes les fonctionnalités de la plateforme. Utilisez le menu pour naviguer à travers les différentes sections, telles que les SIMLETs, les activités et la gestion des utilisateurs. Que vous soyez enseignant, étudiant ou chercheur, vous trouverez tout ce dont vous avez besoin pour créer et gérer vos simulations ici.",
     "welcome.user.text": "Bienvenue {{username}}!\n",
     "welcome.teacher.text": "Voici la vue principale de Simva.\nVous pouvez aller dans Activités pour créer des activités d'enquête, des activités de jeu et d'autres types d'activités personnalisées nécessaires à l'élaboration d'une étude.\nL'onglet Études permet de créer une étude dans laquelle un ensemble d'activités peut être mis en place pour réaliser une évaluation.\nPour gérer les utilisateurs et les groupes, utilisez l'onglet Groupes où des groupes d'utilisateurs et les utilisateurs eux-mêmes peuvent être créés afin de leur permettre de participer aux études.\nPour plus d'informations, consultez le site:",
     "welcome.student.text": "Voici la vue principale de Simva.\nL'onglet Études permet d'accéder à toutes vos études dans lesquelles vous réaliserez une évaluation composé d'un ensemble d'activités qui ont été mise en place.",

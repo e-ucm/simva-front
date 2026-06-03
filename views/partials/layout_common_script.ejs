@@ -1,0 +1,159 @@
+<script type="text/javascript">
+	let currentlanguageCode=null;
+
+	<% if (typeof includeTMonApi !== 'undefined' && includeTMonApi) { %>
+		Simva.setTMonURL("<%= config.tmon.url %>");
+		Simva.setTMonFile("<%= config.tmon.file %>");
+		Simva.setAPIURL("<%= config.api.url %>");
+	<% } %>
+
+	<% if (typeof includeSimvaBase !== 'undefined' && includeSimvaBase) { %>
+		Simva.setSSOURL("<%= config.sso.url %>");
+		Simva.setSSOREALM("<%= config.sso.realm %>");
+		Simva.setURL("<%= config.simva.url %>");
+	<% } %>
+
+	var roller = '<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>';
+
+	<% if (typeof includeUserToken !== 'undefined' && includeUserToken) { %>
+		let getUserToken = function() {
+			Simva.getCurrentUser(function(error, result) {
+				if(!error) {
+					if(result.token) {
+						document.getElementById('username').innerText = result.token;
+						document.getElementById('account_username').removeAttribute('href');
+					} else {
+						document.getElementById('username').innerText = result.username;
+					}
+				}
+			});
+		};
+		getUserToken();
+	<% } %>
+
+	<% if (typeof includeSSE !== 'undefined' && includeSSE) { %>
+		Simva.getEventsPresignedUrl(function(error, result){
+			if(!error) {
+				const presignedUrl = result.url;
+				const sseClient = new SSEClientManager(presignedUrl);
+
+				sseClient.on('message', (data) => {
+					console.debug('New message from server:', data);
+				});
+
+				sseClient.on('open', () => {
+					console.log('Connection to SSE server established.');
+				});
+
+				sseClient.triggerEvent('ping');
+				sseClient.on('ping', (data) => {
+					console.debug('ping:', data);
+				});
+
+				window.addEventListener('beforeunload', () => {
+					if (sseClient) {
+						sseClient.closeConnection();
+					}
+				});
+			}
+		});
+	<% } %>
+
+	$(document).ready(function() {
+		$(".floater").off('click').on('click', function(event) {
+			if (event.target !== this) return;
+			$(this).parent().removeClass('shown');
+		});
+
+		const dropdown = document.getElementById('language-dropdown');
+		const langBtn = document.getElementById('lang-btn');
+
+		if (!dropdown || !langBtn) {
+			return;
+		}
+
+		function getFlagEmoji(languageCode) {
+			const countryCode = languageCode.split('-')[1] || languageCode;
+			const codePoints = countryCode
+				.toUpperCase()
+				.split('')
+				.map(char => 127397 + char.charCodeAt(0));
+			return String.fromCodePoint(...codePoints);
+		}
+
+		function renderDropdown() {
+			const currentUrl = window.location.href;
+			Simva.getLanguage(function(error, result) {
+				if(error) {
+					console.log(error.message);
+				} else {
+					let updateLanguage;
+					if(!result.current) {
+						const preferedLangs = navigator.languages;
+						console.log(`The Preferred languages are: ${preferedLangs}.`);
+						preferedLangs.forEach((lang) => {
+							if(!updateLanguage && result.languages.find(language => language.code === lang)) {
+								updateLanguage = lang;
+							}
+						});
+						if(!updateLanguage) {
+							updateLanguage = result.default;
+						}
+						if(!currentUrl.includes("lng=") && updateLanguage) {
+							Simva.updateLanguage(updateLanguage, function(updateError) {
+								if(updateError) {
+									console.log(updateError.message);
+								} else {
+									if(currentUrl.includes("?")) {
+										window.location.href = `${currentUrl}&lng=${updateLanguage}`;
+									} else {
+										window.location.href = `${currentUrl}?lng=${updateLanguage}`;
+									}
+								}
+							});
+							return;
+						}
+					}
+					const currentlanguage = result.languages.find(language => language.code === result.current);
+					currentlanguageCode = currentlanguage.code;
+					langBtn.innerHTML = getFlagEmoji(currentlanguage.code) + " " + currentlanguage.name;
+					let dropdownHTML = '<div>';
+					result.languages.forEach((lang) => {
+						dropdownHTML += `<button id="${lang.code}">${getFlagEmoji(lang.code)} ${lang.name}</button>`;
+					});
+					dropdownHTML += '</div>';
+					dropdown.innerHTML = dropdownHTML;
+					dropdown.style.display = 'none';
+				}
+			});
+		}
+
+		langBtn.addEventListener('click', () => {
+			dropdown.style.display = 'block';
+			dropdown.style.top = '0';
+		});
+
+		dropdown.addEventListener('click', (event) => {
+			if (event.target.tagName === 'BUTTON') {
+				const currentUrl = window.location.href;
+				const selectedLang = event.target.id;
+				Simva.updateLanguage(selectedLang, function(error) {
+					if(error) {
+						console.log(error.message);
+					} else {
+						dropdown.style.display = 'none';
+						if(currentUrl.includes("?")) {
+							window.location.href = currentUrl.replace(`lng=${currentlanguageCode}`,`lng=${selectedLang}`);
+						} else {
+							window.location.href = `${currentUrl}?lng=${selectedLang}`;
+						}
+					}
+				});
+			} else if (event.target === dropdown) {
+				dropdown.style.display = 'none';
+			}
+		});
+
+		renderDropdown();
+	});
+</script>

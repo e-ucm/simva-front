@@ -8,9 +8,8 @@ const Simva = require('../lib/simva');
 
 const userClientsListManager = require('../lib/userClientsListManager');
 let usertools = require('../lib/usertools');
-const cron = require('node-cron');
 
-module.exports = function(auth, config){
+module.exports = function(auth, redirectToLogin, config){
 
   // Passport configuration
   // Using Keycloak openID
@@ -66,7 +65,7 @@ module.exports = function(auth, config){
   var express = require('express'),
     router = express.Router();
 
-  router.get('/', auth, function(req, res, next) {
+  router.get('/', auth, redirectToLogin, function(req, res, next) {
     res.redirect('../');
   });
 
@@ -77,7 +76,7 @@ module.exports = function(auth, config){
       });
   });
 
-  router.get('/role_selection', auth, function(req, res, next) {
+  router.get('/role_selection', auth, redirectToLogin, function(req, res, next) {
     res.render('users_role_edit', { 
       config: config, 
       user: req.session.user, 
@@ -86,7 +85,7 @@ module.exports = function(auth, config){
   });
 
   
-  router.get('/contact_admin', auth, function(req, res, next) {
+  router.get('/contact_admin', auth, redirectToLogin, function(req, res, next) {
     res.render('users_contact_admin', { 
       config: config, 
       user: req.session.user, 
@@ -146,7 +145,7 @@ module.exports = function(auth, config){
     })(req, res, next);
   });
 
-  router.get('/logout', auth, function(req, res, next){
+  router.get('/logout', auth, redirectToLogin, function(req, res, next){
     let sessionId = req.session.id;
     if(req.session.user.refreshToken){
       clientConfig= `${config.sso.clientId}:${config.sso.clientSecret}`
@@ -175,7 +174,7 @@ module.exports = function(auth, config){
     }
   });
 
-  router.get('/refresh_auth', auth, function (req, res, next) {
+  router.get('/refresh_auth', auth, redirectToLogin, function (req, res, next) {
     usertools.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(req.session.id), function(error, result){
       if(error){
         usertools.redirectOpenId(level, req, res);

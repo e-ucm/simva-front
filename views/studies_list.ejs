@@ -1,88 +1,107 @@
 <%# views/studies_list.ejs %>
- 
+
 <% extend('layout_with_menu_and_sse') %>
 
+<div class="tooltipLine">
+	<h1><%- t('title', { ns : 'SIMLETs' }) %></h1>
+	<div class="tooltip">
+		&#x1F6C8;
+		<span class="tooltiptext">
+			<% if (typeof archived !== 'undefined' && !archived) { %>
+				<%= t('description', { ns : 'SIMLETs' }) %>
+			<% } else { %>
+				<%= t('archived_simlet.description', { ns : 'about' }) %>
+			<% } %>
+		</span>
+	</div>
+</div>
+
+<div id="studies_list">
+	<div style="width: 100%; text-align: center; padding: 200px;">
+		<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+	</div>
+</div>
+
+<%- include('partials/simlet_commons') %>
+
+<div id="simlet_card_template" style="display: none;">
+	<a class="stopable">
+		<div class="selectable card third">
+			<div class="simletCardTitle">
+				<h1 class="cardTitle"></h1>
+				<div class="kebab"></div>
+			</div>
+			<p class="cardDescription"> 	</p>
+			<p class="cardCreationDate"><strong><%- t('card.createdAt', { ns : 'SIMLETs' }) %>: </strong> 		</p>
+			<p class="cardUpdateDate"><strong><%- t('card.updatedAt', { ns : 'SIMLETs' }) %>: </strong> 	</p>
+			<p class="carrdSessions"><strong><%- t('card.sessions', { ns : 'SIMLETs' }) %>: </strong> 	</p>
+			<p>
+				<strong class="cardGroups"><%- t('card.groups', { ns : 'SIMLETs' }) %>: </strong>
+				&nbsp; 
+				<strong class="cardUsers"><%- t('card.users', { ns : 'SIMLETs' }) %>: </strong>
+			</p>
+			<div class="studyTagsRow">
+				<strong><%- t('card.tags', { ns : 'SIMLETs' }) %>:</strong>
+				
+			</div>
+		</div>
+	</a>
+</div>
+
+<% if (typeof archived !== 'undefined' && !archived) { %>
+	<div class="floating_buttons">
+		<a unselectable="on" class="basic" onclick="openStudyForm()">+</a>
+	</div>
+<% } %>
+
+
 <script type="text/javascript">
+	const simletDataIdKey = "simletId"
+	const simletDataNameKey = "simletName"
+	const simletDataDescriptionKey = "simletDescription"
+
+	$(".content").addClass("floating");
+	
+	const archived = "<%= archived %>" === "true";
+	
 	$(document).ready(function() {
-		$("#new_study_form").on('submit', function(event){
+		refreshFunc = refreshStudies;
+
+		$(document).on('submit', "#import_study_form", function(event) {
 			event.preventDefault();
 			let currentform = this;
-			let form = Utils.getFormData($("#new_study_form"));
+			let form = Utils.getFormData($(this));
 			Utils.toggleSubmit(currentform);
-			Simva.addStudy(form.name, function(error, result){
-				if(error && error.responseJSON){
-					Utils.toggleSubmit(currentform);
-					$("#error").text(error.responseJSON.message);
-				}else{
-					Utils.toggleSubmit(currentform);
-					Utils.toggleAddForm('new_study');
-					$('#studies_list').html(roller);
-					Simva.getStudies(function(error, result){
-						if(!error){
-							paintStudies(result);
-						}
-					});
-				}
-			});
-
-			return false;
-		});
-
-		$("#import_study_form").on('submit', function(event){
-			event.preventDefault();
-			let currentform = this;
-			let form = Utils.getFormData($("#import_study_form"));
-			Utils.toggleSubmit(currentform);
-			if($("#import_study_form").find('input[name="exportJson"]').get(0).files[0]){
+			let errorbox = $("#study_form_error");
+			// Check for file presence
+			const fileInput = $(this).find('input[name="jsonFile"]').get(0);
+			if(fileInput && fileInput.files[0]){
 				var reader = new FileReader();
-				var input = event.target;
 				reader.onload = function(){
-					let raw = reader.result;
-					raw = raw.substr(raw.indexOf(',') + 1);
-					var newStudy = raw;
-					Simva.importStudyConfig({file : newStudy}, function(error, result) {
+					try {
+						let raw = reader.result;
+						// Always extract base64 payload from data URL
+						raw = raw.substr(raw.indexOf(',') + 1);
+						var newStudy = raw;
+						Simva.importStudyConfig({file: newStudy, simlet_name: form.studyName}, function(error, result) {
+							Utils.toggleSubmit(currentform);
+							if(!error) {
+								Utils.toggleAddForm('study_form');
+								$('#studies_list').html(roller);
+								refreshStudies();
+							} else {
+								$("#study_form_error").text(error);
+							}
+						});
+					} catch (e) {
 						Utils.toggleSubmit(currentform);
-						if(!error) {
-							Utils.toggleAddForm('new_study');
-							$('#studies_list').html(roller);
-							Simva.getStudies(function(error, result){
-								if(!error){
-									paintStudies(result);
-								}
-							});
-						} else {
-							$("#error").text(error);
-						}
-					});
+						$("#study_form_error").text(e.message);
+					}
 				};
-				reader.readAsDataURL($("#import_study_form").find('input[name="exportJson"]').get(0).files[0]);
+				reader.readAsDataURL(fileInput.files[0]);
 			}else{
-				$("#error").text("<%- t('new.upload.errorMessage', { ns : 'studies' }) %>");
+				$("#study_form_error").text("<%- t('import.upload.error', { ns : 'SIMLETs' }) %>");
 				Utils.toggleSubmit(currentform);
-			}
-
-			return false;
-		});
-
-
-		$("#edit_study_form").on('submit', function(event){
-			event.preventDefault();
-			let currentform = this;
-			let form = Utils.getFormData($("#edit_study_form"));
-			Utils.toggleSubmit(currentform);
-			let errorbox = $(this).find('.error');
-			if(form.name == form.studyName) {
-				errorbox.text("<%- t('name.edit.nochange', { ns : 'studies' }) %>");
-				Utils.toggleSubmit(currentform);
-			} else {
-				Simva.getStudy(form.study, function(error, study){
-					study.name = form.name;
-					Simva.updateStudy(study, function(error, result){
-						Utils.toggleSubmit(currentform);
-						Utils.toggleAddForm('edit_study');
-						refreshStudies();
-					});
-				});
 			}
 			return false;
 		});
@@ -91,116 +110,160 @@
 		refreshStudies();
 	});
 
-	let refreshStudies = function(){
+	let refreshStudies = function() {
 		Simva.getStudies(function(error, result){
-			if(!error){
+			if (!error) {
 				paintStudies(result);
 			}
 		});
 	}
 
-	let paintStudies = function(studies){
-		$('#studies_list').text('');
-		if(studies.length > 0){
-			for (var i = 0; i < studies.length; i++) {
-				let card = $(toCard(studies[i]));
+	let paintStudies = function(studies) {
+		$('#studies_list').empty();
+		let paintedStudies = 0;
 
-				$('#studies_list').append(card);
+		for (var i = 0; i < studies.length; i++) {
+			let study = studies[i]
+			if (study.simlet_archived == archived) {
+				paintedStudies++;
+				addSimletCard(study);
 			}
-		}else{
-			$('#studies_list').text("<%- t('zero.message.title', { ns : 'studies' }) %>");
+		}
+		if (paintedStudies == 0) {
+			if (!archived) {
+				$('#studies_list').text("<%- t('no_simlets.message', { ns : 'SIMLETs' }) %>");
+			}
+			else {
+				$('#studies_list').text("<%- t('no_archived.message', { ns : 'SIMLETs' }) %>");
+			}
 		}
 	}
 
-	let deleteStudy = function(studyid, studyname){
-		event.preventDefault();
-		event.stopPropagation();
-		if(confirm(`<%- t('remove.confirm', { ns : 'studies', study : '${studyname}' }) %>`)){
-			Simva.deleteStudy(studyid, function(error, result){
-				if(!error){
-					refreshStudies();
+
+	const openStudyForm = function(studyId) {		
+		// Always open form in the create/edit common tab
+		Utils.changeTab($('#study_name_desc_tab_button'), 'study_form_form','study_name_desc_tab');
+
+		$('#study_form_error').text("");
+
+		// Creating new study
+		if (studyId == null) {
+			// Open form always and show the add new/import tabs
+			Utils.toggleAddForm("study_form");
+			$("#add_study_tabs").show();
+			
+			$("#study_form_title").text("<%- t('add.title', { ns : 'SIMLETs' }) %>");
+			$("#study_name_desc_submit").val("<%- t('new.submit', { ns : 'SIMLETs' }) %>");
+
+			$('#prev_study_name').val("");
+			$('#prev_study_description').val("");
+
+			$('#study_name').val("");
+			$('#study_description').val("");
+		}
+		// Editing study
+		else {
+			Simva.getStudy(studyId, function(error, result){
+				if(!error) {
+					// Open form only if edit is possible and hide the add new/import tabs (only the name/description tab is needed)
+					Utils.toggleAddForm('study_form');
+					$('#edit_study_id').val(studyId);
+
+					$("#add_study_tabs").hide();
+					
+					$("#study_form_title").text("<%- t('edit.title', { ns : 'SIMLETs' }) %>");
+					$("#study_name_desc_submit").val("<%- t('edit.submit', { ns : 'SIMLETs' }) %>");
+			
+					$('#prev_study_name').val(result.simlet_name);
+					$('#prev_study_description').val(result.simlet_description);
+
+					$('#study_name').val(result.simlet_name);
+					$('#study_description').val(result.simlet_description);
 				}
 			});
 		}
 	}
 
-	let openEditStudyForm = function(studyId, studyName){
-		event.preventDefault();
-		event.stopPropagation();
-		document.getElementById("edit_study_error").innerHTML = "";
-		var inputElement = document.getElementById('edit_study_name');
-		inputElement.value = studyName;
-		$('#edit_study').toggleClass('shown');
-		$('#edit_study input[name="study"]').val(studyId);
-		$('#edit_study span[class="error"]').val("");
-		$('#edit_study input[name="studyName"]').val(studyName);
-	}
 	
-	let toCard = function(study){
-		return `<a class="stopable" href="/studies/${study._id}"><div class="studycard selectable card third">
-			<span class="button yellow" onclick="openEditStudyForm('${study._id}', '${study.name}')">🖍️</span>
-			<span class="button red delete" onclick="deleteStudy('${study._id}', '${study.name}')">X</span>
-			<h1><%- t('single.title', { ns : 'studies' }) %>: ${study.name}</h1>
-			<p><strong><%- t('groups.title', { ns : 'studies' }) %>:</strong> ${study.groups.length}</p>
-			<p><strong><%- t('tests.title', { ns : 'studies' }) %>:</strong> ${study.tests.length}</p>
-			<p><strong><%- t('owners.title', { ns : 'studies' }) %>:</strong> ${study.owners.length}</p>
-			</div></a>`;
+	// Add cards programatically to avoid XSS
+	const addSimletCard = function(study) {
+		const card = $("#simlet_card_template .stopable").clone();
+		card.data(simletDataIdKey, study.simlet_id);
+		card.data(simletDataNameKey, study.simlet_name);
+		card.data(simletDataDescriptionKey, study.simlet_description);
+
+		card.attr("href", `/simlets/${study.simlet_id}`);
+				
+		const kebab = $("#kebab_template .kebab-dropdown").clone();
+		card.find(".kebab").append(kebab);
+		if (archived) {
+			kebab.find(".icon-archive").hide();
+		} else {
+			// Disable archive button if not all sessions are finished
+			const total = study.sessions.length;
+			if (total > 0) {
+				let completed = 0;
+				let allSessionsFinished = true;
+				study.sessions.forEach(testid => {
+					Simva.getStudyTest(study.simlet_id, testid, function(error, result) {
+						if (!error) {
+							let prev = allSessionsFinished;
+							allSessionsFinished = allSessionsFinished && (result.session_status == "terminated" || result.session_status == "inactive");
+						}
+						completed++;
+						if (completed == total && !allSessionsFinished) {
+							kebab.find(".icon-archive").addClass('li-disabled').removeAttr('onclick');
+						} else if (completed == total && allSessionsFinished) {
+							kebab.find(".icon-archive").removeClass('li-disabled');
+						}
+					});
+				});
+			} else {
+				kebab.find(".icon-archive").removeClass('li-disabled');
+			}
+		}
+		
+		card.find(".simletCardTitle h1").text(study.simlet_name);
+		card.find(".cardDescription").text(study.simlet_description);
+		card.find(".cardCreationDate").append(getFormattedDate(study.createdAt, currentlanguageCode));
+		card.find(".cardUpdateDate").append(getFormattedDate(study.updatedAt, currentlanguageCode));
+		card.find(".carrdSessions").append(study.sessions.length);
+		card.find(".cardGroups").after(study.groups.length);
+		card.find(".studyTagsRow").append(renderTags(study));
+		
+		Simva.getStudyParticipants(study.simlet_id, function(error, result) {
+			if (!error) {
+				card.find(".cardUsers").after(result.length);
+			}
+		});
+		
+		$('#studies_list').append(card);
 	}
 
-	let changeTab = function(tab, form, subform){
-		$(`#${form} .tab`).removeClass('selected');
-		$(`#${form} .subform`).removeClass('selected');
-		$(tab).toggleClass('selected');
-		$(`#${subform}`).toggleClass('selected');
-	}
+	// 3-dot menus buttons shared listeners
+	$(document).on('click', ".simletCardTitle .icon-edit", function(e) {
+		const data = $(this).closest(".stopable").data();
+		openStudyForm(data[simletDataIdKey])
+	});
+
+	$(document).on('click', ".simletCardTitle .icon-url", function(e) {
+		const data = $(this).closest(".stopable").data();
+		openUrlSettingsForm(data[simletDataIdKey], data[simletDataNameKey])
+	});
+
+	$(document).on('click', ".simletCardTitle .icon-download", function(e) {
+		const data = $(this).closest(".stopable").data();
+		openConfigDownloadForm(data[simletDataIdKey], data[simletDataNameKey])
+	});
+
+	$(document).on('click', ".simletCardTitle .icon-archive", function(e) {
+		const data = $(this).closest(".stopable").data();
+		archiveStudy(data[simletDataIdKey], data[simletDataNameKey])
+	});
+
+	$(document).on('click', ".simletCardTitle .icon-delete", function(e) {
+		const data = $(this).closest(".stopable").data();
+		deleteStudy(data[simletDataIdKey], data[simletDataDescriptionKey])
+	});	
+	
 </script>
-<h1><%- t('title', { ns : 'studies' }) %></h1>
-<div id="studies_list">
-	<div style="width: 100%; text-align: center; padding: 200px;">
-		<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-	</div>
-</div>
-<div id="new_study" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<h1><%- t('new.title', { ns : 'studies' }) %></h1>
-			<div class="tabs">
-				<span class="tab selected" onclick="changeTab(this, 'new_study','new_study_tab')"><%- t('new.title', { ns : 'studies' }) %></span>
-				<span class="tab" onclick="changeTab(this, 'new_study','import_study_tab')"><%- t('new.upload.title', { ns : 'studies' }) %></span>
-			</div>
-			<div id="new_study_tab" class="subform selected">
-				<form id="new_study_form">
-					<input type="text" name="name" placeholder="<%- t('name.placeholder', { ns : 'studies' }) %>">
-					<input type="submit" value="<%- t('new.submit', { ns : 'studies' }) %>">
-				</form>
-			</div>
-			<div hidden id="import_study_tab" class="subform">
-				<form id="import_study_form">
-					<p><%- t('new.upload.message', { ns : 'studies' }) %></p>
-					<input type="file" name="exportJson">
-					<input type="submit" value="<%- t('new.submit', { ns : 'studies' }) %>">
-				</form>
-			</div>
-		</div>	
-	</div>
-</div>
-<div id="edit_study" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<div id="edit_study_tab" class="subform selected">
-				<h2>"<%- t('name.edit.title', { ns : 'studies' }) %></h2>
-				<form id="edit_study_form">
-					<input hidden type="text" id="study_id" name="study" required>
-					<input hidden type="text" id="study_name" name="studyName" required>
-					<input type="text" name="name" id="edit_study_name" placeholder="<%- t('name.placeholder', { ns : 'studies' }) %>" required>
-					<input type="submit" value="Edit">
-					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<span class="error" id="edit_study_error"></span>
-				</form>
-			</div>
-		</div>
-	</div>
-</div>
-<div class="floating_buttons">
-	<a unselectable="on" class="basic" onclick="Utils.toggleAddForm('new_study')">+</a>
-</div>

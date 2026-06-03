@@ -6,8 +6,15 @@ class SSEClientsListManager {
         this.clients = new Map();
     }
 
-    addActivityAndUserToMap(id, user, userRole, clientId) {
-        var obj = { user : user, userRole : userRole, id : id};
+    addActivityAndUserToMap(id, user, userRole, clientId, userId) {
+        var obj = { user : user, userRole : userRole, id : id, userId: userId };
+        obj.lastTime= Date.now();
+        this.clients.set(clientId, obj);
+        this.displayClients();
+    }
+
+    addGroupAndUserToMap(id, user, userRole, clientId, userId) {
+        var obj = { user : user, userRole : userRole, id : id, userId: userId };
         obj.lastTime= Date.now();
         this.clients.set(clientId, obj);
         this.displayClients();
@@ -38,22 +45,33 @@ class SSEClientsListManager {
 
     getClientList(message) {
         let clientsToSend = [];
+        const studyId = message.studyId ?? message.simlet_id;
+        const groupId = message.groupId ?? message.group_id;
+        const messageUser = message.user ?? message.username;
+        const messageUserId = message.userId ?? message.user_id ?? message.participant_id;
+
         for (let [clientId, clientData] of this.clients) {
             let client = clientData; // Parse the stored client data
             if (client.userRole === 'teacher') {
-                // Check if the client's study includes the studyId
-                if (client.id == message.studyId) {
+                // Check if the client's study includes the studyId or the groupId
+                if (client.id == studyId || client.id == groupId) {
                     clientsToSend.push(clientId); // Add to the list if conditions are met
                     client.lastTime= Date.now();
                     this.clients.set(clientId, client);
                 }
             } else if (client.userRole === 'student') {
-                if(client.user == message.user) {
-                    if (client.id == message.studyId) {
-                        clientsToSend.push(clientId); // Add to the list if conditions are met
-                        client.lastTime= Date.now();
-                        this.clients.set(clientId, client);
-                    }
+                const sameStudy = client.id == studyId;
+                const sameUserById = (client.userId !== undefined && client.userId !== null && messageUserId !== undefined && messageUserId !== null)
+                    ? String(client.userId) === String(messageUserId)
+                    : false;
+                const sameUserByName = (client.user !== undefined && client.user !== null && messageUser !== undefined && messageUser !== null)
+                    ? String(client.user) === String(messageUser)
+                    : false;
+
+                if(sameStudy && (sameUserById || sameUserByName)) {
+                    clientsToSend.push(clientId); // Add to the list if conditions are met
+                    client.lastTime= Date.now();
+                    this.clients.set(clientId, client);
                 }
             } else {
                 logger.info(`Client ${clientId} is not authorized.`);

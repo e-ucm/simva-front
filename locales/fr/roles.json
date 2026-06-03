@@ -1,11 +1,12 @@
 {
-    "selection.title":"Sélection du rôle de Simva",
+    "selection.title": "Sélection du rôle de Simva",
     "admin": "Administrateur",
     "researcher": "Chercheur",
     "teacher": "Enseignant",
     "teachingAssistant": "Assistant d'enseignement",
-    "student":"Étudiant",
-    "choose.title":"Choisir ce rôle",
-    "contactadmin.title":"Contact Administrateur",
-    "contactadmin.message" : "Veuillez contacter votre administrateur SIMVA à l'adresse suivante {{ email }} pour lui attribuer un nouveau rôle."
+    "student": "Étudiant",
+    "choose.title": "Choisir ce rôle",
+    "contactadmin.title": "Contact Administrateur",
+    "contactadmin.message" : "Veuillez contacter votre administrateur SIMVA à l'adresse suivante {{ email }} pour lui attribuer un nouveau rôle.",
+    "not_defined": "Non défini"
 }

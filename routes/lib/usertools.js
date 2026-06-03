@@ -44,33 +44,61 @@ class UserTools {
 	auth(level){
 		var pre=this.preTabs(level);
 		var tmp=this;
+			 return function(req, res, next) {
+				 let simvaToken = userClientsListManager.getJWT(req.session.id);
+				 // Helper: detect if this is a /bff request
+				 const isBff = req.originalUrl && req.originalUrl.startsWith('/bff');
+				 if (req.session && req.session.user && req.session.user.jwt){
+					 tmp.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(req.session.id), (error, result) => {
+							 if(error) {
+								 req.session.intendedUrl=`${req.originalUrl}`;
+								 if (isBff) {
+									 // For BFF, send a frontend redirect page (not a backend redirect)
+									 return res.status(401).send({ frontendRedirect: '/auth-expired.html' });
+								 } else {
+									 return res.redirect(`${pre}users/login`);
+								 }
+							 } else {
+								 logger.debug("auth() - Token OK");
+								 return next();
+							 }
+					 });
+				 } else if(simvaToken){
+					 logger.info("auth() - New token");
+					 let session = req.session;
+					 // Ensure req.session.user exists before setting properties
+					 if (!session.user) {
+						 session.user = {};
+					 }
+					 let profile = tmp.getProfileFromJWT(simvaToken);
+					 session.user.data = profile;
+					 session.user.jwt = simvaToken;
+					 userClientsListManager.addClient(session);
+					 req.session.user.jwt = simvaToken;
+					 logger.info("auth() - New token done");
+					 return next();
+				 }else{
+					 req.session.intendedUrl=`${req.originalUrl}`;
+					 if (isBff) {
+						 return res.status(401).send({ frontendRedirect: '/auth-expired.html' });
+					 } else {
+						 return res.redirect(`${pre}users/login`);
+					 }
+				 }
+			 };
+	}
+
+	redirectToLogin(level) {
+		var pre=this.preTabs(level);
 		return function(req, res, next) {
-		  let simvaToken = userClientsListManager.getJWT(req.session.id);
-		  if (req.session && req.session.user && req.session.user.jwt){
-			tmp.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(req.session.id), (error, result) => {
-				if(error) {
-					req.session.intendedUrl=`${req.originalUrl}`;
-					res.redirect(`${pre}users/login`); 
-				} else {
-					logger.debug("auth() - Token OK");
-					return next();
-				}
-			});
-		  } else if(simvaToken){
-			logger.info("auth() - New token");
-			let session = req.session;
-			let profile = tmp.getProfileFromJWT(simvaToken);
-			session.user.data = profile;
-			session.user.jwt = simvaToken;
-			userClientsListManager.addClient(session);
-			req.session.user.jwt = true;
-			logger.info("auth() - New token done");
-			return next();
-		  }else{
-			req.session.intendedUrl=`${req.originalUrl}`;
-			res.redirect(`${pre}users/login`);
-		  }
-		};
+			// Defensive check: redirect to login if user is not authenticated
+			if (!req.session || !req.session.user || !req.session.user.data) {
+				req.session.intendedUrl = req.originalUrl;
+				return res.redirect(`${pre}users/login`);
+			} else {
+				return next();
+			}
+		}
 	}
 
 	async getRefreshSessionsList() {
@@ -101,7 +129,7 @@ class UserTools {
     authExpiredAndRefreshAuthWithCallback(session, callback) {
         this.authExpired(session, config, (error, result) => {
             if(error) {
-                logger.info(JSON.stringify(error));
+                logger.warn(JSON.stringify(error));
 				if(session && session.id) {
              	   userClientsListManager.removeSession(session.id);
 				}
@@ -128,9 +156,26 @@ class UserTools {
 
 	isAuthExpired(session, callback){
 		try {
+			if(!session || !session.user || typeof session.user.jwt !== 'string' || !session.user.jwt.trim()) {
+				logger.info("authExpired() - Missing or invalid JWT in session");
+				callback(null, {type:"expired"});
+				return;
+			}
+
 			let current = Math.floor(Date.now() / 1000);
 			let jwtdecoded = this.decodeJWT(session.user.jwt);
+			if(!jwtdecoded || !jwtdecoded.exp) {
+				logger.info("authExpired() - JWT decode failed or missing exp");
+				callback(null, {type:"expired"});
+				return;
+			}
+
 			let expiration = parseInt(jwtdecoded.exp);
+			if(Number.isNaN(expiration)) {
+				logger.info("authExpired() - JWT exp is not a valid number");
+				callback(null, {type:"expired"});
+				return;
+			}
 			if(current > expiration){
 				logger.info(`authExpired() - JWT: ${JSON.stringify(jwtdecoded)}`);
 				logger.info(`authExpired() - Expiration: ${expiration}`);
@@ -141,13 +186,8 @@ class UserTools {
 				callback(null, {type:"ok"});
 			}
 		} catch(e) {
-			callback({
-				status: 500,
-				data: {
-					message: 'Unable to parse accessToken',
-					error: e
-				}
-			});
+			logger.info("authExpired() - Unable to parse token, treating as expired");
+			callback(null, {type:"expired"});
 		}
 	}
 
@@ -174,8 +214,8 @@ class UserTools {
 		let simvaJwtToken = this.decodeJWT(token);
 		logger.info(`getProfileFromJWT() : ${JSON.stringify(simvaJwtToken)}`);
 		profile.provider = simvaJwtToken.iss;
-		profile.id = simvaJwtToken.data.id;
-		profile.username = simvaJwtToken.data.username;
+		//profile.id = simvaJwtToken.data.id;
+		profile.username = simvaJwtToken.preferred_username;
 		profile.email = simvaJwtToken.email;
 		profile.roles = simvaJwtToken.realm_access.roles;
 		profile.role = this.getRoleFromJWT(simvaJwtToken);
@@ -184,7 +224,9 @@ class UserTools {
 
 	getRoleFromJWT(decoded){
 		let role = 'norole';
-		if(decoded.realm_access.roles.includes('teacher') || decoded.realm_access.roles.includes('researcher')){
+		if(decoded.realm_access.roles.includes('administrator')){
+			role = 'administrator';
+		} else if(decoded.realm_access.roles.includes('teacher') || decoded.realm_access.roles.includes('researcher')){
 			role = 'teacher';
 		} else if(decoded.realm_access.roles.includes('teaching-assistant') || decoded.realm_access.roles.includes('student')){
 			role = 'student';

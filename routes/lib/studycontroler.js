@@ -1,148 +1,87 @@
 const logger = require('../../logger');
-const Simva  = require('./simva');
-const testcontroler = require('./testscontroler');
 const groupcontroler = require('./groupcontroler');
+const SimvaAsync = require('./simvaAsync');
+const testcontroler = require('./testscontroler');
 
 module.exports = {
     async getCompleteStudy(studyid, sessionid) {
-        let study=await this.getStudy(studyid, sessionid);
-        study.participants = await this.getStudyParticipants(studyid, sessionid);
-        study.allgroups = await groupcontroler.getGroups(sessionid);
-        study.completeGroups = await this.getStudyGroups(studyid, sessionid);
-        study.completeAllocator = await this.getStudyAllocator(studyid, sessionid);
-        let participants={}
-        for(let i=0; i<study.participants.length;i++) {
-            let user=study.participants[i];
-            let username=user.username;
-            let userDisplay=username;
-            if(user.isToken) {
-                userDisplay=user.token;
-            }
-            participants[username]=userDisplay;
-        }
-        study.completeAllocator.data={};
-        study.completeAllocator.data.displayparticipants=participants;
+        let study=await SimvaAsync.getStudy(studyid, sessionid);
         study.completeTests=[];
-        for(let i=0;i<study.tests.length;i++) {
-            study.completeTests.push(await testcontroler.getCompleteTest(studyid, study.tests[i], sessionid));
+        logger.info({study}, "Study data before fetching complete tests");
+        try {
+            study.allgroups = await SimvaAsync.getGroups(sessionid);
+            study.completeGroups = await SimvaAsync.getStudyGroups(studyid, sessionid);
+            study.direct_permissions = await SimvaAsync.getStudyDirectPermissions(studyid, sessionid);
+            study.participants = await SimvaAsync.getStudyParticipants(studyid, sessionid);
+        } catch(e) {
+            logger.warn(e);
+        }
+
+        // Fallback for setups where allocator-based participant endpoints are empty.
+        // In that case, build the participant list from the members of study groups.
+        if (!Array.isArray(study.participants) || study.participants.length === 0) {
+            const mergedParticipants = new Map();
+            const groups = Array.isArray(study.completeGroups) ? study.completeGroups : [];
+
+            for (const group of groups) {
+                try {
+                    const groupParticipants = await SimvaAsync.getGroupParticipants(studyid, group.group_id, sessionid);
+                    if (Array.isArray(groupParticipants)) {
+                        for (const participant of groupParticipants) {
+                            if (participant && participant.user_id !== undefined && participant.user_id !== null) {
+                                mergedParticipants.set(participant.user_id, participant);
+                            }
+                        }
+                    }
+                } catch (e) {
+                    logger.warn(e);
+                }
+            }
+
+            study.participants = Array.from(mergedParticipants.values());
+        }
+        for(let i=0;i<study.sessions.length;i++) {
+            try {
+                let test=await testcontroler.getCompleteTest(studyid, study.sessions[i], sessionid);
+                study.completeTests.push(test);
+            } catch(e) {
+                logger.warn(e);
+                throw e;
+            }
         }
         return study;
     },
 
     async exportStudy(studyid, complete, sessionid) {
-        let study=await this.getStudy(studyid, sessionid);
-        study.allocator = await this.getStudyAllocator(studyid, sessionid);
-        let testsid = study.tests;
-        study.tests=[];
+        let study=await SimvaAsync.getStudy(studyid, sessionid);
+        let testsid = study.sessions;
+        study.sessions=[];
         for(let i=0;i<testsid.length;i++) {
-            study.tests.push(await testcontroler.exportTest(studyid, testsid[i], complete, sessionid));
+            try {
+                study.sessions.push(await testcontroler.exportTest(studyid, testsid[i], complete, sessionid));
+            } catch(e) {
+                logger.warn(e);
+            }
         }
+        let groupsid = study.groups;
+        study.groups=await groupcontroler.exportGroups(studyid, groupsid, sessionid);
         return study;
     },
 
     async importStudy(newstudy, sessionid) {
-        let study=await this.addStudy(newstudy.name, sessionid);
-        for(let i=0;i<newstudy.tests.length;i++) {
-            await testcontroler.importTest(study._id, newstudy.tests[i], sessionid);
+        let study=await SimvaAsync.addStudy({simlet_name: newstudy.simlet_name, simlet_description: newstudy.simlet_description}, sessionid);
+        for(let i=0;i<newstudy.sessions.length;i++) {
+            try {
+                await testcontroler.importTest(study.simlet_id, newstudy.sessions[i], sessionid);
+            } catch(e) {
+                logger.warn(e);
+            }
+        }
+        try {
+            await groupcontroler.importGroups(study.simlet_id, newstudy.groups, sessionid);
+        } catch(e) {
+            logger.warn(e);
         }
         return study;
-    },
-    
-    
-    getStudies(sessionid) {
-        return new Promise((resolve, reject) => {
-            Simva.getStudies(sessionid, (error, result) => {
-                if(error) {
-                    reject(error);
-                } else {
-                    resolve(result);
-                }
-            });
-        });
-    },
-
-    refreshStudy(study, sessionid) {
-        return new Promise((resolve, reject) => {
-            Simva.updateStudy(study, sessionid, (error, result) => {
-                if(error) {
-                    reject(error);
-                } else {
-                    resolve(result);
-                }
-            });
-        });
-    },
-
-
-    addStudy(studyname, sessionid) {
-        return new Promise((resolve, reject) => {
-            Simva.addStudy(studyname, sessionid, (error, study) => {
-                if(error) {
-                    reject(error);
-                } else {
-                    resolve(study);
-                }
-            });
-        });
-    },
-
-    getStudy(studyid, sessionid) {
-        return new Promise((resolve, reject) => {
-            Simva.getStudy(studyid, sessionid, (error, study) => {
-                if(error) {
-                    reject(error);
-                } else {
-                    resolve(study);
-                }
-            });
-        });
-    },
-
-    getStudyParticipants(studyid, sessionid) {
-        return new Promise((resolve, reject) => {
-            Simva.getStudyParticipants(studyid, sessionid, (error, participants) => {
-                if(error) {
-                    reject(error);
-                } else {
-                    resolve(participants);
-                }
-            });
-        });
-    },
-
-    getStudyGroups(studyid, sessionid) {
-        return new Promise((resolve, reject) => {
-            Simva.getStudyGroups(studyid, sessionid, (error, groups) => {
-                if(error) {
-                    reject(error);
-                } else {
-                    resolve(groups);
-                }
-            });
-        });
-    },
-
-    getStudyAllocator(studyid, sessionid) {
-        return new Promise((resolve, reject) => {
-            Simva.getAllocator(studyid, sessionid, (error, allocator) => {
-                if(error) {
-                    reject(error);
-                } else {
-                    resolve(allocator);
-                }
-            });
-        });
-    },
-
-    getStudyTests(studyid, sessionid) {
-        return new Promise((resolve, reject) => {
-            Simva.getStudyTests(studyid, sessionid, (error, tests) => {
-                if(error) {
-                    reject(error);
-                } else {
-                    resolve(tests);
-                }
-            });
-        });
-    },
+    }
 }

@@ -36,7 +36,7 @@ var RageAnalyticsActivityPainter = {
 		let formdata = Utils.getFormData(jform);
 
 		activity.name = formdata.name;
-		activity.type = this.supportedType;
+		activity.activity_type = this.supportedType;
 
 		callback(null, activity);
 	},
@@ -46,39 +46,39 @@ var RageAnalyticsActivityPainter = {
 		let formdata = Utils.getFormData(jform);
 		let activity = {};
 
-		if(actualActivity.name !== formdata.name) {
+		if(actualActivity.activity_name !== formdata.name) {
 			activity.name = formdata.name;
 		}
 	
 		callback(null, activity);
 	},
 
-	fullyPaintActivity: function(activity){
+	fullyPaintActivity: function(activity, participants){
 		this.paintActivity(activity, participants);
 		let tmp = this;
 
-		this.updateParticipants(activity);
+		this.updateParticipants(activity, participants);
 		//setInterval(function(){
-		//	tmp.updateParticipants(activity);
+		//	tmp.updateParticipants(activity, participants);
 		//}, 5000);
 	},
 
-	updateParticipants: function(activity){
+	updateParticipants: function(activity, participants){
 		let tmp = this;
 		activity.tmp = {};
 
-		tmp.paintActivityCompletion(activity, activity.data.completion);
-		tmp.paintActivityResult(activity, activity.data.result);
+		tmp.paintActivityCompletion(activity, activity.data.completion, participants);
+		tmp.paintActivityResult(activity, activity.data.result, participants);
 	},
 
 	paintActivity: function(activity, participants){
-		$(`#test_${activity.test} .activities`).append(`<div id="activity_${activity._id}" class="activity t${activity.type}">
-			<div class="top"><h4>${activity.name}</h4>
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
-			<p class="subtitle">${this.simple_name}</p>
-			<p><a onclick="RageAnalyticsActivityPainter.openDashboard('${activity.extra_data.activity._id}')">Dashboard Link</a></p>
-			<div id="completion_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>
-			<div id="result_progress_${activity._id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>
+		const topBar = PainterFactory.Painters['activity'].paintActivityTopBar.call(this, activity, '');
+		$(`#test_${activity.session_id} .activities`).append(`<div id="activity_${activity.activity_id}" class="activity t${activity.activity_type}">
+			${topBar}
+			<p class="subtitle" title="${this.description || ''}">${this.simple_name}</p>
+			<p><a onclick="RageAnalyticsActivityPainter.openDashboard('${activity.rage_activity_id}')">Dashboard Link</a></p>
+			<div id="completion_progress_${activity.activity_id}" class="progress"><div class="partial"></div><div class="done"></div><span>Completed: <done>0</done>%</span></div>
+			<div id="result_progress_${activity.activity_id}" class="progress"><div class="partial"></div><div class="done"></div><div></div><span>Results: <partial>0</partial>(<done>0</done>)%</span></div>
 			${this.paintActivityParticipantsTable(activity, participants)}</div>`);
 	},
 
@@ -86,14 +86,12 @@ var RageAnalyticsActivityPainter = {
 		let toret = '<table><tr><th>User</th><th>Completed</th><th>Progress</th><th>Result</th></tr>';
 
 		for (var i = 0; i < participants.length; i++) {
-			if(!AllocatorFactory.Painters[allocator.type].isAllocatedToActivity(participants[i].username, activity)){
-				continue;
-			}
+			const participantKey = PainterFactory.Painters["activity"].getParticipantKey(participants[i]);
 			
 			toret += `<tr><td>${PainterFactory.Painters["activity"].paintUsernameOrToken(activity, participants[i])}</td>
-				<td id="completion_${activity._id}_${participants[i].username}">---</td>
-				<td id="progress_${activity._id}_${participants[i].username}" class="progress"><div class="partial"></div><div class="done"></div><span><done>0</done>%</span></td>
-				<td id="result_${activity._id}_${participants[i].username}">---</td>`;
+				<td id="completion_${activity.activity_id}_${participantKey}">---</td>
+				<td id="progress_${activity.activity_id}_${participantKey}" class="progress"><div class="partial"></div><div class="done"></div><span><done>0</done>%</span></td>
+				<td id="result_${activity.activity_id}_${participantKey}">---</td>`;
 		}
 
 		toret += '</table>';
@@ -101,71 +99,91 @@ var RageAnalyticsActivityPainter = {
 		return toret;
 	},
 
-	paintActivityCompletion: function(activity, status){
-		let usernames = Object.keys(status);
+	paintActivityCompletion: function(activity, status, participants=[]){
+		let total = participants.length;
+		if(!status) {
+			// Even without status, update total if we have participant count
+			if(total > 0) {
+				$(`#completion_progress_${activity.activity_id} .done`).css('width', '0%');
+				$(`#completion_progress_${activity.activity_id} done`).text(0);
+			}
+			return;
+		}
 
 		let done = 0;
 
-		for (var i = 0; i < usernames.length; i++) {
-			if(status[usernames[i]]){
+		for (var i = 0; i < participants.length; i++) {
+			const participantKey = PainterFactory.Painters["activity"].getParticipantKey(participants[i]);
+			if(status[participantKey]){
 				done++;
 			}
 
-			let completion = `<span>${status[usernames[i]]}</span>`
-			$(`#completion_${activity._id}_${usernames[i]}`).addClass(!status[usernames[i]] ? 'red' : 'green');
-			$(`#completion_${activity._id}_${usernames[i]}`).empty();
-			$(`#completion_${activity._id}_${usernames[i]}`).append(completion);
+			let completion = `<span>${status[participantKey]}</span>`
+			$(`#completion_${activity.activity_id}_${participantKey}`).addClass(!status[participantKey] ? 'red' : 'green');
+			$(`#completion_${activity.activity_id}_${participantKey}`).empty();
+			$(`#completion_${activity.activity_id}_${participantKey}`).append(completion);
 		}
 
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
+		let progress = Math.round((done / total) * 1000) / 10; 
 
 		if(isNaN(progress)){
 			progress = 0;
 		}
 
-		$(`#completion_progress_${activity._id} .done`).css('width', `${progress}%` );
-		$(`#completion_progress_${activity._id} done`).text(progress);
+		$(`#completion_progress_${activity.activity_id} .done`).css('width', `${progress}%` );
+		$(`#completion_progress_${activity.activity_id} done`).text(progress);
 	},
 
-	paintActivityResult: function(activity, results){
-		let usernames = Object.keys(results);
+	paintActivityResult: function(activity, results, participants=[]){
+		let total = participants.length;
+		if(!results) {
+			// Even without results, update total if we have participant count
+			if(total > 0) {
+				$(`#result_progress_${activity.activity_id} .done`).css('width', '0%');
+				$(`#result_progress_${activity.activity_id} .partial`).css('width', '0%');
+				$(`#result_progress_${activity.activity_id} done`).text(0);
+				$(`#result_progress_${activity.activity_id} partial`).text(0);
+			}
+			return;
+		}
 
 		let done = 0, partial = 0;
 
-		for (var i = 0; i < usernames.length; i++) {
-			let status = results[usernames[i]];
+		for (var i = 0; i < participants.length; i++) {
+			const participantKey = PainterFactory.Painters["activity"].getParticipantKey(participants[i]);
+			let status = results[participantKey];
 			let result = '<span>No results</span>'
 
 			if(status){
 				done++;
-				result = `<span><a onclick="RageAnalyticsActivityPainter.openResults('${activity._id}','${usernames[i]}')">See Results</a></span>`;
+				result = `<span><a onclick="RageAnalyticsActivityPainter.openResults('${activity.activity_id}','${participantKey}')">See Results</a></span>`;
 
 				let tmpprogress = 0; 
-				if(results[usernames[i]]
-					&& results[usernames[i]].progressed
-					&& results[usernames[i]].progressed['serious-game']){
-					let keys = Object.keys(results[usernames[i]].progressed['serious-game']);
+				if(results[participantKey]
+					&& results[participantKey].progressed
+					&& results[participantKey].progressed['serious-game']){
+					let keys = Object.keys(results[participantKey].progressed['serious-game']);
 					if(keys.length > 0){
-						if(results[usernames[i]].progressed['serious-game'][keys[0]].progress){
-							tmpprogress = results[usernames[i]].progressed['serious-game'][keys[0]].progress;
+						if(results[participantKey].progressed['serious-game'][keys[0]].progress){
+							tmpprogress = results[participantKey].progressed['serious-game'][keys[0]].progress;
 						}
 					}
 				}
 
 				tmpprogress = (tmpprogress * 1000) / 10;
 
-				$(`#progress_${activity._id}_${usernames[i]} .done`).css('width', `${tmpprogress}%` );
-				$(`#progress_${activity._id}_${usernames[i]} done`).text(tmpprogress);
+				$(`#progress_${activity.activity_id}_${participantKey} .done`).css('width', `${tmpprogress}%` );
+				$(`#progress_${activity.activity_id}_${participantKey} done`).text(tmpprogress);
 			}
 
 
-			$(`#result_${activity._id}_${usernames[i]}`).addClass(status ? 'green' : 'red');
-			$(`#result_${activity._id}_${usernames[i]}`).empty();
-			$(`#result_${activity._id}_${usernames[i]}`).append(result);
+			$(`#result_${activity.activity_id}_${participantKey}`).addClass(status ? 'green' : 'red');
+			$(`#result_${activity.activity_id}_${participantKey}`).empty();
+			$(`#result_${activity.activity_id}_${participantKey}`).append(result);
 		}
 
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
-		let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
+		let progress = Math.round((done / total) * 1000) / 10; 
+		let partialprogress = Math.round((partial / total) * 1000) / 10;
 
 		if(isNaN(progress)){
 			progress = 0;
@@ -174,10 +192,10 @@ var RageAnalyticsActivityPainter = {
 			partialprogress = 0;
 		}
 
-		$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
-		$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
-		$(`#result_progress_${activity._id} done`).text(progress);
-		$(`#result_progress_${activity._id} partial`).text(partialprogress);
+		$(`#result_progress_${activity.activity_id} .done`).css('width', `${progress}%` );
+		$(`#result_progress_${activity.activity_id} .partial`).css('width', `${partialprogress}%` );
+		$(`#result_progress_${activity.activity_id} done`).text(progress);
+		$(`#result_progress_${activity.activity_id} partial`).text(partialprogress);
 	},
 
 	openResults: function(activity, user){
@@ -191,18 +209,14 @@ var RageAnalyticsActivityPainter = {
 					stack: false
 				});
 			}else{
-				let content = `<div style="padding: 20px;">${result[user]}</div>`;
-				let context = $('#iframe_floating iframe')[0].contentWindow.document;
-				let body = $('body', context);
-				body.html(content);
-				Utils.toggleAddForm('iframe_floating');
+				Utils.openResultContent(result[user], 'Error loading the result');
 			}
 		})
 	},
 
 	openDashboard: function(activityId){
 		$('#iframe_floating iframe').prop('src', `${this.utils.dashboard_url}${activityId}${this.utils.dashboard_query}`);
-		Utils.toggleAddForm('iframe_floating');
+				Utils.showIframeFloating();
 	},
 }
 

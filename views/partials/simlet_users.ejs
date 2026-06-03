@@ -1,0 +1,962 @@
+
+<div class="users">
+    <div class="card coordinators">
+        <div class="groupTop">
+			<div class="tooltipLine">
+	            <h2><%- t('coordinators.title', { ns : 'groups' }) %></h2>
+				<div class="tooltip">
+					&#x1F6C8;
+					<span class="tooltiptext">
+						<%= t('coordinator.description', { ns : 'about' }) %>
+					</span>
+				</div>
+			</div>
+            <div class="expandButton" onclick="toggleOwners()"></div>
+        </div>
+        <table class="owners" id="owners">
+            <thead>
+                <th><%- t('coordinators.table.username.title', { ns : 'groups' }) %></th>
+                <th><%- t('coordinators.table.permissions.title', { ns : 'groups' }) %></th>
+                <th></th>
+            </thead>
+            <tbody>
+                
+            </tbody>
+        </table>
+    </div>
+
+    <div id="group_template" style="display: none;">
+        <div class="test">
+            <div class="groupTop">
+                <h3 class="groupTitle">		</h3>
+                <div class="expandButton"></div>
+                <div class="kebab">
+                    <ul class="kebab-dropdown">
+                        <li class="kebab-icon icon-edit" title="<%- t('groups.settings.groups.edit.title', { ns : 'groups' }) %>">
+                            <%- t('groups.settings.groups.edit.title', { ns : 'groups' }) %>
+                        </li>
+                        <li class="kebab-icon icon-add" title="<%- t('groups.settings.add.title', { ns : 'groups' }) %>">
+                            <%- t('groups.settings.add.title', { ns : 'groups' }) %>
+                        </li>
+                        <li class="kebab-icon icon-gear" title="<%- t('groups.settings.allocator.title', { ns : 'groups' }) %>">
+                            <%- t('groups.settings.allocator.title', { ns : 'groups' }) %>
+						<li class="kebab-icon icon-download" title="<%- t('groups.settings.print.title', { ns : 'groups' }) %>">
+							<%- t('groups.settings.print.title', { ns : 'groups' }) %>
+                        </li>
+                        </li>
+						<li class="kebab-icon icon-export" title="<%- t('groups.settings.export.title', { ns : 'groups' }) %>">
+							<%- t('groups.settings.export.title', { ns : 'groups' }) %>
+						</li>
+                        <li class="kebab-icon icon-delete" title="<%- t('groups.settings.delete.title', { ns : 'groups' }) %>">
+                            <%- t('groups.settings.delete.title', { ns : 'groups' }) %>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+			<div class="deprecated_generation">
+            </div>
+            <div class="allocatorContent">
+            </div>
+			<strong class="groupParticipantsCount"><%- t('participants.title', { ns : 'groups' }) %>: 	</strong>
+			<div class="tooltipLine participantsTitle" style="margin-top: 15px;">
+				<h3><%- t('participants.title', { ns : 'groups' }) %></h3>
+				<div class="tooltip">
+					&#x1F6C8;
+					<span class="tooltiptext">
+						<%= t('participant.description', { ns : 'about' }) %>
+					</span>
+				</div>
+			</div>
+            <div class="participants_container">
+                <table class="participants">
+                    <thead>
+                        <th><%- t('participants.table.username.title', { ns : 'groups' }) %></th>
+                        <th><%- t('participants.table.isToken.title', { ns : 'groups' }) %></th>
+                        <th><%- t('participants.table.token.title', { ns : 'groups' }) %></th>
+                        <th><%- t('participants.table.email.title', { ns : 'groups' }) %></th>
+                        <th><%- t('participants.table.role.title', { ns : 'groups' }) %></th>
+                        <th></th>
+                    </thead>
+                    <tbody>
+                
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+	<div class="card groups">
+		<div class="top">
+			<div class="tooltipLine">
+				<h2><%- t('groups.title', { ns : 'groups' }) %></h2>
+				<div class="tooltip">
+					&#x1F6C8;
+					<span class="tooltiptext">
+						<%= t('group.description', { ns : 'about' }) %>
+					</span>
+				</div>
+			</div>
+		</div>
+		<div id="groups_container">
+            
+		</div>
+	</div>
+</div>
+
+
+<div id ="users_form_menu" class="new_element floating">
+	<div class="floater">
+		<div class="form" id="group_form">
+			<h1 id="users_form_title">  </h1>
+			<div class="tabs" id="add_group_tabs">
+				<span id="group_name_desc_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'group_form','group_name_desc_tab')"><%- t('groups.add.new.tab', { ns : 'groups' }) %></span>
+				<span class="tab" onclick="Utils.changeTab(this, 'group_form','import_group_tab')"><%- t('groups.import.tab', { ns : 'groups' }) %></span>
+				<span id="owners_tab_button" class="tab" onclick="Utils.changeTab(this, 'group_form','owner_tab')"><%- t('coordinators.add.title', { ns : 'groups' }) %></span>
+			</div>
+
+			<div id="group_name_desc_tab" class="subform selected">
+				<form id="group_form">
+					<input hidden type="text" name="editingGroupId" id="edit_group_id">
+					<input hidden type="text" name="prevGroupName" id="prev_group_name">
+					<h3><%- t('groups.name.title', { ns : 'groups' }) %></h3>
+					<input type="text" class="name_field" name="groupName" id="group_name" placeholder="<%- t('groups.name.placeholder', { ns : 'groups' }) %>" required>
+					<!-- TEST -->
+					<!-- <h3><%- t('deprecated.title', { ns : 'groups' }) %></h3> -->
+					<!-- <input type="checkbox" name="group_use_deprecated_generation" id="group_use_deprecated_generation" title="<%- t('deprecated.tooltip', { ns : 'groups' }) %>"><label for="group_use_deprecated_generation" ><%- t('deprecated.title', { ns : 'groups' }) %></label> -->
+					<!-- <br><br> -->
+					<input type="submit" id="group_submit" value="<%- t('groups.add.new.submit', { ns : 'groups' }) %>">
+				</form>
+				<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+				<br>
+				<span class="error" id="group_form_error"></span>
+			</div>
+			<div id="import_group_tab" class="subform" style="display: none;">
+				<form id="import_group_form_modal">
+					<h3><%- t('groups.name.title', { ns : 'groups' }) %></h3>
+					<input type="text" class="name_field" name="groupName" id="import_group_name_modal" placeholder="<%- t('groups.name.placeholder', { ns : 'groups' }) %>" required>
+					<h3><%- t('groups.import.input', { ns : 'groups' }) %></h3>
+					<input type="file" name="jsonFile" accept=".json" required>
+					<br><br>
+					<input type="submit" value="<%- t('groups.import.submit', { ns : 'groups' }) %>">
+				</form>
+				<span class="error" id="import_group_error_modal"></span>
+			</div>
+
+			<div id="owner_tab" class="subform">
+				<form id="existing_owner_form">
+					<h3><%- t('coordinators.name.title', { ns : 'groups' }) %></h3>
+					<input type="text" class="name_field" id="owner_name" name="name" placeholder="<%- t('coordinators.name.placeholder', { ns : 'groups' }) %>" required>
+					<div class="tooltipLine">
+						<h3><%- t('coordinators.permission.title', { ns : 'groups' }) %></h3>
+						<div class="tooltip">
+							&#x1F6C8;
+							<span class="tooltiptext">
+								<%= t('coordinator.description', { ns : 'about' }) %>
+							</span>
+						</div>
+					</div>
+					<select name="permission" required>
+						<option value=""><%- t('coordinators.permission.placeholder', { ns : 'groups' }) %></option>
+						<option value="READ"><%- t('coordinators.permissions.read', { ns : 'groups' }) %></option>
+						<option value="WRITE"><%- t('coordinators.permissions.write', { ns : 'groups' }) %></option>
+					</select>
+					<br><br>
+					<input type="submit" value="<%- t('coordinators.add.title', { ns : 'groups' }) %>">
+					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+					<br><br>
+					<span class="error" id="owner_form_error"></span>
+				</form>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+<div id="add_participant" class="new_element floating">
+	<div class="floater">
+		<div class="form" id="add_participant_form">
+			<h1><%= t('groups.settings.add.title' , { ns : 'groups' }) %></h1>
+			<div class="tabs">
+				<span id="existing_participant_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'add_participant_form','existing_participant_tab')"><%= t('participants.add.existing.tab' , { ns : 'groups' }) %></span>
+				<span class="tab" onclick="Utils.changeTab(this, 'add_participant_form','new_participant_tab')"><%= t('participants.add.new.tab' , { ns : 'groups' }) %></span>
+				<span id="add_batch_tab_button" class="tab" onclick="Utils.changeTab(this, 'add_participant_form','batch_participant_tab')"><%= t('participants.add.batch.tab' , { ns : 'groups' }) %></span>
+			</div>
+			<div id="existing_participant_tab" class="subform selected">
+				<form id="existing_participant_form">
+					<br>
+					<input type="text" class="name_field" name="name" placeholder="<%= t('participants.username.placeholder', { ns : 'groups' }) %>" required>
+					<br>
+					<input type="submit" value="<%= t('participants.add.existing.submit' , { ns : 'groups' }) %>">
+					<br><br>
+					<span class="error"></span>
+				</form>
+			</div>
+			<div id="new_participant_tab" class="subform" style="display: none;">
+				<form id="new_participant_form">
+					<br>
+					<input type="text" class="name_field" name="username" placeholder="<%= t('participants.username.placeholder', { ns : 'groups' }) %>" value="" required>
+					<br>
+					<input type="email" class="name_field" name="email" placeholder="<%= t('participants.add.new.email.placeholder', { ns : 'groups' }) %>" value="" required>
+					<br>
+					<input type="password" class="name_field" name="password" placeholder="<%= t('participants.add.new.password.placeholder', { ns : 'groups' }) %>" required>
+					<br>
+					<div class="role_selector">
+						<input id="teacher_role" type="radio" name="role" value="teacher"><label for="teacher_role"><%= t('teacher' , { ns : 'roles' }) %></label>
+						<input id="student_role" type="radio" name="role" value="student" checked><label for="student_role"><%= t('student' , { ns : 'roles' }) %></label>
+					</div>
+					<br>
+					<input type="submit" value="<%= t('participants.add.new.groups.add.new.submit' , { ns : 'groups' }) %>">
+					<br><br>
+					<span class="error"></span>
+				</form>
+			</div>
+			<div id="batch_participant_tab" class="subform" style="display: none;">
+				<form id="batch_participant_form">
+					<p><%= t('participants.add.batch.number.title' , { ns : 'groups' }) %></p>
+					<input type="number" step="1" min='1' max="100" name="amount" value="1">
+					<p><%= t('participants.add.batch.algorithFormat' , { ns : 'groups' }) %></p>
+					<select name="algorithm">
+						<option value="letters"><%= t('participants.add.batch.algorithFormat.letters' , { ns : 'groups' }) %></option>
+						<option value="alphanumeric"><%= t('participants.add.batch.algorithFormat.alphanumeric' , { ns : 'groups' }) %></option>
+						<option value="base58"><%= t('participants.add.batch.algorithFormat.base58' , { ns : 'groups' }) %></option>
+					</select>
+					<p><%= t('participants.add.batch.length.title' , { ns : 'groups' }) %></p>
+					<input type="number" step="1" min='4' max="10" name="length" value="4">
+					<br><br>
+					<input type="submit" value="<%= t('participants.add.batch.tab' , { ns : 'groups' }) %>">
+					<br><br>
+					<span class="error"></span>
+				</form>
+			</div>
+			<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+		</div>
+	</div>
+</div>
+
+<div id="change_allocator" class="new_element floating">
+    <div class="floater">
+        <div class="form">
+            <h2><%- t('allocator.change.title', { ns : 'groups' }) %></h2>
+            <form id="change_allocator_form">
+                <div id="change_allocator_content">
+                </div>
+				<br>
+                <input type="button" value="<%- t('allocator.change.submit', { ns : 'groups' }) %>" onclick="changeAllocator()">
+                <span class="error"></span>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- TODO PLATFORMS -->
+<!--  <% if (config.lti.enabled == 'true') { %>
+	<div class="graybox lti_platforms default">
+		<h2><%- t('lti_platform.title', { ns : 'groups' }) %></h2>
+		<p></p>
+		<table id="lti_platforms">
+		</table>
+		<input class="violet" type="button" value="<%- t('lti_platform.add.title', { ns : 'groups' }) %>" onclick="Utils.toggleAddForm('add_platform')">
+	</div>
+<% } %>
+-->
+
+<!-- <div id="add_platform" class="new_element floating">
+	<div class="floater">
+		<div class="form">
+			<div id="add_platform_tab" class="subform selected">
+				<h2><%- t('lti_platforms.add.title', { ns : 'SIMLETs' }) %></h2>
+				<form id="add_platform_form">
+					<p><%- t('lti_platforms.add.name.title', { ns : 'SIMLETs' }) %>:</p>
+					<input type="text" name="name" placeholder="imsglobal">
+					<p><%- t('lti_platforms.add.url.title', { ns : 'SIMLETs' }) %>:</p>
+					<input type="text" name="url" placeholder="https://lti-ri.imsglobal.org/platforms/2056">
+					<p><%- t('lti_platforms.add.client_id.title', { ns : 'SIMLETs' }) %>:</p>
+					<input type="text" name="clientId" placeholder="lti-test">
+					<p><%- t('lti_platforms.add.authentication_endpoint.title', { ns : 'SIMLETs' }) %>:</p>
+					<input type="text" name="authenticationEndpoint" placeholder="https://lti-ri.imsglobal.org/platforms/2056/authorizations/new">
+					<p><%- t('lti_platforms.add.accesstoken_endpoint.title', { ns : 'SIMLETs' }) %>Accesstoken Endpoint:</p>
+					<input type="text" name="accesstokenEndpoint" placeholder="https://lti-ri.imsglobal.org/platforms/2056/access_tokens">
+					<p><%- t('lti_platforms.add.jkws_url.title', { ns : 'SIMLETs' }) %>:</p>
+					<input type="text" name="jkwsUrl" placeholder="https://lti-ri.imsglobal.org/platforms/2056/platform_keys/1952.json">
+
+					<input type="submit" value="<%- t('lti_platforms.add.title', { ns : 'SIMLETs' }) %>">
+					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+					<span class="error"></span>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+-->
+
+<div class="floating_buttons">
+    <div unselectable="on" class="basic" onclick="openAddUsersForm()">
+		<img src="../icon/group.png" style="filter: brightness(0) saturate(100%);">
+		<span>+</span>
+	</div>
+</div>
+
+
+<script>
+	let editingGroupId = null;
+	
+	const groupDataIdKey = "groupId"
+	const groupDataNameKey = "groupName"
+	const groupDataAllocatorKey = "groupAllocator"
+	const userDataIdKey = "userId"
+	const userDataNameKey = "userName"
+	
+	
+	// Menus
+	
+	$(document).ready(function() {
+		// Add owner
+		$(document).on('submit', "#existing_owner_form", function(event) {
+			let form = Utils.getFormData($(this));
+			let errorbox = $(this).find('.error');
+			const owners = study.direct_permissions || study.owners || [];
+
+			for (var i = 0; i < owners.length; i++) {
+				if (owners[i].username == form.name) {
+					errorbox.text("<%- t('coordinators.error.already_in', { ns : 'groups' }) %>");
+					return false;
+				}
+			}
+			if (form.permission !== "READ" && form.permission !== "WRITE") {
+				// TODO: add localization
+				errorbox.text("<%- t('coordinators.error.permission', { ns : 'groups' }) %>");
+				return false;
+			}
+
+			Simva.getUsers({ username: form.name }, function(error, users) {
+				if (error) {
+					errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+					return;
+				}
+
+				const foundUser = Array.isArray(users) ? users[0] : users;
+				if (!foundUser || !foundUser.user_id) {
+					// TODO: other error showing in this case instead of this one
+					errorbox.text("<%- t('coordinators.error.not_found', { ns : 'groups' }) %>");
+					return;
+				}
+
+				Simva.createStudyPermissions(studyid, { user_id: foundUser.user_id, permission: form.permission }, function(createError) {
+					if (createError && createError.responseJSON) {
+						errorbox.text(createError.responseJSON.message);
+					} else if (createError) {
+						errorbox.text(createError.message || createError);
+					} else {
+						Utils.toggleAddForm('users_form_menu');
+						reloadStudy();
+					}
+				});
+			});
+
+			return false;
+		});
+		
+
+		// Import group from modal tab
+		$(document).on('submit', '#import_group_form_modal', function(event) {
+			let currentform = this;
+			let form = Utils.getFormData($(this));
+			Utils.toggleSubmit(currentform);
+			let errorbox = $('#import_group_error_modal');
+			const fileInput = $(this).find('input[name="jsonFile"]').get(0);
+			if(fileInput && fileInput.files[0]){
+				var reader = new FileReader();
+				reader.onload = function(){
+					try {
+						let raw = reader.result;
+						raw = raw.substr(raw.indexOf(',') + 1);
+						var newGroup = raw;
+						Simva.importGroup(studyid, {file: newGroup, group_name: form.groupName}, function(importError, result) {
+							Utils.toggleSubmit(currentform);
+							if (importError) {
+								errorbox.text(importError.responseJSON ? importError.responseJSON.message : importError.message || importError);
+								return;
+							} else {
+								$("#users_form_menu").removeClass("shown");
+								reloadStudy();
+							}
+						});
+					} catch (parseError) {
+						console.error('Import error:', parseError);
+						Utils.toggleSubmit(currentform);
+						// TODO: add localization
+						errorbox.text("<%- t('groups.import.error.invalid_file', { ns : 'groups' }) %> " + (parseError.message ? (': ' + parseError.message) : ''));
+					}
+				};
+				reader.readAsDataURL(fileInput.files[0]);
+				Utils.toggleAddForm('users_form_menu');
+			} else {
+				errorbox.text("<%- t('groups.import.upload.error', { ns : 'groups' }) %>");
+				Utils.toggleSubmit(currentform);
+			}
+			return false;
+		});
+
+		// Create/edit group
+		$(document).on('submit', "#group_form", function(event) {
+			let errorbox = $('#group_form_error');
+			let currentform = this;
+			let form = Utils.getFormData($(this));
+			Utils.toggleSubmit(currentform);
+			
+			// Creating new group
+			if (form.editingGroupId == null || form.editingGroupId == "") { 
+				let newGeneration = !Boolean(form.group_use_deprecated_generation);
+				Simva.addGroup(studyid, { group_name : form.groupName, group_sandbox : false, group_use_new_generation : newGeneration }, function(error, result) {
+					if (error && error.responseJSON) {
+						Utils.toggleSubmit(currentform);
+						errorbox.text(error.responseJSON.message);
+					}
+					else {
+						// Automatically allocate group to latest created session
+						let session = getLatestCreatedSession();
+						if(session && session.session_id){
+							Simva.allocateToSession(studyid, result.group_id, sessionId, {}, function(error, result){
+								if(!error){
+									console.log(result)
+								}
+							});
+						}	
+
+						// Fake a wait time and open the add participants form in the batch tab
+						setTimeout(() => {	
+							Utils.toggleSubmit(currentform);
+							Utils.toggleAddForm('users_form_menu');
+							openParticipantForm(result.group_id);
+							Utils.changeTab($('#add_batch_tab_button'), 'add_participant_form','batch_participant_tab');
+							// reloadStudy();
+						}, 500);
+					}
+				});
+			}
+			// Editing group
+			else {
+				const groupId = form.editingGroupId;
+
+				const nameChanged = form.prevGroupName != form.groupName;
+				if (!nameChanged) {
+					errorbox.text("<%- t('groups.edit.no_changes.message', { ns : 'groups' }) %>");
+					Utils.toggleSubmit(currentform);
+				}
+				else {
+					errorbox.text("");
+					Simva.updateGroup(studyid, form.editingGroupId, { group_name : form.groupName }, function(error, result) {
+						if (!error) {
+							Utils.toggleSubmit(currentform);
+							Utils.toggleAddForm('users_form_menu');
+							reloadStudy();
+						}
+					});
+				}
+			}
+			return false;
+		});
+		
+
+		// Add existing user as participant
+		$(document).on('submit', "#existing_participant_form", function(event){
+			let group = getGroupFromGroupId(editingGroupId);
+			let form = Utils.getFormData($(this));
+			let errorbox = $(this).find('.error');
+
+			// Do nothing if participant is already on the group and show error 
+			study.participants.forEach(function(participant) {
+				if (participant.group_id == editingGroupId && participant.username == form.name) {
+					errorbox.text(`<%- t("participants.errormessage.alreadyInGroup", { ns : "groups", group : "${group.group_name}", participant : "${form.name}" }) %>`); 
+					return false;
+				}
+			});
+
+			Simva.getUsers({ username: form.name }, function(error, users){
+                if(error){
+                    errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+                    return;
+                }
+
+                const foundUser = Array.isArray(users) ? users[0] : users;
+                if(!foundUser || !foundUser.user_id){
+                    errorbox.text("User not found");
+                    return;
+                } else {
+                    Simva.addGroupParticipant(studyid, editingGroupId, foundUser.user_id, function(addError){
+                        if(addError && addError.responseJSON){
+                            errorbox.text(addError.responseJSON.message);
+                        }else if(addError) {
+                            errorbox.text(addError.message || addError);
+                        }else{
+                            Utils.toggleAddForm('add_participant');
+                            reloadStudy();
+                        }
+                    });
+                }
+            });
+			
+			return false;
+		});
+
+		// Create and add new participant
+		$(document).on('submit', "#new_participant_form", function(event){
+			let form = Utils.getFormData($(this));
+			let errorbox = $(this).find('.error');
+
+			Simva.register(studyid, editingGroupId, form.username.toLowerCase(), form.email, form.password, form.role, function(error, result){
+				if(error && error.responseJSON){
+					errorbox.text(error.responseJSON.message);
+				}else{
+					Utils.toggleAddForm('add_participant');
+					reloadStudy();
+				}
+			});
+
+			return false;
+		});
+
+		// Generate and add a batch of new users as participant 
+		$(document).on('submit', "#batch_participant_form", function(event){
+			let currentform = this;
+			Utils.toggleSubmit(currentform);
+			let form = Utils.getFormData($(this));
+			let errorbox = $(this).find('.error');
+
+			Simva.generateAndRegister(studyid, editingGroupId, form.algorithm, form.length, form.amount, (error, generated) => {
+				if(!error) { 
+					Utils.toggleAddForm('add_participant');
+					reloadStudy();
+				}
+			});
+			return false;
+		});
+
+		// TODO
+		// Platform
+		$(document).on('submit', "#add_platform_form", function(event) {
+			let form = Utils.getFormData($(this));
+			let errorbox = $(this).find('.error');
+
+			let platform = {
+				url: form.url,
+				name: form.name,
+				clientId: form.clientId,
+				authenticationEndpoint: form.authenticationEndpoint,
+				accesstokenEndpoint: form.accesstokenEndpoint,
+				authConfig: { "method": "JWK_SET", "key": form.jkwsUrl },
+				studyId: studyid
+			}
+
+			Simva.addLtiPlatform(platform, function(error, result) {
+				if (error && error.responseJSON) {
+					errorbox.text(error.responseJSON.message);
+				} else {
+					Utils.toggleAddForm('add_platform');
+					reloadStudy();
+				}
+			});
+
+			return false;
+		});
+
+	});
+
+    //TEST
+	// Utils.changeTab(this, 'study_tabs','users_tab')
+	
+    const toggleOwners = function() {
+		$(".card.coordinators").find('.expandButton').toggleClass('collapsed');
+		$(".card.coordinators").find('.owners').toggleClass('collapsed');
+	}
+
+    const toggleGroup = function(groupId) {
+		$(`#group_box_${groupId}`).find('.tooltipLine.participantsTitle ').toggleClass('collapsed');
+        $(`#group_box_${groupId}`).find('.participants_container').toggleClass('collapsed');
+		$(`#group_box_${groupId}`).find('.expandButton').toggleClass('collapsed');
+    }
+	
+	const openAddUsersForm = function() {
+		// Always open form in the create/edit common tab
+		Utils.changeTab($('#group_name_desc_tab_button'), 'group_form','group_name_desc_tab');
+		Utils.toggleAddForm("users_form_menu");
+
+		// Reset tab state when opening modal
+		$("#owner_name").val("");
+		$('#owner_form_error').text("");
+		$('#edit_group_id').val("");
+		$('#group_name').val("");
+		$('#prev_group_name').val("");
+		$('#group_form_error').text("");
+		$('#import_group_name_modal').val("");
+		$('#import_group_error_modal').text("");
+
+		// Set form title to common title
+		$("#users_form_title").text("<%- t('users.add.title', { ns : 'groups' }) %>");
+	}
+
+	const openEditGroupForm = function(groupId) {
+		// Always open form in the create/edit common tab
+		Utils.changeTab($('#group_name_desc_tab_button'), 'group_form','group_name_desc_tab');
+		Utils.toggleAddForm("users_form_menu");
+
+		// Reset tab state when opening modal
+		$('#edit_group_id').val(groupId || "");
+		$('#prev_group_name').val("");
+		$('#group_name').val("");
+		$('#group_form_error').text("");
+
+		var group = getGroupFromGroupId(groupId);
+		$("#add_group_tabs").hide();
+		// Set form title to edit title
+		$("#users_form_title").text("<%- t('groups.edit.title', { ns : 'groups' }) %>");
+		$("#group_submit").val("<%- t('groups.edit.submit', { ns : 'groups' }) %>");
+		if (group) {
+			$('#prev_group_name').val(group.group_name);
+			$('#group_name').val(group.group_name);
+		}
+	}
+
+	const openParticipantForm = function(groupId) {
+		editingGroupId = groupId;
+		// Always open form in the add existing participant tab
+		Utils.changeTab($('#existing_participant_tab_button'), 'add_participant_form','existing_participant_tab');
+		Utils.toggleAddForm("add_participant");
+	}
+	
+	
+	let openChangeAllocatorForm = function(groupId, currentAllocatorType) {
+		editingGroupId = groupId;
+		let currentGroup=groups.find(g => g.group_id == groupId);
+		console.log("Current group for allocator change:", currentGroup.group_allocator_type);
+		let form = $('#change_allocator_form');
+		Utils.toggleAddForm('change_allocator');
+		$('#change_allocator_form input:radio[name=type]').prop('checked', false);
+		$(`#allocator_${currentGroup.group_allocator_type}`).prop('checked', true);
+	}
+
+	// Groups buttons shared listeners
+
+    $(document).on('click', "#groups_container .groupTop .expandButton", function(e) {
+		const data = $(this).closest(".test").data();
+		toggleGroup(data[groupDataIdKey]);
+	});
+
+	$(document).on('click', ".groupTop .icon-edit", function(e) {
+		const data = $(this).closest(".test").data();
+		openEditGroupForm(data[groupDataIdKey]);
+	});
+
+	$(document).on('click', ".groupTop .icon-add", function(e) {
+		const data = $(this).closest(".test").data();
+		openParticipantForm(data[groupDataIdKey]);
+	});
+	
+	$(document).on('click', ".groupTop .icon-gear", function(e) {
+		const data = $(this).closest(".test").data();
+		openChangeAllocatorForm(data[groupDataIdKey]);
+	});
+
+	$(document).on('click', ".groupTop .icon-export", function(e) {
+		const data = $(this).closest(".test").data();
+		exportGroup(data[groupDataIdKey], data[groupDataNameKey]);
+	});
+
+	$(document).on('click', ".groupTop .icon-download", function(e) {
+		const data = $(this).closest(".test").data();
+		const group = getGroupFromGroupId(data[groupDataIdKey]);
+		
+		let usernames = [];
+		if (group != null) {
+			study.participants.forEach(function(participant) {
+				if (group.participants.includes(participant.user_id)) {
+					if (participant.isToken) {
+						usernames.push(participant.token)
+					}
+					else {
+						usernames.push(participant.username)
+					}
+				}
+			});
+		}
+
+		$("#printable_group_name").text(`<%- t('print_table.title', { ns : 'groups' }) %> ${data[groupDataNameKey]}`);
+		clearTableBody($("#printable_table"));
+
+		let rows = "";
+		for (let i = 0; i < usernames.length; i++) {
+			rows += `
+				<tr>
+					<td>${i + 1}</td>
+					<td></td>
+					<td>${usernames[i]}</td><td>${usernames[i]}</td><td>${usernames[i]}</td><td>${usernames[i]}</td>
+				</tr>
+			`
+		}
+		$("#printable_table tbody").append(rows);
+
+		window.print();
+	});
+
+	$(document).on('click', ".groupTop .icon-delete", function(e) {
+		const data = $(this).closest(".test").data();
+		deleteGroup(data[groupDataIdKey], data[groupDataNameKey]);
+	});
+
+	$(document).on('click', ".participants .red", function(e) {
+		const groupData = $(this).closest(".test").data();
+		const userData = $(this).closest("tr").data();
+		deleteParticipant(userData[userDataIdKey], userData[userDataNameKey], groupData[groupDataIdKey], groupData[groupDataNameKey])
+	});
+
+	
+	// Functionality
+    
+	let deleteOwner = function(userId, owner) {
+		if (confirm(`<%- t('coordinators.delete.confirm', { ns : 'groups', coordinator : '${owner}', SIMLET : '${study.simlet_name}' }) %>`)) {
+			Simva.deleteStudyPermissionsForUser(studyid, userId, function(response) {
+				if (response.status === 200) {
+					reloadStudy();
+				}
+			});
+		}
+	}
+
+	const exportGroup = function(groupId, groupName) {
+		Simva.exportGroup(studyid, groupId, true, function(error, result) {
+			if (!error) {
+				const content = JSON.stringify(result, null, 2);
+				const filename = `simlet-group-${groupName}-export.json`;
+				Utils.download(filename, content);
+			} else {
+				alert(error.responseJSON ? error.responseJSON.message : (error.message || error));
+			}
+		});
+	}
+
+	let deleteGroup = function(groupid, groupname) {
+		if (confirm(`<%- t('groups.delete.confirm', { ns : 'groups', group : '${groupname}', SIMLET : '${study.simlet_name}' }) %>`)) {
+			Simva.deleteStudyGroup(studyid, groupid, function(response) {
+				if (response.status === 200) {
+					reloadStudy();
+				}
+			});
+		}
+	}
+
+	let deleteParticipant = function(participant_id, participant, group_id, group){
+		if(confirm(`<%- t('participants.delete.confirm', { ns : 'groups',  participant : '${participant}', group : '${group}' }) %>`)) {
+			// A participant will only be removed from keycloak if it's been generated as a token
+			Simva.deleteGroupParticipants(studyid, group_id, participant_id, getParticipantFromParticipantId(participant_id).isToken, function(response) {
+				if (response.status === 200) {
+					reloadStudy();
+				}
+			});
+		}
+	}
+	
+	let deletePlatform = function(platform) {
+		if (confirm(`<%- t('lti_platform.delete.confirm', { ns : 'groups', platform : '${platform}', SIMLET : '${study.simlet_name}' }) %>`)) {
+			Simva.removePlatform(platform, function(error, result) {
+				if(!error){
+					reloadStudy();
+				}
+			});
+		}
+	}
+
+	let changeAllocator = function() {
+		let type = $('#change_allocator_form input:radio[name=type]:checked').val();
+
+		if (editingGroupId) {
+			Simva.updateGroup(studyid, editingGroupId, { group_allocator_type: type }, function(error, result) {
+				if (error) {
+					$('#change_allocator_form .error').text(error.responseJSON ? error.responseJSON.message : error.message);
+				} else {
+					Utils.toggleAddForm('change_allocator');
+					reloadStudy();
+				}
+			});
+		} else {
+			Utils.toggleAddForm('change_allocator');
+		}
+	}
+
+
+	// Render
+
+	const clearTableBody = function(table) {
+		if (table.jquery != null) {
+			table.find("tbody tr").remove();
+		}
+	}
+	
+	let paintOwners = function(owners) {
+		clearTableBody($("#owners"));
+
+		for (var i = 0; i < owners.length; i++) {
+			$('#owners tbody').append(createOwnerRow(owners[i]));
+		}
+
+		// Block owner addition/deletion when SIMLET is archived
+		if (study.simlet_archived) {
+			$('.coordinators').find(".groupTop").find("img").hide();
+			$('.coordinators').find(".red").attr("disabled", "disabled");
+		}
+	}
+
+	let createOwnerRow = function(owner) {
+		let permissions = `<%- t('coordinators.permissions.full', { ns : 'groups' }) %>`
+		if (owner.permission.toLowerCase() === "read") {
+			permissions = `<%- t('coordinators.permissions.read', { ns : 'groups' }) %>`
+		}
+		else if (owner.permission.toLowerCase() === "write") {
+			permissions = `<%- t('coordinators.permissions.write', { ns : 'groups' }) %>`
+		}
+
+		let toret = `
+			<tr>
+				<td>${owner.username}</td>
+				<td>${permissions}</td>
+				<td><input class="red" type="button" value="<%- t('coordinators.delete.title', { ns : 'groups' }) %>"
+		`;
+		if (owner.isCurrentUser || owner.permission.toLowerCase() === "full") {
+			toret += ' disabled="disabled"';
+		} else {
+			toret += ` onclick="deleteOwner('${owner.user_id}', '${owner.username}')"`
+		}
+
+		toret += '></td></tr>';
+		return toret;
+	}
+
+
+	let paintGroups = function(groups, tests, participants) {
+		$('#groups_container').html('');
+		
+		let painted = 0;
+		let firstPaintedId = null;
+		if (groups.length > 0) {
+			for (var i = 0; i < groups.length; i++) {
+				if(Boolean(groups[i].group_sandbox)) {
+					continue;
+				}
+				addGroupBox(groups[i])
+				paintAllocator(groups[i], tests, groups, participants);
+				painted++;
+				firstPaintedId = groups[i].group_id;
+			}
+			// Automatically expand the group if there's only one
+            if (painted == 1) {
+			    toggleGroup(firstPaintedId);
+            }
+		} 
+        
+		// If there are no groups painted (either because there are none or all of them are sandbox), add the message
+		if (painted == 0) {
+			$('#groups_container').append("<p><%- t('groups.no_groups.message', { ns : 'groups' }) %></p>");
+		}
+		
+		// Block user addition/deletion when SIMLET is archived
+		if (study.simlet_archived) {
+			$(".groupTop").find(".kebab-dropdown").find(".icon-delete").hide();
+			$(".groupTop").find(".kebab-dropdown").find(".icon-add").hide();
+			$(".groupTop").find(".kebab-dropdown").find(".icon-gear").hide();
+			$('.participants').find(".red").attr("disabled", "disabled");
+		}
+	}
+
+	// Add group programatically to avoid XSS
+	let addGroupBox = function(group) {
+		const box = $("#group_template .test").clone();
+		box.attr("id", `group_box_${group.group_id}`);
+		box.data(groupDataIdKey, group.group_id);
+		box.data(groupDataNameKey, group.group_name);
+		box.data(groupDataAllocatorKey, (group.group_allocator_type || 'default'));
+
+		box.find(".groupParticipantsCount").after(group.participants.length);
+
+		box.find(".allocatorContent").attr("id", `allocator_content_${group.group_id}`);
+
+		box.find(".groupTitle").text(group.group_name);
+		if(Boolean(group.group_use_new_generation)) {
+			box.find(".deprecated_generation").remove();
+		} else {
+			box.find(".deprecated_generation").html("<p><%- t('deprecated.message', { ns : 'groups' }) %></p>");
+		}
+		const table = box.find(".participants");
+        
+		if (group.participants.length == 0) {
+			table.remove();
+			box.find(".participants_container").append("<p><%- t('participants.no_users.message', { ns : 'groups' }) %></p>")
+		}
+		else {
+			// console.log(study.participants, group.participants)
+			study.participants.forEach(function(participant) {
+				if (group.participants.includes(participant.user_id) && participant.group_id == group.group_id) {
+					let role = participant.role === "teacher" ? `<%- t('teacher', { ns : 'roles' }) %>` : `<%- t('student', { ns : 'roles' }) %>`
+					let isToken = participant.isToken ? `<%- t('participants.isToken.true', { ns : 'groups' }) %>` : `<%- t('participants.isToken.false', { ns : 'groups' }) %>`
+					let token = participant.token == null ? "-" : participant.token
+					let newRow = $(`
+						<tr>
+							<td>${participant.username}</td>
+							<td>${isToken}</td>
+							<td>${token}</td>
+							<td><a href="${participant.email}">${participant.email}</a></td>
+							<td>${role}</td>
+							<td><input class="red" type="button" value="<%- t('participant.delete.title', { ns : 'groups' }) %>"></td>
+						</tr>
+					`);
+					table.append(newRow);
+					newRow.data(userDataIdKey, participant.user_id);
+					newRow.data(userDataNameKey, participant.username);
+				}
+			});
+		}
+		
+		box.find(".kebab-dropdown").fadeOut(0);
+		$('#groups_container').append(box);
+        toggleGroup(group.group_id);
+	}
+
+
+	let paintAllocator = function(group, tests, groups, participants) {
+		const allocatorType = group.group_allocator_type || 'default';
+		if (AllocatorFactory.Painters[allocatorType]) {
+			AllocatorFactory.Painters[allocatorType].setTests(tests);
+			AllocatorFactory.Painters[allocatorType].setGroups(groups);
+			AllocatorFactory.Painters[allocatorType].setStudy(study);
+			AllocatorFactory.Painters[allocatorType].setParticipants(participants);
+			AllocatorFactory.Painters[allocatorType].paintAllocatorForGroup(group, `#allocator_content_${group.group_id}`);
+		} 
+        else {
+			$(`#allocator_content_${group.group_id}`).html(`<p><%- t('allocator.type.title', { ns : 'SIMLETs' }) %>: ${allocatorType}</p>`);
+		}
+	}
+
+	
+	// TODO: TEST
+	let paintPlatforms = function(platforms) {
+		$('#lti_platforms').html('');
+		if (platforms.length == 0) {
+			$('#lti_platforms').append("<p><%- t('lti_platform.zero.message', { ns : 'groups' }) %></p>");
+		} else {
+			for (var i = 0; i < platforms.length; i++) {
+				$('#lti_platforms').append(platformRow(platforms[i]));
+			}
+		}
+	}
+	
+	let platformRow = function(platform) {
+		let toret = `<tr><td>${platform.name}</td><td><input class="red" type="button" value="<%- t('lti_platform.delete.title', { ns : 'groups' }) %>"
+		onclick="removePlatform('${platform._id}')"
+		></td></tr>`;
+		return toret;
+	}
+
+</script>
+
+<script type="text/javascript" src="/allocators/defaultallocatorpainter.js"></script>
+<script type="text/javascript" src="/allocators/groupallocatorpainter.js"></script>
+<script type="text/javascript" src="/allocators/sessionallocatorpainter.js"></script>
+<script type="text/javascript" src="/allocators/randomallocatorpainter.js"></script>

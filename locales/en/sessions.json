@@ -1,0 +1,77 @@
+{
+    "title": "Sessions",
+    "single.title": "Session",
+    "no_sessions.message": "There are no sessions for this SIMLET. Try adding one using the button on the bottom right (+)",
+
+    "createdAt": "Created at",
+    "updatedAt": "Updated at",
+    "activities": "Activities",
+    "users": "Users",
+    "play": "Play SIMLET",
+    "download.title": "Download data",
+        "download.session.title": "Download session data",
+        "download.test.title": "Download test data",
+            "download.test.description": "Download your own test trace data for this session.",
+    "download.description": "Download the data for this session.",
+        
+    "add.title": "Add session",
+        "add.new.tab": "Add new",
+        "status.title": "Initial status",
+        "add.submit": "Create session",
+
+        "import.tab": "Import session",
+        "import.input": "Select exported session file",
+        "import.submit": "Import session",
+
+    "edit.title": "Edit session",
+        "edit.submit": "Edit session",
+    
+    "name.title": "Name",
+    "name.placeholder": "Session name",
+    "description.title": "Description",
+    "description.placeholder": "Session description",
+    "tags.title": "Tags",
+        "tags.no_tags": "No tags",
+        "tags.input.placeholder": "Type a tag to find or create it",
+        "tags.dropdown.no_tags": "No tags yet. Press + to create one",
+        "tags.dropdown.no_matches": "No matches for your search",
+        "tags.dropdown.all_matches": "All matching tags are already in this session",
+        "tags.create.placeholder": "New tag name",
+        "tags.create": "Create",
+        "tags.create.cancel": "Cancel",
+        "tags.edit.placeholder": "Tag name",
+        "tags.edit.save": "Save",
+        "tags.edit.cancel": "Cancel",
+
+    "can_be_manually_activated": "Can be manually activated",
+
+    "settings.edit.title": "Edit",
+    "settings.add_activity.title": "Add activity",
+
+    "settings.duplicate.title": "Duplicate",
+        "duplicate.title": "Duplicate session",
+        "duplicate.submit": "Duplicate",
+    
+    "settings.activate.title": "Activate",
+        "active.title": "Active",
+
+    "settings.pause.title": "Pause",
+        "paused.title": "Paused",
+
+    "settings.finish.title": "Finish",
+        "finished.title": "Finished",
+        "finish.confirm": "Are you sure you want to finish (terminate) this session? This action cannot be undone",
+
+    "settings.delete.title": "Delete",
+        "delete.confirm": "Are you sure you want to delete the session '{{session}}' from SIMLET '{{SIMLET}}'?\nAll the activities and data will be deleted too",
+
+    "settings.export.title": "Export",
+    "set_tester.title": "Set myself as tester in this session",
+    "reset_tester.title": "Reset tester (unset and set again)",
+    "unset_tester.title": "Unset myself as tester",
+
+    "status.description": "Depending on its status, a session will behave differently:",
+        "active.description": "An active session will receive data, its activities can be modified, and it can be paused at any time",
+        "paused.description": "A paused session won't receive any data, but it's posible to modify its activities or be reactivated at any time",
+        "finished.description": "A finished session will no longer be able to receive data, have its activities modified, nor be reactivated"
+}

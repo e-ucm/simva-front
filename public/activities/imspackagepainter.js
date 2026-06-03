@@ -31,9 +31,9 @@ var ImsPackagePainter = {
 
 	updateInputEditExtraForm(activity) {
 		var imspackage_trace_storage = document.getElementById('edit_imspackage_trace_storage');
-		imspackage_trace_storage.checked = activity.extra_data.config.trace_storage;
+		imspackage_trace_storage.checked = activity.trace_storage;
 		var imspackage_backup = document.getElementById('edit_imspackage_backup');
-		imspackage_backup.checked = activity.extra_data.config.backup;
+		imspackage_backup.checked = activity.backup;
 	},
 
 	extractInformation: function(form, callback){
@@ -43,7 +43,7 @@ var ImsPackagePainter = {
 		let formdata = Utils.getFormData(jform);
 
 		activity.name = formdata.name;
-		activity.type = this.supportedType;
+		activity.activity_type = this.supportedType;
 
 		activity.trace_storage = formdata.trace_storage === 'on';
 		activity.realtime = formdata.realtime === 'on';
@@ -60,57 +60,64 @@ var ImsPackagePainter = {
 		let formdata = Utils.getFormData(jform);
 		let activity = {};
 
-		if(actualActivity.name !== formdata.name) {
+		if(actualActivity.activity_name !== formdata.name) {
 			activity.name = formdata.name;
 		}
 	
 		callback(null, activity);
 	},
 
-	fullyPaintActivity: function(activity){
+	fullyPaintActivity: function(activity, participants){
 		this.paintActivity(activity, participants);
-		this.updateParticipants(activity);
+		this.updateParticipants(activity, participants);
 	},
 
-	updateParticipants: function(activity){
+	updateParticipants: function(activity, participants){
 		if(activity.data.openable){
-			PainterFactory.Painters["activity"].paintActivityTargets(activity, activity.data.target);
+			PainterFactory.Painters["activity"].paintActivityTargets(activity, activity.data.target, participants);
 		}
-		PainterFactory.Painters["activity"].paintActivityCompletion(activity, activity.data.completion, true);
-		PainterFactory.Painters["activity"].paintActivityResult(activity, activity.data.result, false, "No Backup", null, null, true, "See Backup", "imspackage");
+		PainterFactory.Painters["activity"].paintActivityCompletion(activity, activity.data.completion, true, participants);
+		PainterFactory.Painters["activity"].paintActivityResult(activity, activity.data.result, false, participants, "No Backup", null, null, true, "See Backup", "imspackage");
+	},
+
+	getExtraKebabItems: function(activity) {
+		return '';
 	},
 
 	paintActivity: function(activity, participants){
-		let activitybox = `<div id="activity_${activity._id}" class="activity t${activity.type}">
-			<div class="top"><h4>${activity.name}</h4>
-			<input class="blue" type="button" value="🖍️" onclick="openEditActivityForm('${activity._id}')">
-			<input class="red" type="button" value="X" onclick="deleteActivity('${activity._id}', '${activity.name}', '${activity.test}')"></div>
-			<p class="subtitle">${this.simple_name}</p>`;
+		const topBar = PainterFactory.Painters['activity'].paintActivityTopBar.call(this, activity, this.getExtraKebabItems(activity));
+		let activitybox = `<div id="activity_${activity.activity_id}" class="activity t${activity.activity_type}">
+			${topBar}
+			<p class="subtitle" title="${this.description || ''}">${this.simple_name}</p>`;
 		
 		activitybox += `${this.communSpecific.storage_title}: `
-		if(activity.extra_data.config.trace_storage){
-			activitybox += `<a href="${this.utils.minio_url}minio/${this.utils.minio_bucket}/${this.utils.topics_dir}/${this.utils.trace_topic}/_id=${activity._id}/" target="_blank">Folder</a>`;
+		if(activity.trace_storage){
+			activitybox += `<a href="${this.utils.minio_url}minio/${this.utils.minio_bucket}/${this.utils.topics_dir}/${this.utils.trace_topic}/_id=${activity.activity_id}/" target="_blank">Folder</a>`;
 		}else{
 			activitybox += `<i>${this.commun.storage_disabled}</i>`;
 		}
 		activitybox += `${PainterFactory.Painters["activity"].paintActivityParticipantsTable(activity, participants, true)}</div>`;
-		$(`#test_${activity.test} .activities`).append(activitybox);
+		$(`#test_${activity.session_id} .activities`).append(activitybox);
 	},
 
 	paintActivityCompletion: function(activity, status){
 		PainterFactory.Painters["activity"].paintActivityCompletion(activity, status);
 	},
 
-	paintActivityResult: function(activity, results){
-		let usernames = Object.keys(results);
+	paintActivityResult: function(activity, results, participants=[]){
+		let total = participants.length;
+		if(!results) {
+			return;
+		}
 
 		let done = 0, partial = 0;
 
-		for (var i = 0; i < usernames.length; i++) {
-			let status = results[usernames[i]];
+		for (var i = 0; i < participants.length; i++) {
+			const participantKey = PainterFactory.Painters["activity"].getParticipantKey(participants[i]);
+			let status = results[participantKey];
 			let traces = '<span>No traces</span>';
 			let backup = '<span><i>Disabled</i></span>';
-			if(activity.extra_data.config.backup){
+			if(activity.backup){
 				backup = '<span>No backup</span>';
 			}
 
@@ -130,14 +137,14 @@ var ImsPackagePainter = {
 						}
 
 						traces = `<span>
-						<a onclick="ImsPackagePainter.openTraces('${activity._id}','${usernames[i]}')">
+						<a onclick="ImsPackagePainter.openTraces('${activity.activity_id}','${participantKey}')">
 						See traces</a>
 						</span>`;
 					}
 
-					if(activity.extra_data.config.backup && results[usernames[i]].backup){
+					if(activity.backup && results[participantKey].backup){
 						backup = `<span>
-						<a onclick="ImsPackagePainter.downloadBackup('${activity._id}','${usernames[i]}')">
+						<a onclick="ImsPackagePainter.downloadBackup('${activity.activity_id}','${participantKey}')">
 						Download</a>
 						</span>`;
 					}
@@ -146,22 +153,22 @@ var ImsPackagePainter = {
 
 				tmpprogress = (tmpprogress * 1000) / 10;
 
-				$(`#progress_${activity._id}_${usernames[i]} .done`).css('width', `${tmpprogress}%` );
-				$(`#progress_${activity._id}_${usernames[i]} done`).text(tmpprogress);
+				$(`#progress_${activity.activity_id}_${participantKey} .done`).css('width', `${tmpprogress}%` );
+				$(`#progress_${activity.activity_id}_${participantKey} done`).text(tmpprogress);
 			}
 
 
-			$(`#traces_${activity._id}_${usernames[i]}`).addClass(status && status.realtime ? 'green' : 'red');
-			$(`#traces_${activity._id}_${usernames[i]}`).empty();
-			$(`#traces_${activity._id}_${usernames[i]}`).append(traces);
+			$(`#traces_${activity.activity_id}_${participantKey}`).addClass(status && status.realtime ? 'green' : 'red');
+			$(`#traces_${activity.activity_id}_${participantKey}`).empty();
+			$(`#traces_${activity.activity_id}_${participantKey}`).append(traces);
 
-			$(`#backup_${activity._id}_${usernames[i]}`).addClass(status && status.backup ? 'green' : 'red');
-			$(`#backup_${activity._id}_${usernames[i]}`).empty();
-			$(`#backup_${activity._id}_${usernames[i]}`).append(backup);
+			$(`#backup_${activity.activity_id}_${participantKey}`).addClass(status && status.backup ? 'green' : 'red');
+			$(`#backup_${activity.activity_id}_${participantKey}`).empty();
+			$(`#backup_${activity.activity_id}_${participantKey}`).append(backup);
 		}
 
-		let progress = Math.round((done / usernames.length) * 1000) / 10; 
-		let partialprogress = Math.round((partial / usernames.length) * 1000) / 10;
+		let progress = Math.round((done / total) * 1000) / 10; 
+		let partialprogress = Math.round((partial / total) * 1000) / 10;
 
 		if(isNaN(progress)){
 			progress = 0;
@@ -170,10 +177,10 @@ var ImsPackagePainter = {
 			partialprogress = 0;
 		}
 
-		$(`#result_progress_${activity._id} .done`).css('width', `${progress}%` );
-		$(`#result_progress_${activity._id} .partial`).css('width', `${partialprogress}%` );
-		$(`#result_progress_${activity._id} done`).text(progress);
-		$(`#result_progress_${activity._id} partial`).text(partialprogress);
+		$(`#result_progress_${activity.activity_id} .done`).css('width', `${progress}%` );
+		$(`#result_progress_${activity.activity_id} .partial`).css('width', `${partialprogress}%` );
+		$(`#result_progress_${activity.activity_id} done`).text(progress);
+		$(`#result_progress_${activity.activity_id} partial`).text(partialprogress);
 	},
 
 	downloadBackup: function(activity, user){
@@ -198,7 +205,7 @@ var ImsPackagePainter = {
 		Simva.getActivityResultForUser(activity, user, function(error, result){
 			if(error){
 				$.toast({
-					heading: this.commun.result_error_loading,
+					heading: 'Error loading the result',
 					text: error.message,
 					position: 'top-right',
 					icon: 'error',
@@ -230,7 +237,7 @@ var ImsPackagePainter = {
 				let context = $('#iframe_floating iframe')[0].contentWindow.document;
 				let body = $('body', context);
 				body.html(content);
-				Utils.toggleAddForm('iframe_floating');
+				Utils.showIframeFloating();
 			}
 		})
 	},

@@ -3,30 +3,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title><%= t('title') %></title>
-	<link href="/css/style.css" rel="stylesheet" type="text/css">
-	<link href="/css/loader.css" rel="stylesheet" type="text/css">
-	<link href="/toast/jquery.toast.css" rel="stylesheet" type="text/css">
-	<link href="/libs/jsonTree/jsonTree.css" rel="stylesheet" />
-	<script src="/libs/jsonTree/jsonTree.js"></script>
-	<script src="/libs/SSEClientManager.js"></script>
-	<script type="text/javascript" src="/jquery.js"></script>
-	<script type="text/javascript" src="/toast/jquery.toast.js"></script>
-	<script type="text/javascript" src="/utils.js"></script>
-	<script type="text/javascript" src="/simva.js"></script>
-	<script type="text/javascript">
-		Simva.setURL("<%= config.simva.url %>");
-		Simva.setSSOURL("<%= config.sso.url %>");
-		Simva.setSSOREALM("<%= config.sso.realm %>");
-		var roller = '<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>';
-
-		$(document).ready(function() {
-			$(".floater").off('click').on('click', function(event) { 
-				if (event.target !== this) return;
-				$(this).parent().removeClass('shown');
-			});
-		});
-	</script>
+	<%- include('partials/layout_head_assets') %>
+	<%- include('partials/layout_common_script', { includeSimvaBase: true }) %>
 	<script type="text/javascript">
 		if(true) {
 			Simva.getScheduleEventsPresignedUrl('<%= study %>', function(error, result){
@@ -97,6 +75,7 @@
 		//
 		let studyId = "<%= study %>";
 		let username = "<%= user.data.username %>";
+		let currentUserId = null;
 
 		var manual = '<body style="background-color: black; color: white; font-family: sans-serif; text-align: center;"><h1>External Activity</h1><p>Ask or listen your teacher for what you have to do on this activity.</p><p>If you are allowed to complete the activity on your own, there should be a "complete activity" button above.</p></body>';
 
@@ -158,7 +137,7 @@
 			window.addEventListener('beforeunload', () => {
 				if(current_activity_id != null) {
 					console.log("Suspended");
-					Simva.setActivitySuspend(current_activity_id, username, true, "unload_page", function() {
+					Simva.setActivitySuspend(current_activity_id, currentUserId, true, "unload_page", function() {
 						console.log("Suspended in Simva");
 					});
 				}
@@ -166,15 +145,43 @@
 		});
 
 		// Function to update the user interaction state and notify the server if changed
+		let suspendTimeout = null;
+		let SUSPEND_DELAY_MS = 15000; // 15 seconds
+		let lastSuspendReason = null;
+
 		let updateUserInteractionState = function(reason) {
 			const isInteracting = isUserInteractingFunc();
 			if (isInteracting !== previousState) {
 				console.log(`User is ${isInteracting ? 'interacting' : 'not interacting'} with the page.`);
-				previousState = isInteracting;
-				if(current_activity_id != null) {
-					Simva.setActivitySuspend(current_activity_id, username, !isInteracting, reason, function() {
-						console.log("OK in Simva");
-					});
+				if (current_activity_id != null) {
+					if (!isInteracting) {
+						// User stopped interacting: start suspend timer
+						if (suspendTimeout) clearTimeout(suspendTimeout);
+						lastSuspendReason = reason;
+						suspendTimeout = setTimeout(function() {
+							// Only send suspend if still not interacting
+							if (!isUserInteractingFunc()) {
+								Simva.setActivitySuspend(current_activity_id, currentUserId, true, lastSuspendReason, function() {
+									console.log("OK in Simva (delayed suspend)");
+									previousState=false;
+								});
+							}
+							clearTimeout(suspendTimeout);
+							suspendTimeout = null;
+						}, SUSPEND_DELAY_MS);
+					} else {
+						// User resumed interaction: cancel suspend timer and unsuspend immediately
+						if (suspendTimeout) {
+							clearTimeout(suspendTimeout);
+							suspendTimeout = null;
+						} else {
+							Simva.setActivitySuspend(current_activity_id, currentUserId, false, reason, function() {
+								console.log("OK in Simva (unsuspend)");
+								previousState=true;
+							});
+						}
+						
+					}
 				}
 			}
 		}
@@ -187,6 +194,7 @@
 		let getUserToken = function(){
 			Simva.getCurrentUser(function(error, result) {
 				if(!error) {
+					currentUserId = result.user_id ?? currentUserId;
 					if(result.token) {
 						document.getElementById('username').innerText = result.token;
 					} else {
@@ -199,62 +207,83 @@
 		let avoid_refreshing = false;
 		let reloadSchedule = function(){
 			Simva.getStudySchedule(studyId, function(error, result){
-				if(!current_activity_id || current_activity_id !== result.next){
-					current_activity_id = result.next;
+				if(error){ 
+						$("#complete_activity").hide();
+						$('.underlay').hide();
+						$('#activity_content').hide(10, function(){
+							$('#activity_content').attr('src', 'about:blank');
+							paintCurrentActivity('Error');
+							let errorMessage = error.responseJSON?.message || error.responseJSON?.error || error.statusText || error.message || 'Unknown error';
+							let errorHtml = `<html><body style="display:flex;justify-content:center;align-items:center;height:100vh;margin:0;font-family:sans-serif;"><p style="color:red;font-size:24px;text-align:center;">${errorMessage}</p></body></html>`;
+							document.getElementById('activity_content').src = `data:text/html;charset=utf-8,${encodeURIComponent(errorHtml)}`;
+							$('#activity_content').show();
+							console.log('showing');
+						});
+						avoid_refreshing=false;
+				} else {
+					if(!current_activity_id || current_activity_id !== result.next){
+						current_activity_id = result.next;
 
-					if(!result.next){
-						if(!avoid_refreshing){
-						avoid_refreshing = true;
-							$("#complete_activity").hide();
-							$('#activity_content').hide(10, function(){
-								$('#activity_content').attr('src', 'about:blank');
-								paintCurrentActivity('Completed');
-								document.getElementById('activity_content').src = `data:text/html;charset=utf-8,${escape(completed)}`;
-								$('#activity_content').show();
-								console.log('showing');
-							});
-						}
-						return;
-					}
-
-					avoid_refreshing = false;
-
-					if(!error){
-						let activity = result.activities[result.next];
-						activity._id = result.next;
-						Simva.isActivityOpenable(activity._id, function(error, result){
-							if(!error){
-								if(activity.details.user_managed){
-									$("#complete_activity").show();
-								}else{
-									$("#complete_activity").hide();
-								}
-							}
-							if(result.openable){
-								Simva.getActivityTarget(activity._id, function(error, result){
-									if (error) {
-     									console.error("Error getting the URL of the activity target:", error);
-        								return;
-    								}
-									try {
-										$('#activity_content').attr('src', result[username]);
-									} catch (error) {
-										console.error("Error getting source:", error);
-										return;
-									}
-								});
-							}else{
+						if(!result.next){
+							if(!avoid_refreshing){
+								avoid_refreshing = true;
+								$("#complete_activity").hide();
 								$('#activity_content').hide(10, function(){
 									$('#activity_content').attr('src', 'about:blank');
-									document.getElementById('activity_content').src = `data:text/html;charset=utf-8,${escape(manual)}`;
+									paintCurrentActivity('Completed');
+									document.getElementById('activity_content').src = `data:text/html;charset=utf-8,${escape(completed)}`;
 									$('#activity_content').show();
 									console.log('showing');
 								});
 							}
-						});
-						paintCurrentActivity(activity.name);
+							return;
+						}
+
+						avoid_refreshing = false;
+
+						if(!error){
+							let activity = result.activities[result.next];
+							Simva.isActivityOpenable(activity.activity_id, function(error, result){
+								if(!error){
+									if(activity.manual_user_managed){
+										$("#complete_activity").show();
+									}else{
+										$("#complete_activity").hide();
+									}
+								}
+								if(result.openable){
+									Simva.getActivityTarget(activity.activity_id, function(error, result){
+										if (error) {
+											console.error("Error getting the URL of the activity target:", error);
+											return;
+										}
+										try {
+											console.log("Activity target URL:", result);
+											Simva.getCurrentUser(function(error, user){
+												if(!error) {
+													console.log("Current user:", user);
+													$('#activity_content').attr('src', result[user.user_id]);
+												}
+											});
+										} catch (error) {
+											console.error("Error getting source:", error);
+											return;
+										}
+									});
+								}else{
+									$('#activity_content').hide(10, function(){
+										$('#activity_content').attr('src', 'about:blank');
+										document.getElementById('activity_content').src = `data:text/html;charset=utf-8,${escape(manual)}`;
+										$('#activity_content').show();
+										console.log('showing');
+									});
+								}
+							});
+							paintCurrentActivity(activity.activity_name);
+						}
 					}
 				}
+				
 			});
 		}
 
@@ -263,136 +292,14 @@
 		}
 
 		let completeActivity = function(){
-			Simva.setActivityCompletion(current_activity_id, username, true, function(){
+			Simva.setActivityCompletion(current_activity_id, currentUserId, true, function(){
 				reloadSchedule();
 			});
 		}
-		$(document).ready(function() {
-			var currentlanguageCode;
-			// Get the container element and the button
-			const dropdown = document.getElementById('language-dropdown');
-			const langBtn = document.getElementById('lang-btn');
-			//const current = document.getElementById('current-lang');
-
-			function getFlagEmoji(languageCode) {
-				// Extract the country code (e.g., "BR" from "pt-BR")
-				const countryCode = languageCode.split('-')[1] || languageCode;
-				// Ensure the country code is uppercase
-				const codePoints = countryCode
-					.toUpperCase()
-					.split('')
-					.map(char => 127397 + char.charCodeAt(0)); // Offset for regional indicator symbols
-				return String.fromCodePoint(...codePoints);
-			}
-
-			// Function to render the dropdown
-			function renderDropdown() {
-				const currentUrl = window.location.href;
-				Simva.getLanguage(function(error, result) {
-					if(error) {
-						console.log(error.message);
-					} else {
-						let updateLanguage;
-						const urlTemplate = result.flagTemplateUrl;
-						if(!result.current) {
-							const preferedLangs = navigator.languages;
-							console.log(`The Preferred languages are: ${preferedLangs}.`);
-							preferedLangs.forEach((lang) => {
-								if(!updateLanguage) {
-									if(result.languages.find(language => language.code === lang)) {
-										updateLanguage=lang;
-									}	
-								}
-							});
-							if(!updateLanguage) {
-								updateLanguage=result.default;
-							}
-							if(!currentUrl.includes("lng=") && updateLanguage) {
-								Simva.updateLanguage(updateLanguage, function(error, result) {
-									if(error) {
-										console.log(error.message);
-									} else {
-										console.log(result);
-										if(currentUrl.includes("?")) {
-											window.location.href=`${currentUrl}&lng=${updateLanguage}`;
-										} else {
-											window.location.href=`${currentUrl}?lng=${updateLanguage}`;
-										}
-									}
-								});
-								return;
-							}
-						}
-						const currentlanguage = result.languages.find(language => language.code === result.current);
-						currentlanguageCode=currentlanguage.code;
-						langBtn.innerHTML=getFlagEmoji(currentlanguage.code) + " " + currentlanguage.name;
-						var dropdownHTML = '<div>';
-						result.languages.forEach((lang) => {
-							dropdownHTML += `<button id="${lang.code}">${getFlagEmoji(lang.code)} ${lang.name}</button>`;
-						});
-						dropdownHTML += '</div>';
-						dropdown.innerHTML = dropdownHTML;
-						dropdown.style.display = 'none';
-					}
-				})
-			}
-
-			// Add event listener to the button
-			langBtn.addEventListener('click', () => {
-				// Show the dropdown when the button is clicked
-				dropdown.style.display = 'block';
-				dropdown.style.top = '0'; // Position it on top of other elements
-			});
-
-			// Hide the dropdown when an item is clicked or outside the dropdown is clicked
-			dropdown.addEventListener('click', (event) => {
-				if (event.target.tagName === 'BUTTON') {
-					const currentUrl = window.location.href;
-					const selectedLang = event.target.id;
-					// Do something with the selected language (e.g., update a variable or make an API call)
-					console.log(selectedLang);
-					Simva.updateLanguage(selectedLang, function(error, result) {
-						if(error) {
-							console.log(error.message);
-						} else {
-							console.log(result);
-							dropdown.style.display = 'none';
-							if(currentUrl.includes("?")) {
-								window.location.href=currentUrl.replace(`lng=${currentlanguageCode}`,`lng=${selectedLang}`)
-							} else {
-								window.location.href=`${currentUrl}?lng=${selectedLang}`;
-							}
-							//window.location.reload();
-						}
-					});
-				} else if (event.target === dropdown) {
-					dropdown.style.display = 'none';
-				}
-			});
-
-			// Initial render of the dropdown
-			renderDropdown();
-		});
 	</script>
 </head>
 <body class="black">
-	<div class="header black">
-		<div class="left">
-			<span>
-				<!-- Create a container element for the dropdown -->
-				<div id="language-dropdown" style="display: flex; flex-wrap: wrap;"></div>
-				<button id="lang-btn"></button>
-			</span>
-			<span class="logo"><img src="/logo.png"></span> <span class="title"><%- t('scheduler.current', { ns : 'studies' }) %></span><span id="current_activity_name"></span>
-		</div>
-		<div class="right">
-			<span id="refresh"><a style="cursor: pointer;" onclick="location.reload()"><img src="/icon/refresh.png"> <span><%- t('scheduler.refresh', { ns : 'studies' }) %></span></a></span>
-			<span id="complete_activity" style="display: none"><a style="cursor: pointer;" onclick="completeActivity()"><img src="/icon/check.png"> <span><%- t('scheduler.complete', { ns : 'studies' }) %></span></a></span>
-			<span><a><img src="/icon/user_white.png"> <span id="username"></span></a></span>
-			<span><a class="logout" href="/studies/"><img src="/icon/back.png"> <span><%- t('scheduler.exit', { ns : 'studies' }) %></span></a></span>
-			<span><a class="logout" href="/users/logout"><img src="/icon/power.png"> <span><%- t('logout.title') %></span></a></span>
-		</div>
-	</div>
+	<%- include('partials/header_authenticated', { isScheduler: true }) %>
 
 	<iframe id="activity_content" frameBorder="0">
 		

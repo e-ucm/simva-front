@@ -97,4 +97,7 @@ let tmonPort = ((default_protocol_ports[config.tmon.protocol] !== config.tmon.po
 config.tmon.url = process.env.TMON_URL || `${config.tmon.protocol}://${config.tmon.host}${tmonPort}`;
 config.tmon.file = process.env.TMON_MINIO_TRACES_FILE || "traces.json"
 
+config.activities = {};
+config.activities.enabled = process.env.TEMPLATE_ACTIVITIES_ENABLED || 'false';
+
 module.exports = config;
