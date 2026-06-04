@@ -554,7 +554,7 @@
 				return;
 			}
 			var content = result.data;
-			var filename = `simva-${study.simlet_name}-session-${downloadSessionId}-data.json`;
+			var filename = `simva-${study.simlet_name}-session-${downloadSessionId}-data.jsonl`;
 			Utils.downloadContent(content, filename, 'Session data error');
 		});
 	}
@@ -573,7 +573,7 @@
 				return;
 			}
 			var content = result.data;
-			var filename = `simva-${study.simlet_name}-session-${downloadSessionId}-test-data.json`;
+			var filename = `simva-${study.simlet_name}-session-${downloadSessionId}-test-data.jsonl`;
 			Utils.downloadContent(content, filename, 'Session test data error');
 		});
 	}

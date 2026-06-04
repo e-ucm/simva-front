@@ -292,7 +292,7 @@ var GameplayActivityPainter = {
 					toastParams.text = error.message;
 					$.toast(toastParams);
 				}else{
-					var filename = `${this.communSpecific.result_file_prefix}_${activity}_${user}.json`;
+					var filename = `${this.communSpecific.result_file_prefix}_${activity}_${user}.jsonl`;
 					Utils.download(filename, result[user]);
 				}
 			});
@@ -309,18 +309,18 @@ var GameplayActivityPainter = {
 							let hasResults = false;
 							for(const participant in result) {
 								if(result.hasOwnProperty(participant) && result[participant] != null) {
-									Utils.downloadContent(result[participant], `${this.communSpecific.result_file_prefix}_${activity}_${participant}.json`);
+									Utils.downloadContent(result[participant], `${this.communSpecific.result_file_prefix}_${activity}_${participant}.jsonl`);
 									hasResults = true;
 								};
 							}
 							if(!hasResults) {
-								Utils.download(`${this.communSpecific.result_file_prefix}_${activity}.json`, JSON.stringify(result,null,2));
+								Utils.download(`${this.communSpecific.result_file_prefix}_${activity}.jsonl`, JSON.stringify(result,null,2));
 							}
 						}
 					});
 				} else {
 					console.log('Minio URL for backup:', result);
-					Utils.downloadContent(result.url, `${this.communSpecific.result_file_prefix}_${activity}.json`, this.commun.result_error_downloading);
+					Utils.downloadContent(result.url, `${this.communSpecific.result_file_prefix}_${activity}.jsonl`, this.commun.result_error_downloading);
 				}
 			});
 		}

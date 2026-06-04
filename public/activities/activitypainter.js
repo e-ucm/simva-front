@@ -763,7 +763,7 @@ var ActivityPainter = {
 					toastParams.text = error.message;
 					$.toast(toastParams);
 				} else {
-					var filename = `${this.communSpecific.result_file_prefix}_${activity}_${user}.json`;
+					var filename = `${this.communSpecific.result_file_prefix}_${activity}_${user}.jsonl`;
 					this.downloadContent(result[user], filename, this.commun.result_error_downloading);
 				}
 			});
@@ -773,7 +773,7 @@ var ActivityPainter = {
 					toastParams.text = error.message;
 					$.toast(toastParams);
 				} else {
-					Utils.download(`${this.communSpecific.result_file_prefix}_${activity}.json`, JSON.stringify(result, null, 2));
+					Utils.download(`${this.communSpecific.result_file_prefix}_${activity}.jsonl`, JSON.stringify(result, null, 2));
 				}
 			});
 		}
@@ -812,7 +812,7 @@ var ActivityPainter = {
 					stack: false
 				});
 			} else {
-				this.downloadContent(JSON.stringify(result, null, 2), `activity_export_${activityId}.json`, this.commun.export_error);
+				this.downloadContent(JSON.stringify(result, null, 2), `activity_export_${activityId}.jsonl`, this.commun.export_error);
 			}
 		});
 	},
@@ -844,7 +844,7 @@ var ActivityPainter = {
 					stack: false
 				});
 			} else {
-				this.downloadContent(data.data, `full_xapi_data_${activity}.json`, this.commun.result_error_downloading);
+				this.downloadContent(data.data, `full_xapi_data_${activity}.jsonl`, this.commun.result_error_downloading);
 			}
 		});
 	},
@@ -860,7 +860,7 @@ var ActivityPainter = {
 					stack: false
 				});
 			} else {
-				this.downloadContent(data.data, `test_xapi_data_${activity}.json`, this.commun.result_error_downloading);
+				this.downloadContent(data.data, `test_xapi_data_${activity}.jsonl`, this.commun.result_error_downloading);
 			}
 		});
 	},
