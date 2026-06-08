@@ -98,7 +98,9 @@
 			</div>
 		</div>
 		<div id="groups_container">
-            
+            <div style="width: 100%; text-align: center; padding: 200px;">
+				<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+			</div>
 		</div>
 	</div>
 </div>
@@ -126,9 +128,6 @@
 					<!-- <br><br> -->
 					<input type="submit" id="group_submit" value="<%- t('groups.add.new.submit', { ns : 'groups' }) %>">
 				</form>
-				<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-				<br>
-				<span class="error" id="group_form_error"></span>
 			</div>
 			<div id="import_group_tab" class="subform" style="display: none;">
 				<form id="import_group_form_modal">
@@ -136,10 +135,8 @@
 					<input type="text" class="name_field" name="groupName" id="import_group_name_modal" placeholder="<%- t('groups.name.placeholder', { ns : 'groups' }) %>" required>
 					<h3><%- t('groups.import.input', { ns : 'groups' }) %></h3>
 					<input type="file" name="jsonFile" accept=".json" required>
-					<br><br>
 					<input type="submit" value="<%- t('groups.import.submit', { ns : 'groups' }) %>">
 				</form>
-				<span class="error" id="import_group_error_modal"></span>
 			</div>
 
 			<div id="owner_tab" class="subform">
@@ -160,14 +157,12 @@
 						<option value="READ"><%- t('coordinators.permissions.read', { ns : 'groups' }) %></option>
 						<option value="WRITE"><%- t('coordinators.permissions.write', { ns : 'groups' }) %></option>
 					</select>
-					<br><br>
 					<input type="submit" value="<%- t('coordinators.add.title', { ns : 'groups' }) %>">
-					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-					<br><br>
-					<span class="error" id="owner_form_error"></span>
 				</form>
 			</div>
-
+			
+			<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+			<span class="error" id="users_error"></span>
 		</div>
 	</div>
 </div>
@@ -185,10 +180,8 @@
 				<form id="existing_participant_form">
 					<br>
 					<input type="text" class="name_field" name="name" placeholder="<%= t('participants.username.placeholder', { ns : 'groups' }) %>" required>
-					<br>
+					<!-- <textarea type="text" name="name" id="session_description" placeholder="<%- t('participants.username.placeholder', { ns : 'groups' }) %>" required></textarea> -->
 					<input type="submit" value="<%= t('participants.add.existing.submit' , { ns : 'groups' }) %>">
-					<br><br>
-					<span class="error"></span>
 				</form>
 			</div>
 			<div id="new_participant_tab" class="subform" style="display: none;">
@@ -204,10 +197,8 @@
 						<input id="teacher_role" type="radio" name="role" value="teacher"><label for="teacher_role"><%= t('teacher' , { ns : 'roles' }) %></label>
 						<input id="student_role" type="radio" name="role" value="student" checked><label for="student_role"><%= t('student' , { ns : 'roles' }) %></label>
 					</div>
-					<br>
+
 					<input type="submit" value="<%= t('participants.add.new.groups.add.new.submit' , { ns : 'groups' }) %>">
-					<br><br>
-					<span class="error"></span>
 				</form>
 			</div>
 			<div id="batch_participant_tab" class="subform" style="display: none;">
@@ -222,13 +213,13 @@
 					</select>
 					<p><%= t('participants.add.batch.length.title' , { ns : 'groups' }) %></p>
 					<input type="number" step="1" min='4' max="10" name="length" value="4">
-					<br><br>
 					<input type="submit" value="<%= t('participants.add.batch.tab' , { ns : 'groups' }) %>">
-					<br><br>
-					<span class="error"></span>
 				</form>
 			</div>
+
 			<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+			<span class="error" id="participants_error"></span>
+
 		</div>
 	</div>
 </div>
@@ -240,7 +231,6 @@
             <form id="change_allocator_form">
                 <div id="change_allocator_content">
                 </div>
-				<br>
                 <input type="button" value="<%- t('allocator.change.submit', { ns : 'groups' }) %>" onclick="changeAllocator()">
                 <span class="error"></span>
             </form>
@@ -313,7 +303,7 @@
 		// Add owner
 		$(document).on('submit', "#existing_owner_form", function(event) {
 			let form = Utils.getFormData($(this));
-			let errorbox = $(this).find('.error');
+			let errorbox = $('#users_error');
 			const owners = study.direct_permissions || study.owners || [];
 
 			for (var i = 0; i < owners.length; i++) {
@@ -399,7 +389,7 @@
 
 		// Create/edit group
 		$(document).on('submit', "#group_form", function(event) {
-			let errorbox = $('#group_form_error');
+			let errorbox = $('#users_error');
 			let currentform = this;
 			let form = Utils.getFormData($(this));
 			Utils.toggleSubmit(currentform);
@@ -415,8 +405,8 @@
 					else {
 						// Automatically allocate group to latest created session
 						let session = getLatestCreatedSession();
-						if(session && session.session_id){
-							Simva.allocateToSession(studyid, result.group_id, sessionId, {}, function(error, result){
+						if (session && session.session_id) {
+							Simva.allocateToSession(studyid, result.group_id, session.session_id, {}, function(error, result){
 								if(!error){
 									console.log(result)
 								}
@@ -462,10 +452,10 @@
 		$(document).on('submit', "#existing_participant_form", function(event){
 			let group = getGroupFromGroupId(editingGroupId);
 			let form = Utils.getFormData($(this));
-			let errorbox = $(this).find('.error');
+			let errorbox = $("#participants_error");
 
 			// Do nothing if participant is already on the group and show error 
-			study.participants.forEach(function(participant) {
+			participants.forEach(function(participant) {
 				if (participant.group_id == editingGroupId && participant.username == form.name) {
 					errorbox.text(`<%- t("participants.errormessage.alreadyInGroup", { ns : "groups", group : "${group.group_name}", participant : "${form.name}" }) %>`); 
 					return false;
@@ -502,7 +492,7 @@
 		// Create and add new participant
 		$(document).on('submit', "#new_participant_form", function(event){
 			let form = Utils.getFormData($(this));
-			let errorbox = $(this).find('.error');
+			let errorbox = $("#participants_error");
 
 			Simva.register(studyid, editingGroupId, form.username.toLowerCase(), form.email, form.password, form.role, function(error, result){
 				if(error && error.responseJSON){
@@ -521,7 +511,7 @@
 			let currentform = this;
 			Utils.toggleSubmit(currentform);
 			let form = Utils.getFormData($(this));
-			let errorbox = $(this).find('.error');
+			let errorbox = $("#participants_error");
 
 			Simva.generateAndRegister(studyid, editingGroupId, form.algorithm, form.length, form.amount, (error, generated) => {
 				if(!error) { 
@@ -536,7 +526,7 @@
 		// Platform
 		$(document).on('submit', "#add_platform_form", function(event) {
 			let form = Utils.getFormData($(this));
-			let errorbox = $(this).find('.error');
+			let errorbox = $("#participants_error");
 
 			let platform = {
 				url: form.url,
@@ -583,11 +573,11 @@
 
 		// Reset tab state when opening modal
 		$("#owner_name").val("");
-		$('#owner_form_error').text("");
+		$('#users_error').text("");
 		$('#edit_group_id').val("");
 		$('#group_name').val("");
 		$('#prev_group_name').val("");
-		$('#group_form_error').text("");
+		$('#users_error').text("");
 		$('#import_group_name_modal').val("");
 		$('#import_group_error_modal').text("");
 
@@ -604,7 +594,7 @@
 		$('#edit_group_id').val(groupId || "");
 		$('#prev_group_name').val("");
 		$('#group_name').val("");
-		$('#group_form_error').text("");
+		$('#users_error').text("");
 
 		var group = getGroupFromGroupId(groupId);
 		$("#add_group_tabs").hide();
@@ -668,14 +658,13 @@
 		
 		let usernames = [];
 		if (group != null) {
-			study.participants.forEach(function(participant) {
-				if (group.participants.includes(participant.user_id)) {
-					if (participant.isToken) {
-						usernames.push(participant.token)
-					}
-					else {
-						usernames.push(participant.username)
-					}
+			group.participants.forEach(function(participantId) {
+				const participant = participantsById[participantId];
+				if (participant.isToken) {
+					usernames.push(participant.token)
+				}
+				else {
+					usernames.push(participant.username)
 				}
 			});
 		}
@@ -891,26 +880,24 @@
 			box.find(".participants_container").append("<p><%- t('participants.no_users.message', { ns : 'groups' }) %></p>")
 		}
 		else {
-			// console.log(study.participants, group.participants)
-			study.participants.forEach(function(participant) {
-				if (group.participants.includes(participant.user_id) && participant.group_id == group.group_id) {
-					let role = participant.role === "teacher" ? `<%- t('teacher', { ns : 'roles' }) %>` : `<%- t('student', { ns : 'roles' }) %>`
-					let isToken = participant.isToken ? `<%- t('participants.isToken.true', { ns : 'groups' }) %>` : `<%- t('participants.isToken.false', { ns : 'groups' }) %>`
-					let token = participant.token == null ? "-" : participant.token
-					let newRow = $(`
-						<tr>
-							<td>${participant.username}</td>
-							<td>${isToken}</td>
-							<td>${token}</td>
-							<td><a href="${participant.email}">${participant.email}</a></td>
-							<td>${role}</td>
-							<td><input class="red" type="button" value="<%- t('participant.delete.title', { ns : 'groups' }) %>"></td>
-						</tr>
-					`);
-					table.append(newRow);
-					newRow.data(userDataIdKey, participant.user_id);
-					newRow.data(userDataNameKey, participant.username);
-				}
+			group.participants.forEach(function(participantId) {
+				const participant = participantsById[participantId];
+				let role = participant.role === "teacher" ? `<%- t('teacher', { ns : 'roles' }) %>` : `<%- t('student', { ns : 'roles' }) %>`
+				let isToken = participant.isToken ? `<%- t('participants.isToken.true', { ns : 'groups' }) %>` : `<%- t('participants.isToken.false', { ns : 'groups' }) %>`
+				let token = participant.token == null ? "-" : participant.token
+				let newRow = $(`
+					<tr>
+						<td>${participant.username}</td>
+						<td>${isToken}</td>
+						<td>${token}</td>
+						<td><a href="${participant.email}">${participant.email}</a></td>
+						<td>${role}</td>
+						<td><input class="red" type="button" value="<%- t('participant.delete.title', { ns : 'groups' }) %>"></td>
+					</tr>
+				`);
+				table.append(newRow);
+				newRow.data(userDataIdKey, participant.user_id);
+				newRow.data(userDataNameKey, participant.username);
 			});
 		}
 		

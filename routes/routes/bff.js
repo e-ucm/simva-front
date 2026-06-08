@@ -498,7 +498,16 @@ module.exports = function(auth, redirectToLogin, config){
     * 
     */
     router.get('/studies', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getStudies(req.session.id, (error, result) => {
+        // Filter out empty strings, null, and undefined values
+        const cleanQuery = Object.fromEntries(
+            Object.entries(req.query).filter(([key, value]) => 
+                // $.ajax GET cache parameter is set to false, even if there are no 
+                // parameters, req.parameters will have an object with the _ property
+                key !== '_' && value !== '' && value != null
+            )
+        );
+        
+        Simva.getStudies(req.session.id, cleanQuery, (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {

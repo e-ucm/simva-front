@@ -16,6 +16,24 @@
 	</div>
 </div>
 
+<div class="simletsFiltering">
+	<!-- TODO: Add localization -->
+	<input
+		type="text"
+		id="search_bar"
+		placeholder="<%- t('search.placeholder', { ns : 'SIMLETs' }) %>"
+		oninput="refreshStudies()"
+	>
+	<div class="simletFilter">
+		<span><%- t('filters.showAmount', { ns : 'SIMLETs' }) %></span>
+		<select id="page_size">
+			<option value="3">3</option>
+			<option value="9">9</option>
+		</select>
+	</div>
+	
+</div>
+
 <div id="studies_list">
 	<div style="width: 100%; text-align: center; padding: 200px;">
 		<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
@@ -60,10 +78,13 @@
 	const simletDataNameKey = "simletName"
 	const simletDataDescriptionKey = "simletDescription"
 
-	$(".content").addClass("floating");
+	let studiesById = null;
+	let currentPage = 1;
 	
 	const archived = "<%= archived %>" === "true";
 	
+	$(".content").addClass("floating");
+
 	$(document).ready(function() {
 		refreshFunc = refreshStudies;
 
@@ -111,9 +132,18 @@
 	});
 
 	let refreshStudies = function() {
-		Simva.getStudies(function(error, result){
+		const options = {
+			skip: (currentPage - 1) * $("#page_size").val(),
+			limit: (currentPage) * $("#page_size").val(),
+			searchString: $("#search_bar").val().trim().toLowerCase() || "",
+		}
+		console.log(options)
+		Simva.getStudies(options, function(error, result){
 			if (!error) {
-				paintStudies(result);
+				studiesById = Object.fromEntries(
+					result.map(obj => [obj.simlet_id, obj])
+				);
+				paintStudies();
 			}
 		});
 	}
@@ -122,13 +152,13 @@
 		$('#studies_list').empty();
 		let paintedStudies = 0;
 
-		for (var i = 0; i < studies.length; i++) {
-			let study = studies[i]
+		Object.entries(studiesById).forEach(([id, study]) => {
 			if (study.simlet_archived == archived) {
 				paintedStudies++;
 				addSimletCard(study);
 			}
-		}
+		});
+		
 		if (paintedStudies == 0) {
 			if (!archived) {
 				$('#studies_list').text("<%- t('no_simlets.message', { ns : 'SIMLETs' }) %>");
@@ -140,7 +170,7 @@
 	}
 
 
-	const openStudyForm = function(studyId) {		
+	const openStudyForm = function(studyId) {
 		// Always open form in the create/edit common tab
 		Utils.changeTab($('#study_name_desc_tab_button'), 'study_form_form','study_name_desc_tab');
 
@@ -163,24 +193,23 @@
 		}
 		// Editing study
 		else {
-			Simva.getStudy(studyId, function(error, result){
-				if(!error) {
-					// Open form only if edit is possible and hide the add new/import tabs (only the name/description tab is needed)
-					Utils.toggleAddForm('study_form');
-					$('#edit_study_id').val(studyId);
+			let study = studiesById[studyId];
+			if(study != null) {
+				// Open form only if the study exists and hide the add new/import tabs (only the name/description tab is needed)
+				Utils.toggleAddForm('study_form');
+				$('#edit_study_id').val(studyId);
 
-					$("#add_study_tabs").hide();
-					
-					$("#study_form_title").text("<%- t('edit.title', { ns : 'SIMLETs' }) %>");
-					$("#study_name_desc_submit").val("<%- t('edit.submit', { ns : 'SIMLETs' }) %>");
-			
-					$('#prev_study_name').val(result.simlet_name);
-					$('#prev_study_description').val(result.simlet_description);
+				$("#add_study_tabs").hide();
 
-					$('#study_name').val(result.simlet_name);
-					$('#study_description').val(result.simlet_description);
-				}
-			});
+				$("#study_form_title").text("<%- t('edit.title', { ns : 'SIMLETs' }) %>");
+				$("#study_name_desc_submit").val("<%- t('edit.submit', { ns : 'SIMLETs' }) %>");
+
+				$('#prev_study_name').val(study.simlet_name);
+				$('#prev_study_description').val(study.simlet_description);
+
+				$('#study_name').val(study.simlet_name);
+				$('#study_description').val(study.simlet_description);
+			}
 		}
 	}
 

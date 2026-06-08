@@ -16,7 +16,6 @@
 					<input type="text" class="study_form_name name_field" name="studyName" id="study_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
 					<h3 class="study_form_field"><%- t('description.title', { ns : 'SIMLETs' }) %></h3>
 					<textarea class="study_form_field description_field" name="studyDescription" id="study_description" placeholder="<%- t('description.placeholder', { ns : 'SIMLETs' }) %>"></textarea>
-					<br>
 					<input type="submit" class="study_form_field"id="study_name_desc_submit" value="">
 				</form>
 			</div>
@@ -27,13 +26,11 @@
 					<input type="text" class="import_study_form_name name_field" name="studyName" id="study_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
 					<h3><%- t('import.input', { ns : 'SIMLETs' }) %></h3>
 					<input type="file" class="import_study_form_field" name="jsonFile" accept=".json" required>
-					<br><br>
 					<input type="submit" class="import_study_form_field" value="<%- t('import.submit', { ns : 'SIMLETs' }) %>">
 				</form>
 			</div>
 
 			<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-			<br>
 			<span class="error" id="study_form_error"></span>
 		</div>
 	</div>
@@ -62,12 +59,10 @@
 	<div class="floater">
 		<div class="form" id="generate_study_link_form">
 			<h2><%- t('scheduler.shlink.generate.title', { ns : 'SIMLETs' }) %></h2>
-            <br>
 			<div class="tabs">
 				<span id="generate_link_length_tab_button" class="tab selected" type="hidden" onclick="Utils.changeTab(this, 'generate_study_link_form','generate_study_link_length_tab')"><%- t('scheduler.shlink.generate.randomly_length.title', { ns : 'SIMLETs' }) %></span>
 				<span class="tab" onclick="Utils.changeTab(this, 'generate_study_link_form','generate_study_custom_slug_link_tab')"><%- t('scheduler.shlink.generate.custom_slug.title', { ns : 'SIMLETs' }) %></span>
 			</div>
-            <br>
 
 			<div id="generate_study_link_length_tab" class="subform selected">
 				<form id="generate_study_link_length_form">
@@ -75,7 +70,6 @@
 					<input hidden type="text" name="study">
 					<p><%- t('scheduler.shlink.generate.randomly_length.message', { ns : 'SIMLETs' }) %></p>
 					<input type="number" step=1 min=4 name="link_length_shlink" id="link_length_shlink" onchange="this.value = Math.max(4, parseInt(this.value));" value=4 required>
-					<br><br>
 					<input type="submit" value="<%- t('scheduler.shlink.generate.submit', { ns : 'SIMLETs' }) %>">
 				</form>
 			</div>
@@ -85,7 +79,6 @@
 					<h3><%- t('scheduler.shlink.generate.custom_slug.title', { ns : 'SIMLETs' }) %></h3>
 					<input hidden type="text" name="study">
 					<input type="text" name="custom_slug" id="custom_slug_shlink" placeholder="<%- t('scheduler.shlink.custom_slug.placeholder', { ns : 'SIMLETs' }) %>" required>
-					<br><br>
 					<input type="submit" value="<%- t('scheduler.shlink.generate.submit', { ns : 'SIMLETs' }) %>">
 				</form>
 			</div>
@@ -478,7 +471,7 @@
 
 
 	// --- ARCHIVE/DELETE ---
-
+	
 	const archiveStudy = function(studyId, studyname) {
 		if(confirm(`<%- t('archive.confirm', { ns : 'SIMLETs', SIMLET : '${studyname}' }) %>`)){
 			Simva.updateStudy(studyId, { simlet_archived: true }, function(error, result) {

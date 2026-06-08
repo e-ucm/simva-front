@@ -196,8 +196,16 @@ var Simva = {
 
 	// STUDIES
 
-	getStudies: function(callback){
-		Utils.get(`/bff/studies`, callback);
+	getStudies: function(query, callback){
+		// Filter out empty strings, null, and undefined values
+        const cleanQuery = Object.fromEntries(
+            Object.entries(query).filter(([_, value]) => 
+				value !== '' && value != null
+            )
+        );
+		
+		const queryString = Object.keys(cleanQuery, callback).length > 0 ? `?${new URLSearchParams(cleanQuery).toString()}` : '';
+		Utils.get(`/bff/studies${queryString}`, callback);
 	},
 	
 	getSchedulerStudies: function(callback){

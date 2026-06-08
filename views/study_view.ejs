@@ -199,7 +199,12 @@
 	
 	let studyid = "<%= study %>";
 	let currentUser = null;
-	let study = null, participants = null, tests = null, allocator = null, groups = null, platforms = null;
+	let study = null, 
+		tests = null, 
+		groups = null, 
+		allocator = null, 
+		participants = null, participantsById = null, participantsByUsername = null,
+		platforms = null;
 	
 	const sessionDataIdKey = "sessionId"
 	const sessionDataNameKey = "sessionName"
@@ -222,6 +227,7 @@
 			}
 		});
 
+		// Create the SIMLET 3-dot button from the template 
 		const kebab = $("#kebab_template .kebab-dropdown").clone();
 		$(".simletSettings .kebab").append(kebab);
 		kebab.find(".icon-edit").click(() => { openStudyForm(studyid) });
@@ -232,9 +238,10 @@
 			deleteStudy(studyid, study.simlet_name) 
 			location.reload();
 		});
+
+		// Delete the add and import SIMLET tabs from the name/description menu
 		$("#add_study_tabs").remove();
 		$("#import_study_tab").remove();
-	
 	});
 
 	const openStudyForm = function() {
@@ -251,7 +258,6 @@
 		
 		$('#study_name').val(study.simlet_name);
 		$('#study_description').val(study.simlet_description);
-		
 	}
 
 
@@ -294,8 +300,8 @@
 	} 
 
 	const getParticipantFromParticipantId = function(participantId) {
-		for (let i = 0; i < study.participants.length; i++) {
-			let participant = study.participants[i];
+		for (let i = 0; i < participants.length; i++) {
+			let participant = participants[i];
 			if (participant.user_id === participantId) {
 				return participant;
 			}
@@ -314,9 +320,9 @@
 	}
 
 	const setActive = function(active) {
-		// TEST
-		// archiveStudy(studyid, study.simlet_name);
 		if(confirm(`<%- t('archive.confirm', { ns : 'SIMLETs', SIMLET : '${study.simlet_name}' }) %>`)){
+			// TEST: Comment archiveStudy and uncomment updateStudy to allow dearchivation
+			// archiveStudy(studyid, study.simlet_name);
 			Simva.updateStudy(studyid, { simlet_archived: active }, function(error, result) {
 				if (!error) {
 					reloadStudy();
@@ -330,41 +336,38 @@
 			if (!error) {
 				study = result;
 
-				let tocomplete = 6, done = 0;
-				let completed = function() {
-					done++
-
-					if (done === tocomplete) {
-						paintStudy(study, participants, tests, allocator, groups, allgroups, platforms);
-					}
-				}
-
 				let errorhappened = function(error) {
-					// paint the errors
+					// TODO: paint the errors
 				}
 
-				participants = result.participants;
-				completed();
 				tests = result.completeTests;
 				delete result.completeTests;
-				completed();
-				allocator = result.completeAllocator;
-				delete result.completeAllocator;
-				completed();
+				
 				groups = result.completeGroups;
 				delete result.completeGroups;
-				completed();
+				
 				allgroups = result.allgroups;
 				delete result.allgroups;
-				completed();
+
+				participants = result.participants;
+				delete result.participants;
+				participantsById = Object.fromEntries(
+					participants.map(obj => [obj.user_id, obj])
+				);
+				participantsByUsername = Object.fromEntries(
+					participants.map(obj => [obj.username, obj])
+				);
+				allocator = result.completeAllocator;
+				delete result.completeAllocator;
+				
 				platforms = [];
-				completed();
+				
+				paintStudy(study, participants, tests, allocator, groups, allgroups, platforms);
 			} else {
 				window.location.href="/simlets";
 			}
 		});
 	}
-
 
 	// Render
 
@@ -413,7 +416,7 @@
 			archiveButton.removeClass('icon-dearchive');
 
 			let allSessionsFinished = true;
-			study.sessions.forEach(testid => {
+			tests.forEach(testid => {
 				let test = getTestFromTestId(testid);
 				if (test != null) {
 					allSessionsFinished = allSessionsFinished && test.session_status == "terminated";

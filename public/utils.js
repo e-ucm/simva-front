@@ -90,8 +90,8 @@ var Utils = {
 	},
 
 	toggleSubmit : function(form){
-		$(form).find('input[type="submit"]').toggle();
-		$(form).find('.loader').toggle();
+		$('#iframe_floating').find('input[type="submit"]').toggle();
+		$('#iframe_floating').find('.loader').toggle();
 	},
 
 	changeTab : function(tab, form, subform){

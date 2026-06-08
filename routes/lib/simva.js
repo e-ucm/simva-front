@@ -247,10 +247,13 @@ class Simva {
 		this.delete(`${this.apiurl}/tags/${tag_id}`, sessionId, callback);
 	}
 
+
 	// STUDIES
 
-	getStudies(sessionId, callback){
-		this.get(`${this.apiurl}/simlets`, sessionId, callback);
+	getStudies(sessionId, queryParams, callback){
+		const params = new URLSearchParams(queryParams).toString();
+		const queryString = params ? `?${params}` : "";
+		this.get(`${this.apiurl}/simlets${queryString}`, sessionId, callback);
 	}
 
 	getSchedulerStudies(sessionId, callback){
@@ -291,10 +294,6 @@ class Simva {
 
 	getStudy(study_id, sessionId, callback){
 		this.get(`${this.apiurl}/simlets/${study_id}`, sessionId, callback);
-	}
-
-	getStudySessions(study_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${study_id}/sessions`, sessionId, callback);
 	}
 
 	updateStudy(studyId, study, sessionId, callback){
