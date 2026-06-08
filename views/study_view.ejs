@@ -40,9 +40,10 @@
 					<div id="download_activity_data" class="subform">
 						<!-- onClick functions declared on simlet_activities.ejs -->
 						<input class="yellow" type="button" value="<%- t('download.activity.title', { ns : 'activities' }) %>" onclick="downloadActivityData()">
+						<input class="yellow" id="global_backup_download" type="button" value="<%- t('download.backup.global.title', { ns : 'activities' }) %>" onclick="downloadGlobalActivityBackup()">
 						<input class="yellow" id="activity_test_data_download" type="button" title="<%- t('download.test.description', { ns : 'activities' }) %>" value="<%- t('download.test.title', { ns : 'sessions' }) %>" onclick="downloadActivityTestData()">
 						<input class="yellow" id="xasu_download" type="button" value="<%- t('download.xasu.title', { ns : 'activities' }) %>" onclick="downloadActivityXasuConfig()">
-						<input class="yellow" id="backup_download" type="button" value="<%- t('download.backup.title', { ns : 'activities' }) %>" onclick="downloadActivityBackup()">
+						<input class="yellow" id="backup_download" type="button" value="<%- t('download.backup.user.title', { ns : 'activities' }) %>" onclick="downloadUsersActivityBackup()">
 					</div>
 				</div>
 			</div>

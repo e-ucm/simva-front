@@ -277,54 +277,6 @@ var GameplayActivityPainter = {
 	updateActivityProgress: function(activityId, username, result) {
 		PainterFactory.Painters["activity"].updateActivityProgress(activityId, username,result);
 	},
-	
-	downloadBackup: function(activity, user){
-		var toastParams = {
-			heading: this.commun.result_error_downloading,
-			position: 'top-right',
-			icon: 'error',
-			stack: false
-		};
-		
-		if(user){
-			Simva.getActivityResultForUser(activity, user, function(error, result){
-				if(error){
-					toastParams.text = error.message;
-					$.toast(toastParams);
-				}else{
-					var filename = `${this.communSpecific.result_file_prefix}_${activity}_${user}.jsonl`;
-					Utils.download(filename, result[user]);
-				}
-			});
-		} 
-		else 
-		{
-			Simva.getMinioDataUrl(activity, (error, result) => {
-				if(error) {
-					Simva.getActivityResult(activity, (error, result) => {
-						if(error) {
-							toastParams.text = error.message;
-							$.toast(toastParams);
-						} else {
-							let hasResults = false;
-							for(const participant in result) {
-								if(result.hasOwnProperty(participant) && result[participant] != null) {
-									Utils.downloadContent(result[participant], `${this.communSpecific.result_file_prefix}_${activity}_${participant}.jsonl`);
-									hasResults = true;
-								};
-							}
-							if(!hasResults) {
-								Utils.download(`${this.communSpecific.result_file_prefix}_${activity}.jsonl`, JSON.stringify(result,null,2));
-							}
-						}
-					});
-				} else {
-					console.log('Minio URL for backup:', result);
-					Utils.downloadContent(result.url, `${this.communSpecific.result_file_prefix}_${activity}.jsonl`, this.commun.result_error_downloading);
-				}
-			});
-		}
-	},
 }
 
 PainterFactory.addPainter(GameplayActivityPainter);

@@ -324,14 +324,10 @@
 		}
 
 		$("#xasu_download").hide();
-		$("#backup_download").hide();
 
 		if (activity.activity_type == "gameplay") {
 			if (activity.game_type != "WEB" && activity.activity_trace_storage) {
 				$("#xasu_download").show();
-			}
-			if (activity.game_backup) {
-				$("#backup_download").show();
 			}
 		}
 	}
@@ -352,19 +348,23 @@
 	}
 
 	const downloadActivityData = function () {
-		PainterFactory.Painters['activity'].getMinioData(downloadActivityId);
+		PainterFactory.Painters['activity'].getLRSData(downloadActivityId);
 	}
 
 	const downloadActivityTestData = function() {
-		PainterFactory.Painters['activity'].getMinioTestData(downloadActivityId);
+		PainterFactory.Painters['activity'].getLRSTestData(downloadActivityId);
+	}
+
+	const downloadGlobalActivityBackup = function() {
+		PainterFactory.Painters['activity'].downloadGlobalMinioBackup(downloadActivityId);
 	}
 
 	const downloadActivityXasuConfig = function() {
 		GameplayActivityPainter.downloadXasuConfig(downloadActivityId, studyid);
 	}
 
-	const downloadActivityBackup = function() {
-		GameplayActivityPainter.downloadBackup(downloadActivityId);
+	const downloadUsersActivityBackup = function() {
+		PainterFactory.Painters['activity'].downloadBackup(downloadActivityId);
 	}
 
 	

@@ -175,11 +175,12 @@
     "result.bar.tooltip": "Barre de resumé des resultats: participants avec des resultats partiels ou finaux sur le total des participants.",
 
     "tmon.title": "Tableau de bord TMon",
-    "download.title": "Telecharger les donnees",
-        "download.activity.title": "",
+    "download.title": "Telecharger les données",
+        "download.activity.title": "Telecharger les données de l'activité",
         "download.test.title": "Telecharger les données de test",
-        "download.xasu.title": "",
-        "download.backup.title": "",
+        "download.xasu.title": "Telecharger la configuration de Xasu",
+        "download.backup.global.title": "Telecharger la copie de sécurité globale",
+        "download.backup.user.title": "Telecharger la copie de sécurité des utilisateurs",
         "download.test.description": "Telecharger les donneés de test disponibles pour cette activité.",
     "download.description": "Telecharger toutes les donnees disponibles pour cette activité."
 }

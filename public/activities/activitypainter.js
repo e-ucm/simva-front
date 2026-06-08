@@ -833,7 +833,7 @@ var ActivityPainter = {
 		})
 	},
 
-	getMinioData: function(activity){
+	getLRSData: function(activity){
 		Simva.getActivityLRSData(activity, (error, data) => {
 			if(error){
 				$.toast({
@@ -849,7 +849,7 @@ var ActivityPainter = {
 		});
 	},
 
-	getMinioTestData: function(activity){
+	getLRSTestData: function(activity){
 		Simva.getActivityTestLRSData(activity, (error, data) => {
 			if(error){
 				$.toast({
@@ -864,6 +864,93 @@ var ActivityPainter = {
 			}
 		});
 	},
+
+	downloadGlobalMinioBackup: function(activity){
+		var toastParams = {
+			heading: this.commun.result_error_downloading,
+			position: 'top-right',
+			icon: 'error',
+			stack: false
+		};
+		
+		Simva.getMinioDataUrl(activity, (error, result) => {
+			if(error) {
+				toastParams.text = error.message;
+				$.toast(toastParams);
+			} else {
+				console.log('Minio URL for backup:', result);
+				Utils.downloadContent(result.url, `${this.communSpecific.result_file_prefix}_${activity}.jsonl`, this.commun.result_error_downloading);
+			}
+		});
+	},
+
+	downloadBackup: function(activity, user){
+		var toastParams = {
+			heading: this.commun.result_error_downloading,
+			position: 'top-right',
+			icon: 'error',
+			stack: false
+		};
+		var filename = user ? `${this.communSpecific.result_file_prefix}_${activity}_${user}.jsonl` : `${this.communSpecific.result_file_prefix}_${activity}.zip`;
+		var zipname = `${this.communSpecific.result_file_prefix}_${activity}.zip`;
+		var errorDownloading = this.commun.result_error_downloading;
+		
+		if(user){
+			Simva.getActivityResultForUser(activity, user, function(error, result){
+				if(error){
+					toastParams.text = error.message;
+					$.toast(toastParams);
+				}else{
+					var filename = `${this.communSpecific.result_file_prefix}_${activity}_${user}.jsonl`;
+					Utils.download(filename, result[user]);
+				}
+			});
+		} 
+		else 
+		{
+			Simva.getActivityResult(activity, (error, result) => {
+				if(error) {
+					toastParams.text = error.message;
+					$.toast(toastParams);
+				} else {
+					var zip = new JSZip();
+					let hasResults = false;
+					let downloadPromises = [];
+					for(const participant in result) {
+						if(result.hasOwnProperty(participant) && result[participant] != null) {
+							downloadPromises.push(
+								fetch(result[participant])
+								.then((response) => {
+									if(!response.ok) {
+										throw new Error(`HTTP ${response.status}`);
+									}
+									return response.blob();
+								})
+								.then((blob) => {
+									zip.file(`${this.communSpecific.result_file_prefix}_${activity}_${participant}.jsonl`, blob);
+								})
+								.catch((error) => {
+									console.error(`Error fetching result for participant ${participant}:`, error);
+								})
+							);
+							hasResults = true;
+						};
+					}
+					if(!hasResults) {
+						Utils.download(`${this.communSpecific.result_file_prefix}_${activity}_nodata.jsonl`, JSON.stringify(result,null,2));
+					} else {
+						Promise.all(downloadPromises)
+						.then(() => zip.generateAsync({type:"blob"}))
+						.then(function(content) {
+							// see FileSaver.js
+							saveAs(content, `${zipname}`);
+						});
+					}
+				}
+			});
+		}
+	},
+
 };
 
 PainterFactory.addPainter(ActivityPainter);

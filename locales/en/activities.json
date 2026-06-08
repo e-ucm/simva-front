@@ -177,7 +177,8 @@
         "download.activity.title": "Download activity data",
         "download.test.title": "Download test data",
         "download.xasu.title": "Download Xasu config",
-        "download.backup.title": "Download backup",
+        "download.backup.global.title": "Download global backup",
+        "download.backup.user.title": "Download users backup",
             "download.test.description": "Download available test data for this activity.",
     "download.description": "Download all available data for this activity."
 }
