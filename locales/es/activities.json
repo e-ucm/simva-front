@@ -177,11 +177,11 @@
 
     "tmon.title": "Abrir el panel TMon",
     "download.title": "Descargar datos",
-        "download.activity.title": "Descargar datos de la actividad",
+        "download.activity.title": "Descargar datos de la actividad (LRS)",
         "download.test.title": "Descargar datos de prueba",
         "download.xasu.title": "Descargar configuración para Xasu",
-        "download.backup.global.title": "Descargar copia de seguridad global",
-        "download.backup.user.title": "Descargar copia de seguridad de usuarios",
+        "download.backup.global.title": "Descargar copia de seguridad global de la actividad (MINIO)",
+        "download.backup.user.title": "Descargar copia de seguridad de usuarios en un archivo ZIP (MINIO)",
         "download.test.description": "Descargar datos de prueba disponibles para esta actividad.",
     "download.description": "Descargar todos los datos disponibles de esta actividad."
 }

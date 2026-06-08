@@ -174,11 +174,11 @@
 
     "tmon.title": "Open TMon Dashboard",
     "download.title": "Download data",
-        "download.activity.title": "Download activity data",
+        "download.activity.title": "Download activity data (LRS)",
         "download.test.title": "Download test data",
         "download.xasu.title": "Download Xasu config",
-        "download.backup.global.title": "Download global backup",
-        "download.backup.user.title": "Download users backup",
-            "download.test.description": "Download available test data for this activity.",
+        "download.backup.global.title": "Download global backup (MINIO)",
+        "download.backup.user.title": "Download users backup in a compressed ZIP file (MINIO)",
+        "download.test.description": "Download available test data for this activity.",
     "download.description": "Download all available data for this activity."
 }

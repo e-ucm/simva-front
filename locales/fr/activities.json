@@ -176,11 +176,11 @@
 
     "tmon.title": "Tableau de bord TMon",
     "download.title": "Telecharger les données",
-        "download.activity.title": "Telecharger les données de l'activité",
+        "download.activity.title": "Telecharger les données de l'activité (LRS)",
         "download.test.title": "Telecharger les données de test",
         "download.xasu.title": "Telecharger la configuration de Xasu",
-        "download.backup.global.title": "Telecharger la copie de sécurité globale",
-        "download.backup.user.title": "Telecharger la copie de sécurité des utilisateurs",
+        "download.backup.global.title": "Telecharger la copie de sécurité globale de l'activité (MINIO)",
+        "download.backup.user.title": "Telecharger la copie de sécurité des utilisateurs dans un fichier ZIP (MINIO)",
         "download.test.description": "Telecharger les donneés de test disponibles pour cette activité.",
     "download.description": "Telecharger toutes les donnees disponibles pour cette activité."
 }
