@@ -2,6 +2,17 @@ const activitiescontroler = require('../lib/activitiescontroler');
 const SimvaAsync = require('../lib/simvaAsync');
 const usertools = require('../lib/usertools');
 
+// Filter out empty strings, null, and undefined values
+const getClearQuery = function(req) {
+    return Object.fromEntries(
+        Object.entries(req.query).filter(([key, value]) => 
+            // $.ajax GET cache parameter is set to false, even if there are no 
+            // parameters, req.parameters will have an object with the _ property
+            key !== '_' && value !== '' && value != null
+        )
+    );
+}
+
 module.exports = function(auth, redirectToLogin, config){
     var express = require('express'),
     router = express.Router();
@@ -572,16 +583,7 @@ module.exports = function(auth, redirectToLogin, config){
     */
    
     router.get('/studies', auth, redirectToLogin, async (req, res, next) => {
-        // Filter out empty strings, null, and undefined values
-        const cleanQuery = Object.fromEntries(
-            Object.entries(req.query).filter(([key, value]) => 
-                // $.ajax GET cache parameter is set to false, even if there are no 
-                // parameters, req.parameters will have an object with the _ property
-                key !== '_' && value !== '' && value != null
-            )
-        );
-        
-        Simva.getStudies(req.session.id, cleanQuery, (error, result) => {
+        Simva.getStudies(req.session.id, getClearQuery(req), (error, result, cleanQuery) => {
             if(error) {
                 next(error.response?.data || error);
             } else {

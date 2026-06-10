@@ -1,3 +1,16 @@
+const getQueryString = function(query) {
+	let queryString = "";
+
+	// Filter out empty strings, null, and undefined values
+	const cleanQuery = Object.fromEntries(
+		Object.entries(query).filter(([_, value]) => 
+			value !== '' && value != null
+		)
+	);
+	queryString = Object.keys(cleanQuery).length > 0 ? `?${new URLSearchParams(cleanQuery).toString()}` : '';
+	return queryString;
+}
+
 var Simva = {
 	apiurl: null,
 	jwt: null,
@@ -237,20 +250,11 @@ var Simva = {
 	// STUDIES
 
 	getStudies: function(query, callback) {
-		let queryString = "";
 		if (typeof query === "function") {
 			callback = query;	
+			query = {};
 		}
-		else {
-			// Filter out empty strings, null, and undefined values
-			const cleanQuery = Object.fromEntries(
-				Object.entries(query).filter(([_, value]) => 
-					value !== '' && value != null
-				)
-			);
-		 	queryString = Object.keys(cleanQuery, callback).length > 0 ? `?${new URLSearchParams(cleanQuery).toString()}` : '';
-		}
-		Utils.get(`/bff/studies${queryString}`, callback);
+		Utils.get(`/bff/studies${getQueryString(query)}`, callback);
 	},
 
 	getStudiesCount: function(callback) {

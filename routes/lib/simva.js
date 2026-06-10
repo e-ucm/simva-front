@@ -77,7 +77,20 @@ class Simva {
 
 	
 	getQueryString(queryParams) {
-		const params = new URLSearchParams(queryParams).toString();
+		// Build the queryString manually by formatting each key-value to be like key=value, encode them
+		// to percent-encoding and joining them with the & symbol. It needs to be done this way because 
+		// building it with URLSearchParams().toString() turns spaces into + following the form encoding
+		// standard, instead of %20 following the percent encoding, which the api needs  
+		let params = Object.entries(queryParams)
+			.map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+			.join('&');
+
+		// Manually replace !, ', (, ), and * to follow the percent encoding, since the RFC 3986 standard
+		// reserves these characters and doing encodeURIComponent leaves them unencoded
+		params = params.replace(
+			/[!'()*]/g,
+			(c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`
+		);
 		const queryString = params ? `?${params}` : "";
 		return queryString;
 	}
