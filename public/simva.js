@@ -46,6 +46,7 @@ var Simva = {
 
 
 	//SHLINK URL
+
 	generateShlinkURL(simlet_id, customSlug, length, callback){
 		let body = {
 			customSlug: customSlug, 
@@ -70,18 +71,9 @@ var Simva = {
 		Utils.delete(`/bff/simlets/${simlet_id}/shlink`, callback);
 	},
 
-	// USER
-	register: function(simlet_id, groupid, username, email, password, role, callback){
-		let body = {
-			username: username,
-			email: email,
-			password: password,
-			role: role
-		};
-		Utils.post(`/bff/simlets/${simlet_id}/groups/${groupid}/users`, body, callback);
-	},
 
 	// USER
+
 	generateAndRegister: function(simlet_id, groupid, algorithm, length, batchLength, callback){
 		let body = {
 			algorithm: algorithm,
@@ -91,9 +83,14 @@ var Simva = {
 		Utils.post(`/bff/simlets/${simlet_id}/groups/${groupid}/users`, body, callback);
 	},
 
-	setRole: function(username, body, callback){
-		const normalizedBody = (typeof body === 'string') ? { role: body } : body;
-		Utils.patch(`/bff/users/${username}`, normalizedBody, callback);
+	register: function(simlet_id, groupid, username, email, password, role, callback){
+		let body = {
+			username: username,
+			email: email,
+			password: password,
+			role: role
+		};
+		Utils.post(`/bff/simlets/${simlet_id}/groups/${groupid}/users`, body, callback);
 	},
 
 	getUsers: function(query, callback){
@@ -109,6 +106,11 @@ var Simva = {
 		Utils.post(`/bff/users/events`, data, callback);
 	},
 
+	setRole: function(username, body, callback){
+		const normalizedBody = (typeof body === 'string') ? { role: body } : body;
+		Utils.patch(`/bff/users/${username}`, normalizedBody, callback);
+	},
+
 	getCurrentUser: function(callback){
 		Utils.get(`/bff/users/me`, callback);
 	},
@@ -117,30 +119,58 @@ var Simva = {
 		Utils.get(`/bff/users/islimesurveyadmin`, callback);
 	},
 
+
 	// GROUPS
+	
+	// TODO: Remove?
 	getGroups: function(use_new_generation, callback){
 		Utils.get(`/bff/groups?use_new_generation=${use_new_generation}`, callback);
+	},
+	getGroupSimlets: function(simlet_id,group_id, callback){
+		Utils.get(`/bff/simlets/${simlet_id}/groups/${group_id}/simlets`, callback);
+	},
+	
+
+	getStudyGroups: function(study_id, callback){
+		Utils.get(`/bff/studies/${study_id}/groups`, callback);
+	},
+
+	getStudyGroupsCount: function(simlet_id,callback){
+		Utils.get(`/bff/simlets/${simlet_id}/groups/count`, callback);
 	},
 
 	addGroup: function(simlet_id, body, callback){
 		Utils.post(`/bff/simlets/${simlet_id}/groups`, body, callback);
 	},
+	
+	addStudyGroup: function(study_id, group_id, callback){
+		Utils.post(`/bff/studies/${study_id}/groups/${group_id}`, {}, callback);
+	},
 
-	updateGroup: function(simlet_id, groupId, group, callback){
-		Utils.patch(`/bff/simlets/${simlet_id}/groups/${groupId}`, group, callback);
+	importGroup: function(simlet_id, groupData, callback) {
+		Utils.post(`/bff/simlets/${simlet_id}/groups/import`, groupData, callback);
 	},
 
 	getGroup: function(simlet_id, group_id, callback){
 		Utils.get(`/bff/simlets/${simlet_id}/groups/${group_id}`, callback);
 	},
 
-	getGroupCount: function(simlet_id,callback){
-		Utils.get(`/bff/simlets/${simlet_id}/groups/count`, callback);
+	exportGroup: function(simlet_id, group_id, complete, callback) {
+		Utils.get(`/bff/simlets/${simlet_id}/groups/${group_id}/export?complete=${complete}`, callback);
 	},
 
-	getGroupSimlets: function(simlet_id,group_id, callback){
-		Utils.get(`/bff/simlets/${simlet_id}/groups/${group_id}/simlets`, callback);
+	updateGroup: function(simlet_id, groupId, group, callback){
+		Utils.patch(`/bff/simlets/${simlet_id}/groups/${groupId}`, group, callback);
 	},
+
+	deleteGroup: function(simlet_id,group_id, callback){
+		Utils.delete(`/bff/simlets/${simlet_id}/groups/${group_id}`, callback);
+	},
+	
+	deleteStudyGroup: function(study_id, group_id, callback){
+		Utils.delete(`/bff/studies/${study_id}/groups/${group_id}`, callback);
+	},
+	
 
 	getGroupPermissions: function(simlet_id,group_id, callback){
 		Utils.get(`/bff/simlets/${simlet_id}/groups/${group_id}/permissions`, callback);
@@ -162,22 +192,31 @@ var Simva = {
 		Utils.delete(`/bff/simlets/${simlet_id}/groups/${group_id}/permissions/${user_id}`, callback);
 	},
 
-	deleteGroup: function(simlet_id,group_id, callback){
-		Utils.delete(`/bff/simlets/${simlet_id}/groups/${group_id}`, callback);
-	},
+	// Participants
 
-	addGroupParticipant: function(simlet_id, group_id, participant_id, callback){
-		Utils.post(`/bff/simlets/${simlet_id}/groups/${group_id}/participants/${participant_id}`, { }, callback);
+	getStudyGroupsParticipantsCount: function(simlet_id, callback){
+		Utils.get(`/bff/simlets/${simlet_id}/groups/participants/count`, callback);
 	},
 
 	getGroupParticipants: function(simlet_id, group_id, callback){
 		Utils.get(`/bff/simlets/${simlet_id}/groups/${group_id}/participants`, callback);
 	},
 
+	getGroupParticipantsCount: function(simlet_id, group_id, callback){
+		Utils.get(`/bff/simlets/${simlet_id}/groups/${group_id}/participants/count`, callback);
+	},
+
+	addGroupParticipant: function(simlet_id, group_id, participant_id, callback){
+		Utils.post(`/bff/simlets/${simlet_id}/groups/${group_id}/participants/${participant_id}`, { }, callback);
+	},
+
 	deleteGroupParticipants: function(simlet_id, group_id, participant_id, keycloakDelete, callback){
 		Utils.delete(`/bff/simlets/${simlet_id}/groups/${group_id}/participants/${participant_id}?keycloakDelete=${keycloakDelete}`, callback);
 	},
 
+
+	// TAGS
+	
 	getTags: function(callback){
 		Utils.get(`/bff/tags`, callback);
 	},
@@ -194,22 +233,36 @@ var Simva = {
 		Utils.delete(`/bff/tags/${tag_id}`, callback);
 	},
 
+
 	// STUDIES
 
-	getStudies: function(query, callback){
-		// Filter out empty strings, null, and undefined values
-        const cleanQuery = Object.fromEntries(
-            Object.entries(query).filter(([_, value]) => 
-				value !== '' && value != null
-            )
-        );
-		
-		const queryString = Object.keys(cleanQuery, callback).length > 0 ? `?${new URLSearchParams(cleanQuery).toString()}` : '';
+	getStudies: function(query, callback) {
+		let queryString = "";
+		if (typeof query === "function") {
+			callback = query;	
+		}
+		else {
+			// Filter out empty strings, null, and undefined values
+			const cleanQuery = Object.fromEntries(
+				Object.entries(query).filter(([_, value]) => 
+					value !== '' && value != null
+				)
+			);
+		 	queryString = Object.keys(cleanQuery, callback).length > 0 ? `?${new URLSearchParams(cleanQuery).toString()}` : '';
+		}
 		Utils.get(`/bff/studies${queryString}`, callback);
+	},
+
+	getStudiesCount: function(callback) {
+		Utils.get(`/bff/studies/count`, callback);
 	},
 	
 	getSchedulerStudies: function(callback){
 		Utils.get(`/bff/scheduler/studies`, callback);
+	},
+
+	getSchedulerStudiesCount: function(callback){
+		Utils.get(`/bff/scheduler/studies/count`, callback);
 	},
 
 	addStudy: function(body, callback){
@@ -308,6 +361,10 @@ var Simva = {
 		Utils.get(`/bff/studies/${study_id}/tests`, callback);
 	},
 
+	getStudyTestsCount: function(study_id, callback){
+		Utils.get(`/bff/studies/${study_id}/tests/count`, callback);
+	},
+
 	exportStudyConfig: function(study_id, callback){
 		Utils.get(`/bff/studies/${study_id}/export`, callback);
 	},
@@ -354,26 +411,6 @@ var Simva = {
 
 	deleteSessionPermissionsForUser: function(study_id, test_id, user_id, callback){
 		Utils.delete(`/bff/studies/${study_id}/tests/${test_id}/permissions/${user_id}`, callback);
-	},
-
-	getStudyGroups: function(study_id, callback){
-		Utils.get(`/bff/studies/${study_id}/groups`, callback);
-	},
-
-	exportGroup: function(simlet_id, group_id, complete, callback) {
-		Utils.get(`/bff/simlets/${simlet_id}/groups/${group_id}/export?complete=${complete}`, callback);
-	},
-
-	importGroup: function(simlet_id, groupData, callback) {
-		Utils.post(`/bff/simlets/${simlet_id}/groups/import`, groupData, callback);
-	},
-
-	addStudyGroup: function(study_id, group_id, callback){
-		Utils.post(`/bff/studies/${study_id}/groups/${group_id}`, {}, callback);
-	},
-
-	deleteStudyGroup: function(study_id, group_id, callback){
-		Utils.delete(`/bff/studies/${study_id}/groups/${group_id}`, callback);
 	},
 
 	getTestActivities: function(study_id, test_id, callback){

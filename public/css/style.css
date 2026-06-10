@@ -271,13 +271,13 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 
 .content h1 { margin-bottom: 5px; }
 
-.simletsFiltering {
+.filtering {
 	display: flex;
 	align-items: center;
 	gap: 8px;
 	margin-bottom: 10px;
 }
-.simletsFiltering input[type="text"] {
+.filtering input[type="text"] {
 	border-radius: 5px;
 	min-width: 180px;
 	flex: 1;
@@ -295,24 +295,54 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	--iconTextMargin: 10px;
 	padding-left: calc(var(--iconSize) + var(--iconMargin) + var(--iconTextMargin));
 }
-.simletsFiltering .simletFilter {
+.filtering .filters {
 	background-color: var(--themeOrangeColor);
 	border-radius: 5px;
 	border: 1px solid black;
 }
-.simletsFiltering .simletFilter select {
+.filtering .filters select {
 	border-radius: 5px;
 	border: none;
 }
+.pagination {
+	display: flex;
+	align-content: center;
+}
 
 
-.content .card { vertical-align: top; padding: 10px; background-color: white; box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3); margin-bottom: 10px; margin-right: 5px; display: flow-root; position: relative; }
-.content .card.third { min-width: 370px; width: 32%; display: inline-block; }
-.content .card .delete { float: right; position: absolute; top: 10px; right: 10px; }
-.selectable.card.third { 
-	overflow: hidden;     /* Clips overflowing content */
+.card {
+	vertical-align: top;
+	padding: 10px;
+	background-color: white;
+	box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3);
+	margin-bottom: 10px;
+	margin-right: 5px;
+	display: flow-root;
+	position: relative;
+}
+
+.simletsCardsList {
+	display: flex;
+	flex-wrap: wrap;
+	width: 100%; 
+
+	--max-columns: 3;
+	--column-gap: 10px;
+	gap: var(--column-gap);
+	
+}
+.cardColumn { 
+	/* 100% / columns) - (gap * (columns - 1) / columns) */
+	flex: 0 1 calc((100% / var(--max-columns)) - (var(--column-gap) * (var(--max-columns) - 1) / var(--max-columns)));
+}
+.simletsCardsList a { text-decoration: none; }
+
+.selectable.card { background-color: #c1c1c1; color: black; transition: all 0.2s; }
+.selectable.card:hover { color: white; background-color: #909090; cursor: pointer; }
+.selectable.card { 
+	overflow: hidden;     	 /* Clips overflowing content */
 	word-wrap: break-word;   /* Breaks long words to fit */
-	white-space: normal;    /* Allows text to wrap */
+	white-space: normal;     /* Allows text to wrap */
 	box-sizing: border-box;  /* Includes padding in width/height */
 }
 .card .cardTitle, .card .sessionTagList {
@@ -341,8 +371,6 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .studyTagsRow .sessionTagChip { margin-right: 5px; font-weight: normal; }
 
 
-.content .selectable { background-color: #c1c1c1; color: black; transition: all 0.2s; }
-.selectable:hover { color: white; background-color: #909090; cursor: pointer; }
 .content p { padding: 10px; }
 .content ul { padding: 10px; list-style: square inside; }
 .content li { padding: 10px; }

@@ -1,0 +1,60 @@
+<div class="filtering">
+	<!-- TODO: Add localization -->
+	<input
+		type="text"
+		id="<%= id %>_search_bar"
+		placeholder="<%- t('search.placeholder', { ns : 'SIMLETs' }) %>"
+		oninput="updateFiltersAndPagination()"
+	>
+	<div class="filters">
+		<!-- <span><%- t('filters.showAmount', { ns : 'SIMLETs' }) %></span>
+		<select id="page_size" onchange="updateFiltersAndPagination()">
+			<option value="3">3</option>
+			<option value="9">9</option>
+		</select> -->
+	</div>
+</div>
+
+
+<script type="text/javascript">
+    let showAtOnce = 1;
+    let currentPage = 1;
+    
+    let totalResults = 0;
+    let totalPages = 0;
+    let updateCallback = () => {}
+    let loadMoreCallback = () => {}
+
+    let searchBarOptions = { }
+
+    // Window scroll events
+    $(window).scroll(function() {
+
+        // When scrolling to the bottom of the windows
+        if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+            // If there are still pages to load, update the current page and load more
+            if (currentPage < totalPages) {
+                currentPage++;
+                updateSearchOptions();
+
+                loadMoreCallback();
+            }
+        }
+    });
+    
+    const updateSearchOptions = function() {
+        totalPages = Math.floor(totalResults / showAtOnce) + 1;
+        searchBarOptions = {
+            skip: (currentPage - 1) * showAtOnce,
+            limit: (currentPage) * showAtOnce,
+            searchString: $("#<%= id %>_search_bar").val().trim().toLowerCase() || "",
+        }
+    }
+    
+    const updateFiltersAndPagination = function() {
+        currentPage = 1;
+        updateSearchOptions();
+        updateCallback();
+    }
+
+</script>

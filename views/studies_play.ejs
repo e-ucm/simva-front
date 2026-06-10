@@ -24,14 +24,16 @@
 	}
 
 	let toCard = function(study){
-		return `<a href="/scheduler/${study.simlet_id}"><div class="selectable card third">
+		return `<a href="/scheduler/${study.simlet_id}" class="cardColumn">
+			<div class="selectable card">
 			<h1><%- t('single.title', { ns : 'SIMLETs' }) %>: ${study.simlet_name}</h1>
 			<p><%- t('scheduler.title', { ns : 'SIMLETs' }) %></p>
-			</div></a>`;
+			</div>
+		</a>`;
 	}
 </script>
 <h1><%- t('title', { ns : 'SIMLETs' }) %></h1>
-<div id="studies_list">
+<div id="studies_list" class="simletsCardsList">
 	<div style="width: 100%; text-align: center; padding: 200px;">
 		<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 	</div>

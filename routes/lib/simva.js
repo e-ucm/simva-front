@@ -20,7 +20,8 @@ class Simva {
 		this.shlinkapiurl = config.shlink.apiurl;
 	}
 
-	// REQUEST
+	// REQUESTS
+
 	post(url, req, body, sessionId, callback){
 		logger.info(body, `Making POST request to ${url} for session ${sessionId}`);
 		usertools.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(sessionId), (error, result) => {
@@ -74,7 +75,16 @@ class Simva {
 		});
 	}
 
+	
+	getQueryString(queryParams) {
+		const params = new URLSearchParams(queryParams).toString();
+		const queryString = params ? `?${params}` : "";
+		return queryString;
+	}
+
+
 	//SHLINK URL
+	
 	generateURL(simlet_id, customSlug, length, sessionId, callback){
 		let body = {};
 		if(length) {
@@ -105,7 +115,9 @@ class Simva {
 		this.delete(`${this.apiurl}/simlets/${simlet_id}/shlink`, sessionId, callback);
 	}
 
+
 	// USER
+
 	registerGeneratedUser(simlet_id, groupid, token, sessionId, callback){
 		logger.info(`Registering generated user with token ${token} for group ID ${groupid} in simlet ${simlet_id}`);
 		let body = {
@@ -161,54 +173,58 @@ class Simva {
 		this.get(`${this.apiurl}/limesurvey/isAdmin`, sessionId, callback);
 	}
 
-	// GROUPS
+
+	// Add to Task List
+
 	addToTaskList(body, sessionId, callback){
 		this.post(`${this.apiurl}/tasklist`, null, body, sessionId, callback);
 	}
-
+	
+	
 	// GROUPS
+
+	// TODO: Remove?
 	getGroups(sessionId, callback){
 		this.get(`${this.apiurl}/groups`, sessionId, callback);
 	}
-
 	getGroupsWithVersion(useNewGeneration, sessionId, callback){
 		this.get(`${this.apiurl}/groups?use_new_generation=${useNewGeneration}`, sessionId, callback);
+	}
+	getGroupSimlets(simlet_id, group_id, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/simlets`, sessionId, callback);
+	}
+
+
+	getStudyGroups(sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${sessionId}/groups`, sessionId, callback);
+	}
+
+	getStudyGroupsCount(sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${sessionId}/groups/count`, sessionId, callback);
+	}
+
+	getStudyGroupsWithVersion(useNewGeneration, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simlet_id}/groups`, sessionId, callback);
+	}
+
+	getStudyGroupsWithVersionCount(useNewGeneration, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simlet_id}/groups`, sessionId, callback);
 	}
 
 	addGroup(simlet_id, body, sessionId, callback){
 		this.post(`${this.apiurl}/simlets/${simlet_id}/groups`, null, body, sessionId, callback);
 	}
 
-	updateGroup(simlet_id, groupId, group, sessionId, callback){
-		this.patch(`${this.apiurl}/simlets/${simlet_id}/groups/${groupId}`, null, group, sessionId, callback);
-	}
-
 	getGroup(simlet_id, group_id, sessionId, callback){
 		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}`, sessionId, callback);
 	}
 
-	getGroupCount(simlet_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/count`, sessionId, callback);
-	}
-
-	getGroupSimlets(simlet_id, group_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/simlets`, sessionId, callback);
+	updateGroup(simlet_id, groupId, group, sessionId, callback){
+		this.patch(`${this.apiurl}/simlets/${simlet_id}/groups/${groupId}`, null, group, sessionId, callback);
 	}
 
 	deleteGroup(simlet_id, group_id, sessionId, callback){
 		this.delete(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}`, sessionId, callback);
-	}
-
-	addGroupParticipant(simlet_id, group_id, participant_id, sessionId, callback){
-		this.post(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/participants/${participant_id}`, null, { }, sessionId, callback);
-	}
-
-	getGroupParticipants(simlet_id, group_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/participants`, sessionId, callback);
-	}
-	
-	deleteGroupParticipant(simlet_id, group_id, participant_id, keycloakDelete, sessionId, callback){
-		this.delete(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/participants/${participant_id}?keycloakDelete=${keycloakDelete}`, sessionId, callback);
 	}
 
 	getGroupDirectPermissions(simlet_id, group_id, sessionId, callback){
@@ -231,12 +247,38 @@ class Simva {
 		this.delete(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/permissions/${user_id}`, sessionId, callback);
 	}
 
-	getTags(sessionId, callback){
-		this.get(`${this.apiurl}/tags`, sessionId, callback);
+
+	// PARTICIPANTS
+
+	getStudyGroupsParticipantsCount(simlet_id, sessionId, callback) {
+		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/participants/count`, sessionId, callback);
 	}
+
+	getGroupParticipants(simlet_id, group_id, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/participants`, sessionId, callback);
+	}
+
+	getGroupParticipantsCount(simlet_id, group_id, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/participants/count`, sessionId, callback);
+	}
+	
+	addGroupParticipant(simlet_id, group_id, participant_id, sessionId, callback){
+		this.post(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/participants/${participant_id}`, null, { }, sessionId, callback);
+	}
+	
+	deleteGroupParticipant(simlet_id, group_id, participant_id, keycloakDelete, sessionId, callback){
+		this.delete(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/participants/${participant_id}?keycloakDelete=${keycloakDelete}`, sessionId, callback);
+	}
+
+	
+	// TAGS
 
 	createTag(body, sessionId, callback){
 		this.post(`${this.apiurl}/tags`, null, body, sessionId, callback);
+	}
+	
+	getTags(sessionId, callback){
+		this.get(`${this.apiurl}/tags`, sessionId, callback);
 	}
 
 	updateTag(tag_id, body, sessionId, callback){
@@ -251,13 +293,19 @@ class Simva {
 	// STUDIES
 
 	getStudies(sessionId, queryParams, callback){
-		const params = new URLSearchParams(queryParams).toString();
-		const queryString = params ? `?${params}` : "";
-		this.get(`${this.apiurl}/simlets${queryString}`, sessionId, callback);
+		this.get(`${this.apiurl}/simlets${this.getQueryString(queryParams)}`, sessionId, callback);
+	}
+
+	getStudiesCount(sessionId, callback) {
+		this.get(`${this.apiurl}/simlets/count`, sessionId, callback);
 	}
 
 	getSchedulerStudies(sessionId, callback){
 		this.get(`${this.apiurl}/simlets/scheduler`, sessionId, callback);
+	}
+
+	getSchedulerStudiesCount(sessionId, callback){
+		this.get(`${this.apiurl}/simlets/scheduler/count`, sessionId, callback);
 	}
 
 	getStudyDirectPermissions(study_id, sessionId, callback){
@@ -330,6 +378,10 @@ class Simva {
 
 	getStudyTests(study_id, sessionId, callback){
 		this.get(`${this.apiurl}/simlets/${study_id}/sessions`, sessionId, callback);
+	}
+
+	getStudyTestsCount(study_id, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${study_id}/sessions/count`, sessionId, callback);
 	}
 
 	exportStudyConfig(study_id, sessionId, callback){
