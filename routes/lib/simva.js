@@ -208,12 +208,12 @@ class Simva {
 	}
 
 
-	getStudyGroups(sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${sessionId}/groups`, sessionId, callback);
+	getStudyGroups(simlet_id, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simlet_id}/groups`, sessionId, callback);
 	}
 
-	getStudyGroupsCount(sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${sessionId}/groups/count`, sessionId, callback);
+	getStudyGroupsCount(simlet_id, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/count`, sessionId, callback);
 	}
 
 	getStudyGroupsWithVersion(useNewGeneration, sessionId, callback){

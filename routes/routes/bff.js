@@ -291,7 +291,7 @@ module.exports = function(auth, redirectToLogin, config){
                 }
             });
         } else {
-            Simva.getStudyGroups(req.session.id, (error, result) => {
+            Simva.getStudyGroups(req.params["simlet_id"], req.session.id, (error, result) => {
                 if(error) {
                     next(error.response?.data || error);
                 } else {
@@ -312,7 +312,7 @@ module.exports = function(auth, redirectToLogin, config){
                 }
             });
         } else {
-            Simva.getStudyGroupsCount(req.session.id, (error, result) => {
+            Simva.getStudyGroupsCount(req.params["simlet_id"], req.session.id, (error, result) => {
                 if(error) {
                     next(error.response?.data || error);
                 } else {

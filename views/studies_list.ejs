@@ -277,9 +277,13 @@
 		card.find(".cardGroups").after(study.groups.length);
 		card.find(".studyTagsRow").append(renderTags(study));
 		
-		Simva.getStudyParticipants(study.simlet_id, function(error, result) {
+		Simva.getStudyGroupsParticipantsCount(study.simlet_id, function(error, result) {
 			if (!error) {
-				card.find(".cardUsers").after(result.length);
+				let total = 0;
+				Object.entries(result).forEach(([group, count]) => {
+					total += count;
+				});
+				card.find(".cardUsers").after(total);
 			}
 		});
 		
