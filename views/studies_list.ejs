@@ -156,15 +156,11 @@
 
 	let paintStudyBatch = function(studyBatch) {
 		let paintedStudies = 0;
-
-		const studyBatchById = Object.fromEntries(
-			studyBatch.map(obj => [obj.simlet_id, obj])
-		);
-
-		Object.entries(studyBatchById).forEach(([id, study]) => {
+		
+		studyBatch.forEach((study) => {
 			// If the study is in the correct tab, paint it
 			if (study.simlet_archived == archived) {
-				studiesById.set(id, study);
+				studiesById.set(study.simlet_id, study);
 
 				paintedStudies++;
 				addSimletCard(study);
@@ -210,7 +206,7 @@
 		}
 		// Editing study
 		else {
-			let study = studiesById[studyId];
+			let study = studiesById.get(studyId);
 			if(study != null) {
 				// Open form only if the study exists and hide the add new/import tabs (only the name/description tab is needed)
 				Utils.toggleAddForm('study_form');

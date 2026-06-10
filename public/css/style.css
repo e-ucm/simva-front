@@ -296,17 +296,15 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	padding-left: calc(var(--iconSize) + var(--iconMargin) + var(--iconTextMargin));
 }
 .filtering .filters {
-	background-color: var(--themeOrangeColor);
 	border-radius: 5px;
 	border: 1px solid black;
 }
+.filtering .filters span {
+	margin-left: 5px;
+}
 .filtering .filters select {
 	border-radius: 5px;
-	border: none;
-}
-.pagination {
-	display: flex;
-	align-content: center;
+	border: 1px solid black;
 }
 
 

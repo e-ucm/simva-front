@@ -3,15 +3,24 @@
 	<input
 		type="text"
 		id="<%= id %>_search_bar"
-		placeholder="<%- t('search.placeholder', { ns : 'SIMLETs' }) %>"
+		placeholder="<%- t('searchBar.placeholder', { ns : 'SIMLETs' }) %>"
 		oninput="updateFiltersAndPagination()"
 	>
 	<div class="filters">
-		<!-- <span><%- t('filters.showAmount', { ns : 'SIMLETs' }) %></span>
-		<select id="page_size" onchange="updateFiltersAndPagination()">
-			<option value="3">3</option>
-			<option value="9">9</option>
-		</select> -->
+		<span><%- t('filters.sortBy.title', { ns : 'SIMLETs' }) %></span>
+		<select id="<%= id %>_sortBy" onchange="updateFiltersAndPagination()">
+			<option value="id"><%- t('filters.sortBy.id', { ns : 'SIMLETs' }) %></option>
+			<option value="name"><%- t('filters.sortBy.name', { ns : 'SIMLETs' }) %></option>
+			<option value="createdAt"><%- t('filters.sortBy.createdAt', { ns : 'SIMLETs' }) %></option>
+			<option value="updatedAt"><%- t('filters.sortBy.updatedAt', { ns : 'SIMLETs' }) %></option>
+		</select>
+	</div>
+    <div class="filters">
+		<span><%- t('filters.sortOrder.title', { ns : 'SIMLETs' }) %></span>
+		<select id="<%= id %>_sortOrder" onchange="updateFiltersAndPagination()">
+			<option value="asc"><%- t('filters.sortOrder.asc', { ns : 'SIMLETs' }) %></option>
+			<option value="desc"><%- t('filters.sortOrder.desc', { ns : 'SIMLETs' }) %></option>
+		</select>
 	</div>
 </div>
 
@@ -48,6 +57,8 @@
             skip: (currentPage - 1) * showAtOnce,
             limit: (currentPage) * showAtOnce,
             searchString: $("#<%= id %>_search_bar").val().trim().toLowerCase() || "",
+            orderBy: $("#<%= id %>_sortBy").val() || "id",
+            order: $("#<%= id %>_sortOrder").val() || "desc"
         }
     }
     
