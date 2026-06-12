@@ -1,22 +1,28 @@
 { 
     "title": "SIMLETs",
     "description": "SIMLETs are the core of SIMVA, allowing you to create and manage your own simulations. A SIMLET is a container for all the elements of a simulation, including sessions, activities, users, and groups. You can create new SIMLETs, edit existing ones, archive those you no longer need, and manage their settings and content.",
-
-    "searchBar.placeholder": "Search a SIMLET by name or description",
-        "filters.sortBy.title": "Sort by",
-            "filters.sortBy.id": "ID",
-            "filters.sortBy.name": "Name",
-            "filters.sortBy.createdAt": "Creation date",
-            "filters.sortBy.updatedAt": "Update date",
-            
-        "filters.sortOrder.title": "Order",
-            "filters.sortOrder.asc": "Ascending",
-            "filters.sortOrder.desc": "Descending",
-    
     "archived.title": "Archived SIMLETs",
     "archived.description": "List of SIMLETs that have been archived. You can dearchive them to make them active again.",
     "no_simlets.message": "You have no SIMLETs yet. Create one using the button on the bottom right (+)",
     "no_archived.message": "There are no archived SIMLETS",
+
+    "searchBar.placeholder": "Search a SIMLET by name or description",
+    "filters.sortBy.title": "Sort by",
+        "filters.sortBy.id": "ID",
+        "filters.sortBy.name": "Name",
+        "filters.sortBy.createdAt": "Creation date",
+        "filters.sortBy.updatedAt": "Update date",
+        
+    "filters.sortOrder.title": "Order",
+        "filters.sortOrder.asc": "Ascending",
+        "filters.sortOrder.desc": "Descending",
+    
+    "filters.tags.title": "Tags",
+        "filters.tags.selected.title": "{{count}} selected",
+        "filters.tags.searchBar.placeholder": "Search a tag by name",
+    
+    "filters.no_match.message": "No SIMLETs match the seach",
+    
 
     "card.createdAt": "Created at",
     "card.updatedAt": "Updated at",

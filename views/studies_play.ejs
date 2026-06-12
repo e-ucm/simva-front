@@ -2,39 +2,99 @@
  
 <% extend('layout_with_menu_and_sse') %>
 
+<h1><%- t('title', { ns : 'SIMLETs' }) %></h1>
+
+<!-- Needs to be added before other partials to allow them 
+to use the elements and scripts defined in simlet_commons -->
+<%- include('partials/simlet_commons') %>
+<%- include('partials/filtering_pagination_commons', { id:"scheduler" }) %>
+
+<div id="studies_list" class="simletsCardsList">
+</div>
+
+<div id="loader" class="loader" style="display: none">
+	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+</div>
+
+<div id="simlet_card_template" style="display: none;">
+	<a class="cardColumn">
+		<div class="selectable card">
+			<h1 class="cardTitle"></h1>
+			<p class="cardDescription"> 	</p>
+		</div>
+	</a>
+</div>
+
 <script type="text/javascript">
+	const SHOW_AT_ONCE = 9;
+
 	$(document).ready(function() {
-		$('#studies_list').html(roller);
-		Simva.getSchedulerStudies(function(error, result){
-			if(!error){
-				paintStudies(result);
+		// Delete all forms from simlet_commons (only the tags scripts are needed)
+		$(".new_element.floating").remove();
+		
+		let data = $("#scheduler_filtering").data();
+
+		// Set propertiesfor filtering_pagination_commons partial
+		data["showAtOnce"] = SHOW_AT_ONCE;
+		data["updateCallback"] = refreshStudies;
+		data["loadMoreCallback"] = loadStudyBatch;
+
+		Simva.getSchedulerStudiesCount(function(error, result) {
+			if (!error) {
+				data["totalResults"] = result.count;
+
+				// Calls updateSearchOptions and refreshStudies
+				data["updateSearch"]();
 			}
 		});
+		
+		$('#studies_list').html(roller);
+
 	});
 
-	let paintStudies = function(studies){
-		$('#studies_list').text('');
-		if(studies.length > 0){
-			for (var i = 0; i < studies.length; i++) {
-				$('#studies_list').append(toCard(studies[i]));
+	const loadStudyBatch = function() {
+		let data = $("#scheduler_filtering").data();
+
+		$("#loader").show();
+		Simva.getSchedulerStudies(data["searchParameters"], function(error, result){
+			if (!error) {
+				paintStudyBatch(result);
+				$("#loader").hide();
 			}
-		}else{
+		});
+	}
+	
+	let refreshStudies = function() {
+		let data = $("#scheduler_filtering").data();
+		data["currentPage"] = 1;
+
+		$('#studies_list').empty();
+		loadStudyBatch();
+	}
+
+	// TODO: Check logic to show message when there are no simlets or when no searches match 
+	let paintStudyBatch = function(studyBatch) {
+		let data = $("#scheduler_filtering").data();
+
+		let paintedStudies = 0;
+		
+		studyBatch.forEach((study) => {
+			paintedStudies++;
+			addSimletCard(study);
+		});
+		
+		if (paintedStudies == 0) {
 			$('#studies_list').text("<%- t('scheduler.noSIMLET.title', { ns : 'SIMLETs' }) %>");
 		}
 	}
 
-	let toCard = function(study){
-		return `<a href="/scheduler/${study.simlet_id}" class="cardColumn">
-			<div class="selectable card">
-			<h1><%- t('single.title', { ns : 'SIMLETs' }) %>: ${study.simlet_name}</h1>
-			<p><%- t('scheduler.title', { ns : 'SIMLETs' }) %></p>
-			</div>
-		</a>`;
+	const addSimletCard = function(study) {
+		const card = $("#simlet_card_template a").clone();
+		card.attr("href", `/scheduler/${study.simlet_id}`);
+		card.find(".cardTitle").text(study.simlet_name);
+		card.find(".cardDescription").text("<%- t('scheduler.title', { ns : 'SIMLETs' }) %>");
+
+		$('#studies_list').append(card);
 	}
+	
 </script>
-<h1><%- t('title', { ns : 'SIMLETs' }) %></h1>
-<div id="studies_list" class="simletsCardsList">
-	<div style="width: 100%; text-align: center; padding: 200px;">
-		<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-	</div>
-</div>

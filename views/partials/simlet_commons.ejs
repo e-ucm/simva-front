@@ -123,6 +123,12 @@
 	<span class="char-count"></span>
 </div>
 
+<div id="no_tags_template" style="display: none;">
+	<div class="sessionTagList">
+		<span class="sessionTagEmpty"><%- t('tags.no_tags', { ns : 'sessions' }) %></span>
+	</div>
+</div>
+
 <script type="text/javascript" src="/kebabs.js"></script>
 <script type="text/javascript" src="/tooltips.js"></script>
 
@@ -499,6 +505,35 @@
 
 	// --- TAGS --- 
 
+	let allTags =  new Set();
+	let tagsById = new Map();
+	let tagsByName = new Map(); 
+
+	let remainingTags =  new Set();
+
+	Simva.getTags(function(error, result) {
+		result.forEach(tag => {
+			if (!tagsById.has(tag.tag_id)) {
+				allTags.add(tag);
+				remainingTags.add(tag);
+			}
+			tagsById.set(tag.tag_id, tag);
+			tagsByName.set(tag.tag_name, tag);
+		});
+	});
+
+	const searchTagsByName = function(query) {
+		if (!query) {
+			return remainingTags;
+		}
+
+		return Array.from(remainingTags).filter((tag) => {
+			const name = (tag.tag_name || '').toLowerCase();
+			return name.includes(query);
+		});
+	}
+
+	
 	/**
 	 * Create the html element containing all the tags
 	 * 
@@ -507,9 +542,9 @@
 	*/
 	const renderTags = function(taggedElem) {
 		const tags = Array.isArray(taggedElem.tags) ? taggedElem.tags : [];
-
+		
 		if (tags.length === 0) {
-			return `<div class="sessionTagList"><span class="sessionTagEmpty"><%- t('tags.no_tags', { ns : 'sessions' }) %></span></div>`;
+			return $("#no_tags_template .sessionTagList").html();
 		}
 		let tagsHtml = '<div class="sessionTagList">';
 		for (let i = 0; i < tags.length; i++) {

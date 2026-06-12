@@ -1,23 +1,28 @@
 { 
     "title": "SIMLETs",
     "description": "Les SIMLETs sont le cœur de SIMVA, vous permettant de créer et de gérer vos propres simulations. Un SIMLET est un conteneur pour tous les éléments d'une simulation, y compris les sessions, les activités, les utilisateurs et les groupes. Vous pouvez créer de nouveaux SIMLETs, éditer ceux existants, archiver ceux dont vous n'avez plus besoin et gérer leurs paramètres et leur contenu.",
-
-    "searchBar.placeholder": "",
-        "filters.sortBy.title": "",
-            "filters.sortBy.id": "",
-            "filters.sortBy.name": "",
-            "filters.sortBy.createdAt": "",
-            "filters.sortBy.updatedAt": "",
-            
-        "filters.sortOrder.title": "",
-            "filters.sortOrder.asc": "",
-            "filters.sortOrder.desc": "",
-
     "archived.title": "SIMLETS Archivés",
     "archived.description": "Liste des SIMLETs qui ont été archivés. Vous pouvez les désarchiver pour les réactiver.",
     "no_simlets.message": "Vous n'avez pas encore de SIMLETs. Créez-en un en utilisant le bouton en bas à droite (+)",
     "no_archived.message": "Pas de SIMLETs archivés. Les SIMLETs archivés apparaîtront ici.",
 
+    "searchBar.placeholder": "",
+    "filters.sortBy.title": "",
+        "filters.sortBy.id": "",
+        "filters.sortBy.name": "",
+        "filters.sortBy.createdAt": "",
+        "filters.sortBy.updatedAt": "",
+        
+    "filters.sortOrder.title": "",
+        "filters.sortOrder.asc": "",
+        "filters.sortOrder.desc": "",
+
+    "filters.tags.title": "",
+        "filters.tags.selected.title": "",
+        "filters.tags.searchBar.placeholder": " ",
+    
+    "filters.no_match.message": "",
+        
     "card.createdAt": "Crée le",
     "card.updatedAt": "Mis à jour le",
     "card.sessions": "Sessions",

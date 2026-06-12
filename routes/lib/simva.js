@@ -208,20 +208,22 @@ class Simva {
 	}
 
 
-	getStudyGroups(simlet_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simlet_id}/groups`, sessionId, callback);
+	getStudyGroups(simlet_id, queryParams, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simlet_id}/groups${this.getQueryString(queryParams)}`, sessionId, callback);
 	}
 
-	getStudyGroupsCount(simlet_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/count`, sessionId, callback);
+	getStudyGroupsCount(simlet_id, queryParams, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/count${this.getQueryString(queryParams)}`, sessionId, callback);
 	}
 
-	getStudyGroupsWithVersion(useNewGeneration, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simlet_id}/groups`, sessionId, callback);
+	getStudyGroupsWithVersion(useNewGeneration, simlet_id, queryParams, sessionId, callback){
+		queryParams.useNewGeneration = useNewGeneration;
+		this.get(`${this.apiurl}/simlets/${simlet_id}/groups${this.getQueryString(queryParams)}`, sessionId, callback);
 	}
 
-	getStudyGroupsWithVersionCount(useNewGeneration, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simlet_id}/groups`, sessionId, callback);
+	getStudyGroupsWithVersionCount(useNewGeneration, simlet_id, queryParams, sessionId, callback){
+		queryParams.useNewGeneration = useNewGeneration;
+		this.get(`${this.apiurl}/simlets/${simlet_id}/groups${this.getQueryString(queryParams)}`, sessionId, callback);
 	}
 
 	addGroup(simlet_id, body, sessionId, callback){
@@ -263,16 +265,16 @@ class Simva {
 
 	// PARTICIPANTS
 
-	getStudyGroupsParticipantsCount(simlet_id, sessionId, callback) {
-		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/participants/count`, sessionId, callback);
+	getStudyGroupsParticipantsCount(simlet_id, queryParams, sessionId, callback) {
+		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/participants/count${this.getQueryString(queryParams)}`, sessionId, callback);
 	}
 
 	getGroupParticipants(simlet_id, group_id, sessionId, callback){
 		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/participants`, sessionId, callback);
 	}
 
-	getGroupParticipantsCount(simlet_id, group_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/participants/count`, sessionId, callback);
+	getGroupParticipantsCount(simlet_id, group_id, queryParams, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/participants/count${this.getQueryString(queryParams)}`, sessionId, callback);
 	}
 	
 	addGroupParticipant(simlet_id, group_id, participant_id, sessionId, callback){
@@ -305,20 +307,20 @@ class Simva {
 
 	// STUDIES
 
-	getStudies(sessionId, queryParams, callback){
+	getStudies(queryParams, sessionId, callback){
 		this.get(`${this.apiurl}/simlets${this.getQueryString(queryParams)}`, sessionId, callback);
 	}
 
-	getStudiesCount(sessionId, callback) {
-		this.get(`${this.apiurl}/simlets/count`, sessionId, callback);
+	getStudiesCount(queryParams, sessionId, callback) {
+		this.get(`${this.apiurl}/simlets/count${this.getQueryString(queryParams)}`, sessionId, callback);
 	}
 
-	getSchedulerStudies(sessionId, callback){
-		this.get(`${this.apiurl}/simlets/scheduler`, sessionId, callback);
+	getSchedulerStudies(queryParams, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/scheduler${this.getQueryString(queryParams)}`, sessionId, callback);
 	}
 
-	getSchedulerStudiesCount(sessionId, callback){
-		this.get(`${this.apiurl}/simlets/scheduler/count`, sessionId, callback);
+	getSchedulerStudiesCount(queryParams, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/scheduler/count${this.getQueryString(queryParams)}`, sessionId, callback);
 	}
 
 	getStudyDirectPermissions(study_id, sessionId, callback){
@@ -389,12 +391,12 @@ class Simva {
 		this.patch(`${this.apiurl}/simlets/${study_id}/allocator`, null, allocator, sessionId, callback);
 	}
 
-	getStudyTests(study_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${study_id}/sessions`, sessionId, callback);
+	getStudyTests(study_id, queryParams, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${study_id}/sessions${this.getQueryString(queryParams)}`, sessionId, callback);
 	}
 
-	getStudyTestsCount(study_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${study_id}/sessions/count`, sessionId, callback);
+	getStudyTestsCount(study_id, queryParams, sessionId, callback){
+		this.get(`${this.apiurl}/simlets/${study_id}/sessions/count${this.getQueryString(queryParams)}`, sessionId, callback);
 	}
 
 	exportStudyConfig(study_id, sessionId, callback){
@@ -407,10 +409,6 @@ class Simva {
 
 	getStudyTest(study_id,test_id, sessionId, callback){
 		this.get(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}`, sessionId, callback);
-	}
-
-	getStudyGroups(study_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${study_id}/groups`, sessionId, callback);
 	}
 
 	addStudyGroup(study_id, group_id, sessionId, callback){

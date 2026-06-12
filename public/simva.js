@@ -1,14 +1,36 @@
+// Convert query object to query string
 const getQueryString = function(query) {
 	let queryString = "";
 
 	// Filter out empty strings, null, and undefined values
 	const cleanQuery = Object.fromEntries(
 		Object.entries(query).filter(([_, value]) => 
-			value !== '' && value != null
+			value != '' && value != null
 		)
 	);
 	queryString = Object.keys(cleanQuery).length > 0 ? `?${new URLSearchParams(cleanQuery).toString()}` : '';
 	return queryString;
+}
+
+// Convert query object to query string with only searchString and searchTags params
+const getCountQueryString = function(query) {
+	const cleanQuery = Object.fromEntries(
+		Object.entries(query).filter(([key, value]) => 
+			key == "searchString" || key == "searchTags"
+		)
+	);
+	return getQueryString(cleanQuery);
+}
+
+const determineQueryAndCallback = function(query, callback){
+	if (typeof query === "function") {
+		callback = query;	
+		query = {};
+	}
+	return {
+		query: query,
+		callback: callback
+	}
 }
 
 var Simva = {
@@ -144,12 +166,14 @@ var Simva = {
 	},
 	
 
-	getStudyGroups: function(study_id, callback){
-		Utils.get(`/bff/studies/${study_id}/groups`, callback);
+	getStudyGroups: function(simlet_id, query, callback){
+		const params = determineQueryAndCallback(query, callback);
+		Utils.get(`/bff/simlets/${simlet_id}/groups${getQueryString(params.query)}`, params.callback);
 	},
 
-	getStudyGroupsCount: function(simlet_id,callback){
-		Utils.get(`/bff/simlets/${simlet_id}/groups/count`, callback);
+	getStudyGroupsCount: function(simlet_id, query, callback){
+		const params = determineQueryAndCallback(query, callback);
+		Utils.get(`/bff/simlets/${simlet_id}/groups/count${getCountQueryString(params.query)}`, params.callback);
 	},
 
 	addGroup: function(simlet_id, body, callback){
@@ -207,16 +231,18 @@ var Simva = {
 
 	// Participants
 
-	getStudyGroupsParticipantsCount: function(simlet_id, callback){
-		Utils.get(`/bff/simlets/${simlet_id}/groups/participants/count`, callback);
+	getStudyGroupsParticipantsCount: function(simlet_id, query, callback){
+		const params = determineQueryAndCallback(query, callback);
+		Utils.get(`/bff/simlets/${simlet_id}/groups/participants/count${getCountQueryString(params.query)}`, params.callback);
 	},
 
 	getGroupParticipants: function(simlet_id, group_id, callback){
 		Utils.get(`/bff/simlets/${simlet_id}/groups/${group_id}/participants`, callback);
 	},
 
-	getGroupParticipantsCount: function(simlet_id, group_id, callback){
-		Utils.get(`/bff/simlets/${simlet_id}/groups/${group_id}/participants/count`, callback);
+	getGroupParticipantsCount: function(simlet_id, group_id, query, callback){
+		const params = determineQueryAndCallback(query, callback);
+		Utils.get(`/bff/simlets/${simlet_id}/groups/${group_id}/participants/count${getCountQueryString(params.query)}`, params.callback);
 	},
 
 	addGroupParticipant: function(simlet_id, group_id, participant_id, callback){
@@ -250,23 +276,23 @@ var Simva = {
 	// STUDIES
 
 	getStudies: function(query, callback) {
-		if (typeof query === "function") {
-			callback = query;	
-			query = {};
-		}
-		Utils.get(`/bff/studies${getQueryString(query)}`, callback);
+		const params = determineQueryAndCallback(query, callback);
+		Utils.get(`/bff/studies${getQueryString(params.query)}`, params.callback);
 	},
 
-	getStudiesCount: function(callback) {
-		Utils.get(`/bff/studies/count`, callback);
+	getStudiesCount: function(query, callback) {
+		const params = determineQueryAndCallback(query, callback);
+		Utils.get(`/bff/studies/count${getCountQueryString(params.query)}`, params.callback);
 	},
 	
-	getSchedulerStudies: function(callback){
-		Utils.get(`/bff/scheduler/studies`, callback);
+	getSchedulerStudies: function(query, callback){
+		const params = determineQueryAndCallback(query, callback);
+		Utils.get(`/bff/scheduler/studies${getQueryString(params.query)}`, params.callback);
 	},
 
-	getSchedulerStudiesCount: function(callback){
-		Utils.get(`/bff/scheduler/studies/count`, callback);
+	getSchedulerStudiesCount: function(query, callback){
+		const params = determineQueryAndCallback(query, callback);
+		Utils.get(`/bff/scheduler/studies/count${getCountQueryString(params.query)}`, params.callback);
 	},
 
 	addStudy: function(body, callback){
@@ -361,12 +387,14 @@ var Simva = {
 		Utils.patch(`/bff/studies/${study_id}/allocator`, allocator, callback);
 	},
 
-	getStudyTests: function(study_id, callback){
-		Utils.get(`/bff/studies/${study_id}/tests`, callback);
+	getStudyTests: function(study_id, query, callback){
+		const params = determineQueryAndCallback(query, callback);
+		Utils.get(`/bff/studies/${study_id}/tests${getQueryString(params.query)}`, params.callback);
 	},
 
-	getStudyTestsCount: function(study_id, callback){
-		Utils.get(`/bff/studies/${study_id}/tests/count`, callback);
+	getStudyTestsCount: function(study_id, query, callback){
+		const params = determineQueryAndCallback(query, callback);
+		Utils.get(`/bff/studies/${study_id}/tests/count${getCountQueryString(params.query)}`, params.callback);
 	},
 
 	exportStudyConfig: function(study_id, callback){

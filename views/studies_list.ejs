@@ -16,6 +16,9 @@
 	</div>
 </div>
 
+<!-- Needs to be added before other partials to allow them 
+to use the elements and scripts defined in simlet_commons -->
+<%- include('partials/simlet_commons') %>
 <%- include('partials/filtering_pagination_commons', { id:"simlets" }) %>
 
 <div id="studies_list" class="simletsCardsList">
@@ -24,9 +27,6 @@
 <div id="loader" class="loader" style="display: none">
 	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 </div>
-
-
-<%- include('partials/simlet_commons') %>
 
 <div id="simlet_card_template" style="display: none;">
 	<a class="cardColumn">
@@ -74,23 +74,23 @@
 
 	
 	$(document).ready(function() {
+		let data = $("#simlets_filtering").data();
+
 		// Set refresh function for simlet_commons partial
-		refreshFunc = updateFiltersAndPagination;
+		refreshFunc = data["updateSearch"];
 
 		// Set propertiesfor filtering_pagination_commons partial
-		showAtOnce = SHOW_AT_ONCE;
-		updateCallback = refreshStudies;
-		loadMoreCallback = loadStudyBatch;
+		data["showAtOnce"] = SHOW_AT_ONCE;
+		data["updateCallback"] = refreshStudies;
+		data["loadMoreCallback"] = loadStudyBatch;
 
-		Simva.getStudiesCount(function(error, result) {
+		Simva.getStudiesCount(data["searchParameters"], function(error, result) {
 			if (!error) {
-				totalResults = result.count;
-				
+				data["totalResults"] = result.count;
 				// Calls updateSearchOptions and refreshStudies
-				updateFiltersAndPagination();
+				data["updateSearch"]();
 			}
 		});
-
 
 		$('#studies_list').html(roller);
 
@@ -137,8 +137,10 @@
 
 	
 	const loadStudyBatch = function() {
+		let data = $("#simlets_filtering").data();
+
 		$("#loader").show();
-		Simva.getStudies(searchBarOptions, function(error, result){
+		Simva.getStudies(data["searchParameters"], function(error, result){
 			if (!error) {
 				paintStudyBatch(result);
 				$("#loader").hide();
@@ -147,37 +149,48 @@
 	}
 	
 	let refreshStudies = function() {
-		$('#studies_list').empty();
+		let data = $("#simlets_filtering").data();
+		data["currentPage"] = 1;
 
-		currentPage = 1;
+		$('#studies_list').empty();
 		studiesById.clear();
 		loadStudyBatch();
 	}
 
+	// TODO: Check logic to show message when there are no simlets or when no searches match 
 	let paintStudyBatch = function(studyBatch) {
-		let paintedStudies = 0;
+		let data = $("#simlets_filtering").data();
+
+		let painted = 0;
 		
 		studyBatch.forEach((study) => {
+			const wasChecked = studiesById.has(study.simlet_id);  
+			studiesById.set(study.simlet_id, study);
+
 			// If the study is in the correct tab, paint it
 			if (study.simlet_archived == archived) {
-				studiesById.set(study.simlet_id, study);
 
-				paintedStudies++;
+				painted++;
 				addSimletCard(study);
 			}
-			// Otherwise, remove it from the total amount of studies to adjust total pages calculation
-			else {
-				totalResults--;
-				updateSearchOptions();
-			}
+			// // Otherwise, remove it from the total amount of studies to adjust total pages calculation
+			// else if (!wasChecked) {
+			// 	data["totalResults"]--;
+			// 	data["updateSearchOptions"]();
+			// }
 		});
-		
-		if (paintedStudies == 0) {
-			if (!archived) {
-				$('#studies_list').text("<%- t('no_simlets.message', { ns : 'SIMLETs' }) %>");
+
+		if (painted == 0) {
+			if (data["totalResults"] == 0) {
+				if (!archived) {
+					$('#studies_list').text("<%- t('no_simlets.message', { ns : 'SIMLETs' }) %>");
+				}
+				else {
+					$('#studies_list').text("<%- t('no_archived.message', { ns : 'SIMLETs' }) %>");
+				}
 			}
 			else {
-				$('#studies_list').text("<%- t('no_archived.message', { ns : 'SIMLETs' }) %>");
+				$('#studies_list').text("<%- t('filters.no_match.message', { ns : 'SIMLETs' }) %>");
 			}
 		}
 	}

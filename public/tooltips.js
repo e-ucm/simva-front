@@ -5,7 +5,7 @@ const OFFSET_Y = 20;
 // (the tooltip needs to have its position as fixed to correctly paint on top of overflow hidden areas)
 $(document).on("mouseenter", ".tooltip", function (e) {
     const tooltip = $(this);
-    const tooltiptext = tooltip.find('.tooltiptext');
+    const tooltiptext = tooltip.find(".tooltiptext");
 
     const tooltipRelativeX = tooltip.offset().left - $(window).scrollLeft();
     const tooltipRelativeY = tooltip.offset().top - $(window).scrollTop();

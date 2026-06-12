@@ -1,14 +1,8 @@
-<div class="filtering">
-	<!-- TODO: Add localization -->
-	<input
-		type="text"
-		id="<%= id %>_search_bar"
-		placeholder="<%- t('searchBar.placeholder', { ns : 'SIMLETs' }) %>"
-		oninput="updateFiltersAndPagination()"
-	>
+<div id="<%= id %>_filtering" class="filtering">
+	<input type="text" id="<%= id %>_search_bar" placeholder="<%- t('searchBar.placeholder', { ns : 'SIMLETs' }) %>">
 	<div class="filters">
 		<span><%- t('filters.sortBy.title', { ns : 'SIMLETs' }) %></span>
-		<select id="<%= id %>_sortBy" onchange="updateFiltersAndPagination()">
+		<select id="<%= id %>_sort_by">
 			<option value="id"><%- t('filters.sortBy.id', { ns : 'SIMLETs' }) %></option>
 			<option value="name"><%- t('filters.sortBy.name', { ns : 'SIMLETs' }) %></option>
 			<option value="createdAt"><%- t('filters.sortBy.createdAt', { ns : 'SIMLETs' }) %></option>
@@ -17,55 +11,258 @@
 	</div>
     <div class="filters">
 		<span><%- t('filters.sortOrder.title', { ns : 'SIMLETs' }) %></span>
-		<select id="<%= id %>_sortOrder" onchange="updateFiltersAndPagination()">
+		<select id="<%= id %>_sort_order">
 			<option value="asc"><%- t('filters.sortOrder.asc', { ns : 'SIMLETs' }) %></option>
 			<option value="desc"><%- t('filters.sortOrder.desc', { ns : 'SIMLETs' }) %></option>
 		</select>
 	</div>
+
+<% if (typeof id !== 'undefined' && (id == "simlets" || id == "scheduler" || id == "sessions") ) { %>
+    <div class="filters filtersTags">
+        <span><%- t('filters.tags.title', { ns : 'SIMLETs' }) %></span>
+        <select id="<%= id %>_tags_selector">
+            <!-- Default option to show a value in the dropdown -->
+            <option id="<%= id %>_selected_tags_amount" value="" selected disabled hidden></option>
+        </select>
+
+        <div id="<%= id %>_tags_dropdown" class="filtersTagsDropdown">
+            <input type="text" id="<%= id %>_tags_search_bar" placeholder="<%- t('filters.tags.searchBar.placeholder', { ns : 'SIMLETs' }) %>">
+            <ul id="<%= id %>_tags_list" class="filtersTagsList">
+                
+            </ul>
+            
+        </div>
+	</div>
+
+    <div id="search_tag_template" style="display: none;">
+        <li class="searchTag">
+            <input type="checkbox">
+                <span class="sessionTagChip">
+                    <span class="sessionTagColor"></span>
+                    <span class="sessionTagName"></span>
+                </span>
+            </input>
+        </li>
+    </div>
+    
+<% } %>
 </div>
 
-
 <script type="text/javascript">
-    let showAtOnce = 1;
-    let currentPage = 1;
+    // Variables and functions need to be stored in the div data to avoid
+    // conflicts when including the partial multiple times in the same view
+
+    $("#<%= id %>_filtering").data()["showAtOnce"] = 1;
+    $("#<%= id %>_filtering").data()["currentPage"] = 1;
+
+    $("#<%= id %>_filtering").data()["totalResults"] = 1;
+
+    // Default callbacks
+    $("#<%= id %>_filtering").data()["updateCallback"] = () => {};
+    $("#<%= id %>_filtering").data()["checkLoadMore"] = () => { return true; };
+    $("#<%= id %>_filtering").data()["loadMoreCallback"] = () => {};
+
+    $("#<%= id %>_filtering").data()["searchParameters"] = { };
+
     
-    let totalResults = 0;
-    let totalPages = 0;
-    let updateCallback = () => {}
-    let loadMoreCallback = () => {}
-
-    let searchBarOptions = { }
-
     // Window scroll events
     $(window).scroll(function() {
+        let data = $("#<%= id %>_filtering").data();
 
         // When scrolling to the bottom of the windows
         if ($(window).scrollTop() == $(document).height() - $(window).height()) {
             // If there are still pages to load, update the current page and load more
-            if (currentPage < totalPages) {
-                currentPage++;
-                updateSearchOptions();
-
-                loadMoreCallback();
+            if (data["currentPage"] < data["totalPages"] && data["checkLoadMore"]()) {
+                data["currentPage"]++;
+                data["updateSearchOptions"]();
+                data["loadMoreCallback"]();
             }
         }
     });
     
-    const updateSearchOptions = function() {
-        totalPages = Math.floor(totalResults / showAtOnce) + 1;
-        searchBarOptions = {
-            skip: (currentPage - 1) * showAtOnce,
-            limit: (currentPage) * showAtOnce,
-            searchString: $("#<%= id %>_search_bar").val().trim().toLowerCase() || "",
-            orderBy: $("#<%= id %>_sortBy").val() || "id",
-            order: $("#<%= id %>_sortOrder").val() || "desc"
-        }
+    
+    // Update the search parameters
+    $("#<%= id %>_filtering").data()["updateSearchOptions"] = function() {
+        let data = $("#<%= id %>_filtering").data();
+        
+        data["totalPages"] = Math.floor(data["totalResults"] / data["showAtOnce"]) + 1;
+
+        // Set each parameter individually instead of modifying the entire data["searchParameters"]
+        // object to allow for extra parameters to be added from anywhere else
+        data["searchParameters"].skip = (data["currentPage"] - 1) * data["showAtOnce"];
+        data["searchParameters"].limit = (data["currentPage"]) * data["showAtOnce"];
+        data["searchParameters"].searchString = $("#<%= id %>_search_bar").val().trim().toLowerCase() || "";
+        data["searchParameters"].orderBy = $("#<%= id %>_sort_by").val() || "id";
+        data["searchParameters"].order = $("#<%= id %>_sort_order").val() || "desc";
     }
     
-    const updateFiltersAndPagination = function() {
-        currentPage = 1;
-        updateSearchOptions();
-        updateCallback();
+    // Update the search parameters and call the update function
+    $("#<%= id %>_filtering").data()["updateSearch"] = function() {
+        let data = $("#<%= id %>_filtering").data();
+        data["currentPage"] = 1;
+
+        data["updateSearchOptions"]();
+        data["updateCallback"]();
+    }
+    
+    
+    // Shared listeners 
+
+    // Search bar
+    $("#<%= id %>_search_bar").on("input", function () {
+        $("#<%= id %>_filtering").data()["updateSearch"]();
+    });
+
+    // Sort by dropdown
+    $("#<%= id %>_sort_by").on("change", function () {
+        $("#<%= id %>_filtering").data()["updateSearch"]();
+    });
+
+    // Sort order dropdown
+    $("#<%= id %>_sort_order").on("change", function () {
+        $("#<%= id %>_filtering").data()["updateSearch"]();
+    });
+
+    
+    $(document).on("click", function(e) {
+        // Force select elements of the filtering options to lose focus when clicking outside of them
+        // (they don't lose focus even after clicking outside, so by default they don't detect they're 
+        // getting hovered until clicking outside again) 
+        $(".filtering select").blur();
+    });
+
+</script>
+
+
+<% if (typeof id !== 'undefined' && (id == "simlets" || id == "scheduler" || id == "sessions") ) { %>
+
+<script type="text/javascript">
+    // Since this part will never be included multiple times in the same view, variables 
+    // and functions can be declared normally instead of storing them in the div data
+
+    let selectedTagsIds = new Set();
+
+    // Place the tags dropdown to the left or to the right bellow the select depending on its position
+    $(window).on("resize", function() {
+        const tagsSelector = $(".filtersTags");
+        const tagsDropdown = $(".filtersTags .filtersTagsDropdown");
+
+        if (tagsSelector[0].getBoundingClientRect().left > $(window).width() / 2) {
+            tagsDropdown.css({
+                right: 0,
+                left: "auto"
+            });
+        }
+        else {
+            tagsDropdown.css({
+                lef: 0,
+                right: "auto"
+            });
+        }
+    });
+
+    $(document).ready(function() {
+        // Trigger the resize window event to adjust the tags dropdown for the first time
+        window.dispatchEvent(new Event("resize"));
+        
+        // Reset the tags selection
+        $("#<%= id %>_selected_tags_amount").text("<%- t('filters.tags.selected.title', { ns : 'SIMLETs', count: 0 }) %>");
+        $("#<%= id %>_search_bar").val("");
+	});
+    
+
+    // Shared listeners 
+    
+    // Hide the filtersTagsDropdown since it doesn't behave as the regular select dropdown, so it doesn't
+    // hide automatically after clicking outside of it or when pressing another select element
+    $(document).on("click", function(e) {
+        hideTagsDropdown(e);
+    });
+
+    $("select").on('mousedown', function (e) {
+        hideTagsDropdown(e);
+    });
+    
+
+    $("#<%= id %>_tags_selector").on("mousedown", function (e) {
+        // Prevent the default select dropdown to open
+        e.preventDefault();
+        
+        const $dropdown = $("#<%= id %>_tags_dropdown");
+        $dropdown.toggleClass("shown");
+
+        if ($dropdown.hasClass("shown")) {
+            $("#<%= id %>_tags_search_bar").val("");
+            $("#<%= id %>_tags_search_bar").focus();
+            renderMatchingTags();
+        }
+    });
+    
+    $(document).on("click", ".searchTag", function (e) {
+        const data = $(this).data();
+        $(this).find("input[type='checkbox']").prop("checked", function(i, val) { 
+            // If it's checked, it will get unchecked, so remove it from the selected tags
+            if (val) {
+                selectedTagsIds.delete(data["id"]);
+            }
+            // Otherwise, it will get checked, so add it
+            else {
+                selectedTagsIds.add(data["id"]);
+            }
+            return !val; 
+        });
+        
+        $("#<%= id %>_selected_tags_amount").text(`<%- t('filters.tags.selected.title', { ns : 'SIMLETs', count: '${selectedTagsIds.size}' }) %>`);
+        $("#<%= id %>_filtering").data()["searchParameters"].searchTags = Array.from(selectedTagsIds);
+        $("#<%= id %>_filtering").data()["updateSearch"]();
+    });
+
+
+    // Tags search bar
+    $("#<%= id %>_tags_search_bar").on("input", function () {
+        renderMatchingTags();
+    });
+
+
+    const hideTagsDropdown = function(e) {
+        const dropdown = $("#<%= id %>_tags_dropdown");
+        // Hide if the dropdown is visible and the interacted element is other than the select or the dropdown
+        if (dropdown.hasClass("shown") && !$(e.target).closest("#<%= id %>_tags_selector").length && !$(e.target).closest(dropdown).length ) {
+            e.preventDefault();
+            dropdown.removeClass("shown");
+        }
+    }
+
+    const renderMatchingTags = function () {
+        $('#<%= id %>_tags_list').empty();
+
+        if (allTags.size == 0) {
+            $('#<%= id %>_tags_list').append($("#no_tags_template .sessionTagList").clone());
+            return;
+        }
+        
+        let searchValue = $("#<%= id %>_tags_search_bar").val().trim().toLowerCase() || "";
+
+
+        const searchResult = searchTagsByName(searchValue);
+        searchResult.forEach(tag => {
+            const tagObj = $("#search_tag_template .searchTag").clone();
+            tagObj.data("id", tag.tag_id);
+
+            $(tagObj).find("input[type='checkbox']").prop("checked", selectedTagsIds.has(tag.tag_id));
+
+            tagObj.find(".sessionTagColor").css({
+                background: tag.tag_color
+            });
+            tagObj.find(".sessionTagName").text(tag.tag_name);
+
+            $('#<%= id %>_tags_list').append(tagObj);
+        });
+        if (searchResult.length == 0) {
+            $('#<%= id %>_tags_list').text("<%- t('tags.dropdown.no_matches', { ns : 'sessions' }) %>");
+        }
     }
 
 </script>
+
+<% } %>
