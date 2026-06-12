@@ -479,11 +479,6 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 
 	border-radius: 5px;
 	border: 1px solid black;
-	opacity: 0;
-	transition: opacity 0.1s ease-out; /* Smooth transition */
-}
-.filtersTagsDropdown.shown {
-	opacity: 1;
 }
 
 .filtersTagsDropdown input[type="text"] {

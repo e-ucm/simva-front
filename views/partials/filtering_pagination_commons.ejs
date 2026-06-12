@@ -140,6 +140,7 @@
     // Since this part will never be included multiple times in the same view, variables 
     // and functions can be declared normally instead of storing them in the div data
 
+    $("#<%= id %>_tags_dropdown").hide();
     let selectedTagsIds = new Set();
 
     // Place the tags dropdown to the left or to the right bellow the select depending on its position
@@ -189,9 +190,9 @@
         e.preventDefault();
         
         const $dropdown = $("#<%= id %>_tags_dropdown");
-        $dropdown.toggleClass("shown");
+        $dropdown.fadeToggle(100);
 
-        if ($dropdown.hasClass("shown")) {
+        if ($dropdown.is(":visible")) {
             $("#<%= id %>_tags_search_bar").val("");
             $("#<%= id %>_tags_search_bar").focus();
             renderMatchingTags();
@@ -227,9 +228,9 @@
     const hideTagsDropdown = function(e) {
         const dropdown = $("#<%= id %>_tags_dropdown");
         // Hide if the dropdown is visible and the interacted element is other than the select or the dropdown
-        if (dropdown.hasClass("shown") && !$(e.target).closest("#<%= id %>_tags_selector").length && !$(e.target).closest(dropdown).length ) {
+        if (dropdown.is(":visible") && !$(e.target).closest("#<%= id %>_tags_selector").length && !$(e.target).closest(dropdown).length ) {
             e.preventDefault();
-            dropdown.removeClass("shown");
+            dropdown.fadeOut(100);
         }
     }
 
