@@ -17,7 +17,7 @@
 		</select>
 	</div>
 
-<% if (typeof id !== 'undefined' && (id == "simlets" || id == "scheduler" || id == "sessions") ) { %>
+<% if (typeof id !== 'undefined' && (id == "simlets" || id == "sessions") ) { %>
     <div class="filters filtersTags">
         <span><%- t('filters.tags.title', { ns : 'SIMLETs' }) %></span>
         <select id="<%= id %>_tags_selector">
@@ -58,34 +58,18 @@
     $("#<%= id %>_filtering").data()["totalResults"] = 1;
 
     // Default callbacks
-    $("#<%= id %>_filtering").data()["updateCallback"] = () => {};
+    $("#<%= id %>_filtering").data()["updateSearchCallback"] = () => {};
     $("#<%= id %>_filtering").data()["checkLoadMore"] = () => { return true; };
     $("#<%= id %>_filtering").data()["loadMoreCallback"] = () => {};
 
     $("#<%= id %>_filtering").data()["searchParameters"] = { };
 
     
-    // Window scroll events
-    $(window).scroll(function() {
-        let data = $("#<%= id %>_filtering").data();
-
-        // When scrolling to the bottom of the windows
-        if ($(window).scrollTop() == $(document).height() - $(window).height()) {
-            // If there are still pages to load, update the current page and load more
-            if (data["currentPage"] < data["totalPages"] && data["checkLoadMore"]()) {
-                data["currentPage"]++;
-                data["updateSearchOptions"]();
-                data["loadMoreCallback"]();
-            }
-        }
-    });
-    
-    
     // Update the search parameters
     $("#<%= id %>_filtering").data()["updateSearchOptions"] = function() {
         let data = $("#<%= id %>_filtering").data();
         
-        data["totalPages"] = Math.floor(data["totalResults"] / data["showAtOnce"]) + 1;
+        data["totalPages"] = Math.ceil(data["totalResults"] / data["showAtOnce"]);
 
         // Set each parameter individually instead of modifying the entire data["searchParameters"]
         // object to allow for extra parameters to be added from anywhere else
@@ -97,30 +81,44 @@
     }
     
     // Update the search parameters and call the update function
-    $("#<%= id %>_filtering").data()["updateSearch"] = function() {
+    $("#<%= id %>_filtering").data()["search"] = function() {
         let data = $("#<%= id %>_filtering").data();
         data["currentPage"] = 1;
 
         data["updateSearchOptions"]();
-        data["updateCallback"]();
+        data["updateSearchCallback"]();
     }
-    
+
     
     // Shared listeners 
+    
+    $(window).scroll(function() {
+        let data = $("#<%= id %>_filtering").data();
 
+        // When scrolling to the bottom of the window
+        if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+            // If there are still pages to load, update the current page and load more
+            if (data["currentPage"] < data["totalPages"] && data["checkLoadMore"]()) {
+                data["currentPage"]++;
+                data["updateSearchOptions"]();
+                data["loadMoreCallback"]();
+            }
+        }
+    });
+    
     // Search bar
     $("#<%= id %>_search_bar").on("input", function () {
-        $("#<%= id %>_filtering").data()["updateSearch"]();
+        $("#<%= id %>_filtering").data()["search"]();
     });
 
     // Sort by dropdown
     $("#<%= id %>_sort_by").on("change", function () {
-        $("#<%= id %>_filtering").data()["updateSearch"]();
+        $("#<%= id %>_filtering").data()["search"]();
     });
 
     // Sort order dropdown
     $("#<%= id %>_sort_order").on("change", function () {
-        $("#<%= id %>_filtering").data()["updateSearch"]();
+        $("#<%= id %>_filtering").data()["search"]();
     });
 
     
@@ -134,7 +132,7 @@
 </script>
 
 
-<% if (typeof id !== 'undefined' && (id == "simlets" || id == "scheduler" || id == "sessions") ) { %>
+<% if (typeof id !== 'undefined' && (id == "simlets" || id == "sessions") ) { %>
 
 <script type="text/javascript">
     // Since this part will never be included multiple times in the same view, variables 
@@ -215,7 +213,7 @@
         
         $("#<%= id %>_selected_tags_amount").text(`<%- t('filters.tags.selected.title', { ns : 'SIMLETs', count: '${selectedTagsIds.size}' }) %>`);
         $("#<%= id %>_filtering").data()["searchParameters"].searchTags = Array.from(selectedTagsIds);
-        $("#<%= id %>_filtering").data()["updateSearch"]();
+        $("#<%= id %>_filtering").data()["search"]();
     });
 
 

@@ -4,9 +4,6 @@
 
 <h1><%- t('title', { ns : 'SIMLETs' }) %></h1>
 
-<!-- Needs to be added before other partials to allow them 
-to use the elements and scripts defined in simlet_commons -->
-<%- include('partials/simlet_commons') %>
 <%- include('partials/filtering_pagination_commons', { id:"scheduler" }) %>
 
 <div id="studies_list" class="simletsCardsList">
@@ -29,22 +26,17 @@ to use the elements and scripts defined in simlet_commons -->
 	const SHOW_AT_ONCE = 9;
 
 	$(document).ready(function() {
-		// Delete all forms from simlet_commons (only the tags scripts are needed)
-		$(".new_element.floating").remove();
-		
 		let data = $("#scheduler_filtering").data();
 
-		// Set propertiesfor filtering_pagination_commons partial
+		// Set properties of filtering_pagination_commons partial
 		data["showAtOnce"] = SHOW_AT_ONCE;
-		data["updateCallback"] = refreshStudies;
+		data["updateSearchCallback"] = onSearch;
 		data["loadMoreCallback"] = loadStudyBatch;
 
 		Simva.getSchedulerStudiesCount(function(error, result) {
 			if (!error) {
 				data["totalResults"] = result.count;
-
-				// Calls updateSearchOptions and refreshStudies
-				data["updateSearch"]();
+				data["search"]();
 			}
 		});
 		
@@ -52,10 +44,16 @@ to use the elements and scripts defined in simlet_commons -->
 
 	});
 
-	const loadStudyBatch = function() {
+	const onSearch = function() {
 		let data = $("#scheduler_filtering").data();
+		$('#studies_list').empty();
+		loadStudyBatch();
+	}
 
+	const loadStudyBatch = function() {
 		$("#loader").show();
+		
+		let data = $("#scheduler_filtering").data();
 		Simva.getSchedulerStudies(data["searchParameters"], function(error, result){
 			if (!error) {
 				paintStudyBatch(result);
@@ -63,27 +61,16 @@ to use the elements and scripts defined in simlet_commons -->
 			}
 		});
 	}
-	
-	let refreshStudies = function() {
-		let data = $("#scheduler_filtering").data();
-		data["currentPage"] = 1;
 
-		$('#studies_list').empty();
-		loadStudyBatch();
-	}
-
-	// TODO: Check logic to show message when there are no simlets or when no searches match 
-	let paintStudyBatch = function(studyBatch) {
+	const paintStudyBatch = function(studyBatch) {
 		let data = $("#scheduler_filtering").data();
 
-		let paintedStudies = 0;
-		
 		studyBatch.forEach((study) => {
-			paintedStudies++;
 			addSimletCard(study);
 		});
 		
-		if (paintedStudies == 0) {
+		// If there are no studies in this batch,  set the corrseponding no simlets message 
+		if (studyBatch.length == 0) {
 			$('#studies_list').text("<%- t('scheduler.noSIMLET.title', { ns : 'SIMLETs' }) %>");
 		}
 	}

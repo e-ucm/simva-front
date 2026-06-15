@@ -76,21 +76,16 @@ to use the elements and scripts defined in simlet_commons -->
 	$(document).ready(function() {
 		let data = $("#simlets_filtering").data();
 
-		// Set refresh function for simlet_commons partial
-		refreshFunc = data["updateSearch"];
+		// Set refresh function of simlet_commons partial
+		refreshFunc = refreshStudies;
 
-		// Set propertiesfor filtering_pagination_commons partial
+		// Set properties of filtering_pagination_commons partial
 		data["showAtOnce"] = SHOW_AT_ONCE;
-		data["updateCallback"] = refreshStudies;
+		data["searchParameters"].status = archived ? "archived" : "active";
+		data["updateSearchCallback"] = onSearch;
 		data["loadMoreCallback"] = loadStudyBatch;
-
-		Simva.getStudiesCount(data["searchParameters"], function(error, result) {
-			if (!error) {
-				data["totalResults"] = result.count;
-				// Calls updateSearchOptions and refreshStudies
-				data["updateSearch"]();
-			}
-		});
+		
+		refreshStudies();
 
 		$('#studies_list').html(roller);
 
@@ -136,10 +131,30 @@ to use the elements and scripts defined in simlet_commons -->
 	});
 
 	
-	const loadStudyBatch = function() {
+	// Update the number of studies to ensure correct total count after deletion/archivation
+	// and call the search function to update the rest of parameters and paint the studies
+	const refreshStudies = function() {
 		let data = $("#simlets_filtering").data();
+		Simva.getStudiesCount({status: data["searchParameters"].status}, function(error, result) {
+			if (!error) {
+				studiesById.clear();
+				data["totalResults"] = result.count;
+				data["search"]();
+			}
+		});
+	}
 
+	// When updating any filter parameter (in filtering_pagination_commons), remove all the painted studies and load a new batch
+	const onSearch = function() {
+		let data = $("#simlets_filtering").data();
+		$('#studies_list').empty();
+		loadStudyBatch();
+	}
+
+	const loadStudyBatch = function() {
 		$("#loader").show();
+		
+		let data = $("#simlets_filtering").data();
 		Simva.getStudies(data["searchParameters"], function(error, result){
 			if (!error) {
 				paintStudyBatch(result);
@@ -147,40 +162,18 @@ to use the elements and scripts defined in simlet_commons -->
 			}
 		});
 	}
-	
-	let refreshStudies = function() {
-		let data = $("#simlets_filtering").data();
-		data["currentPage"] = 1;
 
-		$('#studies_list').empty();
-		studiesById.clear();
-		loadStudyBatch();
-	}
-
-	// TODO: Check logic to show message when there are no simlets or when no searches match 
-	let paintStudyBatch = function(studyBatch) {
+	const paintStudyBatch = function(studyBatch) {
 		let data = $("#simlets_filtering").data();
 
-		let painted = 0;
-		
 		studyBatch.forEach((study) => {
-			const wasChecked = studiesById.has(study.simlet_id);  
 			studiesById.set(study.simlet_id, study);
-
-			// If the study is in the correct tab, paint it
-			if (study.simlet_archived == archived) {
-
-				painted++;
-				addSimletCard(study);
-			}
-			// // Otherwise, remove it from the total amount of studies to adjust total pages calculation
-			// else if (!wasChecked) {
-			// 	data["totalResults"]--;
-			// 	data["updateSearchOptions"]();
-			// }
+			addSimletCard(study);
 		});
 
-		if (painted == 0) {
+		// If there are no studies in this batch
+		if (studyBatch.length == 0) {
+			// If there are no studies in the current section, set the corrseponding no simlets message 
 			if (data["totalResults"] == 0) {
 				if (!archived) {
 					$('#studies_list').text("<%- t('no_simlets.message', { ns : 'SIMLETs' }) %>");
@@ -189,6 +182,7 @@ to use the elements and scripts defined in simlet_commons -->
 					$('#studies_list').text("<%- t('no_archived.message', { ns : 'SIMLETs' }) %>");
 				}
 			}
+			// If there are studies, none of them matched the search parameters
 			else {
 				$('#studies_list').text("<%- t('filters.no_match.message', { ns : 'SIMLETs' }) %>");
 			}
@@ -299,7 +293,9 @@ to use the elements and scripts defined in simlet_commons -->
 		$('#studies_list').append(card);
 	}
 
+
 	// 3-dot menus buttons shared listeners
+
 	$(document).on('click', ".simletCardTitle .icon-edit", function(e) {
 		const data = $(this).closest("a").data();
 		openStudyForm(data[simletDataIdKey])

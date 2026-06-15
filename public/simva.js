@@ -16,7 +16,7 @@ const getQueryString = function(query) {
 const getCountQueryString = function(query) {
 	const cleanQuery = Object.fromEntries(
 		Object.entries(query).filter(([key, value]) => 
-			key == "searchString" || key == "searchTags"
+			key == "searchString" || key == "searchTags" || key == "status"
 		)
 	);
 	return getQueryString(cleanQuery);
