@@ -3,11 +3,16 @@
     "single.title": "Sesión",
     "no_sessions.message": "No hay sesiones para este SIMLET. Intente añadir una utilizando el botón inferior derecho (+)",
 
+    "searchBar.placeholder": "Busque una sesión por su nombre o descripción",
+    "filters.status.title": "Estado",
+        "filters.status.all": "Todos",
+
     "createdAt": "Creado el",
     "updatedAt": "Actualizado el",
     "activities": "Actividades",
     "users": "Usuarios",
     "play": "Jugar al SIMLET",
+
     "download.title": "Descargar datos",
         "download.session.title": "Descargar datos de la sesión",
         "download.test.title": "Descargar datos de prueba",
@@ -34,7 +39,6 @@
         "tags.no_tags": "Sin etiquetas",
         "tags.input.placeholder": "Escriba una etiqueta para encontrarla o créela",
         "tags.dropdown.no_tags": "Aún no hay etiquetas. Presione + para crear una",
-        "tags.dropdown.no_matches": "No hay coincidencias para su búsqueda",
         "tags.dropdown.all_matches": "Todas las etiquetas que coinciden ya están en esta sesión",
         "tags.create.placeholder": "Nombre de la nueva etiqueta",
         "tags.create": "Crear",

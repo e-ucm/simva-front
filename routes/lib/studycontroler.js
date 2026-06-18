@@ -4,6 +4,7 @@ const SimvaAsync = require('./simvaAsync');
 const testcontroler = require('./testscontroler');
 
 module.exports = {
+    // TODO: Remove?
     async getCompleteStudy(studyid, sessionid) {
         let study=await SimvaAsync.getStudy(studyid, sessionid);
         study.completeTests=[];

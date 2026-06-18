@@ -20,6 +20,8 @@
             "coordinators.error.permission": "",
             "coordinators.error.not_found": "",
         
+    "searchBar.placeholder": "",
+
     "groups.title": "Groups",
         "groups.no_groups.message": "You have 0 groups yet. Create one using the bottom right (+) button",
 

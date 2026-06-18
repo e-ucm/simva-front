@@ -289,7 +289,7 @@
 	}
 
     let openEditActivityForm = function(activityId) {
-		let activity = getActivityFromActivityId(activityId);
+		let activity = getActivityFromId(activityId);
 		Utils.toggleAddForm('edit_activity');
 		document.getElementById("edit_activity_error").innerHTML = "";
 		var inputElement = document.getElementById('edit_activity_name');
@@ -311,11 +311,11 @@
 		Utils.changeTab(null, 'download_data_form','download_activity_data');
 		
         downloadActivityId = activityId;
-		const activity = getActivityFromActivityId(activityId);
+		const activity = getActivityFromId(activityId);
 
 		$("#downloadFormTitle").text(`<%- t('single.title', { ns : 'activities' }) %>: ${activity.activity_name}`);
 
-		const session = getTestFromTestId(activity.session_id);
+		const session = getSessionFromId(activity.session_id);
 
 		// Show test download button based on participant status
 		$("#activity_test_data_download").hide();
@@ -338,7 +338,7 @@
 	// Functionality
 
     let deleteActivity = function(activityid, activityname, testid) {
-		let test = getTestFromTestId(testid);
+		let test = getSessionFromId(testid);
 		let testName = test && test.session_name ? test.session_name : testid;
 		if (confirm(`<%- t('delete.confirm', { ns : 'activities', activity : '${activityname}', session: '${testName}' , SIMLET : '${study.simlet_name}' }) %>`)) {
 			Simva.deleteActivity(studyid, testid, activityid, function(error, result) {
@@ -370,7 +370,7 @@
 	
 	// Render
 	
-    let paintTestActivities = function(test, activities, participants) {
+    let paintTestActivities = async function(test, activities, participants) {
 		window.participants = participants;
 		const isCurrentUserParticipant = currentUser.user_id !== null && participants.some(function(p) {
 			return p.user_id === currentUser.user_id || String(p.user_id) === String(currentUser.user_id);
@@ -380,8 +380,8 @@
 		if (activities.length === 0) {
 			$(`#test_${test.session_id} .activities`).text("<%- t('no_activities.message', { ns : 'activities' }) %>");
 		} else {
-			for (var i = 0; i < activities.length; i++) {
-				switch(activities[i].activity_type) {
+			activities.forEach((activity) => {
+				switch(activity.activity_type) {
 					case 'rageminio':
 					case 'miniokafka':
 					case 'rageanalytics':
@@ -391,13 +391,13 @@
 					case 'manual':
 					case 'ltitool':
 					case 'imspackage':
-						PainterFactory.Painters[activities[i].activity_type].fullyPaintActivity(activities[i], participants);
+						PainterFactory.Painters[activity.activity_type].fullyPaintActivity(activity, participants);
 						break;
 					default:
-						ActivityPainter.fullyPaintActivity(activities[i], participants);
+						ActivityPainter.fullyPaintActivity(activity, participants);
 						break;
 				}
-			}
+			});
 		}
 
 		// Block activity changes when SIMLET is archived

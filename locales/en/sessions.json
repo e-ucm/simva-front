@@ -3,11 +3,16 @@
     "single.title": "Session",
     "no_sessions.message": "There are no sessions for this SIMLET. Try adding one using the button on the bottom right (+)",
 
+    "searchBar.placeholder": "Search a session by name or description",
+    "filters.status.title": "Status",
+        "filters.status.all": "All",
+
     "createdAt": "Created at",
     "updatedAt": "Updated at",
     "activities": "Activities",
     "users": "Users",
     "play": "Play SIMLET",
+
     "download.title": "Download data",
         "download.session.title": "Download session data",
         "download.test.title": "Download test data",
@@ -34,7 +39,6 @@
         "tags.no_tags": "No tags",
         "tags.input.placeholder": "Type a tag to find or create it",
         "tags.dropdown.no_tags": "No tags yet. Press + to create one",
-        "tags.dropdown.no_matches": "No matches for your search",
         "tags.dropdown.all_matches": "All matching tags are already in this session",
         "tags.create.placeholder": "New tag name",
         "tags.create": "Create",

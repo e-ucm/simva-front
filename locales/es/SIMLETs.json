@@ -8,20 +8,19 @@
         
     "searchBar.placeholder": "Busque un SIMLET por su nombre o descripción",
     "filters.sortBy.title": "Ordenar por",
-        "filters.sortBy.id": "ID",
-        "filters.sortBy.name": "Nombre",
-        "filters.sortBy.createdAt": "Fecha de creación",
-        "filters.sortBy.updatedAt": "Fecha de actualización",
+        "filters.sortBy.id": "Defecto",
+        "filters.sortBy.name.asc": "Nombre (A-Z)",
+        "filters.sortBy.name.desc": "Nombre (Z-A)",
+        "filters.sortBy.createdAt.asc": "Fecha de creación (Más antiguos primero)",
+        "filters.sortBy.createdAt.desc": "Fecha de creación (Más nuevos primero)",
+        "filters.sortBy.updatedAt.asc": "Fecha de actualización (Más antiguos primero)",
+        "filters.sortBy.updatedAt.desc": "Fecha de actualización (Más nuevos primero)",
     
-    "filters.sortOrder.title": "Orden",
-        "filters.sortOrder.asc": "Ascendente",
-        "filters.sortOrder.desc": "Descendente",
-
     "filters.tags.title": "Etiquetas",
         "filters.tags.selected.title": "{{count}} seleccionada(s)",
         "filters.tags.searchBar.placeholder": "Busque una etiqueta por su nombre",
     
-    "filters.no_match.message": "Ningún SIMLET coincide con la búsqueda",
+    "search.no_matches": "No hay coincidencias para su búsqueda",
     
     "card.createdAt": "Creado el",
     "card.updatedAt": "Actualizado el",

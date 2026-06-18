@@ -9,19 +9,18 @@
     "searchBar.placeholder": "",
     "filters.sortBy.title": "",
         "filters.sortBy.id": "",
-        "filters.sortBy.name": "",
-        "filters.sortBy.createdAt": "",
-        "filters.sortBy.updatedAt": "",
-        
-    "filters.sortOrder.title": "",
-        "filters.sortOrder.asc": "",
-        "filters.sortOrder.desc": "",
+        "filters.sortBy.name.asc": "",
+        "filters.sortBy.name.desc": "",
+        "filters.sortBy.createdAt.asc": "",
+        "filters.sortBy.createdAt.desc": "",
+        "filters.sortBy.updatedAt.asc": "",
+        "filters.sortBy.updatedAt.desc": "",
 
     "filters.tags.title": "",
         "filters.tags.selected.title": "",
         "filters.tags.searchBar.placeholder": " ",
     
-    "filters.no_match.message": "",
+    "search.no_matches": "",
         
     "card.createdAt": "Crée le",
     "card.updatedAt": "Mis à jour le",

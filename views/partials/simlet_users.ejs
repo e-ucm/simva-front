@@ -13,7 +13,7 @@
 			</div>
             <div class="expandButton" onclick="toggleOwners()"></div>
         </div>
-        <table class="owners" id="owners">
+        <table class="owners" id="coordinators">
             <thead>
                 <th><%- t('coordinators.table.username.title', { ns : 'groups' }) %></th>
                 <th><%- t('coordinators.table.permissions.title', { ns : 'groups' }) %></th>
@@ -25,7 +25,45 @@
         </table>
     </div>
 
-    <div id="group_template" style="display: none;">
+	<!-- Template for each row of the coordinators table -->
+	<div id="coordinator_template" style="display: none;">
+		<!-- tr needs to be contained inside a table, otherwise the 
+		browser will delete it and won't be able to be cloned -->
+		<table>
+			<tr>
+				<td class="username"> </td>
+				<td class="permissions"> </td>
+				<td><input class="red" type="button" value="<%- t('coordinators.delete.title', { ns : 'groups' }) %>"></td>
+			</tr>
+		</table>
+	</div>
+
+    
+	<div class="card groups">
+		<div class="top">
+			<div class="tooltipLine">
+				<h2><%- t('groups.title', { ns : 'groups' }) %></h2>
+				<div class="tooltip">
+					&#x1F6C8;
+					<span class="tooltiptext">
+						<%= t('group.description', { ns : 'about' }) %>
+					</span>
+				</div>
+			</div>
+		</div>
+		<% const searchBarPlaceholder = t('searchBar.placeholder', { ns: 'groups' }); %>
+		<%- include('filtering_pagination_commons', { id:"groups", searchBarPlaceholderText: searchBarPlaceholder }) %>
+		<div id="groups_container">
+            
+		</div>
+
+		<div id="groups_loader" class="loader">
+			<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+		</div>
+	</div>
+
+	<!-- Template for each element of the groups list -->
+	<div id="group_template" style="display: none;">
         <div class="test">
             <div class="groupTop">
                 <h3 class="groupTitle">		</h3>
@@ -85,24 +123,22 @@
         </div>
     </div>
 
-	<div class="card groups">
-		<div class="top">
-			<div class="tooltipLine">
-				<h2><%- t('groups.title', { ns : 'groups' }) %></h2>
-				<div class="tooltip">
-					&#x1F6C8;
-					<span class="tooltiptext">
-						<%= t('group.description', { ns : 'about' }) %>
-					</span>
-				</div>
-			</div>
-		</div>
-		<div id="groups_container">
-            <div style="width: 100%; text-align: center; padding: 200px;">
-				<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-			</div>
-		</div>
+	<!-- Template for each row of the participants table -->
+	<div id="participant_template" style="display: none;">
+		<!-- tr needs to be contained inside a table, otherwise the 
+		browser will delete it and won't be able to be cloned -->
+		<table>
+			<tr>
+				<td class="username">	</td>
+				<td class="isToken">	</td>
+				<td class="token">	</td>
+				<td><a class="email">	</a></td>
+				<td class="role">	</td>
+				<td><input class="red" type="button" value="<%- t('participant.delete.title', { ns : 'groups' }) %>"></td>
+			</tr>
+		</table>
 	</div>
+
 </div>
 
 
@@ -286,6 +322,18 @@
 	</div>
 </div>
 
+<!-- Template for each row of the group printable table -->
+<div id="participant_printable_template" style="display: none;">
+	<!-- tr needs to be contained inside a table, otherwise the 
+	browser will delete it and won't be able to be cloned -->
+	<table>
+		<tr>
+			<td class="index"> </td>
+			<td></td>
+			<td class="username">	</td><td class="username">	</td><td class="username">	</td><td class="username">	</td>
+		</tr>
+	</table>
+</div>
 
 <script>
 	let editingGroupId = null;
@@ -450,7 +498,7 @@
 
 		// Add existing user as participant
 		$(document).on('submit', "#existing_participant_form", function(event){
-			let group = getGroupFromGroupId(editingGroupId);
+			let group = getGroupFromId(editingGroupId);
 			let form = Utils.getFormData($(this));
 			let errorbox = $("#participants_error");
 
@@ -596,7 +644,7 @@
 		$('#group_name').val("");
 		$('#users_error').text("");
 
-		var group = getGroupFromGroupId(groupId);
+		var group = getGroupFromId(groupId);
 		$("#add_group_tabs").hide();
 		// Set form title to edit title
 		$("#users_form_title").text("<%- t('groups.edit.title', { ns : 'groups' }) %>");
@@ -652,37 +700,32 @@
 		exportGroup(data[groupDataIdKey], data[groupDataNameKey]);
 	});
 
+	// Export group to PDF printable table
 	$(document).on('click', ".groupTop .icon-download", function(e) {
 		const data = $(this).closest(".test").data();
-		const group = getGroupFromGroupId(data[groupDataIdKey]);
+		const group = getGroupFromId(data[groupDataIdKey]);
 		
-		let usernames = [];
-		if (group != null) {
-			group.participants.forEach(function(participantId) {
-				const participant = participantsById[participantId];
-				if (participant.isToken) {
-					usernames.push(participant.token)
-				}
-				else {
-					usernames.push(participant.username)
-				}
-			});
-		}
-
+		// Change the table group name and clear it
 		$("#printable_group_name").text(`<%- t('print_table.title', { ns : 'groups' }) %> ${data[groupDataNameKey]}`);
 		clearTableBody($("#printable_table"));
 
-		let rows = "";
-		for (let i = 0; i < usernames.length; i++) {
-			rows += `
-				<tr>
-					<td>${i + 1}</td>
-					<td></td>
-					<td>${usernames[i]}</td><td>${usernames[i]}</td><td>${usernames[i]}</td><td>${usernames[i]}</td>
-				</tr>
-			`
-		}
-		$("#printable_table tbody").append(rows);
+		// Add each participant as a row
+		let i = 0;
+		group.participants.forEach((participantId) => {
+			i++;
+
+			const participant = getParticipantFromId(participantId);
+			let username = participant.username;
+			if (participant.isToken) {
+				username =participant.token;
+			}
+			
+			const row = $("#participant_printable_template tr").clone()
+			$('#printable_table').append(row);
+			
+			row.find(".index").text(i)
+			row.find(".username").text(username)
+		});
 
 		window.print();
 	});
@@ -692,13 +735,23 @@
 		deleteGroup(data[groupDataIdKey], data[groupDataNameKey]);
 	});
 
+	$(document).on('click', ".owners .red", function(e) {
+		const data = $(this).closest("tr").data();
+		deleteOwner(data[userDataIdKey], data[userDataNameKey]);
+	});
+	
 	$(document).on('click', ".participants .red", function(e) {
 		const groupData = $(this).closest(".test").data();
 		const userData = $(this).closest("tr").data();
 		deleteParticipant(userData[userDataIdKey], userData[userDataNameKey], groupData[groupDataIdKey], groupData[groupDataNameKey])
 	});
 
-	
+	// Block page refresh when clicking the participant email href 
+	$(document).on('click', ".participants .email", function(e) {
+		e.preventDefault();
+	});
+
+
 	// Functionality
     
 	let deleteOwner = function(userId, owner) {
@@ -736,7 +789,7 @@
 	let deleteParticipant = function(participant_id, participant, group_id, group){
 		if(confirm(`<%- t('participants.delete.confirm', { ns : 'groups',  participant : '${participant}', group : '${group}' }) %>`)) {
 			// A participant will only be removed from keycloak if it's been generated as a token
-			Simva.deleteGroupParticipants(studyid, group_id, participant_id, getParticipantFromParticipantId(participant_id).isToken, function(response) {
+			Simva.deleteGroupParticipants(studyid, group_id, participant_id, getParticipantFromId(participant_id).isToken, function(response) {
 				if (response.status === 200) {
 					reloadStudy();
 				}
@@ -776,149 +829,259 @@
 
 	const clearTableBody = function(table) {
 		if (table.jquery != null) {
-			table.find("tbody tr").remove();
+			table.find("tbody").empty();
 		}
 	}
 	
-	let paintOwners = function(owners) {
-		clearTableBody($("#owners"));
 
-		for (var i = 0; i < owners.length; i++) {
-			$('#owners tbody').append(createOwnerRow(owners[i]));
-		}
+	const paintCoordinators = function() {
+		Simva.getStudyPermissions(studyid, function(error, result) {
+			if (!error) {
+				clearTableBody($("#coordinators"));
 
-		// Block owner addition/deletion when SIMLET is archived
-		if (study.simlet_archived) {
-			$('.coordinators').find(".groupTop").find("img").hide();
-			$('.coordinators').find(".red").attr("disabled", "disabled");
-		}
+				result.forEach((coordinator) => {
+					// Add the coordinator row synchronously to ensure they appear in order
+					const row = $("#coordinator_template tr").clone()
+					$('#coordinators').append(row);
+
+					// Then, fill its details asynchronously since the order of execution doesn't matter once the row has been added
+					fillCoordinatorRow(coordinator, row);
+				});
+
+				// Block coordinator addition/deletion when SIMLET is archived
+				if (study.simlet_archived) {
+					$('.coordinators').find(".groupTop").find("img").hide();
+					$('.coordinators').find(".red").prop("disabled", true);
+				}
+			}
+		});
 	}
 
-	let createOwnerRow = function(owner) {
+	// Set coordinator row parameters programatically to avoid XSS
+	const fillCoordinatorRow = async function(coordinator, row) {
+		row.data(userDataIdKey, coordinator.user_id);
+		row.data(userDataNameKey, coordinator.username);
+		
+		// Determine the permissions text
 		let permissions = `<%- t('coordinators.permissions.full', { ns : 'groups' }) %>`
-		if (owner.permission.toLowerCase() === "read") {
+		if (coordinator.permission.toLowerCase() === "read") {
 			permissions = `<%- t('coordinators.permissions.read', { ns : 'groups' }) %>`
 		}
-		else if (owner.permission.toLowerCase() === "write") {
+		else if (coordinator.permission.toLowerCase() === "write") {
 			permissions = `<%- t('coordinators.permissions.write', { ns : 'groups' }) %>`
 		}
+		
+		row.find(".username").text(coordinator.username);
+		row.find(".permissions").text(permissions);
 
-		let toret = `
-			<tr>
-				<td>${owner.username}</td>
-				<td>${permissions}</td>
-				<td><input class="red" type="button" value="<%- t('coordinators.delete.title', { ns : 'groups' }) %>"
-		`;
-		if (owner.isCurrentUser || owner.permission.toLowerCase() === "full") {
-			toret += ' disabled="disabled"';
-		} else {
-			toret += ` onclick="deleteOwner('${owner.user_id}', '${owner.username}')"`
+		// Block the delete button if the added coordinator is the same as the current user or if it has full permissions
+		if (coordinator.isCurrentUser || coordinator.permission.toLowerCase() === "full") {
+			row.find(".red").prop("disabled", true);
 		}
-
-		toret += '></td></tr>';
-		return toret;
 	}
 
+	
+	const GROUPS_SHOW_AT_ONCE = 5;
+	let groupsFilteringPaginationData = $("#groups_filtering").data();
 
-	let paintGroups = function(groups, tests, participants) {
-		$('#groups_container').html('');
-		
-		let painted = 0;
-		let firstPaintedId = null;
-		if (groups.length > 0) {
-			for (var i = 0; i < groups.length; i++) {
-				if(Boolean(groups[i].group_sandbox)) {
-					continue;
-				}
-				addGroupBox(groups[i])
-				paintAllocator(groups[i], tests, groups, participants);
-				painted++;
-				firstPaintedId = groups[i].group_id;
+	$(document).ready(function() {
+		// Set properties of filtering_pagination_commons partial
+		groupsFilteringPaginationData["showAtOnce"] = GROUPS_SHOW_AT_ONCE;
+		groupsFilteringPaginationData["updateSearchCallback"] = onGroupSearch;
+		groupsFilteringPaginationData["checkLoadMore"] = () => {
+			return $("#users_tab").is(".selected");
+		};
+		groupsFilteringPaginationData["loadMoreCallback"] = loadGroupBatch;
+	});
+
+	// When updating any filter parameter, remove all the groups studies and load a new batch
+	// (called by updateSearch in filtering_pagination_commons)
+	const onGroupSearch = function() {
+		$('#groups_container').empty();
+
+		// Recalculate the total count of matching results
+		Simva.getStudyGroupsCount(studyid, groupsFilteringPaginationData["searchParams"], function(error, result) {
+			if (!error) {
+				// Update the total results and recalculate the number of pages (but don't perform the search again)
+				groupsFilteringPaginationData["totalResults"] = result.count;
+				groupsFilteringPaginationData["updateSearchOptions"]();
+				loadGroupBatch();
 			}
-			// Automatically expand the group if there's only one
-            if (painted == 1) {
-			    toggleGroup(firstPaintedId);
-            }
-		} 
-        
-		// If there are no groups painted (either because there are none or all of them are sandbox), add the message
-		if (painted == 0) {
-			$('#groups_container').append("<p><%- t('groups.no_groups.message', { ns : 'groups' }) %></p>");
-		}
+		});
+	}
+
+	// Load batch of max GROUPS_SHOW_AT_ONCE groups matching the search parameters and paint them 
+	// Gets called both when updating the search results and when loading the next page of results
+	const loadGroupBatch = function() {
+		$("#groups_loader").show();
 		
-		// Block user addition/deletion when SIMLET is archived
+		// TODO: Filter out sandbox groups?
+		Simva.getStudyGroups(studyid, groupsFilteringPaginationData["searchParams"], function(error, result){
+			if (!error) {
+				paintGroupBatch(result);
+				$("#groups_loader").hide();
+			}
+		});
+	}
+	
+	const paintGroupBatch = function(groupBatch) {
+		groupBatch.forEach((group) => {
+			// Add the group card synchronously to ensure they appear in order
+			const card = $("#group_template .test").clone();
+			$('#groups_container').append(card);
+			card.find(".kebab-dropdown").fadeOut(0);
+
+			card.attr("id", `group_box_${group.group_id}`);
+			card.data(groupDataIdKey, group.group_id);
+			card.data(groupDataNameKey, group.group_name);
+			card.data(groupDataAllocatorKey, (group.group_allocator_type || 'default'));
+			card.find(".allocatorContent").attr("id", `allocator_content_${group.group_id}`);
+
+			// Then, fill its details asynchronously since the order of execution doesn't matter once the card has been added
+			fillGroupCard(group, card);
+			paintAllocator(group);
+		});
+		
+		// No results
+		if (groupBatch.length == 0) {
+			// No groups
+			if (study.groups.length == 0) {
+				$('#groups_container').append("<p><%- t('groups.no_groups.message', { ns : 'groups' }) %></p>");
+			}
+			// There are groups, but none of them matched the search parameters
+			else {
+				$('#groups_container').text("<%- t('search.no_matches', { ns : 'SIMLETs' }) %>");
+			}
+		}
+		// There's only one result
+		else if (groupBatch.length == 1) {
+			// Automatically expand the card to show its activities
+			toggleGroup(groupBatch[0].group_id);
+		}
+
+		// Block user addition/deletion of all groups cards when SIMLET is archived
 		if (study.simlet_archived) {
 			$(".groupTop").find(".kebab-dropdown").find(".icon-delete").hide();
 			$(".groupTop").find(".kebab-dropdown").find(".icon-add").hide();
 			$(".groupTop").find(".kebab-dropdown").find(".icon-gear").hide();
-			$('.participants').find(".red").attr("disabled", "disabled");
+			$('.participants').find(".red").prop("disabled", true);
 		}
 	}
+	
+	// Set group card parameters programatically to avoid XSS
+	let fillGroupCard = async function(group, card) {
+		card.find(".groupTitle").text(group.group_name);
+		card.find(".groupParticipantsCount").after(group.participants.length);
 
-	// Add group programatically to avoid XSS
-	let addGroupBox = function(group) {
-		const box = $("#group_template .test").clone();
-		box.attr("id", `group_box_${group.group_id}`);
-		box.data(groupDataIdKey, group.group_id);
-		box.data(groupDataNameKey, group.group_name);
-		box.data(groupDataAllocatorKey, (group.group_allocator_type || 'default'));
-
-		box.find(".groupParticipantsCount").after(group.participants.length);
-
-		box.find(".allocatorContent").attr("id", `allocator_content_${group.group_id}`);
-
-		box.find(".groupTitle").text(group.group_name);
 		if(Boolean(group.group_use_new_generation)) {
-			box.find(".deprecated_generation").remove();
+			card.find(".deprecated_generation").remove();
 		} else {
-			box.find(".deprecated_generation").html("<p><%- t('deprecated.message', { ns : 'groups' }) %></p>");
+			card.find(".deprecated_generation").html("<p><%- t('deprecated.message', { ns : 'groups' }) %></p>");
 		}
-		const table = box.find(".participants");
-        
+
+		const table = card.find(".participants");
+		// If there are no users, the entire table for this group (which just has content in the header) is replaced by a message
 		if (group.participants.length == 0) {
 			table.remove();
-			box.find(".participants_container").append("<p><%- t('participants.no_users.message', { ns : 'groups' }) %></p>")
+			card.find(".participants_container").append("<p><%- t('participants.no_users.message', { ns : 'groups' }) %></p>")
 		}
 		else {
-			group.participants.forEach(function(participantId) {
-				const participant = participantsById[participantId];
-				let role = participant.role === "teacher" ? `<%- t('teacher', { ns : 'roles' }) %>` : `<%- t('student', { ns : 'roles' }) %>`
-				let isToken = participant.isToken ? `<%- t('participants.isToken.true', { ns : 'groups' }) %>` : `<%- t('participants.isToken.false', { ns : 'groups' }) %>`
-				let token = participant.token == null ? "-" : participant.token
-				let newRow = $(`
-					<tr>
-						<td>${participant.username}</td>
-						<td>${isToken}</td>
-						<td>${token}</td>
-						<td><a href="${participant.email}">${participant.email}</a></td>
-						<td>${role}</td>
-						<td><input class="red" type="button" value="<%- t('participant.delete.title', { ns : 'groups' }) %>"></td>
-					</tr>
-				`);
-				table.append(newRow);
-				newRow.data(userDataIdKey, participant.user_id);
-				newRow.data(userDataNameKey, participant.username);
-			});
+			// Callback to fill the table with the users info 
+			// (called after retreiving the complete group info from either the previously stored groups info or from the database)
+			const fillCompleteFields = function(completeGroup) {
+				completeGroup.completeParticipants.forEach(function(participant) {
+					participantsById.set(participant.user_id, participant)
+					participantsByUsername.set(participant.username, participant)
+
+					const row = $("#participant_template tr").clone()
+					row.data(userDataIdKey, participant.user_id);
+					row.data(userDataNameKey, participant.username);
+					table.append(row);
+
+					let role = participant.role === "teacher" ? `<%- t('teacher', { ns : 'roles' }) %>` : `<%- t('student', { ns : 'roles' }) %>`
+					let isToken = participant.isToken ? `<%- t('participants.isToken.true', { ns : 'groups' }) %>` : `<%- t('participants.isToken.false', { ns : 'groups' }) %>`
+					let token = participant.token == null ? "-" : participant.token
+					
+					row.find(".username").text(participant.username);
+					row.find(".isToken").text(isToken);
+					row.find(".token").text(token);
+					row.find(".email").attr("href", participant.email);
+					row.find(".email").text(participant.email);
+					row.find(".role").text(role);
+				});
+			}
+
+			// Get the complete group info and fill the card fields that depend on that info
+			if (completeGroupsById.has(group.group_id)) {
+				fillCompleteFields(completeGroupsById.get(group.group_id));
+			}
+			// If the complete info hasn't been stored yet, retreive it and store it for faster access
+			else {
+				Simva.getGroup(studyid, group.group_id, function(error, result) {
+					if(!error) {
+						completeGroupsById.set(group.group_id, result);
+						fillCompleteFields(result);
+					}
+				});
+			}
 		}
 		
-		box.find(".kebab-dropdown").fadeOut(0);
-		$('#groups_container').append(box);
         toggleGroup(group.group_id);
 	}
 
 
-	let paintAllocator = function(group, tests, groups, participants) {
-		const allocatorType = group.group_allocator_type || 'default';
-		if (AllocatorFactory.Painters[allocatorType]) {
-			AllocatorFactory.Painters[allocatorType].setTests(tests);
-			AllocatorFactory.Painters[allocatorType].setGroups(groups);
-			AllocatorFactory.Painters[allocatorType].setStudy(study);
-			AllocatorFactory.Painters[allocatorType].setParticipants(participants);
-			AllocatorFactory.Painters[allocatorType].paintAllocatorForGroup(group, `#allocator_content_${group.group_id}`);
-		} 
-        else {
-			$(`#allocator_content_${group.group_id}`).html(`<p><%- t('allocator.type.title', { ns : 'SIMLETs' }) %>: ${allocatorType}</p>`);
+	let paintAllocator = async function(group) {
+		let completed = 0;
+
+		const onLoadComplete = () => {
+			completed++;
+			if (completed == 2) {
+				const allocatorType = group.group_allocator_type || 'default';
+				if (AllocatorFactory.Painters[allocatorType]) {
+					AllocatorFactory.Painters[allocatorType].setTests(Array.from(sessionsById.values()));
+					AllocatorFactory.Painters[allocatorType].setGroups(Array.from(groupsById.values()));
+					AllocatorFactory.Painters[allocatorType].setStudy(study);
+					AllocatorFactory.Painters[allocatorType].setParticipants(group);
+					AllocatorFactory.Painters[allocatorType].paintAllocatorForGroup(group, `#allocator_content_${group.group_id}`);
+				} 
+				else {
+					$(`#allocator_content_${group.group_id}`).html(`<p><%- t('allocator.type.title', { ns : 'SIMLETs' }) %>: ${allocatorType}</p>`);
+				}
+			}
 		}
+		
+		// If all sessions have already been retreived, call the callback directly
+		if (sessionsById.size == study.sessions.length) {
+			onLoadComplete();
+		}
+		else {
+			Simva.getStudyTests(studyid, function(error, result) {
+				if (!error) {
+					sessionsById = new Map(
+						result.map(obj => [obj.session_id, obj])
+					);
+					onLoadComplete();
+				}
+			})
+		}
+
+		// Same for the groups
+		if (groupsById.size == study.groups.length) {
+			onLoadComplete();
+		}
+		// Otherwise, retreive them from the database, store them, and call the callback once it's done
+		else {
+			Simva.getStudyGroups(studyid, function(error, result) {
+				if (!error) {
+					groupsById = new Map(
+						result.map(obj => [obj.group_id, obj])
+					);
+					onLoadComplete();
+				}
+			})
+		}
+
+		
 	}
 
 	

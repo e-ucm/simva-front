@@ -13,6 +13,7 @@
 	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 </div>
 
+<!-- Template for each card of the studies list -->
 <div id="simlet_card_template" style="display: none;">
 	<a class="cardColumn">
 		<div class="selectable card">
@@ -36,7 +37,7 @@
 		Simva.getSchedulerStudiesCount(function(error, result) {
 			if (!error) {
 				data["totalResults"] = result.count;
-				data["search"]();
+				data["updateSearch"]();
 			}
 		});
 		
@@ -54,7 +55,7 @@
 		$("#loader").show();
 		
 		let data = $("#scheduler_filtering").data();
-		Simva.getSchedulerStudies(data["searchParameters"], function(error, result){
+		Simva.getSchedulerStudies(data["searchParams"], function(error, result){
 			if (!error) {
 				paintStudyBatch(result);
 				$("#loader").hide();

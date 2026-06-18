@@ -1,3 +1,6 @@
+<!-- Elements that are common both the SIMLETs/archived SIMLETs list view and the individual SIMLET view -->
+
+<!-- Add/edit study form -->
 <div id ="study_form" class="new_element floating">
 	<div class="floater">
 		<div class="form" id="study_form_form">
@@ -36,6 +39,7 @@
 	</div>
 </div>
 
+<!-- Manage study URL form -->
 <div id="study_url_settings" class="new_element floating">
 	<div class="floater">
 		<div class="form">
@@ -55,6 +59,7 @@
 	</div>
 </div>
 
+<!-- Genrate study URL form -->
 <div id="generate_study_link" class="new_element floating">
 	<div class="floater">
 		<div class="form" id="generate_study_link_form">
@@ -88,7 +93,7 @@
 	</div>
 </div>
 
-
+<!-- Download study config form -->
 <div id="download_config" class="new_element floating">
 	<div class="floater">
 		<div class="form">
@@ -99,6 +104,7 @@
 	</div>
 </div>
 
+<!-- Template for the 3-dot menu of an entire study  -->
 <div id="kebab_template" style="display: none;">
 	<ul class="kebab-dropdown" style="display: none;">
 		<li class="kebab-icon icon-edit" title="<%- t('settings.edit.title', { ns : 'SIMLETs' }) %>">
@@ -119,26 +125,28 @@
 	</ul>
 </div>
 
+<!-- Template for the character count of all the text input fields in forms -->
 <div id="char_count_template" style="display: none;">
 	<span class="char-count"></span>
 </div>
 
+<!-- Template for the no tags element of the tags list -->
 <div id="no_tags_template" style="display: none;">
 	<div class="sessionTagList">
 		<span class="sessionTagEmpty"><%- t('tags.no_tags', { ns : 'sessions' }) %></span>
 	</div>
 </div>
 
+
 <script type="text/javascript" src="/kebabs.js"></script>
 <script type="text/javascript" src="/tooltips.js"></script>
-
 
 <script>
 	const nameFieldClass = "name_field";
 	const descriptionFieldClass = "description_field";
 	const MAX_NAME_LENGTH = 40;
 	const MAX_DESC_LENGTH = 100;
-	const START_WARNING_PERCENTAGE = 30;
+	const START_WARNING_PERCENTAGE = 30;	// When the caracter count has this % of character remaining, its color changes to warn the user 
 	let classesWithCharCount = new Set();
 	let classesWithCharCountStr = "";
 
@@ -154,7 +162,7 @@
 	 * 
 	 * @param rawDate {Number} - date epoch
 	 * @param currentlanguageCode {string} - language the user is currently using 
-	 * @returns {string} string with the formatted date
+	 * @returns {string} - string with the formatted date
 	*/
 	const getFormattedDate = function(rawDate, currentlanguageCode) {
 		const date = new Date(rawDate);
@@ -166,6 +174,12 @@
 		// return date.toLocaleDateString(currentlanguageCode);
 	}
 
+	/**
+	 * Adds the character counter to all elements of the same class
+	 * 
+	 * @param className {string} - name of the class of the elements that will get the counter added
+	 * @param maxLength {Number} - max number of characters
+	*/
 	const addInputCharCountToClass = function(className, maxLength) {
 		// Store the class and update the string with all the classes that must be checked when updating input value
 		classesWithCharCount.add(`.${className}`);
@@ -224,17 +238,17 @@
 
 		// Show the text in red if there are no characters left 
 		if (maxLength - count == 0) {
-			$(countTextElem).addClass("red");
+			$(countTextElem).addClass("full");
 		}
 		// Show the text in orange if there are more than 0 but less than the START_WARNING_PERCENTAGE of characters left 
 		else if ((maxLength - count) <= maxLength * (START_WARNING_PERCENTAGE / 100)) {
-			$(countTextElem).removeClass("red");
-			$(countTextElem).addClass("orange");
+			$(countTextElem).removeClass("full");
+			$(countTextElem).addClass("warn");
 		}
 		// Show the text normally
 		else {
-			$(countTextElem).removeClass("red");
-			$(countTextElem).removeClass("orange");
+			$(countTextElem).removeClass("full");
+			$(countTextElem).removeClass("warn");
 		}
 	}
 
@@ -538,7 +552,7 @@
 	 * Create the html element containing all the tags
 	 * 
 	 * @param taggedElem {Object} - study or session to get the tags from
-	 * @returns {string} string with the html elements needed to render the tags
+	 * @returns {string} - string with the html elements needed to render the tags
 	*/
 	const renderTags = function(taggedElem) {
 		const tags = Array.isArray(taggedElem.tags) ? taggedElem.tags : [];

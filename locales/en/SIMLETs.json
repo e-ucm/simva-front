@@ -8,21 +8,19 @@
 
     "searchBar.placeholder": "Search a SIMLET by name or description",
     "filters.sortBy.title": "Sort by",
-        "filters.sortBy.id": "ID",
-        "filters.sortBy.name": "Name",
-        "filters.sortBy.createdAt": "Creation date",
-        "filters.sortBy.updatedAt": "Update date",
+        "filters.sortBy.id": "Default",
+        "filters.sortBy.name.asc": "Name (A-Z)",
+        "filters.sortBy.name.desc": "Name (Z-A)",
+        "filters.sortBy.createdAt.asc": "Creation date (Oldest first)",
+        "filters.sortBy.createdAt.desc": "Creation date (Newest first)",
+        "filters.sortBy.updatedAt.asc": "Update date (Oldest first)",
+        "filters.sortBy.updatedAt.desc": "Update date (Newest first)",
         
-    "filters.sortOrder.title": "Order",
-        "filters.sortOrder.asc": "Ascending",
-        "filters.sortOrder.desc": "Descending",
-    
     "filters.tags.title": "Tags",
         "filters.tags.selected.title": "{{count}} selected",
         "filters.tags.searchBar.placeholder": "Search a tag by name",
     
-    "filters.no_match.message": "No SIMLETs match the seach",
-    
+    "search.no_matches": "No matches for your search",
 
     "card.createdAt": "Created at",
     "card.updatedAt": "Updated at",

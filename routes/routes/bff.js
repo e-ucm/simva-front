@@ -637,7 +637,7 @@ module.exports = function(auth, redirectToLogin, config){
         let studyId = req.params['studyid'];
         let sessionid = req.session.id;
         try {
-            let study = await studycontroler.getCompleteStudy(studyId, sessionid);
+            let study = await SimvaAsync.getStudy(studyId, sessionid);
             res.status(200).send(study);
         } catch(error) {
             next(error);
@@ -924,6 +924,18 @@ module.exports = function(auth, redirectToLogin, config){
                 res.status(200).send(result);
             }
         });
+    });
+
+    router.get('/studies/:studyid/tests/:testid/complete', auth, redirectToLogin, async (req, res, next) => {
+        let studyId = req.params['studyid'];
+        let testId = req.params['testid'];
+        let sessionid = req.session.id;
+        try {
+            let test = await testscontroler.getCompleteTest(studyId, testId, sessionid) 
+            res.status(200).send(test);
+        } catch(error) {
+            next(error);
+        }
     });
 
     router.get('/studies/:studyid/tests/:testid/participants', auth, redirectToLogin, async (req, res, next) => {

@@ -1,30 +1,45 @@
+<!-- Elements that are common for all views that include a search bar + filters for filtering and pagination -->
+
 <div id="<%= id %>_filtering" class="filtering">
-	<input type="text" id="<%= id %>_search_bar" placeholder="<%- t('searchBar.placeholder', { ns : 'SIMLETs' }) %>">
+	<input type="text" id="<%= id %>_search_bar" placeholder="<%= searchBarPlaceholderText %>">
+    
 	<div class="filters">
 		<span><%- t('filters.sortBy.title', { ns : 'SIMLETs' }) %></span>
 		<select id="<%= id %>_sort_by">
-			<option value="id"><%- t('filters.sortBy.id', { ns : 'SIMLETs' }) %></option>
-			<option value="name"><%- t('filters.sortBy.name', { ns : 'SIMLETs' }) %></option>
-			<option value="createdAt"><%- t('filters.sortBy.createdAt', { ns : 'SIMLETs' }) %></option>
-			<option value="updatedAt"><%- t('filters.sortBy.updatedAt', { ns : 'SIMLETs' }) %></option>
-		</select>
-	</div>
-    <div class="filters">
-		<span><%- t('filters.sortOrder.title', { ns : 'SIMLETs' }) %></span>
-		<select id="<%= id %>_sort_order">
-			<option value="asc"><%- t('filters.sortOrder.asc', { ns : 'SIMLETs' }) %></option>
-			<option value="desc"><%- t('filters.sortOrder.desc', { ns : 'SIMLETs' }) %></option>
+			<option value="id" data-order="asc" ><%- t('filters.sortBy.id', { ns : 'SIMLETs' }) %></option>
+			<option value="name" data-order="asc"><%- t('filters.sortBy.name.asc', { ns : 'SIMLETs' }) %></option>
+			<option value="name" data-order="desc"><%- t('filters.sortBy.name.desc', { ns : 'SIMLETs' }) %></option>
+			<option value="createdAt" data-order="desc"><%- t('filters.sortBy.createdAt.desc', { ns : 'SIMLETs' }) %></option>
+			<option value="createdAt" data-order="asc"><%- t('filters.sortBy.createdAt.asc', { ns : 'SIMLETs' }) %></option>
+			<option value="updatedAt" data-order="desc"><%- t('filters.sortBy.updatedAt.desc', { ns : 'SIMLETs' }) %></option>
+			<option value="updatedAt" data-order="asc"><%- t('filters.sortBy.updatedAt.asc', { ns : 'SIMLETs' }) %></option>
 		</select>
 	</div>
 
+<!-- Session status filtering -->
+<% if (typeof id !== 'undefined' && id == "sessions" ) { %>
+    <div class="filters">
+		<span><%- t('filters.status.title', { ns : 'sessions' }) %></span>
+		<select id="<%= id %>_status">
+			<option value=""><%- t('filters.status.all', { ns : 'sessions' }) %></option>
+			<option value="active"><%- t('active.title', { ns : 'sessions' }) %></option>
+			<option value="inactive"><%- t('paused.title', { ns : 'sessions' }) %></option>
+			<option value="terminated"><%- t('finished.title', { ns : 'sessions' }) %></option>
+		</select>
+	</div>
+<% } %>
+
+<!-- Tags filtering -->
 <% if (typeof id !== 'undefined' && (id == "simlets" || id == "sessions") ) { %>
     <div class="filters filtersTags">
         <span><%- t('filters.tags.title', { ns : 'SIMLETs' }) %></span>
+
         <select id="<%= id %>_tags_selector">
             <!-- Default option to show a value in the dropdown -->
             <option id="<%= id %>_selected_tags_amount" value="" selected disabled hidden></option>
         </select>
-
+        
+        <!-- Fake select dropdown that will appear instead of the default one -->
         <div id="<%= id %>_tags_dropdown" class="filtersTagsDropdown">
             <input type="text" id="<%= id %>_tags_search_bar" placeholder="<%- t('filters.tags.searchBar.placeholder', { ns : 'SIMLETs' }) %>">
             <ul id="<%= id %>_tags_list" class="filtersTagsList">
@@ -34,6 +49,7 @@
         </div>
 	</div>
 
+    <!-- Template for each element of the tags list -->
     <div id="search_tag_template" style="display: none;">
         <li class="searchTag">
             <input type="checkbox">
@@ -44,25 +60,35 @@
             </input>
         </li>
     </div>
-    
 <% } %>
+
 </div>
 
 <script type="text/javascript">
-    // Variables and functions need to be stored in the div data to avoid
+    // Variables and functions need to be stored in the div data to avoid declaration
     // conflicts when including the partial multiple times in the same view
 
-    $("#<%= id %>_filtering").data()["showAtOnce"] = 1;
-    $("#<%= id %>_filtering").data()["currentPage"] = 1;
+    $("#<%= id %>_filtering").data()["lastScrollTop"] = 0;
 
-    $("#<%= id %>_filtering").data()["totalResults"] = 1;
+    $("#<%= id %>_filtering").data()["showAtOnce"] = 1;     // Maximum amount of results that will be returned on each search
+    $("#<%= id %>_filtering").data()["currentPage"] = 1;    // "Page" from where the search will take the results (used to calculate skip and limit)
+    $("#<%= id %>_filtering").data()["totalResults"] = 1;   // Amount of results available for the search
 
-    // Default callbacks
-    $("#<%= id %>_filtering").data()["updateSearchCallback"] = () => {};
-    $("#<%= id %>_filtering").data()["checkLoadMore"] = () => { return true; };
-    $("#<%= id %>_filtering").data()["loadMoreCallback"] = () => {};
+    // Default callbacks. To change their behavior, a function needs to be asigned as their value
+    $("#<%= id %>_filtering").data()["updateSearchCallback"] = () => {};            // Called when updating a search to get new results
+    $("#<%= id %>_filtering").data()["checkLoadMore"] = () => { return true; };     // Called to check extra conditions to know when to load more results
+    $("#<%= id %>_filtering").data()["loadMoreCallback"] = () => {};                // Called to load more results in the current search
 
-    $("#<%= id %>_filtering").data()["searchParameters"] = { };
+    // Object that defines the parameters that will be passed to the api calls as a query
+    // The default parameters common all calls are:
+    // - skip (pagination)
+    // - limit (pagination)
+    // - searchString (filtering)
+    // - orderBy (filtering)
+    // - order (filtering)
+    // Other parameters that are exclusive to certain calls are searchTags or status
+    // When calling the /count endpoints, only searchString and the exclusive parameters will be taken into account
+    $("#<%= id %>_filtering").data()["searchParams"] = { };
 
     
     // Update the search parameters
@@ -71,17 +97,21 @@
         
         data["totalPages"] = Math.ceil(data["totalResults"] / data["showAtOnce"]);
 
-        // Set each parameter individually instead of modifying the entire data["searchParameters"]
-        // object to allow for extra parameters to be added from anywhere else
-        data["searchParameters"].skip = (data["currentPage"] - 1) * data["showAtOnce"];
-        data["searchParameters"].limit = (data["currentPage"]) * data["showAtOnce"];
-        data["searchParameters"].searchString = $("#<%= id %>_search_bar").val().trim().toLowerCase() || "";
-        data["searchParameters"].orderBy = $("#<%= id %>_sort_by").val() || "id";
-        data["searchParameters"].order = $("#<%= id %>_sort_order").val() || "desc";
+        // Set each parameter individually instead of setting the entire data["searchParams"]
+        // object to allow extra parameters to be added from anywhere else
+        data["searchParams"].skip = (data["currentPage"] - 1) * data["showAtOnce"];
+        data["searchParams"].limit = (data["currentPage"]) * data["showAtOnce"];
+        data["searchParams"].searchString = $("#<%= id %>_search_bar").val().trim().toLowerCase() || "";
+        data["searchParams"].orderBy = $("#<%= id %>_sort_by").val() || "id";
+        data["searchParams"].order = $("#<%= id %>_sort_by").find("option:selected").data("order") || "desc";
+
+        if ($("#<%= id %>_status").length) {
+            data["searchParams"].status = $("#<%= id %>_status").val() || "";
+        }
     }
     
     // Update the search parameters and call the update function
-    $("#<%= id %>_filtering").data()["search"] = function() {
+    $("#<%= id %>_filtering").data()["updateSearch"] = function() {
         let data = $("#<%= id %>_filtering").data();
         data["currentPage"] = 1;
 
@@ -92,33 +122,41 @@
     
     // Shared listeners 
     
-    $(window).scroll(function() {
+    $(window).scroll(function(e) {
         let data = $("#<%= id %>_filtering").data();
 
-        // When scrolling to the bottom of the window
-        if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+        const currentScrollTop = $(window).scrollTop();
+        const scrollDelta = currentScrollTop - data["lastScrollTop"];
+
+        // When scrolling to the bottom of the window, if the scroll is positive 
+        // (to ignore when the window scroll event gets triggered when the window
+        // gets smaller for dynamically removing/shrinking elements)
+        if ($(window).scrollTop() == $(document).height() - $(window).height() && scrollDelta > 0 ) {
             // If there are still pages to load, update the current page and load more
             if (data["currentPage"] < data["totalPages"] && data["checkLoadMore"]()) {
                 data["currentPage"]++;
+
                 data["updateSearchOptions"]();
                 data["loadMoreCallback"]();
             }
         }
+
+        data["lastScrollTop"] = currentScrollTop;
     });
     
     // Search bar
     $("#<%= id %>_search_bar").on("input", function () {
-        $("#<%= id %>_filtering").data()["search"]();
+        $("#<%= id %>_filtering").data()["updateSearch"]();
     });
 
     // Sort by dropdown
     $("#<%= id %>_sort_by").on("change", function () {
-        $("#<%= id %>_filtering").data()["search"]();
+        $("#<%= id %>_filtering").data()["updateSearch"]();
     });
 
     // Sort order dropdown
     $("#<%= id %>_sort_order").on("change", function () {
-        $("#<%= id %>_filtering").data()["search"]();
+        $("#<%= id %>_filtering").data()["updateSearch"]();
     });
 
     
@@ -137,7 +175,7 @@
 <script type="text/javascript">
     // Since this part will never be included multiple times in the same view, variables 
     // and functions can be declared normally instead of storing them in the div data
-
+    
     $("#<%= id %>_tags_dropdown").hide();
     let selectedTagsIds = new Set();
 
@@ -212,8 +250,8 @@
         });
         
         $("#<%= id %>_selected_tags_amount").text(`<%- t('filters.tags.selected.title', { ns : 'SIMLETs', count: '${selectedTagsIds.size}' }) %>`);
-        $("#<%= id %>_filtering").data()["searchParameters"].searchTags = Array.from(selectedTagsIds);
-        $("#<%= id %>_filtering").data()["search"]();
+        $("#<%= id %>_filtering").data()["searchParams"].searchTags = Array.from(selectedTagsIds);
+        $("#<%= id %>_filtering").data()["updateSearch"]();
     });
 
 
@@ -258,9 +296,21 @@
             $('#<%= id %>_tags_list').append(tagObj);
         });
         if (searchResult.length == 0) {
-            $('#<%= id %>_tags_list').text("<%- t('tags.dropdown.no_matches', { ns : 'sessions' }) %>");
+            $('#<%= id %>_tags_list').text("<%- t('search.no_matches', { ns : 'SIMLETs' }) %>");
         }
     }
+
+</script>
+
+<% } %>
+
+<% if (typeof id !== 'undefined' && id == "sessions") { %>
+
+<script type="text/javascript">
+
+    $("#<%= id %>_status").on("change", function () {
+        $("#<%= id %>_filtering").data()["updateSearch"]();
+    });
 
 </script>
 

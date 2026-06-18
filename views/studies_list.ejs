@@ -16,18 +16,20 @@
 	</div>
 </div>
 
-<!-- Needs to be added before other partials to allow them 
-to use the elements and scripts defined in simlet_commons -->
+<!-- Needs to be added before other partials to allow them to use
+the elements and scripts defined in the simlet_commons partial -->
 <%- include('partials/simlet_commons') %>
-<%- include('partials/filtering_pagination_commons', { id:"simlets" }) %>
+<% const searchBarPlaceholder = t('searchBar.placeholder', { ns: 'SIMLETs' }); %>
+<%- include('partials/filtering_pagination_commons', { id:"simlets", searchBarPlaceholderText: searchBarPlaceholder }) %>
 
 <div id="studies_list" class="simletsCardsList">
 </div>
 
-<div id="loader" class="loader" style="display: none">
+<div id="loader" class="loader">
 	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 </div>
 
+<!-- Template for each card of the studies list -->
 <div id="simlet_card_template" style="display: none;">
 	<a class="cardColumn">
 		<div class="selectable card">
@@ -60,34 +62,34 @@ to use the elements and scripts defined in simlet_commons -->
 
 
 <script type="text/javascript">
+	const archived = "<%= archived %>" === "true";
+
 	const simletDataIdKey = "simletId"
 	const simletDataNameKey = "simletName"
 	const simletDataDescriptionKey = "simletDescription"
 
-	const SHOW_AT_ONCE = 9;
-
 	let studiesById = new Map();
 	
-	const archived = "<%= archived %>" === "true";
+	// Assign properties and functions of filtering_pagination_commons partial
+	const SHOW_AT_ONCE = 9;
+	let filteringPaginationData = $("#simlets_filtering").data();
 	
+	// Add the floating class to the content element to add space at the bottom 
+	// of the page so the floating button doesnt cover any other element
 	$(".content").addClass("floating");
 
 	
 	$(document).ready(function() {
-		let data = $("#simlets_filtering").data();
-
-		// Set refresh function of simlet_commons partial
+		// Set refresh function of the simlet_commons partial
 		refreshFunc = refreshStudies;
 
-		// Set properties of filtering_pagination_commons partial
-		data["showAtOnce"] = SHOW_AT_ONCE;
-		data["searchParameters"].status = archived ? "archived" : "active";
-		data["updateSearchCallback"] = onSearch;
-		data["loadMoreCallback"] = loadStudyBatch;
+		// Assign properties and functions of filtering_pagination_commons partial
+		filteringPaginationData["showAtOnce"] = SHOW_AT_ONCE;
+		filteringPaginationData["searchParams"].status = archived ? "archived" : "active";
+		filteringPaginationData["updateSearchCallback"] = onSearch;
+		filteringPaginationData["loadMoreCallback"] = loadStudyBatch;
 		
 		refreshStudies();
-
-		$('#studies_list').html(roller);
 
 		$(document).on('submit', "#import_study_form", function(event) {
 			event.preventDefault();
@@ -110,7 +112,7 @@ to use the elements and scripts defined in simlet_commons -->
 							if(!error) {
 								Utils.toggleAddForm('study_form');
 								$('#studies_list').html(roller);
-								refreshStudies();
+								refreshFunc();
 							} else {
 								$("#study_form_error").text(error);
 							}
@@ -127,35 +129,47 @@ to use the elements and scripts defined in simlet_commons -->
 			}
 			return false;
 		});
-
+		
 	});
 
-	
-	// Update the number of studies to ensure correct total count after deletion/archivation
-	// and call the search function to update the rest of parameters and paint the studies
 	const refreshStudies = function() {
-		let data = $("#simlets_filtering").data();
-		Simva.getStudiesCount({status: data["searchParameters"].status}, function(error, result) {
+		// Updates all the search parameters and calls onSearch
+		filteringPaginationData["updateSearch"]();
+
+		// At the same time, asynchronously get all the studies in this section and store
+		// them by id for faster access to its parameters when opening the edit menu
+		Simva.getStudies({ status: filteringPaginationData["searchParams"].status }, function(error, result) {
 			if (!error) {
-				studiesById.clear();
-				data["totalResults"] = result.count;
-				data["search"]();
+				studiesById = new Map(
+					result.map(obj => [obj.simlet_id, obj])
+				);
 			}
 		});
 	}
 
-	// When updating any filter parameter (in filtering_pagination_commons), remove all the painted studies and load a new batch
+	// When updating any filter parameter, remove all the painted studies and load a new batch
+	// (called by updateSearch in filtering_pagination_commons)
 	const onSearch = function() {
-		let data = $("#simlets_filtering").data();
 		$('#studies_list').empty();
-		loadStudyBatch();
+
+		Simva.getStudiesCount(filteringPaginationData["searchParams"], function(error, result) {
+			if (!error) {
+				// Update the total results and recalculate the number of pages (but don't perform the search again)
+				filteringPaginationData["totalResults"] = result.count;
+				filteringPaginationData["updateSearchOptions"]();
+				
+				loadStudyBatch();
+			}
+		});
+
 	}
 
+	// Load batch of max SHOW_AT_ONCE studies matching the search parameters and paint them
+	// Gets called both when updating the search results and when loading the next page of results
 	const loadStudyBatch = function() {
 		$("#loader").show();
 		
-		let data = $("#simlets_filtering").data();
-		Simva.getStudies(data["searchParameters"], function(error, result){
+		Simva.getStudies(filteringPaginationData["searchParams"], function(error, result){
 			if (!error) {
 				paintStudyBatch(result);
 				$("#loader").hide();
@@ -164,17 +178,18 @@ to use the elements and scripts defined in simlet_commons -->
 	}
 
 	const paintStudyBatch = function(studyBatch) {
-		let data = $("#simlets_filtering").data();
-
 		studyBatch.forEach((study) => {
-			studiesById.set(study.simlet_id, study);
-			addSimletCard(study);
+			// Add the session card synchronously to ensure they appear in order
+			const card = $("#simlet_card_template a").clone();
+			$('#studies_list').append(card);
+
+			// Then, fill its details asynchronously since the order of execution doesn't matter once the card has been added
+			addSimletCard(study, card);
 		});
 
-		// If there are no studies in this batch
 		if (studyBatch.length == 0) {
-			// If there are no studies in the current section, set the corrseponding no simlets message 
-			if (data["totalResults"] == 0) {
+			// There are no studies in the current section (active/archived)
+			if (studiesById.size == 0) {
 				if (!archived) {
 					$('#studies_list').text("<%- t('no_simlets.message', { ns : 'SIMLETs' }) %>");
 				}
@@ -182,9 +197,9 @@ to use the elements and scripts defined in simlet_commons -->
 					$('#studies_list').text("<%- t('no_archived.message', { ns : 'SIMLETs' }) %>");
 				}
 			}
-			// If there are studies, none of them matched the search parameters
+			// There are studies, but none of them matched the search parameters
 			else {
-				$('#studies_list').text("<%- t('filters.no_match.message', { ns : 'SIMLETs' }) %>");
+				$('#studies_list').text("<%- t('search.no_matches', { ns : 'SIMLETs' }) %>");
 			}
 		}
 	}
@@ -235,8 +250,7 @@ to use the elements and scripts defined in simlet_commons -->
 
 	
 	// Add cards programatically to avoid XSS
-	const addSimletCard = function(study) {
-		const card = $("#simlet_card_template a").clone();
+	const addSimletCard = async function(study, card) {
 		card.data(simletDataIdKey, study.simlet_id);
 		card.data(simletDataNameKey, study.simlet_name);
 		card.data(simletDataDescriptionKey, study.simlet_description);
@@ -289,8 +303,6 @@ to use the elements and scripts defined in simlet_commons -->
 				card.find(".cardUsers").after(total);
 			}
 		});
-		
-		$('#studies_list').append(card);
 	}
 
 

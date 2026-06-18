@@ -1,4 +1,8 @@
-// Convert query object to query string
+/**
+ * Convert query object to query string
+ * @param {Object} query - object containing the parameters of the query 
+ * @returns {string} - string of the query parameters, including the starting ? if there are any parameters
+ */
 const getQueryString = function(query) {
 	let queryString = "";
 
@@ -12,7 +16,11 @@ const getQueryString = function(query) {
 	return queryString;
 }
 
-// Convert query object to query string with only searchString and searchTags params
+/**
+ * Convert query object to query string containing only the parameters necessary for the /count endpoints
+ * @param {Object} query - object containing the parameters of the query 
+ * @returns {string} - string of the query parameters, including the starting ? if there are any parameters
+ */
 const getCountQueryString = function(query) {
 	const cleanQuery = Object.fromEntries(
 		Object.entries(query).filter(([key, value]) => 
@@ -22,7 +30,14 @@ const getCountQueryString = function(query) {
 	return getQueryString(cleanQuery);
 }
 
-const determineQueryAndCallback = function(query, callback){
+/**
+ * Given the 2 passed parameters, determine 
+ * @param {Object} query - object containing the parameters of the query. If no query object is being passed, then it's the callback
+ * @param {function} callback - function to call once the api call returns its result
+ * @returns {Object} - object with the parameters query and callback after corrections
+ */
+const determineQueryAndCallback = function(query, callback) {
+	// If the passed query object is a function, no parameters are being passed, so it's the callback
 	if (typeof query === "function") {
 		callback = query;	
 		query = {};
@@ -407,6 +422,10 @@ var Simva = {
 
 	getStudyTest: function(study_id,test_id, callback){
 		Utils.get(`/bff/studies/${study_id}/tests/${test_id}`, callback);
+	},
+
+	getStudyTestComplete: function(study_id,test_id, callback){
+		Utils.get(`/bff/studies/${study_id}/tests/${test_id}/complete`, callback);
 	},
 
 	deleteTest: function(study_id, test_id, callback){

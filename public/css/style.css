@@ -367,14 +367,15 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .form h1, .form h2 { margin-bottom: 10px; text-align: center; }
 .form h3, .form .error { margin-top: 10px; margin-bottom: 5px; }
 .form input[type="submit"] { margin-top: 20px; margin-bottom: 5px; }
-.form .char-count { display: flex; justify-content: flex-end; margin-right: 10px; margin-top: 5px; }
-.form .char-count.orange { color: rgb(255, 196, 0); }
-.form .char-count.red { color: red; }
 .new_element .form .yellow, .new_element .form .blue, .new_element .form .red, .new_element .form .green {
 	margin-top:10px;
 	margin-bottom:10px;
 	padding: 10px;
 }
+.form .char-count { display: flex; justify-content: flex-end; margin-right: 10px; margin-top: 5px; }
+.form .char-count.warn { color: rgb(255, 196, 0); }
+.form .char-count.full { color: red; }
+
 
 .tabs { width: 100%; display: flex; }
 
@@ -622,6 +623,8 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	color: black;
 }
 .sessionTagEmpty {
+	line-height: 1.4;
+	padding: 2px 8px;
 	font-size: 12px;
 	opacity: 0.7;
 }
@@ -1105,12 +1108,12 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .sessionProgress.progress span {
 	top: 3px;
 }
-#sessionTestLauch, #sessionDownload {
+.sessionTestLauch, .sessionDownload {
 	margin-left: auto;
 	margin-right: 15px;
 	cursor: pointer;
 }
-#sessionTestLauch::before {
+.sessionTestLauch::before {
 	filter: none;
 }
 
@@ -1268,7 +1271,6 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 #pdf_printable {
 	display: none;
 	font-size: 20px;
-	font-family: "DejaVu Sans Mono";
 	text-align: center;
 	padding: 10px;
 }
@@ -1277,7 +1279,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 #pdf_printable table, #pdf_printable th, #pdf_printable td { padding: 5px; border: solid 1px black;  font-weight: normal; }
 @page { size: A4;  margin: 4mm 4mm 4mm 4mm; }
 @media print {
-	body {  background-color: white; }
+	body { font-family: serif; background-color: white; }
 	.content { padding: 0px;  width: 210mm;  height: 297mm; }
 	.header, .menu, .content .simletTop, .sessionTagList, #study_tabs { display: none; }
 	#pdf_printable { display: contents; }
