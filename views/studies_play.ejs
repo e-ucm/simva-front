@@ -4,7 +4,8 @@
 
 <h1><%- t('title', { ns : 'SIMLETs' }) %></h1>
 
-<%- include('partials/filtering_pagination_commons', { id:"scheduler" }) %>
+<% const searchBarPlaceholder = t('searchBar.placeholder', { ns: 'SIMLETs' }); %>
+<%- include('partials/filtering_pagination_commons', { id:"scheduler", searchBarPlaceholderText: searchBarPlaceholder }) %>
 
 <div id="studies_list" class="simletsCardsList">
 </div>
