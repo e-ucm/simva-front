@@ -205,21 +205,16 @@ the elements and scripts defined in the simlet_commons partial -->
 	let currentUser = null;
 	let study = null;
 
-	// Defined on reloadStudy or on paintAllocator in the simlet_users partial (whichever loads first).
-	// Need to contain all the sessions from the start to show them as options in the group allocator
-	let sessionsById = new Map();
-	let	groupsById = new Map();
+	// Needs to contain all the sessions from the start to show them as options in the group allocator
+	let sessionsById = new Map();	// Defined on reloadStudy or on paintAllocator in the simlet_users partial (whichever loads first)
 	
-	// Defined on fillSessionCard in the simlet_sessions partial. Don't need to contain all the 
-	// sessions/activities from the start since they're only neeeded when they're getting painted
-	let completeSessionsById = new Map();	// Stored to avoid having to retreive them every time the search parameters change 
-	let	activitiesById = new Map();
-	
-	// Defined on paintAllocator in the simlet_users partial. Don't need to contain all the 
-	// sessions/activities from the start since they're only neeeded when they're getting painted
-	let completeGroupsById = new Map();		// Stored to avoid having to retreive them every time the search parameters change
-	let participantsById = new Map();
-	let participantsByUsername = new Map();
+	// Stored to avoid having to retreive them every time the search parameters change 
+	// They don't need to contain all the data from the start since they're only neeeded when they're getting painted
+	let completeSessionsById = new Map();		// Defined on fillSessionCard in the simlet_sessions partial 
+	let	completeActivitiesById = new Map();		// Defined on fillSessionCard in the simlet_sessions partial
+	let completeGroupsById = new Map();			// Defined on paintAllocator in the simlet_users partial
+	let participantsById = new Map();			// Defined on paintAllocator in the simlet_users partial
+	let participantsByUsername = new Map();		// Defined on paintAllocator in the simlet_users partial
 	
 	// TODO: Declare platforms
 
@@ -279,22 +274,22 @@ the elements and scripts defined in the simlet_commons partial -->
 	// Functionality
 
 	const getSessionFromId = function(testId) {
-		if (sessionsById.has(testId)) {
-			return sessionsById.get(testId);
+		if (completeSessionsById.has(testId)) {
+			return completeSessionsById.get(testId);
 		}
 		return null;
 	}
 
 	const getActivityFromId = function(activityId) {
-		if (activitiesById.has(activityId)) {
-			return activitiesById.get(activityId);
+		if (completeActivitiesById.has(activityId)) {
+			return completeActivitiesById.get(activityId);
 		}
 		return null;
 	}
 
 	const getGroupFromId = function (groupId) {
-		if (groupsById.has(groupId)) {
-			return groupsById.get(groupId);
+		if (completeGroupsById.has(groupId)) {
+			return completeGroupsById.get(groupId);
 		}
 		return null;
 	}
@@ -321,7 +316,7 @@ the elements and scripts defined in the simlet_commons partial -->
 		// Clear the stored variables in case of deletion/edit, as they were only stored to 
 		// avoid retreiving them from the database every time the search parameters change 
 		completeSessionsById.clear();
-		activitiesById.clear();
+		completeActivitiesById.clear();
 		completeGroupsById.clear();
 		participantsById.clear();
 		participantsByUsername.clear();
@@ -331,7 +326,6 @@ the elements and scripts defined in the simlet_commons partial -->
 		Simva.getStudy(studyid, function(error, result) {
 			if (!error) {
 				study = result;
-				// console.log(result)
 
 				$('#simlet_name').text(study.simlet_name);
 				$("#simlet_tags").remove();
@@ -358,15 +352,6 @@ the elements and scripts defined in the simlet_commons partial -->
 						if (!error) {
 							sessionsById = new Map(
 								result.map(obj => [obj.session_id, obj])
-							);
-						}
-					})
-				}
-				if (groupsById.size < study.groups.length) {
-					Simva.getStudyGroups(studyid, function(error, result) {
-						if (!error) {
-							groupsById = new Map(
-								result.map(obj => [obj.group_id, obj])
 							);
 						}
 					})
@@ -402,10 +387,11 @@ the elements and scripts defined in the simlet_commons partial -->
 			archiveButton.addClass('icon-archive');
 			archiveButton.removeClass('icon-dearchive');
 
-			Simva.getStudyTests(studyid, function(error, result) {
+			const checkAllSessionsFinished = () => {
 				// Check if all sessions are finished
 				let allSessionsFinished = true;
-				result.forEach(session => {
+
+				sessionsById.forEach((id, session) => {
 																					// Defined in simlet_sessions
 					allSessionsFinished = allSessionsFinished && session.session_status == sessionFinishedStatus;
 				});
@@ -418,11 +404,28 @@ the elements and scripts defined in the simlet_commons partial -->
 				else {
 					archiveButton.removeClass('li-disabled').click(() => { 
 						if(confirm(`<%- t('archive.confirm', { ns : 'SIMLETs', SIMLET : '${study.simlet_name}' }) %>`)){
+							// Defined in the simlet_commons partial
 							archiveStudy(studyid, study.simlet_name);
 						}
 					});
 				}
-			});
+			}
+
+			// If all sessions have already been retreived, call the callback directly
+			if (sessionsById.size == study.sessions.length) {
+				checkAllSessionsFinished();
+			}
+			// Otherwise, retreive them from the database, store them, and call the callback once it's done
+			else {
+				Simva.getStudyTests(studyid, function(error, result) {
+					if (!error) {
+						sessionsById = new Map(
+							result.map(obj => [obj.session_id, obj])
+						);
+						checkAllSessionsFinished();
+					}
+				})
+			}
 		}
 		// If the study is archived
 		else {

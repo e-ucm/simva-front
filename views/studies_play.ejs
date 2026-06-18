@@ -67,7 +67,7 @@
 		let data = $("#scheduler_filtering").data();
 
 		studyBatch.forEach((study) => {
-			addSimletCard(study);
+			fillStudyCard(study);
 		});
 		
 		// If there are no studies in this batch,  set the corrseponding no simlets message 
@@ -76,7 +76,7 @@
 		}
 	}
 
-	const addSimletCard = function(study) {
+	const fillStudyCard = function(study) {
 		const card = $("#simlet_card_template a").clone();
 		card.attr("href", `/scheduler/${study.simlet_id}`);
 		card.find(".cardTitle").text(study.simlet_name);

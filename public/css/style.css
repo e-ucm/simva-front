@@ -1281,6 +1281,6 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 @media print {
 	body { font-family: serif; background-color: white; }
 	.content { padding: 0px;  width: 210mm;  height: 297mm; }
-	.header, .menu, .content .simletTop, .sessionTagList, #study_tabs { display: none; }
+	.header, .menu, .content .simletTop, #simlet_tags, .sessionTagList, #study_tabs { display: none; }
 	#pdf_printable { display: contents; }
 }

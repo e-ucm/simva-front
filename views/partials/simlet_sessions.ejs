@@ -452,12 +452,14 @@
         downloadSessionId = sessionId;
 		const session = getSessionFromId(sessionId);
 
-		$("#downloadFormTitle").text(`<%- t('single.title', { ns : 'sessions' }) %>: ${session.session_name}`);
-
-		// Show test download button based on participant status
-		$("#session_test_data_download").hide();
-		if (isCurrentUserParticipant(session.completeParticipants)) {
-			$("#session_test_data_download").show();
+		if (session != null) {
+			$("#downloadFormTitle").text(`<%- t('single.title', { ns : 'sessions' }) %>: ${session.session_name}`);
+	
+			// Show test download button based on participant status
+			$("#session_test_data_download").hide();
+			if (isCurrentUserParticipant(session.completeParticipants)) {
+				$("#session_test_data_download").show();
+			}
 		}
 	}
     
@@ -736,7 +738,7 @@
 
 			// Store the activities for faster access 
 			activities.forEach((activity) => {
-				activitiesById.set(activity.activity_id, activity);
+				completeActivitiesById.set(activity.activity_id, activity);
 			})
 
 			// If there are any users, calculate the percentage of users that have completed the last activity

@@ -79,6 +79,9 @@
     $("#<%= id %>_filtering").data()["checkLoadMore"] = () => { return true; };     // Called to check extra conditions to know when to load more results
     $("#<%= id %>_filtering").data()["loadMoreCallback"] = () => {};                // Called to load more results in the current search
 
+    $("#<%= id %>_filtering").data()["searchTimerInterval"] = 200;     // Time in ms to wait before performing a search update
+    $("#<%= id %>_filtering").data()["searchTimer"] = null;
+
     // Object that defines the parameters that will be passed to the api calls as a query
     // The default parameters common all calls are:
     // - skip (pagination)
@@ -144,19 +147,31 @@
         data["lastScrollTop"] = currentScrollTop;
     });
     
+    // Before updating the search results, wait a certain time to ensure the user is done changing parameters
+    $("#<%= id %>_filtering").data()["resetSearchTimer"] = function() {
+        const data = $("#<%= id %>_filtering").data();
+        
+        // Reset the timeout callback on each call and create it again
+        clearTimeout(data["searchTimer"]);
+        data["searchTimer"] = setTimeout(() => {
+           data["updateSearch"]();
+
+        }, data["searchTimerInterval"]);
+    }
+
     // Search bar
     $("#<%= id %>_search_bar").on("input", function () {
-        $("#<%= id %>_filtering").data()["updateSearch"]();
+        $("#<%= id %>_filtering").data()["resetSearchTimer"]();
     });
 
     // Sort by dropdown
     $("#<%= id %>_sort_by").on("change", function () {
-        $("#<%= id %>_filtering").data()["updateSearch"]();
+        $("#<%= id %>_filtering").data()["resetSearchTimer"]();
     });
 
     // Sort order dropdown
     $("#<%= id %>_sort_order").on("change", function () {
-        $("#<%= id %>_filtering").data()["updateSearch"]();
+        $("#<%= id %>_filtering").data()["resetSearchTimer"]();
     });
 
     
@@ -251,7 +266,7 @@
         
         $("#<%= id %>_selected_tags_amount").text(`<%- t('filters.tags.selected.title', { ns : 'SIMLETs', count: '${selectedTagsIds.size}' }) %>`);
         $("#<%= id %>_filtering").data()["searchParams"].searchTags = Array.from(selectedTagsIds);
-        $("#<%= id %>_filtering").data()["updateSearch"]();
+        $("#<%= id %>_filtering").data()["resetSearchTimer"]();
     });
 
 
@@ -309,7 +324,7 @@
 <script type="text/javascript">
 
     $("#<%= id %>_status").on("change", function () {
-        $("#<%= id %>_filtering").data()["updateSearch"]();
+        $("#<%= id %>_filtering").data()["resetSearchTimer"]();
     });
 
 </script>

@@ -11,7 +11,7 @@
 					</span>
 				</div>
 			</div>
-            <div class="expandButton" onclick="toggleOwners()"></div>
+            <div class="expandButton" onclick="toggleCoordinators()"></div>
         </div>
         <table class="owners" id="coordinators">
             <thead>
@@ -600,10 +600,7 @@
 
 	});
 
-    //TEST
-	// Utils.changeTab(this, 'study_tabs','users_tab')
-	
-    const toggleOwners = function() {
+    const toggleCoordinators = function() {
 		$(".card.coordinators").find('.expandButton').toggleClass('collapsed');
 		$(".card.coordinators").find('.owners').toggleClass('collapsed');
 	}
@@ -665,7 +662,7 @@
 	
 	let openChangeAllocatorForm = function(groupId, currentAllocatorType) {
 		editingGroupId = groupId;
-		let currentGroup=groups.find(g => g.group_id == groupId);
+		let currentGroup = getGroupFromId(groupId);
 		console.log("Current group for allocator change:", currentGroup.group_allocator_type);
 		let form = $('#change_allocator_form');
 		Utils.toggleAddForm('change_allocator');
@@ -939,7 +936,6 @@
 
 			// Then, fill its details asynchronously since the order of execution doesn't matter once the card has been added
 			fillGroupCard(group, card);
-			paintAllocator(group);
 		});
 		
 		// No results
@@ -975,7 +971,8 @@
 
 		if(Boolean(group.group_use_new_generation)) {
 			card.find(".deprecated_generation").remove();
-		} else {
+		} 
+		else {
 			card.find(".deprecated_generation").html("<p><%- t('deprecated.message', { ns : 'groups' }) %></p>");
 		}
 
@@ -1009,6 +1006,9 @@
 					row.find(".email").text(participant.email);
 					row.find(".role").text(role);
 				});
+
+				// Paint the allocator once all the participants have been added
+				paintAllocator(completeGroup)
 			}
 
 			// Get the complete group info and fill the card fields that depend on that info
@@ -1031,22 +1031,17 @@
 
 
 	let paintAllocator = async function(group) {
-		let completed = 0;
-
 		const onLoadComplete = () => {
-			completed++;
-			if (completed == 2) {
-				const allocatorType = group.group_allocator_type || 'default';
-				if (AllocatorFactory.Painters[allocatorType]) {
-					AllocatorFactory.Painters[allocatorType].setTests(Array.from(sessionsById.values()));
-					AllocatorFactory.Painters[allocatorType].setGroups(Array.from(groupsById.values()));
-					AllocatorFactory.Painters[allocatorType].setStudy(study);
-					AllocatorFactory.Painters[allocatorType].setParticipants(group);
-					AllocatorFactory.Painters[allocatorType].paintAllocatorForGroup(group, `#allocator_content_${group.group_id}`);
-				} 
-				else {
-					$(`#allocator_content_${group.group_id}`).html(`<p><%- t('allocator.type.title', { ns : 'SIMLETs' }) %>: ${allocatorType}</p>`);
-				}
+			const allocatorType = group.group_allocator_type || 'default';
+			if (AllocatorFactory.Painters[allocatorType]) {
+				AllocatorFactory.Painters[allocatorType].setTests(Array.from(sessionsById.values()));
+				AllocatorFactory.Painters[allocatorType].setGroups([]);
+				AllocatorFactory.Painters[allocatorType].setStudy(study);
+				AllocatorFactory.Painters[allocatorType].setParticipants(group.completeParticipants);
+				AllocatorFactory.Painters[allocatorType].paintAllocatorForGroup(group, `#allocator_content_${group.group_id}`);
+			} 
+			else {
+				$(`#allocator_content_${group.group_id}`).html(`<p><%- t('allocator.type.title', { ns : 'SIMLETs' }) %>: ${allocatorType}</p>`);
 			}
 		}
 		
@@ -1054,6 +1049,7 @@
 		if (sessionsById.size == study.sessions.length) {
 			onLoadComplete();
 		}
+		// Otherwise, retreive them from the database, store them, and call the callback once it's done
 		else {
 			Simva.getStudyTests(studyid, function(error, result) {
 				if (!error) {
@@ -1065,23 +1061,6 @@
 			})
 		}
 
-		// Same for the groups
-		if (groupsById.size == study.groups.length) {
-			onLoadComplete();
-		}
-		// Otherwise, retreive them from the database, store them, and call the callback once it's done
-		else {
-			Simva.getStudyGroups(studyid, function(error, result) {
-				if (!error) {
-					groupsById = new Map(
-						result.map(obj => [obj.group_id, obj])
-					);
-					onLoadComplete();
-				}
-			})
-		}
-
-		
 	}
 
 	
