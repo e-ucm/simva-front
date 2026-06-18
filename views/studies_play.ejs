@@ -10,7 +10,7 @@
 <div id="studies_list" class="simletsCardsList">
 </div>
 
-<div id="loader" class="loader" style="display: none">
+<div id="loader" class="loader">
 	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 </div>
 
@@ -26,37 +26,45 @@
 
 <script type="text/javascript">
 	const SHOW_AT_ONCE = 9;
+	let filteringPaginationData = $("#scheduler_filtering").data();
+	let totalResults = 0;
 
 	$(document).ready(function() {
-		let data = $("#scheduler_filtering").data();
-
 		// Set properties of filtering_pagination_commons partial
-		data["showAtOnce"] = SHOW_AT_ONCE;
-		data["updateSearchCallback"] = onSearch;
-		data["loadMoreCallback"] = loadStudyBatch;
+		filteringPaginationData["showAtOnce"] = SHOW_AT_ONCE;
+		filteringPaginationData["updateSearchCallback"] = onSearch;
+		filteringPaginationData["loadMoreCallback"] = loadStudyBatch;
 
+		// Updates all the search parameters and calls onSearch
+		filteringPaginationData["updateSearch"]();
+
+		// At the same time, asynchronously get all the studies in this section and store
+		// them by id for faster access to its parameters when opening the edit menu
 		Simva.getSchedulerStudiesCount(function(error, result) {
 			if (!error) {
-				data["totalResults"] = result.count;
-				data["updateSearch"]();
+				totalResults = result.count;
 			}
 		});
-		
-		$('#studies_list').html(roller);
-
 	});
 
 	const onSearch = function() {
-		let data = $("#scheduler_filtering").data();
 		$('#studies_list').empty();
-		loadStudyBatch();
+
+		Simva.getSchedulerStudiesCount(filteringPaginationData["searchParams"], function(error, result) {
+			if (!error) {
+				// Update the total results and recalculate the number of pages (but don't perform the search again)
+				filteringPaginationData["totalResults"] = result.count;
+				filteringPaginationData["updateSearchOptions"]();
+				
+				loadStudyBatch();
+			}
+		});
 	}
 
 	const loadStudyBatch = function() {
 		$("#loader").show();
 		
-		let data = $("#scheduler_filtering").data();
-		Simva.getSchedulerStudies(data["searchParams"], function(error, result){
+		Simva.getSchedulerStudies(filteringPaginationData["searchParams"], function(error, result){
 			if (!error) {
 				paintStudyBatch(result);
 				$("#loader").hide();
@@ -65,15 +73,21 @@
 	}
 
 	const paintStudyBatch = function(studyBatch) {
-		let data = $("#scheduler_filtering").data();
+		filteringPaginationData = $("#scheduler_filtering").data();
 
 		studyBatch.forEach((study) => {
 			fillStudyCard(study);
 		});
 		
-		// If there are no studies in this batch,  set the corrseponding no simlets message 
 		if (studyBatch.length == 0) {
-			$('#studies_list').text("<%- t('scheduler.noSIMLET.title', { ns : 'SIMLETs' }) %>");
+			// There are no studies in the current section
+			if (totalResults == 0) {
+				$('#studies_list').text("<%- t('scheduler.noSIMLET.title', { ns : 'SIMLETs' }) %>");
+			}
+			// There are studies, but none of them matched the search parameters
+			else {
+				$('#studies_list').text("<%- t('search.no_matches', { ns : 'SIMLETs' }) %>");
+			}
 		}
 	}
 
