@@ -716,7 +716,7 @@
 		card.find(".sessionTestLauch").hide();
 		
 		// Callback to set the summary completion bar progress and other info that depends on the number of activities or users
-		// (called after retreiving the complete session info from either the previously stored sessions info or from the database)
+		// (called after fetching the complete session info from either the previously stored sessions info or from the database)
 		const fillCompleteFields = function(completeSession) {
 			const sessionParticipants = Array.isArray(completeSession.completeParticipants) ? completeSession.completeParticipants : [];
 			let userCount = sessionParticipants.length;
@@ -772,7 +772,7 @@
 		if (completeSessionsById.has(session.session_id)) {
 			fillCompleteFields(completeSessionsById.get(session.session_id));
 		}
-		// If the complete info hasn't been stored yet, retreive it and store it for faster access
+		// If the complete info hasn't been stored yet, fetch it and store it for faster access
 		else {
 			Simva.getStudyTestComplete(studyid, session.session_id, function(error, result) {
 				if(!error) {

@@ -208,8 +208,9 @@ the elements and scripts defined in the simlet_commons partial -->
 	// Needs to contain all the sessions from the start to show them as options in the group allocator
 	let sessionsById = new Map();	// Defined on reloadStudy or on paintAllocator in the simlet_users partial (whichever loads first)
 	
-	// Stored to avoid having to retreive them every time the search parameters change 
-	// They don't need to contain all the data from the start since they're only neeeded when they're getting painted
+	// Stored to avoid having to fetch them every time the search parameters change 
+	// They don't need to contain all the data from the start since they're only neeeded
+	// when they're getting painted and when interacting with the elements they're painted on
 	let completeSessionsById = new Map();		// Defined on fillSessionCard in the simlet_sessions partial 
 	let	completeActivitiesById = new Map();		// Defined on fillSessionCard in the simlet_sessions partial
 	let completeGroupsById = new Map();			// Defined on paintAllocator in the simlet_users partial
@@ -314,7 +315,7 @@ the elements and scripts defined in the simlet_commons partial -->
 	
 	let reloadStudy = function() {
 		// Clear the stored variables in case of deletion/edit, as they were only stored to 
-		// avoid retreiving them from the database every time the search parameters change 
+		// avoid fetching them from the database every time the search parameters change 
 		completeSessionsById.clear();
 		completeActivitiesById.clear();
 		completeGroupsById.clear();
@@ -344,8 +345,8 @@ the elements and scripts defined in the simlet_commons partial -->
 				// Defined in the simlet_groups partial
 				groupsFilteringPaginationData["updateSearch"]();
 
-				// Try retreiving the sessions and groups before paintAllocator in the simlet_users partial
-				// to potentially avoid retreiving them multiple times, since the first paintAllocator calls
+				// Try fetching the sessions and groups before paintAllocator in the simlet_users partial
+				// to potentially avoid fetching them multiple times, since the first paintAllocator calls
 				// run asynchronously and practically at the same time 
 				if (sessionsById.size < study.sessions.length) {
 					Simva.getStudyTests(studyid, function(error, result) {
@@ -411,11 +412,11 @@ the elements and scripts defined in the simlet_commons partial -->
 				}
 			}
 
-			// If all sessions have already been retreived, call the callback directly
+			// If all sessions have already been fetched, call the callback directly
 			if (sessionsById.size == study.sessions.length) {
 				checkAllSessionsFinished();
 			}
-			// Otherwise, retreive them from the database, store them, and call the callback once it's done
+			// Otherwise, fetch them from the database, store them, and call the callback once it's done
 			else {
 				Simva.getStudyTests(studyid, function(error, result) {
 					if (!error) {

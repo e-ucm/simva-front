@@ -69,10 +69,13 @@
             "groups.edit.no_changes.message": "Aucun changement n'a été détecté avec groupe nom !",
         "groups.settings.add.title": "Ajouter des participants",
             "participants.username.placeholder": "Nom d'utilisateur du participant",
+            "participants.username.placeholder.batch": "",
             
             "participants.add.existing.tab": "Ajouter existant",
                 "participants.add.existing.submit": "Ajouter existant",
                 "participants.errormessage.alreadyInGroup": "Le participant '{{participant}}' est déjà dans le groupe '{{group}}'.",
+                "participants.errormessage.notFound": "",
+                "participants.errormessage.reloadManually": "",
 
             "participants.add.new.tab": "Ajouter un nouveau",
                 "participants.add.new.email.placeholder": "email@example.com",

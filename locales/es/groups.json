@@ -69,10 +69,13 @@
 
         "groups.settings.add.title": "Añadir participantes",
             "participants.username.placeholder": "Nombre de usuario del participante",
+            "participants.username.placeholder.batch": "Nombres de usuario de los participantes separados por ,",
             
             "participants.add.existing.tab": "Añadir existente",
                 "participants.add.existing.submit": "Añadir usuario",
                 "participants.errormessage.alreadyInGroup": "El participante '{{participant}}' ya está en el grupo '{{group}}'",
+                "participants.errormessage.notFound": "No se encontró el usuario '{{participant}}'",
+                "participants.errormessage.reloadManually": "Por favor, refresque la página para ver los cambios",
 
             "participants.add.new.tab": "Añadir nuevo",
                 "participants.add.new.email.placeholder": "email@ejemplo.com",

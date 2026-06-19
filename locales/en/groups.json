@@ -69,11 +69,14 @@
 
         "groups.settings.add.title": "Add participants",
             "participants.username.placeholder": "Participant username",
+            "participants.username.placeholder.batch": "Participant usernames separated by ,",
             
             "participants.add.existing.tab": "Add existing",
                 "participants.add.existing.submit": "Add existing",
                 "participants.errormessage.alreadyInGroup": "The participant '{{participant}}' is already in the group '{{group}}'",
-
+                "participants.errormessage.notFound": "User '{{participant}}' not found",
+                "participants.errormessage.reloadManually": "Please refresh the page to see the changes",
+                
             "participants.add.new.tab": "Add new",
                 "participants.add.new.email.placeholder": "email@example.com",
                 "participants.add.new.password.placeholder": "Password",

@@ -215,8 +215,8 @@
 			<div id="existing_participant_tab" class="subform selected">
 				<form id="existing_participant_form">
 					<br>
-					<input type="text" class="name_field" name="name" placeholder="<%= t('participants.username.placeholder', { ns : 'groups' }) %>" required>
-					<!-- <textarea type="text" name="name" id="session_description" placeholder="<%- t('participants.username.placeholder', { ns : 'groups' }) %>" required></textarea> -->
+					<!-- <input type="text" class="name_field" name="name" placeholder="<%= t('participants.username.placeholder', { ns : 'groups' }) %>" required> -->
+					<textarea type="text" name="name" style="max-height: 10rem; " placeholder="<%- t('participants.username.placeholder.batch', { ns : 'groups' }) %>" required></textarea>
 					<input type="submit" value="<%= t('participants.add.existing.submit' , { ns : 'groups' }) %>">
 				</form>
 			</div>
@@ -498,41 +498,119 @@
 
 		// Add existing user as participant
 		$(document).on('submit', "#existing_participant_form", function(event){
-			let group = getGroupFromId(editingGroupId);
+			let currentform = this;
 			let form = Utils.getFormData($(this));
 			let errorbox = $("#participants_error");
+			let errorText = "";
 
-			// Do nothing if participant is already on the group and show error 
-			participants.forEach(function(participant) {
-				if (participant.group_id == editingGroupId && participant.username == form.name) {
-					errorbox.text(`<%- t("participants.errormessage.alreadyInGroup", { ns : "groups", group : "${group.group_name}", participant : "${form.name}" }) %>`); 
-					return false;
+			// Get all users in the group and store them by username
+			const group = getGroupFromId(editingGroupId);
+			let groupParticipants = new Map();
+			if (group != null) {
+				groupParticipants = new Map(
+					group.completeParticipants.map(obj => [obj.username, obj])
+				);
+			}
+			else {
+				return false;
+			}
+
+			// Remove all the white spaces from the text area and split all the usernames by commas
+			const noWhitespaces = form.name.replaceAll(/\s/g, '');
+			const usernames = noWhitespaces.split(",");
+			
+			let foundUsers = new Map();
+			let completed = 0;
+			let added = 0;
+
+			// Callback to wait for all the addGroupParticipant calls to finish
+			const addUsersComplete = () => {
+				completed++;
+				if (completed == usernames.length) {
+					// If all users have been correctly added, close the form and reload the study
+					if (added == usernames.length) {
+						Utils.toggleSubmit(currentform);
+						Utils.toggleAddForm('add_participant');
+						reloadStudy();
+					}
+					// Otherwise, don't close the form to show the error
+					else {
+						Utils.toggleSubmit(currentform);
+
+						// If some users have been added, add an extra message asking for 
+						// manual refreshing (to allow the user to see the error message)
+						if (added > 0) {
+							errorText += `<%- t("participants.errormessage.reloadManually", { ns : "groups" }) %> <br> `
+						}
+						errorbox.html(errorText);
+						return false;
+					}
 				}
-			});
+			}
 
-			Simva.getUsers({ username: form.name }, function(error, users){
-                if(error){
-                    errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
-                    return;
-                }
-
-                const foundUser = Array.isArray(users) ? users[0] : users;
-                if(!foundUser || !foundUser.user_id){
-                    errorbox.text("User not found");
-                    return;
-                } else {
-                    Simva.addGroupParticipant(studyid, editingGroupId, foundUser.user_id, function(addError){
-                        if(addError && addError.responseJSON){
-                            errorbox.text(addError.responseJSON.message);
-                        }else if(addError) {
-                            errorbox.text(addError.message || addError);
-                        }else{
-                            Utils.toggleAddForm('add_participant');
-                            reloadStudy();
-                        }
-                    });
-                }
-            });
+			// Callback to wait for all the getUsers calls to finish
+			const checkUserComplete = () => {
+				completed++;
+				if (completed == usernames.length) {
+					// If all users can be added, iterate over them and try adding them 
+					if (foundUsers.size == usernames.length) {
+						completed = 0;
+						errorText = "";
+						
+						Utils.toggleSubmit(currentform);
+						foundUsers.forEach((user, username) => {
+							Simva.addGroupParticipant(studyid, editingGroupId, user.user_id, function(addError){
+								// If there are any erorrs, add them to the error message
+							    if(addError && addError.responseJSON) {
+									errorText += `${addError.responseJSON.message} <br> `
+							    }
+								else if(addError) {
+									errorText += `${(addError.message || addError)} <br> ` 
+							    }
+								// Otherwise, increase the added users count
+								else{
+							        added++;
+							    }
+								addUsersComplete();
+							});
+						});
+					}
+					// Otherwise, don't add any user and show all the error messages
+					else {
+						errorbox.html(errorText);
+						return false;
+					}
+				}
+			}
+  			
+			// Try adding all the usernames
+			usernames.forEach((username) => {
+				// If any participant is already in the group, add each user to the error message 
+				if (groupParticipants.has(username)) {
+					errorText += `<%- t("participants.errormessage.alreadyInGroup", { ns : "groups", group : "${group.group_name}", participant : "${username}" }) %> <br> `;
+					checkUserComplete();
+				}
+				// Otherwise, try to fetch an user from the database with said username
+				else {
+					Simva.getUsers({ username: username }, function(error, result) {
+						// If there's no user with that username, add if to the error message
+						if (error) {
+							errorText += `${(error.responseJSON ? error.responseJSON.message : error.message || error)} <br> ` 
+						}
+						else {
+							const foundUser = Array.isArray(result) ? result[0] : result;
+                			if(!foundUser || !foundUser.user_id){
+								errorText += `<%- t("participants.errormessage.alreadyInGroup", { ns : "groups", participant : "${username}" }) %> <br> `
+							}
+							// If there's a user with that username, add it to the found users
+							else {
+								foundUsers.set(username, foundUser)
+							}
+						}
+						checkUserComplete();
+					});
+				}
+			})
 			
 			return false;
 		});
@@ -984,7 +1062,7 @@
 		}
 		else {
 			// Callback to fill the table with the users info 
-			// (called after retreiving the complete group info from either the previously stored groups info or from the database)
+			// (called after fetching the complete group info from either the previously stored groups info or from the database)
 			const fillCompleteFields = function(completeGroup) {
 				completeGroup.completeParticipants.forEach(function(participant) {
 					participantsById.set(participant.user_id, participant)
@@ -1015,7 +1093,7 @@
 			if (completeGroupsById.has(group.group_id)) {
 				fillCompleteFields(completeGroupsById.get(group.group_id));
 			}
-			// If the complete info hasn't been stored yet, retreive it and store it for faster access
+			// If the complete info hasn't been stored yet, fetch it and store it for faster access
 			else {
 				Simva.getGroup(studyid, group.group_id, function(error, result) {
 					if(!error) {
@@ -1045,11 +1123,11 @@
 			}
 		}
 		
-		// If all sessions have already been retreived, call the callback directly
+		// If all sessions have already been fetched, call the callback directly
 		if (sessionsById.size == study.sessions.length) {
 			onLoadComplete();
 		}
-		// Otherwise, retreive them from the database, store them, and call the callback once it's done
+		// Otherwise, fetch them from the database, store them, and call the callback once it's done
 		else {
 			Simva.getStudyTests(studyid, function(error, result) {
 				if (!error) {
