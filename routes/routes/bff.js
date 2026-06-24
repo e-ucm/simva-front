@@ -241,41 +241,6 @@ module.exports = function(auth, redirectToLogin, config){
 
 
     /**
-    * GROUPS
-    */
-
-    // TODO: Remove?
-    router.get('/groups', auth, redirectToLogin, async (req, res, next) => {
-        if(req.query.use_new_generation) {
-            Simva.getGroupsWithVersion(req.query.use_new_generation === 'true', req.session.id, (error, result) => {
-                if(error) {
-                    next(error.response?.data || error);
-                } else {
-                    res.status(200).send(result);
-                }
-            });
-        } else {
-            Simva.getGroups(req.session.id, (error, result) => {
-                if(error) {
-                    next(error.response?.data || error);
-                } else {
-                    res.status(200).send(result);
-                }
-            });
-        }
-    });
-    router.get('/simlets/:simlet_id/groups/:groupid/simlets', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getGroupSimlets(req.params['simlet_id'], req.params['groupid'], req.session.id, (error, result) => {
-            if(error) {
-                next(error.response?.data || error);
-            } else {
-                res.status(200).send(result);
-            }
-        });
-    });
-
-
-    /**
     * SIMLET GROUPS (with simlet_id)
     * 
     */

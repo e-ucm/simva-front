@@ -196,18 +196,6 @@ class Simva {
 	
 	// GROUPS
 
-	// TODO: Remove?
-	getGroups(sessionId, callback){
-		this.get(`${this.apiurl}/groups`, sessionId, callback);
-	}
-	getGroupsWithVersion(useNewGeneration, sessionId, callback){
-		this.get(`${this.apiurl}/groups?use_new_generation=${useNewGeneration}`, sessionId, callback);
-	}
-	getGroupSimlets(simlet_id, group_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/simlets`, sessionId, callback);
-	}
-
-
 	getStudyGroups(simlet_id, queryParams, sessionId, callback){
 		this.get(`${this.apiurl}/simlets/${simlet_id}/groups${this.getQueryString(queryParams)}`, sessionId, callback);
 	}

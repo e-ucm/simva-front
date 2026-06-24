@@ -171,15 +171,6 @@ var Simva = {
 
 
 	// GROUPS
-	
-	// TODO: Remove?
-	getGroups: function(use_new_generation, callback){
-		Utils.get(`/bff/groups?use_new_generation=${use_new_generation}`, callback);
-	},
-	getGroupSimlets: function(simlet_id,group_id, callback){
-		Utils.get(`/bff/simlets/${simlet_id}/groups/${group_id}/simlets`, callback);
-	},
-	
 
 	getStudyGroups: function(simlet_id, query, callback){
 		const params = determineQueryAndCallback(query, callback);

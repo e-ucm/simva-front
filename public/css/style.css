@@ -830,13 +830,13 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
-.studyTagsRow .sessionTagList {
+.simletTagsRow .sessionTagList {
 	vertical-align: top;
 	gap: 5px;
 	text-align: left;
 	font-weight: bold;
 }
-.studyTagsRow .sessionTagChip { margin-right: 5px; font-weight: normal; }
+.simletTagsRow .sessionTagChip { margin-right: 5px; font-weight: normal; }
 
 
 
@@ -993,7 +993,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	margin-left: auto;
 	margin-right: 0px;
 }
-.studyTagsRow {
+.simletTagsRow {
 	padding: 10px;
 	display: flex;
     gap: 5px;

@@ -79,25 +79,24 @@
         let painters = Object.keys(PainterFactory.Painters);
 
 		Simva.getActivityTypes(function(error, activitytypes) {
-
-			   // Add a default 'no selected' option
-			   $('#new_activity_form select[name="type"]').append("<option value=\"\" selected disabled hidden><%- t('activity.type.select', { ns : 'activities' }) %></option>");
-			   for (var i = 0; i < activitytypes.length; i++) {
-				   if (activitytypes[i].commun && PainterFactory.Painters["activity"]) {
-					   PainterFactory.Painters["activity"].commun = activitytypes[i].commun;
-					   PainterFactory.Painters["activity"].communSpecific = activitytypes[i].communSpecific;
-				   }
-				   if (PainterFactory.Painters[activitytypes[i].activity_type]) {
-					   PainterFactory.Painters[activitytypes[i].activity_type].setUtils(activitytypes[i].activity_utils);
-					   PainterFactory.Painters[activitytypes[i].activity_type].simple_name = activitytypes[i].name;
-					   PainterFactory.Painters[activitytypes[i].activity_type].description = activitytypes[i].description;
-					   PainterFactory.Painters[activitytypes[i].activity_type].commun = activitytypes[i].commun;
-					   PainterFactory.Painters[activitytypes[i].activity_type].communSpecific = activitytypes[i].communSpecific;
-					   PainterFactory.Painters[activitytypes[i].activity_type].specific = activitytypes[i].specific;
-					   let row = `<option value="${activitytypes[i].activity_type}">${PainterFactory.Painters[activitytypes[i].activity_type].simple_name}</option>`;
-					   $('#new_activity_form select[name="type"]').append(row);
-				   }
-			   }
+			// Add a default 'no selected' option
+			$('#new_activity_form select[name="type"]').append("<option value=\"\" selected disabled hidden><%- t('activity.type.select', { ns : 'activities' }) %></option>");
+			for (var i = 0; i < activitytypes.length; i++) {
+				if (activitytypes[i].commun && PainterFactory.Painters["activity"]) {
+					PainterFactory.Painters["activity"].commun = activitytypes[i].commun;
+					PainterFactory.Painters["activity"].communSpecific = activitytypes[i].communSpecific;
+				}
+				if (PainterFactory.Painters[activitytypes[i].activity_type]) {
+					PainterFactory.Painters[activitytypes[i].activity_type].setUtils(activitytypes[i].activity_utils);
+					PainterFactory.Painters[activitytypes[i].activity_type].simple_name = activitytypes[i].name;
+					PainterFactory.Painters[activitytypes[i].activity_type].description = activitytypes[i].description;
+					PainterFactory.Painters[activitytypes[i].activity_type].commun = activitytypes[i].commun;
+					PainterFactory.Painters[activitytypes[i].activity_type].communSpecific = activitytypes[i].communSpecific;
+					PainterFactory.Painters[activitytypes[i].activity_type].specific = activitytypes[i].specific;
+					let row = `<option value="${activitytypes[i].activity_type}">${PainterFactory.Painters[activitytypes[i].activity_type].simple_name}</option>`;
+					$('#new_activity_form select[name="type"]').append(row);
+				}
+			}
 			$('#new_activity_extras').empty();
 
 			Simva.getAllocatorTypes(function(error, allocatortypes) {
@@ -116,7 +115,7 @@
 						$('#change_allocator_content').append(row);
 					}
 				}
-				reloadStudy();
+				reloadSimlet();
 			});
 		});
 
@@ -147,14 +146,14 @@
 						let raw = reader.result;
 						raw = raw.substr(raw.indexOf(',') + 1);
 						var newActivity = raw;
-						Simva.importActivity(studyid, form.test, {file: newActivity, activity_name: form.name}, function(importError, result) {
+						Simva.importActivity(simletId, form.test, {file: newActivity, activity_name: form.name}, function(importError, result) {
 							Utils.toggleSubmit(currentform);
 							if (importError) {
 								errorbox.text(importError.responseJSON ? importError.responseJSON.message : importError.message || importError);
 								return;
 							} else {
 								$("#add_activity").removeClass("shown");
-								reloadStudy();
+								reloadSimlet();
 							}
 						});
 					} catch (parseError) {
@@ -191,13 +190,13 @@
 					   if (error) {
 						   errorbox.text(error);
 					   } else {
-						   Simva.addActivityToTest(studyid, form.test, activity, function(error, result) {
+						   Simva.addActivityToTest(simletId, form.test, activity, function(error, result) {
 							   Utils.toggleSubmit(currentform);
 							   if (error && error.responseJSON) {
 								   errorbox.text(error.responseJSON.message);
 							   } else {
 								   Utils.toggleAddForm('add_activity');
-								   reloadStudy();
+								   reloadSimlet();
 							   }
 						   });
 					   }
@@ -249,13 +248,13 @@
 						errorbox.text("<%- t('edit.no_changes.message', { ns : 'SIMLETs' }) %>");
 						Utils.toggleSubmit(currentform);
 					} else {
-						Simva.updateActivity(studyid, form.test, form.activity, updatedActivity, function(error, result) {
+						Simva.updateActivity(simletId, form.test, form.activity, updatedActivity, function(error, result) {
 							Utils.toggleSubmit(currentform);
 							if (error && error.responseJSON) {
 								errorbox.text(error.responseJSON.message);
 							} else {
 								Utils.toggleAddForm('iframe_floating');
-								reloadStudy();
+								reloadSimlet();
 							}
 						});
 					}
@@ -332,17 +331,17 @@
 		}
 	}
 
-	// TODO: add shared listeners
+	// TODO: add shared listeners using event delegation
 
 	
 	// Functionality
 
-    let deleteActivity = function(activityid, activityname, testid) {
-		let test = getSessionFromId(testid);
-		let testName = test && test.session_name ? test.session_name : testid;
-		if (confirm(`<%- t('delete.confirm', { ns : 'activities', activity : '${activityname}', session: '${testName}' , SIMLET : '${study.simlet_name}' }) %>`)) {
-			Simva.deleteActivity(studyid, testid, activityid, function(error, result) {
-				reloadStudy();
+    const deleteActivity = function(activityid, activityname, sessionId) {
+		let test = getSessionFromId(sessionId);
+		let testName = test && test.session_name ? test.session_name : sessionId;
+		if (confirm(`<%- t('delete.confirm', { ns : 'activities', activity : '${activityname}', session: '${testName}' , SIMLET : '${simlet.simlet_name}' }) %>`)) {
+			Simva.deleteActivity(simletId, sessionId, activityid, function(error, result) {
+				reloadSimlet();
 			});
 		}
 	}
@@ -360,7 +359,7 @@
 	}
 
 	const downloadActivityXasuConfig = function() {
-		GameplayActivityPainter.downloadXasuConfig(downloadActivityId, studyid);
+		GameplayActivityPainter.downloadXasuConfig(downloadActivityId, simletId);
 	}
 
 	const downloadUsersActivityBackup = function() {
@@ -369,16 +368,23 @@
 
 	
 	// Render
-	
-    let paintTestActivities = async function(test, activities, participants) {
+
+	/**
+	 * Paint all the activities cards of a session
+	 * 
+	 * @param {Object} sesion - object containing the session info
+	 * @param {Array} activities - Array of objects containing the activities info
+	 * @param {Array} participants - Array of objects containing the session participants info
+	 */
+    const paintSessionActivities = async function(session, activities, participants) {
 		window.participants = participants;
 		const isCurrentUserParticipant = currentUser.user_id !== null && participants.some(function(p) {
 			return p.user_id === currentUser.user_id || String(p.user_id) === String(currentUser.user_id);
 		});
-		$(`#test_${test.session_id} .activities`).empty();
+		$(`#test_${session.session_id} .activities`).empty();
 
 		if (activities.length === 0) {
-			$(`#test_${test.session_id} .activities`).text("<%- t('no_activities.message', { ns : 'activities' }) %>");
+			$(`#test_${session.session_id} .activities`).text("<%- t('no_activities.message', { ns : 'activities' }) %>");
 		} else {
 			activities.forEach((activity) => {
 				switch(activity.activity_type) {
@@ -401,7 +407,7 @@
 		}
 
 		// Block activity changes when SIMLET is archived
-		if (test.session_status == sessionFinishedStatus) {
+		if (session.session_status == SESSION_FINISHED_STATUS) {
 			$(".activityTopActions").find(".kebab-dropdown").find(".icon-delete").hide();
 			$(".activityTopActions").find(".kebab-dropdown").find(".icon-activate").hide();
 			$(".activityTopActions").find(".kebab-dropdown").find(".icon-pause").hide();

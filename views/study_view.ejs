@@ -2,9 +2,7 @@
  
 <% extend('layout_with_menu') %>
 
-<!--<div id="roller" style="width: 100%; text-align: center; padding: 200px;">
-	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-</div>-->
+<!-- Top part of the view, which includes the SIMLET name and the 3-dot menu button -->
 <div class="simletTop">
 	<h1 title="<%- t('single.description', { ns : 'SIMLETs' }) %>"><%- t('single.title', { ns : 'SIMLETs' }) %>: <span id="simlet_name"></span></h1>
 	<div class="simletSettings">
@@ -14,10 +12,13 @@
 	</div>
 </div>
 
+<!-- The SIMLET tags list will be inserted here after the SIMLET has loaded -->
+
 <!-- Needs to be added before other partials to allow them to use
 the elements and scripts defined in the simlet_commons partial -->
 <%- include('partials/simlet_commons') %>
 
+<!-- Sessions/groups tabs -->
 <div id="study_tabs">
 	<div class="tabs studyTabsButtons">
 		<input class="tab yellow selected" type="button" title="<%- t('sessions.tab.description', { ns : 'SIMLETs' }) %>" onclick="Utils.changeTab(this, 'study_tabs','sessions_tab')" value="<%- t('sessions.tab.title', { ns : 'SIMLETs' }) %>">
@@ -29,10 +30,12 @@ the elements and scripts defined in the simlet_commons partial -->
 		<%- include('partials/simlet_sessions') %>
 		<%- include('partials/simlet_activities') %>
 		
+		<!-- Common menu for downloading both sessions and activities data  -->
 		<div id="download_data_menu" class="new_element floating">
 			<div class="floater">
 				<div class="form" id="download_data_form">
-					<h1 id="downloadFormTitle">	</h1>
+					<h1 id="downloadFormTitle">		</h1>
+
 					<div id="download_session_data" class="subform selected">
 						<!-- onClick functions defined on the simlet_sessions partial -->
 						<input class="yellow" type="button" value="<%- t('download.session.title', { ns : 'sessions' }) %>" onclick="downloadSessionData()">
@@ -40,7 +43,7 @@ the elements and scripts defined in the simlet_commons partial -->
 					</div>
 
 					<div id="download_activity_data" class="subform">
-						<!-- onClick functions definedd on the simlet_activities partial -->
+						<!-- onClick functions defined on the simlet_activities partial -->
 						<input class="yellow" type="button" value="<%- t('download.activity.title', { ns : 'activities' }) %>" onclick="downloadActivityData()">
 						<input class="yellow" id="global_backup_download" type="button" value="<%- t('download.backup.global.title', { ns : 'activities' }) %>" onclick="downloadGlobalActivityBackup()">
 						<input class="yellow" id="activity_test_data_download" type="button" title="<%- t('download.test.description', { ns : 'activities' }) %>" value="<%- t('download.test.title', { ns : 'sessions' }) %>" onclick="downloadActivityTestData()">
@@ -59,7 +62,8 @@ the elements and scripts defined in the simlet_commons partial -->
 	</div>
 </div>
 
-
+<!-- Invisible table that gets filled when exporting a group as PDF. Needs to
+ be included in this view to ensure it correctly renders on the print window-->
 <div id="pdf_printable">
 	<h3 id="printable_group_name">	</h3>
 	<table id="printable_table">
@@ -73,6 +77,7 @@ the elements and scripts defined in the simlet_commons partial -->
 		</tbody>
 	</table>
 </div>
+
 
 <!-- SSE -->
 <script type="text/javascript">
@@ -201,12 +206,12 @@ the elements and scripts defined in the simlet_commons partial -->
 	// of the page so the floating button doesnt cover any other element
 	$(".content").addClass("floating");
 	
-	let studyid = "<%= study %>";
+	let simletId = "<%= study %>";
 	let currentUser = null;
-	let study = null;
+	let simlet = null;
 
 	// Needs to contain all the sessions from the start to show them as options in the group allocator
-	let sessionsById = new Map();	// Defined on reloadStudy or on paintAllocator in the simlet_users partial (whichever loads first)
+	let sessionsById = new Map();	// Defined on reloadSimlet or on paintAllocator in the simlet_users partial (whichever loads first)
 	
 	// Stored to avoid having to fetch them every time the search parameters change 
 	// They don't need to contain all the data from the start since they're only neeeded
@@ -224,7 +229,7 @@ the elements and scripts defined in the simlet_commons partial -->
 
 	$(document).ready(function() {
 		// Set refresh function of the simlet_commons partial
-		refreshFunc = reloadStudy;
+		refreshFunc = reloadSimlet;
 		
 		Simva.getCurrentUser((error, user) => {
 			if(!error) {
@@ -234,19 +239,19 @@ the elements and scripts defined in the simlet_commons partial -->
 				currentUser = null;
 				// Optionally, display an error message to the user
 				alert("Error fetching user information. Some features may not work properly.");
-				//reloadStudy();
+				//reloadSimlet();
 			}
 		});
 
 		// Create the SIMLET 3-dot button from the template 
 		const kebab = $("#kebab_template .kebab-dropdown").clone();
 		$(".simletSettings .kebab").append(kebab);
-		kebab.find(".icon-edit").click(() => { openStudyForm(studyid) });
-		kebab.find(".icon-url").click(() => { openUrlSettingsForm(studyid, study.simlet_name) });
-		kebab.find(".icon-download").click(() => { openConfigDownloadForm(studyid, study.simlet_name) });
-		kebab.find(".icon-export").click(() => { exportSimlet(studyid) });
+		kebab.find(".icon-edit").click(() => { openSimletForm(simletId) });
+		kebab.find(".icon-url").click(() => { openUrlSettingsForm(simletId, simlet.simlet_name) });
+		kebab.find(".icon-download").click(() => { openConfigDownloadForm(simletId, simlet.simlet_name) });
+		kebab.find(".icon-export").click(() => { exportSimlet(simletId) });
 		kebab.find(".icon-delete").click(() => { 
-			deleteStudy(studyid, study.simlet_name) 
+			deleteSimlet(simletId, simlet.simlet_name) 
 			refreshFunc();
 		});
 
@@ -255,20 +260,20 @@ the elements and scripts defined in the simlet_commons partial -->
 		$("#import_study_tab").remove();
 	});
 
-	const openStudyForm = function() {
+	const openSimletForm = function() {
 		Utils.toggleAddForm('study_form');
 
 		$('#study_form_error').text("");
-		$('#edit_study_id').val(studyid);
+		$('#edit_study_id').val(simletId);
 		
 		$("#study_form_title").text("<%- t('edit.title', { ns : 'SIMLETs' }) %>")
 		$("#study_name_desc_submit").val("<%- t('edit.submit', { ns : 'SIMLETs' }) %>")
 
-		$('#prev_study_name').val(study.simlet_name);
-		$('#prev_study_description').val(study.simlet_description);
+		$('#prev_study_name').val(simlet.simlet_name);
+		$('#prev_study_description').val(simlet.simlet_description);
 		
-		$('#study_name').val(study.simlet_name);
-		$('#study_description').val(study.simlet_description);
+		$('#study_name').val(simlet.simlet_name);
+		$('#study_description').val(simlet.simlet_description);
 	}
 
 
@@ -306,14 +311,14 @@ the elements and scripts defined in the simlet_commons partial -->
 		const sorted = Array.from(sessionsById.values()).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 		return sorted[0];
 	}
-
+	
 	const getLatestUpdatedSession = function() {
 		const sorted = Array.from(sessionsById.values()).sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
 		return sorted[0];
 	}
 
 	
-	let reloadStudy = function() {
+	const reloadSimlet = function() {
 		// Clear the stored variables in case of deletion/edit, as they were only stored to 
 		// avoid fetching them from the database every time the search parameters change 
 		completeSessionsById.clear();
@@ -322,15 +327,15 @@ the elements and scripts defined in the simlet_commons partial -->
 		participantsById.clear();
 		participantsByUsername.clear();
 		
-		// Get the study essential parameters such as the name or its status and paint the different 
-		// independent sections of the study asynchronously since the order of execution doesn't matter
-		Simva.getStudy(studyid, function(error, result) {
+		// Get the SIMLET essential parameters such as the name or its status and paint the different 
+		// independent sections of the SIMLET asynchronously since the order of execution doesn't matter
+		Simva.getStudy(simletId, function(error, result) {
 			if (!error) {
-				study = result;
+				simlet = result;
 
-				$('#simlet_name').text(study.simlet_name);
+				$('#simlet_name').text(simlet.simlet_name);
 				$("#simlet_tags").remove();
-				$(".simletTop").after($(renderTags(study)).attr("id", "simlet_tags"));
+				$(".simletTop").after($(renderTags(simlet)).attr("id", "simlet_tags"));
 				
 				paintArchived();
 				
@@ -348,8 +353,8 @@ the elements and scripts defined in the simlet_commons partial -->
 				// Try fetching the sessions and groups before paintAllocator in the simlet_users partial
 				// to potentially avoid fetching them multiple times, since the first paintAllocator calls
 				// run asynchronously and practically at the same time 
-				if (sessionsById.size < study.sessions.length) {
-					Simva.getStudyTests(studyid, function(error, result) {
+				if (sessionsById.size < simlet.sessions.length) {
+					Simva.getStudyTests(simletId, function(error, result) {
 						if (!error) {
 							sessionsById = new Map(
 								result.map(obj => [obj.session_id, obj])
@@ -369,15 +374,17 @@ the elements and scripts defined in the simlet_commons partial -->
 	}
 
 
-	// Paint the corresponding archivation button depending of the study status (active/archived) 
-	// and activate/deactivate it depending on all the sessions status  
+	/**
+	 * Paint the corresponding archivation button depending of the SIMLET status (active/archived) 
+	 * and activate/deactivate it depending on all the sessions status  
+	 */
 	const paintArchived = async function() {
-		const active = !study.simlet_archived;
+		const active = !simlet.simlet_archived;
 
 		let archiveButton = $(".archivationButton");
 		let txt = ""
 		
-		// If the study is active
+		// If the SIMLET is active
 		if (active == null || active) {
 			txt = "<%- t('settings.archive.title', { ns : 'SIMLETs' }) %>"
 
@@ -393,32 +400,32 @@ the elements and scripts defined in the simlet_commons partial -->
 				let allSessionsFinished = true;
 
 				sessionsById.forEach((id, session) => {
-																					// Defined in simlet_sessions
-					allSessionsFinished = allSessionsFinished && session.session_status == sessionFinishedStatus;
+																					// Defined in the simlet_sessions partial
+					allSessionsFinished = allSessionsFinished && session.session_status == SESSION_FINISHED_STATUS;
 				});
 
 				// If not all sessions are finished, disable the archive button
 				if (!allSessionsFinished) {
 					archiveButton.addClass('li-disabled').removeAttr('onclick');
 				}
-				// Otherwise, enable it and set its onclick function to archive the study
+				// Otherwise, enable it and set its onclick function to archive the SIMLET
 				else {
 					archiveButton.removeClass('li-disabled').click(() => { 
-						if(confirm(`<%- t('archive.confirm', { ns : 'SIMLETs', SIMLET : '${study.simlet_name}' }) %>`)){
+						if(confirm(`<%- t('archive.confirm', { ns : 'SIMLETs', SIMLET : '${simlet.simlet_name}' }) %>`)){
 							// Defined in the simlet_commons partial
-							archiveStudy(studyid, study.simlet_name);
+							archiveSimlet(simletId, simlet.simlet_name);
 						}
 					});
 				}
 			}
 
 			// If all sessions have already been fetched, call the callback directly
-			if (sessionsById.size == study.sessions.length) {
+			if (sessionsById.size == simlet.sessions.length) {
 				checkAllSessionsFinished();
 			}
 			// Otherwise, fetch them from the database, store them, and call the callback once it's done
 			else {
-				Simva.getStudyTests(studyid, function(error, result) {
+				Simva.getStudyTests(simletId, function(error, result) {
 					if (!error) {
 						sessionsById = new Map(
 							result.map(obj => [obj.session_id, obj])
@@ -428,7 +435,7 @@ the elements and scripts defined in the simlet_commons partial -->
 				})
 			}
 		}
-		// If the study is archived
+		// If the SIMLET is archived
 		else {
 			txt = "<%- t('settings.dearchive.title', { ns : 'SIMLETs' }) %>"
 
@@ -439,7 +446,7 @@ the elements and scripts defined in the simlet_commons partial -->
 			archiveButton.addClass('icon-dearchive');
 			archiveButton.removeClass('icon-archive');
 			archiveButton.click(() => { 
-				Simva.updateStudy(studyid, { simlet_archived: false }, function(error, result) {
+				Simva.updateStudy(simletId, { simlet_archived: false }, function(error, result) {
 					if (!error) {
 						refreshFunc();
 					}

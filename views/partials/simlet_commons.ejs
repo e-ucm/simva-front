@@ -1,15 +1,19 @@
 <!-- Elements that are common both the SIMLETs/archived SIMLETs list view and the individual SIMLET view -->
 
-<!-- Add/edit study form -->
+<!-- Add/edit SIMLET form -->
 <div id ="study_form" class="new_element floating">
 	<div class="floater">
 		<div class="form" id="study_form_form">
 			<h1 id="study_form_title"> </h1>
+			
 			<% if (typeof archived !== 'undefined' && !archived) { %>
 			<div class="tabs" id="add_study_tabs">
 				<span id="study_name_desc_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'study_form_form','study_name_desc_tab')"><%- t('new.tab', { ns : 'SIMLETs' }) %></span>
 				<span class="tab" onclick="Utils.changeTab(this, 'study_form_form','import_study_tab')"><%- t('import.tab', { ns : 'SIMLETs' }) %></span>
-			</div>		<% } %>
+			</div>
+			<% } %>
+
+			<!-- Create/edit SIMLET -->
 			<div id="study_name_desc_tab" class="subform selected">
 				<form id="study_name_desc_form">
 					<input hidden type="text" name="editingStudyId" id="edit_study_id">
@@ -23,6 +27,7 @@
 				</form>
 			</div>
 
+			<!-- Import SIMLET -->
 			<div hidden id="import_study_tab" class="subform" style="display: none;">
 				<form id="import_study_form">
 					<h3 class="import_study_form_name"><%- t('name.title', { ns : 'SIMLETs' }) %></h3>
@@ -39,7 +44,7 @@
 	</div>
 </div>
 
-<!-- Manage study URL form -->
+<!-- Manage SIMLET URL form -->
 <div id="study_url_settings" class="new_element floating">
 	<div class="floater">
 		<div class="form">
@@ -59,7 +64,7 @@
 	</div>
 </div>
 
-<!-- Genrate study URL form -->
+<!-- Genrate SIMLET URL form -->
 <div id="generate_study_link" class="new_element floating">
 	<div class="floater">
 		<div class="form" id="generate_study_link_form">
@@ -93,7 +98,7 @@
 	</div>
 </div>
 
-<!-- Download study config form -->
+<!-- Download SIMLET config form -->
 <div id="download_config" class="new_element floating">
 	<div class="floater">
 		<div class="form">
@@ -104,7 +109,7 @@
 	</div>
 </div>
 
-<!-- Template for the 3-dot menu of an entire study  -->
+<!-- Template for the 3-dot menu of an entire SIMLET  -->
 <div id="kebab_template" style="display: none;">
 	<ul class="kebab-dropdown" style="display: none;">
 		<li class="kebab-icon icon-edit" title="<%- t('settings.edit.title', { ns : 'SIMLETs' }) %>">
@@ -142,16 +147,17 @@
 <script type="text/javascript" src="/tooltips.js"></script>
 
 <script>
-	const nameFieldClass = "name_field";
-	const descriptionFieldClass = "description_field";
-	const MAX_NAME_LENGTH = 40;
-	const MAX_DESC_LENGTH = 100;
-	const START_WARNING_PERCENTAGE = 30;	// When the caracter count has this % of character remaining, its color changes to warn the user 
-	let classesWithCharCount = new Set();
-	let classesWithCharCountStr = "";
+	const NAME_FIELD_CLASS = "name_field";					// Class of the input fields that will be used to write names 
+	const DESCRIPTION_DIELD_CLASS = "description_field";	// Class of the input fields that will be used to write descriptions
+	let classesWithCharCount = new Set();					// Classes of elements that will have character counts	
+	let classesWithCharCountStr = "";						// classesWithCharCount converted to jquery selector format
 
-	let currStudyId = null;
-	let refreshFunc = null;
+	const MAX_NAME_LENGTH = 40;								// Max length of the name input fields
+	const MAX_DESC_LENGTH = 100;							// Max length of the description input fields
+	const START_WARNING_PERCENTAGE = 30;	// When the caracter count has this % of character remaining, its color changes to warn the user 
+
+	let currSimletId = null;	// Id of the SIMLET that is currently being edited
+	let refreshFunc = null;		// Function to call when needing to refresh/reload the page info
     let shlink = null;
 
 	
@@ -163,7 +169,7 @@
 	 * @param rawDate {Number} - date epoch
 	 * @param currentlanguageCode {string} - language the user is currently using 
 	 * @returns {string} - string with the formatted date
-	*/
+	 */
 	const getFormattedDate = function(rawDate, currentlanguageCode) {
 		const date = new Date(rawDate);
 		const yyyy = String(date.getFullYear()).slice(-4).padStart(4, '0');
@@ -179,7 +185,7 @@
 	 * 
 	 * @param className {string} - name of the class of the elements that will get the counter added
 	 * @param maxLength {Number} - max number of characters
-	*/
+	 */
 	const addInputCharCountToClass = function(className, maxLength) {
 		// Store the class and update the string with all the classes that must be checked when updating input value
 		classesWithCharCount.add(`.${className}`);
@@ -227,12 +233,25 @@
 		}
 	};
 
+
+	/**
+	 * Checks if the element has any of the classes with a character count and updates the count if it does
+	 * 
+	 * @param elem {Object} - jquery object of the element that will be checked
+	 * @param value {Number} - current number of characters
+	 */
 	const checkAndUpdateCharCount = function(elem, value) {
-		// Only update the character count if the element has the custom name field class
 		if ($(elem).is(classesWithCharCountStr)) {
 			updateCharCount($(elem).next(".char-count"), value.length, $(elem).prop("maxLength"));
 		}
 	}
+	/**
+	 * Updates the character count of an element
+	 * 
+	 * @param countTextElem {Object} - jquery object of the element that will be updated
+	 * @param count {Number} - current number of characters
+	 * @param maxLength {Number} - max number of characters
+	 */
 	const updateCharCount = function(countTextElem, count, maxLength) {
 		$(countTextElem).text(`${count}/${maxLength}`);
 
@@ -258,15 +277,16 @@
     $(document).ready(function() {
 		// Add counter to all name and description fields (must be done after
 		// loading everything to ensure all elements get their counter added)
-		addInputCharCountToClass(nameFieldClass, MAX_NAME_LENGTH);
-		addInputCharCountToClass(descriptionFieldClass, MAX_DESC_LENGTH);
+		addInputCharCountToClass(NAME_FIELD_CLASS, MAX_NAME_LENGTH);
+		addInputCharCountToClass(DESCRIPTION_DIELD_CLASS, MAX_DESC_LENGTH);
 		
+		// When submitting the add/edit SIMLET form
 		$(document).on('submit', "#study_name_desc_tab", function(event) {
 			let currentform = this;
 			let form = Utils.getFormData($("#study_name_desc_form"));
 			Utils.toggleSubmit(currentform);
 
-			// Creating new study
+			// Creating new SIMLET
 			if (form.editingStudyId == null || form.editingStudyId == "") {
 				Simva.addStudy({ simlet_name : form.studyName, simlet_description : form.studyDescription }, function(error, result) {
 					if (error && error.responseJSON) {
@@ -286,7 +306,7 @@
 					}
 				});
 			}
-			// Editing study
+			// Editing SIMLET
 			else {
 				if (form.prevStudyName == form.studyName && form.prevStudyDescription == form.studyDescription) {
 					$('#study_form_error').text("<%- t('edit.no_changes.message', { ns : 'SIMLETs' }) %>");
@@ -308,6 +328,7 @@
 			return false;
 		});
 
+		// When submitting the generate custom shlink form
         $(document).on('submit',"#generate_study_custom_slug_link_form", function(event) {
             event.preventDefault();
             let currentform = this;
@@ -318,7 +339,7 @@
             custom_slug = form.custom_slug;
             Utils.toggleSubmit(currentform);
             
-            Simva.generateShlinkURL(currStudyId, custom_slug, null, (error, result) => {
+            Simva.generateShlinkURL(currSimletId, custom_slug, null, (error, result) => {
                 if (!error) {
                     shlink = result;
                     let shortUrl=shlink.shortUrl;
@@ -343,6 +364,7 @@
             return false;
         });
     
+		// When submitting the generate random shlink form
 		$(document).on('submit',"#generate_study_link_length_form", function(event) {
         	event.preventDefault();
         	let currentform = this;
@@ -355,7 +377,7 @@
         	}
         	Utils.toggleSubmit(currentform);
             
-            Simva.generateShlinkURL(currStudyId, null, length, (error, result) => {
+            Simva.generateShlinkURL(currSimletId, null, length, (error, result) => {
                 if (!error) {
                     shlink = result;
                     let shortUrl=shlink.shortUrl;
@@ -380,15 +402,15 @@
 
 
     // --- URL FORM ---
-    const openUrlSettingsForm = function(studyId, studyName) {
+    const openUrlSettingsForm = function(simletId, simletName) {
 		// Always open form in the generate random link with length tab
 		Utils.changeTab($('#generate_link_length_tab_button'), 'generate_study_link_form','generate_study_link_length_tab');
 
-		$(".formSimletTitle").text(`<%- t('single.title', { ns : 'SIMLETs' }) %>: ${studyName}`);
+		$(".formSimletTitle").text(`<%- t('single.title', { ns : 'SIMLETs' }) %>: ${simletName}`);
 
-        currStudyId = studyId;
+        currSimletId = simletId;
 
-		Simva.getShLink(studyId, (error, result) => {
+		Simva.getShLink(simletId, (error, result) => {
 			Utils.toggleAddForm('study_url_settings');
 			if (!error) {
 				shlink = result;
@@ -423,11 +445,11 @@
 
     const deleteShLink = function() {
 		Utils.toggleSubmit($("#generate_study_link"));
-        Simva.getStudy(currStudyId, (error, result) => {
+        Simva.getStudy(currSimletId, (error, result) => {
 			if (!error) {
 				let shortCode = shlink.shortCode;
 				if (confirm(`<%- t('scheduler.shlink.delete.confirm', { ns : 'SIMLETs', shlink : '${shortCode}', SIMLET : '${result.simlet_name}' }) %>`)) {
-					Simva.deleteShLink(currStudyId, (error, result) => {
+					Simva.deleteShLink(currSimletId, (error, result) => {
 						if (!error) {
 							shlink = null;
 							if (refreshFunc != null) {
@@ -445,25 +467,25 @@
 
     // --- DOWNLOAD FORM ---
 
-    const openConfigDownloadForm = function(studyId, studyName) {
-        currStudyId = studyId;
+    const openConfigDownloadForm = function(simletId, simletName) {
+        currSimletId = simletId;
 		Utils.toggleAddForm('download_config');
-		$(".formSimletTitle").text(`<%- t('single.title', { ns : 'SIMLETs' }) %>: ${studyName}`);
+		$(".formSimletTitle").text(`<%- t('single.title', { ns : 'SIMLETs' }) %>: ${simletName}`);
 	}
 
-	const exportSimlet = function(studyId) {
-		Simva.exportSimlet(studyId, function(error, result) {
+	const exportSimlet = function(simletId) {
+		Simva.exportSimlet(simletId, function(error, result) {
 			if (!error) {
-				var content = JSON.stringify(result, null, 2);
-				var filename = `simlet-${result.simlet_name}-export.json`;
+				const content = JSON.stringify(result, null, 2);
+				const filename = `simlet-${result.simlet_name}-export.json`;
 				Utils.download(filename, content);
 			}
 		})
 	}
 
     const downloadUAConfig = function() {
-		var content = JSON.stringify({
-			study: currStudyId,
+		const content = JSON.stringify({
+			study: currSimletId,
 			host: "<%= config.api.host %>",
 			protocol: "<%= config.api.protocol %>",
 			port: "<%= config.api.port %>",
@@ -472,17 +494,17 @@
     		client_id: "uadventure"
 		}, null, 2);
 
-		var filename = "simva.conf";
+		const filename = "simva.conf";
 
 		Utils.download(filename, content);
 	}
 
 	const downloadStudyConfig = function() {
-		Simva.exportStudyConfig(currStudyId, function(error, result) {
+		Simva.exportStudyConfig(currSimletId, function(error, result) {
 			if (!error) {
-				var studyExport = result;
-				var content = JSON.stringify(studyExport, null, 2);
-				var filename = `simva-${studyExport.simlet_name}-export.json`;
+				const simletExport = result;
+				const content = JSON.stringify(simletExport, null, 2);
+				const filename = `simva-${simletExport.simlet_name}-export.json`;
 
 				Utils.download(filename, content);
 			}
@@ -492,9 +514,9 @@
 
 	// --- ARCHIVE/DELETE ---
 	
-	const archiveStudy = function(studyId, studyname) {
-		if(confirm(`<%- t('archive.confirm', { ns : 'SIMLETs', SIMLET : '${studyname}' }) %>`)){
-			Simva.updateStudy(studyId, { simlet_archived: true }, function(error, result) {
+	const archiveSimlet = function(simletId, simletName) {
+		if(confirm(`<%- t('archive.confirm', { ns : 'SIMLETs', SIMLET : '${simletName}' }) %>`)){
+			Simva.updateStudy(simletId, { simlet_archived: true }, function(error, result) {
 				if (!error  && refreshFunc != null) {
 					refreshFunc();
 				}
@@ -503,9 +525,9 @@
 		
 	}
 
-	const deleteStudy = function(studyid, studyname){
-		if(confirm(`<%- t('delete.confirm', { ns : 'SIMLETs', SIMLET : '${studyname}' }) %>`)){
-			Simva.deleteStudy(studyid, function(response) {
+	const deleteSimlet = function(simletId, simletName){
+		if(confirm(`<%- t('delete.confirm', { ns : 'SIMLETs', SIMLET : '${simletName}' }) %>`)){
+			Simva.deleteSimlet(simletId, function(response) {
 				if(response.status !== 200) {
 					// Muestra el error real para depuración
 					alert(response || "Error eliminando el simlet");
@@ -525,6 +547,7 @@
 
 	let remainingTags =  new Set();
 
+	// Get all the existing tags and store them in allTags, tagsById, tagsByName and remainingTags
 	Simva.getTags(function(error, result) {
 		result.forEach(tag => {
 			if (!tagsById.has(tag.tag_id)) {
@@ -536,14 +559,20 @@
 		});
 	});
 
-	const searchTagsByName = function(query) {
-		if (!query) {
+	/**
+	 * Get all the tags matching (partially or completely) the name
+	 * 
+	 * @param tagName {string} - name of the tags to retrieve
+	 * @returns {Array} - array of objects with the info of the matching tags
+	*/
+	const searchTagsByName = function(tagName) {
+		if (!tagName) {
 			return remainingTags;
 		}
 
 		return Array.from(remainingTags).filter((tag) => {
 			const name = (tag.tag_name || '').toLowerCase();
-			return name.includes(query);
+			return name.includes(tagName);
 		});
 	}
 
@@ -551,7 +580,7 @@
 	/**
 	 * Create the html element containing all the tags
 	 * 
-	 * @param taggedElem {Object} - study or session to get the tags from
+	 * @param taggedElem {Object} - SIMLET or session to get the tags from
 	 * @returns {string} - string with the html elements needed to render the tags
 	*/
 	const renderTags = function(taggedElem) {

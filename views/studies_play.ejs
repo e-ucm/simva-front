@@ -1,5 +1,3 @@
-<%# views/studies_list.ejs %>
- 
 <% extend('layout_with_menu_and_sse') %>
 
 <h1><%- t('title', { ns : 'SIMLETs' }) %></h1>
@@ -7,14 +5,14 @@
 <% const searchBarPlaceholder = t('searchBar.placeholder', { ns: 'SIMLETs' }); %>
 <%- include('partials/filtering_pagination_commons', { id:"scheduler", searchBarPlaceholderText: searchBarPlaceholder }) %>
 
-<div id="studies_list" class="simletsCardsList">
+<div id="simlets_list" class="simletsCardsList">
 </div>
 
 <div id="loader" class="loader">
 	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 </div>
 
-<!-- Template for each card of the studies list -->
+<!-- Template for each card of the SIMLETs list -->
 <div id="simlet_card_template" style="display: none;">
 	<a class="cardColumn">
 		<div class="selectable card">
@@ -33,12 +31,12 @@
 		// Set properties of filtering_pagination_commons partial
 		filteringPaginationData["showAtOnce"] = SHOW_AT_ONCE;
 		filteringPaginationData["updateSearchCallback"] = onSearch;
-		filteringPaginationData["loadMoreCallback"] = loadStudyBatch;
+		filteringPaginationData["loadMoreCallback"] = loadSimletBatch;
 
 		// Updates all the search parameters and calls onSearch
 		filteringPaginationData["updateSearch"]();
 
-		// At the same time, asynchronously get all the studies in this section and store
+		// At the same time, asynchronously get all the SIMLETs in this section and store
 		// them by id for faster access to its parameters when opening the edit menu
 		Simva.getSchedulerStudiesCount(function(error, result) {
 			if (!error) {
@@ -47,8 +45,12 @@
 		});
 	});
 
+	/**
+	 * When updating any filter parameter, remove all the painted SIMLETs and load a new batch
+	 * (called by updateSearch in filtering_pagination_commons)
+	 */
 	const onSearch = function() {
-		$('#studies_list').empty();
+		$('#simlets_list').empty();
 
 		Simva.getSchedulerStudiesCount(filteringPaginationData["searchParams"], function(error, result) {
 			if (!error) {
@@ -56,48 +58,65 @@
 				filteringPaginationData["totalResults"] = result.count;
 				filteringPaginationData["updateSearchOptions"]();
 				
-				loadStudyBatch();
+				loadSimletBatch();
 			}
 		});
 	}
 
-	const loadStudyBatch = function() {
+	/**
+	 * Load batch of max SHOW_AT_ONCE SIMLETs matching the search parameters and paint them
+	 * (called both when updating the search results and when loading the next page of results)
+	 */
+	const loadSimletBatch = function() {
 		$("#loader").show();
 		
 		Simva.getSchedulerStudies(filteringPaginationData["searchParams"], function(error, result){
 			if (!error) {
-				paintStudyBatch(result);
+				paintSimletBatch(result);
 				$("#loader").hide();
 			}
 		});
 	}
 
-	const paintStudyBatch = function(studyBatch) {
+	/**
+	 * Paint the cards for a batch of SIMLETs
+	 * 
+	 * @param {Array} batch - Array of objects containing the simlet info
+	 */
+	const paintSimletBatch = function(batch) {
 		filteringPaginationData = $("#scheduler_filtering").data();
 
-		studyBatch.forEach((study) => {
-			fillStudyCard(study);
+		batch.forEach((simlet) => {
+			// Add the SIMLET card synchronously to ensure they appear in order
+			const card = $("#simlet_card_template a").clone();
+			$('#simlets_list').append(card);
+
+			// Then, fill its details asynchronously since the order of execution doesn't matter once the card has been added
+			fillSimletCard(simlet, card);
 		});
 		
-		if (studyBatch.length == 0) {
-			// There are no studies in the current section
+		if (batch.length == 0) {
+			// There are no SIMLETs in the current section
 			if (totalResults == 0) {
-				$('#studies_list').text("<%- t('scheduler.noSIMLET.title', { ns : 'SIMLETs' }) %>");
+				$('#simlets_list').text("<%- t('scheduler.noSIMLET.title', { ns : 'SIMLETs' }) %>");
 			}
-			// There are studies, but none of them matched the search parameters
+			// There are SIMLETs, but none of them matched the search parameters
 			else {
-				$('#studies_list').text("<%- t('search.no_matches', { ns : 'SIMLETs' }) %>");
+				$('#simlets_list').text("<%- t('search.no_matches', { ns : 'SIMLETs' }) %>");
 			}
 		}
 	}
 
-	const fillStudyCard = function(study) {
-		const card = $("#simlet_card_template a").clone();
-		card.attr("href", `/scheduler/${study.simlet_id}`);
-		card.find(".cardTitle").text(study.simlet_name);
+	/**
+	 * Fill the SIMLET card info programatically to avoid XSS
+	 * 
+	 * @param {Object} simlet - object containing simlet info
+	 * @param {Object} card - jquery object of the card element
+	 */
+	const fillSimletCard = async function(simlet, card) {
+		card.attr("href", `/scheduler/${simlet.simlet_id}`);
+		card.find(".cardTitle").text(simlet.simlet_name);
 		card.find(".cardDescription").text("<%- t('scheduler.title', { ns : 'SIMLETs' }) %>");
-
-		$('#studies_list').append(card);
 	}
 	
 </script>

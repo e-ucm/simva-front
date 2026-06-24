@@ -1,5 +1,3 @@
-<%# views/studies_list.ejs %>
-
 <% extend('layout_with_menu_and_sse') %>
 
 <div class="tooltipLine">
@@ -22,14 +20,14 @@ the elements and scripts defined in the simlet_commons partial -->
 <% const searchBarPlaceholder = t('searchBar.placeholder', { ns: 'SIMLETs' }); %>
 <%- include('partials/filtering_pagination_commons', { id:"simlets", searchBarPlaceholderText: searchBarPlaceholder }) %>
 
-<div id="studies_list" class="simletsCardsList">
+<div id="simlets_list" class="simletsCardsList">
 </div>
 
 <div id="loader" class="loader">
 	<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 </div>
 
-<!-- Template for each card of the studies list -->
+<!-- Template for each card of the SIMLETs list -->
 <div id="simlet_card_template" style="display: none;">
 	<a class="cardColumn">
 		<div class="selectable card">
@@ -46,7 +44,7 @@ the elements and scripts defined in the simlet_commons partial -->
 				&nbsp; 
 				<strong class="cardUsers"><%- t('card.users', { ns : 'SIMLETs' }) %>: </strong>
 			</p>
-			<div class="studyTagsRow">
+			<div class="simletTagsRow">
 				<strong><%- t('card.tags', { ns : 'SIMLETs' }) %>:</strong>
 				
 			</div>
@@ -56,19 +54,19 @@ the elements and scripts defined in the simlet_commons partial -->
 
 <% if (typeof archived !== 'undefined' && !archived) { %>
 	<div class="floating_buttons">
-		<a unselectable="on" class="basic" onclick="openStudyForm()">+</a>
+		<a unselectable="on" class="basic" onclick="openSimletForm()">+</a>
 	</div>
 <% } %>
 
 
 <script type="text/javascript">
-	const archived = "<%= archived %>" === "true";
+	const ARCHIVED = "<%= archived %>" === "true";
 
-	const simletDataIdKey = "simletId"
-	const simletDataNameKey = "simletName"
-	const simletDataDescriptionKey = "simletDescription"
+	const SIMLET_DATA_ID_KEY = "simletId"
+	const SIMLET_DATA_NAME_KEY = "simletName"
+	const SIMLET_DATA_DESCRIPTION_KEY = "simletDescription"
 
-	let studiesById = new Map();
+	let simletsById = new Map();
 	
 	// Assign properties and functions of filtering_pagination_commons partial
 	const SHOW_AT_ONCE = 9;
@@ -81,16 +79,17 @@ the elements and scripts defined in the simlet_commons partial -->
 	
 	$(document).ready(function() {
 		// Set refresh function of the simlet_commons partial
-		refreshFunc = refreshStudies;
+		refreshFunc = refreshSimlets;
 
 		// Assign properties and functions of filtering_pagination_commons partial
 		filteringPaginationData["showAtOnce"] = SHOW_AT_ONCE;
-		filteringPaginationData["searchParams"].status = archived ? "archived" : "active";
+		filteringPaginationData["searchParams"].status = ARCHIVED ? "archived" : "active";
 		filteringPaginationData["updateSearchCallback"] = onSearch;
-		filteringPaginationData["loadMoreCallback"] = loadStudyBatch;
+		filteringPaginationData["loadMoreCallback"] = loadSimletBatch;
 		
-		refreshStudies();
+		refreshSimlets();
 
+		// When submitting the import SIMLET form
 		$(document).on('submit', "#import_study_form", function(event) {
 			event.preventDefault();
 			let currentform = this;
@@ -100,18 +99,18 @@ the elements and scripts defined in the simlet_commons partial -->
 			// Check for file presence
 			const fileInput = $(this).find('input[name="jsonFile"]').get(0);
 			if(fileInput && fileInput.files[0]){
-				var reader = new FileReader();
+				let reader = new FileReader();
 				reader.onload = function(){
 					try {
 						let raw = reader.result;
 						// Always extract base64 payload from data URL
 						raw = raw.substr(raw.indexOf(',') + 1);
-						var newStudy = raw;
+						const newStudy = raw;
 						Simva.importStudyConfig({file: newStudy, simlet_name: form.studyName}, function(error, result) {
 							Utils.toggleSubmit(currentform);
 							if(!error) {
 								Utils.toggleAddForm('study_form');
-								$('#studies_list').html(roller);
+								$('#simlets_list').html(roller);
 								refreshFunc();
 							} else {
 								$("#study_form_error").text(error);
@@ -132,25 +131,27 @@ the elements and scripts defined in the simlet_commons partial -->
 		
 	});
 
-	const refreshStudies = function() {
+	const refreshSimlets = function() {
 		// Updates all the search parameters and calls onSearch
 		filteringPaginationData["updateSearch"]();
 
-		// At the same time, asynchronously get all the studies in this section and store
+		// At the same time, asynchronously get all the SIMLETs in this section and store
 		// them by id for faster access to its parameters when opening the edit menu
 		Simva.getStudies({ status: filteringPaginationData["searchParams"].status }, function(error, result) {
 			if (!error) {
-				studiesById = new Map(
+				simletsById = new Map(
 					result.map(obj => [obj.simlet_id, obj])
 				);
 			}
 		});
 	}
 
-	// When updating any filter parameter, remove all the painted studies and load a new batch
-	// (called by updateSearch in filtering_pagination_commons)
+	/**
+	 * When updating any filter parameter, remove all the painted SIMLETs and load a new batch
+	 * (called by updateSearch in filtering_pagination_commons)
+	 */
 	const onSearch = function() {
-		$('#studies_list').empty();
+		$('#simlets_list').empty();
 
 		Simva.getStudiesCount(filteringPaginationData["searchParams"], function(error, result) {
 			if (!error) {
@@ -158,61 +159,72 @@ the elements and scripts defined in the simlet_commons partial -->
 				filteringPaginationData["totalResults"] = result.count;
 				filteringPaginationData["updateSearchOptions"]();
 				
-				loadStudyBatch();
+				loadSimletBatch();
 			}
 		});
 
 	}
 
-	// Load batch of max SHOW_AT_ONCE studies matching the search parameters and paint them
-	// Gets called both when updating the search results and when loading the next page of results
-	const loadStudyBatch = function() {
+	/**
+	 * Load batch of max SHOW_AT_ONCE SIMLETs matching the search parameters and paint them
+	 * (called both when updating the search results and when loading the next page of results)
+	 */
+	const loadSimletBatch = function() {
 		$("#loader").show();
 		
 		Simva.getStudies(filteringPaginationData["searchParams"], function(error, result){
 			if (!error) {
-				paintStudyBatch(result);
+				paintSimletBatch(result);
 				$("#loader").hide();
 			}
 		});
 	}
 
-	const paintStudyBatch = function(studyBatch) {
-		studyBatch.forEach((study) => {
-			// Add the session card synchronously to ensure they appear in order
+	/**
+	 * Paint the cards for a batch of SIMLETs
+	 * 
+	 * @param {Array} batch - Array of objects containing the SIMLETs info
+	 */
+	const paintSimletBatch = function(batch) {
+		batch.forEach((simlet) => {
+			// Add the SIMLET card synchronously to ensure they appear in order
 			const card = $("#simlet_card_template a").clone();
-			$('#studies_list').append(card);
+			$('#simlets_list').append(card);
+
+			card.data(SIMLET_DATA_ID_KEY, simlet.simlet_id);
+			card.data(SIMLET_DATA_NAME_KEY, simlet.simlet_name);
+			card.data(SIMLET_DATA_DESCRIPTION_KEY, simlet.simlet_description);
 
 			// Then, fill its details asynchronously since the order of execution doesn't matter once the card has been added
-			fillStudyCard(study, card);
+			fillSimletCard(simlet, card);
 		});
 
-		if (studyBatch.length == 0) {
-			// There are no studies in the current section (active/archived)
-			if (studiesById.size == 0) {
-				if (!archived) {
-					$('#studies_list').text("<%- t('no_simlets.message', { ns : 'SIMLETs' }) %>");
+		if (batch.length == 0) {
+			// There are no SIMLETs in the current section (active/archived)
+			if (simletsById.size == 0) {
+				if (!ARCHIVED) {
+					$('#simlets_list').text("<%- t('no_simlets.message', { ns : 'SIMLETs' }) %>");
 				}
 				else {
-					$('#studies_list').text("<%- t('no_archived.message', { ns : 'SIMLETs' }) %>");
+					$('#simlets_list').text("<%- t('no_archived.message', { ns : 'SIMLETs' }) %>");
 				}
 			}
-			// There are studies, but none of them matched the search parameters
+			// There are SIMLETs, but none of them matched the search parameters
 			else {
-				$('#studies_list').text("<%- t('search.no_matches', { ns : 'SIMLETs' }) %>");
+				$('#simlets_list').text("<%- t('search.no_matches', { ns : 'SIMLETs' }) %>");
 			}
 		}
 	}
 
 
-	const openStudyForm = function(studyId) {
+	const openSimletForm = function(simletId) {
 		// Always open form in the create/edit common tab
 		Utils.changeTab($('#study_name_desc_tab_button'), 'study_form_form','study_name_desc_tab');
 
 		$('#study_form_error').text("");
 
-		// Creating new study
-		if (studyId == null) {
+		// Creating new SIMLET
+		if (simletId == null) {
 			// Open form always and show the add new/import tabs
 			Utils.toggleAddForm("study_form");
 			$("#add_study_tabs").show();
@@ -226,49 +238,50 @@ the elements and scripts defined in the simlet_commons partial -->
 			$('#study_name').val("");
 			$('#study_description').val("");
 		}
-		// Editing study
+		// Editing SIMLET
 		else {
-			let study = studiesById.get(studyId);
-			if(study != null) {
-				// Open form only if the study exists and hide the add new/import tabs (only the name/description tab is needed)
+			const simlet = simletsById.get(simletId);
+			if(simlet != null) {
+				// Open form only if the SIMLET exists and hide the add new/import tabs (only the name/description tab is needed)
 				Utils.toggleAddForm('study_form');
-				$('#edit_study_id').val(studyId);
+				$('#edit_study_id').val(simletId);
 
 				$("#add_study_tabs").hide();
 
 				$("#study_form_title").text("<%- t('edit.title', { ns : 'SIMLETs' }) %>");
 				$("#study_name_desc_submit").val("<%- t('edit.submit', { ns : 'SIMLETs' }) %>");
 
-				$('#prev_study_name').val(study.simlet_name);
-				$('#prev_study_description').val(study.simlet_description);
+				$('#prev_study_name').val(simlet.simlet_name);
+				$('#prev_study_description').val(simlet.simlet_description);
 
-				$('#study_name').val(study.simlet_name);
-				$('#study_description').val(study.simlet_description);
+				$('#study_name').val(simlet.simlet_name);
+				$('#study_description').val(simlet.simlet_description);
 			}
 		}
 	}
 
 	
-	// Add cards programatically to avoid XSS
-	const fillStudyCard = async function(study, card) {
-		card.data(simletDataIdKey, study.simlet_id);
-		card.data(simletDataNameKey, study.simlet_name);
-		card.data(simletDataDescriptionKey, study.simlet_description);
-
-		card.attr("href", `/simlets/${study.simlet_id}`);
+	/**
+	 * Fill the SIMLET card info programatically to avoid XSS
+	 * 
+	 * @param {Object} simlet - object containing the SIMLET info
+	 * @param {Object} card - jquery object of the card element
+	 */
+	const fillSimletCard = async function(simlet, card) {
+		card.attr("href", `/simlets/${simlet.simlet_id}`);
 				
 		const kebab = $("#kebab_template .kebab-dropdown").clone();
 		card.find(".kebab").append(kebab);
-		if (archived) {
+		if (ARCHIVED) {
 			kebab.find(".icon-archive").hide();
 		} else {
 			// Disable archive button if not all sessions are finished
-			const total = study.sessions.length;
+			const total = simlet.sessions.length;
 			if (total > 0) {
 				let completed = 0;
 				let allSessionsFinished = true;
-				study.sessions.forEach(testid => {
-					Simva.getStudyTest(study.simlet_id, testid, function(error, result) {
+				simlet.sessions.forEach(sessionId => {
+					Simva.getStudyTest(simlet.simlet_id, sessionId, function(error, result) {
 						if (!error) {
 							let prev = allSessionsFinished;
 							allSessionsFinished = allSessionsFinished && (result.session_status == "terminated" || result.session_status == "inactive");
@@ -286,15 +299,15 @@ the elements and scripts defined in the simlet_commons partial -->
 			}
 		}
 		
-		card.find(".simletCardTitle h1").text(study.simlet_name);
-		card.find(".cardDescription").text(study.simlet_description);
-		card.find(".cardCreationDate").append(getFormattedDate(study.createdAt, currentlanguageCode));
-		card.find(".cardUpdateDate").append(getFormattedDate(study.updatedAt, currentlanguageCode));
-		card.find(".carrdSessions").append(study.sessions.length);
-		card.find(".cardGroups").after(study.groups.length);
-		card.find(".studyTagsRow").append(renderTags(study));
+		card.find(".simletCardTitle h1").text(simlet.simlet_name);
+		card.find(".cardDescription").text(simlet.simlet_description);
+		card.find(".cardCreationDate").append(getFormattedDate(simlet.createdAt, currentlanguageCode));
+		card.find(".cardUpdateDate").append(getFormattedDate(simlet.updatedAt, currentlanguageCode));
+		card.find(".carrdSessions").append(simlet.sessions.length);
+		card.find(".cardGroups").after(simlet.groups.length);
+		card.find(".simletTagsRow").append(renderTags(simlet));
 		
-		Simva.getStudyGroupsParticipantsCount(study.simlet_id, function(error, result) {
+		Simva.getStudyGroupsParticipantsCount(simlet.simlet_id, function(error, result) {
 			if (!error) {
 				let total = 0;
 				Object.entries(result).forEach(([group, count]) => {
@@ -306,35 +319,36 @@ the elements and scripts defined in the simlet_commons partial -->
 	}
 
 
-	// 3-dot menus buttons shared listeners
+	// 3-dot menus buttons shared listeners using event delegation to ensure 
+	// the handler works even if element is added after the document ready event
 
 	$(document).on('click', ".simletCardTitle .icon-edit", function(e) {
 		const data = $(this).closest("a").data();
-		openStudyForm(data[simletDataIdKey])
+		openSimletForm(data[SIMLET_DATA_ID_KEY])
 	});
 
 	$(document).on('click', ".simletCardTitle .icon-url", function(e) {
 		const data = $(this).closest("a").data();
 		// Defined in the simlet_commons partial
-		openUrlSettingsForm(data[simletDataIdKey], data[simletDataNameKey])
+		openUrlSettingsForm(data[SIMLET_DATA_ID_KEY], data[SIMLET_DATA_NAME_KEY])
 	});
 
 	$(document).on('click', ".simletCardTitle .icon-download", function(e) {
 		const data = $(this).closest("a").data();
 		// Defined in the simlet_commons partial
-		openConfigDownloadForm(data[simletDataIdKey], data[simletDataNameKey])
+		openConfigDownloadForm(data[SIMLET_DATA_ID_KEY], data[SIMLET_DATA_NAME_KEY])
 	});
 
 	$(document).on('click', ".simletCardTitle .icon-archive", function(e) {
 		const data = $(this).closest("a").data();
 		// Defined in the simlet_commons partial
-		archiveStudy(data[simletDataIdKey], data[simletDataNameKey])
+		archiveSimlet(data[SIMLET_DATA_ID_KEY], data[SIMLET_DATA_NAME_KEY])
 	});
 
 	$(document).on('click', ".simletCardTitle .icon-delete", function(e) {
 		const data = $(this).closest("a").data();
 		// Defined in the simlet_commons partial
-		deleteStudy(data[simletDataIdKey], data[simletDataDescriptionKey])
+		deleteSimlet(data[SIMLET_DATA_ID_KEY], data[SIMLET_DATA_DESCRIPTION_KEY])
 	});	
 	
 </script>

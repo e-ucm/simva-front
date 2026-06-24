@@ -65,10 +65,10 @@
 </div>
 
 <script type="text/javascript">
-    // Variables and functions need to be stored in the div data to avoid declaration
-    // conflicts when including the partial multiple times in the same view
+    // Variables and functions need to be stored in the div data-* attribute to avoid 
+    // declaration conflicts when including the partial multiple times in the same view
 
-    $("#<%= id %>_filtering").data()["lastScrollTop"] = 0;
+    $("#<%= id %>_filtering").data()["lastScrollTop"] = 0;  // Last vertical position the window was when the scroll event gets triggered
 
     $("#<%= id %>_filtering").data()["showAtOnce"] = 1;     // Maximum amount of results that will be returned on each search
     $("#<%= id %>_filtering").data()["currentPage"] = 1;    // "Page" from where the search will take the results (used to calculate skip and limit)
@@ -159,18 +159,13 @@
         }, data["searchTimerInterval"]);
     }
 
-    // Search bar
+    // Writing on the search bar input
     $("#<%= id %>_search_bar").on("input", function () {
         $("#<%= id %>_filtering").data()["resetSearchTimer"]();
     });
 
-    // Sort by dropdown
+    // Changing the value of the Sort by dropdown
     $("#<%= id %>_sort_by").on("change", function () {
-        $("#<%= id %>_filtering").data()["resetSearchTimer"]();
-    });
-
-    // Sort order dropdown
-    $("#<%= id %>_sort_order").on("change", function () {
         $("#<%= id %>_filtering").data()["resetSearchTimer"]();
     });
 
@@ -194,7 +189,8 @@
     $("#<%= id %>_tags_dropdown").hide();
     let selectedTagsIds = new Set();
 
-    // Place the tags dropdown to the left or to the right bellow the select depending on its position
+    // When changing the window size, place the tags dropdown to the 
+    // left or to the right bellow the select depending on its position
     $(window).on("resize", function() {
         const tagsSelector = $(".filtersTags");
         const tagsDropdown = $(".filtersTags .filtersTagsDropdown");
@@ -207,7 +203,7 @@
         }
         else {
             tagsDropdown.css({
-                lef: 0,
+                left: 0,
                 right: "auto"
             });
         }
@@ -223,33 +219,40 @@
 	});
     
 
-    // Shared listeners 
+    // Shared listeners using event delegation to ensure the handler 
+    // works even if element is added after the document ready event
+
+    // The select elements click events must be handled in the mousedown event instead of on the click event to
+    // effectively handle them in time, since the mousedown event triggers before and runs before the default
+    // select dropdown appears
     
     // Hide the filtersTagsDropdown since it doesn't behave as the regular select dropdown, so it doesn't
     // hide automatically after clicking outside of it or when pressing another select element
     $(document).on("click", function(e) {
         hideTagsDropdown(e);
     });
-
     $("select").on('mousedown', function (e) {
         hideTagsDropdown(e);
     });
     
-
+    // Tags select element press
     $("#<%= id %>_tags_selector").on("mousedown", function (e) {
         // Prevent the default select dropdown to open
         e.preventDefault();
         
+        // Toggle the dropdown
         const $dropdown = $("#<%= id %>_tags_dropdown");
         $dropdown.fadeToggle(100);
 
+        // Focus the tags search bar and reset the search
         if ($dropdown.is(":visible")) {
-            $("#<%= id %>_tags_search_bar").val("");
             $("#<%= id %>_tags_search_bar").focus();
+            $("#<%= id %>_tags_search_bar").val("");
             renderMatchingTags();
         }
     });
     
+    // When clicking any element of the search tags dropdown
     $(document).on("click", ".searchTag", function (e) {
         const data = $(this).data();
         $(this).find("input[type='checkbox']").prop("checked", function(i, val) { 
@@ -270,7 +273,7 @@
     });
 
 
-    // Tags search bar
+    // Writing on the tags search bar
     $("#<%= id %>_tags_search_bar").on("input", function () {
         renderMatchingTags();
     });
@@ -285,24 +288,24 @@
         }
     }
 
+    // Render the tags that match the search in the tags dropdown
     const renderMatchingTags = function () {
         $('#<%= id %>_tags_list').empty();
 
+        // No tags
         if (allTags.size == 0) {
             $('#<%= id %>_tags_list').append($("#no_tags_template .sessionTagList").clone());
             return;
         }
         
         let searchValue = $("#<%= id %>_tags_search_bar").val().trim().toLowerCase() || "";
-
-
         const searchResult = searchTagsByName(searchValue);
+
         searchResult.forEach(tag => {
             const tagObj = $("#search_tag_template .searchTag").clone();
             tagObj.data("id", tag.tag_id);
 
             $(tagObj).find("input[type='checkbox']").prop("checked", selectedTagsIds.has(tag.tag_id));
-
             tagObj.find(".sessionTagColor").css({
                 background: tag.tag_color
             });
@@ -322,7 +325,7 @@
 <% if (typeof id !== 'undefined' && id == "sessions") { %>
 
 <script type="text/javascript">
-
+    // Changing the value of the session status dropdown
     $("#<%= id %>_status").on("change", function () {
         $("#<%= id %>_filtering").data()["resetSearchTimer"]();
     });

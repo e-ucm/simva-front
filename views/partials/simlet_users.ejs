@@ -1,5 +1,7 @@
 
+<!-- Section where all users will be painted -->
 <div class="users">
+	<!-- Coordinators table -->
     <div class="card coordinators">
         <div class="groupTop">
 			<div class="tooltipLine">
@@ -51,8 +53,11 @@
 				</div>
 			</div>
 		</div>
+		
 		<% const searchBarPlaceholder = t('searchBar.placeholder', { ns: 'groups' }); %>
 		<%- include('filtering_pagination_commons', { id:"groups", searchBarPlaceholderText: searchBarPlaceholder }) %>
+
+		<!-- Container for all the groups cards -->
 		<div id="groups_container">
             
 		</div>
@@ -141,7 +146,7 @@
 
 </div>
 
-
+<!-- Add/edit groups/Add coordinator menu -->
 <div id ="users_form_menu" class="new_element floating">
 	<div class="floater">
 		<div class="form" id="group_form">
@@ -152,6 +157,7 @@
 				<span id="owners_tab_button" class="tab" onclick="Utils.changeTab(this, 'group_form','owner_tab')"><%- t('coordinators.add.title', { ns : 'groups' }) %></span>
 			</div>
 
+			<!-- Create/edit group -->
 			<div id="group_name_desc_tab" class="subform selected">
 				<form id="group_form">
 					<input hidden type="text" name="editingGroupId" id="edit_group_id">
@@ -165,6 +171,8 @@
 					<input type="submit" id="group_submit" value="<%- t('groups.add.new.submit', { ns : 'groups' }) %>">
 				</form>
 			</div>
+
+			<!-- Import group -->
 			<div id="import_group_tab" class="subform" style="display: none;">
 				<form id="import_group_form_modal">
 					<h3><%- t('groups.name.title', { ns : 'groups' }) %></h3>
@@ -175,6 +183,7 @@
 				</form>
 			</div>
 
+			<!-- Add coordinator -->
 			<div id="owner_tab" class="subform">
 				<form id="existing_owner_form">
 					<h3><%- t('coordinators.name.title', { ns : 'groups' }) %></h3>
@@ -203,6 +212,7 @@
 	</div>
 </div>
 
+<!-- Add participants menu -->
 <div id="add_participant" class="new_element floating">
 	<div class="floater">
 		<div class="form" id="add_participant_form">
@@ -212,14 +222,17 @@
 				<span class="tab" onclick="Utils.changeTab(this, 'add_participant_form','new_participant_tab')"><%= t('participants.add.new.tab' , { ns : 'groups' }) %></span>
 				<span id="add_batch_tab_button" class="tab" onclick="Utils.changeTab(this, 'add_participant_form','batch_participant_tab')"><%= t('participants.add.batch.tab' , { ns : 'groups' }) %></span>
 			</div>
+
+			<!-- Add existing participants -->
 			<div id="existing_participant_tab" class="subform selected">
 				<form id="existing_participant_form">
 					<br>
-					<!-- <input type="text" class="name_field" name="name" placeholder="<%= t('participants.username.placeholder', { ns : 'groups' }) %>" required> -->
 					<textarea type="text" name="name" style="max-height: 10rem; " placeholder="<%- t('participants.username.placeholder.batch', { ns : 'groups' }) %>" required></textarea>
 					<input type="submit" value="<%= t('participants.add.existing.submit' , { ns : 'groups' }) %>">
 				</form>
 			</div>
+
+			<!-- Add new participant -->
 			<div id="new_participant_tab" class="subform" style="display: none;">
 				<form id="new_participant_form">
 					<br>
@@ -237,6 +250,8 @@
 					<input type="submit" value="<%= t('participants.add.new.groups.add.new.submit' , { ns : 'groups' }) %>">
 				</form>
 			</div>
+
+			<!-- Add batch of tokens -->
 			<div id="batch_participant_tab" class="subform" style="display: none;">
 				<form id="batch_participant_form">
 					<p><%= t('participants.add.batch.number.title' , { ns : 'groups' }) %></p>
@@ -260,6 +275,7 @@
 	</div>
 </div>
 
+<!-- Change allocator menu -->
 <div id="change_allocator" class="new_element floating">
     <div class="floater">
         <div class="form">
@@ -315,6 +331,8 @@
 </div>
 -->
 
+
+<!-- Add group floating button -->
 <div class="floating_buttons">
     <div unselectable="on" class="basic" onclick="openAddUsersForm()">
 		<img src="../icon/group.png" style="filter: brightness(0) saturate(100%);">
@@ -335,31 +353,36 @@
 	</table>
 </div>
 
+
 <script>
+	// Id of the group that opened the edit group menu
 	let editingGroupId = null;
 	
-	const groupDataIdKey = "groupId"
-	const groupDataNameKey = "groupName"
-	const groupDataAllocatorKey = "groupAllocator"
-	const userDataIdKey = "userId"
-	const userDataNameKey = "userName"
+	// Ids for the data-* attributes of each group card
+	const GROUP_DATA_ID_KEY = "groupId"
+	const GROUP_DATA_NAME_KEY = "groupName"
+	const GROUP_DATA_ALLOCATOR_KEY = "groupAllocator"
+	
+	// Ids for the data-* attributes of each participant row
+	const USER_DATA_ID_KEY = "userId"
+	const USER_DATA_NAME_KEY = "userName"
 	
 	
 	// Menus
 	
 	$(document).ready(function() {
-		// Add owner
+		// When submitting the add owner form
 		$(document).on('submit', "#existing_owner_form", function(event) {
 			let form = Utils.getFormData($(this));
 			let errorbox = $('#users_error');
-			const owners = study.direct_permissions || study.owners || [];
+			const owners = simlet.direct_permissions || simlet.owners || [];
 
-			for (var i = 0; i < owners.length; i++) {
-				if (owners[i].username == form.name) {
+			owners.forEach((owner) => {
+				if (owner.username == form.name) {
 					errorbox.text("<%- t('coordinators.error.already_in', { ns : 'groups' }) %>");
 					return false;
 				}
-			}
+			});
 			if (form.permission !== "READ" && form.permission !== "WRITE") {
 				// TODO: add localization
 				errorbox.text("<%- t('coordinators.error.permission', { ns : 'groups' }) %>");
@@ -379,14 +402,14 @@
 					return;
 				}
 
-				Simva.createStudyPermissions(studyid, { user_id: foundUser.user_id, permission: form.permission }, function(createError) {
+				Simva.createStudyPermissions(simletId, { user_id: foundUser.user_id, permission: form.permission }, function(createError) {
 					if (createError && createError.responseJSON) {
 						errorbox.text(createError.responseJSON.message);
 					} else if (createError) {
 						errorbox.text(createError.message || createError);
 					} else {
 						Utils.toggleAddForm('users_form_menu');
-						reloadStudy();
+						reloadSimlet();
 					}
 				});
 			});
@@ -395,7 +418,7 @@
 		});
 		
 
-		// Import group from modal tab
+		// When submitting the import group from
 		$(document).on('submit', '#import_group_form_modal', function(event) {
 			let currentform = this;
 			let form = Utils.getFormData($(this));
@@ -403,20 +426,20 @@
 			let errorbox = $('#import_group_error_modal');
 			const fileInput = $(this).find('input[name="jsonFile"]').get(0);
 			if(fileInput && fileInput.files[0]){
-				var reader = new FileReader();
+				let reader = new FileReader();
 				reader.onload = function(){
 					try {
 						let raw = reader.result;
 						raw = raw.substr(raw.indexOf(',') + 1);
-						var newGroup = raw;
-						Simva.importGroup(studyid, {file: newGroup, group_name: form.groupName}, function(importError, result) {
+						const newGroup = raw;
+						Simva.importGroup(simletId, {file: newGroup, group_name: form.groupName}, function(importError, result) {
 							Utils.toggleSubmit(currentform);
 							if (importError) {
 								errorbox.text(importError.responseJSON ? importError.responseJSON.message : importError.message || importError);
 								return;
 							} else {
 								$("#users_form_menu").removeClass("shown");
-								reloadStudy();
+								reloadSimlet();
 							}
 						});
 					} catch (parseError) {
@@ -435,7 +458,7 @@
 			return false;
 		});
 
-		// Create/edit group
+		// When submitting the create/edit group form
 		$(document).on('submit', "#group_form", function(event) {
 			let errorbox = $('#users_error');
 			let currentform = this;
@@ -445,7 +468,8 @@
 			// Creating new group
 			if (form.editingGroupId == null || form.editingGroupId == "") { 
 				let newGeneration = !Boolean(form.group_use_deprecated_generation);
-				Simva.addGroup(studyid, { group_name : form.groupName, group_sandbox : false, group_use_new_generation : newGeneration }, function(error, result) {
+
+				Simva.addGroup(simletId, { group_name : form.groupName, group_sandbox : false, group_use_new_generation : newGeneration }, function(error, result) {
 					if (error && error.responseJSON) {
 						Utils.toggleSubmit(currentform);
 						errorbox.text(error.responseJSON.message);
@@ -454,7 +478,7 @@
 						// Automatically allocate group to latest created session
 						let session = getLatestCreatedSession();
 						if (session && session.session_id) {
-							Simva.allocateToSession(studyid, result.group_id, session.session_id, {}, function(error, result){
+							Simva.allocateToSession(simletId, result.group_id, session.session_id, {}, function(error, result){
 								if(!error){
 									console.log(result)
 								}
@@ -467,7 +491,7 @@
 							Utils.toggleAddForm('users_form_menu');
 							openParticipantForm(result.group_id);
 							Utils.changeTab($('#add_batch_tab_button'), 'add_participant_form','batch_participant_tab');
-							// reloadStudy();
+							// reloadSimlet();
 						}, 500);
 					}
 				});
@@ -483,11 +507,11 @@
 				}
 				else {
 					errorbox.text("");
-					Simva.updateGroup(studyid, form.editingGroupId, { group_name : form.groupName }, function(error, result) {
+					Simva.updateGroup(simletId, form.editingGroupId, { group_name : form.groupName }, function(error, result) {
 						if (!error) {
 							Utils.toggleSubmit(currentform);
 							Utils.toggleAddForm('users_form_menu');
-							reloadStudy();
+							reloadSimlet();
 						}
 					});
 				}
@@ -496,7 +520,7 @@
 		});
 		
 
-		// Add existing user as participant
+		// When submitting the add existing user as participant form
 		$(document).on('submit', "#existing_participant_form", function(event){
 			let currentform = this;
 			let form = Utils.getFormData($(this));
@@ -527,11 +551,11 @@
 			const addUsersComplete = () => {
 				completed++;
 				if (completed == usernames.length) {
-					// If all users have been correctly added, close the form and reload the study
+					// If all users have been correctly added, close the form and reload the SIMLET
 					if (added == usernames.length) {
 						Utils.toggleSubmit(currentform);
 						Utils.toggleAddForm('add_participant');
-						reloadStudy();
+						reloadSimlet();
 					}
 					// Otherwise, don't close the form to show the error
 					else {
@@ -559,7 +583,7 @@
 						
 						Utils.toggleSubmit(currentform);
 						foundUsers.forEach((user, username) => {
-							Simva.addGroupParticipant(studyid, editingGroupId, user.user_id, function(addError){
+							Simva.addGroupParticipant(simletId, editingGroupId, user.user_id, function(addError){
 								// If there are any erorrs, add them to the error message
 							    if(addError && addError.responseJSON) {
 									errorText += `${addError.responseJSON.message} <br> `
@@ -615,74 +639,76 @@
 			return false;
 		});
 
-		// Create and add new participant
+		// When submitting the create and add new participant form
 		$(document).on('submit', "#new_participant_form", function(event){
 			let form = Utils.getFormData($(this));
 			let errorbox = $("#participants_error");
 
-			Simva.register(studyid, editingGroupId, form.username.toLowerCase(), form.email, form.password, form.role, function(error, result){
+			Simva.register(simletId, editingGroupId, form.username.toLowerCase(), form.email, form.password, form.role, function(error, result){
 				if(error && error.responseJSON){
 					errorbox.text(error.responseJSON.message);
 				}else{
 					Utils.toggleAddForm('add_participant');
-					reloadStudy();
+					reloadSimlet();
 				}
 			});
 
 			return false;
 		});
 
-		// Generate and add a batch of new users as participant 
+		// When submitting the add batch of new users as participants form
 		$(document).on('submit', "#batch_participant_form", function(event){
 			let currentform = this;
 			Utils.toggleSubmit(currentform);
 			let form = Utils.getFormData($(this));
 			let errorbox = $("#participants_error");
 
-			Simva.generateAndRegister(studyid, editingGroupId, form.algorithm, form.length, form.amount, (error, generated) => {
+			Simva.generateAndRegister(simletId, editingGroupId, form.algorithm, form.length, form.amount, (error, generated) => {
 				if(!error) { 
 					Utils.toggleAddForm('add_participant');
-					reloadStudy();
+					reloadSimlet();
 				}
 			});
 			return false;
 		});
 
 		// TODO
-		// Platform
-		$(document).on('submit', "#add_platform_form", function(event) {
-			let form = Utils.getFormData($(this));
-			let errorbox = $("#participants_error");
+		// When submitting the add platfom form
+		// $(document).on('submit', "#add_platform_form", function(event) {
+		// 	let form = Utils.getFormData($(this));
+		// 	let errorbox = $("#participants_error");
 
-			let platform = {
-				url: form.url,
-				name: form.name,
-				clientId: form.clientId,
-				authenticationEndpoint: form.authenticationEndpoint,
-				accesstokenEndpoint: form.accesstokenEndpoint,
-				authConfig: { "method": "JWK_SET", "key": form.jkwsUrl },
-				studyId: studyid
-			}
+		// 	let platform = {
+		// 		url: form.url,
+		// 		name: form.name,
+		// 		clientId: form.clientId,
+		// 		authenticationEndpoint: form.authenticationEndpoint,
+		// 		accesstokenEndpoint: form.accesstokenEndpoint,
+		// 		authConfig: { "method": "JWK_SET", "key": form.jkwsUrl },
+		// 		studyId: simletId
+		// 	}
 
-			Simva.addLtiPlatform(platform, function(error, result) {
-				if (error && error.responseJSON) {
-					errorbox.text(error.responseJSON.message);
-				} else {
-					Utils.toggleAddForm('add_platform');
-					reloadStudy();
-				}
-			});
+		// 	Simva.addLtiPlatform(platform, function(error, result) {
+		// 		if (error && error.responseJSON) {
+		// 			errorbox.text(error.responseJSON.message);
+		// 		} else {
+		// 			Utils.toggleAddForm('add_platform');
+		// 			reloadSimlet();
+		// 		}
+		// 	});
 
-			return false;
-		});
+		// 	return false;
+		// });
 
 	});
 
+	// Expand/hide the coordinators table
     const toggleCoordinators = function() {
 		$(".card.coordinators").find('.expandButton').toggleClass('collapsed');
 		$(".card.coordinators").find('.owners').toggleClass('collapsed');
 	}
 
+	// Expand/hide group info
     const toggleGroup = function(groupId) {
 		$(`#group_box_${groupId}`).find('.tooltipLine.participantsTitle ').toggleClass('collapsed');
         $(`#group_box_${groupId}`).find('.participants_container').toggleClass('collapsed');
@@ -738,7 +764,7 @@
 	}
 	
 	
-	let openChangeAllocatorForm = function(groupId, currentAllocatorType) {
+	const openChangeAllocatorForm = function(groupId, currentAllocatorType) {
 		editingGroupId = groupId;
 		let currentGroup = getGroupFromId(groupId);
 		console.log("Current group for allocator change:", currentGroup.group_allocator_type);
@@ -748,40 +774,42 @@
 		$(`#allocator_${currentGroup.group_allocator_type}`).prop('checked', true);
 	}
 
-	// Groups buttons shared listeners
+	
+	// Groups buttons shared listeners using event delegation to ensure 
+	// the handler works even if element is added after the document ready event
 
     $(document).on('click', "#groups_container .groupTop .expandButton", function(e) {
 		const data = $(this).closest(".test").data();
-		toggleGroup(data[groupDataIdKey]);
+		toggleGroup(data[GROUP_DATA_ID_KEY]);
 	});
 
 	$(document).on('click', ".groupTop .icon-edit", function(e) {
 		const data = $(this).closest(".test").data();
-		openEditGroupForm(data[groupDataIdKey]);
+		openEditGroupForm(data[GROUP_DATA_ID_KEY]);
 	});
 
 	$(document).on('click', ".groupTop .icon-add", function(e) {
 		const data = $(this).closest(".test").data();
-		openParticipantForm(data[groupDataIdKey]);
+		openParticipantForm(data[GROUP_DATA_ID_KEY]);
 	});
 	
 	$(document).on('click', ".groupTop .icon-gear", function(e) {
 		const data = $(this).closest(".test").data();
-		openChangeAllocatorForm(data[groupDataIdKey]);
+		openChangeAllocatorForm(data[GROUP_DATA_ID_KEY]);
 	});
 
 	$(document).on('click', ".groupTop .icon-export", function(e) {
 		const data = $(this).closest(".test").data();
-		exportGroup(data[groupDataIdKey], data[groupDataNameKey]);
+		exportGroup(data[GROUP_DATA_ID_KEY], data[GROUP_DATA_NAME_KEY]);
 	});
 
 	// Export group to PDF printable table
 	$(document).on('click', ".groupTop .icon-download", function(e) {
 		const data = $(this).closest(".test").data();
-		const group = getGroupFromId(data[groupDataIdKey]);
+		const group = getGroupFromId(data[GROUP_DATA_ID_KEY]);
 		
 		// Change the table group name and clear it
-		$("#printable_group_name").text(`<%- t('print_table.title', { ns : 'groups' }) %> ${data[groupDataNameKey]}`);
+		$("#printable_group_name").text(`<%- t('print_table.title', { ns : 'groups' }) %> ${data[GROUP_DATA_NAME_KEY]}`);
 		clearTableBody($("#printable_table"));
 
 		// Add each participant as a row
@@ -807,18 +835,18 @@
 
 	$(document).on('click', ".groupTop .icon-delete", function(e) {
 		const data = $(this).closest(".test").data();
-		deleteGroup(data[groupDataIdKey], data[groupDataNameKey]);
+		deleteGroup(data[GROUP_DATA_ID_KEY], data[GROUP_DATA_NAME_KEY]);
 	});
 
 	$(document).on('click', ".owners .red", function(e) {
 		const data = $(this).closest("tr").data();
-		deleteOwner(data[userDataIdKey], data[userDataNameKey]);
+		deleteOwner(data[USER_DATA_ID_KEY], data[USER_DATA_NAME_KEY]);
 	});
 	
 	$(document).on('click', ".participants .red", function(e) {
 		const groupData = $(this).closest(".test").data();
 		const userData = $(this).closest("tr").data();
-		deleteParticipant(userData[userDataIdKey], userData[userDataNameKey], groupData[groupDataIdKey], groupData[groupDataNameKey])
+		deleteParticipant(userData[USER_DATA_ID_KEY], userData[USER_DATA_NAME_KEY], groupData[GROUP_DATA_ID_KEY], groupData[GROUP_DATA_NAME_KEY])
 	});
 
 	// Block page refresh when clicking the participant email href 
@@ -829,18 +857,18 @@
 
 	// Functionality
     
-	let deleteOwner = function(userId, owner) {
-		if (confirm(`<%- t('coordinators.delete.confirm', { ns : 'groups', coordinator : '${owner}', SIMLET : '${study.simlet_name}' }) %>`)) {
-			Simva.deleteStudyPermissionsForUser(studyid, userId, function(response) {
+	const deleteOwner = function(userId, coordinatorName) {
+		if (confirm(`<%- t('coordinators.delete.confirm', { ns : 'groups', coordinator : '${coordinatorName}', SIMLET : '${simlet.simlet_name}' }) %>`)) {
+			Simva.deleteStudyPermissionsForUser(simletId, userId, function(response) {
 				if (response.status === 200) {
-					reloadStudy();
+					reloadSimlet();
 				}
 			});
 		}
 	}
 
 	const exportGroup = function(groupId, groupName) {
-		Simva.exportGroup(studyid, groupId, true, function(error, result) {
+		Simva.exportGroup(simletId, groupId, true, function(error, result) {
 			if (!error) {
 				const content = JSON.stringify(result, null, 2);
 				const filename = `simlet-group-${groupName}-export.json`;
@@ -851,47 +879,47 @@
 		});
 	}
 
-	let deleteGroup = function(groupid, groupname) {
-		if (confirm(`<%- t('groups.delete.confirm', { ns : 'groups', group : '${groupname}', SIMLET : '${study.simlet_name}' }) %>`)) {
-			Simva.deleteStudyGroup(studyid, groupid, function(response) {
+	const deleteGroup = function(groupid, groupName) {
+		if (confirm(`<%- t('groups.delete.confirm', { ns : 'groups', group : '${groupName}', SIMLET : '${simlet.simlet_name}' }) %>`)) {
+			Simva.deleteStudyGroup(simletId, groupid, function(response) {
 				if (response.status === 200) {
-					reloadStudy();
+					reloadSimlet();
 				}
 			});
 		}
 	}
 
-	let deleteParticipant = function(participant_id, participant, group_id, group){
-		if(confirm(`<%- t('participants.delete.confirm', { ns : 'groups',  participant : '${participant}', group : '${group}' }) %>`)) {
+	const deleteParticipant = function(participant_id, participantName, group_id, groupName){
+		if(confirm(`<%- t('participants.delete.confirm', { ns : 'groups',  participant : '${participantName}', group : '${groupName}' }) %>`)) {
 			// A participant will only be removed from keycloak if it's been generated as a token
-			Simva.deleteGroupParticipants(studyid, group_id, participant_id, getParticipantFromId(participant_id).isToken, function(response) {
+			Simva.deleteGroupParticipants(simletId, group_id, participant_id, getParticipantFromId(participant_id).isToken, function(response) {
 				if (response.status === 200) {
-					reloadStudy();
+					reloadSimlet();
 				}
 			});
 		}
 	}
 	
-	let deletePlatform = function(platform) {
-		if (confirm(`<%- t('lti_platform.delete.confirm', { ns : 'groups', platform : '${platform}', SIMLET : '${study.simlet_name}' }) %>`)) {
+	const deletePlatform = function(platform) {
+		if (confirm(`<%- t('lti_platform.delete.confirm', { ns : 'groups', platform : '${platform}', SIMLET : '${simlet.simlet_name}' }) %>`)) {
 			Simva.removePlatform(platform, function(error, result) {
 				if(!error){
-					reloadStudy();
+					reloadSimlet();
 				}
 			});
 		}
 	}
 
-	let changeAllocator = function() {
+	const changeAllocator = function() {
 		let type = $('#change_allocator_form input:radio[name=type]:checked').val();
 
 		if (editingGroupId) {
-			Simva.updateGroup(studyid, editingGroupId, { group_allocator_type: type }, function(error, result) {
+			Simva.updateGroup(simletId, editingGroupId, { group_allocator_type: type }, function(error, result) {
 				if (error) {
 					$('#change_allocator_form .error').text(error.responseJSON ? error.responseJSON.message : error.message);
 				} else {
 					Utils.toggleAddForm('change_allocator');
-					reloadStudy();
+					reloadSimlet();
 				}
 			});
 		} else {
@@ -902,15 +930,22 @@
 
 	// Render
 
+	/**
+	 * Remove all rows (except for the header rows) from a table
+	 * 
+	 * @param {Object} table - jquery object of the table element
+	 */
 	const clearTableBody = function(table) {
 		if (table.jquery != null) {
 			table.find("tbody").empty();
 		}
 	}
 	
-
+	/**
+	 * Fill the coordinators table
+	 */
 	const paintCoordinators = function() {
-		Simva.getStudyPermissions(studyid, function(error, result) {
+		Simva.getStudyPermissions(simletId, function(error, result) {
 			if (!error) {
 				clearTableBody($("#coordinators"));
 
@@ -924,7 +959,7 @@
 				});
 
 				// Block coordinator addition/deletion when SIMLET is archived
-				if (study.simlet_archived) {
+				if (simlet.simlet_archived) {
 					$('.coordinators').find(".groupTop").find("img").hide();
 					$('.coordinators').find(".red").prop("disabled", true);
 				}
@@ -932,10 +967,15 @@
 		});
 	}
 
-	// Set coordinator row parameters programatically to avoid XSS
+	/**
+	 * Fill the coordinator row info programatically to avoid XSS
+	 * 
+	 * @param {Object} coordinator - object containing the coordinator info
+	 * @param {Object} row - jquery object of the row element
+	 */
 	const fillCoordinatorRow = async function(coordinator, row) {
-		row.data(userDataIdKey, coordinator.user_id);
-		row.data(userDataNameKey, coordinator.username);
+		row.data(USER_DATA_ID_KEY, coordinator.user_id);
+		row.data(USER_DATA_NAME_KEY, coordinator.username);
 		
 		// Determine the permissions text
 		let permissions = `<%- t('coordinators.permissions.full', { ns : 'groups' }) %>`
@@ -975,7 +1015,7 @@
 		$('#groups_container').empty();
 
 		// Recalculate the total count of matching results
-		Simva.getStudyGroupsCount(studyid, groupsFilteringPaginationData["searchParams"], function(error, result) {
+		Simva.getStudyGroupsCount(simletId, groupsFilteringPaginationData["searchParams"], function(error, result) {
 			if (!error) {
 				// Update the total results and recalculate the number of pages (but don't perform the search again)
 				groupsFilteringPaginationData["totalResults"] = result.count;
@@ -985,13 +1025,15 @@
 		});
 	}
 
-	// Load batch of max GROUPS_SHOW_AT_ONCE groups matching the search parameters and paint them 
-	// Gets called both when updating the search results and when loading the next page of results
+	/**
+	 * Load batch of max GROUPS_SHOW_AT_ONCE groups matching the search parameters and paint them 
+	 * (called both when updating the search results and when loading the next page of results)
+	 */
 	const loadGroupBatch = function() {
 		$("#groups_loader").show();
 		
 		// TODO: Filter out sandbox groups?
-		Simva.getStudyGroups(studyid, groupsFilteringPaginationData["searchParams"], function(error, result){
+		Simva.getStudyGroups(simletId, groupsFilteringPaginationData["searchParams"], function(error, result){
 			if (!error) {
 				paintGroupBatch(result);
 				$("#groups_loader").hide();
@@ -999,17 +1041,22 @@
 		});
 	}
 	
-	const paintGroupBatch = function(groupBatch) {
-		groupBatch.forEach((group) => {
+	/**
+	 * Paint the cards for a batch of groups
+	 * 
+	 * @param {Array} batch - Array of objects containing the groups info
+	 */
+	const paintGroupBatch = function(batch) {
+		batch.forEach((group) => {
 			// Add the group card synchronously to ensure they appear in order
 			const card = $("#group_template .test").clone();
 			$('#groups_container').append(card);
 			card.find(".kebab-dropdown").fadeOut(0);
 
 			card.attr("id", `group_box_${group.group_id}`);
-			card.data(groupDataIdKey, group.group_id);
-			card.data(groupDataNameKey, group.group_name);
-			card.data(groupDataAllocatorKey, (group.group_allocator_type || 'default'));
+			card.data(GROUP_DATA_ID_KEY, group.group_id);
+			card.data(GROUP_DATA_NAME_KEY, group.group_name);
+			card.data(GROUP_DATA_ALLOCATOR_KEY, (group.group_allocator_type || 'default'));
 			card.find(".allocatorContent").attr("id", `allocator_content_${group.group_id}`);
 
 			// Then, fill its details asynchronously since the order of execution doesn't matter once the card has been added
@@ -1017,9 +1064,9 @@
 		});
 		
 		// No results
-		if (groupBatch.length == 0) {
+		if (batch.length == 0) {
 			// No groups
-			if (study.groups.length == 0) {
+			if (simlet.groups.length == 0) {
 				$('#groups_container').append("<p><%- t('groups.no_groups.message', { ns : 'groups' }) %></p>");
 			}
 			// There are groups, but none of them matched the search parameters
@@ -1028,13 +1075,13 @@
 			}
 		}
 		// There's only one result
-		else if (groupBatch.length == 1) {
+		else if (batch.length == 1) {
 			// Automatically expand the card to show its activities
-			toggleGroup(groupBatch[0].group_id);
+			toggleGroup(batch[0].group_id);
 		}
 
 		// Block user addition/deletion of all groups cards when SIMLET is archived
-		if (study.simlet_archived) {
+		if (simlet.simlet_archived) {
 			$(".groupTop").find(".kebab-dropdown").find(".icon-delete").hide();
 			$(".groupTop").find(".kebab-dropdown").find(".icon-add").hide();
 			$(".groupTop").find(".kebab-dropdown").find(".icon-gear").hide();
@@ -1042,8 +1089,13 @@
 		}
 	}
 	
-	// Set group card parameters programatically to avoid XSS
-	let fillGroupCard = async function(group, card) {
+	/**
+	 * Fill the group card info programatically to avoid XSS
+	 * 
+	 * @param {Object} group - object containing the group info
+	 * @param {Object} card - jquery object of the card element
+	 */
+	const fillGroupCard = async function(group, card) {
 		card.find(".groupTitle").text(group.group_name);
 		card.find(".groupParticipantsCount").after(group.participants.length);
 
@@ -1069,8 +1121,8 @@
 					participantsByUsername.set(participant.username, participant)
 
 					const row = $("#participant_template tr").clone()
-					row.data(userDataIdKey, participant.user_id);
-					row.data(userDataNameKey, participant.username);
+					row.data(USER_DATA_ID_KEY, participant.user_id);
+					row.data(USER_DATA_NAME_KEY, participant.username);
 					table.append(row);
 
 					let role = participant.role === "teacher" ? `<%- t('teacher', { ns : 'roles' }) %>` : `<%- t('student', { ns : 'roles' }) %>`
@@ -1095,7 +1147,7 @@
 			}
 			// If the complete info hasn't been stored yet, fetch it and store it for faster access
 			else {
-				Simva.getGroup(studyid, group.group_id, function(error, result) {
+				Simva.getGroup(simletId, group.group_id, function(error, result) {
 					if(!error) {
 						completeGroupsById.set(group.group_id, result);
 						fillCompleteFields(result);
@@ -1107,14 +1159,19 @@
         toggleGroup(group.group_id);
 	}
 
-
-	let paintAllocator = async function(group) {
+	
+	/**
+	 * Paint the allocator info on the group card
+	 * 
+	 * @param {Object} group - object containing the group info
+	 */
+	const paintAllocator = async function(group) {
 		const onLoadComplete = () => {
 			const allocatorType = group.group_allocator_type || 'default';
 			if (AllocatorFactory.Painters[allocatorType]) {
 				AllocatorFactory.Painters[allocatorType].setTests(Array.from(sessionsById.values()));
 				AllocatorFactory.Painters[allocatorType].setGroups([]);
-				AllocatorFactory.Painters[allocatorType].setStudy(study);
+				AllocatorFactory.Painters[allocatorType].setStudy(simlet);
 				AllocatorFactory.Painters[allocatorType].setParticipants(group.completeParticipants);
 				AllocatorFactory.Painters[allocatorType].paintAllocatorForGroup(group, `#allocator_content_${group.group_id}`);
 			} 
@@ -1124,12 +1181,12 @@
 		}
 		
 		// If all sessions have already been fetched, call the callback directly
-		if (sessionsById.size == study.sessions.length) {
+		if (sessionsById.size == simlet.sessions.length) {
 			onLoadComplete();
 		}
 		// Otherwise, fetch them from the database, store them, and call the callback once it's done
 		else {
-			Simva.getStudyTests(studyid, function(error, result) {
+			Simva.getStudyTests(simletId, function(error, result) {
 				if (!error) {
 					sessionsById = new Map(
 						result.map(obj => [obj.session_id, obj])
@@ -1142,24 +1199,24 @@
 	}
 
 	
-	// TODO: TEST
-	let paintPlatforms = function(platforms) {
-		$('#lti_platforms').html('');
-		if (platforms.length == 0) {
-			$('#lti_platforms').append("<p><%- t('lti_platform.zero.message', { ns : 'groups' }) %></p>");
-		} else {
-			for (var i = 0; i < platforms.length; i++) {
-				$('#lti_platforms').append(platformRow(platforms[i]));
-			}
-		}
-	}
+	// TODO
+	// const paintPlatforms = function(platforms) {
+	// 	$('#lti_platforms').html('');
+	// 	if (platforms.length == 0) {
+	// 		$('#lti_platforms').append("<p><%- t('lti_platform.zero.message', { ns : 'groups' }) %></p>");
+	// 	} else {
+	// 		for (var i = 0; i < platforms.length; i++) {
+	// 			$('#lti_platforms').append(platformRow(platforms[i]));
+	// 		}
+	// 	}
+	// }
 	
-	let platformRow = function(platform) {
-		let toret = `<tr><td>${platform.name}</td><td><input class="red" type="button" value="<%- t('lti_platform.delete.title', { ns : 'groups' }) %>"
-		onclick="removePlatform('${platform._id}')"
-		></td></tr>`;
-		return toret;
-	}
+	// const platformRow = function(platform) {
+	// 	let toret = `<tr><td>${platform.name}</td><td><input class="red" type="button" value="<%- t('lti_platform.delete.title', { ns : 'groups' }) %>"
+	// 	onclick="removePlatform('${platform._id}')"
+	// 	></td></tr>`;
+	// 	return toret;
+	// }
 
 </script>
 
