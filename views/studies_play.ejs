@@ -111,7 +111,7 @@
 	 * Fill the SIMLET card info programatically to avoid XSS
 	 * 
 	 * @param {Object} simlet - object containing simlet info
-	 * @param {Object} card - jquery object of the card element
+	 * @param {Object} card - jquery object reference of the card element
 	 */
 	const fillSimletCard = async function(simlet, card) {
 		card.attr("href", `/scheduler/${simlet.simlet_id}`);

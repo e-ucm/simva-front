@@ -297,7 +297,7 @@
 		<p></p>
 		<table id="lti_platforms">
 		</table>
-		<input class="violet" type="button" value="<%- t('lti_platform.add.title', { ns : 'groups' }) %>" onclick="Utils.toggleAddForm('add_platform')">
+		<input class="violet" type="button" value="<%- t('lti_platform.add.title', { ns : 'groups' }) %>" onclick="Utils.toggleFormInFloating('add_platform')">
 	</div>
 <% } %>
 -->
@@ -408,7 +408,7 @@
 					} else if (createError) {
 						errorbox.text(createError.message || createError);
 					} else {
-						Utils.toggleAddForm('users_form_menu');
+						Utils.toggleFormInFloating('users_form_menu');
 						reloadSimlet();
 					}
 				});
@@ -422,7 +422,7 @@
 		$(document).on('submit', '#import_group_form_modal', function(event) {
 			let currentform = this;
 			let form = Utils.getFormData($(this));
-			Utils.toggleSubmit(currentform);
+			Utils.toggleSubmit();
 			let errorbox = $('#import_group_error_modal');
 			const fileInput = $(this).find('input[name="jsonFile"]').get(0);
 			if(fileInput && fileInput.files[0]){
@@ -433,7 +433,7 @@
 						raw = raw.substr(raw.indexOf(',') + 1);
 						const newGroup = raw;
 						Simva.importGroup(simletId, {file: newGroup, group_name: form.groupName}, function(importError, result) {
-							Utils.toggleSubmit(currentform);
+							Utils.toggleSubmit();
 							if (importError) {
 								errorbox.text(importError.responseJSON ? importError.responseJSON.message : importError.message || importError);
 								return;
@@ -444,16 +444,16 @@
 						});
 					} catch (parseError) {
 						console.error('Import error:', parseError);
-						Utils.toggleSubmit(currentform);
+						Utils.toggleSubmit();
 						// TODO: add localization
 						errorbox.text("<%- t('groups.import.error.invalid_file', { ns : 'groups' }) %> " + (parseError.message ? (': ' + parseError.message) : ''));
 					}
 				};
 				reader.readAsDataURL(fileInput.files[0]);
-				Utils.toggleAddForm('users_form_menu');
+				Utils.toggleFormInFloating('users_form_menu');
 			} else {
 				errorbox.text("<%- t('groups.import.upload.error', { ns : 'groups' }) %>");
-				Utils.toggleSubmit(currentform);
+				Utils.toggleSubmit();
 			}
 			return false;
 		});
@@ -463,7 +463,7 @@
 			let errorbox = $('#users_error');
 			let currentform = this;
 			let form = Utils.getFormData($(this));
-			Utils.toggleSubmit(currentform);
+			Utils.toggleSubmit();
 			
 			// Creating new group
 			if (form.editingGroupId == null || form.editingGroupId == "") { 
@@ -471,7 +471,7 @@
 
 				Simva.addGroup(simletId, { group_name : form.groupName, group_sandbox : false, group_use_new_generation : newGeneration }, function(error, result) {
 					if (error && error.responseJSON) {
-						Utils.toggleSubmit(currentform);
+						Utils.toggleSubmit();
 						errorbox.text(error.responseJSON.message);
 					}
 					else {
@@ -487,8 +487,8 @@
 
 						// Fake a wait time and open the add participants form in the batch tab
 						setTimeout(() => {	
-							Utils.toggleSubmit(currentform);
-							Utils.toggleAddForm('users_form_menu');
+							Utils.toggleSubmit();
+							Utils.toggleFormInFloating('users_form_menu');
 							openParticipantForm(result.group_id);
 							Utils.changeTab($('#add_batch_tab_button'), 'add_participant_form','batch_participant_tab');
 							// reloadSimlet();
@@ -503,14 +503,14 @@
 				const nameChanged = form.prevGroupName != form.groupName;
 				if (!nameChanged) {
 					errorbox.text("<%- t('groups.edit.no_changes.message', { ns : 'groups' }) %>");
-					Utils.toggleSubmit(currentform);
+					Utils.toggleSubmit();
 				}
 				else {
 					errorbox.text("");
 					Simva.updateGroup(simletId, form.editingGroupId, { group_name : form.groupName }, function(error, result) {
 						if (!error) {
-							Utils.toggleSubmit(currentform);
-							Utils.toggleAddForm('users_form_menu');
+							Utils.toggleSubmit();
+							Utils.toggleFormInFloating('users_form_menu');
 							reloadSimlet();
 						}
 					});
@@ -553,13 +553,13 @@
 				if (completed == usernames.length) {
 					// If all users have been correctly added, close the form and reload the SIMLET
 					if (added == usernames.length) {
-						Utils.toggleSubmit(currentform);
-						Utils.toggleAddForm('add_participant');
+						Utils.toggleSubmit();
+						Utils.toggleFormInFloating('add_participant');
 						reloadSimlet();
 					}
 					// Otherwise, don't close the form to show the error
 					else {
-						Utils.toggleSubmit(currentform);
+						Utils.toggleSubmit();
 
 						// If some users have been added, add an extra message asking for 
 						// manual refreshing (to allow the user to see the error message)
@@ -581,7 +581,7 @@
 						completed = 0;
 						errorText = "";
 						
-						Utils.toggleSubmit(currentform);
+						Utils.toggleSubmit();
 						foundUsers.forEach((user, username) => {
 							Simva.addGroupParticipant(simletId, editingGroupId, user.user_id, function(addError){
 								// If there are any erorrs, add them to the error message
@@ -648,7 +648,7 @@
 				if(error && error.responseJSON){
 					errorbox.text(error.responseJSON.message);
 				}else{
-					Utils.toggleAddForm('add_participant');
+					Utils.toggleFormInFloating('add_participant');
 					reloadSimlet();
 				}
 			});
@@ -659,13 +659,13 @@
 		// When submitting the add batch of new users as participants form
 		$(document).on('submit', "#batch_participant_form", function(event){
 			let currentform = this;
-			Utils.toggleSubmit(currentform);
+			Utils.toggleSubmit();
 			let form = Utils.getFormData($(this));
 			let errorbox = $("#participants_error");
 
 			Simva.generateAndRegister(simletId, editingGroupId, form.algorithm, form.length, form.amount, (error, generated) => {
 				if(!error) { 
-					Utils.toggleAddForm('add_participant');
+					Utils.toggleFormInFloating('add_participant');
 					reloadSimlet();
 				}
 			});
@@ -692,7 +692,7 @@
 		// 		if (error && error.responseJSON) {
 		// 			errorbox.text(error.responseJSON.message);
 		// 		} else {
-		// 			Utils.toggleAddForm('add_platform');
+		// 			Utils.toggleFormInFloating('add_platform');
 		// 			reloadSimlet();
 		// 		}
 		// 	});
@@ -718,7 +718,7 @@
 	const openAddUsersForm = function() {
 		// Always open form in the create/edit common tab
 		Utils.changeTab($('#group_name_desc_tab_button'), 'group_form','group_name_desc_tab');
-		Utils.toggleAddForm("users_form_menu");
+		Utils.toggleFormInFloating("users_form_menu");
 
 		// Reset tab state when opening modal
 		$("#owner_name").val("");
@@ -737,7 +737,7 @@
 	const openEditGroupForm = function(groupId) {
 		// Always open form in the create/edit common tab
 		Utils.changeTab($('#group_name_desc_tab_button'), 'group_form','group_name_desc_tab');
-		Utils.toggleAddForm("users_form_menu");
+		Utils.toggleFormInFloating("users_form_menu");
 
 		// Reset tab state when opening modal
 		$('#edit_group_id').val(groupId || "");
@@ -760,7 +760,7 @@
 		editingGroupId = groupId;
 		// Always open form in the add existing participant tab
 		Utils.changeTab($('#existing_participant_tab_button'), 'add_participant_form','existing_participant_tab');
-		Utils.toggleAddForm("add_participant");
+		Utils.toggleFormInFloating("add_participant");
 	}
 	
 	
@@ -769,7 +769,7 @@
 		let currentGroup = getGroupFromId(groupId);
 		console.log("Current group for allocator change:", currentGroup.group_allocator_type);
 		let form = $('#change_allocator_form');
-		Utils.toggleAddForm('change_allocator');
+		Utils.toggleFormInFloating('change_allocator');
 		$('#change_allocator_form input:radio[name=type]').prop('checked', false);
 		$(`#allocator_${currentGroup.group_allocator_type}`).prop('checked', true);
 	}
@@ -918,12 +918,12 @@
 				if (error) {
 					$('#change_allocator_form .error').text(error.responseJSON ? error.responseJSON.message : error.message);
 				} else {
-					Utils.toggleAddForm('change_allocator');
+					Utils.toggleFormInFloating('change_allocator');
 					reloadSimlet();
 				}
 			});
 		} else {
-			Utils.toggleAddForm('change_allocator');
+			Utils.toggleFormInFloating('change_allocator');
 		}
 	}
 
@@ -933,7 +933,7 @@
 	/**
 	 * Remove all rows (except for the header rows) from a table
 	 * 
-	 * @param {Object} table - jquery object of the table element
+	 * @param {Object} table - jquery object reference of the table element
 	 */
 	const clearTableBody = function(table) {
 		if (table.jquery != null) {
@@ -971,7 +971,7 @@
 	 * Fill the coordinator row info programatically to avoid XSS
 	 * 
 	 * @param {Object} coordinator - object containing the coordinator info
-	 * @param {Object} row - jquery object of the row element
+	 * @param {Object} row - jquery object reference of the row element
 	 */
 	const fillCoordinatorRow = async function(coordinator, row) {
 		row.data(USER_DATA_ID_KEY, coordinator.user_id);
@@ -1093,7 +1093,7 @@
 	 * Fill the group card info programatically to avoid XSS
 	 * 
 	 * @param {Object} group - object containing the group info
-	 * @param {Object} card - jquery object of the card element
+	 * @param {Object} card - jquery object reference of the card element
 	 */
 	const fillGroupCard = async function(group, card) {
 		card.find(".groupTitle").text(group.group_name);

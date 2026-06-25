@@ -2,8 +2,12 @@ const activitiescontroler = require('../lib/activitiescontroler');
 const SimvaAsync = require('../lib/simvaAsync');
 const usertools = require('../lib/usertools');
 
-// Filter out empty strings, null, and undefined values
-const getClearQuery = function(req) {
+/**
+ * Filter out empty strings, null, and undefined values
+ * @param {Object} req - object containing the parameters of the request, including the query 
+ * @returns {Object} - object containing the clean query parameters
+ */
+const getCleanQuery = function(req) {
     return Object.fromEntries(
         Object.entries(req.query).filter(([key, value]) => 
             // $.ajax GET cache parameter is set to false, even if there are no 
@@ -248,7 +252,7 @@ module.exports = function(auth, redirectToLogin, config){
     // get all groups in study
     router.get('/simlets/:simlet_id/groups', auth, redirectToLogin, async (req, res, next) => {
         if(req.query.use_new_generation) {
-            Simva.getStudyGroupsWithVersion(req.query.use_new_generation === 'true', req.params["simlet_id"], getClearQuery(req), req.session.id, (error, result) => {
+            Simva.getStudyGroupsWithVersion(req.query.use_new_generation === 'true', req.params["simlet_id"], getCleanQuery(req), req.session.id, (error, result) => {
                 if(error) {
                     next(error.response?.data || error);
                 } else {
@@ -256,7 +260,7 @@ module.exports = function(auth, redirectToLogin, config){
                 }
             });
         } else {
-            Simva.getStudyGroups(req.params["simlet_id"], getClearQuery(req), req.session.id, (error, result) => {
+            Simva.getStudyGroups(req.params["simlet_id"], getCleanQuery(req), req.session.id, (error, result) => {
                 if(error) {
                     next(error.response?.data || error);
                 } else {
@@ -269,7 +273,7 @@ module.exports = function(auth, redirectToLogin, config){
     // get count of all groups in study
     router.get('/simlets/:simlet_id/groups/count', auth, redirectToLogin, async (req, res, next) => {
         if(req.query.use_new_generation) {
-            Simva.getStudyGroupsWithVersionCount(req.query.use_new_generation === 'true', req.params["simlet_id"], getClearQuery(req), req.session.id, (error, result) => {
+            Simva.getStudyGroupsWithVersionCount(req.query.use_new_generation === 'true', req.params["simlet_id"], getCleanQuery(req), req.session.id, (error, result) => {
                 if(error) {
                     next(error.response?.data || error);
                 } else {
@@ -277,7 +281,7 @@ module.exports = function(auth, redirectToLogin, config){
                 }
             });
         } else {
-            Simva.getStudyGroupsCount(req.params["simlet_id"], getClearQuery(req), req.session.id, (error, result) => {
+            Simva.getStudyGroupsCount(req.params["simlet_id"], getCleanQuery(req), req.session.id, (error, result) => {
                 if(error) {
                     next(error.response?.data || error);
                 } else {
@@ -451,7 +455,7 @@ module.exports = function(auth, redirectToLogin, config){
 
     // get count of all participants from each group of specific study
     router.get('/simlets/:simlet_id/groups/participants/count', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getStudyGroupsParticipantsCount(req.params['simlet_id'], getClearQuery(req), req.session.id, (error, result) => {
+        Simva.getStudyGroupsParticipantsCount(req.params['simlet_id'], getCleanQuery(req), req.session.id, (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -473,7 +477,7 @@ module.exports = function(auth, redirectToLogin, config){
 
     // get count of all participants from specific group
     router.get('/simlets/:simlet_id/groups/:groupid/participants/count', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getGroupParticipantsCount(req.params['simlet_id'], req.params['groupid'], getClearQuery(req), req.session.id, (error, result) => {
+        Simva.getGroupParticipantsCount(req.params['simlet_id'], req.params['groupid'], getCleanQuery(req), req.session.id, (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -548,7 +552,7 @@ module.exports = function(auth, redirectToLogin, config){
     */
    
     router.get('/studies', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getStudies(getClearQuery(req), req.session.id, (error, result, cleanQuery) => {
+        Simva.getStudies(getCleanQuery(req), req.session.id, (error, result, cleanQuery) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -558,7 +562,7 @@ module.exports = function(auth, redirectToLogin, config){
     });
 
     router.get('/studies/count', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getStudiesCount(getClearQuery(req), req.session.id, (error, result, cleanQuery) => {
+        Simva.getStudiesCount(getCleanQuery(req), req.session.id, (error, result, cleanQuery) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -569,7 +573,7 @@ module.exports = function(auth, redirectToLogin, config){
     
 
     router.get('/scheduler/studies', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getSchedulerStudies(getClearQuery(req), req.session.id, (error, result) => {
+        Simva.getSchedulerStudies(getCleanQuery(req), req.session.id, (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -579,7 +583,7 @@ module.exports = function(auth, redirectToLogin, config){
     });
 
     router.get('/scheduler/studies/count', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getSchedulerStudiesCount(getClearQuery(req), req.session.id, (error, result) => {
+        Simva.getSchedulerStudiesCount(getCleanQuery(req), req.session.id, (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -839,7 +843,7 @@ module.exports = function(auth, redirectToLogin, config){
     * 
     */
     router.get('/studies/:studyid/tests', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getStudyTests(req.params["studyid"], getClearQuery(req), req.session.id, (error, result) => {
+        Simva.getStudyTests(req.params["studyid"], getCleanQuery(req), req.session.id, (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -849,7 +853,7 @@ module.exports = function(auth, redirectToLogin, config){
     });
 
     router.get('/studies/:studyid/tests/count', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getStudyTestsCount(req.params["studyid"], getClearQuery(req), req.session.id, (error, result) => {
+        Simva.getStudyTestsCount(req.params["studyid"], getCleanQuery(req), req.session.id, (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {

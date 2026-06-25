@@ -136,7 +136,7 @@
 		$(document).on('submit', "#import_activity_form", function(event) {
 			let currentform = this;
 			let form = Utils.getFormData($(this));
-			Utils.toggleSubmit(currentform);
+			Utils.toggleSubmit();
 			let errorbox = $('#import_activity_form .error');
 			const fileInput = $(this).find('input[name="jsonFile"]').get(0);
 			if(fileInput && fileInput.files[0]){
@@ -147,7 +147,7 @@
 						raw = raw.substr(raw.indexOf(',') + 1);
 						var newActivity = raw;
 						Simva.importActivity(simletId, form.test, {file: newActivity, activity_name: form.name}, function(importError, result) {
-							Utils.toggleSubmit(currentform);
+							Utils.toggleSubmit();
 							if (importError) {
 								errorbox.text(importError.responseJSON ? importError.responseJSON.message : importError.message || importError);
 								return;
@@ -158,15 +158,15 @@
 						});
 					} catch (parseError) {
 						console.error('Import error:', parseError);
-						Utils.toggleSubmit(currentform);
+						Utils.toggleSubmit();
 						errorbox.text("<%- t('import.error.invalid_file', { ns : 'activities' }) %> " + (parseError.message ? (': ' + parseError.message) : ''));
 					}
 				};
 				reader.readAsDataURL(fileInput.files[0]);
-				Utils.toggleAddForm('add_activity');
+				Utils.toggleFormInFloating('add_activity');
 			} else {
 				errorbox.text("<%- t('import.upload.error', { ns : 'activities' }) %>");
-				Utils.toggleSubmit(currentform);
+				Utils.toggleSubmit();
 			}
 			return false;
 		});
@@ -175,13 +175,13 @@
 			   event.preventDefault();
 			   let currentform = this;
 			   let form = Utils.getFormData($(this));
-			   Utils.toggleSubmit(currentform);
+			   Utils.toggleSubmit();
 			   let errorbox = $(this).find('.error');
 
 			   // Require the user to select a type
 			   if (!form.type) {
 				   errorbox.text("<%- t('activity.type.select_required', { ns : 'activities' }) %>");
-				   Utils.toggleSubmit(currentform);
+				   Utils.toggleSubmit();
 				   return false;
 			   }
 
@@ -191,11 +191,11 @@
 						   errorbox.text(error);
 					   } else {
 						   Simva.addActivityToTest(simletId, form.test, activity, function(error, result) {
-							   Utils.toggleSubmit(currentform);
+							   Utils.toggleSubmit();
 							   if (error && error.responseJSON) {
 								   errorbox.text(error.responseJSON.message);
 							   } else {
-								   Utils.toggleAddForm('add_activity');
+								   Utils.toggleFormInFloating('add_activity');
 								   reloadSimlet();
 							   }
 						   });
@@ -221,14 +221,14 @@
 			event.preventDefault();
 			let currentform = this;
 			let form = Utils.getFormData($(this));
-			Utils.toggleSubmit(currentform);
+			Utils.toggleSubmit();
 			let errorbox = $(this).find('.error');
 			let test = tests.filter(item => 
 				item.session_id == form.test
 			)[0];
 			if (!test || !test.completeActivities) {
 				errorbox.text("Test or activities not found");
-				Utils.toggleSubmit(currentform);
+				Utils.toggleSubmit();
 				return false;
 			}
 			let activities = test.completeActivities;
@@ -237,7 +237,7 @@
 			)[0];
 			if (!activity) {
 				errorbox.text("Activity not found");
-				Utils.toggleSubmit(currentform);
+				Utils.toggleSubmit();
 				return false;
 			}
 			PainterFactory.Painters[form.type].extractEditInformation('#edit_activity_form', activity, function(error, updatedActivity) {
@@ -246,14 +246,14 @@
 				} else {
 					if (Object.keys(updatedActivity).length == 0) {
 						errorbox.text("<%- t('edit.no_changes.message', { ns : 'SIMLETs' }) %>");
-						Utils.toggleSubmit(currentform);
+						Utils.toggleSubmit();
 					} else {
 						Simva.updateActivity(simletId, form.test, form.activity, updatedActivity, function(error, result) {
-							Utils.toggleSubmit(currentform);
+							Utils.toggleSubmit();
 							if (error && error.responseJSON) {
 								errorbox.text(error.responseJSON.message);
 							} else {
-								Utils.toggleAddForm('iframe_floating');
+								Utils.toggleFormInFloating('iframe_floating');
 								reloadSimlet();
 							}
 						});
@@ -277,7 +277,7 @@
     let openActivityForm = function(test) {
 		// Always open form in the new activity 
 		openNewActivityTab();
-		Utils.toggleAddForm('add_activity');
+		Utils.toggleFormInFloating('add_activity');
 		
 		$('#new_activity_form input[name="test"]').val(test);
 		$('#import_activity_form input[name="test"]').val(test);
@@ -289,7 +289,7 @@
 
     let openEditActivityForm = function(activityId) {
 		let activity = getActivityFromId(activityId);
-		Utils.toggleAddForm('edit_activity');
+		Utils.toggleFormInFloating('edit_activity');
 		document.getElementById("edit_activity_error").innerHTML = "";
 		var inputElement = document.getElementById('edit_activity_name');
 		inputElement.value = activity.activity_name;
@@ -306,7 +306,7 @@
 	}
 
 	const openActivityDownloadForm = function(activityId) {
-		Utils.toggleAddForm('download_data_menu');
+		Utils.toggleFormInFloating('download_data_menu');
 		Utils.changeTab(null, 'download_data_form','download_activity_data');
 		
         downloadActivityId = activityId;

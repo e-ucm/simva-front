@@ -94,7 +94,7 @@ the elements and scripts defined in the simlet_commons partial -->
 			event.preventDefault();
 			let currentform = this;
 			let form = Utils.getFormData($(this));
-			Utils.toggleSubmit(currentform);
+			Utils.toggleSubmit();
 			let errorbox = $("#study_form_error");
 			// Check for file presence
 			const fileInput = $(this).find('input[name="jsonFile"]').get(0);
@@ -107,9 +107,9 @@ the elements and scripts defined in the simlet_commons partial -->
 						raw = raw.substr(raw.indexOf(',') + 1);
 						const newStudy = raw;
 						Simva.importStudyConfig({file: newStudy, simlet_name: form.studyName}, function(error, result) {
-							Utils.toggleSubmit(currentform);
+							Utils.toggleSubmit();
 							if(!error) {
-								Utils.toggleAddForm('study_form');
+								Utils.toggleFormInFloating('study_form');
 								$('#simlets_list').html(roller);
 								refreshFunc();
 							} else {
@@ -117,14 +117,14 @@ the elements and scripts defined in the simlet_commons partial -->
 							}
 						});
 					} catch (e) {
-						Utils.toggleSubmit(currentform);
+						Utils.toggleSubmit();
 						$("#study_form_error").text(e.message);
 					}
 				};
 				reader.readAsDataURL(fileInput.files[0]);
 			}else{
 				$("#study_form_error").text("<%- t('import.upload.error', { ns : 'SIMLETs' }) %>");
-				Utils.toggleSubmit(currentform);
+				Utils.toggleSubmit();
 			}
 			return false;
 		});
@@ -226,7 +226,7 @@ the elements and scripts defined in the simlet_commons partial -->
 		// Creating new SIMLET
 		if (simletId == null) {
 			// Open form always and show the add new/import tabs
-			Utils.toggleAddForm("study_form");
+			Utils.toggleFormInFloating("study_form");
 			$("#add_study_tabs").show();
 			
 			$("#study_form_title").text("<%- t('add.title', { ns : 'SIMLETs' }) %>");
@@ -243,7 +243,7 @@ the elements and scripts defined in the simlet_commons partial -->
 			const simlet = simletsById.get(simletId);
 			if(simlet != null) {
 				// Open form only if the SIMLET exists and hide the add new/import tabs (only the name/description tab is needed)
-				Utils.toggleAddForm('study_form');
+				Utils.toggleFormInFloating('study_form');
 				$('#edit_study_id').val(simletId);
 
 				$("#add_study_tabs").hide();
@@ -265,7 +265,7 @@ the elements and scripts defined in the simlet_commons partial -->
 	 * Fill the SIMLET card info programatically to avoid XSS
 	 * 
 	 * @param {Object} simlet - object containing the SIMLET info
-	 * @param {Object} card - jquery object of the card element
+	 * @param {Object} card - jquery object reference of the card element
 	 */
 	const fillSimletCard = async function(simlet, card) {
 		card.attr("href", `/simlets/${simlet.simlet_id}`);

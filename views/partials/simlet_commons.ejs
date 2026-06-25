@@ -166,8 +166,8 @@
 	/**
 	 * Format the raw date to show it in YYYY/MM/DD format on the user's timezone
 	 * 
-	 * @param rawDate {Number} - date epoch
-	 * @param currentlanguageCode {string} - language the user is currently using 
+	 * @param {Number} rawDate - date epoch
+	 * @param {string} currentlanguageCode - language the user is currently using 
 	 * @returns {string} - string with the formatted date
 	 */
 	const getFormattedDate = function(rawDate, currentlanguageCode) {
@@ -183,8 +183,8 @@
 	/**
 	 * Adds the character counter to all elements of the same class
 	 * 
-	 * @param className {string} - name of the class of the elements that will get the counter added
-	 * @param maxLength {Number} - max number of characters
+	 * @param {string} className  - name of the class of the elements that will get the counter added
+	 * @param {Number} maxLength - max number of characters
 	 */
 	const addInputCharCountToClass = function(className, maxLength) {
 		// Store the class and update the string with all the classes that must be checked when updating input value
@@ -237,8 +237,8 @@
 	/**
 	 * Checks if the element has any of the classes with a character count and updates the count if it does
 	 * 
-	 * @param elem {Object} - jquery object of the element that will be checked
-	 * @param value {Number} - current number of characters
+	 * @param {Object} elem - jquery object reference of the element that will be checked
+	 * @param {Number} value - current number of characters
 	 */
 	const checkAndUpdateCharCount = function(elem, value) {
 		if ($(elem).is(classesWithCharCountStr)) {
@@ -248,9 +248,9 @@
 	/**
 	 * Updates the character count of an element
 	 * 
-	 * @param countTextElem {Object} - jquery object of the element that will be updated
-	 * @param count {Number} - current number of characters
-	 * @param maxLength {Number} - max number of characters
+	 * @param {Object} countTextElem - jquery object reference of the element that will be updated
+	 * @param {Number} count - current number of characters
+	 * @param {Number} maxLength - max number of characters
 	 */
 	const updateCharCount = function(countTextElem, count, maxLength) {
 		$(countTextElem).text(`${count}/${maxLength}`);
@@ -284,19 +284,19 @@
 		$(document).on('submit', "#study_name_desc_tab", function(event) {
 			let currentform = this;
 			let form = Utils.getFormData($("#study_name_desc_form"));
-			Utils.toggleSubmit(currentform);
+			Utils.toggleSubmit();
 
 			// Creating new SIMLET
 			if (form.editingStudyId == null || form.editingStudyId == "") {
 				Simva.addStudy({ simlet_name : form.studyName, simlet_description : form.studyDescription }, function(error, result) {
 					if (error && error.responseJSON) {
-						Utils.toggleSubmit(currentform);
+						Utils.toggleSubmit();
 						$("#study_form_error").text(error.responseJSON.message);
 					}
 					else {
 						$('#studies_list').html(roller);
-						Utils.toggleSubmit(currentform);
-						Utils.toggleAddForm('study_form');
+						Utils.toggleSubmit();
+						Utils.toggleFormInFloating('study_form');
 						$("#study_form_error").text("");
 						Simva.getStudies(function(error, result) {
 							if (!error && refreshFunc) {
@@ -310,13 +310,13 @@
 			else {
 				if (form.prevStudyName == form.studyName && form.prevStudyDescription == form.studyDescription) {
 					$('#study_form_error').text("<%- t('edit.no_changes.message', { ns : 'SIMLETs' }) %>");
-					Utils.toggleSubmit(currentform);
+					Utils.toggleSubmit();
 				}
 				else {
 					$('#study_form_error').text("");
 					Simva.updateStudy(form.editingStudyId, { simlet_name : form.studyName, simlet_description : form.studyDescription }, function(error, result) {
-						Utils.toggleSubmit(currentform);
-						Utils.toggleAddForm('study_form');
+						Utils.toggleSubmit();
+						Utils.toggleFormInFloating('study_form');
 
 						if (refreshFunc != null) {
 							refreshFunc();
@@ -337,7 +337,7 @@
             
             let form = Utils.getFormData($(this));
             custom_slug = form.custom_slug;
-            Utils.toggleSubmit(currentform);
+            Utils.toggleSubmit();
             
             Simva.generateShlinkURL(currSimletId, custom_slug, null, (error, result) => {
                 if (!error) {
@@ -347,7 +347,7 @@
                     navigator.clipboard.writeText(shortUrl);
                     // Alert Short URL
                     alert(shortUrl);
-                    Utils.toggleAddForm('generate_study_link');
+                    Utils.toggleFormInFloating('generate_study_link');
 
 					if (refreshFunc != null) {
 						refreshFunc();
@@ -358,7 +358,7 @@
                 else {
                     $('#generate_link_error').text(error.message);
                 }
-                Utils.toggleSubmit(currentform);
+                Utils.toggleSubmit();
             });
 
             return false;
@@ -375,7 +375,7 @@
         	if (form.link_length_shlink != "") {
             	length = form.link_length_shlink;
         	}
-        	Utils.toggleSubmit(currentform);
+        	Utils.toggleSubmit();
             
             Simva.generateShlinkURL(currSimletId, null, length, (error, result) => {
                 if (!error) {
@@ -385,7 +385,7 @@
                     navigator.clipboard.writeText(shortUrl);
                     // Alert Short URL
                     alert(shortUrl);
-                    Utils.toggleAddForm('generate_study_link');
+                    Utils.toggleFormInFloating('generate_study_link');
 					if (refreshFunc != null) {
 						refreshFunc();
 					}
@@ -394,7 +394,7 @@
                 else {
                     $('#generate_link_error').text(error.message);
                 }
-                Utils.toggleSubmit(currentform);
+                Utils.toggleSubmit();
             });
             return false;
         });
@@ -411,7 +411,7 @@
         currSimletId = simletId;
 
 		Simva.getShLink(simletId, (error, result) => {
-			Utils.toggleAddForm('study_url_settings');
+			Utils.toggleFormInFloating('study_url_settings');
 			if (!error) {
 				shlink = result;
 				$('#shlink_url_short').val(`<%- t('scheduler.shlink.message', { ns : 'SIMLETs', shlink : '${shlink.shortUrl}' }) %>`);
@@ -429,8 +429,8 @@
 	}
 
     const openGenerateLinkForm = function() {
-        Utils.toggleAddForm('study_url_settings');
-        Utils.toggleAddForm('generate_study_link');
+        Utils.toggleFormInFloating('study_url_settings');
+        Utils.toggleFormInFloating('generate_study_link');
         $('#generate_link_error').text("");
         $('#custom_slug_shlink').val("");
         $('#link_length_shlink').val($('#link_length_shlink').prop("min"));
@@ -455,7 +455,7 @@
 							if (refreshFunc != null) {
 								refreshFunc();
 							}
-							Utils.toggleAddForm('study_url_settings');
+							Utils.toggleFormInFloating('study_url_settings');
 						}
 						Utils.toggleSubmit($("#generate_study_link"));
 					});
@@ -469,7 +469,7 @@
 
     const openConfigDownloadForm = function(simletId, simletName) {
         currSimletId = simletId;
-		Utils.toggleAddForm('download_config');
+		Utils.toggleFormInFloating('download_config');
 		$(".formSimletTitle").text(`<%- t('single.title', { ns : 'SIMLETs' }) %>: ${simletName}`);
 	}
 
@@ -562,7 +562,7 @@
 	/**
 	 * Get all the tags matching (partially or completely) the name
 	 * 
-	 * @param tagName {string} - name of the tags to retrieve
+	 * @param {string} tagName  - name of the tags to retrieve
 	 * @returns {Array} - array of objects with the info of the matching tags
 	*/
 	const searchTagsByName = function(tagName) {
@@ -580,7 +580,7 @@
 	/**
 	 * Create the html element containing all the tags
 	 * 
-	 * @param taggedElem {Object} - SIMLET or session to get the tags from
+	 * @param {Object} taggedElem - SIMLET or session to get the tags from
 	 * @returns {string} - string with the html elements needed to render the tags
 	*/
 	const renderTags = function(taggedElem) {

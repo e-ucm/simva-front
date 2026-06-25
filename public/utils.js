@@ -1,52 +1,253 @@
 var Utils = {
-	getFormData: function($form){
-	    var unindexed_array = $form.serializeArray();
-	    var indexed_array = {};
+	// JQUERY AJAX WRAPPERS
+	
+	/**
+	 * Send an async POST request to the specified url where the request body is a JSON object 
+	 * 
+	 * @param {string} url - url to send the request to
+	 * @param {Object} body - data to send in the request
+	 * @param {Function} callback - function to call when the request gets a response (either on success or on error) 
+	 */
+	post: function(url, body, callback){
+		$.ajax({
+			type: 'POST',
+			url: url,
+			data: JSON.stringify(body),
+			contentType: 'application/json',
+			dataType: 'json',
+			cache: false,
+			success: function(data){
+				callback(null, data);
+			},
+			error: function(error){
+				callback(error);
+			},
+		});
+	},
 
+	/**
+	 * Send an async POST request to the specified url where the request body is a FormData object
+	 * 
+	 * @param {string} url - url to send the request to
+	 * @param {FormData} body - data to send in the request
+	 * @param {Function} callback - function to call when the request gets a response (either on success or on error) 
+	 */
+	postForm: function(url, formData, callback){
+	    $.ajax({
+	       type: 'POST',
+	       url: url,
+	       data: formData,
+	       processData: false,
+	       contentType: false,
+	       cache: false,
+	       success: function(data){
+		       callback(null, data);
+	       },
+	       error: function(error){
+		       callback(error);
+	       },
+	    });
+	},
+
+	/**
+	 * Send an async PATCH request to the specified url where the request body is a JSON object 
+	 * 
+	 * @param {string} url - url to send the request to
+	 * @param {Object} body - data to send in the request
+	 * @param {Function} callback - function to call when the request gets a response (either on success or on error) 
+	 */
+	patch: function(url, body, callback){
+		$.ajax({
+			type: 'PATCH',
+			url: url,
+			data: JSON.stringify(body),
+			contentType: 'application/json',
+			dataType: 'json',
+			cache: false,
+			success: function(data){
+				callback(null, data);
+			},
+			error: function(error){
+				callback(error);
+			},
+		});
+	},
+
+	/**
+	 * Send an async PATCH request to the specified url where the request body is a FormData object
+	 * 
+	 * @param {string} url - url to send the request to
+	 * @param {FormData} body - data to send in the request
+	 * @param {Function} callback - function to call when the request gets a response (either on success or on error) 
+	 */
+	patchForm: function(url, formData, callback){
+	    $.ajax({
+	       type: 'PATCH',
+	       url: url,
+	       data: formData,
+	       processData: false,
+	       contentType: false,
+	       cache: false,
+	       success: function(data){
+		       callback(null, data);
+	       },
+	       error: function(error){
+		       callback(error);
+	       },
+	    });
+	},
+
+	/**
+	 * Send an async PUT request to the specified url where the request body is a JSON object 
+	 * 
+	 * @param {string} url - url to send the request to
+	 * @param {Object} body - data to send in the request
+	 * @param {Function} callback - function to call when the request gets a response (either on success or on error) 
+	 */
+	put: function(url, body, callback){
+		$.ajax({
+			type: 'PUT',
+			url: url,
+			data: JSON.stringify(body),
+			contentType: 'application/json',
+			dataType: 'json',
+			cache: false,
+			success: function(data){
+				callback(null, data);
+			},
+			error: function(error){
+				callback(error);
+			},
+		});
+	},
+
+	/**
+	 * Send an async GET request to the specified url
+	 * 
+	 * @param {string} url - url to send the request to
+	 * @param {Function} callback - function to call when the request gets a response (either on success or on error) 
+	 */
+	get: function(url, callback){
+		$.ajax({
+			type: 'GET',
+			url: url,
+			contentType: 'application/json',
+			dataType: 'json',
+			cache: false,
+			success: function(data){
+				callback(null, data);
+			},
+			error: function(error){
+				callback(error);
+			},
+		});
+	},
+
+	/**
+	 * Send an async DELETE request to the specified url
+	 * 
+	 * @param {string} url - url to send the request to
+	 * @param {Function} callback - function to call when the request gets a response (either on success or on error) 
+	 */
+	delete: function(url, callback){
+		$.ajax({
+			type: 'DELETE',
+			url: url,
+			contentType: 'application/json',
+			dataType: 'json',
+			cache: false,
+			success: function(data){
+				callback(null, data);
+			},
+			error: function(error){
+				callback(error);
+			},
+		});
+	},
+	
+	
+	// FLOATING MENUS
+
+	/**
+	 * Convert a html form into an object containing its data. For a form field to
+	 * be included in the returned object, it must include the "name" property 
+	 *  
+	 * @param {Object} $form - jquery object of the form
+	 * @returns {Object} - object containing the form data, where each key is the "name" property of each form field
+	 */
+	getFormData: function($form){
+		// Get an array of objects where each object contains the data of each form field
+	    const unindexed_array = $form.serializeArray();
+		
+		// Convert the array into an object, using the "name" property of the form field as the key
+	    let indexed_array = {};
 	    $.map(unindexed_array, function(n, i){
 	        indexed_array[n['name']] = n['value'];
 	    });
-
+		
 	    return indexed_array;
 	},
 	
+
+	showIframeFloating: function() {
+		$('#iframe_floating').addClass('shown');
+	},
+
+	hideIframeFloating: function() {
+		$('#iframe_floating').removeClass('shown is-iframe');
+		$('#iframe_floating').find('.iframe_content').empty();
+	},
+
+	
+	/**
+	 * Show/hide a floating menu that contains an iframe 
+	 * 
+	 * @param {string} url - url to open in the iframe  
+	 */
 	toggleIframeInFloating: function(url) {
 		const $el = $('#iframe_floating');
 		if ($el.hasClass('shown')) {
 			this.hideIframeFloating();
 		} else {
-			const self = this;
+			// Remove all previous contents from the floating menu
 			const $content = $el.find('.iframe_content').empty();
 
 			// Switch to iframe mode
 			$el.addClass('is-iframe');
 
+			// Add the iframe and a loader to the floating menu
 			const $iframe = $('<iframe class="iframe" frameborder="0"></iframe>');
-
 			const $loader = $(`
 				<div class="iframe_loader">
 					<div class="lds-roller"><div></div><div></div><div></div>
 					<div></div><div></div><div></div><div></div><div></div></div>
 				</div>
 			`);
-
 			$content.append($loader).append($iframe);
+
+			// Set the iframe url
+			$iframe.attr('src', url);
 
 			$iframe.on('load', function() {
 				$loader.remove();
 			});
 
-			$iframe.attr('src', url);
-			self.showIframeFloating();
+			this.showIframeFloating();
 		}
 	},
 
+	/**
+	 * Show/hide html contents in a floating menu 
+	 * 
+	 * @param {string} html - html string to show in the floating menu
+	 */
 	toggleHTMLInFloating: function(html) {
 		const $el = $('#iframe_floating');
 		if ($el.hasClass('shown')) {
 			this.hideIframeFloating();
 		} else {
 			const $modal = $('#iframe_floating');
+			// Remove all previous contents from the floating menu and append the html contents 
 			$modal.find('.iframe_content')
 					.empty()
 					.append(html);
@@ -54,7 +255,12 @@ var Utils = {
 		}
 	},
 
-	toggleAddForm: function(id) {
+	/**
+	 * Show/hide a form inside a floating menu
+	 * 
+	 * @param {string} id - id attribute of the form 
+	 */
+	toggleFormInFloating: function(id) {
 		const $el = $('#iframe_floating');
 		if ($el.hasClass('shown')) {
 			this.hideIframeFloating();
@@ -70,6 +276,7 @@ var Utils = {
 					? form.find('.form').first().parent() 
 					: form;
 
+				// Remove all previous contents from the floating menu and append the form elements to it
 				$modal.find('.iframe_content')
 					.empty()
 					.append(formContent.html());
@@ -79,21 +286,22 @@ var Utils = {
 		}
 	},
 
-	showIframeFloating: function() {
-		$('#iframe_floating').addClass('shown');
-	},
-
-	hideIframeFloating: function() {
-		$('#iframe_floating').removeClass('shown is-iframe');
-		$('#iframe_floating').find('.iframe_content')
-							.empty();
-	},
-
-	toggleSubmit : function(form){
+	/**
+	 * Hides the submit button of the floating form and shows the loader
+	 */
+	toggleSubmit : function(){
 		$('#iframe_floating').find('input[type="submit"]').toggle();
 		$('#iframe_floating').find('.loader').toggle();
 	},
 
+
+	/**
+	 * Select the chosen tab inside of a "tabs" element inside of a "form" element and show the chosen "subform" 
+	 * 
+	 * @param {string} tab - id / jquery object reference of the tab button that calls this function
+	 * @param {string} form - id / jquery object reference of the "form" (element containing both the tab buttons and each tab's contents) that contains the tab to show
+	 * @param {String} subform - id / jquery object reference of the "subform" (element containing the tab elements) to show
+	 */
 	changeTab : function(tab, form, subform){
 		// Support both string id and direct element reference
 		let $form = typeof form === 'string' ? $(`#${form}`) : $(form);
@@ -121,153 +329,27 @@ var Utils = {
 			$targetSubform = $($subform);
 		}
 		$targetSubform.show().addClass('selected');
-		if ($targetSubform.length > 0) {
-			// $targetSubform[0].style.display = 'block';
-		}
 	},
 
-	post: function(url, body, callback){
-		$.ajax({
-			type: 'POST',
-			url: url,
-			data: JSON.stringify(body),
-			contentType: 'application/json',
-			dataType: 'json',
-			cache: false,
-			success: function(data){
-				callback(null, data);
-			},
-			error: function(error){
-				callback(error);
-			},
-		});
-	},
 
-	
-	postForm: function(url, formData, callback){
-	    $.ajax({
-	       type: 'POST',
-	       url: url,
-	       data: formData,
-	       processData: false,
-	       contentType: false,
-	       cache: false,
-	       success: function(data){
-		       callback(null, data);
-	       },
-	       error: function(error){
-		       callback(error);
-	       },
-	    });
-	},
+	// DOWNLOAD DATA
 
-	patch: function(url, body, callback){
-		$.ajax({
-			type: 'PATCH',
-			url: url,
-			data: JSON.stringify(body),
-			contentType: 'application/json',
-			dataType: 'json',
-			cache: false,
-			success: function(data){
-				callback(null, data);
-			},
-			error: function(error){
-				callback(error);
-			},
-		});
-	},
-
-	patchForm: function(url, formData, callback){
-	    $.ajax({
-	       type: 'PATCH',
-	       url: url,
-	       data: formData,
-	       processData: false,
-	       contentType: false,
-	       cache: false,
-	       success: function(data){
-		       callback(null, data);
-	       },
-	       error: function(error){
-		       callback(error);
-	       },
-	    });
-	},
-
-	put: function(url, body, callback){
-		$.ajax({
-			type: 'PUT',
-			url: url,
-			data: JSON.stringify(body),
-			contentType: 'application/json',
-			dataType: 'json',
-			cache: false,
-			success: function(data){
-				callback(null, data);
-			},
-			error: function(error){
-				callback(error);
-			},
-		});
-	},
-
-	get: function(url, callback){
-		$.ajax({
-			type: 'GET',
-			url: url,
-			contentType: 'application/json',
-			dataType: 'json',
-			cache: false,
-			success: function(data){
-				callback(null, data);
-			},
-			error: function(error){
-				callback(error);
-			},
-		});
-	},
-
-	getPDF: function(url, callback){
-		var req = new XMLHttpRequest();
-		req.open("GET", url, true);
-		req.setRequestHeader('Authorization',`Bearer ${jwt}`);
-		req.responseType = "blob";
-
-		req.onload = function (event) {
-			var blob = req.response;
-			callback(null, blob);
-		};
-
-		req.send();
-	},
-
-	delete: function(url, callback){
-		$.ajax({
-			type: 'DELETE',
-			url: url,
-			contentType: 'application/json',
-			dataType: 'json',
-			cache: false,
-			success: function(data){
-				callback(null, data);
-			},
-			error: function(error){
-				callback(error);
-			},
-		});
-	},
-
-	isDownloadUrl: function(value){
-		if(typeof value !== 'string') {
+	/**
+	 * Check if the url is a download url
+	 * 
+	 * @param {string} url - url to check
+	 * @returns {Boolean} - true if the URL is an absolute or protocol-relative URL 
+	 * (like https://example.com or //cdn.example.com) or a root-relative path (like /home)
+	 */
+	isDownloadUrl: function(url){
+		if(typeof url !== 'string') {
 			return false;
 		}
-
-		return /^(https?:)?\/\//.test(value) || value.startsWith('/');
+		return /^(https?:)?\/\//.test(url) || url.startsWith('/');
 	},
 
-	download: function(filename, text){
-		var element = document.createElement('a');
+	download: function(filename, text) {
+		let element = document.createElement('a');
 		element.setAttribute('href', `data:text/plain;charset=utf-8, ${encodeURIComponent(text)}`);
 		element.setAttribute('download', filename);
 
@@ -354,10 +436,11 @@ var Utils = {
 			});
 	},
 
+
 	decodeJWT: function (token) {
-	    var base64Url = token.split('.')[1];
-	    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-	    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+	    let base64Url = token.split('.')[1];
+	    let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+	    let jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
 	        return `%${('00' + c.charCodeAt(0).toString(16)).slice(-2)}`;
 	    }).join(''));
 

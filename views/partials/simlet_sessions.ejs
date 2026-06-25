@@ -251,7 +251,7 @@
 			event.preventDefault();
 			let currentform = this;
 			let form = Utils.getFormData($(this));
-			Utils.toggleSubmit(currentform);
+			Utils.toggleSubmit();
 			let errorbox = $('#session_form_error');
 			// Check for file
 			const fileInput = $(this).find('input[name="jsonFile"]').get(0);
@@ -264,24 +264,24 @@
 						raw = raw.substr(raw.indexOf(',') + 1);
 						const newTest = raw;
 						Simva.importTestConfig(simletId, {file: newTest, session_name: form.sessionName}, function(importError, result) {
-							Utils.toggleSubmit(currentform);
+							Utils.toggleSubmit();
 							if (importError) {
 								errorbox.text(importError.responseJSON ? importError.responseJSON.message : importError.message || importError);
 								return;
 							}
-							Utils.toggleAddForm('session_form_menu');
+							Utils.toggleFormInFloating('session_form_menu');
 							reloadSimlet();
 						});
 					} catch (parseError) {
 						console.error('Import error:', parseError);
-						Utils.toggleSubmit(currentform);
+						Utils.toggleSubmit();
 						errorbox.text("<%- t('import.error.invalid_file', { ns : 'sessions' }) %> " + (parseError.message ? (': ' + parseError.message) : ''));
 					}
 				};
 				reader.readAsDataURL(fileInput.files[0]);
 			} else {
 				errorbox.text("<%- t('import.upload.error', { ns : 'sessions' }) %>");
-				Utils.toggleSubmit(currentform);
+				Utils.toggleSubmit();
 			}
 			return false;
 		});
@@ -291,7 +291,7 @@
 			let errorbox = $('#session_form_error');
 			let currentform = this;
 			let form = Utils.getFormData($(this));
-			Utils.toggleSubmit(currentform);
+			Utils.toggleSubmit();
 			
 			const selectedTagIds = selectedTags.map((tag) => Number(tag.tag_id));
 
@@ -299,29 +299,29 @@
 			if (form.editingSessionId == null || form.editingSessionId == "") {
 				Simva.addTestToStudy(simletId, { session_name: form.sessionName, session_description: form.sessionDescription, session_can_be_manually_activated: true, session_status: form.sessionStatus }, function(error, result) {
 					if (error && error.responseJSON) {
-						Utils.toggleSubmit(currentform);
+						Utils.toggleSubmit();
 						errorbox.text(error.responseJSON.message);
 					}
 					else if (error) {
-						Utils.toggleSubmit(currentform);
+						Utils.toggleSubmit();
 						errorbox.text(error.message || error);
 					}
 					else {
 						const newSessionId = result && result.session_id ? Number(result.session_id) : null;
 						if (!newSessionId || selectedTagIds.length === 0) {
-							Utils.toggleSubmit(currentform);
-							Utils.toggleAddForm('session_form_menu');
+							Utils.toggleSubmit();
+							Utils.toggleFormInFloating('session_form_menu');
 							reloadSimlet();
 							return;
 						}
 
 						syncSessionTags(simletId, newSessionId, [], selectedTagIds, function(syncError) {
-							Utils.toggleSubmit(currentform);
+							Utils.toggleSubmit();
 							if (syncError) {
 								errorbox.text(syncError.responseJSON ? syncError.responseJSON.message : syncError.message || syncError);
 								return;
 							}
-							Utils.toggleAddForm('session_form_menu');
+							Utils.toggleFormInFloating('session_form_menu');
 							reloadSimlet();
 						});
 					}
@@ -337,19 +337,19 @@
 
 				if (!nameChanged && !descriptionChanged && !tagsChanged) {
 					errorbox.text("<%- t('edit.no_changes.message', { ns : 'SIMLETs' }) %>");
-					Utils.toggleSubmit(currentform);
+					Utils.toggleSubmit();
 				}
 				else {
 					errorbox.text("");
 
 					const finishSync = function() {
 						syncSessionTags(simletId, Number(sessionId), originalTagsIds, selectedTagIds, function(syncError) {
-							Utils.toggleSubmit(currentform);
+							Utils.toggleSubmit();
 							if (syncError) {
 								errorbox.text(syncError.responseJSON ? syncError.responseJSON.message : syncError.message || syncError);
 								return;
 							}
-							Utils.toggleAddForm('session_form_menu');
+							Utils.toggleFormInFloating('session_form_menu');
 							reloadSimlet();
 						});
 					}
@@ -357,7 +357,7 @@
 					if (nameChanged || descriptionChanged) {
 						Simva.updateTest("<%= study %>", Number(sessionId), { session_name : form.sessionName, session_description : form.sessionDescription }, function(error) {
 							if (error) {
-								Utils.toggleSubmit(currentform);
+								Utils.toggleSubmit();
 								errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
 								return;
 							}
@@ -380,7 +380,7 @@
 		const session = getSessionFromId(sessionId);
 		
 		// Open form always
-		Utils.toggleAddForm('session_form_menu');
+		Utils.toggleFormInFloating('session_form_menu');
 
 		$('#session_form_error').text("");
 		$('#session_tags_error').text("");
@@ -461,7 +461,7 @@
 	}
 	
 	const openSessionDownloadForm = function(sessionId) {
-		Utils.toggleAddForm('download_data_menu');
+		Utils.toggleFormInFloating('download_data_menu');
 		Utils.changeTab(null, 'download_data_form','download_session_data');
 		
         downloadSessionId = sessionId;
@@ -553,7 +553,7 @@
 	/**
 	 * Check if the current user is a participant of a session based on its participants array
 	 * 
-	 * @param participants {Array} - array of objects where each object is the participant data with the property user_id
+	 * @param {Array} participants - array of objects where each object is the participant data with the property user_id
 	 * @returns {Boolean} - true if the current user is in the session participants, false otherwise
 	 */
 	const isCurrentUserParticipant = function(participants) {
@@ -574,8 +574,8 @@
 	/**
 	 * Change a session status
 	 * 
-	 * @param sessionId {Number} - id of the sesssion
-	 * @param nextStatus {string} - status the session will be changed to (active, inactive, terminated)
+	 * @param {Number} sessionId - id of the sesssion
+	 * @param {string} nextStatus - status the session will be changed to (active, inactive, terminated)
 	 */
 	const changeSessionStatus = function(sessionId, nextStatus) {
 		Simva.activateSession(simletId, sessionId, { activate: nextStatus }, function(error, result) {
@@ -752,7 +752,7 @@
 	 * Fill the session card info programatically to avoid XSS
 	 * 
 	 * @param {Object} session - object containing the session info
-	 * @param {Object} card - jquery object of the card element
+	 * @param {Object} card - jquery object reference of the card element
 	 */
 	const fillSessionCard = async function(session, card) {
 		card.find(".icon-tester").show();
