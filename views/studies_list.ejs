@@ -182,7 +182,6 @@ the elements and scripts defined in the simlet_commons partial -->
 
 	/**
 	 * Paint the cards for a batch of SIMLETs
-	 * 
 	 * @param {Array} batch - Array of objects containing the SIMLETs info
 	 */
 	const paintSimletBatch = function(batch) {
@@ -263,9 +262,8 @@ the elements and scripts defined in the simlet_commons partial -->
 	
 	/**
 	 * Fill the SIMLET card info programatically to avoid XSS
-	 * 
-	 * @param {Object} simlet - object containing the SIMLET info
-	 * @param {Object} card - jquery object reference of the card element
+	 * @param {object} simlet - object containing the SIMLET info
+	 * @param {object} card - jquery object reference of the card element
 	 */
 	const fillSimletCard = async function(simlet, card) {
 		card.attr("href", `/simlets/${simlet.simlet_id}`);

@@ -165,8 +165,7 @@
 	
 	/**
 	 * Format the raw date to show it in YYYY/MM/DD format on the user's timezone
-	 * 
-	 * @param {Number} rawDate - date epoch
+	 * @param {number} rawDate - date epoch
 	 * @param {string} currentlanguageCode - language the user is currently using 
 	 * @returns {string} - string with the formatted date
 	 */
@@ -182,9 +181,8 @@
 
 	/**
 	 * Adds the character counter to all elements of the same class
-	 * 
 	 * @param {string} className  - name of the class of the elements that will get the counter added
-	 * @param {Number} maxLength - max number of characters
+	 * @param {number} maxLength - max number of characters
 	 */
 	const addInputCharCountToClass = function(className, maxLength) {
 		// Store the class and update the string with all the classes that must be checked when updating input value
@@ -236,9 +234,8 @@
 
 	/**
 	 * Checks if the element has any of the classes with a character count and updates the count if it does
-	 * 
-	 * @param {Object} elem - jquery object reference of the element that will be checked
-	 * @param {Number} value - current number of characters
+	 * @param {object} elem - jquery object reference of the element that will be checked
+	 * @param {number} value - current number of characters
 	 */
 	const checkAndUpdateCharCount = function(elem, value) {
 		if ($(elem).is(classesWithCharCountStr)) {
@@ -247,10 +244,9 @@
 	}
 	/**
 	 * Updates the character count of an element
-	 * 
-	 * @param {Object} countTextElem - jquery object reference of the element that will be updated
-	 * @param {Number} count - current number of characters
-	 * @param {Number} maxLength - max number of characters
+	 * @param {object} countTextElem - jquery object reference of the element that will be updated
+	 * @param {number} count - current number of characters
+	 * @param {number} maxLength - max number of characters
 	 */
 	const updateCharCount = function(countTextElem, count, maxLength) {
 		$(countTextElem).text(`${count}/${maxLength}`);
@@ -527,7 +523,7 @@
 
 	const deleteSimlet = function(simletId, simletName){
 		if(confirm(`<%- t('delete.confirm', { ns : 'SIMLETs', SIMLET : '${simletName}' }) %>`)){
-			Simva.deleteSimlet(simletId, function(response) {
+			Simva.deleteStudy(simletId, function(response) {
 				if(response.status !== 200) {
 					// Muestra el error real para depuración
 					alert(response || "Error eliminando el simlet");
@@ -561,7 +557,6 @@
 
 	/**
 	 * Get all the tags matching (partially or completely) the name
-	 * 
 	 * @param {string} tagName  - name of the tags to retrieve
 	 * @returns {Array} - array of objects with the info of the matching tags
 	*/
@@ -579,8 +574,7 @@
 	
 	/**
 	 * Create the html element containing all the tags
-	 * 
-	 * @param {Object} taggedElem - SIMLET or session to get the tags from
+	 * @param {object} taggedElem - SIMLET or session to get the tags from
 	 * @returns {string} - string with the html elements needed to render the tags
 	*/
 	const renderTags = function(taggedElem) {

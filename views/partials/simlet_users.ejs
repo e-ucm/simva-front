@@ -892,7 +892,7 @@
 	const deleteParticipant = function(participant_id, participantName, group_id, groupName){
 		if(confirm(`<%- t('participants.delete.confirm', { ns : 'groups',  participant : '${participantName}', group : '${groupName}' }) %>`)) {
 			// A participant will only be removed from keycloak if it's been generated as a token
-			Simva.deleteGroupParticipants(simletId, group_id, participant_id, getParticipantFromId(participant_id).isToken, function(response) {
+			Simva.deleteGroupParticipant(simletId, group_id, participant_id, getParticipantFromId(participant_id).isToken, function(response) {
 				if (response.status === 200) {
 					reloadSimlet();
 				}
@@ -932,8 +932,7 @@
 
 	/**
 	 * Remove all rows (except for the header rows) from a table
-	 * 
-	 * @param {Object} table - jquery object reference of the table element
+	 * @param {object} table - jquery object reference of the table element
 	 */
 	const clearTableBody = function(table) {
 		if (table.jquery != null) {
@@ -969,9 +968,8 @@
 
 	/**
 	 * Fill the coordinator row info programatically to avoid XSS
-	 * 
-	 * @param {Object} coordinator - object containing the coordinator info
-	 * @param {Object} row - jquery object reference of the row element
+	 * @param {object} coordinator - object containing the coordinator info
+	 * @param {object} row - jquery object reference of the row element
 	 */
 	const fillCoordinatorRow = async function(coordinator, row) {
 		row.data(USER_DATA_ID_KEY, coordinator.user_id);
@@ -1043,7 +1041,6 @@
 	
 	/**
 	 * Paint the cards for a batch of groups
-	 * 
 	 * @param {Array} batch - Array of objects containing the groups info
 	 */
 	const paintGroupBatch = function(batch) {
@@ -1091,9 +1088,8 @@
 	
 	/**
 	 * Fill the group card info programatically to avoid XSS
-	 * 
-	 * @param {Object} group - object containing the group info
-	 * @param {Object} card - jquery object reference of the card element
+	 * @param {object} group - object containing the group info
+	 * @param {object} card - jquery object reference of the card element
 	 */
 	const fillGroupCard = async function(group, card) {
 		card.find(".groupTitle").text(group.group_name);
@@ -1162,8 +1158,7 @@
 	
 	/**
 	 * Paint the allocator info on the group card
-	 * 
-	 * @param {Object} group - object containing the group info
+	 * @param {object} group - object containing the group info
 	 */
 	const paintAllocator = async function(group) {
 		const onLoadComplete = () => {

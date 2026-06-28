@@ -1,12 +1,18 @@
+/**
+ * @typedef {string} RequestUrl - url to send the request to
+ * @typedef {object} JsonRequestBody - data to send in the request (formatted as a JSON object)
+ * @typedef {FormData} FormDataRequestBody - data to send in the request (formatted as a FormData object)
+ * @typedef {function} RequestCallback - function to call when the request gets a response (either on success or on error) 
+ */
+
 var Utils = {
 	// JQUERY AJAX WRAPPERS
 	
 	/**
 	 * Send an async POST request to the specified url where the request body is a JSON object 
-	 * 
-	 * @param {string} url - url to send the request to
-	 * @param {Object} body - data to send in the request
-	 * @param {Function} callback - function to call when the request gets a response (either on success or on error) 
+	 * @param {RequestUrl} url
+	 * @param {JsonRequestBody} body
+	 * @param {RequestCallback} callback
 	 */
 	post: function(url, body, callback){
 		$.ajax({
@@ -27,10 +33,9 @@ var Utils = {
 
 	/**
 	 * Send an async POST request to the specified url where the request body is a FormData object
-	 * 
-	 * @param {string} url - url to send the request to
-	 * @param {FormData} body - data to send in the request
-	 * @param {Function} callback - function to call when the request gets a response (either on success or on error) 
+	 * @param {RequestUrl} url
+	 * @param {FormDataRequestBody} body
+	 * @param {RequestCallback} callback
 	 */
 	postForm: function(url, formData, callback){
 	    $.ajax({
@@ -51,10 +56,9 @@ var Utils = {
 
 	/**
 	 * Send an async PATCH request to the specified url where the request body is a JSON object 
-	 * 
-	 * @param {string} url - url to send the request to
-	 * @param {Object} body - data to send in the request
-	 * @param {Function} callback - function to call when the request gets a response (either on success or on error) 
+	 * @param {RequestUrl} url
+	 * @param {JsonRequestBody} body
+	 * @param {RequestCallback} callback
 	 */
 	patch: function(url, body, callback){
 		$.ajax({
@@ -75,10 +79,9 @@ var Utils = {
 
 	/**
 	 * Send an async PATCH request to the specified url where the request body is a FormData object
-	 * 
-	 * @param {string} url - url to send the request to
-	 * @param {FormData} body - data to send in the request
-	 * @param {Function} callback - function to call when the request gets a response (either on success or on error) 
+	 * @param {RequestUrl} url
+	 * @param {FormDataRequestBody} body
+	 * @param {RequestCallback} callback
 	 */
 	patchForm: function(url, formData, callback){
 	    $.ajax({
@@ -99,10 +102,9 @@ var Utils = {
 
 	/**
 	 * Send an async PUT request to the specified url where the request body is a JSON object 
-	 * 
-	 * @param {string} url - url to send the request to
-	 * @param {Object} body - data to send in the request
-	 * @param {Function} callback - function to call when the request gets a response (either on success or on error) 
+	 * @param {RequestUrl} url
+	 * @param {JsonRequestBody} body
+	 * @param {RequestCallback} callback
 	 */
 	put: function(url, body, callback){
 		$.ajax({
@@ -123,9 +125,8 @@ var Utils = {
 
 	/**
 	 * Send an async GET request to the specified url
-	 * 
-	 * @param {string} url - url to send the request to
-	 * @param {Function} callback - function to call when the request gets a response (either on success or on error) 
+	 * @param {RequestUrl} url
+	 * @param {RequestCallback} callback
 	 */
 	get: function(url, callback){
 		$.ajax({
@@ -145,9 +146,8 @@ var Utils = {
 
 	/**
 	 * Send an async DELETE request to the specified url
-	 * 
-	 * @param {string} url - url to send the request to
-	 * @param {Function} callback - function to call when the request gets a response (either on success or on error) 
+	 * @param {RequestUrl} url
+	 * @param {RequestCallback} callback
 	 */
 	delete: function(url, callback){
 		$.ajax({
@@ -171,9 +171,8 @@ var Utils = {
 	/**
 	 * Convert a html form into an object containing its data. For a form field to
 	 * be included in the returned object, it must include the "name" property 
-	 *  
-	 * @param {Object} $form - jquery object of the form
-	 * @returns {Object} - object containing the form data, where each key is the "name" property of each form field
+	 * @param {object} $form - jquery object of the form
+	 * @returns {object} - object containing the form data, where each key is the "name" property of each form field
 	 */
 	getFormData: function($form){
 		// Get an array of objects where each object contains the data of each form field
@@ -201,7 +200,6 @@ var Utils = {
 	
 	/**
 	 * Show/hide a floating menu that contains an iframe 
-	 * 
 	 * @param {string} url - url to open in the iframe  
 	 */
 	toggleIframeInFloating: function(url) {
@@ -238,7 +236,6 @@ var Utils = {
 
 	/**
 	 * Show/hide html contents in a floating menu 
-	 * 
 	 * @param {string} html - html string to show in the floating menu
 	 */
 	toggleHTMLInFloating: function(html) {
@@ -257,7 +254,6 @@ var Utils = {
 
 	/**
 	 * Show/hide a form inside a floating menu
-	 * 
 	 * @param {string} id - id attribute of the form 
 	 */
 	toggleFormInFloating: function(id) {
@@ -297,10 +293,9 @@ var Utils = {
 
 	/**
 	 * Select the chosen tab inside of a "tabs" element inside of a "form" element and show the chosen "subform" 
-	 * 
 	 * @param {string} tab - id / jquery object reference of the tab button that calls this function
 	 * @param {string} form - id / jquery object reference of the "form" (element containing both the tab buttons and each tab's contents) that contains the tab to show
-	 * @param {String} subform - id / jquery object reference of the "subform" (element containing the tab elements) to show
+	 * @param {string} subform - id / jquery object reference of the "subform" (element containing the tab elements) to show
 	 */
 	changeTab : function(tab, form, subform){
 		// Support both string id and direct element reference
@@ -336,9 +331,8 @@ var Utils = {
 
 	/**
 	 * Check if the url is a download url
-	 * 
 	 * @param {string} url - url to check
-	 * @returns {Boolean} - true if the URL is an absolute or protocol-relative URL 
+	 * @returns {boolean} - true if the URL is an absolute or protocol-relative URL 
 	 * (like https://example.com or //cdn.example.com) or a root-relative path (like /home)
 	 */
 	isDownloadUrl: function(url){

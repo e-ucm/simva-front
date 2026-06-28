@@ -552,9 +552,8 @@
 
 	/**
 	 * Check if the current user is a participant of a session based on its participants array
-	 * 
 	 * @param {Array} participants - array of objects where each object is the participant data with the property user_id
-	 * @returns {Boolean} - true if the current user is in the session participants, false otherwise
+	 * @returns {boolean} - true if the current user is in the session participants, false otherwise
 	 */
 	const isCurrentUserParticipant = function(participants) {
 		return currentUser.user_id !== null && participants.some(function(p) {
@@ -573,8 +572,7 @@
 
 	/**
 	 * Change a session status
-	 * 
-	 * @param {Number} sessionId - id of the sesssion
+	 * @param {number} sessionId - id of the sesssion
 	 * @param {string} nextStatus - status the session will be changed to (active, inactive, terminated)
 	 */
 	const changeSessionStatus = function(sessionId, nextStatus) {
@@ -712,7 +710,6 @@
 
 	/**
 	 * Paint the cards for a batch of sessions
-	 * 
 	 * @param {Array} batch - Array of objects containing the sessions info
 	 */
 	const paintSessionBatch = function(batch) {
@@ -750,9 +747,8 @@
 
 	/**
 	 * Fill the session card info programatically to avoid XSS
-	 * 
-	 * @param {Object} session - object containing the session info
-	 * @param {Object} card - jquery object reference of the card element
+	 * @param {object} session - object containing the session info
+	 * @param {object} card - jquery object reference of the card element
 	 */
 	const fillSessionCard = async function(session, card) {
 		card.find(".icon-tester").show();

@@ -1,7 +1,26 @@
 /**
+ * @typedef {object} Query - object containing the parameters of the query
+ * @property {number} skip - number of results to exclude from the beginning of the fetched results (after filtering and sorting)
+ * @property {number} limit - maximum number of results to return after the skip offset (after filtering and sorting)
+ * @property {string} searchString - fetch results whose name/description match (either partially or completely) the string
+ * @property {string} orderBy - fetch results sorted by this parameter (id/name/createdAt/updatedAt)
+ * @property {string} order - order of the sorted results (asc/desc)
+ * 
+ * (ONLY FOR SIMLETS AND SESSIONS)
+ * @property {string} status - fetch results whose status parameter matches this value (active/archived for SIMLETs, active/inactive/terminated for sessions)
+ * @property {Array} searchTags - fetch results whose tags ids contain any of the ids in the array
+ */
+
+/** 
+ * @typedef {string} QueryString - string of the query parameters, including the starting ? if there are any parameters
+ * @typedef {function} Callback - function to call when the request gets a response (either on success or on error) 
+ */
+
+
+/**
  * Convert query object to query string
- * @param {Object} query - object containing the parameters of the query 
- * @returns {string} - string of the query parameters, including the starting ? if there are any parameters
+ * @param {Query} query
+ * @returns {QueryString}
  */
 const getQueryString = function(query) {
 	let queryString = "";
@@ -18,8 +37,8 @@ const getQueryString = function(query) {
 
 /**
  * Convert query object to query string containing only the parameters necessary for the /count endpoints
- * @param {Object} query - object containing the parameters of the query 
- * @returns {string} - string of the query parameters, including the starting ? if there are any parameters
+ * @param {Query} query
+ * @returns {QueryString}
  */
 const getCountQueryString = function(query) {
 	const cleanQuery = Object.fromEntries(
@@ -31,10 +50,10 @@ const getCountQueryString = function(query) {
 }
 
 /**
- * Given the 2 passed parameters, determine 
- * @param {Object} query - object containing the parameters of the query. If no query object is being passed, then it's the callback
+ * Given the 2 passed parameters, determine whether the first one is a query or a callback
+ * @param {Query} query
  * @param {function} callback - function to call once the api call returns its result
- * @returns {Object} - object with the parameters query and callback after corrections
+ * @returns {object} - object with the parameters query and callback after corrections
  */
 const determineQueryAndCallback = function(query, callback) {
 	// If the passed query object is a function, no parameters are being passed, so it's the callback
@@ -82,6 +101,9 @@ var Simva = {
 		this.tmonFile = tmonFile;
 	},
 
+
+	// TODO: Document
+	
 	refreshAuth : function(callback){
 		Utils.get(`/users/refresh_auth`, callback);
 	},
@@ -95,548 +117,1109 @@ var Simva = {
 	},
 
 
+	// TAGS
+	
+	/**
+	 * Send a GET request to the bff to fetch all the existing tags
+	 * @param {Callback} callback
+	 */
+	getTags: function(callback){
+		Utils.get(`/bff/tags`, callback);
+	},
+
+	/**
+	 * Send a POST request to the bff to create a new tag
+	 * @param {object} body - object containing the tag_name and tag_color of the tag
+	 * @param {Callback} callback
+	 */
+	createTag: function(body, callback){
+		Utils.post(`/bff/tags`, body, callback);
+	},
+	
+	/**
+	 * Send a PATCH request to the bff to update the specified tag info 
+	 * @param {number} tag_id - id of the tag to update
+	 * @param {object} body - object containing either the modified tag_name, the tag_color, or both
+	 * @param {Callback} callback
+	 */
+	updateTag: function(tag_id, body, callback){
+		Utils.patch(`/bff/tags/${tag_id}`, body, callback);
+	},
+
+	/**
+	 * Send a DELETE request to the bff to delete the specified tag 
+	 * @param {number} tag_id - id of the tag to delete
+	 * @param {Callback} callback
+	 */
+	deleteTag: function(tag_id, callback){
+		Utils.delete(`/bff/tags/${tag_id}`, callback);
+	},
+
+
+	// SIMLETS + SCHEDULERS
+
+	/**
+	 * Send a GET request to the bff to fetch the SIMLETs matching the query search parameters
+	 * @param {Query} query
+	 * @param {Callback} callback
+	 */
+	getStudies: function(query, callback) {
+		const params = determineQueryAndCallback(query, callback);
+		Utils.get(`/bff/studies${getQueryString(params.query)}`, params.callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to fetch the amount of SIMLETs matching the query search parameters
+	 * @param {Query} query
+	 * @param {Callback} callback
+	 */
+	getStudiesCount: function(query, callback) {
+		const params = determineQueryAndCallback(query, callback);
+		Utils.get(`/bff/studies/count${getCountQueryString(params.query)}`, params.callback);
+	},
+	
+	/**
+	 * Send a POST request to the bff to add a SIMLET 
+	 * @param {object} body - object containing the simlet_name and simlet_description of the SIMLET
+	 * @param {Callback} callback
+	 */
+	addStudy: function(body, callback){
+		Utils.post(`/bff/studies`, body, callback);
+	},
+
+	/**
+	 * Send a POST request to the bff to import a SIMLET 
+	 * @param {object} newStudy - object containing the simlet_name and file of the SIMLET
+	 * @param {Callback} callback
+	 */
+	importStudyConfig: function(newStudy, callback){
+		Utils.post(`/bff/studies/import`, newStudy, callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to fetch the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET to fetch
+	 * @param {Callback} callback
+	 */
+	getStudy: function(simletId, callback){
+		Utils.get(`/bff/studies/${simletId}`, callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to export the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET to export
+	 * @param {Callback} callback
+	 */
+	exportStudyConfig: function(simletId, callback){
+		Utils.get(`/bff/studies/${simletId}/export`, callback);
+	},
+	
+	/**
+	 * Send a PATCH request to the bff to update the specified SIMLET info 
+	 * @param {number} simletId - id of the SIMLET to update
+	 * @param {object} study - object containing either the modified simlet_name, the simlet_description, or both
+	 * @param {Callback} callback
+	 */
+	updateStudy: function(simletId, study, callback){
+		Utils.patch(`/bff/studies/${simletId}`, study, callback);
+	},
+	
+	/**
+	 * Send a DELETE request to the bff to delete the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET to delete
+	 * @param {Callback} callback
+	 */
+	deleteStudy: function(simletId, callback){
+		Utils.delete(`/bff/studies/${simletId}`, callback);
+	},
+
+
+	/**
+	 * Send a GET request to the bff to fetch the scheduled SIMLETs matching the query search parameters
+	 * @param {Query} query
+	 * @param {Callback} callback
+	 */
+	getSchedulerStudies: function(query, callback){
+		const params = determineQueryAndCallback(query, callback);
+		Utils.get(`/bff/scheduler/studies${getQueryString(params.query)}`, params.callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to fetch the amount of scheduled SIMLETs matching the query search parameters
+	 * @param {Query} query
+	 * @param {Callback} callback
+	 */
+	getSchedulerStudiesCount: function(query, callback){
+		const params = determineQueryAndCallback(query, callback);
+		Utils.get(`/bff/scheduler/studies/count${getCountQueryString(params.query)}`, params.callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to fetch the scheduler of the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET to fetch
+	 * @param {Callback} callback
+	 */
+	getStudySchedule: function(simletId, callback){
+		Utils.get(`/bff/studies/${simletId}/schedule`, callback);
+	},
+
+	
 	//SHLINK URL
 
-	generateShlinkURL(simlet_id, customSlug, length, callback){
+	/**
+	 * Send a POST request to the bff to generate a shlink url for the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that the shlink will be generated for
+	 * @param {string} customSlug - custom text that appears as the url
+	 * @param {number} length - length of the custom slug
+	 * @param {Callback} callback 
+	 */
+	generateShlinkURL(simletId, customSlug, length, callback){
 		let body = {
 			customSlug: customSlug, 
 			length:length
 		};
-		Utils.post(`/bff/simlets/${simlet_id}/shlink`, body, callback);
+		Utils.post(`/bff/simlets/${simletId}/shlink`, body, callback);
 	},
 
-	getShLink(simlet_id, callback){
-		Utils.get(`/bff/simlets/${simlet_id}/shlink`, callback);
+	/**
+	 * Send a GET request to the bff to fetch the shlink url of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET the shlink will be fetched from
+	 * @param {Callback} callback 
+	 */
+	getShLink(simletId, callback){
+		Utils.get(`/bff/simlets/${simletId}/shlink`, callback);
 	},
 
-	updateShLink(simlet_id, customSlug, length, callback){
+	// TODO: Remove?
+	updateShLink(simletId, customSlug, length, callback){
 		let body = {
 			customSlug: customSlug, 
 			length:length
 		};
-		Utils.patch(`/bff/simlets/${simlet_id}/shlink`, body, callback);
+		Utils.patch(`/bff/simlets/${simletId}/shlink`, body, callback);
 	},	
 
-	deleteShLink(simlet_id, callback){
-		Utils.delete(`/bff/simlets/${simlet_id}/shlink`, callback);
+	/**
+	 * Send a DELETE request to the bff to delete the shlink url of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET the shlink will be deleted from
+	 * @param {Callback} callback 
+	 */
+	deleteShLink(simletId, callback){
+		Utils.delete(`/bff/simlets/${simletId}/shlink`, callback);
 	},
 
 
-	// USER
+	// SESSIONS
 
-	generateAndRegister: function(simlet_id, groupid, algorithm, length, batchLength, callback){
+	/**
+	 * Send a GET request to the bff to fetch the sessions matching the query search parameters in the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET to fetch the sessions from
+	 * @param {Query} query 
+	 * @param {Callback} callback 
+	 */
+	getStudyTests: function(simletId, query, callback){
+		const params = determineQueryAndCallback(query, callback);
+		Utils.get(`/bff/studies/${simletId}/tests${getQueryString(params.query)}`, params.callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to fetch the amount of sessions matching the query search parameters in the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET to fetch the sessions from
+	 * @param {Query} query 
+	 * @param {Callback} callback 
+	 */
+	getStudyTestsCount: function(simletId, query, callback){
+		const params = determineQueryAndCallback(query, callback);
+		Utils.get(`/bff/studies/${simletId}/tests/count${getCountQueryString(params.query)}`, params.callback);
+	},
+
+	/**
+	 * Send a POST request to the bff to add a session to the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET to add the session to
+	 * @param {object} body - object containing the session_name, session_description, session_status and session_can_be_manually_activated of the session
+	 * @param {Callback} callback
+	 */
+	addTestToStudy: function(simletId, body, callback){
+	   Utils.post(`/bff/studies/${simletId}/tests`, body, callback);
+	},
+
+	/**
+	 * Send a POST request to the bff to import a session in the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET to add the session to
+	 * @param {object} newSession - object containing the session_name and file of the session
+	 * @param {Callback} callback
+	 */
+	importTestConfig: function(simletId, newSession, callback){
+		Utils.post(`/bff/studies/${simletId}/tests/import`, newSession, callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to fetch the specified session from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to fetch
+	 * @param {Callback} callback 
+	 */
+	getStudyTest: function(simletId,sessionId, callback){
+		Utils.get(`/bff/studies/${simletId}/tests/${sessionId}`, callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to fetch the complete info of the specified session from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to fetch
+	 * @param {Callback} callback 
+	 */
+	getStudyTestComplete: function(simletId,sessionId, callback){
+		Utils.get(`/bff/studies/${simletId}/tests/${sessionId}/complete`, callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to export the specified session from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to export
+	 * @param {Callback} callback 
+	 */
+	exportTest: function(simletId, sessionId, callback){
+		Utils.get(`/bff/studies/${simletId}/tests/${sessionId}/export`, callback);
+	},
+
+	/**
+	 * Send a PATCH request to the bff to update the specified session from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to update
+	 * @param {object} body - object containing either the modified session_name, the session_description, or both
+	 * @param {Callback} callback 
+	 */
+	updateTest: function(simletId, sessionId, body, callback){
+		Utils.patch(`/bff/studies/${simletId}/tests/${sessionId}`, body, callback);
+	},
+
+	/**
+	 * Send a DELETE request to the bff to delete the specified session from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to delete
+	 * @param {Callback} callback 
+	 */
+	deleteTest: function(simletId, sessionId, callback){
+		Utils.delete(`/bff/studies/${simletId}/tests/${sessionId}`, callback);
+	},
+	
+	
+	/**
+	 * Send a PATCH request to the bff to change the status of the specified session from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to update
+	 * @param {object} body - object containing the activate of the session
+	 * @param {Callback} callback 
+	 */
+	activateSession(simletId, sessionId, body, callback){
+		Utils.post(`/bff/studies/${simletId}/tests/${sessionId}/activate`, body, callback);
+	},
+	
+	
+	/**
+	 * Send a PATCH request to the bff to add the specified tag to the specified session from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to update
+	 * @param {number} tag_id - id of the tag to add
+	 * @param {Callback} callback 
+	 */
+	addTagToSession: function(simletId, sessionId, tag_id, callback){
+		Utils.post(`/bff/simlets/${simletId}/tests/${sessionId}/tags/${tag_id}`, {}, callback);
+	},
+
+	/**
+	 * Send a DELETE request to the bff to delete the specified tag to the specified session from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to update
+	 * @param {number} tag_id - id of the tag to delete
+	 * @param {Callback} callback 
+	 */
+	deleteTagFromSession: function(simletId, sessionId, tag_id, callback){
+		Utils.delete(`/bff/simlets/${simletId}/tests/${sessionId}/tags/${tag_id}`, callback);
+	},
+
+
+	/**
+	 * Send a POST request to the bff to set the current user as tester (allocate to session, create sandbox group if needed)
+	 *  in the specified session from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to set the tester in
+	 * @param {Callback} callback 
+	 */
+	setTesterForSession: function(simletId, sessionId, callback){
+		Utils.post(`/bff/studies/${simletId}/tests/${sessionId}/set-tester`, {}, callback);
+	},
+
+	/**
+	 * Send a POST request to the bff to unset the current user as tester (remove from group, delete group if sandbox)
+	 * in the specified session from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to unset the tester from
+	 * @param {Callback} callback 
+	 */
+	unsetTesterForSession: function(simletId, sessionId, callback){
+		Utils.post(`/bff/studies/${simletId}/tests/${sessionId}/unset-tester`, {}, callback);
+	},
+
+	/**
+	 * Send a POST request to the bff to resset the current user as tester (unset and set again as tester)
+	 * in the specified session from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to reset the tester from
+	 * @param {Callback} callback 
+	 */
+	resetTesterForSession: function(simletId, sessionId, callback){
+		Utils.post(`/bff/studies/${simletId}/tests/${sessionId}/reset-tester`, {}, callback);
+	},
+	
+
+	/**
+	 * Send a GET request to the bff to fetch the LRS data of the specified session from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to fetch the data from
+	 * @param {Callback} callback 
+	 */
+	getSessionLRSData: function(simletId, sessionId, callback){
+		Utils.get(`/bff/simlets/${simletId}/sessions/${sessionId}/lrs/statements`, callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to fetch the LRS data for the test users of the specified session from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to fetch the data from
+	 * @param {Callback} callback 
+	 */
+	getSessionTestLRSData: function(simletId, sessionId, callback){
+		Utils.get(`/bff/simlets/${simletId}/sessions/${sessionId}/lrs_test_statements`, callback);
+	},
+
+
+	// ACTIVITIES
+
+	/**
+	 * Send a GET request to the bff to fetch all the activities in the specified session of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session that has the activities
+	 * @param {Callback} callback 
+	 */
+	getTestActivities: function(simletId, sessionId, callback){
+		Utils.get(`/bff/studies/${simletId}/tests/${sessionId}/activities`, callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to fetch all the existing activity types
+	 * @param {Callback} callback 
+	 */
+	getActivityTypes: function(callback){
+		Utils.get(`/bff/activitytypes`, callback);
+	},
+
+	/**
+	 * Send a POST request to the bff to add an activity to the specified session of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to add the activity to
+	 * @param {object} activity - object containing the activity info
+	 * @param {Callback} callback
+	 */
+	addActivityToTest: function(simletId, sessionId, activity, callback){
+		if(activity instanceof FormData){
+			Utils.postForm(`/bff/studies/${simletId}/tests/${sessionId}/activities`, activity, callback);
+		} else {
+			Utils.post(`/bff/studies/${simletId}/tests/${sessionId}/activities`, activity, callback);
+		}
+	},
+
+	/**
+ 	 * Send a POST request to the bff to import an activity to the specified session of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to add the activity to
+	 * @param {object} activityData - object containing the activity_name and file of the activity
+	 * @param {Callback} callback
+	 */
+	importActivity: function(simletId, sessionId, activityData, callback){
+		Utils.post(`/bff/studies/${simletId}/tests/${sessionId}/activities/import`, activityData, callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to fetch the specified activity
+	 * @param {number} activityId - id of the activity to fetch
+	 * @param {Callback} callback 
+	 */
+	getActivity: function(activityId, callback){
+		Utils.get(`/bff/activities/${activityId}`, callback);
+	},
+
+	// TODO: Which one to use?
+	exportActivity: function(activityId, complete, callback){
+		Utils.get(`/bff/activities/${activityId}/export?complete=${complete}`, callback);
+	},
+	exportActivity: function(activityId, simletId, sessionId, callback){
+		Utils.get(`/bff/studies/${simletId}/tests/${sessionId}/activities/${activityId}/export`, callback);
+	},
+
+	/**
+	 * Send a PATCH request to the bff to update the specified activity info of the specified session of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session that has the activity
+	 * @param {number} activityId - id of the activity to update
+	 * @param {object} activity - object containing the parameters to update
+	 * @param {Callback} callback 
+	 */
+	updateActivity: function(simletId, sessionId, activityId, activity, callback){
+		if(activity instanceof FormData){
+			Utils.patchForm(`/bff/studies/${simletId}/tests/${sessionId}/activities/${activityId}`, activity, callback);
+		} else {
+			Utils.patch(`/bff/studies/${simletId}/tests/${sessionId}/activities/${activityId}`, activity, callback);
+		}
+	},
+
+	/**
+	 * Send a DELETE request to the bff to delete the specified activity of the specified session of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session that has the activity
+	 * @param {number} activityId - id of the activity to delete
+	 * @param {Callback} callback 
+	 */
+	deleteActivity: function(simletId, sessionId, activityId, callback){
+		Utils.delete(`/bff/studies/${simletId}/tests/${sessionId}/activities/${activityId}`, callback);
+	},
+	
+	// TODO: Remove?
+	setActivityTest: function(activityId, payload, callback){
+		Utils.post(`/bff/activities/${activityId}/test`, payload, callback);
+	},
+	
+	/**
+	 * Send a GET request to the bff to fetch the target of the specified activity
+	 * @param {number} activityId - id of the activity to fetch the target from
+	 * @param {Callback} callback 
+	 */
+	getActivityTarget: function(activityId, callback){
+		Utils.get(`/bff/activities/${activityId}/target`, callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to fetch all the available surveys
+	 * @param {Callback} callback 
+	 */
+	getSurveyList: function(callback){
+		Utils.get(`/bff/limesurvey/surveys`, callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to fetch the languages of the specified survey
+	 * @param {number} surveyId - id of the survey to fetch the languages from
+	 * @param {Callback} callback 
+	 */
+	getSurveyLanguages: function(surveyId, callback){
+		Utils.get(`/bff/limesurvey/surveys/${surveyId}/languages`, callback);
+	},
+
+	/**
+	 * Send a PATCH request to the bff to set the owner of a survey
+	 * @param {number} surveyId - id of the survey to set the owner in
+	 * @param {Callback} callback 
+	 */
+	setSurveyOwner: function(surveyId, callback){
+		Utils.patch(`/bff/limesurvey/surveys/${surveyId}/owner`, {}, callback);
+	},
+	
+	/**
+	 * Send a GET request to the bff to check if the specified activity can be opened
+	 * @param {number} activityId - id of the activity to check
+	 * @param {Callback} callback 
+	 */
+	isActivityOpenable: function(activityId, callback){
+		Utils.get(`/bff/activities/${activityId}/openable`, callback);
+	},
+
+	// TODO: Remove?
+	openActivity: function(activityId, callback){
+		Utils.get(`/bff/activities/${activityId}/open`, callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to check if the specified activity has been initialized
+	 * @param {number} activityId - id of the activity to check
+	 * @param {Callback} callback 
+	 */
+	getActivityInitialized: function(activityId, callback){
+		Utils.get(`/bff/activities/${activityId}/initialized`, callback);
+	},
+
+	// TODO: Remove?
+	setActivityInitialized: function(activityId, user, status, callback){
+		Utils.post(`/bff/activities/${activityId}/initialized?user=${user}`, { status: status }, callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to fetch the specified activity progress
+	 * @param {number} activityId - id of the activity to fetch the progress from
+	 * @param {Callback} callback 
+	 */
+	getActivityProgress: function(activityId, callback){
+		Utils.get(`/bff/activities/${activityId}/progress`, callback);
+	},
+
+	// TODO: Remove?
+	setActivityProgress: function(activityId, user, status, callback){
+		const userQuery = user ? `?user=${user}` : '';
+		Utils.post(`/bff/activities/${activityId}/progress${userQuery}`, { status: status }, callback);
+	},
+	
+	/**
+	 * Send a GET request to the bff to fetch the specified activity completion
+	 * @param {number} activityId - id of the activity to fetch the completion from
+	 * @param {Callback} callback 
+	 */
+	getActivityCompletion: function(activityId, callback){
+		Utils.get(`/bff/activities/${activityId}/completion`, callback);
+	},
+
+	/**
+	 * Send a POST request to the bff to set the completion status for the specified user of the specified activity 
+	 * @param {number} activityId - id of the activity that has the user
+	 * @param {number} userId - id of the user to change the completion for 
+	 * @param {boolean} status - true to set the activity as completed, false otherwise
+	 * @param {Callback} callback 
+	 */
+	setActivityCompletion: function(activityId, userId, status, callback){
+		Utils.post(`/bff/activities/${activityId}/completion?user=${userId}`, { status: status }, callback);
+	},
+
+	/**
+	 * Send a POST request to the bff to set the completion status for all the users of the specified activity 
+	 * @param {number} activityId - id of the activity to set the status for
+	 * @param {boolean} status - true to set the activity as completed, false otherwise
+	 * @param {Callback} callback 
+	 */
+	setMultiActivityCompletion: function(activityId, status, callback){
+		Utils.post(`/bff/activities/${activityId}/completion/multi`, { status: status }, callback);
+	},
+
+	// TODO: Remove?
+	getActivityHasResult: function(activityId, callback){
+		Utils.get(`/bff/activities/${activityId}/hasresult`, callback);
+	},
+
+	// TODO: Remove?
+	hasActivityResult: function(activityId, callback){
+		Utils.get(`/bff/activities/${activityId}/hasresult`, callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to fetch the result data of the specified activity
+	 * @param {number} activityId - id of the activity to fetch the results from
+	 * @param {Callback} callback 
+	 */
+	getActivityResult: function(activityId, callback){
+		Utils.get(`/bff/activities/${activityId}/result`, callback);
+	},
+	
+	/**
+	 * Send a GET request to the bff to fetch the result data of the specified user from the specified activity
+	 * @param {number} activityId - id of the activity that has the user
+	 * @param {number} student - id of the user to fetch the result data from 
+	 * @param {Callback} callback 
+	 */
+	getActivityResultForUser : function(activityId, student, callback){
+		Utils.get(`/bff/activities/${activityId}/result?users=${student}&type=full`, callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to fetch the result data of the specified activity with the specified type
+	 * @param {number} activityId - id of the activity to fetch the results from
+	 * @param {string} type - type of result of the result data to fetch 
+	 * @param {Callback} callback 
+	 */
+	getActivityResultWithType: function(activityId, type, callback){
+		if(type === undefined) {
+			type = 'full';
+		}
+		Utils.get(`/bff/activities/${activityId}/result?type=${type}`, callback);
+	},
+
+	/**
+	 * 	 * Send a GET request to the bff to fetch the result data of the specified user from the specified activity with the specified type
+	 * @param {number} activityId - id of the activity that has the user
+	 * @param {string} type - type of result of the result data to fetch 
+	 * @param {number} student - id of the user to fetch the result data from 
+	 * @param {Callback} callback 
+	 */
+	getActivityResultWithTypeForUser : function(activityId, type, student, callback){
+		if(type === undefined) {
+			type = 'full';
+		}
+		Utils.get(`/bff/activities/${activityId}/result?users=${student}&type=${type}`, callback);
+	},
+
+	// TODO: Remove?
+	getActivitySuspension: function(activityId, callback){
+		Utils.get(`/bff/activities/${activityId}/suspension`, callback);
+	},
+	
+	/**
+	 * Send a POST request to the bff to change the specified activity status of the specified user 
+	 * @param {number} activityId - id of the activity that has the user
+	 * @param {number} user - id of the user to set the status for  
+	 * @param {boolean} status - true to set the activity as suspended, false otherwise
+	 * @param {string} reason - reason of the status change
+	 * @param {Callback} callback 
+	 */
+	setActivitySuspend: function(activityId, user, status, reason, callback){
+		Utils.post(`/bff/activities/${activityId}/suspension`, { user : user , status : status, reason : reason }, callback);
+	},
+	
+	
+	/**
+	 * Send a GET request to the bff to fetch the LRS data for the specified activity
+	 * @param {number} activityId - id of the activity to fetch the data from
+	 * @param {Callback} callback 
+	 */
+	getActivityLRSData: function(activityId, callback){
+		Utils.get(`/bff/activities/${activityId}/lrs/statements`, callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to fetch the LRS data for the test users of the specified activity
+	 * @param {number} activityId - id of the activity to fetch the data from
+	 * @param {Callback} callback 
+	 */
+	getActivityTestLRSData: function(activityId, callback){
+		Utils.get(`/bff/activities/${activityId}/lrs_test_statements`, callback);
+	},
+	
+
+	// GROUPS
+
+	/**
+	 * Send a GET request to the bff to fetch the groups matching the query search parameters in the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET to fetch the groups from
+	 * @param {Query} query 
+	 * @param {Callback} callback 
+	 */
+	getStudyGroups: function(simletId, query, callback){
+		const params = determineQueryAndCallback(query, callback);
+		Utils.get(`/bff/simlets/${simletId}/groups${getQueryString(params.query)}`, params.callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to fetch the amount of groups matching the query search parameters in the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET to fetch the groups from
+	 * @param {Query} query 
+	 * @param {Callback} callback 
+	 */
+	getStudyGroupsCount: function(simletId, query, callback){
+		const params = determineQueryAndCallback(query, callback);
+		Utils.get(`/bff/simlets/${simletId}/groups/count${getCountQueryString(params.query)}`, params.callback);
+	},
+
+	/**
+	 * Send a POST request to the bff to add a group to the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET to add the group to
+	 * @param {object} body - object containing the group_name, group_sandbox and group_use_new_generation of the group
+	 * @param {Callback} callback 
+	 */
+	addGroup: function(simletId, body, callback){
+		Utils.post(`/bff/simlets/${simletId}/groups`, body, callback);
+	},
+	
+	// TODO: Remove?
+	addStudyGroup: function(simletId, groupId, callback){
+		Utils.post(`/bff/studies/${simletId}/groups/${groupId}`, {}, callback);
+	},
+
+	/**
+	 * Send a POST request to the bff to import a group in the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET to add the group to
+	 * @param {object} groupData  - object containing the group_name and file of the group
+	 * @param {Callback} callback 
+	 */
+	importGroup: function(simletId, groupData, callback) {
+		Utils.post(`/bff/simlets/${simletId}/groups/import`, groupData, callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to fetch the specified group from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group to fetch
+	 * @param {Callback} callback 
+	 */
+	getGroup: function(simletId, groupId, callback){
+		Utils.get(`/bff/simlets/${simletId}/groups/${groupId}`, callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to export the specified group from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group to export
+	 * @param {boolean} complete - true to export the complete group info, false otherwise 
+	 * @param {Callback} callback 
+	 */
+	exportGroup: function(simletId, groupId, complete, callback) {
+		Utils.get(`/bff/simlets/${simletId}/groups/${groupId}/export?complete=${complete}`, callback);
+	},
+
+	/**
+	 * Send a PATCH request to the bff to update the specified group from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group to update
+	 * @param {object} group - object containing either the modified group_name, group_sandbox, group_use_new_generation, or any combination of them
+	 * @param {Callback} callback 
+	 */
+	updateGroup: function(simletId, groupId, group, callback){
+		Utils.patch(`/bff/simlets/${simletId}/groups/${groupId}`, group, callback);
+	},
+
+	/**
+	 * Send a DELETE request to the bff to delete the specified group from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId  - id of the group to delete
+	 * @param {Callback} callback 
+	 */
+	deleteGroup: function(simletId,groupId, callback){
+		Utils.delete(`/bff/simlets/${simletId}/groups/${groupId}`, callback);
+	},
+
+	// TODO: Remove?
+	deleteStudyGroup: function(simletId, groupId, callback){
+		Utils.delete(`/bff/studies/${simletId}/groups/${groupId}`, callback);
+	},
+
+	
+	// ALLOCATOR
+
+	/**
+	 * Send a GET request to the bff to fetch all the allocator types
+	 * @param {Callback} callback 
+	 */
+	getAllocatorTypes: function(callback){
+		Utils.get(`/bff/allocatortypes`, callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to fetch the allocator for the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET to fetch the allocator from 
+	 * @param {Callback} callback 
+	 */
+	getAllocator: function(simletId, callback){
+		Utils.get(`/bff/studies/${simletId}/allocator`, callback);
+	},
+
+	// TODO: Remove?
+	updateAllocator: function(simletId, allocator, callback){
+		Utils.patch(`/bff/studies/${simletId}/allocator`, allocator, callback);
+	},
+	
+	/**
+	 * Send a POST request to the bff to allocate a participant of the specified group to the specified session of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session and the group
+	 * @param {number} groupId - id of the group that has the participant to allocate
+	 * @param {number} sessionId - id of the session to allocate the participant in
+	 * @param {object} body - object containing the participant_id of the participant to allocate 
+	 * @param {Callback} callback 
+	 */
+	allocateToSession: function(simletId, groupId, sessionId, body, callback){
+		Utils.post(`/bff/studies/${simletId}/groups/${groupId}/allocate/${sessionId}`, body, callback);
+	},
+
+	/**
+	 * Send a POST request to the bff to allocate a participant of the specified group to a random session of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session and the group
+	 * @param {number} groupId - id of the group that has the participant to allocate
+	 * @param {object} data - object containing the participant_id of the participant to allocate 
+	 * @param {Callback} callback 
+	 */
+	allocateRandomly: function(simletId, groupId, data, callback){
+		Utils.post(`/bff/studies/${simletId}/groups/${groupId}/allocate/random`, data, callback);
+	},
+	
+	
+	// PARTICIPANTS
+	
+	/**
+	 * Send a GET request to the bff to fetch all the participants of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET to fetch the participants from
+	 * @param {Callback} callback 
+	 */
+	getStudyParticipants: function(simletId, callback){
+		Utils.get(`/bff/studies/${simletId}/participants`, callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to fetch the amount of participants in each group of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET to fetch the participants from
+	 * @param {Query} query 
+	 * @param {Callback} callback 
+	 */
+	getStudyGroupsParticipantsCount: function(simletId, query, callback){
+		const params = determineQueryAndCallback(query, callback);
+		Utils.get(`/bff/simlets/${simletId}/groups/participants/count${getCountQueryString(params.query)}`, params.callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to fetch all the participants in the specified session of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to fetch the participants from
+	 * @param {Callback} callback 
+	 */
+	getSessionParticipants: function(simletId, sessionId, callback){
+		Utils.get(`/bff/studies/${simletId}/tests/${sessionId}/participants`, callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to fetch all the participants in the specified group of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group to fetch the participants from
+	 * @param {Callback} callback 
+	 */
+	getGroupParticipants: function(simletId, groupId, callback){
+		Utils.get(`/bff/simlets/${simletId}/groups/${groupId}/participants`, callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to fetch the amount of participants in the specified group of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group to fetch the participants from
+	 * @param {Query} query - TODO: Remove?
+	 * @param {Callback} callback 
+	 */
+	getGroupParticipantsCount: function(simletId, groupId, query, callback){
+		const params = determineQueryAndCallback(query, callback);
+		Utils.get(`/bff/simlets/${simletId}/groups/${groupId}/participants/count${getCountQueryString(params.query)}`, params.callback);
+	},
+	
+	/**
+	 * Send a POST request to the bff to add a participant to the specified group of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group to add the participant to
+	 * @param {number} participantId - id of the participant to add
+	 * @param {Callback} callback 
+	 */
+	addGroupParticipant: function(simletId, groupId, participantId, callback){
+		Utils.post(`/bff/simlets/${simletId}/groups/${groupId}/participants/${participantId}`, { }, callback);
+	},
+
+	/**
+	 * Send a DELETE request to the bff to delete the specified participant from the specified group of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group to delete the participant from
+	 * @param {number} participantId - id of the participant to delete
+	 * @param {boolean} keycloakDelete - true to delete the user from keycloak, false otherwise 
+	 * @param {Callback} callback 
+	 */
+	deleteGroupParticipant: function(simletId, groupId, participantId, keycloakDelete, callback){
+		Utils.delete(`/bff/simlets/${simletId}/groups/${groupId}/participants/${participantId}?keycloakDelete=${keycloakDelete}`, callback);
+	},
+
+
+	// USERS
+
+	/**
+	 * TODO: Document (why pass a query object instead of the username?) 
+	 * @param {Query} query 
+	 * @param {Callback} callback 
+	 */
+	getUsers: function(query, callback){
+		const queryString = query ? `?${new URLSearchParams(query).toString()}` : '';
+		Utils.get(`/bff/users${queryString}`, callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to fetch the user data of the current user
+	 * @param {Callback} callback 
+	 */
+	getCurrentUser: function(callback){
+		Utils.get(`/bff/users/me`, callback);
+	},
+	
+	/**
+	 * Send a POST request to the bff to add a batch of generated users to the specified group of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group where the users will be added to
+	 * @param {string} algorithm - algorithm to use for the token generation (letters/alphanumeric/base58)
+	 * @param {number} length - length of the tokens
+	 * @param {number} batchLength - amount of tokens to generate
+	 * @param {Callback} callback 
+	 */
+	generateAndRegister: function(simletId, groupid, algorithm, length, batchLength, callback){
 		let body = {
 			algorithm: algorithm,
 			length: Number(length),
 			batchLength: Number(batchLength)
 		};
-		Utils.post(`/bff/simlets/${simlet_id}/groups/${groupid}/users`, body, callback);
+		Utils.post(`/bff/simlets/${simletId}/groups/${groupid}/users`, body, callback);
 	},
 
-	register: function(simlet_id, groupid, username, email, password, role, callback){
+	/**
+	 * Send a POST request to the bff to add a new user to the specified group of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group where the user will be added to
+	 * @param {string} username - username of the new user
+	 * @param {string} email - email of the new user
+	 * @param {string} password - password of the new user
+	 * @param {string} role - role of the new user (student/teacher) 
+	 * @param {Callback} callback 
+	 */
+	register: function(simletId, groupid, username, email, password, role, callback){
 		let body = {
 			username: username,
 			email: email,
 			password: password,
 			role: role
 		};
-		Utils.post(`/bff/simlets/${simlet_id}/groups/${groupid}/users`, body, callback);
+		Utils.post(`/bff/simlets/${simletId}/groups/${groupid}/users`, body, callback);
 	},
 
-	getUsers: function(query, callback){
-		const queryString = query ? `?${new URLSearchParams(query).toString()}` : '';
-		Utils.get(`/bff/users${queryString}`, callback);
-	},
-
+	// TODO: Remove?
 	linkUserAccount: function(data, callback){
 		Utils.post(`/bff/users/link`, data, callback);
 	},
 
+	// TODO: Remove?
 	processUserEvents: function(data, callback){
 		Utils.post(`/bff/users/events`, data, callback);
 	},
 
+	/**
+	 * TODO: Document / Remove?
+	 * @param {string} username 
+	 * @param {object} body 
+	 * @param {Callback} callback 
+	 */
 	setRole: function(username, body, callback){
 		const normalizedBody = (typeof body === 'string') ? { role: body } : body;
 		Utils.patch(`/bff/users/${username}`, normalizedBody, callback);
 	},
 
-	getCurrentUser: function(callback){
-		Utils.get(`/bff/users/me`, callback);
-	},
-
+	/**
+	 * TODO: Document
+	 * @param {Callback} callback 
+	 */
 	islimesurveyadmin: function(callback){
 		Utils.get(`/bff/users/islimesurveyadmin`, callback);
 	},
 
 
-	// GROUPS
+	// PERMISSIONS
 
-	getStudyGroups: function(simlet_id, query, callback){
-		const params = determineQueryAndCallback(query, callback);
-		Utils.get(`/bff/simlets/${simlet_id}/groups${getQueryString(params.query)}`, params.callback);
+	/**
+	 * Send a GET request to the bff to fetch the permissions data for all the coordinators of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET to fetch the data from
+	 * @param {Callback} callback 
+	 */
+	getStudyPermissions: function(simletId, callback){
+		Utils.get(`/bff/studies/${simletId}/permissions`, callback);
 	},
 
-	getStudyGroupsCount: function(simlet_id, query, callback){
-		const params = determineQueryAndCallback(query, callback);
-		Utils.get(`/bff/simlets/${simlet_id}/groups/count${getCountQueryString(params.query)}`, params.callback);
+	/**
+	 * Send a POST request to the bff to add permissions data to the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET to add the data to
+	 * @param {object} permissions - object containing the user_id, and permission type (READ/WRITE)
+	 * @param {Callback} callback 
+	 */
+	createStudyPermissions: function(simletId, permissions, callback){
+		Utils.post(`/bff/studies/${simletId}/permissions`, permissions, callback);
 	},
 
-	addGroup: function(simlet_id, body, callback){
-		Utils.post(`/bff/simlets/${simlet_id}/groups`, body, callback);
+	// TODO: Remove?
+	getStudyPermissionsForUser: function(simletId, userId, callback){
+		Utils.get(`/bff/studies/${simletId}/permissions/${userId}`, callback);
 	},
-	
-	addStudyGroup: function(study_id, group_id, callback){
-		Utils.post(`/bff/studies/${study_id}/groups/${group_id}`, {}, callback);
-	},
-
-	importGroup: function(simlet_id, groupData, callback) {
-		Utils.post(`/bff/simlets/${simlet_id}/groups/import`, groupData, callback);
-	},
-
-	getGroup: function(simlet_id, group_id, callback){
-		Utils.get(`/bff/simlets/${simlet_id}/groups/${group_id}`, callback);
-	},
-
-	exportGroup: function(simlet_id, group_id, complete, callback) {
-		Utils.get(`/bff/simlets/${simlet_id}/groups/${group_id}/export?complete=${complete}`, callback);
-	},
-
-	updateGroup: function(simlet_id, groupId, group, callback){
-		Utils.patch(`/bff/simlets/${simlet_id}/groups/${groupId}`, group, callback);
-	},
-
-	deleteGroup: function(simlet_id,group_id, callback){
-		Utils.delete(`/bff/simlets/${simlet_id}/groups/${group_id}`, callback);
-	},
-	
-	deleteStudyGroup: function(study_id, group_id, callback){
-		Utils.delete(`/bff/studies/${study_id}/groups/${group_id}`, callback);
-	},
-	
-
-	getGroupPermissions: function(simlet_id,group_id, callback){
-		Utils.get(`/bff/simlets/${simlet_id}/groups/${group_id}/permissions`, callback);
-	},
-
-	createGroupPermissions: function(simlet_id,group_id, permissions, callback){
-		Utils.post(`/bff/simlets/${simlet_id}/groups/${group_id}/permissions`, permissions, callback);
-	},
-
-	getGroupPermissionsForUser: function(simlet_id,group_id, user_id, callback){
-		Utils.get(`/bff/simlets/${simlet_id}/groups/${group_id}/permissions/${user_id}`, callback);
-	},
-
-	patchGroupPermissionsForUser: function(simlet_id, group_id, user_id, permissions, callback){
-		Utils.patch(`/bff/simlets/${simlet_id}/groups/${group_id}/permissions/${user_id}`, permissions, callback);
-	},
-
-	deleteGroupPermissionsForUser: function(simlet_id,group_id, user_id, callback){
-		Utils.delete(`/bff/simlets/${simlet_id}/groups/${group_id}/permissions/${user_id}`, callback);
-	},
-
-	// Participants
-
-	getStudyGroupsParticipantsCount: function(simlet_id, query, callback){
-		const params = determineQueryAndCallback(query, callback);
-		Utils.get(`/bff/simlets/${simlet_id}/groups/participants/count${getCountQueryString(params.query)}`, params.callback);
-	},
-
-	getGroupParticipants: function(simlet_id, group_id, callback){
-		Utils.get(`/bff/simlets/${simlet_id}/groups/${group_id}/participants`, callback);
-	},
-
-	getGroupParticipantsCount: function(simlet_id, group_id, query, callback){
-		const params = determineQueryAndCallback(query, callback);
-		Utils.get(`/bff/simlets/${simlet_id}/groups/${group_id}/participants/count${getCountQueryString(params.query)}`, params.callback);
-	},
-
-	addGroupParticipant: function(simlet_id, group_id, participant_id, callback){
-		Utils.post(`/bff/simlets/${simlet_id}/groups/${group_id}/participants/${participant_id}`, { }, callback);
-	},
-
-	deleteGroupParticipants: function(simlet_id, group_id, participant_id, keycloakDelete, callback){
-		Utils.delete(`/bff/simlets/${simlet_id}/groups/${group_id}/participants/${participant_id}?keycloakDelete=${keycloakDelete}`, callback);
-	},
-
-
-	// TAGS
-	
-	getTags: function(callback){
-		Utils.get(`/bff/tags`, callback);
-	},
-
-	createTag: function(body, callback){
-		Utils.post(`/bff/tags`, body, callback);
-	},
-
-	updateTag: function(tag_id, body, callback){
-		Utils.patch(`/bff/tags/${tag_id}`, body, callback);
-	},
-
-	deleteTag: function(tag_id, callback){
-		Utils.delete(`/bff/tags/${tag_id}`, callback);
-	},
-
-
-	// STUDIES
-
-	getStudies: function(query, callback) {
-		const params = determineQueryAndCallback(query, callback);
-		Utils.get(`/bff/studies${getQueryString(params.query)}`, params.callback);
-	},
-
-	getStudiesCount: function(query, callback) {
-		const params = determineQueryAndCallback(query, callback);
-		Utils.get(`/bff/studies/count${getCountQueryString(params.query)}`, params.callback);
-	},
-	
-	getSchedulerStudies: function(query, callback){
-		const params = determineQueryAndCallback(query, callback);
-		Utils.get(`/bff/scheduler/studies${getQueryString(params.query)}`, params.callback);
-	},
-
-	getSchedulerStudiesCount: function(query, callback){
-		const params = determineQueryAndCallback(query, callback);
-		Utils.get(`/bff/scheduler/studies/count${getCountQueryString(params.query)}`, params.callback);
-	},
-
-	addStudy: function(body, callback){
-		Utils.post(`/bff/studies`, body, callback);
-	},
-
-	addTestToStudy: function(study_id, body, callback){
-	   Utils.post(`/bff/studies/${study_id}/tests`, body, callback);
-	},
-
-	importTestConfig: function(study_id, newSession, callback){
-		Utils.post(`/bff/studies/${study_id}/tests/import`, newSession, callback);
-	},
-
-	getStudyEventsPresignedUrl: function(study_id, callback){
-		Utils.get(`/simlets/${study_id}/events/getPresignedUrl`, callback);
-	},
-
-	exportTest: function(study_id, test_id, callback){
-		Utils.get(`/bff/studies/${study_id}/tests/${test_id}/export`, callback);
-	},
-
-	getStudy: function(study_id, callback){
-		Utils.get(`/bff/studies/${study_id}`, callback);
-	},
-
-	updateStudy: function(studyId, study, callback){
-		Utils.patch(`/bff/studies/${studyId}`, study, callback);
-	},
-
-	updateTest: function(studyId, sessionId, test, callback){
-		Utils.patch(`/bff/studies/${studyId}/tests/${sessionId}`, test, callback);
-	},
-
-	setTesterForSession: function(study_id, test_id, callback){
-		Utils.post(`/bff/studies/${study_id}/tests/${test_id}/set-tester`, {}, callback);
-	},
-
-	unsetTesterForSession: function(study_id, test_id, callback){
-		Utils.post(`/bff/studies/${study_id}/tests/${test_id}/unset-tester`, {}, callback);
-	},
-
-	resetTesterForSession: function(study_id, test_id, callback){
-		Utils.post(`/bff/studies/${study_id}/tests/${test_id}/reset-tester`, {}, callback);
-	},
-
-	addTagToSession: function(study_id, test_id, tag, callback){
-		Utils.post(`/bff/simlets/${study_id}/tests/${test_id}/tags/${tag}`, {}, callback);
-	},
 
-	deleteTagFromSession: function(study_id, test_id, tag, callback){
-		Utils.delete(`/bff/simlets/${study_id}/tests/${test_id}/tags/${tag}`, callback);
+	// TODO: Remove?
+	patchStudyPermissionsForUser: function(simletId, userId, permissions, callback){
+		Utils.patch(`/bff/studies/${simletId}/permissions/${userId}`, permissions, callback);
 	},
 
-	updateActivity: function(studyId, testId, activityId, activity, callback){
-		if(activity instanceof FormData){
-			Utils.patchForm(`/bff/studies/${studyId}/tests/${testId}/activities/${activityId}`, activity, callback);
-		} else {
-			Utils.patch(`/bff/studies/${studyId}/tests/${testId}/activities/${activityId}`, activity, callback);
-		}
+	/**
+	 * Send a DELETE request to the bff to delete the permissions of the specified user in the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the user
+	 * @param {number} userId - id of the user to remove the permissions from
+	 * @param {Callback} callback 
+	 */
+	deleteStudyPermissionsForUser: function(simletId, userId, callback){
+		Utils.delete(`/bff/studies/${simletId}/permissions/${userId}`, callback);
 	},
 
-	deleteStudy: function(study_id, callback){
-		Utils.delete(`/bff/studies/${study_id}`, callback);
-	},
-
-	getAllocator: function(study_id, callback){
-		Utils.get(`/bff/studies/${study_id}/allocator`, callback);
-	},
-
-	getStudyPermissions: function(study_id, callback){
-		Utils.get(`/bff/studies/${study_id}/permissions`, callback);
-	},
-
-	createStudyPermissions: function(study_id, permissions, callback){
-		Utils.post(`/bff/studies/${study_id}/permissions`, permissions, callback);
-	},
-
-	getStudyPermissionsForUser: function(study_id, user_id, callback){
-		Utils.get(`/bff/studies/${study_id}/permissions/${user_id}`, callback);
-	},
-
-	patchStudyPermissionsForUser: function(study_id, user_id, permissions, callback){
-		Utils.patch(`/bff/studies/${study_id}/permissions/${user_id}`, permissions, callback);
-	},
-
-	deleteStudyPermissionsForUser: function(study_id, user_id, callback){
-		Utils.delete(`/bff/studies/${study_id}/permissions/${user_id}`, callback);
-	},
 
-	updateAllocator: function(study_id, allocator, callback){
-		Utils.patch(`/bff/studies/${study_id}/allocator`, allocator, callback);
+	// TODO: Remove?
+	getSessionPermissions: function(simletId, sessionId, callback){
+		Utils.get(`/bff/studies/${simletId}/tests/${sessionId}/permissions`, callback);
 	},
 
-	getStudyTests: function(study_id, query, callback){
-		const params = determineQueryAndCallback(query, callback);
-		Utils.get(`/bff/studies/${study_id}/tests${getQueryString(params.query)}`, params.callback);
+	// TODO: Remove?
+	createSessionPermissions: function(simletId, sessionId, permissions, callback){
+		Utils.post(`/bff/studies/${simletId}/tests/${sessionId}/permissions`, permissions, callback);
 	},
 
-	getStudyTestsCount: function(study_id, query, callback){
-		const params = determineQueryAndCallback(query, callback);
-		Utils.get(`/bff/studies/${study_id}/tests/count${getCountQueryString(params.query)}`, params.callback);
+	// TODO: Remove?
+	getSessionPermissionsForUser: function(simletId, sessionId, userId, callback){
+		Utils.get(`/bff/studies/${simletId}/tests/${sessionId}/permissions/${userId}`, callback);
 	},
 
-	exportStudyConfig: function(study_id, callback){
-		Utils.get(`/bff/studies/${study_id}/export`, callback);
+	// TODO: Remove?
+	patchSessionPermissionsForUser: function(simletId, sessionId, userId, permissions, callback){
+		Utils.patch(`/bff/studies/${simletId}/tests/${sessionId}/permissions/${userId}`, permissions, callback);
 	},
 
-	importStudyConfig: function(newStudy, callback){
-		Utils.post(`/bff/studies/import`, newStudy, callback);
+	// TODO: Remove?
+	deleteSessionPermissionsForUser: function(simletId, sessionId, userId, callback){
+		Utils.delete(`/bff/studies/${simletId}/tests/${sessionId}/permissions/${userId}`, callback);
 	},
 
-	getStudyTest: function(study_id,test_id, callback){
-		Utils.get(`/bff/studies/${study_id}/tests/${test_id}`, callback);
-	},
-
-	getStudyTestComplete: function(study_id,test_id, callback){
-		Utils.get(`/bff/studies/${study_id}/tests/${test_id}/complete`, callback);
-	},
-
-	deleteTest: function(study_id, test_id, callback){
-		Utils.delete(`/bff/studies/${study_id}/tests/${test_id}`, callback);
-	},
-
-	getSessionParticipants: function(study_id, test_id, callback){
-		Utils.get(`/bff/studies/${study_id}/tests/${test_id}/participants`, callback);
-	},
-
-	allocateToSession: function(study_id, group_id, test_id, body, callback){
-		Utils.post(`/bff/studies/${study_id}/groups/${group_id}/allocate/${test_id}`, body, callback);
-	},
 
-	allocateRandomly: function(study_id, group_id, data, callback){
-		Utils.post(`/bff/studies/${study_id}/groups/${group_id}/allocate/random`, data, callback);
+	// TODO: Remove?
+	getGroupPermissions: function(simletId,groupId, callback){
+		Utils.get(`/bff/simlets/${simletId}/groups/${groupId}/permissions`, callback);
 	},
 
-	getSessionPermissions: function(study_id, test_id, callback){
-		Utils.get(`/bff/studies/${study_id}/tests/${test_id}/permissions`, callback);
+	// TODO: Remove?
+	createGroupPermissions: function(simletId,groupId, permissions, callback){
+		Utils.post(`/bff/simlets/${simletId}/groups/${groupId}/permissions`, permissions, callback);
 	},
 
-	createSessionPermissions: function(study_id, test_id, permissions, callback){
-		Utils.post(`/bff/studies/${study_id}/tests/${test_id}/permissions`, permissions, callback);
+	// TODO: Remove?
+	getGroupPermissionsForUser: function(simletId,groupId, userId, callback){
+		Utils.get(`/bff/simlets/${simletId}/groups/${groupId}/permissions/${userId}`, callback);
 	},
 
-	getSessionPermissionsForUser: function(study_id, test_id, user_id, callback){
-		Utils.get(`/bff/studies/${study_id}/tests/${test_id}/permissions/${user_id}`, callback);
+	// TODO: Remove?
+	patchGroupPermissionsForUser: function(simletId, groupId, userId, permissions, callback){
+		Utils.patch(`/bff/simlets/${simletId}/groups/${groupId}/permissions/${userId}`, permissions, callback);
 	},
 
-	patchSessionPermissionsForUser: function(study_id, test_id, user_id, permissions, callback){
-		Utils.patch(`/bff/studies/${study_id}/tests/${test_id}/permissions/${user_id}`, permissions, callback);
+	// TODO: Remove?
+	deleteGroupPermissionsForUser: function(simletId,groupId, userId, callback){
+		Utils.delete(`/bff/simlets/${simletId}/groups/${groupId}/permissions/${userId}`, callback);
 	},
 
-	deleteSessionPermissionsForUser: function(study_id, test_id, user_id, callback){
-		Utils.delete(`/bff/studies/${study_id}/tests/${test_id}/permissions/${user_id}`, callback);
-	},
-
-	getTestActivities: function(study_id, test_id, callback){
-		Utils.get(`/bff/studies/${study_id}/tests/${test_id}/activities`, callback);
-	},
 
-	getStudyParticipants: function(study_id, callback){
-		Utils.get(`/bff/studies/${study_id}/participants`, callback);
-	},
+	// TODO: Document + classify / remove?
 
-	getStudySchedule: function(study_id, callback){
-		Utils.get(`/bff/studies/${study_id}/schedule`, callback);
+	getStudyEventsPresignedUrl: function(simletId, callback){
+		Utils.get(`/simlets/${simletId}/events/getPresignedUrl`, callback);
 	},
 
-	
-	getScheduleEventsPresignedUrl: function(study_id, callback){
-		Utils.get(`/simlets/${study_id}/schedule/events/getPresignedUrl`, callback);
+	getScheduleEventsPresignedUrl: function(simletId, callback){
+		Utils.get(`/simlets/${simletId}/schedule/events/getPresignedUrl`, callback);
 	},
 
-	getGroupEventsPresignedUrl: function(simlet_id, group_id, callback) {
-		Utils.get(`/groups/${simlet_id}/${group_id}/events/getPresignedUrl`, callback);
+	getGroupEventsPresignedUrl: function(simletId, groupId, callback) {
+		Utils.get(`/groups/${simletId}/${groupId}/events/getPresignedUrl`, callback);
 	},
 
 	getEventsPresignedUrl: function(callback){
 		Utils.get(`/events/getPresignedUrl`, callback);
 	},
 
-	activateSession(study_id, test_id, body, callback){
-		Utils.post(`/bff/studies/${study_id}/tests/${test_id}/activate`, body, callback);
-	},
-
-	// Activities
-
-	addActivityToTest: function(study_id, test_id, activity, callback){
-		if(activity instanceof FormData){
-			Utils.postForm(`/bff/studies/${study_id}/tests/${test_id}/activities`, activity, callback);
-		} else {
-			Utils.post(`/bff/studies/${study_id}/tests/${test_id}/activities`, activity, callback);
-		}
-	},
-
-	getActivity: function(activity_id, callback){
-		Utils.get(`/bff/activities/${activity_id}`, callback);
-	},
-
-	exportActivity: function(activity_id, complete, callback){
-		Utils.get(`/bff/activities/${activity_id}/export?complete=${complete}`, callback);
-	},
-
-	setSurveyOwner: function(survey_id, callback){
-		Utils.patch(`/bff/limesurvey/surveys/${survey_id}/owner`, {}, callback);
-	},
-
-	getSurveyList: function(callback){
-		Utils.get(`/bff/limesurvey/surveys`, callback);
-	},
-
-	getSurveyLanguages: function(survey_id, callback){
-		Utils.get(`/bff/limesurvey/surveys/${survey_id}/languages`, callback);
-	},
-
-	getActivityProgress: function(activity_id, callback){
-		Utils.get(`/bff/activities/${activity_id}/progress`, callback);
-	},
-
-	setActivityProgress: function(activity_id, user, status, callback){
-		const userQuery = user ? `?user=${user}` : '';
-		Utils.post(`/bff/activities/${activity_id}/progress${userQuery}`, { status: status }, callback);
-	},
-
-	openActivity: function(activity_id, callback){
-		Utils.get(`/bff/activities/${activity_id}/open`, callback);
-	},
-
-	getActivityInitialized: function(activity_id, callback){
-		Utils.get(`/bff/activities/${activity_id}/initialized`, callback);
-	},
-
-	setActivityInitialized: function(activity_id, user, status, callback){
-		Utils.post(`/bff/activities/${activity_id}/initialized?user=${user}`, { status: status }, callback);
-	},
-
-	getActivityCompletion: function(activity_id, callback){
-		Utils.get(`/bff/activities/${activity_id}/completion`, callback);
-	},
-
-	setActivityCompletion: function(activity_id, user, status, callback){
-		Utils.post(`/bff/activities/${activity_id}/completion?user=${user}`, { status: status }, callback);
-	},
-
-	setMultiActivityCompletion: function(activity_id, status, callback){
-		Utils.post(`/bff/activities/${activity_id}/completion/multi`, { status: status }, callback);
+	getMinioDataUrl: function(activityId, callback){
+		Utils.get(`/bff/activities/${activityId}/presignedurl`, callback);
 	},
 	
-	setActivitySuspend: function(activity_id, user, status, reason, callback){
-		Utils.post(`/bff/activities/${activity_id}/suspension`, { user : user , status : status, reason : reason }, callback);
-	},
 
-	getActivitySuspension: function(activity_id, callback){
-		Utils.get(`/bff/activities/${activity_id}/suspension`, callback);
-	},
-
-	getActivityResultForUser : function(activity_id, student, callback){
-		Utils.get(`/bff/activities/${activity_id}/result?users=${student}&type=full`, callback);
-	},
-
-	getActivityResultWithTypeForUser : function(activity_id, type, student, callback){
-		if(type === undefined) {
-			type = 'full';
-		}
-		Utils.get(`/bff/activities/${activity_id}/result?users=${student}&type=${type}`, callback);
-	},
-
-	getActivityResult: function(activity_id, callback){
-		Utils.get(`/bff/activities/${activity_id}/result`, callback);
-	},
-
-	getActivityResultWithType: function(activity_id, type, callback){
-		if(type === undefined) {
-			type = 'full';
-		}
-		Utils.get(`/bff/activities/${activity_id}/result?type=${type}`, callback);
-	},
-
-	getActivityHasResult: function(activity_id, callback){
-		Utils.get(`/bff/activities/${activity_id}/hasresult`, callback);
-	},
-
-	hasActivityResult: function(activity_id, callback){
-		Utils.get(`/bff/activities/${activity_id}/hasresult`, callback);
-	},
-
-	getActivityTarget: function(activity_id, callback){
-		Utils.get(`/bff/activities/${activity_id}/target`, callback);
-	},
-
-	isActivityOpenable: function(activity_id, callback){
-		Utils.get(`/bff/activities/${activity_id}/openable`, callback);
-	},
-
-	getMinioDataUrl: function(activity_id, callback){
-		Utils.get(`/bff/activities/${activity_id}/presignedurl`, callback);
-	},
-
-	getSessionLRSData: function(simlet_id, session_id, callback){
-		Utils.get(`/bff/simlets/${simlet_id}/sessions/${session_id}/lrs/statements`, callback);
-	},
-
-	getActivityLRSData: function(activity_id, callback){
-		Utils.get(`/bff/activities/${activity_id}/lrs/statements`, callback);
-	},
-
-	getSessionTestLRSData: function(simlet_id, session_id, callback){
-		Utils.get(`/bff/simlets/${simlet_id}/sessions/${session_id}/lrs_test_statements`, callback);
-	},
-
-	getActivityTestLRSData: function(activity_id, callback){
-		Utils.get(`/bff/activities/${activity_id}/lrs_test_statements`, callback);
-	},
-
-	setActivityTest: function(activity_id, payload, callback){
-		Utils.post(`/bff/activities/${activity_id}/test`, payload, callback);
-	},
-
-	deleteActivity: function(studyId, testId, activity_id, callback){
-		Utils.delete(`/bff/studies/${studyId}/tests/${testId}/activities/${activity_id}`, callback);
-	},
-
-	exportActivity: function(activity_id, study_id, test_id, callback){
-		Utils.get(`/bff/studies/${study_id}/tests/${test_id}/activities/${activity_id}/export`, callback);
-	},
-
-	importActivity: function(study_id, test_id, activityData, callback){
-		Utils.post(`/bff/studies/${study_id}/tests/${test_id}/activities/import`, activityData, callback);
-	},
-
-	getActivityTypes: function(callback){
-		Utils.get(`/bff/activitytypes`, callback);
-	},
-
-	getAllocatorTypes: function(callback){
-		Utils.get(`/bff/allocatortypes`, callback);
-	},
-
+	// TODO: Document
 	// LTI
 
 	getLtiTools: function(callback){
@@ -654,7 +1237,7 @@ var Simva = {
 	getLtiPlatforms: function(study, callback){
 		let query = '';
 		if(study){
-			query = '?searchString=' + encodeURI(`{"studyId":"${study}"}`);
+			query = '?searchString=' + encodeURI(`{"simletId":"${study}"}`);
 		}
 
 		Utils.get(`/bff/lti/platforms${query}`, callback);
