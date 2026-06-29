@@ -117,7 +117,7 @@ module.exports = function(auth, redirectToLogin, config){
   });
 
   router.get('/', auth, redirectToLogin, function(req, res, next) {
-      res.render('studies_list', { 
+      res.render('simlets_list', { 
         config: config, 
         user: req.session.user,
         t : req.t,
@@ -126,7 +126,7 @@ module.exports = function(auth, redirectToLogin, config){
   });
   
   router.get('/:studyid', auth, redirectToLogin, function(req, res, next) {
-    res.render('study_view', { 
+    res.render('simlet_view', { 
       config: config, 
       user: req.session.user, 
       study: req.params['studyid'],

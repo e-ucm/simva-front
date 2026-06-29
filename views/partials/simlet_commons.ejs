@@ -166,17 +166,14 @@
 	/**
 	 * Format the raw date to show it in YYYY/MM/DD format on the user's timezone
 	 * @param {number} rawDate - date epoch
-	 * @param {string} currentlanguageCode - language the user is currently using 
 	 * @returns {string} - string with the formatted date
 	 */
-	const getFormattedDate = function(rawDate, currentlanguageCode) {
+	const getFormattedDate = function(rawDate) {
 		const date = new Date(rawDate);
 		const yyyy = String(date.getFullYear()).slice(-4).padStart(4, '0');
 		const mm = String(date.getMonth() + 1).padStart(2, '0');
 		const dd = String(date.getDate()).padStart(2, '0');
 		return `${yyyy}/${mm}/${dd}`;
-		// Date format depends on the localization and may not be YY/MM/DD
-		// return date.toLocaleDateString(currentlanguageCode);
 	}
 
 	/**
@@ -284,17 +281,17 @@
 
 			// Creating new SIMLET
 			if (form.editingStudyId == null || form.editingStudyId == "") {
-				Simva.addStudy({ simlet_name : form.studyName, simlet_description : form.studyDescription }, function(error, result) {
+				Simva.addSimlet({ simlet_name : form.studyName, simlet_description : form.studyDescription }, function(error, result) {
 					if (error && error.responseJSON) {
 						Utils.toggleSubmit();
 						$("#study_form_error").text(error.responseJSON.message);
 					}
 					else {
-						$('#studies_list').html(roller);
+						$('#simlets_list').html(roller);
 						Utils.toggleSubmit();
 						Utils.toggleFormInFloating('study_form');
 						$("#study_form_error").text("");
-						Simva.getStudies(function(error, result) {
+						Simva.getSimlets(function(error, result) {
 							if (!error && refreshFunc) {
 								refreshFunc();
 							}
@@ -310,7 +307,7 @@
 				}
 				else {
 					$('#study_form_error').text("");
-					Simva.updateStudy(form.editingStudyId, { simlet_name : form.studyName, simlet_description : form.studyDescription }, function(error, result) {
+					Simva.updateSimlet(form.editingStudyId, { simlet_name : form.studyName, simlet_description : form.studyDescription }, function(error, result) {
 						Utils.toggleSubmit();
 						Utils.toggleFormInFloating('study_form');
 
@@ -335,7 +332,7 @@
             custom_slug = form.custom_slug;
             Utils.toggleSubmit();
             
-            Simva.generateShlinkURL(currSimletId, custom_slug, null, (error, result) => {
+            Simva.generateShlink(currSimletId, custom_slug, null, (error, result) => {
                 if (!error) {
                     shlink = result;
                     let shortUrl=shlink.shortUrl;
@@ -373,7 +370,7 @@
         	}
         	Utils.toggleSubmit();
             
-            Simva.generateShlinkURL(currSimletId, null, length, (error, result) => {
+            Simva.generateShlink(currSimletId, null, length, (error, result) => {
                 if (!error) {
                     shlink = result;
                     let shortUrl=shlink.shortUrl;
@@ -441,7 +438,7 @@
 
     const deleteShLink = function() {
 		Utils.toggleSubmit($("#generate_study_link"));
-        Simva.getStudy(currSimletId, (error, result) => {
+        Simva.getSimlet(currSimletId, (error, result) => {
 			if (!error) {
 				let shortCode = shlink.shortCode;
 				if (confirm(`<%- t('scheduler.shlink.delete.confirm', { ns : 'SIMLETs', shlink : '${shortCode}', SIMLET : '${result.simlet_name}' }) %>`)) {
@@ -496,7 +493,7 @@
 	}
 
 	const downloadStudyConfig = function() {
-		Simva.exportStudyConfig(currSimletId, function(error, result) {
+		Simva.exportSimlet(currSimletId, function(error, result) {
 			if (!error) {
 				const simletExport = result;
 				const content = JSON.stringify(simletExport, null, 2);
@@ -512,7 +509,7 @@
 	
 	const archiveSimlet = function(simletId, simletName) {
 		if(confirm(`<%- t('archive.confirm', { ns : 'SIMLETs', SIMLET : '${simletName}' }) %>`)){
-			Simva.updateStudy(simletId, { simlet_archived: true }, function(error, result) {
+			Simva.updateSimlet(simletId, { simlet_archived: true }, function(error, result) {
 				if (!error  && refreshFunc != null) {
 					refreshFunc();
 				}
@@ -523,7 +520,7 @@
 
 	const deleteSimlet = function(simletId, simletName){
 		if(confirm(`<%- t('delete.confirm', { ns : 'SIMLETs', SIMLET : '${simletName}' }) %>`)){
-			Simva.deleteStudy(simletId, function(response) {
+			Simva.deleteSimlet(simletId, function(response) {
 				if(response.status !== 200) {
 					// Muestra el error real para depuración
 					alert(response || "Error eliminando el simlet");

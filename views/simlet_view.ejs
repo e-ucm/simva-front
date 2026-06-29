@@ -83,7 +83,7 @@ the elements and scripts defined in the simlet_commons partial -->
 <script type="text/javascript">
 	if (true)  {
 		// Create an instance of SSEClientManager
-		Simva.getStudyEventsPresignedUrl('<%= study %>', function(error, result) {
+		Simva.getSimletEventsPresignedUrl('<%= study %>', function(error, result) {
 			if (!error) {
 				const presignedUrl = result.url;
 				const sseClient = new SSEClientManager(presignedUrl);
@@ -279,30 +279,30 @@ the elements and scripts defined in the simlet_commons partial -->
 
 	// Functionality
 
-	const getSessionFromId = function(testId) {
-		if (completeSessionsById.has(testId)) {
-			return completeSessionsById.get(testId);
+	const getSessionFromId = function(sessionId) {
+		if (completeSessionsById.has(Number(sessionId))) {
+			return completeSessionsById.get(Number(sessionId));
 		}
 		return null;
 	}
 
 	const getActivityFromId = function(activityId) {
-		if (completeActivitiesById.has(activityId)) {
-			return completeActivitiesById.get(activityId);
+		if (completeActivitiesById.has(Number(activityId))) {
+			return completeActivitiesById.get(Number(activityId));
 		}
 		return null;
 	}
 
 	const getGroupFromId = function (groupId) {
-		if (completeGroupsById.has(groupId)) {
-			return completeGroupsById.get(groupId);
+		if (completeGroupsById.has(Number(groupId))) {
+			return completeGroupsById.get(Number(groupId));
 		}
 		return null;
 	}
 
 	const getParticipantFromId = function(participantId) {
-		if (participantsById.has(participantId)) {
-			return participantsById.get(participantId);
+		if (participantsById.has(Number(participantId))) {
+			return participantsById.get(Number(participantId));
 		}
 		return null;
 	}
@@ -329,7 +329,7 @@ the elements and scripts defined in the simlet_commons partial -->
 		
 		// Get the SIMLET essential parameters such as the name or its status and paint the different 
 		// independent sections of the SIMLET asynchronously since the order of execution doesn't matter
-		Simva.getStudy(simletId, function(error, result) {
+		Simva.getSimlet(simletId, function(error, result) {
 			if (!error) {
 				simlet = result;
 
@@ -354,7 +354,7 @@ the elements and scripts defined in the simlet_commons partial -->
 				// to potentially avoid fetching them multiple times, since the first paintAllocator calls
 				// run asynchronously and practically at the same time 
 				if (sessionsById.size < simlet.sessions.length) {
-					Simva.getStudyTests(simletId, function(error, result) {
+					Simva.getSimletSessions(simletId, function(error, result) {
 						if (!error) {
 							sessionsById = new Map(
 								result.map(obj => [obj.session_id, obj])
@@ -425,7 +425,7 @@ the elements and scripts defined in the simlet_commons partial -->
 			}
 			// Otherwise, fetch them from the database, store them, and call the callback once it's done
 			else {
-				Simva.getStudyTests(simletId, function(error, result) {
+				Simva.getSimletSessions(simletId, function(error, result) {
 					if (!error) {
 						sessionsById = new Map(
 							result.map(obj => [obj.session_id, obj])
@@ -446,7 +446,7 @@ the elements and scripts defined in the simlet_commons partial -->
 			archiveButton.addClass('icon-dearchive');
 			archiveButton.removeClass('icon-archive');
 			archiveButton.click(() => { 
-				Simva.updateStudy(simletId, { simlet_archived: false }, function(error, result) {
+				Simva.updateSimlet(simletId, { simlet_archived: false }, function(error, result) {
 					if (!error) {
 						refreshFunc();
 					}

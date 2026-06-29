@@ -4,7 +4,7 @@ module.exports = function(auth, redirectToLogin, config){
 
     router.get('/', auth, redirectToLogin, function(req, res, next) {
         if(req.session.user.data.role === 'teacher' || req.session.user.data.role === 'administrator'){
-            res.render('studies_list', { 
+            res.render('simlets_list', { 
                 config: config, 
                 user: req.session.user,
                 t : req.t,

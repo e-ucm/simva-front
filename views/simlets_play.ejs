@@ -38,7 +38,7 @@
 
 		// At the same time, asynchronously get all the SIMLETs in this section and store
 		// them by id for faster access to its parameters when opening the edit menu
-		Simva.getSchedulerStudiesCount(function(error, result) {
+		Simva.getSchedulerSimletsCount(function(error, result) {
 			if (!error) {
 				totalResults = result.count;
 			}
@@ -52,7 +52,7 @@
 	const onSearch = function() {
 		$('#simlets_list').empty();
 
-		Simva.getSchedulerStudiesCount(filteringPaginationData["searchParams"], function(error, result) {
+		Simva.getSchedulerSimletsCount(filteringPaginationData["searchParams"], function(error, result) {
 			if (!error) {
 				// Update the total results and recalculate the number of pages (but don't perform the search again)
 				filteringPaginationData["totalResults"] = result.count;
@@ -70,7 +70,8 @@
 	const loadSimletBatch = function() {
 		$("#loader").show();
 		
-		Simva.getSchedulerStudies(filteringPaginationData["searchParams"], function(error, result){
+		Simva.getSchedulerSimlets(filteringPaginationData["searchParams"], function(error, result){
+			console.log(result)
 			if (!error) {
 				paintSimletBatch(result);
 				$("#loader").hide();

@@ -763,7 +763,7 @@ var ActivityPainter = {
 					toastParams.text = error.message;
 					$.toast(toastParams);
 				} else {
-					var filename = `${this.communSpecific.result_file_prefix}_${activity}_${user}.jsonl`;
+					var filename = `${this.communSpecific.result_file_prefix}_${activity}_${user}.json`;
 					this.downloadContent(result[user], filename, this.commun.result_error_downloading);
 				}
 			});
@@ -773,7 +773,7 @@ var ActivityPainter = {
 					toastParams.text = error.message;
 					$.toast(toastParams);
 				} else {
-					Utils.download(`${this.communSpecific.result_file_prefix}_${activity}.jsonl`, JSON.stringify(result, null, 2));
+					Utils.download(`${this.communSpecific.result_file_prefix}_${activity}.json`, JSON.stringify(result, null, 2));
 				}
 			});
 		}
@@ -812,7 +812,7 @@ var ActivityPainter = {
 					stack: false
 				});
 			} else {
-				this.downloadContent(JSON.stringify(result, null, 2), `activity_export_${activityId}.jsonl`, this.commun.export_error);
+				this.downloadContent(JSON.stringify(result, null, 2), `activity_export_${activityId}.json`, this.commun.export_error);
 			}
 		});
 	},
@@ -844,7 +844,7 @@ var ActivityPainter = {
 					stack: false
 				});
 			} else {
-				this.downloadContent(data.data, `full_xapi_data_${activity}.jsonl`, this.commun.result_error_downloading);
+				this.downloadContent(data.data, `full_xapi_data_${activity}.json`, this.commun.result_error_downloading);
 			}
 		});
 	},
@@ -860,7 +860,7 @@ var ActivityPainter = {
 					stack: false
 				});
 			} else {
-				this.downloadContent(data.data, `test_xapi_data_${activity}.jsonl`, this.commun.result_error_downloading);
+				this.downloadContent(data.data, `test_xapi_data_${activity}.json`, this.commun.result_error_downloading);
 			}
 		});
 	},
@@ -879,7 +879,7 @@ var ActivityPainter = {
 				$.toast(toastParams);
 			} else {
 				console.log('Minio URL for backup:', result);
-				Utils.downloadContent(result.url, `${this.communSpecific.result_file_prefix}_${activity}.jsonl`, this.commun.result_error_downloading);
+				Utils.downloadContent(result.url, `${this.communSpecific.result_file_prefix}_${activity}.json`, this.commun.result_error_downloading);
 			}
 		});
 	},
@@ -891,7 +891,7 @@ var ActivityPainter = {
 			icon: 'error',
 			stack: false
 		};
-		var filename = user ? `${this.communSpecific.result_file_prefix}_${activity}_${user}.jsonl` : `${this.communSpecific.result_file_prefix}_${activity}.zip`;
+		var filename = user ? `${this.communSpecific.result_file_prefix}_${activity}_${user}.json` : `${this.communSpecific.result_file_prefix}_${activity}.zip`;
 		var zipname = `${this.communSpecific.result_file_prefix}_${activity}.zip`;
 		var errorDownloading = this.commun.result_error_downloading;
 		
@@ -901,7 +901,7 @@ var ActivityPainter = {
 					toastParams.text = error.message;
 					$.toast(toastParams);
 				}else{
-					var filename = `${this.communSpecific.result_file_prefix}_${activity}_${user}.jsonl`;
+					var filename = `${this.communSpecific.result_file_prefix}_${activity}_${user}.json`;
 					Utils.download(filename, result[user]);
 				}
 			});
@@ -927,7 +927,7 @@ var ActivityPainter = {
 									return response.blob();
 								})
 								.then((blob) => {
-									zip.file(`${this.communSpecific.result_file_prefix}_${activity}_${participant}.jsonl`, blob);
+									zip.file(`${this.communSpecific.result_file_prefix}_${activity}_${participant}.json`, blob);
 								})
 								.catch((error) => {
 									console.error(`Error fetching result for participant ${participant}:`, error);
@@ -937,7 +937,7 @@ var ActivityPainter = {
 						};
 					}
 					if(!hasResults) {
-						Utils.download(`${this.communSpecific.result_file_prefix}_${activity}_nodata.jsonl`, JSON.stringify(result,null,2));
+						Utils.download(`${this.communSpecific.result_file_prefix}_${activity}_nodata.json`, JSON.stringify(result,null,2));
 					} else {
 						Promise.all(downloadPromises)
 						.then(() => zip.generateAsync({type:"blob"}))

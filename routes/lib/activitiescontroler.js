@@ -4,7 +4,7 @@ const SimvaAsync  = require('./simvaAsync');
 module.exports = {
     getActivities(studyid, testid, sessionid) {
         return new Promise((resolve, reject) => {
-            Simva.getTestActivities(studyid, testid, sessionid, (error, result) => {
+            Simva.getSessionActivities(studyid, testid, sessionid, (error, result) => {
                 if(error) {
                     reject(error);
                 } else {
@@ -63,7 +63,7 @@ module.exports = {
             } 
         } else {
             try {
-                act.data.hasresult=await SimvaAsync.hasActivityResult(activityid, sessionid);
+                act.data.hasresult=await SimvaAsync.getActivityHasResult(activityid, sessionid);
             } catch(e) {
                 logger.warn(e);
             }
@@ -200,7 +200,7 @@ module.exports = {
                 logger.warn("Unknown activity type "+activity.activity_type+" for activity "+activity.activity_name);
         }
         logger.debug(activityImport, "Activity to import");
-        let act=await SimvaAsync.addActivityToTest(studyid, testid, null, activityImport, sessionid);
+        let act=await SimvaAsync.addActivityToSession(studyid, testid, null, activityImport, sessionid);
         return act;
     },
 }

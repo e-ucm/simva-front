@@ -9,7 +9,28 @@ var Utils = {
 	// JQUERY AJAX WRAPPERS
 	
 	/**
-	 * Send an async POST request to the specified url where the request body is a JSON object 
+	 * Send a GET request to the specified url
+	 * @param {RequestUrl} url
+	 * @param {RequestCallback} callback
+	 */
+	get: function(url, callback){
+		$.ajax({
+			type: 'GET',
+			url: url,
+			contentType: 'application/json',
+			dataType: 'json',
+			cache: false,
+			success: function(data){
+				callback(null, data);
+			},
+			error: function(error){
+				callback(error);
+			},
+		});
+	},
+	
+	/**
+	 * Send a POST request to the specified url where the request body is a JSON object 
 	 * @param {RequestUrl} url
 	 * @param {JsonRequestBody} body
 	 * @param {RequestCallback} callback
@@ -32,7 +53,7 @@ var Utils = {
 	},
 
 	/**
-	 * Send an async POST request to the specified url where the request body is a FormData object
+	 * Send a POST request to the specified url where the request body is a FormData object
 	 * @param {RequestUrl} url
 	 * @param {FormDataRequestBody} body
 	 * @param {RequestCallback} callback
@@ -55,7 +76,7 @@ var Utils = {
 	},
 
 	/**
-	 * Send an async PATCH request to the specified url where the request body is a JSON object 
+	 * Send a PATCH request to the specified url where the request body is a JSON object 
 	 * @param {RequestUrl} url
 	 * @param {JsonRequestBody} body
 	 * @param {RequestCallback} callback
@@ -78,7 +99,7 @@ var Utils = {
 	},
 
 	/**
-	 * Send an async PATCH request to the specified url where the request body is a FormData object
+	 * Send a PATCH request to the specified url where the request body is a FormData object
 	 * @param {RequestUrl} url
 	 * @param {FormDataRequestBody} body
 	 * @param {RequestCallback} callback
@@ -101,7 +122,7 @@ var Utils = {
 	},
 
 	/**
-	 * Send an async PUT request to the specified url where the request body is a JSON object 
+	 * Send a PUT request to the specified url where the request body is a JSON object 
 	 * @param {RequestUrl} url
 	 * @param {JsonRequestBody} body
 	 * @param {RequestCallback} callback
@@ -123,29 +144,9 @@ var Utils = {
 		});
 	},
 
-	/**
-	 * Send an async GET request to the specified url
-	 * @param {RequestUrl} url
-	 * @param {RequestCallback} callback
-	 */
-	get: function(url, callback){
-		$.ajax({
-			type: 'GET',
-			url: url,
-			contentType: 'application/json',
-			dataType: 'json',
-			cache: false,
-			success: function(data){
-				callback(null, data);
-			},
-			error: function(error){
-				callback(error);
-			},
-		});
-	},
 
 	/**
-	 * Send an async DELETE request to the specified url
+	 * Send a DELETE request to the specified url
 	 * @param {RequestUrl} url
 	 * @param {RequestCallback} callback
 	 */
@@ -342,6 +343,7 @@ var Utils = {
 		return /^(https?:)?\/\//.test(url) || url.startsWith('/');
 	},
 
+	// TODO: Document
 	download: function(filename, text) {
 		let element = document.createElement('a');
 		element.setAttribute('href', `data:text/plain;charset=utf-8, ${encodeURIComponent(text)}`);
@@ -355,6 +357,7 @@ var Utils = {
 		document.body.removeChild(element);
 	},
 
+	// TODO: Document
 	downloadContent: function(source, filename, errorHeading){
 		if(!this.isDownloadUrl(source)) {
 			this.download(filename, source);
@@ -392,6 +395,7 @@ var Utils = {
 			});
 	},
 
+	// TODO: Document
 	displayResultInFloatingFrame: function(content, floatingId){
 		const stringifyres = String(content)
 			.replace(/</g, '&lt;')
@@ -401,6 +405,7 @@ var Utils = {
 		Utils.toggleHTMLInFloating(renderedContent);
 	},
 
+	// TODO: Document
 	openResultContent: function(source){
 		if(!this.isDownloadUrl(source)) {
 			this.displayResultInFloatingFrame(source);
@@ -431,6 +436,7 @@ var Utils = {
 	},
 
 
+	// TODO: Document
 	decodeJWT: function (token) {
 	    let base64Url = token.split('.')[1];
 	    let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');

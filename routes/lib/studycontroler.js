@@ -6,14 +6,14 @@ const testcontroler = require('./testscontroler');
 module.exports = {
     // TODO: Remove?
     async getCompleteStudy(studyid, sessionid) {
-        let study=await SimvaAsync.getStudy(studyid, sessionid);
+        let study=await SimvaAsync.getSimlet(studyid, sessionid);
         study.completeTests=[];
         logger.info({study}, "Study data before fetching complete tests");
         try {
             study.allgroups = await SimvaAsync.getGroups(sessionid);
-            study.completeGroups = await SimvaAsync.getStudyGroups(studyid, sessionid);
-            study.direct_permissions = await SimvaAsync.getStudyDirectPermissions(studyid, sessionid);
-            study.participants = await SimvaAsync.getStudyParticipants(studyid, sessionid);
+            study.completeGroups = await SimvaAsync.getSimletGroups(studyid, sessionid);
+            study.direct_permissions = await SimvaAsync.getSimletDirectPermissions(studyid, sessionid);
+            study.participants = await SimvaAsync.getSimletParticipants(studyid, sessionid);
         } catch(e) {
             logger.warn(e);
         }
@@ -54,12 +54,12 @@ module.exports = {
     },
 
     async exportStudy(studyid, complete, sessionid) {
-        let study=await SimvaAsync.getStudy(studyid, sessionid);
+        let study=await SimvaAsync.getSimlet(studyid, sessionid);
         let testsid = study.sessions;
         study.sessions=[];
         for(let i=0;i<testsid.length;i++) {
             try {
-                study.sessions.push(await testcontroler.exportTest(studyid, testsid[i], complete, sessionid));
+                study.sessions.push(await testcontroler.exportSession(studyid, testsid[i], complete, sessionid));
             } catch(e) {
                 logger.warn(e);
             }
@@ -70,7 +70,7 @@ module.exports = {
     },
 
     async importStudy(newstudy, sessionid) {
-        let study=await SimvaAsync.addStudy({simlet_name: newstudy.simlet_name, simlet_description: newstudy.simlet_description}, sessionid);
+        let study=await SimvaAsync.addSimlet({simlet_name: newstudy.simlet_name, simlet_description: newstudy.simlet_description}, sessionid);
         for(let i=0;i<newstudy.sessions.length;i++) {
             try {
                 await testcontroler.importTest(study.simlet_id, newstudy.sessions[i], sessionid);

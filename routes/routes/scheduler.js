@@ -5,7 +5,7 @@ module.exports = function(auth, redirectToLogin, config){
   const logger = require('../../logger');
 
   router.get('/', auth, redirectToLogin, function(req, res, next) {
-  	   res.render('studies_play', { 
+  	   res.render('simlets_play', { 
          config: config,
          user: req.session.user,
          t : req.t

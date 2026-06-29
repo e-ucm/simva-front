@@ -118,7 +118,7 @@ module.exports = {
 
     async setTesterGroup(studyid, testid, userId, username, sessionid) {
         // 1. Find or create sandbox group for user
-       let groups = await SimvaAsync.getStudyGroups(studyid, {}, sessionid);
+       let groups = await SimvaAsync.getSimletGroups(studyid, {}, sessionid);
        const groupName = `tester_${studyid}_${userId}_${username}`;
        let myGroup = groups.find(g => g.group_sandbox === true && g.group_name === groupName);
        if (!myGroup) {
@@ -137,7 +137,7 @@ module.exports = {
 
     async unsetTesterGroup(studyid, testid, userId, username, sessionid) {
         // Find sandbox group for user
-        let groups = await SimvaAsync.getStudyGroups(studyid, {}, sessionid);
+        let groups = await SimvaAsync.getSimletGroups(studyid, {}, sessionid);
         const groupName = `tester_${studyid}_${userId}_${username}`;
         let myGroup = groups.find(g => g.group_sandbox === true && g.group_name === groupName);
         if (!myGroup) {

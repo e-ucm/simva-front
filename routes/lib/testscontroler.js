@@ -5,7 +5,7 @@ const groupcontroler = require('./groupcontroler');
 
 module.exports = {
     async getCompleteTest(studyid, testid, sessionid) {
-        let test=await SimvaAsync.getStudyTest(studyid, testid, sessionid);
+        let test=await SimvaAsync.getSimletSession(studyid, testid, sessionid);
         test.completeParticipants = [];
         test.completeActivities = [];
         for(let i=0;i<test.activities.length;i++) {
@@ -23,8 +23,8 @@ module.exports = {
         return test;
     },
 
-    async exportTest(studyid, testid, complete, sessionid) {
-        let test=await SimvaAsync.getStudyTest(studyid, testid, sessionid);
+    async exportSession(studyid, testid, complete, sessionid) {
+        let test=await SimvaAsync.getSimletSession(studyid, testid, sessionid);
         let activitiesid = test.activities;
         test.activities = [];
         for(let i=0;i<activitiesid.length;i++) {
@@ -38,7 +38,7 @@ module.exports = {
     },
 
     async importTest(studyid, newtest, sessionid) {
-        let test=await SimvaAsync.addTestToStudy(studyid, {session_name: newtest.session_name, session_description: newtest.session_description, session_can_be_manually_activated: newtest.session_can_be_manually_activated}, sessionid);
+        let test=await SimvaAsync.addSessionToSimlet(studyid, {session_name: newtest.session_name, session_description: newtest.session_description, session_can_be_manually_activated: newtest.session_can_be_manually_activated}, sessionid);
         test.activities = [];
         for(let i=0;i<newtest.activities.length;i++) {
             try {

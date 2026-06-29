@@ -137,7 +137,7 @@
 			window.addEventListener('beforeunload', () => {
 				if(current_activity_id != null) {
 					console.log("Suspended");
-					Simva.setActivitySuspend(current_activity_id, currentUserId, true, "unload_page", function() {
+					Simva.setActivitySuspension(current_activity_id, currentUserId, true, "unload_page", function() {
 						console.log("Suspended in Simva");
 					});
 				}
@@ -161,7 +161,7 @@
 						suspendTimeout = setTimeout(function() {
 							// Only send suspend if still not interacting
 							if (!isUserInteractingFunc()) {
-								Simva.setActivitySuspend(current_activity_id, currentUserId, true, lastSuspendReason, function() {
+								Simva.setActivitySuspension(current_activity_id, currentUserId, true, lastSuspendReason, function() {
 									console.log("OK in Simva (delayed suspend)");
 									previousState=false;
 								});
@@ -175,7 +175,7 @@
 							clearTimeout(suspendTimeout);
 							suspendTimeout = null;
 						} else {
-							Simva.setActivitySuspend(current_activity_id, currentUserId, false, reason, function() {
+							Simva.setActivitySuspension(current_activity_id, currentUserId, false, reason, function() {
 								console.log("OK in Simva (unsuspend)");
 								previousState=true;
 							});
@@ -206,7 +206,7 @@
 		
 		let avoid_refreshing = false;
 		let reloadSchedule = function(){
-			Simva.getStudySchedule(studyId, function(error, result){
+			Simva.getSimletScheduler(studyId, function(error, result){
 				if(error){ 
 						$("#complete_activity").hide();
 						$('.underlay').hide();

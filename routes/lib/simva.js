@@ -1,3 +1,22 @@
+/**
+ * @typedef {object} Query - object containing the parameters of the query (status and searchTags params ONLY FOR SIMLETS AND SESSIONS)
+ * @property {number} skip - number of results to exclude from the beginning of the fetched results (after filtering and sorting)
+ * @property {number} limit - maximum number of results to return after the skip offset (after filtering and sorting)
+ * @property {string} searchString - fetch results whose name/description match (either partially or completely) the string
+ * @property {string} orderBy - fetch results sorted by this parameter (id/name/createdAt/updatedAt)
+ * @property {string} order - order of the sorted results (asc/desc)
+ * @property {string} status - fetch results whose status parameter matches this value (active/archived for SIMLETs, active/inactive/terminated for sessions)
+ * @property {Array} searchTags - fetch results whose tags ids contain any of the ids in the array
+ */
+
+/** 
+ * @typedef {number} CurrSessionId - id of the current session
+ * @typedef {string} QueryString - string of the query parameters, including the starting ? if there are any parameters
+ * @typedef {function} Callback - function to call when the request gets a response (either on success or on error) 
+ * @typedef {object} Request - HTTP Request object passed from the bff
+ */
+
+
 const Utils = require('./utils');
 const config = require('../../config');
 const userClientsListManager = require('./userClientsListManager');
@@ -22,66 +41,107 @@ class Simva {
 
 	// REQUESTS
 
-	post(url, req, body, sessionId, callback){
-		logger.info(body, `Making POST request to ${url} for session ${sessionId}`);
-		usertools.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(sessionId), (error, result) => {
+	/**
+	 * Handle/refresh the current session and send a GET request to the Axios wrapper
+	 * @param {string} url - url to send the request to
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	get(url, currSessionId, callback){
+		usertools.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(currSessionId), (error, result) => {
 			if(error) {
 				callback(error);
 				return;
 			}
-			Utils.post(url, req, body, callback, userClientsListManager.getJWT(sessionId));
+			Utils.get(url, callback, userClientsListManager.getJWT(currSessionId));
+		});
+	}
+	
+	/**
+	 * Handle/refresh the current session and send a POST request to the Axios wrapper
+	 * @param {string} url - url to send the request to
+	 * @param {Request} req
+	 * @param {object} body - data to send in the request
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	post(url, req, body, currSessionId, callback){
+		logger.info(body, `Making POST request to ${url} for session ${currSessionId}`);
+		usertools.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(currSessionId), (error, result) => {
+			if(error) {
+				callback(error);
+				return;
+			}
+			Utils.post(url, req, body, callback, userClientsListManager.getJWT(currSessionId));
 		});
 		
 	}
 
-	patch(url, req, body, sessionId, callback){
-		logger.info(body, `Making PATCH request to ${url} for session ${sessionId}`);
-		usertools.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(sessionId), (error, result) => {
+	/**
+	 * Handle/refresh the current session and send a PATCH request to the Axios wrapper
+	 * @param {string} url - url to send the request to
+	 * @param {Request} req
+	 * @param {object} body - data to send in the request
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	patch(url, req, body, currSessionId, callback){
+		logger.info(body, `Making PATCH request to ${url} for session ${currSessionId}`);
+		usertools.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(currSessionId), (error, result) => {
 			if(error) {
 				callback(error);
 				return;
 			}
-			Utils.patch(url, req, body, callback, userClientsListManager.getJWT(sessionId));
+			Utils.patch(url, req, body, callback, userClientsListManager.getJWT(currSessionId));
 		});
 	}
 
-	put(url, req, body, sessionId, callback){
-		usertools.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(sessionId), (error, result) => {
+	/**
+	 * Handle/refresh the current session and send a PUT request to the Axios wrapper
+	 * @param {string} url - url to send the request to
+	 * @param {Request} req
+	 * @param {object} body - data to send in the request
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	put(url, req, body, currSessionId, callback){
+		usertools.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(currSessionId), (error, result) => {
 			if(error) {
 				callback(error);
 				return;
 			}
-			Utils.put(url, req, body, callback, userClientsListManager.getJWT(sessionId));
+			Utils.put(url, req, body, callback, userClientsListManager.getJWT(currSessionId));
 		});
 	}
 
-	get(url, sessionId, callback){
-		usertools.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(sessionId), (error, result) => {
+	/**
+	 * Handle/refresh the current session and send a DELETE request to the Axios wrapper
+	 * @param {string} url - url to send the request to
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	delete(url, currSessionId, callback){
+		usertools.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(currSessionId), (error, result) => {
 			if(error) {
 				callback(error);
 				return;
 			}
-			Utils.get(url, callback, userClientsListManager.getJWT(sessionId));
-		});
-	}
-
-	delete(url, sessionId, callback){
-		usertools.authExpiredAndRefreshAuthWithCallback(userClientsListManager.getSession(sessionId), (error, result) => {
-			if(error) {
-				callback(error);
-				return;
-			}
-			Utils.delete(url, callback, userClientsListManager.getJWT(sessionId));
+			Utils.delete(url, callback, userClientsListManager.getJWT(currSessionId));
 		});
 	}
 
 	
-	getQueryString(queryParams) {
-		// Build the queryString manually by formatting each key-value to be like key=value, encode them
-		// to percent-encoding and joining them with the & symbol. It needs to be done this way because 
-		// building it with URLSearchParams().toString() turns spaces into + following the form encoding
-		// standard, instead of %20 following the percent encoding, which the api needs  
-		let params = Object.entries(queryParams)
+	/**
+	 * Convert query object to query string
+	 * @param {Query | undefined} query 
+	 * @returns {string} - string of the query parameters, including the starting ? if there are any parameters
+	 */
+	getQueryString(query) {
+		// Build the queryString manually by formatting each key-value to be like key=value, encode them to 
+		// percent-encoding and join them with the & symbol 
+		// It needs to be done this way because building it with URLSearchParams().toString() turns spaces into + 
+		// following the form encoding standard, instead of %20 following the percent encoding, which the api needs  
+		let params = Object.entries(query)
 			.map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
 			.join('&');
 
@@ -98,74 +158,173 @@ class Simva {
 	
 	// TAGS
 
-	getTags(sessionId, callback){
-		this.get(`${this.apiurl}/tags`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch all the existing tags
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getTags(currSessionId, callback){
+		this.get(`${this.apiurl}/tags`, currSessionId, callback);
 	}
 	
-	createTag(body, sessionId, callback){
-		this.post(`${this.apiurl}/tags`, null, body, sessionId, callback);
+	/**
+	 * Send a POST request to the Axios wrapper to create a new tag
+	 * @param {object} body - object containing the tag_name and tag_color of the tag
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	createTag(body, currSessionId, callback){
+		this.post(`${this.apiurl}/tags`, null, body, currSessionId, callback);
 	}
 
-	updateTag(tag_id, body, sessionId, callback){
-		this.patch(`${this.apiurl}/tags/${tag_id}`, null, body, sessionId, callback);
+	/**
+	 * Send a PATCH request to the Axios wrapper to update the specified tag info 
+	 * @param {number} tagId - id of the tag to update
+	 * @param {object} body - object containing either the modified tag_name, the tag_color, or both
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	updateTag(tagId, body, currSessionId, callback){
+		this.patch(`${this.apiurl}/tags/${tagId}`, null, body, currSessionId, callback);
 	}
 
-	deleteTag(tag_id, sessionId, callback){
-		this.delete(`${this.apiurl}/tags/${tag_id}`, sessionId, callback);
+	/**
+	 * Send a DELETE request to the Axios wrapper to delete the specified tag 
+	 * @param {number} tagId - id of the tag to delete
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	deleteTag(tagId, currSessionId, callback){
+		this.delete(`${this.apiurl}/tags/${tagId}`, currSessionId, callback);
 	}
 
 
 	// SIMLETS + SCHEDULERS
 
-	getStudies(queryParams, sessionId, callback){
-		this.get(`${this.apiurl}/simlets${this.getQueryString(queryParams)}`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the SIMLETs matching the query search parameters
+	 * @param {Query | undefined} query 
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getSimlets(query, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets${this.getQueryString(query)}`, currSessionId, callback);
 	}
 
-	getStudiesCount(queryParams, sessionId, callback) {
-		this.get(`${this.apiurl}/simlets/count${this.getQueryString(queryParams)}`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the amount of SIMLETs matching the query search parameters
+	 * @param {Query | undefined} query 
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getSimletsCount(query, currSessionId, callback) {
+		this.get(`${this.apiurl}/simlets/count${this.getQueryString(query)}`, currSessionId, callback);
 	}
 	
-	addStudy(body, sessionId, callback){
-		this.post(`${this.apiurl}/simlets`, null, body, sessionId, callback);
+	/**
+	 * Send a POST request to the Axios wrapper to add a SIMLET 
+	 * @param {object} body - object containing the simlet_name and simlet_description of the SIMLET
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	addSimlet(body, currSessionId, callback){
+		this.post(`${this.apiurl}/simlets`, null, body, currSessionId, callback);
 	}
 
-	importStudyConfig(newStudy, sessionId, callback){
-		this.post(`${this.apiurl}/simlets/import`, null, newStudy, sessionId, callback);
+	/**
+	 * Send a POST request to the Axios wrapper to import a SIMLET 
+	 * @param {object} newStudy - object containing the simlet_name and file of the SIMLET
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	importSimlet(newStudy, currSessionId, callback){
+		this.post(`${this.apiurl}/simlets/import`, null, newStudy, currSessionId, callback);
 	}
 
-	getStudy(study_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${study_id}`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET to fetch
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getSimlet(simletId, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}`, currSessionId, callback);
 	}
 
-	exportStudyConfig(study_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${study_id}/export`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to export the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET to export
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	exportSimlet(simletId, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/export`, currSessionId, callback);
 	}
 
-	updateStudy(studyId, study, sessionId, callback){
-		this.patch(`${this.apiurl}/simlets/${studyId}`, null, study, sessionId, callback);
+	/**
+	 * Send a PATCH request to the Axios wrapper to update the specified SIMLET info 
+	 * @param {number} simletId - id of the SIMLET to update
+	 * @param {object} study - object containing either the modified simlet_name, the simlet_description, or both
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	updateSimlet(simletId, study, currSessionId, callback){
+		this.patch(`${this.apiurl}/simlets/${simletId}`, null, study, currSessionId, callback);
 	}
 
-	deleteStudy(study_id, sessionId, callback){
-		this.delete(`${this.apiurl}/simlets/${study_id}`, sessionId, callback);
+	/**
+	 * Send a DELETE request to the Axios wrapper to delete the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET to delete
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	deleteSimlet(simletId, currSessionId, callback){
+		this.delete(`${this.apiurl}/simlets/${simletId}`, currSessionId, callback);
 	}
 
 
-	getSchedulerStudies(queryParams, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/scheduler${this.getQueryString(queryParams)}`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the scheduled SIMLETs matching the query search parameters
+	 * @param {Query | undefined} query 
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getSchedulerSimlets(query, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/scheduler${this.getQueryString(query)}`, currSessionId, callback);
 	}
 
-	getSchedulerStudiesCount(queryParams, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/scheduler/count${this.getQueryString(queryParams)}`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the amount of scheduled SIMLETs matching the query search parameters
+	 * @param {Query | undefined} query 
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getSchedulerSimletsCount(query, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/scheduler/count${this.getQueryString(query)}`, currSessionId, callback);
 	}
 
-	getStudySchedule(study_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${study_id}/schedule`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the scheduler of the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET to fetch
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getSimletScheduler(simletId, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/schedule`, currSessionId, callback);
 	}
 	
 
 	//SHLINK URL
 	
-	generateURL(simlet_id, customSlug, length, sessionId, callback){
+	/**
+	 * Send a POST request to the Axios wrapper to generate a shlink url for the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that the shlink will be generated for
+	 * @param {string} customSlug - custom text that appears as the url
+	 * @param {number} length - length of the custom slug
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	generateShlink(simletId, customSlug, length, currSessionId, callback){
 		let body = {};
 		if(length) {
 			body.length = parseInt(length);
@@ -173,14 +332,21 @@ class Simva {
 		if(customSlug) {
 			body.customSlug = customSlug;
 		}
-		this.post(`${this.apiurl}/simlets/${simlet_id}/shlink`, null, body, sessionId, callback);
+		this.post(`${this.apiurl}/simlets/${simletId}/shlink`, null, body, currSessionId, callback);
 	}
 
-	getShLink(simlet_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simlet_id}/shlink`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the shlink url of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET the shlink will be fetched from
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getShLink(simletId, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/shlink`, currSessionId, callback);
 	}
 
-	updateShLink(simlet_id, customSlug, length, sessionId, callback){
+	// TODO: Document / remove?
+	updateShLink(simletId, customSlug, length, currSessionId, callback){
 		let body = {};
 		if(length) {
 			body.length = parseInt(length);
@@ -188,343 +354,764 @@ class Simva {
 		if(customSlug) {
 			body.customSlug = customSlug;
 		}
-		this.patch(`${this.apiurl}/simlets/${simlet_id}/shlink`, null, body, sessionId, callback);
+		this.patch(`${this.apiurl}/simlets/${simletId}/shlink`, null, body, currSessionId, callback);
 	}
 	
-	deleteShLink(simlet_id, sessionId, callback){
-		this.delete(`${this.apiurl}/simlets/${simlet_id}/shlink`, sessionId, callback);
+	/**
+	 * Send a DELETE request to the Axios wrapper to delete the shlink url of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET the shlink will be deleted from
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	deleteShLink(simletId, currSessionId, callback){
+		this.delete(`${this.apiurl}/simlets/${simletId}/shlink`, currSessionId, callback);
 	}
 
 
 	// SESSIONS
 
-	getStudyTests(study_id, queryParams, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${study_id}/sessions${this.getQueryString(queryParams)}`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the sessions matching the query search parameters in the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET to fetch the sessions from
+	 * @param {Query | undefined} query 
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getSimletSessions(simletId, query, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/sessions${this.getQueryString(query)}`, currSessionId, callback);
 	}
 
-	getStudyTestsCount(study_id, queryParams, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${study_id}/sessions/count${this.getQueryString(queryParams)}`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the amount of sessions matching the query search parameters in the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET to fetch the sessions from
+	 * @param {Query | undefined} query 
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getSimletSessionsCount(simletId, query, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/sessions/count${this.getQueryString(query)}`, currSessionId, callback);
 	}
 
-	addTestToStudy(study_id, body, sessionId, callback){
-	   this.post(`${this.apiurl}/simlets/${study_id}/sessions`, null, body, sessionId, callback);
+	/**
+	 * Send a POST request to the Axios wrapper to add a session to the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET to add the session to
+	 * @param {object} body - object containing the session_name, session_description, session_status and session_can_be_manually_activated of the session
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	addSessionToSimlet(simletId, body, currSessionId, callback){
+	   this.post(`${this.apiurl}/simlets/${simletId}/sessions`, null, body, currSessionId, callback);
 	}
 
-	getStudyTest(study_id,test_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the specified session from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to fetch
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getSimletSession(simletId,sessionId, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}`, currSessionId, callback);
 	}
 
-	updateTest(studyId, testId, test, sessionId, callback){
-		this.patch(`${this.apiurl}/simlets/${studyId}/sessions/${testId}`, null, test, sessionId, callback);
+	/**
+	 * Send a PATCH request to the Axios wrapper to update the specified session from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to update
+	 * @param {object} body - object containing either the modified session_name, the session_description, or both
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	updateSession(simletId, sessionId, body, currSessionId, callback){
+		this.patch(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}`, null, body, currSessionId, callback);
 	}
 
-	deleteTest(studyId, testId, sessionId, callback){
-		this.delete(`${this.apiurl}/simlets/${studyId}/sessions/${testId}`, sessionId, callback);
+	/**
+	 * Send a DELETE request to the Axios wrapper to delete the specified session from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to delete
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	deleteSession(simletId, sessionId, currSessionId, callback){
+		this.delete(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}`, currSessionId, callback);
 	}
 
 
-	activateSession(study_id, test_id, body, sessionId, callback){
-		this.post(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/activate`, null, body, sessionId, callback);
+	/**
+	 * Send a PATCH request to the Axios wrapper to change the status of the specified session from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to update
+	 * @param {object} body - object containing the activate of the session
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	activateSession(simletId, sessionId, body, currSessionId, callback){
+		this.post(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/activate`, null, body, currSessionId, callback);
 	}
 
 
-	addTagToSession(study_id, test_id, tag, sessionId, callback){
-		this.post(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/tags/${tag}`, null, {}, sessionId, callback);
+	/**
+	 * Send a PATCH request to the Axios wrapper to add the specified tag to the specified session from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to update
+	 * @param {number} tagId - id of the tag to add
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	addTagToSession(simletId, sessionId, tag, currSessionId, callback){
+		this.post(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/tags/${tag}`, null, {}, currSessionId, callback);
 	}
 
-	deleteTagFromSession(study_id, test_id, tag, sessionId, callback){
-		this.delete(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/tags/${tag}`, sessionId, callback);
+	/**
+	 * Send a DELETE request to the Axios wrapper to delete the specified tag to the specified session from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to update
+	 * @param {number} tagId - id of the tag to delete
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	deleteTagFromSession(simletId, sessionId, tag, currSessionId, callback){
+		this.delete(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/tags/${tag}`, currSessionId, callback);
 	}
 	
 
-	getSessionLRSData(simlet_id, session_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simlet_id}/sessions/${session_id}/lrs/statements`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the LRS data of the specified session from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to fetch the data from
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getSessionLRSData(simletId, sessionId, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/lrs/statements`, currSessionId, callback);
 	}
 		
-	getSessionMoreLRSData(simlet_id, session_id, more, sessionId, callback){
-		this.getLrsStatementsMore(`${this.apiurl}/simlets/${simlet_id}/sessions/${session_id}/lrs/statements`, more, sessionId, callback);
+	// TODO: Document
+	getSessionMoreLRSData(simletId, sessionId, more, currSessionId, callback){
+		this.getLrsStatementsMore(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/lrs/statements`, more, currSessionId, callback);
 	}
 
-	getSessionTestLRSData(simlet_id, session_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simlet_id}/sessions/${session_id}/lrs_test_statements`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the LRS data for the test users of the specified session from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to fetch the data from
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getSessionTestLRSData(simletId, sessionId, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/lrs_test_statements`, currSessionId, callback);
 	}
 
-	getSessionMoreTestLRSData(simlet_id, session_id, more, sessionId, callback){
-		this.getLrsStatementsMore(`${this.apiurl}/simlets/${simlet_id}/sessions/${session_id}/lrs_test_statements`, more, sessionId, callback);
+	// TODO: Document
+	getSessionMoreTestLRSData(simletId, sessionId, more, currSessionId, callback){
+		this.getLrsStatementsMore(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/lrs_test_statements`, more, currSessionId, callback);
 	}
 
 	
 	// ACTIVITIES
 	
-	getTestActivities(study_id, test_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/activities`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch all the activities in the specified session of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session that has the activities
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getSessionActivities(simletId, sessionId, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/activities`, currSessionId, callback);
 	}
 
-	getActivityTypes(sessionId, callback){
-		this.get(`${this.apiurl}/activitytypes`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch all the existing activity types
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getActivityTypes(currSessionId, callback){
+		this.get(`${this.apiurl}/activitytypes`, currSessionId, callback);
 	}
 	
-	addActivityToTest(study_id, test_id, req, activity, sessionId, callback){
-		this.post(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/activities`, req, activity, sessionId, callback);
+	/**
+	 * Send a POST request to the Axios wrapper to add an activity to the specified session of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to add the activity to
+	 * @param {object} activity - object containing the activity info
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	addActivityToSession(simletId, sessionId, req, activity, currSessionId, callback){
+		this.post(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/activities`, req, activity, currSessionId, callback);
 	}
 
-	getActivity(activity_id, sessionId, callback){
-		this.get(`${this.apiurl}/activities/${activity_id}`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the specified activity
+	 * @param {number} activityId - id of the activity to fetch
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getActivity(activityId, currSessionId, callback){
+		this.get(`${this.apiurl}/activities/${activityId}`, currSessionId, callback);
 	}
 
-	exportActivity(activity_id, complete, sessionId, callback){
-		this.get(`${this.apiurl}/activities/${activity_id}/export?complete=${complete}`, sessionId, callback);
+	// TODO: Document / remove?
+	exportActivity(activityId, complete, currSessionId, callback){
+		this.get(`${this.apiurl}/activities/${activityId}/export?complete=${complete}`, currSessionId, callback);
+	}
+
+	/**
+	 * Send a PATCH request to the Axios wrapper to update the specified activity info of the specified session of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session that has the activity
+	 * @param {number} activityId - id of the activity to update
+	 * @param {Request} req 
+	 * @param {object} activity - object containing the parameters to update
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	updateActivity(simletId, sessionId, activityId, req, activity, currSessionId, callback){
+		this.patch(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/activities/${activityId}`, req, activity, currSessionId, callback);
+	}
+
+	/**
+	 * Send a DELETE request to the Axios wrapper to delete the specified activity of the specified session of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session that has the activity
+	 * @param {number} activityId - id of the activity to delete
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	deleteActivity(simletId, sessionId, activityId, currSessionId, callback){
+		this.delete(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/activities/${activityId}`, currSessionId, callback);
+	}
+
+	// TODO: Document / remove?
+	setActivityTest(activityId, payload, currSessionId, callback){
+		this.post(`${this.apiurl}/activities/${activityId}/test`, null, payload, currSessionId, callback);
+	}
+
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the target of the specified activity
+	 * @param {number} activityId - id of the activity to fetch the target from
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getActivityTarget(activityId, currSessionId, callback){
+		this.get(`${this.apiurl}/activities/${activityId}/target`, currSessionId, callback);
+	}
+
+	/**
+	 * Send a GET request to the Axios wrapper to fetch all the available surveys
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getSurveyList(currSessionId, callback){
+		this.get(`${this.apiurl}/limesurvey/surveys`, currSessionId, callback);
+	}
+
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the languages of the specified survey
+	 * @param {number} surveyId - id of the survey to fetch the languages from
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getSurveyLanguages(surveyId, currSessionId, callback){
+		this.get(`${this.apiurl}/limesurvey/${surveyId}/surveylanguages`, currSessionId, callback);
+	}
+
+	/**
+	 * Send a PATCH request to the Axios wrapper to set the owner of a survey
+	 * @param {number} surveyId - id of the survey to set the owner in
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	setSurveyOwner(surveyId, currSessionId, callback){
+		this.patch(`${this.apiurl}/limesurvey/${surveyId}/surveyowner`, null, {}, currSessionId, callback);
+	}
+
+	/**
+	 * Send a GET request to the Axios wrapper to check if the specified activity can be opened
+	 * @param {number} activityId - id of the activity to check
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	isActivityOpenable(activityId, currSessionId, callback){
+		this.get(`${this.apiurl}/activities/${activityId}/openable`, currSessionId, callback);
+	}
+
+	// TODO: Document / remove?
+	openActivity(activityId, currSessionId, callback){
+		this.get(`${this.apiurl}/activities/${activityId}/open`, currSessionId, callback);
+	}
+
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the initialized data of all participants of the specified activity 
+	 * @param {number} activityId - id of the activity to check
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getActivityInitialized(activityId, currSessionId, callback){
+		this.get(`${this.apiurl}/activities/${activityId}/initialized`, currSessionId, callback);
+	}
+
+	// TODO: Document / remove?
+	setActivityInitialized(activityId, participantId, status, currSessionId, callback){
+		this.post(`${this.apiurl}/activities/${activityId}/initialized?user=${participantId}`, null, { status: status }, currSessionId, callback);
+	}
+
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the completion data of all participants of the specified activity 
+	 * @param {number} activityId - id of the activity to fetch the progress from
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getActivityProgress(activityId, currSessionId, callback){
+		this.get(`${this.apiurl}/activities/${activityId}/progress`, currSessionId, callback);
+	}
+
+	// TODO: Document / remove?
+	setActivityProgress(activityId, participantId, status, currSessionId, callback){
+		const userQuery = participantId ? `?user=${participantId}` : '';
+		this.post(`${this.apiurl}/activities/${activityId}/progress${userQuery}`, null, { status: status }, currSessionId, callback);
+	}
+
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the completion data of all participants of the specified activity 
+	 * @param {number} activityId - id of the activity to fetch the completion from
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getActivityCompletion(activityId, currSessionId, callback){
+		this.get(`${this.apiurl}/activities/${activityId}/completion`, currSessionId, callback);
+	}
+
+	/**
+	 * Send a POST request to the Axios wrapper to set the completion status for the specified participant of the specified activity 
+	 * @param {number} activityId - id of the activity that has the participant
+	 * @param {number} participantId - id of the participant to change the completion for 
+	 * @param {boolean} status - true to set the activity as completed, false otherwise
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	setActivityCompletion(activityId, participantId, status, currSessionId, callback){
+		this.post(`${this.apiurl}/activities/${activityId}/completion?user=${participantId}`, null, { status: status }, currSessionId, callback);
 	}
 	
-	updateActivity(activity_id, req, activity, sessionId, callback){
-		this.patch(`${this.apiurl}/activities/${activity_id}`, req, activity, sessionId, callback);
+	/**
+	 * Send a POST request to the Axios wrapper to set the completion status for all the participants of the specified activity 
+	 * @param {number} activityId - id of the activity to set the status for
+	 * @param {object} body - object containing the status value (true to set the activity as completed, false otherwise)
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	setMultiActivityCompletion(activityId, body, currSessionId, callback) {
+		this.post(`${this.apiurl}/activities/${activityId}/completion/multi`, null, body, currSessionId, callback);
 	}
 
-	updateActivityInTest(study_id, test_id, activity_id, req, activity, sessionId, callback){
-		this.patch(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/activities/${activity_id}`, req, activity, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the hasResult data of all participants of the specified activity 
+	 * @param {number} activityId - id of the activity to fetch the hasResult from
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getActivityHasResult(activityId, currSessionId, callback){
+		this.get(`${this.apiurl}/activities/${activityId}/hasresult`, currSessionId, callback);
 	}
 
-
-	deleteActivity(activity_id, sessionId, callback){
-		this.delete(`${this.apiurl}/activities/${activity_id}`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the result data of the specified participant from the specified activity with the specified type
+	 * @param {number} activityId - id of the activity that has the participant
+	 * @param {string} type - type of result of the result data to fetch 
+	 * @param {number} participantId - id of the participant to fetch the result data from 
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getActivityResultWithTypeForUser (activityId, type, participantId, currSessionId, callback){
+		this.get(`${this.apiurl}/activities/${activityId}/result?users=${participantId}&type=${type}`, currSessionId, callback);
 	}
 
-	deleteActivityFromTest(study_id, test_id, activity_id, sessionId, callback){
-		this.delete(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/activities/${activity_id}`, sessionId, callback);
-	}
-
-	setActivityTest(activity_id, payload, sessionId, callback){
-		this.post(`${this.apiurl}/activities/${activity_id}/test`, null, payload, sessionId, callback);
-	}
-
-	getActivityTarget(activity_id, sessionId, callback){
-		this.get(`${this.apiurl}/activities/${activity_id}/target`, sessionId, callback);
-	}
-
-	getSurveyList(sessionId, callback){
-		this.get(`${this.apiurl}/limesurvey/surveys`, sessionId, callback);
-	}
-
-	getSurveyLanguages(activity_id, sessionId, callback){
-		this.get(`${this.apiurl}/limesurvey/${activity_id}/surveylanguages`, sessionId, callback);
-	}
-
-	setSurveyOwner(activity_id, sessionId, callback){
-		this.patch(`${this.apiurl}/limesurvey/${activity_id}/surveyowner`, null, {}, sessionId, callback);
-	}
-
-	isActivityOpenable(activity_id, sessionId, callback){
-		this.get(`${this.apiurl}/activities/${activity_id}/openable`, sessionId, callback);
-	}
-
-	openActivity(activity_id, sessionId, callback){
-		this.get(`${this.apiurl}/activities/${activity_id}/open`, sessionId, callback);
-	}
-
-	getActivityInitialized(activity_id, sessionId, callback){
-		this.get(`${this.apiurl}/activities/${activity_id}/initialized`, sessionId, callback);
-	}
-
-	setActivityInitialized(activity_id, user, status, sessionId, callback){
-		this.post(`${this.apiurl}/activities/${activity_id}/initialized?user=${user}`, null, { status: status }, sessionId, callback);
-	}
-
-	getActivityProgress(activity_id, sessionId, callback){
-		this.get(`${this.apiurl}/activities/${activity_id}/progress`, sessionId, callback);
-	}
-
-	setActivityProgress(activity_id, user, status, sessionId, callback){
-		const userQuery = user ? `?user=${user}` : '';
-		this.post(`${this.apiurl}/activities/${activity_id}/progress${userQuery}`, null, { status: status }, sessionId, callback);
-	}
-
-	getActivityCompletion(activity_id, sessionId, callback){
-		this.get(`${this.apiurl}/activities/${activity_id}/completion`, sessionId, callback);
-	}
-
-	setActivityCompletion(activity_id, user, status, sessionId, callback){
-		this.post(`${this.apiurl}/activities/${activity_id}/completion?user=${user}`, null, { status: status }, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the result data of for all the participants of the specified activity 
+	 * @param {number} activityId - id of the activity to fetch the results from
+	 * @param {string} type - type of result of the result data to fetch 
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getActivityResultWithType(activityId, type, currSessionId, callback){
+		this.get(`${this.apiurl}/activities/${activityId}/result?type=${type}`, currSessionId, callback);
 	}
 	
-	setMultiActivityCompletion(activity_id, body, sessionId, callback) {
-		this.post(`${this.apiurl}/activities/${activity_id}/completion/multi`, null, body, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the result data of the specified participant from the specified activity
+	 * @param {number} activityId - id of the activity that has the participant
+	 * @param {number} participantId - id of the participant to fetch the result data from 
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getActivityResultForUser(activityId, participantId, currSessionId, callback){
+		this.get(`${this.apiurl}/activities/${activityId}/result?users=${participantId}&type=full`, currSessionId, callback);
 	}
 
-	getActivityHasResult(activity_id, sessionId, callback){
-		this.get(`${this.apiurl}/activities/${activity_id}/hasresult`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the result data for all the participants of the specified activity 
+	 * @param {number} activityId - id of the activity to fetch the results from
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getActivityResult(activityId, currSessionId, callback){
+		this.get(`${this.apiurl}/activities/${activityId}/result?type=full`, currSessionId, callback);
 	}
 
-	hasActivityResult(activity_id, sessionId, callback){
-		this.get(`${this.apiurl}/activities/${activity_id}/hasresult`, sessionId, callback);
+	// TODO: Document / remove?
+	getActivitySuspension(activityId, currSessionId, callback) {
+		this.get(`${this.apiurl}/activities/${activityId}/suspension`, currSessionId, callback);
 	}
 
-	getActivityResult(activity_id, sessionId, callback){
-		this.get(`${this.apiurl}/activities/${activity_id}/result?type=full`, sessionId, callback);
+	/**
+	 * Send a POST request to the Axios wrapper to change the specified activity status for the specified participant 
+	 * @param {number} activityId - id of the activity that has the participant
+	 * @param {number} participantId - id of the participant to set the status for  
+	 * @param {object} body - object containing the status value (true to set the activity as suspended, false otherwise)
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	setActivitySuspension(activityId, participantId, body, currSessionId, callback) {
+		const userQuery = participantId ? `?user=${participantId}` : '';
+		this.post(`${this.apiurl}/activities/${activityId}/suspension${userQuery}`, null, body, currSessionId, callback);
 	}
 
-	getActivityResultWithType(activity_id, type, sessionId, callback){
-		this.get(`${this.apiurl}/activities/${activity_id}/result?type=${type}`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the LRS data for the specified activity
+	 * @param {number} activityId - id of the activity to fetch the data from
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getActivityLRSData(activityId, currSessionId, callback){
+		this.get(`${this.apiurl}/activities/${activityId}/lrs/statements`, currSessionId, callback);
 	}
 
-	getActivityResultForUser(activity_id, student, sessionId, callback){
-		this.get(`${this.apiurl}/activities/${activity_id}/result?users=${student}&type=full`, sessionId, callback);
-	}
-
-	getActivityResultWithTypeForUser (activity_id, type, student, sessionId, callback){
-		this.get(`${this.apiurl}/activities/${activity_id}/result?users=${student}&type=${type}`, sessionId, callback);
-	}
-
-	getActivitySuspension(activity_id, sessionId, callback) {
-		this.get(`${this.apiurl}/activities/${activity_id}/suspension`, sessionId, callback);
-	}
-
-	setActivitySuspension(activity_id, user, body, sessionId, callback) {
-		const userQuery = user ? `?user=${user}` : '';
-		this.post(`${this.apiurl}/activities/${activity_id}/suspension${userQuery}`, null, body, sessionId, callback);
-	}
-
-	getActivityLRSData(activity_id, sessionId, callback){
-		this.get(`${this.apiurl}/activities/${activity_id}/lrs/statements`, sessionId, callback);
-	}
-
-	getActivityMoreLRSData(activity_id, more, sessionId, callback){
-		this.getLrsStatementsMore(`${this.apiurl}/activities/${activity_id}/lrs/statements`, more, sessionId, callback);
+	// TODO: Document
+	getActivityMoreLRSData(activityId, more, currSessionId, callback){
+		this.getLrsStatementsMore(`${this.apiurl}/activities/${activityId}/lrs/statements`, more, currSessionId, callback);
 	}
 	
-	getActivityTestLRSData(activity_id, sessionId, callback){
-		this.get(`${this.apiurl}/activities/${activity_id}/lrs_test_statements`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the LRS data for the test users of the specified activity
+	 * @param {number} activityId - id of the activity to fetch the data from
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getActivityTestLRSData(activityId, currSessionId, callback){
+		this.get(`${this.apiurl}/activities/${activityId}/lrs_test_statements`, currSessionId, callback);
 	}
 
-	getActivityMoreTestLRSData(activity_id, more, sessionId, callback){
-		this.getLrsStatementsMore(`${this.apiurl}/activities/${activity_id}/lrs_test_statements`, more, sessionId, callback);
+	// TODO: Document
+	getActivityMoreTestLRSData(activityId, more, currSessionId, callback){
+		this.getLrsStatementsMore(`${this.apiurl}/activities/${activityId}/lrs_test_statements`, more, currSessionId, callback);
 	}
 	
 
 	// GROUPS
 
-	getStudyGroups(simlet_id, queryParams, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simlet_id}/groups${this.getQueryString(queryParams)}`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the groups matching the query search parameters in the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET to fetch the groups from
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getSimletGroups(simletId, query, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/groups${this.getQueryString(query)}`, currSessionId, callback);
 	}
 
-	getStudyGroupsCount(simlet_id, queryParams, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/count${this.getQueryString(queryParams)}`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the amount of groups matching the query search parameters in the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET to fetch the groups from
+	 * @param {Query | undefined} query 
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getSimletGroupsCount(simletId, query, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/groups/count${this.getQueryString(query)}`, currSessionId, callback);
 	}
 
-	getStudyGroupsWithVersion(useNewGeneration, simlet_id, queryParams, sessionId, callback){
-		queryParams.useNewGeneration = useNewGeneration;
-		this.get(`${this.apiurl}/simlets/${simlet_id}/groups${this.getQueryString(queryParams)}`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the groups matching the query search parameters in the specified SIMLET
+	 * @param {boolean} useNewGeneration - true to search for groups created using new generation, false otherwise
+	 * @param {number} simletId - id of the SIMLET to fetch the groups from
+	 * @param {Query | undefined} query 
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getSimletGroupsWithVersion(useNewGeneration, simletId, query, currSessionId, callback){
+		query.useNewGeneration = useNewGeneration;
+		this.get(`${this.apiurl}/simlets/${simletId}/groups${this.getQueryString(query)}`, currSessionId, callback);
 	}
 
-	getStudyGroupsWithVersionCount(useNewGeneration, simlet_id, queryParams, sessionId, callback){
-		queryParams.useNewGeneration = useNewGeneration;
-		this.get(`${this.apiurl}/simlets/${simlet_id}/groups${this.getQueryString(queryParams)}`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the amount of groups matching the query search parameters in the specified SIMLET
+	 * @param {boolean} useNewGeneration - true to search for groups created using new generation, false otherwise
+	 * @param {number} simletId - id of the SIMLET to fetch the groups from
+	 * @param {Query | undefined} query 
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getSimletGroupsWithVersionCount(useNewGeneration, simletId, query, currSessionId, callback){
+		query.useNewGeneration = useNewGeneration;
+		this.get(`${this.apiurl}/simlets/${simletId}/groups${this.getQueryString(query)}`, currSessionId, callback);
 	}
 	
-	addGroup(simlet_id, body, sessionId, callback){
-		this.post(`${this.apiurl}/simlets/${simlet_id}/groups`, null, body, sessionId, callback);
+	/**
+	 * Send a POST request to the Axios wrapper to add a group to the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET to add the group to
+	 * @param {object} body - object containing the group_name, group_sandbox and group_use_new_generation of the group
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	addGroup(simletId, body, currSessionId, callback){
+		this.post(`${this.apiurl}/simlets/${simletId}/groups`, null, body, currSessionId, callback);
 	}
 
-	addStudyGroup(study_id, group_id, sessionId, callback){
-		this.post(`${this.apiurl}/simlets/${study_id}/groups/${group_id}`, null, {}, sessionId, callback);
+	// TODO: Document / remove?
+	addStudyGroup(simletId, groupId, currSessionId, callback){
+		this.post(`${this.apiurl}/simlets/${simletId}/groups/${groupId}`, null, {}, currSessionId, callback);
 	}
 
-	getGroup(simlet_id, group_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the specified group from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group to fetch
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getGroup(simletId, groupId, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/groups/${groupId}`, currSessionId, callback);
 	}
 	
-	updateGroup(simlet_id, groupId, group, sessionId, callback){
-		this.patch(`${this.apiurl}/simlets/${simlet_id}/groups/${groupId}`, null, group, sessionId, callback);
+	/**
+	 * Send a PATCH request to the Axios wrapper to update the specified group from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group to update
+	 * @param {object} group - object containing either the modified group_name, group_sandbox, group_use_new_generation, or any combination of them
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	updateGroup(simletId, groupId, group, currSessionId, callback){
+		this.patch(`${this.apiurl}/simlets/${simletId}/groups/${groupId}`, null, group, currSessionId, callback);
 	}
 
-	deleteGroup(simlet_id, group_id, sessionId, callback){
-		this.delete(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}`, sessionId, callback);
+	/**
+	 * Send a DELETE request to the Axios wrapper to delete the specified group from the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId  - id of the group to delete
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	deleteGroup(simletId, groupId, currSessionId, callback){
+		this.delete(`${this.apiurl}/simlets/${simletId}/groups/${groupId}`, currSessionId, callback);
 	}
 
-	deleteStudyGroup(study_id, group_id, sessionId, callback){
-		this.delete(`${this.apiurl}/simlets/${study_id}/groups/${group_id}`, sessionId, callback);
+	// TODO: Document / remove?
+	deleteStudyGroup(simletId, groupId, currSessionId, callback){
+		this.delete(`${this.apiurl}/simlets/${simletId}/groups/${groupId}`, currSessionId, callback);
 	}
 
 
 	// ALLOCATOR
 
-	getAllocatorTypes(sessionId, callback){
-		this.get(`${this.apiurl}/allocatortypes`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch all the allocator types
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getAllocatorTypes(currSessionId, callback){
+		this.get(`${this.apiurl}/allocatortypes`, currSessionId, callback);
 	}
 
-	getAllocator(study_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${study_id}/allocator`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the allocator for the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET to fetch the allocator from 
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getAllocator(simletId, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/allocator`, currSessionId, callback);
 	}
 
-	updateAllocator(study_id, allocator, sessionId, callback){
-		this.patch(`${this.apiurl}/simlets/${study_id}/allocator`, null, allocator, sessionId, callback);
+	// TODO: Document / remove?
+	updateAllocator(simletId, allocator, currSessionId, callback){
+		this.patch(`${this.apiurl}/simlets/${simletId}/allocator`, null, allocator, currSessionId, callback);
 	}
 
-	allocateToSession(study_id, group_id, test_id, body, sessionId, callback){
-		this.post(`${this.apiurl}/simlets/${study_id}/groups/${group_id}/allocate/${test_id}`, null, body, sessionId, callback);
+	/**
+	 * Send a POST request to the Axios wrapper to allocate the specified participant of the specified group to the specified session of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session and the group
+	 * @param {number} groupId - id of the group that has the participant to allocate
+	 * @param {number} sessionId - id of the session to allocate the participant in
+	 * @param {object} body - object containing the participant_id of the participant to allocate 
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	allocateToSession(simletId, groupId, sessionId, body, currSessionId, callback){
+		this.post(`${this.apiurl}/simlets/${simletId}/groups/${groupId}/allocate/${sessionId}`, null, body, currSessionId, callback);
 	}
 
-	allocateRandomly(study_id, group_id, data, sessionId, callback){
-		this.post(`${this.apiurl}/simlets/${study_id}/groups/${group_id}/allocate/random`, null, data, sessionId, callback);
+	/**
+	 * Send a POST request to the Axios wrapper to allocate the specified participant of the specified group to a random session of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session and the group
+	 * @param {number} groupId - id of the group that has the participant to allocate
+	 * @param {object} data - object containing the participant_id of the participant to allocate 
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	allocateRandomly(simletId, groupId, data, currSessionId, callback){
+		this.post(`${this.apiurl}/simlets/${simletId}/groups/${groupId}/allocate/random`, null, data, currSessionId, callback);
 	}
 
 
 	// PARTICIPANTS
 
-	getStudyParticipants(study_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${study_id}/participants`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch all the participants of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET to fetch the participants from
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getSimletParticipants(simletId, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/participants`, currSessionId, callback);
 	}
 
-	getStudyGroupsParticipantsCount(simlet_id, queryParams, sessionId, callback) {
-		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/participants/count${this.getQueryString(queryParams)}`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the amount of participants in each group of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET to fetch the participants from
+	 * @param {Query | undefined} query 
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getSimletGroupsParticipantsCount(simletId, query, currSessionId, callback) {
+		this.get(`${this.apiurl}/simlets/${simletId}/groups/participants/count${this.getQueryString(query)}`, currSessionId, callback);
 	}
 	
-	getSessionParticipants(study_id, test_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/participants`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch all the participants in the specified session of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to fetch the participants from
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getSessionParticipants(simletId, sessionId, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/participants`, currSessionId, callback);
 	}
 
-	getGroupParticipants(simlet_id, group_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/participants`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch all the participants in the specified group of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group to fetch the participants from
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getGroupParticipants(simletId, groupId, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/groups/${groupId}/participants`, currSessionId, callback);
 	}
 
-	getGroupParticipantsCount(simlet_id, group_id, queryParams, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/participants/count${this.getQueryString(queryParams)}`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the amount of participants in the specified group of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group to fetch the participants from
+	 * @param {Query | undefined} query - TODO: Remove?
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getGroupParticipantsCount(simletId, groupId, query, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/groups/${groupId}/participants/count${this.getQueryString(query)}`, currSessionId, callback);
 	}
 	
-	addGroupParticipant(simlet_id, group_id, participant_id, sessionId, callback){
-		this.post(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/participants/${participant_id}`, null, { }, sessionId, callback);
+	/**
+	 * Send a POST request to the Axios wrapper to add a participant to the specified group of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group to add the participant to
+	 * @param {number} participantId - id of the participant to add
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	addGroupParticipant(simletId, groupId, participantId, currSessionId, callback){
+		this.post(`${this.apiurl}/simlets/${simletId}/groups/${groupId}/participants/${participantId}`, null, { }, currSessionId, callback);
 	}
 	
-	deleteGroupParticipant(simlet_id, group_id, participant_id, keycloakDelete, sessionId, callback){
-		this.delete(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/participants/${participant_id}?keycloakDelete=${keycloakDelete}`, sessionId, callback);
+	/**
+	 * Send a DELETE request to the Axios wrapper to delete the specified participant from the specified group of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group to delete the participant from
+	 * @param {number} participantId - id of the participant to delete
+	 * @param {boolean} keycloakDelete - true to delete the user from keycloak, false otherwise 
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	deleteGroupParticipant(simletId, groupId, participantId, keycloakDelete, currSessionId, callback){
+		this.delete(`${this.apiurl}/simlets/${simletId}/groups/${groupId}/participants/${participantId}?keycloakDelete=${keycloakDelete}`, currSessionId, callback);
 	}
 
 
 	// USERS
 
-	getUsers(search, sessionId, callback){
-		const queryString = search ? `?search=${search}` : '';
-		this.get(`${this.apiurl}/users${queryString}`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the users matching the query search parameters
+	 * @param {Query} query 
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getUsers(query, currSessionId, callback){
+		this.get(`${this.apiurl}/users${this.getQueryString(query)}`, currSessionId, callback);
 	}
 
-	getCurrentUser(sessionId, callback){
-		this.get(`${this.apiurl}/users/me`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the user data with the specified username
+	 * @param {string} username - username of the user to fetch 
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getUser(username, currSessionId, callback){
+		this.get(`${this.apiurl}/users?username=${username}`, currSessionId, callback);
 	}
 
-	getMe(sessionId, callback){
-		this.getCurrentUser(sessionId, callback);
+	
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the user data of the current user
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getCurrentUser(currSessionId, callback){
+		this.get(`${this.apiurl}/users/me`, currSessionId, callback);
 	}
 
-	registerGeneratedUser(simlet_id, groupid, token, sessionId, callback){
-		logger.info(`Registering generated user with token ${token} for group ID ${groupid} in simlet ${simlet_id}`);
+	/**
+	 * Send a POST request to the Axios wrapper to add register a generated user to the specified group of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group where the user will be added to
+	 * @param {string} token - token of the generated user 
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	registerGeneratedUser(simletId, groupid, token, currSessionId, callback){
+		logger.info(`Registering generated user with token ${token} for group ID ${groupid} in simlet ${simletId}`);
 		let body = {
 			token: token,
 			role: "student",
 			isToken : true
 		};
-		this.post(`${this.apiurl}/simlets/${simlet_id}/groups/${groupid}/participants`, null, body, sessionId, callback);
+		this.post(`${this.apiurl}/simlets/${simletId}/groups/${groupid}/participants`, null, body, currSessionId, callback);
 	}
 	
-	register(simlet_id, groupid, username, email, password, role, sessionId, callback){
+	/**
+	 * Send a POST request to the Axios wrapper to add a new participant to the specified group of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group where the participant will be added to
+	 * @param {string} username - username of the new user
+	 * @param {string} email - email of the new user
+	 * @param {string} password - password of the new user
+	 * @param {string} role - role of the new user (student/teacher) 
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	register(simletId, groupid, username, email, password, role, currSessionId, callback){
 		let body = {
 			username: username,
 			email: email,
@@ -532,143 +1119,183 @@ class Simva {
 			role: role,
 			isToken : false
 		};
-		this.post(`${this.apiurl}/simlets/${simlet_id}/groups/${groupid}/participants`, null, body, sessionId, callback);
+		this.post(`${this.apiurl}/simlets/${simletId}/groups/${groupid}/participants`, null, body, currSessionId, callback);
 	}
 
-	linkUserAccount(data, sessionId, callback){
-		this.post(`${this.apiurl}/users/link`, null, data, sessionId, callback);
+	// TODO: Document / remove?
+	linkUserAccount(data, currSessionId, callback){
+		this.post(`${this.apiurl}/users/link`, null, data, currSessionId, callback);
 	}
 
-	processUserEvents(data, sessionId, callback){
-		this.post(`${this.apiurl}/users/events`, null, data, sessionId, callback);
+	// TODO: Document / remove?
+	processUserEvents(data, currSessionId, callback){
+		this.post(`${this.apiurl}/users/events`, null, data, currSessionId, callback);
 	}
 
-	setRole(username, body, sessionId, callback){
+	/**
+	 * TODO: Document / remove?
+	 * @param {string} username 
+	 * @param {object} body 
+	 * @param {Callback} callback 
+	 */
+	setRole(username, body, currSessionId, callback){
 		const normalizedBody = (typeof body === 'string') ? { role: body } : body;
-		this.patch(`${this.apiurl}/users/${username}`, null, normalizedBody, sessionId, callback);
+		this.patch(`${this.apiurl}/users/${username}`, null, normalizedBody, currSessionId, callback);
 	}
 	
-	islimesurveyadmin(sessionId, callback){
-		this.get(`${this.apiurl}/limesurvey/isAdmin`, sessionId, callback);
+	/**
+	 * TODO: Document
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	islimesurveyadmin(currSessionId, callback){
+		this.get(`${this.apiurl}/limesurvey/isAdmin`, currSessionId, callback);
 	}
 	
-
-	getUser(username, sessionId, callback){
-		this.get(`${this.apiurl}/users?username=${username}`, sessionId, callback);
-	}
-
 	
 	// PERMISSIONS
 	
-	getStudyDirectPermissions(study_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${study_id}/permissions`, sessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the permissions data for all the coordinators of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET to fetch the data from
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getSimletDirectPermissions(simletId, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/permissions`, currSessionId, callback);
 	}
 
-	createStudyPermissions(study_id, permissions, sessionId, callback){
-		this.post(`${this.apiurl}/simlets/${study_id}/permissions`, null, permissions, sessionId, callback);
+	/**
+	 * Send a POST request to the Axios wrapper to add permissions data for a user to the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET to add the data to
+	 * @param {object} permissions - object containing the user_id, and permission type (READ/WRITE)
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	createSimletPermissions(simletId, permissions, currSessionId, callback){
+		this.post(`${this.apiurl}/simlets/${simletId}/permissions`, null, permissions, currSessionId, callback);
 	}
 
-	getStudyPermissionsForUser(study_id, user_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${study_id}/permissions/${user_id}`, sessionId, callback);
+	// TODO: Document / remove?
+	getSimletPermissionsForUser(simletId, user_id, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/permissions/${user_id}`, currSessionId, callback);
 	}
 
-	patchStudyPermissionsForUser(study_id, user_id, permissions, sessionId, callback){
-		this.patch(`${this.apiurl}/simlets/${study_id}/permissions/${user_id}`, null, permissions, sessionId, callback);
+	// TODO: Document / remove?
+	patchSimletPermissionsForUser(simletId, user_id, permissions, currSessionId, callback){
+		this.patch(`${this.apiurl}/simlets/${simletId}/permissions/${user_id}`, null, permissions, currSessionId, callback);
 	}
 
-	deleteStudyPermissionsForUser(study_id, user_id, sessionId, callback){
-		this.delete(`${this.apiurl}/simlets/${study_id}/permissions/${user_id}`, sessionId, callback);
-	}
-
-
-	getSessionPermissions(study_id, test_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/permissions`, sessionId, callback);
-	}
-
-	createSessionPermissions(study_id, test_id, permissions, sessionId, callback){
-		this.post(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/permissions`, null, permissions, sessionId, callback);
-	}
-
-	getSessionPermissionsForUser(study_id, test_id, user_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/permissions/${user_id}`, sessionId, callback);
-	}
-
-	patchSessionPermissionsForUser(study_id, test_id, user_id, permissions, sessionId, callback){
-		this.patch(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/permissions/${user_id}`, null, permissions, sessionId, callback);
-	}
-
-	deleteSessionPermissionsForUser(study_id, test_id, user_id, sessionId, callback){
-		this.delete(`${this.apiurl}/simlets/${study_id}/sessions/${test_id}/permissions/${user_id}`, sessionId, callback);
-	}
-
-
-	getGroupDirectPermissions(simlet_id, group_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/permissions`, sessionId, callback);
-	}
-
-	createGroupPermissions(simlet_id, group_id, permissions, sessionId, callback){
-		this.post(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/permissions`, null, permissions, sessionId, callback);
-	}
-
-	getGroupPermissionsForUser(simlet_id, group_id, user_id, sessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/permissions/${user_id}`, sessionId, callback);
-	}
-
-	patchGroupPermissionsForUser(simlet_id, group_id, user_id, permissions, sessionId, callback){
-		this.patch(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/permissions/${user_id}`, null, permissions, sessionId, callback);
-	}
-
-	deleteGroupPermissionsForUser(simlet_id, group_id, user_id, sessionId, callback){
-		this.delete(`${this.apiurl}/simlets/${simlet_id}/groups/${group_id}/permissions/${user_id}`, sessionId, callback);
+	/**
+	 * Send a DELETE request to the Axios wrapper to delete the permissions of the specified user in the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the user
+	 * @param {number} userId - id of the user to remove the permissions from
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	deleteSimletPermissionsForUser(simletId, user_id, currSessionId, callback){
+		this.delete(`${this.apiurl}/simlets/${simletId}/permissions/${user_id}`, currSessionId, callback);
 	}
 
 
-	// TODO: classify / remove?
-
-	// Add to Task List
-	addToTaskList(body, sessionId, callback){
-		this.post(`${this.apiurl}/tasklist`, null, body, sessionId, callback);
+	// TODO: Document / remove?
+	getSessionPermissions(simletId, sessionId, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/permissions`, currSessionId, callback);
 	}
 
-	getMinioDataUrl(activity_id, sessionId, callback){
-		this.get(`${this.apiurl}/activities/${activity_id}/presignedurl`, sessionId, callback);
+	// TODO: Document / remove?
+	createSessionPermissions(simletId, sessionId, permissions, currSessionId, callback){
+		this.post(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/permissions`, null, permissions, currSessionId, callback);
 	}
 
-	getLrsStatementsMore(baseUrl, more, sessionId, callback){
+	// TODO: Document / remove?
+	getSessionPermissionsForUser(simletId, sessionId, user_id, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/permissions/${user_id}`, currSessionId, callback);
+	}
+
+	// TODO: Document / remove?
+	patchSessionPermissionsForUser(simletId, sessionId, user_id, permissions, currSessionId, callback){
+		this.patch(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/permissions/${user_id}`, null, permissions, currSessionId, callback);
+	}
+
+	// TODO: Document / remove?
+	deleteSessionPermissionsForUser(simletId, sessionId, user_id, currSessionId, callback){
+		this.delete(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/permissions/${user_id}`, currSessionId, callback);
+	}
+
+
+	// TODO: Document / remove?
+	getGroupDirectPermissions(simletId, groupId, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/groups/${groupId}/permissions`, currSessionId, callback);
+	}
+
+	// TODO: Document / remove?
+	createGroupPermissions(simletId, groupId, permissions, currSessionId, callback){
+		this.post(`${this.apiurl}/simlets/${simletId}/groups/${groupId}/permissions`, null, permissions, currSessionId, callback);
+	}
+
+	// TODO: Document / remove?
+	getGroupPermissionsForUser(simletId, groupId, user_id, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/groups/${groupId}/permissions/${user_id}`, currSessionId, callback);
+	}
+
+	// TODO: Document / remove?
+	patchGroupPermissionsForUser(simletId, groupId, user_id, permissions, currSessionId, callback){
+		this.patch(`${this.apiurl}/simlets/${simletId}/groups/${groupId}/permissions/${user_id}`, null, permissions, currSessionId, callback);
+	}
+
+	// TODO: Document / remove?
+	deleteGroupPermissionsForUser(simletId, groupId, user_id, currSessionId, callback){
+		this.delete(`${this.apiurl}/simlets/${simletId}/groups/${groupId}/permissions/${user_id}`, currSessionId, callback);
+	}
+
+
+	// TODO: Document + classify / remove?
+
+	addToTaskList(body, currSessionId, callback){
+		this.post(`${this.apiurl}/tasklist`, null, body, currSessionId, callback);
+	}
+
+	getMinioDataUrl(activityId, currSessionId, callback){
+		this.get(`${this.apiurl}/activities/${activityId}/presignedurl`, currSessionId, callback);
+	}
+
+	getLrsStatementsMore(baseUrl, more, currSessionId, callback){
 		const encodedMore = encodeURIComponent(String(more || ''));
-		this.get(`${baseUrl}?more=${encodedMore}`, sessionId, callback);
+		this.get(`${baseUrl}?more=${encodedMore}`, currSessionId, callback);
 	}
 
 
+	// TODO: Document
 	// LTI
 
-	getLtiTools(sessionId, callback){
-		this.get(`${this.apiurl}/lti/tools`, sessionId, callback);
+	getLtiTools(currSessionId, callback){
+		this.get(`${this.apiurl}/lti/tools`, currSessionId, callback);
 	}
 
-	addLtiTool(tool, sessionId, callback){
-		this.post(`${this.apiurl}/lti/tools`, null, tool, sessionId, callback);
+	addLtiTool(tool, currSessionId, callback){
+		this.post(`${this.apiurl}/lti/tools`, null, tool, currSessionId, callback);
 	}
 
-	deleteLtiTool(tool, sessionId, callback){
-		this.delete(`${this.apiurl}/lti/tools/${tool}`, sessionId, callback);
+	deleteLtiTool(tool, currSessionId, callback){
+		this.delete(`${this.apiurl}/lti/tools/${tool}`, currSessionId, callback);
 	}
 
-	getLtiPlatforms(study, sessionId, callback){
+	getLtiPlatforms(study, currSessionId, callback){
 		let query = '';
 		if(study){
-			query = '?searchString=' + encodeURI(`{"studyId":"${study}"}`);
+			query = '?searchString=' + encodeURI(`{"simletId":"${study}"}`);
 		}
 
-		this.get(`${this.apiurl}/lti/platforms${query}`, sessionId, callback);
+		this.get(`${this.apiurl}/lti/platforms${query}`, currSessionId, callback);
 	}
 
-	addLtiPlatform(platform, sessionId, callback){
-		this.post(`${this.apiurl}/lti/platforms`, null, platform, sessionId, callback);
+	addLtiPlatform(platform, currSessionId, callback){
+		this.post(`${this.apiurl}/lti/platforms`, null, platform, currSessionId, callback);
 	}
 
-	removePlatform(platform_id, sessionId, callback) {
-		this.delete(`${this.apiurl}/lti/platforms/${platform_id}`, sessionId, callback);
+	removePlatform(platform_id, currSessionId, callback) {
+		this.delete(`${this.apiurl}/lti/platforms/${platform_id}`, currSessionId, callback);
 	}
 }
 

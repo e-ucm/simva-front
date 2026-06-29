@@ -154,6 +154,7 @@
 							} else {
 								$("#add_activity").removeClass("shown");
 								reloadSimlet();
+								Utils.toggleFormInFloating('add_activity');
 							}
 						});
 					} catch (parseError) {
@@ -163,7 +164,6 @@
 					}
 				};
 				reader.readAsDataURL(fileInput.files[0]);
-				Utils.toggleFormInFloating('add_activity');
 			} else {
 				errorbox.text("<%- t('import.upload.error', { ns : 'activities' }) %>");
 				Utils.toggleSubmit();
@@ -190,7 +190,7 @@
 					   if (error) {
 						   errorbox.text(error);
 					   } else {
-						   Simva.addActivityToTest(simletId, form.test, activity, function(error, result) {
+						   Simva.addActivityToSession(simletId, form.test, activity, function(error, result) {
 							   Utils.toggleSubmit();
 							   if (error && error.responseJSON) {
 								   errorbox.text(error.responseJSON.message);
@@ -287,7 +287,7 @@
 		$('#gameplay_game_uri').val("");
 	}
 
-    let openEditActivityForm = function(activityId) {
+    const openEditActivityForm = function(activityId) {
 		let activity = getActivityFromId(activityId);
 		Utils.toggleFormInFloating('edit_activity');
 		document.getElementById("edit_activity_error").innerHTML = "";
@@ -316,14 +316,14 @@
 
 		const session = getSessionFromId(activity.session_id);
 
-		// Show test download button based on participant status
+		// Show test download button if the current user is participant of the session
 		$("#activity_test_data_download").hide();
 		if (isCurrentUserParticipant(session.completeParticipants)) {
 			$("#activity_test_data_download").show();
 		}
 
+		// Show xasu download button if the activity is a desktop gameplay activity
 		$("#xasu_download").hide();
-
 		if (activity.activity_type == "gameplay") {
 			if (activity.game_type != "WEB" && activity.activity_trace_storage) {
 				$("#xasu_download").show();

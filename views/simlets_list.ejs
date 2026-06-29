@@ -106,7 +106,7 @@ the elements and scripts defined in the simlet_commons partial -->
 						// Always extract base64 payload from data URL
 						raw = raw.substr(raw.indexOf(',') + 1);
 						const newStudy = raw;
-						Simva.importStudyConfig({file: newStudy, simlet_name: form.studyName}, function(error, result) {
+						Simva.importSimlet({file: newStudy, simlet_name: form.studyName}, function(error, result) {
 							Utils.toggleSubmit();
 							if(!error) {
 								Utils.toggleFormInFloating('study_form');
@@ -137,7 +137,7 @@ the elements and scripts defined in the simlet_commons partial -->
 
 		// At the same time, asynchronously get all the SIMLETs in this section and store
 		// them by id for faster access to its parameters when opening the edit menu
-		Simva.getStudies({ status: filteringPaginationData["searchParams"].status }, function(error, result) {
+		Simva.getSimlets({ status: filteringPaginationData["searchParams"].status }, function(error, result) {
 			if (!error) {
 				simletsById = new Map(
 					result.map(obj => [obj.simlet_id, obj])
@@ -153,7 +153,7 @@ the elements and scripts defined in the simlet_commons partial -->
 	const onSearch = function() {
 		$('#simlets_list').empty();
 
-		Simva.getStudiesCount(filteringPaginationData["searchParams"], function(error, result) {
+		Simva.getSimletsCount(filteringPaginationData["searchParams"], function(error, result) {
 			if (!error) {
 				// Update the total results and recalculate the number of pages (but don't perform the search again)
 				filteringPaginationData["totalResults"] = result.count;
@@ -172,7 +172,7 @@ the elements and scripts defined in the simlet_commons partial -->
 	const loadSimletBatch = function() {
 		$("#loader").show();
 		
-		Simva.getStudies(filteringPaginationData["searchParams"], function(error, result){
+		Simva.getSimlets(filteringPaginationData["searchParams"], function(error, result){
 			if (!error) {
 				paintSimletBatch(result);
 				$("#loader").hide();
@@ -279,7 +279,7 @@ the elements and scripts defined in the simlet_commons partial -->
 				let completed = 0;
 				let allSessionsFinished = true;
 				simlet.sessions.forEach(sessionId => {
-					Simva.getStudyTest(simlet.simlet_id, sessionId, function(error, result) {
+					Simva.getSimletSession(simlet.simlet_id, sessionId, function(error, result) {
 						if (!error) {
 							let prev = allSessionsFinished;
 							allSessionsFinished = allSessionsFinished && (result.session_status == "terminated" || result.session_status == "inactive");
@@ -305,7 +305,7 @@ the elements and scripts defined in the simlet_commons partial -->
 		card.find(".cardGroups").after(simlet.groups.length);
 		card.find(".simletTagsRow").append(renderTags(simlet));
 		
-		Simva.getStudyGroupsParticipantsCount(simlet.simlet_id, function(error, result) {
+		Simva.getSimletGroupsParticipantsCount(simlet.simlet_id, function(error, result) {
 			if (!error) {
 				let total = 0;
 				Object.entries(result).forEach(([group, count]) => {

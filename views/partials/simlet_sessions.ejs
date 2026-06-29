@@ -263,7 +263,7 @@
 						// Always extract base64 payload from data URL
 						raw = raw.substr(raw.indexOf(',') + 1);
 						const newTest = raw;
-						Simva.importTestConfig(simletId, {file: newTest, session_name: form.sessionName}, function(importError, result) {
+						Simva.importSession(simletId, {file: newTest, session_name: form.sessionName}, function(importError, result) {
 							Utils.toggleSubmit();
 							if (importError) {
 								errorbox.text(importError.responseJSON ? importError.responseJSON.message : importError.message || importError);
@@ -297,7 +297,7 @@
 
 			// Creating new session
 			if (form.editingSessionId == null || form.editingSessionId == "") {
-				Simva.addTestToStudy(simletId, { session_name: form.sessionName, session_description: form.sessionDescription, session_can_be_manually_activated: true, session_status: form.sessionStatus }, function(error, result) {
+				Simva.addSessionToSimlet(simletId, { session_name: form.sessionName, session_description: form.sessionDescription, session_can_be_manually_activated: true, session_status: form.sessionStatus }, function(error, result) {
 					if (error && error.responseJSON) {
 						Utils.toggleSubmit();
 						errorbox.text(error.responseJSON.message);
@@ -355,7 +355,7 @@
 					}
 					
 					if (nameChanged || descriptionChanged) {
-						Simva.updateTest("<%= study %>", Number(sessionId), { session_name : form.sessionName, session_description : form.sessionDescription }, function(error) {
+						Simva.updateSession("<%= study %>", Number(sessionId), { session_name : form.sessionName, session_description : form.sessionDescription }, function(error) {
 							if (error) {
 								Utils.toggleSubmit();
 								errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
@@ -444,7 +444,7 @@
 	}
 
 	const exportSession = function(sessionId) {
-		Simva.exportTest(simletId, sessionId, function(error, result) {
+		Simva.exportSession(simletId, sessionId, function(error, result) {
 			if(!error) {
 				const content = JSON.stringify(result, null, 2);
 				const filename = `simlet-${simlet.simlet_name}-session-${sessionId}-export.json`;
@@ -523,7 +523,7 @@
 
 	$(document).on('click', ".sessionTop .icon-delete", function(e) {
 		const data = $(this).closest(".test").data();
-		deleteTest(data[SESSION_DATA_ID_KEY], data[SESSION_DATA_NAME_KEY]);
+		deleteSession(data[SESSION_DATA_ID_KEY], data[SESSION_DATA_NAME_KEY]);
 	});
 
 	$(document).on('click', ".sessionTop .icon-untester", function(e) {
@@ -561,9 +561,9 @@
 		});
 	}
 
-	const deleteTest = function(sessionId, sessionName) {
+	const deleteSession = function(sessionId, sessionName) {
 		if (confirm(`<%- t('delete.confirm', { ns : 'sessions', session : '${sessionName}', SIMLET : '${simlet.simlet_name}' }) %>`)) {
-			Simva.deleteTest(simletId, sessionId, function(error, result) {
+			Simva.deleteSession(simletId, sessionId, function(error, result) {
 				reloadSimlet();
 			});
 		}
@@ -597,7 +597,7 @@
 				return;
 			}
 			const content = result.data;
-			const filename = `simva-${simlet.simlet_name}-session-${downloadSessionId}-data.jsonl`;
+			const filename = `simva-${simlet.simlet_name}-session-${downloadSessionId}-data.json`;
 			Utils.downloadContent(content, filename, 'Session data error');
 		});
 	}
@@ -616,7 +616,7 @@
 				return;
 			}
 			const content = result.data;
-			const filename = `simva-${simlet.simlet_name}-session-${downloadSessionId}-test-data.jsonl`;
+			const filename = `simva-${simlet.simlet_name}-session-${downloadSessionId}-test-data.json`;
 			Utils.downloadContent(content, filename, 'Session test data error');
 		});
 	}
@@ -682,7 +682,7 @@
 		$('#tests').empty();
 
 		// Recalculate the total count of matching results
-		Simva.getStudyTestsCount(simletId, sessionsFilteringPaginationData["searchParams"], function(error, result) {
+		Simva.getSimletSessionsCount(simletId, sessionsFilteringPaginationData["searchParams"], function(error, result) {
 			if (!error) {
 				// Update the total results and recalculate the number of pages (but don't perform the search again)
 				sessionsFilteringPaginationData["totalResults"] = result.count;
@@ -700,7 +700,7 @@
 	const loadSessionBatch = function() {
 		$("#sessions_loader").show();
 		
-		Simva.getStudyTests(simletId, sessionsFilteringPaginationData["searchParams"], function(error, result){
+		Simva.getSimletSessions(simletId, sessionsFilteringPaginationData["searchParams"], function(error, result){
 			if (!error) {
 				paintSessionBatch(result);
 				$("#sessions_loader").hide();
@@ -815,7 +815,7 @@
 		}
 		// If the complete info hasn't been stored yet, fetch it and store it for faster access
 		else {
-			Simva.getStudyTestComplete(simletId, session.session_id, function(error, result) {
+			Simva.getSimletSessionComplete(simletId, session.session_id, function(error, result) {
 				if(!error) {
 					completeSessionsById.set(session.session_id, result);
 					fillCompleteFields(result);
