@@ -1,12 +1,31 @@
 <div class="header" id="logout_header">
 	<div class="left">
 		<%- include('header_language_selector') %>
-		<span class="logo"><img src="/logo.png"></span> <span class="title"><%= t('title') %></span>
+		<img class="logo" src="/logo.png">
+		<span style="margin-left: 10px;"><%= t('title') %></span>
 	</div>
 	<div class="right">
-		<span></span><a class="about" href="/about"><span><img src="/icon/info.png"></span> <span><%= t('title', { ns : 'about'}) %></span></a></span>
-		<span><a href="https://e-ucm.es/"> <span><%= t('eUCMResearch.title') %></span></a></span>
-		<span><a> <span><%= t('contact.title') %></span></a></span>
-		<span><a class="login" href="/users/login"><img src="/icon/power.png"> <span><%= t('login.title') %></span></a></span>
+		<ul>
+			<li>
+				<a href="/about">
+					<img src="/icon/info.png" style="filter: invert(100%);"> <%= t('title', { ns : 'about'}) %>
+				</a>
+			</li>
+			<li>
+				<a href="https://e-ucm.es/">
+					<img src="/icon/eucm_icon.ico"> <%= t('eUCMResearch.title') %>
+				</a>
+			</li>
+			<li>
+				<a href="">
+					<img src="/icon/comment.png"> <%= t('contact.title') %>
+				</a>
+			</li>
+			<li>
+				<a class="login" href="/users/login">
+					<img src="/icon/power.png"> <%= t('login.title') %>
+				</a>
+			</li>
+		</ul>
 	</div>
 </div>

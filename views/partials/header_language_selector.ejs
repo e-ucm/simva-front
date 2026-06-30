@@ -1,4 +1,110 @@
-<span>
-	<div id="language-dropdown" style="display: flex; flex-wrap: wrap;"></div>
-	<button id="lang-btn"></button>
-</span>
+
+<select id="language-dropdown" style="margin-right: 15px;" onchange="changeLanguage()">
+</select>
+
+<script>
+	const currentUrl = window.location.href;
+	let currentlanguageCode = null;
+
+	$(document).ready(function () {
+
+		Simva.getLanguage(function (error, result) {
+			if (error) {
+				console.log(error.message);
+			}
+			else {
+				// No language selected
+				if (!result.current) {
+					let newLangCode;
+
+					const preferredLangs = navigator.languages;
+					console.log(`The Preferred languages are: ${preferredLangs}.`);
+
+					// Set the newLangCode to the first language of the preferred 
+					// navigator languages that is included in the available languages
+					if (Array.isArray(result.languages)) {
+						preferredLangs.forEach((lang) => {
+							if (!newLangCode && result.languages.find(language => language.code === lang)) {
+								newLangCode = lang;
+							}
+						});
+					}
+					// If none of the preferred navigator languages is in the 
+					// available languages, set newLangCode to the default one
+					if (!newLangCode && result.default) {
+						newLangCode = result.default;
+					}
+
+					// If no language has been selected before and there's a 
+					// default language to change to, update the language
+					if (!currentUrl.includes("lng=") && newLangCode) {
+						updateLanguage(newLangCode);
+						return;
+					}
+				}
+				
+				// If there are any available languages
+				if (Array.isArray(result.languages)) {
+					// Get the language whose code matches the current language code
+					const currentlanguage = result.languages.find(language => language.code === result.current);
+					currentlanguageCode = currentlanguage.code;
+
+					// Iterate over all the available languages
+					result.languages.forEach((lang) => {
+						// Add a new option to the dropdown
+						$("#language-dropdown").append($('<option>', {
+							value: lang.code,
+							text: `${getFlagEmoji(lang.code)} ${lang.name}`
+						}));
+
+						// Set the current language as the selected option
+						if (lang.code == currentlanguageCode) {
+							$("#language-dropdown").val(lang.code)
+						}
+					});
+				}
+				
+			}
+		});
+	});
+
+	const getFlagEmoji = function(languageCode) {
+		const countryCode = languageCode.split('-')[1] || languageCode;
+		const codePoints = countryCode
+			.toUpperCase()
+			.split('')
+			.map(char => 127397 + char.charCodeAt(0));
+		return String.fromCodePoint(...codePoints);
+	}
+
+	const changeLanguage = function (langCode) {
+		const selectedLang = $("#language-dropdown").val();
+		updateLanguage(selectedLang);
+	}
+
+	const updateLanguage = function (newLangCode) {
+		Simva.updateLanguage(newLangCode, function (updateError) {
+			if (updateError) {
+				console.log(updateError.message);
+			}
+			else {
+				// If the current url has query parameters
+				if (currentUrl.includes("?")) {
+					// If the current url already has the lng parameter, replace its value with the new owe
+					if (currentUrl.includes("lng=")) {
+						window.location.href = currentUrl.replace(`lng=${currentlanguageCode}`,`lng=${newLangCode}`);
+					}
+					// Otherwise, add the lng parameter to the existing query parameters
+					else {
+						window.location.href = `${currentUrl}&lng=${newLangCode}`;
+					}
+				}
+				// Otherwise, add a new query with the selected lng parameter  
+				else {
+					window.location.href = `${currentUrl}?lng=${newLangCode}`;
+				}
+			}
+		});
+	}
+
+</script>

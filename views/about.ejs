@@ -23,7 +23,7 @@
 	$("#scroll_top_button").hide();
 
 	$(window).scroll(function(e) {
-		if ($(window).scrollTop() > MIN_SCROLL) {
+		if (window.scrollY > MIN_SCROLL) {
 			$("#scroll_top_button").fadeIn(100);
 		}
 		else {

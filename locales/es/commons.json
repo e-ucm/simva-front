@@ -1,6 +1,6 @@
 {
     "title": "SIMVA - Un SIMple VAlidador",
-    "login.title": "Inicio de sesión",
+    "login.title": "Iniciar sesión",
     "logout.title": "Cierre de sesión",
     "home.title": "Inicio",
     "home.description": "¡Bienvenido a SIMVA! Este es el panel principal donde puedes acceder a todas las funciones de la plataforma. Usa el menú para navegar por las diferentes secciones, como SIMLETs, actividades y gestión de usuarios. Ya seas un profesor, estudiante o investigador, encontrarás todo lo que necesitas para crear y gestionar tus simulaciones aquí.",

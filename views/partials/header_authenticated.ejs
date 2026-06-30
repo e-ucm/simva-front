@@ -3,23 +3,54 @@
 <div class="header<%= schedulerMode ? ' black' : '' %>">
 	<div class="left">
 		<%- include('header_language_selector') %>
-		<span class="logo"><img src="/logo.png"></span>
-		<span class="title"><%= schedulerMode ? t('scheduler.current', { ns : 'SIMLETs' }) : t('title') %></span>
-		<% if (schedulerMode) { %><span id="current_activity_name"></span><% } %>
+		<img class="logo" src="/logo.png">
+		<span style="margin-left: 10px;"><%= schedulerMode ? t('scheduler.current', { ns : 'SIMLETs' }) : t('title') %></span>
+		<% if (schedulerMode) { %><span id="current_activity_name" style="margin-left: 5px;"></span><% } %>
 	</div>
 	<div class="right">
+		<ul>
 		<% if (schedulerMode) { %>
-			<span id="refresh"><a style="cursor: pointer;" onclick="location.reload()"><img src="/icon/refresh.png"> <span><%= t('scheduler.refresh', { ns : 'SIMLETs' }) %></span></a></span>
-			<span id="complete_activity" style="display: none"><a style="cursor: pointer;" onclick="completeActivity()"><img src="/icon/check.png"> <span><%= t('scheduler.complete', { ns : 'SIMLETs' }) %></span></a></span>
-			<span><a><img src="/icon/user_white.png"> <span id="username"></span></a></span>
+			<li>
+				<a id="refresh" style="cursor: pointer;" onclick="location.reload()">
+					<img src="/icon/undo.png" style="filter: invert(100%);"> <%= t('scheduler.refresh', { ns : 'SIMLETs' }) %>
+				</a>
+			</li>
+			
+			<li id="complete_activity" style="display: none">
+				<a style="cursor: pointer;" onclick="completeActivity()">
+					<img src="/icon/check.png"> <%= t('scheduler.complete', { ns : 'SIMLETs' }) %>
+				</a>
+			</li>
+			<li>
+				<a>
+					<img src="/icon/user_white.png"> <span id="username" style="padding: 0px;">
+				</a>
+			</li>
+			
 			<% if(!schedulerTestMode) { %>
-				<span><a class="back" href="/scheduler/"><img src="/icon/back.png"> <span><%= t('scheduler.exit', { ns : 'SIMLETs' }) %></span></a></span>
+				<li>
+					<a href="/scheduler/">
+						<img src="/icon/back.png"> <%= t('scheduler.exit', { ns : 'SIMLETs' }) %></span>
+					</a>
+				</li>
 			<% } %>
+			
 		<% } else { %>
-			<span><a id="account_username" href="<%= config.sso.accountUrl%>"><img src="/icon/user.png"> <span id="username"></span></a></span>
+			<li>
+				<a id="account_username" href="<%= config.sso.accountUrl%>">
+					<img src="/icon/user.png"> <span id="username" style="padding: 0px;">
+				</a>
+			</li>
 		<% } %>
+
 		<% if(!schedulerTestMode) { %>
-			<span><a class="logout" href="/users/logout"><img src="/icon/power.png"> <span><%= t('logout.title') %></span></a></span>
+			<li>
+				<a class="logout" href="/users/logout">
+					<img src="/icon/power.png"> <%= t('logout.title') %>
+				</a>
+			</li>
 		<% } %>
+		</ul>
+		
 	</div>
 </div>
