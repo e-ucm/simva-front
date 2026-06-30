@@ -71,26 +71,26 @@
 	<div id="group_template" style="display: none;">
         <div class="test">
             <div class="groupTop">
-                <h3 class="groupTitle">		</h3>
+                <h2 class="groupTitle">		</h2>
                 <div class="expandButton"></div>
                 <div class="kebab">
                     <ul class="kebab-dropdown">
-                        <li class="kebab-icon icon-edit" title="<%- t('groups.settings.groups.edit.title', { ns : 'groups' }) %>">
+                        <li class="text-with-icon icon-edit" title="<%- t('groups.settings.groups.edit.title', { ns : 'groups' }) %>">
                             <%- t('groups.settings.groups.edit.title', { ns : 'groups' }) %>
                         </li>
-                        <li class="kebab-icon icon-add" title="<%- t('groups.settings.add.title', { ns : 'groups' }) %>">
+                        <li class="text-with-icon icon-add" title="<%- t('groups.settings.add.title', { ns : 'groups' }) %>">
                             <%- t('groups.settings.add.title', { ns : 'groups' }) %>
                         </li>
-                        <li class="kebab-icon icon-gear" title="<%- t('groups.settings.allocator.title', { ns : 'groups' }) %>">
+                        <li class="text-with-icon icon-gear" title="<%- t('groups.settings.allocator.title', { ns : 'groups' }) %>">
                             <%- t('groups.settings.allocator.title', { ns : 'groups' }) %>
-						<li class="kebab-icon icon-download" title="<%- t('groups.settings.print.title', { ns : 'groups' }) %>">
+						<li class="text-with-icon icon-download" title="<%- t('groups.settings.print.title', { ns : 'groups' }) %>">
 							<%- t('groups.settings.print.title', { ns : 'groups' }) %>
                         </li>
                         </li>
-						<li class="kebab-icon icon-export" title="<%- t('groups.settings.export.title', { ns : 'groups' }) %>">
+						<li class="text-with-icon icon-export" title="<%- t('groups.settings.export.title', { ns : 'groups' }) %>">
 							<%- t('groups.settings.export.title', { ns : 'groups' }) %>
 						</li>
-                        <li class="kebab-icon icon-delete" title="<%- t('groups.settings.delete.title', { ns : 'groups' }) %>">
+                        <li class="text-with-icon icon-delete" title="<%- t('groups.settings.delete.title', { ns : 'groups' }) %>">
                             <%- t('groups.settings.delete.title', { ns : 'groups' }) %>
                         </li>
                     </ul>
@@ -114,7 +114,6 @@
                 <table class="participants">
                     <thead>
                         <th><%- t('participants.table.username.title', { ns : 'groups' }) %></th>
-                        <th><%- t('participants.table.isToken.title', { ns : 'groups' }) %></th>
                         <th><%- t('participants.table.token.title', { ns : 'groups' }) %></th>
                         <th><%- t('participants.table.email.title', { ns : 'groups' }) %></th>
                         <th><%- t('participants.table.role.title', { ns : 'groups' }) %></th>
@@ -135,7 +134,6 @@
 		<table>
 			<tr>
 				<td class="username">	</td>
-				<td class="isToken">	</td>
 				<td class="token">	</td>
 				<td><a class="email">	</a></td>
 				<td class="role">	</td>
@@ -819,7 +817,7 @@
 			const participant = getParticipantFromId(participantId);
 			let username = participant.username;
 			if (participant.isToken) {
-				username =participant.token;
+				username = participant.token;
 			}
 			
 			const row = $("#participant_printable_template tr").clone()
@@ -1122,11 +1120,9 @@
 					table.append(row);
 
 					let role = participant.role === "teacher" ? `<%- t('teacher', { ns : 'roles' }) %>` : `<%- t('student', { ns : 'roles' }) %>`
-					let isToken = participant.isToken ? `<%- t('participants.isToken.true', { ns : 'groups' }) %>` : `<%- t('participants.isToken.false', { ns : 'groups' }) %>`
 					let token = participant.token == null ? "-" : participant.token
 					
 					row.find(".username").text(participant.username);
-					row.find(".isToken").text(isToken);
 					row.find(".token").text(token);
 					row.find(".email").attr("href", participant.email);
 					row.find(".email").text(participant.email);

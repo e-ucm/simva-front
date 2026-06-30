@@ -23,9 +23,7 @@
 			
         </div>
 
-		<div id="sessions_loader" class="loader"  style="margin-bottom: 20px;">
-			<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-		</div>
+		<div id="sessions_loader" class="loader" style="margin-bottom: 20px;"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>
 		
     </div>
 </div>
@@ -34,7 +32,7 @@
 <div id="session_template" style="display: none;">
 	<div class="test">
 		<div class="sessionTop" >
-			<h3 class="sessionTitle">	</h3>
+			<h2 class="sessionTitle">	</h2>
 			<div class="tooltipLine">
 				<div class="tooltip">
 					&#x1F6C8;
@@ -52,34 +50,34 @@
 			<div class="expandButton"></div>
 			<div class="kebab">
 				<ul class="kebab-dropdown">
-                    <li class="kebab-icon icon-edit" title="<%- t('settings.edit.title', { ns : 'sessions' }) %>">
+                    <li class="text-with-icon icon-edit" title="<%- t('settings.edit.title', { ns : 'sessions' }) %>">
                         <%- t('settings.edit.title', { ns : 'sessions' }) %>
                     </li>
-                    <li class="kebab-icon icon-add" title=" <%- t('settings.add_activity.title', { ns : 'sessions' }) %>">
+                    <li class="text-with-icon icon-add" title=" <%- t('settings.add_activity.title', { ns : 'sessions' }) %>">
                         <%- t('settings.add_activity.title', { ns : 'sessions' }) %>
                     </li>
-                    <li class="kebab-icon icon-export" title="<%- t('settings.export.title', { ns : 'sessions' }) %>">
+                    <li class="text-with-icon icon-export" title="<%- t('settings.export.title', { ns : 'sessions' }) %>">
                         <%- t('settings.export.title', { ns : 'sessions' }) %>
                     </li>
-                    <li class="kebab-icon icon-activate" title="<%- t('settings.activate.title', { ns : 'sessions' }) %>">
+                    <li class="text-with-icon icon-activate" title="<%- t('settings.activate.title', { ns : 'sessions' }) %>">
                         <%- t('settings.activate.title', { ns : 'sessions' }) %>
                     </li>
-                    <li class="kebab-icon icon-pause" title="<%- t('settings.pause.title', { ns : 'sessions' }) %>">
+                    <li class="text-with-icon icon-pause" title="<%- t('settings.pause.title', { ns : 'sessions' }) %>">
                         <%- t('settings.pause.title', { ns : 'sessions' }) %>
                     </li>
-                    <li class="kebab-icon icon-finish" title="<%- t('settings.finish.title', { ns : 'sessions' }) %>">
+                    <li class="text-with-icon icon-finish" title="<%- t('settings.finish.title', { ns : 'sessions' }) %>">
                         <%- t('settings.finish.title', { ns : 'sessions' }) %>
                     </li>
-                    <li class="kebab-icon icon-delete" title="<%- t('settings.delete.title', { ns : 'sessions' }) %>">
+                    <li class="text-with-icon icon-delete" title="<%- t('settings.delete.title', { ns : 'sessions' }) %>">
                         <%- t('settings.delete.title', { ns : 'sessions' }) %>
                     </li>
-					<li class="kebab-icon icon-tester" title="<%- t('set_tester.title', { ns : 'sessions' }) %>">
+					<li class="text-with-icon icon-tester" title="<%- t('set_tester.title', { ns : 'sessions' }) %>">
 						<%- t('set_tester.title', { ns : 'sessions' }) %>
 					</li>
-					<li class="kebab-icon icon-reset-tester" title="<%- t('reset_tester.title', { ns : 'sessions' }) %>">
+					<li class="text-with-icon icon-reset-tester" title="<%- t('reset_tester.title', { ns : 'sessions' }) %>">
 						<%- t('reset_tester.title', { ns : 'sessions' }) %>
 					</li>
-					<li class="kebab-icon icon-untester" title="<%- t('unset_tester.title', { ns : 'sessions' }) %>">
+					<li class="text-with-icon icon-untester" title="<%- t('unset_tester.title', { ns : 'sessions' }) %>">
 						<%- t('unset_tester.title', { ns : 'sessions' }) %>
 					</li>
                 </ul>
@@ -99,10 +97,10 @@
                     <done class="completionPercentage">		</done>% [ <doneres class="completedUsers">		</doneres> / <total class="completedTotalUsers">		</total> ]
                 </span>
             </div>
-			<div class="kebab-icon icon-play sessionTestLauch" onclick="Utils.toggleIframeInFloating(`/scheduler/${simlet.simlet_id}?testMode=true`)" title="<%- t('play.description', { ns : 'SIMLETs' }) %>">
+			<div class="text-with-icon icon-play sessionTestLauch" onclick="Utils.toggleIframeInFloating(`/scheduler/${simlet.simlet_id}?testMode=true`)" title="<%- t('play.description', { ns : 'SIMLETs' }) %>">
 				<b><%- t('play', { ns : 'sessions' }) %></b>
 			</div>
-            <div class="kebab-icon icon-download sessionDownload" title="<%- t('download.description', { ns : 'sessions' }) %>">
+            <div class="text-with-icon icon-download sessionDownload" title="<%- t('download.description', { ns : 'sessions' }) %>">
                 <b><%- t('download.title', { ns : 'sessions' }) %></b>
             </div>
         </div>
@@ -118,9 +116,7 @@
 			</div>
 		</div>
         <div class="activities">
-            <div class="loader" style="margin-bottom: 20px;">
-				<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-			</div>
+            <div class="loader" style="margin-bottom: 20px;"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>
         </div>
     </div>
 </div>

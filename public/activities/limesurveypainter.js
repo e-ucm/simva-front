@@ -293,7 +293,7 @@ var LimeSurveyPainter = {
 	},
 
 	getExtraKebabItems: function(activity) {
-		return `<li class="kebab-icon icon-edit" title="${this.specific.edit_title || 'Edit Survey'}" onclick="LimeSurveyPainter.openEditLimesurvey('${activity.activity_id}', '${activity.survey_id}')">${this.specific.edit_title || 'Edit Survey'}</li>`;
+		return `<li class="text-with-icon icon-edit" title="${this.specific.edit_title || 'Edit Survey'}" onclick="LimeSurveyPainter.openEditLimesurvey('${activity.activity_id}', '${activity.survey_id}')">${this.specific.edit_title || 'Edit Survey'}</li>`;
 	},
 
 	paintActivity: function(activity, participants){

@@ -8,3 +8,30 @@
 <% } else { %>
 <%- include('partials/about_content') %>
 <% } %>
+
+<div class="content">
+	<div class="floating_buttons">
+		<div id="scroll_top_button" unselectable="on" class="basic scrollTop" onclick="scrollToTop()" style="opacity: 75%; width: 60px; height: 60px;">
+			<img src="../icon/up-arrow.png" style="transform: translate(0%, 0%);">
+		</div>
+	</div>
+</div>
+
+<script>
+	const MIN_SCROLL = 300;
+	
+	$("#scroll_top_button").hide();
+
+	$(window).scroll(function(e) {
+		if ($(window).scrollTop() > MIN_SCROLL) {
+			$("#scroll_top_button").fadeIn(100);
+		}
+		else {
+			$("#scroll_top_button").fadeOut(100);
+		}
+	});
+
+	const scrollToTop = function() {
+		window.scrollTo(0, 0);
+	}
+</script>

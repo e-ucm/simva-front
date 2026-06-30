@@ -29,9 +29,6 @@
         "participants.title": "Participants",
 
         "participants.table.username.title": "Username",
-        "participants.table.isToken.title": "Is token",
-        "participants.isToken.true": "Yes",
-        "participants.isToken.false": "No",
         "participants.table.token.title": "Token",
         "participants.table.email.title": "Email",
         "participants.table.role.title": "Role",

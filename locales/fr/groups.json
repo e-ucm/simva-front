@@ -30,9 +30,6 @@
         "participants.title": "Participants",
         
         "participants.table.username.title": "Nom d'utilisateur",
-        "participants.table.isToken.title": "Est un jeton",
-        "participants.isToken.true": "Oui",
-        "participants.isToken.false": "Nom",
         "participants.table.token.title": "Jeton",
         "participants.table.email.title": "Mail",
         "participants.table.role.title": "Rôle",
