@@ -128,13 +128,17 @@
     $(window).scroll(function(e) {
         let data = $("#<%= id %>_filtering").data();
 
-        const currentScrollTop = $(window).scrollTop();
+        const currentScrollTop = window.scrollY;
         const scrollDelta = currentScrollTop - data["lastScrollTop"];
 
         // When scrolling to the bottom of the window, if the scroll is positive 
         // (to ignore when the window scroll event gets triggered when the window
         // gets smaller for dynamically removing/shrinking elements)
-        if ($(window).scrollTop() == $(document).height() - $(window).height() && scrollDelta > 0 ) {
+        //
+        // IMPORTANT: $(window).scrollTop(), $(document).height() and $(window).height() 
+        // behave differently on different browsers so jquery can't be used to calculate
+        // if the page is scrolled all the way to the bottom
+        if (window.scrollY == document.documentElement.scrollHeight - window.innerHeight && scrollDelta > 0 ) {
             // If there are still pages to load, update the current page and load more
             if (data["currentPage"] < data["totalPages"] && data["checkLoadMore"]()) {
                 data["currentPage"]++;
@@ -174,7 +178,9 @@
         // Force select elements of the filtering options to lose focus when clicking outside of them
         // (they don't lose focus even after clicking outside, so by default they don't detect they're 
         // getting hovered until clicking outside again) 
-        $(".filtering select").blur();
+        if (!$(e.target).closest("select").length) {
+            $(".filtering select").blur();
+        }
     });
 
 </script>
@@ -195,7 +201,7 @@
         const tagsSelector = $(".filtersTags");
         const tagsDropdown = $(".filtersTags .filtersTagsDropdown");
 
-        if (tagsSelector[0].getBoundingClientRect().left > $(window).width() / 2) {
+        if (tagsSelector[0].getBoundingClientRect().left > window.innerWidth / 2) {
             tagsDropdown.css({
                 right: 0,
                 left: "auto"
