@@ -1032,6 +1032,11 @@
 			if (!error) {
 				paintGroupBatch(result);
 				$("#groups_loader").hide();
+
+				// Once all results have loaded, allow the bottom reached check
+				// just in case more results fit on the screen
+				groupsFilteringPaginationData["checkBottomReached"] = true;
+				groupsFilteringPaginationData["bottomReached"]();
 			}
 		});
 	}

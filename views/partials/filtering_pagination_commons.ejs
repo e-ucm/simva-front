@@ -68,7 +68,6 @@
     // Variables and functions need to be stored in the div data-* attribute to avoid 
     // declaration conflicts when including the partial multiple times in the same view
 
-    $("#<%= id %>_filtering").data()["lastScrollTop"] = 0;  // Last vertical position the window was when the scroll event gets triggered
 
     $("#<%= id %>_filtering").data()["showAtOnce"] = 1;     // Maximum amount of results that will be returned on each search
     $("#<%= id %>_filtering").data()["currentPage"] = 1;    // "Page" from where the search will take the results (used to calculate skip and limit)
@@ -76,6 +75,9 @@
 
     // Default callbacks. To change their behavior, a function needs to be asigned as their value
     $("#<%= id %>_filtering").data()["updateSearchCallback"] = () => {};            // Called when updating a search to get new results
+    $("#<%= id %>_filtering").data()["checkBottomReached"] = false;                 // Allow/block checking if the page is scrolled all the way down 
+                                                                                    // (to prevent it from instantly updating the current page number 
+                                                                                    // after repainting the results, which makes it skip the first page)
     $("#<%= id %>_filtering").data()["checkLoadMore"] = () => { return true; };     // Called to check extra conditions to know when to load more results
     $("#<%= id %>_filtering").data()["loadMoreCallback"] = () => {};                // Called to load more results in the current search
 
@@ -122,35 +124,32 @@
         data["updateSearchCallback"]();
     }
 
-    
-    // Shared listeners 
-    
-    $(window).scroll(function(e) {
+    // Check if the page has been scrolled all the way down to load more results
+    $("#<%= id %>_filtering").data()["bottomReached"] = function() {
         let data = $("#<%= id %>_filtering").data();
 
-        const currentScrollTop = window.scrollY;
-        const scrollDelta = currentScrollTop - data["lastScrollTop"];
+        // If the check is not blocked
+        if (data["checkBottomReached"]) {
+            // Calculate the distance to the bottom
+            // IMPORTANT: $(window).scrollTop(), $(document).height() and $(window).height() 
+            // behave differently on different browsers so jquery can't be used to calculate
+            // if the page is scrolled all the way to the bottom
+            const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
+            const distanceToBottom = scrollHeight - scrollTop - clientHeight;
+            
+            // If the distance is less than 1px (1 and not 0 just in case of floating pixels)
+            if (Math.abs(distanceToBottom) < 1) {
+                // If there are still pages to load, update the current page and load more
+                if (data["currentPage"] < data["totalPages"] && data["checkLoadMore"]()) {
+                    data["currentPage"]++;
 
-        // When scrolling to the bottom of the page (-1 pixel in case of floating pixel 
-        // difference) if the scroll is positive (ignore when the window scroll event gets
-        // triggered when the window gets smaller for dynamically removing/shrinking elements)
-        //
-        // IMPORTANT: $(window).scrollTop(), $(document).height() and $(window).height() 
-        // behave differently on different browsers so jquery can't be used to calculate
-        // if the page is scrolled all the way to the bottom
-        if (window.scrollY >= document.documentElement.scrollHeight - window.innerHeight - 1 && scrollDelta > 0 ) {
-            // If there are still pages to load, update the current page and load more
-            if (data["currentPage"] < data["totalPages"] && data["checkLoadMore"]()) {
-                data["currentPage"]++;
-
-                data["updateSearchOptions"]();
-                data["loadMoreCallback"]();
+                    data["updateSearchOptions"]();
+                    data["loadMoreCallback"]();
+                }
             }
         }
+    }
 
-        data["lastScrollTop"] = currentScrollTop;
-    });
-    
     // Before updating the search results, wait a certain time to ensure the user is done changing parameters
     $("#<%= id %>_filtering").data()["resetSearchTimer"] = function() {
         const data = $("#<%= id %>_filtering").data();
@@ -162,6 +161,13 @@
 
         }, data["searchTimerInterval"]);
     }
+
+
+    // Shared listeners 
+    
+    $(window).scroll(function(e) {
+        $("#<%= id %>_filtering").data()["bottomReached"]();
+    });
 
     // Writing on the search bar input
     $("#<%= id %>_search_bar").on("input", function () {

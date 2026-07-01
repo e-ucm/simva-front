@@ -21,8 +21,8 @@ the elements and scripts defined in the simlet_commons partial -->
 <!-- Sessions/groups tabs -->
 <div id="study_tabs">
 	<div class="tabs studyTabsButtons">
-		<input class="tab yellow selected" type="button" title="<%- t('sessions.tab.description', { ns : 'SIMLETs' }) %>" onclick="Utils.changeTab(this, 'study_tabs','sessions_tab')" value="<%- t('sessions.tab.title', { ns : 'SIMLETs' }) %>">
-		<input class="tab yellow" type="button" title="<%- t('users.tab.description', { ns : 'SIMLETs' }) %>" onclick="Utils.changeTab(this, 'study_tabs','users_tab')" value="<%- t('users.tab.title', { ns : 'SIMLETs' }) %>">
+		<input id="sessions_tab_button" class="tab yellow selected" type="button" title="<%- t('sessions.tab.description', { ns : 'SIMLETs' }) %>" onclick="openSessionsTab()" value="<%- t('sessions.tab.title', { ns : 'SIMLETs' }) %>">
+		<input id="users_tab_button" class="tab yellow" type="button" title="<%- t('users.tab.description', { ns : 'SIMLETs' }) %>" onclick="openUsersTab()" value="<%- t('users.tab.title', { ns : 'SIMLETs' }) %>">
 	</div>
 	
 	<div id="sessions_tab" class="subform studyTab selected">
@@ -260,6 +260,24 @@ the elements and scripts defined in the simlet_commons partial -->
 		$("#import_study_tab").remove();
 	});
 
+	const openSessionsTab = function() {
+		Utils.changeTab("sessions_tab_button", 'study_tabs','sessions_tab')
+
+		// Check if the bottom has been reached just in case more results fit on the screen,
+		// since the check is based on the current tab height, it can be different when
+		// changing tabs, so the check needs to be done manually to ensure correct loading
+		sessionsFilteringPaginationData["bottomReached"]();
+	}
+
+	const openUsersTab = function() {
+		Utils.changeTab("users_tab_button", 'study_tabs','users_tab')
+
+		// Check if the bottom has been reached just in case more results fit on the screen,
+		// since the check is based on the current tab height, it can be different when
+		// changing tabs, so the check needs to be done manually to ensure correct loading
+		groupsFilteringPaginationData["bottomReached"]();
+	}
+	
 	const openSimletForm = function() {
 		Utils.toggleFormInFloating('study_form');
 
@@ -275,7 +293,7 @@ the elements and scripts defined in the simlet_commons partial -->
 		$('#study_name').val(simlet.simlet_name);
 		$('#study_description').val(simlet.simlet_description);
 	}
-
+	
 
 	// Functionality
 
@@ -342,12 +360,14 @@ the elements and scripts defined in the simlet_commons partial -->
 				// Update all the sessions search parameters and calls its onSearch to paint them
 				// No need to paint the activities here as they will be painted when painting the sessions
 				// Defined in the simlet_sessions partial
+				sessionsFilteringPaginationData["checkBottomReached"] = false;
 				sessionsFilteringPaginationData["updateSearch"]();
 
 				paintCoordinators();
 
 				// Update all the groups search parameters and calls its onSearch to paint them
 				// Defined in the simlet_groups partial
+				groupsFilteringPaginationData["checkBottomReached"] = false;
 				groupsFilteringPaginationData["updateSearch"]();
 
 				// Try fetching the sessions and groups before paintAllocator in the simlet_users partial

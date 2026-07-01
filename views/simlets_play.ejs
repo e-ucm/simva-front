@@ -71,10 +71,14 @@
 		$("#loader").show();
 		
 		Simva.getSchedulerSimlets(filteringPaginationData["searchParams"], function(error, result){
-			console.log(result)
 			if (!error) {
 				paintSimletBatch(result);
 				$("#loader").hide();
+
+				// Once all results have loaded, allow the bottom reached check
+				// just in case more results fit on the screen
+				filteringPaginationData["checkBottomReached"] = true;
+				filteringPaginationData["bottomReached"]();
 			}
 		});
 	}

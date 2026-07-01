@@ -700,6 +700,11 @@
 			if (!error) {
 				paintSessionBatch(result);
 				$("#sessions_loader").hide();
+
+				// Once all results have loaded, allow the bottom reached check
+				// just in case more results fit on the screen
+				sessionsFilteringPaginationData["checkBottomReached"] = true;
+				sessionsFilteringPaginationData["bottomReached"]();
 			}
 		});
 	}

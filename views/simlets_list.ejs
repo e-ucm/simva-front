@@ -132,6 +132,9 @@ the elements and scripts defined in the simlet_commons partial -->
 	});
 
 	const refreshSimlets = function() {
+		// Block the bottom reached check
+		filteringPaginationData["checkBottomReached"] = false;
+		
 		// Updates all the search parameters and calls onSearch
 		filteringPaginationData["updateSearch"]();
 
@@ -176,6 +179,11 @@ the elements and scripts defined in the simlet_commons partial -->
 			if (!error) {
 				paintSimletBatch(result);
 				$("#loader").hide();
+
+				// Once all results have loaded, allow the bottom reached check
+				// just in case more results fit on the screen
+				filteringPaginationData["checkBottomReached"] = true;
+				filteringPaginationData["bottomReached"]();
 			}
 		});
 	}
