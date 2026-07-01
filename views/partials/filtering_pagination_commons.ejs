@@ -131,14 +131,14 @@
         const currentScrollTop = window.scrollY;
         const scrollDelta = currentScrollTop - data["lastScrollTop"];
 
-        // When scrolling to the bottom of the window, if the scroll is positive 
-        // (to ignore when the window scroll event gets triggered when the window
-        // gets smaller for dynamically removing/shrinking elements)
+        // When scrolling to the bottom of the page (-1 pixel in case of floating pixel 
+        // difference) if the scroll is positive (ignore when the window scroll event gets
+        // triggered when the window gets smaller for dynamically removing/shrinking elements)
         //
         // IMPORTANT: $(window).scrollTop(), $(document).height() and $(window).height() 
         // behave differently on different browsers so jquery can't be used to calculate
         // if the page is scrolled all the way to the bottom
-        if (window.scrollY == document.documentElement.scrollHeight - window.innerHeight && scrollDelta > 0 ) {
+        if (window.scrollY >= document.documentElement.scrollHeight - window.innerHeight - 1 && scrollDelta > 0 ) {
             // If there are still pages to load, update the current page and load more
             if (data["currentPage"] < data["totalPages"] && data["checkLoadMore"]()) {
                 data["currentPage"]++;
