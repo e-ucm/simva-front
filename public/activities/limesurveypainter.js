@@ -32,10 +32,10 @@ var LimeSurveyPainter = {
 					form+=`<p><a class="button green" onclick="LimeSurveyPainter.openNewLimesurvey()">${this.specific.new_description}</a></p>`
 				} else {
 					form += `<div name="limesurvey_tabs" class="tabs">
-					<span class="tab selected" method="byid" onclick="LimesurveyChangeTab(this, 'new_activity_extras','limesurvey_byid')">${this.specific.surveyid_title}</span>
-					<span class="tab" method="byexisting" onclick="LimesurveyChangeTab(this,'new_activity_extras','limesurvey_byexisting')">${this.specific.existing_title}</span>
-					<span class="tab" method="bynew" onclick="LimesurveyChangeTab(this, 'new_activity_extras','limesurvey_bynew')">${this.specific.new_title}</span>
-					<span class="tab" method="byupload" onclick="LimesurveyChangeTab(this, 'new_activity_extras','limesurvey_byupload')">${this.specific.upload_title}</span>
+					<span class="tab selected" method="byid" onclick="LimesurveyChangeTab(this, 'activity_extras','limesurvey_byid')">${this.specific.surveyid_title}</span>
+					<span class="tab" method="byexisting" onclick="LimesurveyChangeTab(this,'activity_extras','limesurvey_byexisting')">${this.specific.existing_title}</span>
+					<span class="tab" method="bynew" onclick="LimesurveyChangeTab(this, 'activity_extras','limesurvey_bynew')">${this.specific.new_title}</span>
+					<span class="tab" method="byupload" onclick="LimesurveyChangeTab(this, 'activity_extras','limesurvey_byupload')">${this.specific.upload_title}</span>
 					</div>
 					<div id="limesurvey_byid" class="subform selected">
 					<p>${this.specific.surveyid_title}:</p>
@@ -60,7 +60,7 @@ var LimeSurveyPainter = {
 	},
 
 	getEditExtraForm: function () {
-		let form=`${this.specific.survey_title}`;
+		let form=`<h3>${this.specific.survey_title}</h3>`;
 		form += '<select name="existingid" id="existing_survey_list"></select>';
 		form+=`<h3>${this.specific.language_title}</h3>`;
 		form += '<select name="language" id="language_list"></select>';
@@ -141,7 +141,7 @@ var LimeSurveyPainter = {
 
 		let jform = $(form);
 		let formdata = Utils.getFormData(jform);
-		let method = $('#new_activity_extras .tab.selected').attr('method');
+		let method = $('#activity_extras .tab.selected').attr('method');
 
 		console.log('[limesurveypainter] extractInformation called');
 		console.log('Form:', form);

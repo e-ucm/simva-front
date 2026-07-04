@@ -23,8 +23,8 @@ var LTIToolPainter = {
 
 	getExtraForm: function () {
 		let form = `<div class="tabs">
-				<span id="ltitoolpainter_tab_byexising" class="tab" method="byexisting" onclick="Utils.changeTab(this, \`new_activity_extras\`,\`ltitool_byexisting\`)">Existing Tool</span>
-				<span class="tab" method="bynew" onclick="Utils.changeTab(this, \`new_activity_extras\`,\`ltitool_bynew\`)">New Tool</span>
+				<span id="ltitoolpainter_tab_byexising" class="tab" method="byexisting" onclick="Utils.changeTab(this, \`activity_extras\`,\`ltitool_byexisting\`)">Existing Tool</span>
+				<span class="tab" method="bynew" onclick="Utils.changeTab(this, \`activity_extras\`,\`ltitool_bynew\`)">New Tool</span>
 			</div>
 			<div id="ltitool_byexisting" class="subform selected">`;
 
@@ -81,7 +81,7 @@ var LTIToolPainter = {
 
 		let jform = $(form);
 		let formdata = Utils.getFormData(jform);
-		let method = $('#new_activity_extras .tab.selected').attr('method');
+		let method = $('#activity_extras .tab.selected').attr('method');
 
 		activity.name = formdata.activityName;
 		activity.activity_type = this.supportedType;
@@ -289,7 +289,7 @@ var LTIToolPainter = {
 					$('#ltitool_jwks_uri').val('');
 					$('#ltitool_login_uri').val('');
 					$('#ltitool_redirect_uri').val('');
-					Utils.changeTab($('#ltitoolpainter_tab_byexising'), 'new_activity_extras','ltitool_byexisting');
+					Utils.changeTab($('#ltitoolpainter_tab_byexising'), 'activity_extras','ltitool_byexisting');
 				});
 			}
 		});

@@ -163,19 +163,21 @@ textarea { 	resize: vertical; width: 100%; max-height: 5rem; }
 
 .tooltipLine * {
 	display: inline-block;
-	margin: 0;
 	vertical-align: top;
+	margin: 0;
+	line-height: 1; 
 }
 
 .tooltip {
-	position: relative;
-	display: inline-block;
-	border-bottom: 1px dotted black;
+	--tooltipIconColor: blue;
+	border-bottom: 1px dotted var(--tooltipIconColor);
 	font-weight: bold;
 	color: blue;
+	height: min-content;
+	cursor: help;
 }
-.tooltiptext { font-weight: normal; }
-.tooltip .tooltiptext {
+.tooltiptext {
+	font-weight: normal;
 	position: fixed;
 	z-index: 9999;
 
@@ -860,6 +862,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 
 .content .test .activities .activity.tlimesurvey {
 	background-color: #3f8446;
+	color: white;
 	width: 500px;
 }
 .content .test .activities .activity.tmanual {
@@ -868,6 +871,9 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	width: 400px;
 }
 
+.icon-gameplay-web::before { width: 24px; height: 24px; background-image: url("../icon/browser.png"); }
+.icon-gameplay-desktop::before { width: 24px; height: 24px; background-image: url("../icon/electronics.png"); }
+.icon-survey::before { width: 24px; height: 24px; background-image: url("../icon/questionnaire.png"); }
 .content .test .activities .activity.tgameplay {
 	background-color: #163f67;
 	color: white;
@@ -959,21 +965,21 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .content .test .activities .activity .progress span, .activityProgress.progress span { float: left; width: 100%; position: absolute; top: 7px; left: 0px; text-align: center; font-size: 12px; font-weight: bold; }
 .content .test .activities .activity a { font-weight: bold; cursor: pointer; }
 
-#new_activity_form fieldset { margin-top: 15px; }
-#new_activity_form fieldset p { padding: 5px; }
-#new_activity_form fieldset p label i { width: 50%; margin-bottom: 5px; }
-.content .new_element form .gameplay_activity .info { font-size: 14px; font-style: italic; }
-#new_activity_form fieldset p:has(input[type="checkbox"]) {
+.gameplayActivitySettings {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
-}
-#new_activity_form fieldset p:has(input[type="checkbox"]) input[type="checkbox"] {
-	--checkboxSize: 15x;
-	width: var(--checkboxSize);
-	height: var(--checkboxSize);
-	justify-self: center;
+	grid-template-columns: repeat(2, 1fr); 
+	gap: 10px;
+	margin: 20px;
 }
 
+.gameplaySetting {
+	display: flex;
+	align-items: center;   /* Keeps vertical alignment */
+	justify-content: center; /* Centers content horizontally */
+	gap: 10px;
+	min-width: 0;
+}
+.gameplaySetting input[type="checkbox"] { width: max-content; }
 
 .simletCardTitle {
 	display: flex;

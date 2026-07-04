@@ -96,6 +96,7 @@
     "gameplay.restarted.title": "Permettre de redémarrer ?",
     "gameplay.restarted.description": "Permettre aux participants de redémarrer l'activité de jeu après l'avoir terminée, ce qui peut être utile pour collecter plusieurs séries de données d'interaction ou permettre aux participants d'améliorer leurs performances.",
 
+    "gameplay.platform.title": "",
     "gameplay.web.title": "Web",
     "gameplay.web.description": "L'activité de jeu est basée sur un jeu web lancé dans une iframe, et les données d'interaction sont collectées via des déclarations xAPI envoyées du jeu à SIMVA.",
     "gameplay.desktop.title": "Jeu de bureau",

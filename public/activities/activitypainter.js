@@ -221,7 +221,6 @@ var ActivityPainter = {
 		return `<div class="top"><h3>${activity.activity_name}</h3>
 			<div class="activityTopActions" data-${this.ACTIVITY_DATA_ID_KEY}=${activity.activity_id} data-${this.ACTIVITY_DATA_NAME_KEY}=${activity.activity_name}>
 				<div class="activityDownload text-with-icon icon-download" title="${this.commun.download_tooltip}"><b>${this.commun.download_title}</b></div>
-				
 				<div class="kebab">
 					<ul class="kebab-dropdown">
 						<li class="text-with-icon icon-edit" title="${this.commun.edit_title}">${this.commun.edit_title}</li>
@@ -231,7 +230,8 @@ var ActivityPainter = {
 						<li class="text-with-icon icon-delete" title="${this.commun.delete_title}">${this.commun.delete_title}</li>
 					</ul>
 				</div>
-			</div></div>`;
+			</div>
+		</div>`;
 	},
 
 	paintActivity: function(activity, participants){
@@ -818,7 +818,7 @@ var ActivityPainter = {
 	},
 
 	setCompletionForAllParticipant(activityid, status) {
-		Simva.setMultiActivityCompletion(activityid, status, function(error, result){
+		Simva.setMultiActivityCompletion(activityid, status, (error, result) => {
 			if(error){
 				$.toast({
 					heading: this.commun.completed_error,
@@ -896,7 +896,7 @@ var ActivityPainter = {
 		var errorDownloading = this.commun.result_error_downloading;
 		
 		if(user){
-			Simva.getActivityResultForUser(activity, user, function(error, result){
+			Simva.getActivityResultForUser(activity, user, (error, result) => {
 				if(error){
 					toastParams.text = error.message;
 					$.toast(toastParams);

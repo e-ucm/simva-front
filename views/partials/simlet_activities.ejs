@@ -19,8 +19,22 @@
 
 					<h3 class="activity_form_name"><%- t('name.title', { ns : 'activities' }) %></h3>
 					<input type="text" class="name_field" name="activityName" id="activity_name" placeholder="<%- t('name.placeholder', { ns : 'activities' }) %>" required>
-					<div style="width: 100%; display: flex; align-items: center; gap: 10px;">
-						<b><%- t('activity.type.title', { ns : 'activities' }) %></b>
+					
+					<div style="display: flex; align-items: center; gap: 10px;">
+						<div class="tooltipLine">
+							<h3><%- t('activity.type.title', { ns : 'activities' }) %></h3>
+							<div class="tooltip">
+								&#x1F6C8;
+								<span class="tooltiptext">
+									<ul>
+										<li><b><%- t('gameplay.name', { ns : 'activities' }) %></b>: <%- t('gameplay.description', { ns : 'activities' }) %></li>
+										<li><b><%- t('limesurvey.name', { ns : 'activities' }) %></b>: <%- t('limesurvey.description', { ns : 'activities' }) %></li>
+										<li><b><%- t('manual.name', { ns : 'activities' }) %></b>: <%- t('manual.description', { ns : 'activities' }) %></li>
+									</ul>
+								</span>
+							</div>
+						</div>
+						
 						<select class="activityTypeSelector" name="type" id="activity_type" onchange="changeActivityType()" required>
 							<!-- Default 'no selected' option -->
 							<option value="\" selected disabled hidden><%- t('activity.type.select', { ns : 'activities' }) %>
@@ -29,7 +43,6 @@
                     <fieldset id="activity_extras">
 
                     </fieldset>
-                    <br>
 					<input type="submit" id="activity_submit" value="">
 
 				</form>
@@ -102,7 +115,7 @@
 				}
 			});
 			
-			$('#new_activity_extras').empty();
+			$('#activity_extras').empty();
 
 			Simva.getAllocatorTypes(function(error, result) {
 				result.forEach((allocatorType) => {
@@ -140,21 +153,23 @@
 			   }
 
 			   const addActivity = function() {
+					// TODO: Make add new and edit menus share the same extract method
 				   PainterFactory.Painters[form.type].extractInformation('#activity_form', function(error, activity) {
-					   if (error) {
-						   errorbox.text(error);
-					   } 
-					   else {
-						   Simva.addActivityToSession(simletId, currSessionId, activity, function(error, result) {
-							   Utils.toggleSubmit();
-							   if (error && error.responseJSON) {
-								   errorbox.text(error.responseJSON.message);
-							   } else {
-								   Utils.toggleFormInFloating('activity_form_menu');
-								   reloadSimlet();
-							   }
-						   });
-					   }
+						console.log(activity)					
+						if (error) {
+							errorbox.text(error);
+						} 
+						else {
+							Simva.addActivityToSession(simletId, currSessionId, activity, function(error, result) {
+								Utils.toggleSubmit();
+								if (error && error.responseJSON) {
+									errorbox.text(error.responseJSON.message);
+								} else {
+									Utils.toggleFormInFloating('activity_form_menu');
+									reloadSimlet();
+								}
+							});
+						}
 				   });
 			   }
 
@@ -179,7 +194,7 @@
 					Utils.toggleSubmit();
 					return false;
 				}
-
+				// TODO: Make add new and edit menus share the same extract method
 				PainterFactory.Painters[form.type].extractEditInformation('#activity_form', activity, function(error, updatedActivity) {
 					if (error) {
 						errorbox.text(error);
@@ -353,7 +368,7 @@
 		deleteActivity(data[ACTIVITY_DATA_ID_KEY], data[ACTIVITY_DATA_NAME_KEY], sessionData[SESSION_DATA_ID_KEY])
 	});
 	
-	
+
 	// Functionality
 
     const deleteActivity = function(activityId, activityName, sessionId) {
@@ -433,19 +448,12 @@
 	}
 
 
-	$(document).on('change', '#new_activity_form select[name="type"]', function(event) {
-			if (PainterFactory.Painters[selectedType]) {
-				$('#activity_extras').append(`${PainterFactory.Painters[selectedType].description}\n`);
-			}
-		});
-	
 	const changeActivityType = function() {
 		const selectedType = $("#activity_type").val();
 		$('#activity_extras').empty();
 
+		// TODO: Make add new and edit menus share extra elements
 		if (PainterFactory.Painters[selectedType]) {
-			$('#activity_extras').append(`${PainterFactory.Painters[selectedType].description}\n`);
-	
 			if ($('#edit_activity_id').val() == null) {
 				PainterFactory.Painters[selectedType].getExtraForm((error, result) => {
 					if (!error) {

@@ -88,7 +88,7 @@ var ManualActivityPainter = {
 		let activity = {};
 		let jform = $(form);
 		let formdata = Utils.getFormData(jform);
-		let method = $('#new_activity_extras .tab.selected').attr('method');
+		let method = $('#activity_extras .tab.selected').attr('method');
 
 		console.log('[manualpainter] extractInformation called');
 		console.log('Form:', form);

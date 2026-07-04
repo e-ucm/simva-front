@@ -640,6 +640,7 @@ module.exports = function(auth, redirectToLogin, config){
                             specific['upload_description'] = req.t(`${element.activity_type}.upload.description`, { ns: 'activities' });
                             specific['xapi_by_game_title'] = req.t(`${element.activity_type}.xapi_by_game.title`, { ns: 'activities' });
                             specific['xapi_by_game_description'] = req.t(`${element.activity_type}.xapi_by_game.description`, { ns: 'activities' });
+                            specific['platform_title'] = req.t(`${element.activity_type}.platform.title`, { ns: 'activities' });
                             specific['web_title'] = req.t(`${element.activity_type}.web.title`, { ns: 'activities' });
                             specific['web_description'] = req.t(`${element.activity_type}.web.description`, { ns: 'activities' });
                             specific['desktop_title'] = req.t(`${element.activity_type}.desktop.title`, { ns: 'activities' });

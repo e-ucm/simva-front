@@ -96,6 +96,7 @@
     "gameplay.restarted.title": "Allow restarting?",
     "gameplay.restarted.description": "Allow participants to restart the gameplay activity after completion, which can be useful for collecting multiple rounds of interaction data or allowing participants to improve their performance.",
 
+    "gameplay.platform.title": "Platform",
     "gameplay.web.title": "Web",
     "gameplay.web.description": "The gameplay activity is based on a web game launched in an iframe, and the interaction data is collected via xAPI statements sent from the game to SIMVA.",
     "gameplay.desktop.title": "Desktop Game",

@@ -20,27 +20,92 @@ var GameplayActivityPainter = {
 
 	getExtraForm: function (callback) {
 		let form = `<div id="gameplay_activity" name="gameplay_activity" class="gameplay_activity">
-			<p><label for="gameplay_trace_storage"><b>${this.communSpecific.storage_title}</b></label><input title="${this.communSpecific.storage_description}" id="gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
-			<p><label for="gameplay_trace_storage"><i>${this.communSpecific.storage_description}</i></label></p>
-			<p><label for="gameplay_backup"><b>${this.communSpecific.result_title}</b></label><input title="${this.communSpecific.result_description}" id="gameplay_backup" type="checkbox" name="backup" checked></p>
-			<p><label for="gameplay_backup"><i>${this.communSpecific.result_description}</i></label></p>
-			<p><label for="gameplay_scorm_xAPI"><b>${this.specific.xapi_by_game_title}</b></label><input title="${this.specific.xapi_by_game_description}" id="gameplay_scorm_xAPI" type="checkbox" name="scorm_xapi"></p>
-			<p><label for="gameplay_scorm_xAPI"><i>${this.specific.xapi_by_game_description}</i></label></p>
-			<p><label for="gameplay_restarted"><b>${this.communSpecific.restarted_title}</b></label><input title="${this.communSpecific.restarted_description}" id="gameplay_restarted" type="checkbox" name="restarted"></p>
-			<p><label for="gameplay_restarted"><i>${this.communSpecific.restarted_description}</i></label></p>
-			<div class="tabs" class="gameplay_tabs">
-				<span id="gameplay_web_tab_button" class="tab selected" method="WEB" title="${this.specific.web_description}" onclick="Utils.changeTab(this, 'gameplay_activity','gameplay_web')">${this.specific.web_title}</span>
-				<span class="tab" method="DESKTOP" title="${this.specific.desktop_description}" onclick="Utils.changeTab(this, 'gameplay_activity','gameplay_desktop')">${this.specific.desktop_title}</span>
+			<div class="gameplayActivitySettings">
+				<div class="gameplaySetting">
+					<input type="checkbox" id="gameplay_trace_storage" name="trace_storage" checked>
+					<div class="tooltipLine">
+						<label for="gameplay_trace_storage"><b>${this.communSpecific.storage_title}</b></label>
+						<div class="tooltip">
+							&#x1F6C8;
+							<span class="tooltiptext">
+								${this.communSpecific.storage_description}
+							</span>
+						</div>
+					</div>
+				</div>
+				
+				<div class="gameplaySetting">
+					<input type="checkbox" id="gameplay_backup" name="backup" checked>
+					<div class="tooltipLine">
+						<label for="gameplay_backup"><b>${this.communSpecific.result_title}</b></label>
+						<div class="tooltip">
+							&#x1F6C8;
+							<span class="tooltiptext">
+								${this.communSpecific.result_description}
+							</span>
+						</div>
+					</div>
+				</div>
+
+				<div class="gameplaySetting">
+					<input type="checkbox" id="gameplay_scorm_xAPI" name="scorm_xapi">
+					<div class="tooltipLine">
+						<label for="gameplay_scorm_xAPI"><b>${this.specific.xapi_by_game_title}</b></label>
+						<div class="tooltip">
+							&#x1F6C8;
+							<span class="tooltiptext">
+								${this.specific.xapi_by_game_description}
+							</span>
+						</div>
+					</div>
+				</div>
+
+				<div class="gameplaySetting">
+					<input type="checkbox" id="gameplay_restarted" name="restarted">
+					<div class="tooltipLine">
+						<label for="gameplay_restarted"><b>${this.communSpecific.restarted_title}</b></label>
+						<div class="tooltip">
+							&#x1F6C8;
+							<span class="tooltiptext">
+								${this.communSpecific.restarted_description}
+							</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="tooltipLine">
+				<h3>${this.specific.platform_title}</h3>
+				<div class="tooltip">
+					&#x1F6C8;
+					<span class="tooltiptext">
+						<ul>
+							<li><b>${this.specific.web_title}</b>: ${this.specific.web_description}</li>
+							<li><b>${this.specific.desktop_title}</b>: ${this.specific.desktop_description}</li>
+						</ul>
+					</span>
+				</div>
+			</div>
+			
+			<div id="gameplay_tabs" class="tabs">
+				<span class="tab selected" method="WEB" title="${this.specific.web_title}" onclick="Utils.changeTab(this, 'gameplay_activity','gameplay_web')">${this.specific.web_title}</span>
+				<span class="tab" method="DESKTOP" title="${this.specific.desktop_title}" onclick="Utils.changeTab(this, 'gameplay_activity','gameplay_desktop')">${this.specific.desktop_title}</span>
 			</div>
 			<div id="gameplay_web" class="subform selected">
-				<p><i>${this.specific.web_description}</i></p>
-				<p><label for="gameplay_game_uri" style="width: 100%; text-align: center;">${this.specific.game_uri_title}</label><input id="gameplay_game_uri" type="text" name="game_uri">
-				<span class="info">${this.specific.game_uri_description}</span></p>
+				<div class="tooltipLine">
+					<h3>${this.specific.game_uri_title}</h3>
+					<div class="tooltip">
+						&#x1F6C8;
+						<span class="tooltiptext">
+							${this.specific.game_uri_description}
+						</span>
+					</div>
+				</div>
+				<input id="gameplay_game_uri" type="text" name="game_uri">
 			</div>
 			<div id="gameplay_desktop" class="subform" style="display: none;">
-				<p><i>${this.specific.desktop_description}</i></p>
 			</div>
-		</div>`;
+		</div>;`;
 			//	<label for="gamefile">${this.specific.upload_title || 'Upload game file for DESKTOP activity'}</label>
 			//	   <input type="file" name="file" id="gamefile" placeholder="Game file" accept=".zip">
 			//	<span class="info">${this.specific.upload_description || 'Select DESKTOP tab and upload a file.'}</span>
@@ -49,27 +114,92 @@ var GameplayActivityPainter = {
 
 	getEditExtraForm: function () {
 		return `<div id="edit_gameplay_activity" name="edit_gameplay_activity" class="gameplay_activity">
-			<p><label for="edit_gameplay_trace_storage"><b>${this.communSpecific.storage_title}</b></label><input title="${this.commun.storage_description}" id="edit_gameplay_trace_storage" type="checkbox" name="trace_storage" checked></p>
-			<p><label for="edit_gameplay_trace_storage"><i>${this.communSpecific.storage_description}</i></label></p>
-			<p><label for="edit_gameplay_backup"><b>${this.communSpecific.result_title}</b></label><input title="${this.communSpecific.result_description}" id="edit_gameplay_backup" type="checkbox" name="backup" checked></p>
-			<p><label for="edit_gameplay_backup"><i>${this.communSpecific.result_description}</i></label></p>
-			<p><label for="edit_gameplay_scorm_xAPI"><b>${this.specific.xapi_by_game_title}</b></label><input title="${this.specific.xapi_by_game_description}" id="edit_gameplay_scorm_xAPI" type="checkbox" name="scorm_xapi" checked></p>
-			<p><label for="edit_gameplay_scorm_xAPI"><i>${this.specific.xapi_by_game_description}</i></label></p>
-			<p><label for="edit_gameplay_restarted"><b>${this.communSpecific.restarted_title}</b></label><input title="${this.communSpecific.restarted_description}" id="edit_gameplay_restarted" type="checkbox" name="restarted"></p>
-			<p><label for="edit_gameplay_restarted"><i>${this.communSpecific.restarted_description}</i></label></p>
+			<div class="gameplayActivitySettings">
+				<div class="gameplaySetting">
+					<input type="checkbox" id="edit_gameplay_trace_storage" name="trace_storage" checked>
+					<div class="tooltipLine">
+						<label for="edit_gameplay_trace_storage"><b>${this.communSpecific.storage_title}</b></label>
+						<div class="tooltip">
+							&#x1F6C8;
+							<span class="tooltiptext">
+								${this.communSpecific.storage_description}
+							</span>
+						</div>
+					</div>
+				</div>
+				
+				<div class="gameplaySetting">
+					<input type="checkbox" id="edit_gameplay_backup" name="backup" checked>
+					<div class="tooltipLine">
+						<label for="edit_gameplay_backup"><b>${this.communSpecific.result_title}</b></label>
+						<div class="tooltip">
+							&#x1F6C8;
+							<span class="tooltiptext">
+								${this.communSpecific.result_description}
+							</span>
+						</div>
+					</div>
+				</div>
+
+				<div class="gameplaySetting">
+					<input type="checkbox" id="edit_gameplay_scorm_xAPI" name="scorm_xapi">
+					<div class="tooltipLine">
+						<label for="edit_gameplay_scorm_xAPI"><b>${this.specific.xapi_by_game_title}</b></label>
+						<div class="tooltip">
+							&#x1F6C8;
+							<span class="tooltiptext">
+								${this.specific.xapi_by_game_description}
+							</span>
+						</div>
+					</div>
+				</div>
+
+				<div class="gameplaySetting">
+					<input type="checkbox" id="edit_gameplay_restarted" name="restarted">
+					<div class="tooltipLine">
+						<label for="edit_gameplay_restarted"><b>${this.communSpecific.restarted_title}</b></label>
+						<div class="tooltip">
+							&#x1F6C8;
+							<span class="tooltiptext">
+								${this.communSpecific.restarted_description}
+							</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="tooltipLine">
+				<h3>${this.specific.platform_title}</h3>
+				<div class="tooltip">
+					&#x1F6C8;
+					<span class="tooltiptext">
+						<ul>
+							<li><b>${this.specific.web_title}</b>: ${this.specific.web_description}</li>
+							<li><b>${this.specific.desktop_title}</b>: ${this.specific.desktop_description}</li>
+						</ul>
+					</span>
+				</div>
+			</div>
 			<div id="edit_gameplay_tabs" class="tabs">
 				<span class="tab selected" method="WEB" title="${this.specific.web_title}" onclick="Utils.changeTab(this, 'edit_gameplay_activity','edit_gameplay_web')">${this.specific.web_title}</span>
 				<span class="tab" method="DESKTOP" title="${this.specific.desktop_title}" onclick="Utils.changeTab(this, 'edit_gameplay_activity','edit_gameplay_desktop')">${this.specific.desktop_title}</span>
 			</div>
-			<div id="edit_gameplay_web" class="subform selected">
-				<p><i>${this.specific.web_description}</i></p>
-				<p><label for="edit_gameplay_game_uri" style="width: 100%; text-align: center;">${this.specific.game_uri_title}</label><input id="edit_gameplay_game_uri" type="text" name="game_uri">
-				<span class="info">${this.specific.game_uri_description}</span></p>
+			<div id="edit_gameplay_web" class="subform selected" style="margin-top:10px;">
+				<div class="tooltipLine">
+					<h3>${this.specific.game_uri_title}</h3>
+					<div class="tooltip">
+						&#x1F6C8;
+						<span class="tooltiptext">
+							${this.specific.game_uri_description}
+						</span>
+					</div>
+				</div>
+				<input id="edit_gameplay_game_uri" type="text" name="game_uri">
 			</div>
 			<div id="edit_gameplay_desktop" class="subform" style="display: none;">
-				<p><i>${this.specific.desktop_description}</i></p>
 			</div>
 		</div>`;
+		
 		//<label for="edit_gamefile">${this.specific.upload_title || 'Upload game file for DESKTOP activity'}</label>
 		//  <input type="file" name="file" id="edit_gamefile" placeholder="Game file" accept=".zip">
 		//<span class="info">${this.specific.upload_explication || 'Select DESKTOP tab and upload a file.'}</span>
@@ -104,7 +234,7 @@ var GameplayActivityPainter = {
 		let activity = {};
 		let jform = $(form);
 		let formdata = Utils.getFormData(jform);
-		let method = $('#new_activity_extras .tab.selected').attr('method');
+		let method = $('#activity_extras .tab.selected').attr('method');
 
 		console.log('[gameplaypainter] extractInformation called');
 		console.log('Form:', form);

@@ -87,9 +87,10 @@
     "gameplay.storage.file.array.suffix": "juego_traza_matriz",
     "gameplay.storage.file.one_per_line.suffix": "juego_una_traza_por_linea",
     
-    "gameplay.restarted.title": "Permitir reiniciar?",
+    "gameplay.restarted.title": "¿Permitir reiniciar?",
     "gameplay.restarted.description": "Los participantes pueden reiniciar.",
     
+    "gameplay.platform.title": "Plataforma",
     "gameplay.web.title": "Web",
     "gameplay.web.description": "La actividad de juego se basa en un juego web lanzado en un iframe, y los datos de interacción se recopilan a través de declaraciones xAPI enviadas desde el juego a SIMVA.",
     "gameplay.desktop.title": "Juego de escritorio",
