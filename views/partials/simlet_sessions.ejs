@@ -125,7 +125,7 @@
 <div id ="session_form_menu" class="new_element floating">
 	<div class="floater">
 		<div class="form" id="session_form_form">
-			<h1 id="session_form_title"></h1>
+			<h1 id="session_form_title">	</h1>
 			<div class="tabs" id="add_session_tabs">
 				<span id="session_name_desc_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'session_form_form','session_name_desc_tab')"><%- t('add.new.tab', { ns : 'sessions' }) %></span>
 				<span class="tab" onclick="Utils.changeTab(this, 'session_form_form','import_session_tab')"><%- t('import.tab', { ns : 'sessions' }) %></span>
@@ -138,17 +138,17 @@
 					<input hidden type="text" name="prevSessionName" id="prev_session_name">
 					<input hidden type="text" name="prevSessionDescription" id="prev_session_description">
 
-					<h3 class="session_form_field session_form_name"><%- t('name.title', { ns : 'sessions' }) %></h3>
-					<input class="session_form_field session_form_name name_field" type="text" name="sessionName" id="session_name" placeholder="<%- t('name.placeholder', { ns : 'sessions' }) %>" required>
-					<h3 class="session_form_field" id="session_description_label"><%- t('description.title', { ns : 'SIMLETs' }) %></h3>
-					<textarea class="session_form_field description_field" type="text" name="sessionDescription" id="session_description" placeholder="<%- t('description.placeholder', { ns : 'sessions' }) %>"></textarea>
-					<h3 class="session_form_field" id="session_status_title"><%- t('status.title', { ns : 'sessions' }) %></h3>
+					<h3><%- t('name.title', { ns : 'sessions' }) %></h3>
+					<input class="session_form_name name_field" type="text" name="sessionName" id="session_name" placeholder="<%- t('name.placeholder', { ns : 'sessions' }) %>" required>
+					<h3 id="session_description_label"><%- t('description.title', { ns : 'SIMLETs' }) %></h3>
+					<textarea class="description_field" type="text" name="sessionDescription" id="session_description" placeholder="<%- t('description.placeholder', { ns : 'sessions' }) %>"></textarea>
+					<h3 id="session_status_title"><%- t('status.title', { ns : 'sessions' }) %></h3>
 					<select id="session_status_selector" name="sessionStatus">
 						<option value="active"><%- t('active.title', { ns : 'sessions' }) %></option>
 						<option value="inactive"><%- t('paused.title', { ns : 'sessions' }) %></option>
 					</select>
-					<h3 class="session_form_field"><%- t('tags.title', { ns : 'sessions' }) %></h3>
-					<div class="session_form_field" id="session_tags_area" style="margin-top: 5px;">
+					<h3><%- t('tags.title', { ns : 'sessions' }) %></h3>
+					<div id="session_tags_area" style="margin-top: 5px;">
 						<div class="tagPickerArea">
 							<div class="tagPickerRow">
 								<div class="tagPickerInputWrap"  >
@@ -188,24 +188,24 @@
 					</div>
 
 					<!--
-					<div class="session_form_field" id="can_be_manually_activated" >
+					<div id="can_be_manually_activated" >
 						<h3><%- t('can_be_manually_activated', { ns : 'sessions' }) %></h3>
 						<input type="checkbox" name="can_be_manually_activated" checked>
 					</div>
 					-->
-					<br class="session_form_field">
-					<input class="session_form_field" type="submit" id="session_submit" value="">
+					<br>
+					<input type="submit" id="session_submit" value="">
 				</form>
 			</div>
 
 			<!-- Import session -->
 			<div id="import_session_tab" class="subform" style="display: none;">
 				<form id="import_session_form">
-					<h3 class="import_session_form_field session_form_name"><%- t('name.title', { ns : 'sessions' }) %></h3>
-					<input class="import_session_form_field import_session_form_name name_field" type="text" name="sessionName" id="import_session_name" placeholder="<%- t('name.placeholder', { ns : 'sessions' }) %>" required>
+					<h3 class="session_form_name"><%- t('name.title', { ns : 'sessions' }) %></h3>
+					<input class="import_session_form_name name_field" type="text" name="sessionName" id="import_session_name" placeholder="<%- t('name.placeholder', { ns : 'sessions' }) %>" required>
 					<h3><%- t('import.input', { ns : 'sessions' }) %></h3>
 					<input type="file" name="jsonFile" accept=".json" required>
-					<input class="import_session_form_field" type="submit" id="import_session_submit" value="<%- t('import.submit', { ns : 'sessions' }) %>">
+					<input type="submit" id="import_session_submit" value="<%- t('import.submit', { ns : 'sessions' }) %>">
 				</form>
 			</div>
 
@@ -244,8 +244,6 @@
 		
 		// When submitting the import session form
 		$(document).on('submit','#import_session_form', function(event) {
-			event.preventDefault();
-			let currentform = this;
 			let form = Utils.getFormData($(this));
 			Utils.toggleSubmit();
 			let errorbox = $('#session_form_error');
@@ -285,7 +283,6 @@
 		// When submitting the add/edit SIMLET form
         $(document).on('submit','#session_form', function(event) {
 			let errorbox = $('#session_form_error');
-			let currentform = this;
 			let form = Utils.getFormData($(this));
 			Utils.toggleSubmit();
 			
@@ -406,7 +403,7 @@
 		}
 		// Editing session
 		else {
-			// Show the add new/import tabs (only the name/description/tags tab is needed when editing session)
+			// Hide the add new/import tabs (only the name/description/tags tab is needed when editing session)
 			$("#add_session_tabs").hide();
 
 			$("#session_form_title").text("<%- t('edit.title', { ns : 'sessions' }) %>");
@@ -490,7 +487,7 @@
 
 	$(document).on('click', ".sessionTop .icon-add", function(e) {
 		const data = $(this).closest(".test").data();
-		openActivityForm(data[SESSION_DATA_ID_KEY]);
+		openActivityForm(data[SESSION_DATA_ID_KEY], null);
 	});
 
 	$(document).on('click', ".sessionTop .icon-export", function(e) {

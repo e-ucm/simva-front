@@ -6,22 +6,26 @@
     "no_activities.message": "There are no activities in this session. Add one using the 3-dot menu button on the right",
 
     "add.title": "Add activity",
-        "add.new.title": "New activity",
-            "add.new.web.no_url_message": "You're about to create a web activity with no URL. Are you sure you want to continue? (You will be able to change the URL later)",
-        "add.existing.title": "Select from existing",
-
-    "edit.title": "Edit",
+        "add.new.tab": "Add new",
+        "add.submit": "Create activity",
+        "add.new.web.no_url_message": "You're about to create a web activity with no URL. Are you sure you want to continue? (You will be able to change the URL later)",
+            
+        "import.tab": "Import",
+        "import.message": "Select the file to import",
+        "import.upload.error": "Select the file to upload first",
+        "import.error.invalid_file": "Invalid file",
+        
+    "edit.title": "Edit activity",
+    "edit.submit": "Edit activity",
     
     "delete.title": "Delete",
     "delete.confirm": "Are you sure you want to delete the activity '{{activity}}' of session '{{session}}' from SIMLET '{{SIMLET}}'?\nAll the data of the activity will be deleted too",
     
     "export.title": "Export",
-    "import.title": "Import",
-    "import.message": "Select the file to import",
-    "import.upload.error": "Select the file to upload first",
-    "import.error.invalid_file": "Invalid file",
     
+    "name.title": "Name",
     "name.placeholder": "Activity name",
+    
     "activity.type.title": "Activity type",
     "type.title": "Type",
 

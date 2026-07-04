@@ -42,7 +42,7 @@ var ImsPackagePainter = {
 		let jform = $(form);
 		let formdata = Utils.getFormData(jform);
 
-		activity.name = formdata.name;
+		activity.name = formdata.activityName;
 		activity.activity_type = this.supportedType;
 
 		activity.trace_storage = formdata.trace_storage === 'on';
@@ -60,8 +60,8 @@ var ImsPackagePainter = {
 		let formdata = Utils.getFormData(jform);
 		let activity = {};
 
-		if(actualActivity.activity_name !== formdata.name) {
-			activity.name = formdata.name;
+		if(actualActivity.activity_name !== formdata.activityName) {
+			activity.name = formdata.activityName;
 		}
 	
 		callback(null, activity);

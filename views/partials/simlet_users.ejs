@@ -354,7 +354,7 @@
 
 <script type="text/javascript">
 	// Id of the group that opened the edit group menu
-	let editingGroupId = null;
+	let currGroupId = null;
 	
 	// Ids for the data-* attributes of each group card
 	const GROUP_DATA_ID_KEY = "groupId"
@@ -525,7 +525,7 @@
 			let errorText = "";
 
 			// Get all users in the group and store them by username
-			const group = getGroupFromId(editingGroupId);
+			const group = getGroupFromId(currGroupId);
 			let groupParticipants = new Map();
 			if (group != null) {
 				groupParticipants = new Map(
@@ -580,7 +580,7 @@
 						
 						Utils.toggleSubmit();
 						foundUsers.forEach((user, username) => {
-							Simva.addGroupParticipant(simletId, editingGroupId, user.user_id, function(addError){
+							Simva.addGroupParticipant(simletId, currGroupId, user.user_id, function(addError){
 								// If there are any erorrs, add them to the error message
 							    if(addError && addError.responseJSON) {
 									errorText += `${addError.responseJSON.message} <br> `
@@ -641,7 +641,7 @@
 			let form = Utils.getFormData($(this));
 			let errorbox = $("#participants_error");
 
-			Simva.register(simletId, editingGroupId, form.username.toLowerCase(), form.email, form.password, form.role, function(error, result){
+			Simva.register(simletId, currGroupId, form.username.toLowerCase(), form.email, form.password, form.role, function(error, result){
 				if(error && error.responseJSON){
 					errorbox.text(error.responseJSON.message);
 				}else{
@@ -660,7 +660,7 @@
 			let form = Utils.getFormData($(this));
 			let errorbox = $("#participants_error");
 
-			Simva.generateAndRegister(simletId, editingGroupId, form.algorithm, form.length, form.amount, (error, generated) => {
+			Simva.generateAndRegister(simletId, currGroupId, form.algorithm, form.length, form.amount, (error, generated) => {
 				if(!error) { 
 					Utils.toggleFormInFloating('add_participant');
 					reloadSimlet();
@@ -742,7 +742,7 @@
 		$('#group_name').val("");
 		$('#users_error').text("");
 
-		var group = getGroupFromId(groupId);
+		const group = getGroupFromId(groupId);
 		$("#add_group_tabs").hide();
 		// Set form title to edit title
 		$("#users_form_title").text("<%- t('groups.edit.title', { ns : 'groups' }) %>");
@@ -754,7 +754,7 @@
 	}
 
 	const openParticipantForm = function(groupId) {
-		editingGroupId = groupId;
+		currGroupId = groupId;
 		// Always open form in the add existing participant tab
 		Utils.changeTab($('#existing_participant_tab_button'), 'add_participant_form','existing_participant_tab');
 		Utils.toggleFormInFloating("add_participant");
@@ -762,7 +762,7 @@
 	
 	
 	const openChangeAllocatorForm = function(groupId, currentAllocatorType) {
-		editingGroupId = groupId;
+		currGroupId = groupId;
 		let currentGroup = getGroupFromId(groupId);
 		console.log("Current group for allocator change:", currentGroup.group_allocator_type);
 		let form = $('#change_allocator_form');
@@ -910,8 +910,8 @@
 	const changeAllocator = function() {
 		let type = $('#change_allocator_form input:radio[name=type]:checked').val();
 
-		if (editingGroupId) {
-			Simva.updateGroup(simletId, editingGroupId, { group_allocator_type: type }, function(error, result) {
+		if (currGroupId) {
+			Simva.updateGroup(simletId, currGroupId, { group_allocator_type: type }, function(error, result) {
 				if (error) {
 					$('#change_allocator_form .error').text(error.responseJSON ? error.responseJSON.message : error.message);
 				} else {

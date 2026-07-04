@@ -539,132 +539,135 @@ module.exports = function(auth, redirectToLogin, config){
     // Get all the existing activity types
     router.get('/activitytypes', auth, redirectToLogin, async (req, res, next) => {
         Simva.getActivityTypes(req.session.id, (error, result) => {
-            if(error) {
+            if (error) {
                 next(error.response?.data || error);
             } else {
-                commun={};
-                commun['completed_title'] = req.t(`completed.title`, { ns : 'activities' } );
-                commun['completed_error'] = req.t(`completed.error.message`, { ns : 'activities' } );
-                commun['completed_all_set'] = req.t(`completed.all.set`, { ns : 'activities' } );
-                commun['completed_all_unset'] = req.t(`completed.all.unset`, { ns : 'activities' } );
-                commun['completed_on'] = req.t(`completed.on`, { ns : 'activities' } );
-                commun['completed_off'] = req.t(`completed.off`, { ns : 'activities' } );
-                commun['result_title'] = req.t(`result.title`, { ns : 'activities' } );
-                commun['result_disabled'] = req.t(`result.disabled`, { ns : 'activities' } );
-                commun['result_error_loading'] = req.t(`result.error.loading`, { ns : 'activities' } );
-                commun['result_error_downloading'] = req.t(`result.error.downloading`, { ns : 'activities' } );
-                commun['storage_title'] = req.t(`storage.title`, { ns : 'activities' } );
-                commun['storage_disabled'] = req.t(`storage.disabled`, { ns : 'activities' } );
-                commun['storage_file_title'] = req.t(`storage.file.title`, { ns : 'activities' } );
-                commun['storage_file_array_title'] = req.t(`storage.file.array.title`, { ns : 'activities' } );
-                commun['storage_file_one_per_line_title'] = req.t(`storage.file.one_per_line.title`, { ns : 'activities' } );
-                commun['storage_error_downloading'] = req.t(`storage.error.downloading`, { ns : 'activities' } );
-                commun['progress_title'] = req.t(`progress.title`, { ns : 'activities' } );
-                commun['user_title'] = req.t(`participant.title`, { ns : 'activities' } );
-                commun['type_title'] = req.t(`type.title`, { ns : 'activities' } );
-                commun['participant_tooltip'] = req.t(`participant.tooltip`, { ns : 'activities' } );
-                commun['init_tooltip'] = req.t(`init.tooltip`, { ns : 'activities' } );
-                commun['progress_tooltip'] = req.t(`progress.tooltip`, { ns : 'activities' } );
-                commun['completed_tooltip'] = req.t(`completed.tooltip`, { ns : 'activities' } );
-                commun['result_tooltip'] = req.t(`result.tooltip`, { ns : 'activities' } );
-                commun['init_bar_tooltip'] = req.t(`init.bar.tooltip`, { ns : 'activities' } );
-                commun['progress_bar_tooltip'] = req.t(`progress.bar.tooltip`, { ns : 'activities' } );
-                commun['completed_bar_tooltip'] = req.t(`completed.bar.tooltip`, { ns : 'activities' } );
-                commun['result_bar_tooltip'] = req.t(`result.bar.tooltip`, { ns : 'activities' } );
-                commun['tmon_title'] = req.t(`tmon.title`, { ns : 'activities' } );
-                commun['download_title'] = req.t(`download.title`, { ns : 'activities' } );
-                commun['download_tooltip'] = req.t(`download.description`, { ns : 'activities' } );
-                commun['test_download_title'] = req.t(`download.test.title`, { ns : 'activities' } );
-                commun['test_download_tooltip'] = req.t(`download.test.description`, { ns : 'activities' } );
-                commun['edit_title'] = req.t(`edit.title`, { ns : 'activities' } );
-                commun['delete_title'] = req.t(`delete.title`, { ns : 'activities' } );
-                commun['init_title'] = req.t(`init.title`, { ns : 'activities' } );
-                commun['init_on'] = req.t(`init.on`, { ns : 'activities' } );
-                commun['init_off'] = req.t(`init.off`, { ns : 'activities' } );
-                commun['export_title'] = req.t(`export.title`, { ns : 'activities' } );
-                commun['import_title'] = req.t(`import.title`, { ns : 'activities' } );
-                commun['import_message'] = req.t(`import.message`, { ns : 'activities' } );
-                commun['import_error'] = req.t(`import.error`, { ns : 'activities' } );
+                let commun = {
+                    completed_title: req.t(`completed.title`, { ns: 'activities' }),
+                    completed_error: req.t(`completed.error.message`, { ns: 'activities' }),
+                    completed_all_set: req.t(`completed.all.set`, { ns: 'activities' }),
+                    completed_all_unset: req.t(`completed.all.unset`, { ns: 'activities' }),
+                    completed_on: req.t(`completed.on`, { ns: 'activities' }),
+                    completed_off: req.t(`completed.off`, { ns: 'activities' }),
+                    result_title: req.t(`result.title`, { ns: 'activities' }),
+                    result_disabled: req.t(`result.disabled`, { ns: 'activities' }),
+                    result_error_loading: req.t(`result.error.loading`, { ns: 'activities' }),
+                    result_error_downloading: req.t(`result.error.downloading`, { ns: 'activities' }),
+                    storage_title: req.t(`storage.title`, { ns: 'activities' }),
+                    storage_disabled: req.t(`storage.disabled`, { ns: 'activities' }),
+                    storage_file_title: req.t(`storage.file.title`, { ns: 'activities' }),
+                    storage_file_array_title: req.t(`storage.file.array.title`, { ns: 'activities' }),
+                    storage_file_one_per_line_title: req.t(`storage.file.one_per_line.title`, { ns: 'activities' }),
+                    storage_error_downloading: req.t(`storage.error.downloading`, { ns: 'activities' }),
+                    progress_title: req.t(`progress.title`, { ns: 'activities' }),
+                    user_title: req.t(`participant.title`, { ns: 'activities' }),
+                    type_title: req.t(`type.title`, { ns: 'activities' }),
+                    participant_tooltip: req.t(`participant.tooltip`, { ns: 'activities' }),
+                    init_tooltip: req.t(`init.tooltip`, { ns: 'activities' }),
+                    progress_tooltip: req.t(`progress.tooltip`, { ns: 'activities' }),
+                    completed_tooltip: req.t(`completed.tooltip`, { ns: 'activities' }),
+                    result_tooltip: req.t(`result.tooltip`, { ns: 'activities' }),
+                    init_bar_tooltip: req.t(`init.bar.tooltip`, { ns: 'activities' }),
+                    progress_bar_tooltip: req.t(`progress.bar.tooltip`, { ns: 'activities' }),
+                    completed_bar_tooltip: req.t(`completed.bar.tooltip`, { ns: 'activities' }),
+                    result_bar_tooltip: req.t(`result.bar.tooltip`, { ns: 'activities' }),
+                    tmon_title: req.t(`tmon.title`, { ns: 'activities' }),
+                    download_title: req.t(`download.title`, { ns: 'activities' }),
+                    download_tooltip: req.t(`download.description`, { ns: 'activities' }),
+                    test_download_title: req.t(`download.test.title`, { ns: 'activities' }),
+                    test_download_tooltip: req.t(`download.test.description`, { ns: 'activities' }),
+                    edit_title: req.t(`edit.title`, { ns: 'activities' }),
+                    delete_title: req.t(`delete.title`, { ns: 'activities' }),
+                    init_title: req.t(`init.title`, { ns: 'activities' }),
+                    init_on: req.t(`init.on`, { ns: 'activities' }),
+                    init_off: req.t(`init.off`, { ns: 'activities' }),
+                    export_title: req.t(`export.title`, { ns: 'activities' }),
+                    import_title: req.t(`import.tab`, { ns: 'activities' }),
+                    import_message: req.t(`import.message`, { ns: 'activities' }),
+                    import_error: req.t(`import.error`, { ns: 'activities' }),
+                };
 
                 result.forEach(element => {
-                    element['description'] = req.t(`${element.activity_type}.description`, { ns : 'activities' } );
-                    element['name'] = req.t(`${element.activity_type}.name`, { ns : 'activities' } );
-                    element['commun']=commun;
-                    communSpecific={};
-                    switch(element.activity_type){
-						case 'limesurvey':
-						case 'gameplay':
-						case 'activity':
+                    element['description'] = req.t(`${element.activity_type}.description`, { ns: 'activities' });
+                    element['name'] = req.t(`${element.activity_type}.name`, { ns: 'activities' });
+                    element['commun'] = commun;
+                    let communSpecific = {};
+                    switch (element.activity_type) {
+                        case 'limesurvey':
+                        case 'gameplay':
+                        case 'activity':
                         case 'manual':
-							communSpecific['result_file_prefix'] = req.t(`${element.activity_type}.result.file.prefix`, { ns : 'activities' } );
-                            communSpecific['result_title'] = req.t(`${element.activity_type}.result.title`, { ns : 'activities' } );
-                            communSpecific['result_description'] = req.t(`${element.activity_type}.result.description`, { ns : 'activities' } );
-                            communSpecific['result_zero'] = req.t(`${element.activity_type}.result.zero`, { ns : 'activities' } );
-                            communSpecific['result_view_partial_value'] = req.t(`${element.activity_type}.result.view.partial`, { ns : 'activities' } );
-                            communSpecific['result_view_final_value'] = req.t(`${element.activity_type}.result.view.final`, { ns : 'activities' } );
-                            communSpecific['storage_title'] = req.t(`${element.activity_type}.storage.title`, { ns : 'activities' } );
-                            communSpecific['storage_description'] = req.t(`${element.activity_type}.storage.description`, { ns : 'activities' } );
-                            communSpecific['storage_file_suffix_array'] = req.t(`${element.activity_type}.storage.file.array.suffix`, { ns : 'activities' } );
-                            communSpecific['storage_file_suffix_one_per_line'] = req.t(`${element.activity_type}.storage.file.one_per_line.suffix`, { ns : 'activities' } );
-                            communSpecific['restarted_title'] = req.t(`${element.activity_type}.restarted.title`, { ns : 'activities' } );
-                            communSpecific['restarted_description'] = req.t(`${element.activity_type}.restarted.description`, { ns : 'activities' } );
+                            communSpecific['result_file_prefix'] = req.t(`${element.activity_type}.result.file.prefix`, { ns: 'activities' });
+                            communSpecific['result_title'] = req.t(`${element.activity_type}.result.title`, { ns: 'activities' });
+                            communSpecific['result_description'] = req.t(`${element.activity_type}.result.description`, { ns: 'activities' });
+                            communSpecific['result_zero'] = req.t(`${element.activity_type}.result.zero`, { ns: 'activities' });
+                            communSpecific['result_view_partial_value'] = req.t(`${element.activity_type}.result.view.partial`, { ns: 'activities' });
+                            communSpecific['result_view_final_value'] = req.t(`${element.activity_type}.result.view.final`, { ns: 'activities' });
+                            communSpecific['storage_title'] = req.t(`${element.activity_type}.storage.title`, { ns: 'activities' });
+                            communSpecific['storage_description'] = req.t(`${element.activity_type}.storage.description`, { ns: 'activities' });
+                            communSpecific['storage_file_suffix_array'] = req.t(`${element.activity_type}.storage.file.array.suffix`, { ns: 'activities' });
+                            communSpecific['storage_file_suffix_one_per_line'] = req.t(`${element.activity_type}.storage.file.one_per_line.suffix`, { ns: 'activities' });
+                            communSpecific['restarted_title'] = req.t(`${element.activity_type}.restarted.title`, { ns: 'activities' });
+                            communSpecific['restarted_description'] = req.t(`${element.activity_type}.restarted.description`, { ns: 'activities' });
                             break;
-						default:
-							break; 
+                        default:
+                            break;
                     }
-                    element['communSpecific']=communSpecific;
-                    specific={};
-                    switch(element.activity_type){
-						case 'limesurvey':
-                            specific['surveyid_title'] = req.t(`${element.activity_type}.surveyid.title`, { ns : 'activities' } );
-							specific['surveyid_placeholder'] = req.t(`${element.activity_type}.surveyid.placeholder`, { ns : 'activities' } );
-                            specific['existing_title'] = req.t(`${element.activity_type}.existing.title`, { ns : 'activities' } );
-                            specific['new_title'] = req.t(`${element.activity_type}.new.title`, { ns : 'activities' } );
-                            specific['new_description'] = req.t(`${element.activity_type}.new.description`, { ns : 'activities' } );
-                            specific['upload_title'] = req.t(`${element.activity_type}.upload.title`, { ns : 'activities' } );
-                            specific['upload_description'] = req.t(`${element.activity_type}.upload.description`, { ns : 'activities' } );
-                            specific['language_title'] = req.t(`${element.activity_type}.language.title`, { ns : 'activities' } );
-                            specific['survey_title'] = req.t(`${element.activity_type}.survey.title`, { ns : 'activities' } );
-                            specific['edit_title'] = req.t(`${element.activity_type}.edit.title`, { ns : 'activities' } );
-                            specific['short_url_title'] = req.t(`${element.activity_type}.short_url.title`, { ns : 'activities' } );
-                            specific['backup_full_title'] = req.t(`${element.activity_type}.backup.full.title`, { ns : 'activities' } );
-                            specific['backup_code_title'] = req.t(`${element.activity_type}.backup.code.title`, { ns : 'activities' } );
-							break;
-						case 'gameplay':
-                            specific['game_uri_title'] = req.t(`${element.activity_type}.game_uri.title`, { ns : 'activities' } );
-                            specific['game_uri_description'] = req.t(`${element.activity_type}.game_uri.description`, { ns : 'activities' } );
-                            specific['xasu_title'] = req.t(`${element.activity_type}.xasu.title`, { ns : 'activities' } );
-                            specific['upload_title'] = req.t(`${element.activity_type}.upload.title`, { ns : 'activities' } );
-                            specific['upload_description'] = req.t(`${element.activity_type}.upload.description`, { ns : 'activities' } );
-                            specific['xapi_by_game_title'] = req.t(`${element.activity_type}.xapi_by_game.title`, { ns : 'activities' } );
-                            specific['xapi_by_game_description'] = req.t(`${element.activity_type}.xapi_by_game.description`, { ns : 'activities' } );
-                            specific['web_title'] = req.t(`${element.activity_type}.web.title`, { ns : 'activities' } );
-                            specific['web_description'] = req.t(`${element.activity_type}.web.description`, { ns : 'activities' } );
-                            specific['desktop_title'] = req.t(`${element.activity_type}.desktop.title`, { ns : 'activities' } );
-                            specific['desktop_description'] = req.t(`${element.activity_type}.desktop.description`, { ns : 'activities' } );
-							break;
+                    element['communSpecific'] = communSpecific;
+
+                    let specific = {};
+                    switch (element.activity_type) {
+                        case 'limesurvey':
+                            specific['surveyid_title'] = req.t(`${element.activity_type}.surveyid.title`, { ns: 'activities' });
+                            specific['surveyid_placeholder'] = req.t(`${element.activity_type}.surveyid.placeholder`, { ns: 'activities' });
+                            specific['existing_title'] = req.t(`${element.activity_type}.existing.title`, { ns: 'activities' });
+                            specific['new_title'] = req.t(`${element.activity_type}.new.title`, { ns: 'activities' });
+                            specific['new_description'] = req.t(`${element.activity_type}.new.description`, { ns: 'activities' });
+                            specific['upload_title'] = req.t(`${element.activity_type}.upload.title`, { ns: 'activities' });
+                            specific['upload_description'] = req.t(`${element.activity_type}.upload.description`, { ns: 'activities' });
+                            specific['language_title'] = req.t(`${element.activity_type}.language.title`, { ns: 'activities' });
+                            specific['survey_title'] = req.t(`${element.activity_type}.survey.title`, { ns: 'activities' });
+                            specific['edit_title'] = req.t(`${element.activity_type}.edit.title`, { ns: 'activities' });
+                            specific['short_url_title'] = req.t(`${element.activity_type}.short_url.title`, { ns: 'activities' });
+                            specific['backup_full_title'] = req.t(`${element.activity_type}.backup.full.title`, { ns: 'activities' });
+                            specific['backup_code_title'] = req.t(`${element.activity_type}.backup.code.title`, { ns: 'activities' });
+                            break;
+                        case 'gameplay':
+                            specific['game_uri_title'] = req.t(`${element.activity_type}.game_uri.title`, { ns: 'activities' });
+                            specific['game_uri_description'] = req.t(`${element.activity_type}.game_uri.description`, { ns: 'activities' });
+                            specific['xasu_title'] = req.t(`${element.activity_type}.xasu.title`, { ns: 'activities' });
+                            specific['upload_title'] = req.t(`${element.activity_type}.upload.title`, { ns: 'activities' });
+                            specific['upload_description'] = req.t(`${element.activity_type}.upload.description`, { ns: 'activities' });
+                            specific['xapi_by_game_title'] = req.t(`${element.activity_type}.xapi_by_game.title`, { ns: 'activities' });
+                            specific['xapi_by_game_description'] = req.t(`${element.activity_type}.xapi_by_game.description`, { ns: 'activities' });
+                            specific['web_title'] = req.t(`${element.activity_type}.web.title`, { ns: 'activities' });
+                            specific['web_description'] = req.t(`${element.activity_type}.web.description`, { ns: 'activities' });
+                            specific['desktop_title'] = req.t(`${element.activity_type}.desktop.title`, { ns: 'activities' });
+                            specific['desktop_description'] = req.t(`${element.activity_type}.desktop.description`, { ns: 'activities' });
+                            break;
                         case 'manual':
-                            specific['student_complete_title'] = req.t(`${element.activity_type}.student_complete.title`, { ns : 'activities' } );
-                            specific['student_complete_description'] = req.t(`${element.activity_type}.student_complete.description`, { ns : 'activities' } );
-                            specific['student_complete_ok'] = req.t(`${element.activity_type}.student_complete.ok`, { ns : 'activities' } );
-                            specific['student_complete_nok'] = req.t(`${element.activity_type}.student_complete.nok`, { ns : 'activities' } );
-                            specific['uri_title'] = req.t(`${element.activity_type}.uri.title`, { ns : 'activities' } );
-                            specific['uri_description'] = req.t(`${element.activity_type}.uri.description`, { ns : 'activities' } );
-                            specific['upload_title'] = req.t(`${element.activity_type}.upload.title`, { ns : 'activities' } );
-                            specific['upload_description'] = req.t(`${element.activity_type}.upload.description`, { ns : 'activities' } );
-                            specific['web_title'] = req.t(`${element.activity_type}.web.title`, { ns : 'activities' } );
-                            specific['web_description'] = req.t(`${element.activity_type}.web.description`, { ns : 'activities' } );
-                            specific['external_title'] = req.t(`${element.activity_type}.external.title`, { ns : 'activities' } );
-                            specific['external_description'] = req.t(`${element.activity_type}.external.description`, { ns : 'activities' } );
-							break;
+                            specific['student_complete_title'] = req.t(`${element.activity_type}.student_complete.title`, { ns: 'activities' });
+                            specific['student_complete_description'] = req.t(`${element.activity_type}.student_complete.description`, { ns: 'activities' });
+                            specific['student_complete_ok'] = req.t(`${element.activity_type}.student_complete.ok`, { ns: 'activities' });
+                            specific['student_complete_nok'] = req.t(`${element.activity_type}.student_complete.nok`, { ns: 'activities' });
+                            specific['uri_title'] = req.t(`${element.activity_type}.uri.title`, { ns: 'activities' });
+                            specific['uri_description'] = req.t(`${element.activity_type}.uri.description`, { ns: 'activities' });
+                            specific['upload_title'] = req.t(`${element.activity_type}.upload.title`, { ns: 'activities' });
+                            specific['upload_description'] = req.t(`${element.activity_type}.upload.description`, { ns: 'activities' });
+                            specific['web_title'] = req.t(`${element.activity_type}.web.title`, { ns: 'activities' });
+                            specific['web_description'] = req.t(`${element.activity_type}.web.description`, { ns: 'activities' });
+                            specific['external_title'] = req.t(`${element.activity_type}.external.title`, { ns: 'activities' });
+                            specific['external_description'] = req.t(`${element.activity_type}.external.description`, { ns: 'activities' });
+                            break;
                         case 'imspackage':
-                            specific['package_title'] = req.t(`${element.activity_type}.package.title`, { ns : 'activities' } );
-							break;
-						default:
-							break; 
+                            specific['package_title'] = req.t(`${element.activity_type}.package.title`, { ns: 'activities' });
+                            break;
+                        default:
+                            break;
                     }
-                    element['specific']=specific;
+                    element['specific'] = specific;
                 });
+                
                 res.status(200).send(result);
             }
         });

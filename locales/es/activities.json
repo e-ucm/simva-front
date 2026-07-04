@@ -6,23 +6,26 @@
     "no_activities.message": "No hay actividades en esta Sesión. Añada una utilizando el botón del menú de 3 puntos a la derecha",
 
     "add.title": "Añadir actividad",
-        "add.new.title": "Nueva actividad",
-            "add.new.web.no_url_message": "Está a punto de crear una actividad web sin URL. ¿Está seguro de que quiere continuar? (Podrá cambiar la URL más adelante)",
-        "add.existing.title": "Seleccionar de las existentes",
+        "add.new.tab": "Nueva actividad",
+        "add.submit": "Crear actividad",
+        "add.new.web.no_url_message": "Está a punto de crear una actividad web sin URL. ¿Está seguro de que quiere continuar? (Podrá cambiar la URL más adelante)",
 
-    "edit.title": "Editar",
+        "import.tab": "Importar",
+        "import.message": "Seleccione el archivo a importar",
+        "import.upload.error": "Seleccione el archivo a subir primero",
+        "import.error.invalid_file": "Archivo inválido",
+        
+    "edit.title": "Editar actividad",
+    "edit.submit": "Editar actividad",
     
     "delete.title": "Eliminar",
     "delete.confirm": "¿Está seguro de que desea eliminar la actividad '{{activity}}' de la sesión '{{session}}' del SIMLET '{{SIMLET}}'?\nTambién se eliminarán todos los datos de la actividad",
     
     "export.title": "Exportar",
-    "import.title": "Importar",
-    "import.message": "Seleccione el archivo a importar",
-    "import.error": "Seleccione el archivo a importar primero",
-    "import.upload.error": "Seleccione el archivo a subir primero",
-    "import.error.invalid_file": "Archivo inválido",
-    
+        
+    "name.title": "Nombre",
     "name.placeholder": "Nombre de la actividad",
+
     "activity.type.title": "Tipo de actividad",
     "type.title": "Tipo",
 

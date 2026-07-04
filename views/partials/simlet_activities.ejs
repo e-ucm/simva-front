@@ -1,184 +1,138 @@
-<div id="add_activity" class="new_element floating">
-    <div class="floater">
-        <div class="form" id="add_activity_form">
-            <div class="tabs">
-                <span id="new_activity_tab_button" class="tab selected" onclick="openNewActivityTab()"><%- t('add.new.title', { ns : 'activities' }) %></span>
-				<span class="tab" type="hidden" onclick="Utils.changeTab(this, 'add_activity_form','import_activity_tab')"><%- t('import.title', { ns : 'activities' }) %></span>
-                <!--<span class="tab" type="hidden" onclick="Utils.changeTab(this, 'add_activity_form','existing_activity_tab')"><%- t('add.existing.title', { ns : 'activities' }) %></span>-->
-            </div>
-			<!-- TODO: Combine add new and edit existing tabs to share elements -->
-            <div id="new_activity_tab" class="subform selected">
-                <form id="new_activity_form">
-                    <input type="hidden" name="test">
-					<h3><%- t('name.placeholder', { ns : 'activities' }) %></h3>
-                    <input type="text" class="name_field" name="name" placeholder="<%- t('name.placeholder', { ns : 'activities' }) %>" required>
+<!-- Elements for the activities on the sessions tab in the SIMLET view -->
+
+<!-- Add/edit activity menu -->
+<div id="activity_form_menu" class="new_element floating">
+	<div class="floater">
+        <div class="form" id="activity_form_form">
+			<h1 id="activity_form_title">	</h1>
+
+			<div class="tabs" id="add_activity_tabs">
+				<span id="activity_name_desc_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'activity_form_form','activity_name_desc_tab')"><%- t('add.new.tab', { ns : 'activities' }) %></span>
+				<span class="tab" onclick="Utils.changeTab(this, 'activity_form_form','import_activity_tab')"><%- t('import.tab', { ns : 'activities' }) %></span>
+			</div>
+
+			<div id="activity_name_desc_tab" class="subform selected">
+				<form id="activity_form">
+					<input hidden type="text" name="editingActivityId" id="edit_activity_id">
+					<input hidden type="text" name="prevActivityType" id="prev_activity_type">
+					<input hidden type="text" name="prevActivityName" id="prev_activity_name">
+
+					<h3 class="activity_form_name"><%- t('name.title', { ns : 'activities' }) %></h3>
+					<input type="text" class="name_field" name="activityName" id="activity_name" placeholder="<%- t('name.placeholder', { ns : 'activities' }) %>" required>
 					<div style="width: 100%; display: flex; align-items: center; gap: 10px;">
 						<b><%- t('activity.type.title', { ns : 'activities' }) %></b>
-						<select class="activityTypeSelector" name="type" required>
+						<select class="activityTypeSelector" name="type" id="activity_type" onchange="changeActivityType()" required>
+							<!-- Default 'no selected' option -->
+							<option value="\" selected disabled hidden><%- t('activity.type.select', { ns : 'activities' }) %>
 	                    </select>
 					</div>
-                    <fieldset id="new_activity_extras">
+                    <fieldset id="activity_extras">
+
                     </fieldset>
-                    <input type="submit" value="<%- t('add.title', { ns : 'activities' }) %>">
-                    <span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-                    <span class="error"></span>
-                </form>
-            </div>
+                    <br>
+					<input type="submit" id="activity_submit" value="">
+
+				</form>
+			</div>
+
 			<div id="import_activity_tab" class="subform" style="display: none;">
                 <form id="import_activity_form">
-                    <input type="hidden" name="test">
 					<h3><%- t('name.placeholder', { ns : 'activities' }) %></h3>
-                    <input type="text" class="name_field" name="name" placeholder="<%- t('name.placeholder', { ns : 'activities' }) %>" required>
+                    <input type="text" class="name_field" name="activityName" placeholder="<%- t('name.placeholder', { ns : 'activities' }) %>" required>
                     <h3><%- t('import.message', { ns : 'activities' }) %></h3>
 					<input name="jsonFile" type="file" accept=".json" required>
-                    <input type="submit" value="<%- t('import.title', { ns : 'activities' }) %>">
-                    <span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-                    <span class="error"></span>
+                    <input type="submit" value="<%- t('import.tab', { ns : 'activities' }) %>">
                 </form>
             </div>
-            <div id="existing_activity_tab" class="subform" style="display: none;">
-                <form id="existing_activity_form">
-                    <input type="hidden" name="test">
-					<h3><%- t('name.placeholder', { ns : 'activities' }) %></h3>
-                    <input type="text" class="name_field" name="name" placeholder="<%- t('name.placeholder', { ns : 'activities' }) %>" required>
-                    <select name="type">
-                    </select>
-                    <input disabled type="submit" value="<%- t('add.title', { ns : 'activities' }) %> (Not enabled)">
-                    <span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-                    <span class="error"></span>
-                </form>
-            </div>
-        </div>
-    </div>
+
+			<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
+			<span class="error" id="activity_form_error"></span>
+		</div>
+	</div>
 </div>
 
-<div id="edit_activity" class="new_element floating">
-    <div class="floater">
-        <div class="form">
-            <form id="edit_activity_form">
-                <input type="hidden" name="test">
-                <input type="hidden" name="activity">
-                <input id="edit_activity_type" type="hidden" name="type">
-                <input id="edit_activity_name" type="text" name="name" placeholder="<%- t('name.placeholder', { ns : 'activities' }) %>" required>
-                </select>
-                <fieldset id="edit_activity_extras">
-                </fieldset>
-                <input type="submit" value="<%- t('edit.title', { ns : 'activities' }) %>">
-                <span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-                <span class="error" id="edit_activity_error"></span>
-            </form>
-        </div>
-    </div>
-</div>
+
+<script type="text/javascript" src="/activities/activitypainter.js"></script>
+<script type="text/javascript" src="/activities/limesurveypainter.js"></script>
+<script type="text/javascript" src="/activities/rageanalyticspainter.js"></script>
+<script type="text/javascript" src="/activities/miniopainter.js"></script>
+<script type="text/javascript" src="/activities/rageminiopainter.js"></script>
+<script type="text/javascript" src="/activities/gameplaypainter.js"></script>
+<script type="text/javascript" src="/activities/manualpainter.js"></script>
+<script type="text/javascript" src="/activities/ltitoolpainter.js"></script>
+<script type="text/javascript" src="/activities/imspackagepainter.js"></script>
 
 <script type="text/javascript">
+	// Ids for the data-* attributes of each activity card
+	const ACTIVITY_DATA_ID_KEY = "activityId"
+	const ACTIVITY_DATA_NAME_KEY = "activityName"
+
+	// Id of the session that opened the activity menu
+	let currSessionId = null;
 	let downloadActivityId = null;
-    // Menus
+
+
+	// Menus
 
     $(document).ready(function() {
         let painters = Object.keys(PainterFactory.Painters);
 
-		Simva.getActivityTypes(function(error, activitytypes) {
-			// Add a default 'no selected' option
-			$('#new_activity_form select[name="type"]').append("<option value=\"\" selected disabled hidden><%- t('activity.type.select', { ns : 'activities' }) %></option>");
-			for (var i = 0; i < activitytypes.length; i++) {
-				if (activitytypes[i].commun && PainterFactory.Painters["activity"]) {
-					PainterFactory.Painters["activity"].commun = activitytypes[i].commun;
-					PainterFactory.Painters["activity"].communSpecific = activitytypes[i].communSpecific;
+		// Get all the available activity types and store extra info in the activityPainters
+		Simva.getActivityTypes(function(error, result) {
+			result.forEach((activityTypeInfo) => {
+				if (activityTypeInfo.commun && PainterFactory.Painters["activity"]) {
+					PainterFactory.Painters["activity"].commun = activityTypeInfo.commun;
+					PainterFactory.Painters["activity"].communSpecific = activityTypeInfo.communSpecific;
 				}
-				if (PainterFactory.Painters[activitytypes[i].activity_type]) {
-					PainterFactory.Painters[activitytypes[i].activity_type].setUtils(activitytypes[i].activity_utils);
-					PainterFactory.Painters[activitytypes[i].activity_type].simple_name = activitytypes[i].name;
-					PainterFactory.Painters[activitytypes[i].activity_type].description = activitytypes[i].description;
-					PainterFactory.Painters[activitytypes[i].activity_type].commun = activitytypes[i].commun;
-					PainterFactory.Painters[activitytypes[i].activity_type].communSpecific = activitytypes[i].communSpecific;
-					PainterFactory.Painters[activitytypes[i].activity_type].specific = activitytypes[i].specific;
-					let row = `<option value="${activitytypes[i].activity_type}">${PainterFactory.Painters[activitytypes[i].activity_type].simple_name}</option>`;
-					$('#new_activity_form select[name="type"]').append(row);
+
+				if (PainterFactory.Painters[activityTypeInfo.activity_type]) {
+					// data-* attributes are case-insensitive, so they must be set in kebab-case so the browser converts them to camelCase
+					PainterFactory.Painters[activityTypeInfo.activity_type].ACTIVITY_DATA_ID_KEY = "activity-id"
+					PainterFactory.Painters[activityTypeInfo.activity_type].ACTIVITY_DATA_NAME_KEY = "activity-name"
+
+					PainterFactory.Painters[activityTypeInfo.activity_type].setUtils(activityTypeInfo.activity_utils);
+					PainterFactory.Painters[activityTypeInfo.activity_type].simple_name = activityTypeInfo.name;
+					PainterFactory.Painters[activityTypeInfo.activity_type].description = activityTypeInfo.description;
+					PainterFactory.Painters[activityTypeInfo.activity_type].commun = activityTypeInfo.commun;
+					PainterFactory.Painters[activityTypeInfo.activity_type].communSpecific = activityTypeInfo.communSpecific;
+					PainterFactory.Painters[activityTypeInfo.activity_type].specific = activityTypeInfo.specific;
+					
+					let row = `<option value="${activityTypeInfo.activity_type}">${PainterFactory.Painters[activityTypeInfo.activity_type].simple_name}</option>`;
+					$('#activity_type').append(row);
 				}
-			}
+			});
+			
 			$('#new_activity_extras').empty();
 
-			Simva.getAllocatorTypes(function(error, allocatortypes) {
-				for (var i = 0; i < allocatortypes.length; i++) {
-					if (AllocatorFactory.Painters[allocatortypes[i].allocator_type]) {
-						AllocatorFactory.Painters[allocatortypes[i].allocator_type].simple_name = allocatortypes[i].name;
-						AllocatorFactory.Painters[allocatortypes[i].allocator_type].description = allocatortypes[i].description;
-						AllocatorFactory.Painters[allocatortypes[i].allocator_type].type_translated = allocatortypes[i].type_t;
-						AllocatorFactory.Painters[allocatortypes[i].allocator_type].add_message = allocatortypes[i].add_message;
-						AllocatorFactory.Painters[allocatortypes[i].allocator_type].add_error = allocatortypes[i].add_error;
-						AllocatorFactory.Painters[allocatortypes[i].allocator_type].type_title = allocatortypes[i].type_title;
-						AllocatorFactory.Painters[allocatortypes[i].allocator_type].participant_title = allocatortypes[i].participant_title;
-						AllocatorFactory.Painters[allocatortypes[i].allocator_type].test_title = allocatortypes[i].test_title;
-						AllocatorFactory.Painters[allocatortypes[i].allocator_type].add_title = allocatortypes[i].add_title;
-						let row = `<div class="row"><input type="radio" name="type" id="allocator_${allocatortypes[i].allocator_type}" value="${allocatortypes[i].allocator_type}"><label for="allocator_${allocatortypes[i].allocator_type}"><span class="name">${AllocatorFactory.Painters[allocatortypes[i].allocator_type].simple_name}</span><span class="description">${AllocatorFactory.Painters[allocatortypes[i].allocator_type].description}</span></label></div>`;
+			Simva.getAllocatorTypes(function(error, result) {
+				result.forEach((allocatorType) => {
+					if (AllocatorFactory.Painters[allocatorType.allocator_type]) {
+						AllocatorFactory.Painters[allocatorType.allocator_type].simple_name = allocatorType.name;
+						AllocatorFactory.Painters[allocatorType.allocator_type].description = allocatorType.description;
+						AllocatorFactory.Painters[allocatorType.allocator_type].type_translated = allocatorType.type_t;
+						AllocatorFactory.Painters[allocatorType.allocator_type].add_message = allocatorType.add_message;
+						AllocatorFactory.Painters[allocatorType.allocator_type].add_error = allocatorType.add_error;
+						AllocatorFactory.Painters[allocatorType.allocator_type].type_title = allocatorType.type_title;
+						AllocatorFactory.Painters[allocatorType.allocator_type].participant_title = allocatorType.participant_title;
+						AllocatorFactory.Painters[allocatorType.allocator_type].test_title = allocatorType.test_title;
+						AllocatorFactory.Painters[allocatorType.allocator_type].add_title = allocatorType.add_title;
+						let row = `<div class="row"><input type="radio" name="type" id="allocator_${allocatorType.allocator_type}" value="${allocatorType.allocator_type}"><label for="allocator_${allocatorType.allocator_type}"><span class="name">${AllocatorFactory.Painters[allocatorType.allocator_type].simple_name}</span><span class="description">${AllocatorFactory.Painters[allocatorType.allocator_type].description}</span></label></div>`;
 						$('#change_allocator_content').append(row);
 					}
-				}
+				});
 				reloadSimlet();
 			});
 		});
 
-		// Use event delegation to ensure the handler works even if the form is re-rendered
-		$(document).on('change', '#new_activity_form select[name="type"]', function(event) {
-			$('#new_activity_extras').empty();
-			var type = $(this).val();
-			if (PainterFactory.Painters[type]) {
-				$('#new_activity_extras').append(`${PainterFactory.Painters[type].description}\n`);
-				PainterFactory.Painters[type].getExtraForm((error, result) => {
-					if (!error) {
-						$('#new_activity_extras').append(result);
-					}
-				});
-			}
-		});
-
-		$(document).on('submit', "#import_activity_form", function(event) {
-			let currentform = this;
+		// When submitting the add/edit activity form
+        $(document).on('submit','#activity_form', function(event) {
+			let errorbox = $('#activity_form_error');
 			let form = Utils.getFormData($(this));
 			Utils.toggleSubmit();
-			let errorbox = $('#import_activity_form .error');
-			const fileInput = $(this).find('input[name="jsonFile"]').get(0);
-			if(fileInput && fileInput.files[0]){
-				var reader = new FileReader();
-				reader.onload = function(){
-					try {
-						let raw = reader.result;
-						raw = raw.substr(raw.indexOf(',') + 1);
-						var newActivity = raw;
-						Simva.importActivity(simletId, form.test, {file: newActivity, activity_name: form.name}, function(importError, result) {
-							Utils.toggleSubmit();
-							if (importError) {
-								errorbox.text(importError.responseJSON ? importError.responseJSON.message : importError.message || importError);
-								return;
-							} else {
-								$("#add_activity").removeClass("shown");
-								reloadSimlet();
-								Utils.toggleFormInFloating('add_activity');
-							}
-						});
-					} catch (parseError) {
-						console.error('Import error:', parseError);
-						Utils.toggleSubmit();
-						errorbox.text("<%- t('import.error.invalid_file', { ns : 'activities' }) %> " + (parseError.message ? (': ' + parseError.message) : ''));
-					}
-				};
-				reader.readAsDataURL(fileInput.files[0]);
-			} else {
-				errorbox.text("<%- t('import.upload.error', { ns : 'activities' }) %>");
-				Utils.toggleSubmit();
-			}
-			return false;
-		});
 
-		$(document).on('submit', "#new_activity_form", function(event) {
-			   event.preventDefault();
-			   let currentform = this;
-			   let form = Utils.getFormData($(this));
-			   Utils.toggleSubmit();
-			   let errorbox = $(this).find('.error');
-
-			   // Require the user to select a type
+			// Creating new activity
+			if (form.editingActivityId == null || form.editingActivityId == "") {
+				// Require the user to select a type
 			   if (!form.type) {
 				   errorbox.text("<%- t('activity.type.select_required', { ns : 'activities' }) %>");
 				   Utils.toggleSubmit();
@@ -186,16 +140,17 @@
 			   }
 
 			   const addActivity = function() {
-				   PainterFactory.Painters[form.type].extractInformation('#new_activity_form', function(error, activity) {
+				   PainterFactory.Painters[form.type].extractInformation('#activity_form', function(error, activity) {
 					   if (error) {
 						   errorbox.text(error);
-					   } else {
-						   Simva.addActivityToSession(simletId, form.test, activity, function(error, result) {
+					   } 
+					   else {
+						   Simva.addActivityToSession(simletId, currSessionId, activity, function(error, result) {
 							   Utils.toggleSubmit();
 							   if (error && error.responseJSON) {
 								   errorbox.text(error.responseJSON.message);
 							   } else {
-								   Utils.toggleFormInFloating('add_activity');
+								   Utils.toggleFormInFloating('activity_form_menu');
 								   reloadSimlet();
 							   }
 						   });
@@ -213,102 +168,136 @@
 			   else {
 				   addActivity();
 			   }
-
+			   
 			   return false;
-		});
-
-		$(document).on('submit', "#edit_activity_form", function(event) {
-			event.preventDefault();
-			let currentform = this;
-			let form = Utils.getFormData($(this));
-			Utils.toggleSubmit();
-			let errorbox = $(this).find('.error');
-			let test = tests.filter(item => 
-				item.session_id == form.test
-			)[0];
-			if (!test || !test.completeActivities) {
-				errorbox.text("Test or activities not found");
-				Utils.toggleSubmit();
-				return false;
 			}
-			let activities = test.completeActivities;
-			let activity = activities.filter(activity => 
-				activity.activity_id == form.activity
-			)[0];
-			if (!activity) {
-				errorbox.text("Activity not found");
-				Utils.toggleSubmit();
-				return false;
-			}
-			PainterFactory.Painters[form.type].extractEditInformation('#edit_activity_form', activity, function(error, updatedActivity) {
-				if (error) {
-					errorbox.text(error);
-				} else {
-					if (Object.keys(updatedActivity).length == 0) {
-						errorbox.text("<%- t('edit.no_changes.message', { ns : 'SIMLETs' }) %>");
-						Utils.toggleSubmit();
-					} else {
-						Simva.updateActivity(simletId, form.test, form.activity, updatedActivity, function(error, result) {
-							Utils.toggleSubmit();
-							if (error && error.responseJSON) {
-								errorbox.text(error.responseJSON.message);
-							} else {
-								Utils.toggleFormInFloating('iframe_floating');
-								reloadSimlet();
-							}
-						});
-					}
+			// Editing activity
+			else {
+				let activity = getActivityFromId(form.editingActivityId);
+				if (activity == null) {
+					errorbox.text("Activity not found");
+					Utils.toggleSubmit();
+					return false;
 				}
-			});
+
+				PainterFactory.Painters[form.type].extractEditInformation('#activity_form', activity, function(error, updatedActivity) {
+					if (error) {
+						errorbox.text(error);
+					} else {
+						if (Object.keys(updatedActivity).length == 0) {
+							errorbox.text("<%- t('edit.no_changes.message', { ns : 'SIMLETs' }) %>");
+							Utils.toggleSubmit();
+						} else {
+							Simva.updateActivity(simletId, currSessionId, form.editingActivityId, updatedActivity, function(error, result) {
+								Utils.toggleSubmit();
+								if (error && error.responseJSON) {
+									errorbox.text(error.responseJSON.message);
+								} else {
+									Utils.toggleFormInFloating('activity_form_menu');
+									reloadSimlet();
+								}
+							});
+						}
+					}
+				});
+			}
+			
 			return false;
 		});
 
-        
+		// When submitting the import activity form
+		$(document).on('submit', "#import_activity_form", function(event) {
+			let form = Utils.getFormData($(this));
+			Utils.toggleSubmit();
+			let errorbox = $('#activity_form_error');
+			const fileInput = $(this).find('input[name="jsonFile"]').get(0);
+			if(fileInput && fileInput.files[0]){
+				let reader = new FileReader();
+				reader.onload = function(){
+					try {
+						let raw = reader.result;
+						raw = raw.substr(raw.indexOf(',') + 1);
+						const newActivity = raw;
+
+						Simva.importActivity(simletId, currSessionId, {file: newActivity, activity_name: form.activityName}, function(importError, result) {
+							Utils.toggleSubmit();
+							if (importError) {
+								errorbox.text(importError.responseJSON ? importError.responseJSON.message : importError.message || importError);
+								return;
+							} else {
+								reloadSimlet();
+								Utils.toggleFormInFloating('activity_form_menu');
+							}
+						});
+					} catch (parseError) {
+						console.error('Import error:', parseError);
+						Utils.toggleSubmit();
+						errorbox.text("<%- t('import.error.invalid_file', { ns : 'activities' }) %> " + (parseError.message ? (': ' + parseError.message) : ''));
+					}
+				};
+				reader.readAsDataURL(fileInput.files[0]);
+			} else {
+				errorbox.text("<%- t('import.upload.error', { ns : 'activities' }) %>");
+				Utils.toggleSubmit();
+			}
+			return false;
+		});
+
     });
 
-	const openNewActivityTab = function() {
-		Utils.changeTab($('#new_activity_tab_button'), 'add_activity_form','new_activity_tab');
+
+    const openActivityForm = function(sessionId, activityId) {
+		// Always open form in the create/edit common tab
+		Utils.changeTab($('#activity_name_desc_tab_button'), 'activity_form_form','activity_name_desc_tab');
 
 		// Hide the activity type info and select the placeholder option
 		$("#new_activity_form").find("fieldset").empty();
 		$(".activityTypeSelector option").eq(0).prop("selected", true);
-	}
 
-    let openActivityForm = function(test) {
-		// Always open form in the new activity 
-		openNewActivityTab();
-		Utils.toggleFormInFloating('add_activity');
-		
-		$('#new_activity_form input[name="test"]').val(test);
-		$('#import_activity_form input[name="test"]').val(test);
-		$('#existing_activity_form span[class="test"]').val(test);
 
-		$('#new_activity_form input[name="name"]').val("");
-		$('#gameplay_game_uri').val("");
-	}
+		Utils.toggleFormInFloating('activity_form_menu');
 
-    const openEditActivityForm = function(activityId) {
-		let activity = getActivityFromId(activityId);
-		Utils.toggleFormInFloating('edit_activity');
-		document.getElementById("edit_activity_error").innerHTML = "";
-		var inputElement = document.getElementById('edit_activity_name');
-		inputElement.value = activity.activity_name;
-		var inputElement = document.getElementById('edit_activity_type');
-		inputElement.value = activity.activity_type;
-		$('#edit_activity_extras').empty();
-		$('#edit_activity_extras').append(`${PainterFactory.Painters[activity.activity_type].description}\n`);
-		$('#edit_activity_extras').append(PainterFactory.Painters[activity.activity_type].getEditExtraForm());
-		PainterFactory.Painters[activity.activity_type].updateInputEditExtraForm(activity);
-		$('#edit_activity_form input[name="test"]').val(activity.session_id);
-		$('#edit_activity_form span[class="error"]').text("");
-		$('#edit_activity_form input[name="activity"]').val(activity.activity_id);
+		$('#activity_form_error').text("");
 
+		$('#edit_activity_id').val(activityId);
+		currSessionId = sessionId;
+
+		if (activityId == null) {
+			// Show the add new/import tabs
+			$("#add_activity_tabs").show();
+
+			$("#activity_form_title").text("<%- t('add.title', { ns : 'activities' }) %>");
+			$("#activity_submit").val("<%- t('add.submit', { ns : 'activities' }) %>");
+
+			$('#prev_activity_name').val("");
+			$('#prev_activity_type').val("");
+			$('#activity_name').val("");
+		}
+		else {
+			const activity = getActivityFromId(activityId);
+
+			// Hide the add new/import tabs (only the name/description/tags tab is needed when editing session)
+			$("#add_session_tabs").hide();
+
+			$("#activity_form_title").text("<%- t('edit.title', { ns : 'activities' }) %>");
+			$("#activity_submit").val("<%- t('edit.submit', { ns : 'activities' }) %>");
+
+			$('#prev_activity_name').val(activity.activity_name);
+			$('#prev_activity_type').val(activity.activity_type);
+			
+			$('#activity_name').val(activity.activity_name);
+			$('#activity_type').val(activity.activity_type);
+
+			// Paint the extra info depending on the activity type
+			changeActivityType();
+			PainterFactory.Painters[activity.activity_type].updateInputEditExtraForm(activity);
+		}
 	}
 
 	const openActivityDownloadForm = function(activityId) {
 		Utils.toggleFormInFloating('download_data_menu');
 		Utils.changeTab(null, 'download_data_form','download_activity_data');
-		
+
         downloadActivityId = activityId;
 		const activity = getActivityFromId(activityId);
 
@@ -331,16 +320,47 @@
 		}
 	}
 
-	// TODO: add shared listeners using event delegation
 
+	// Activities buttons shared listeners using event delegation to ensure 
+	// the handler works even if element is added after the document ready event
+
+	$(document).on('click', ".activityTopActions .activityDownload", function(e) {
+		const data = $(this).closest(".activityTopActions").data();
+		openActivityDownloadForm(data[ACTIVITY_DATA_ID_KEY])
+	});
+
+	$(document).on('click', ".activityTopActions .icon-edit", function(e) {
+		const data = $(this).closest(".activityTopActions").data();
+		const sessionData = $(this).closest(".test").data();
+		openActivityForm(sessionData[SESSION_DATA_ID_KEY], data[ACTIVITY_DATA_ID_KEY]);
+	});
+
+	$(document).on('click', ".activityTopActions .icon-export", function(e) {
+		const data = $(this).closest(".activityTopActions").data();
+		const sessionData = $(this).closest(".test").data();
+		PainterFactory.Painters['activity'].exportActivity(data[ACTIVITY_DATA_ID_KEY], sessionData[SESSION_DATA_ID_KEY], simletId);
+	});
+
+	$(document).on('click', ".activityTopActions .icon-url", function(e) {
+		const data = $(this).closest(".activityTopActions").data();
+		const sessionData = $(this).closest(".test").data();
+		PainterFactory.Painters['activity'].getTMonUrl(data[ACTIVITY_DATA_ID_KEY], sessionData[SESSION_DATA_ID_KEY], simletId)
+	});
+
+	$(document).on('click', ".activityTopActions .icon-delete", function(e) {
+		const data = $(this).closest(".activityTopActions").data();
+		const sessionData = $(this).closest(".test").data();
+		deleteActivity(data[ACTIVITY_DATA_ID_KEY], data[ACTIVITY_DATA_NAME_KEY], sessionData[SESSION_DATA_ID_KEY])
+	});
+	
 	
 	// Functionality
 
-    const deleteActivity = function(activityid, activityname, sessionId) {
+    const deleteActivity = function(activityId, activityName, sessionId) {
 		let test = getSessionFromId(sessionId);
 		let testName = test && test.session_name ? test.session_name : sessionId;
-		if (confirm(`<%- t('delete.confirm', { ns : 'activities', activity : '${activityname}', session: '${testName}' , SIMLET : '${simlet.simlet_name}' }) %>`)) {
-			Simva.deleteActivity(simletId, sessionId, activityid, function(error, result) {
+		if (confirm(`<%- t('delete.confirm', { ns : 'activities', activity : '${activityName}', session: '${testName}' , SIMLET : '${simlet.simlet_name}' }) %>`)) {
+			Simva.deleteActivity(simletId, sessionId, activityId, function(error, result) {
 				reloadSimlet();
 			});
 		}
@@ -366,7 +386,7 @@
 		PainterFactory.Painters['activity'].downloadBackup(downloadActivityId);
 	}
 
-	
+
 	// Render
 
 	/**
@@ -377,9 +397,6 @@
 	 */
     const paintSessionActivities = async function(session, activities, participants) {
 		window.participants = participants;
-		const isCurrentUserParticipant = currentUser.user_id !== null && participants.some(function(p) {
-			return p.user_id === currentUser.user_id || String(p.user_id) === String(currentUser.user_id);
-		});
 		$(`#test_${session.session_id} .activities`).empty();
 
 		if (activities.length === 0) {
@@ -415,14 +432,31 @@
 		}
 	}
 
-</script>
 
-<script type="text/javascript" src="/activities/activitypainter.js"></script>
-<script type="text/javascript" src="/activities/limesurveypainter.js"></script>
-<script type="text/javascript" src="/activities/rageanalyticspainter.js"></script>
-<script type="text/javascript" src="/activities/miniopainter.js"></script>
-<script type="text/javascript" src="/activities/rageminiopainter.js"></script>
-<script type="text/javascript" src="/activities/gameplaypainter.js"></script>
-<script type="text/javascript" src="/activities/manualpainter.js"></script>
-<script type="text/javascript" src="/activities/ltitoolpainter.js"></script>
-<script type="text/javascript" src="/activities/imspackagepainter.js"></script>
+	$(document).on('change', '#new_activity_form select[name="type"]', function(event) {
+			if (PainterFactory.Painters[selectedType]) {
+				$('#activity_extras').append(`${PainterFactory.Painters[selectedType].description}\n`);
+			}
+		});
+	
+	const changeActivityType = function() {
+		const selectedType = $("#activity_type").val();
+		$('#activity_extras').empty();
+
+		if (PainterFactory.Painters[selectedType]) {
+			$('#activity_extras').append(`${PainterFactory.Painters[selectedType].description}\n`);
+	
+			if ($('#edit_activity_id').val() == null) {
+				PainterFactory.Painters[selectedType].getExtraForm((error, result) => {
+					if (!error) {
+						$('#activity_extras').append(result);
+					}
+				});
+			}
+			else {
+				$('#activity_extras').append(PainterFactory.Painters[selectedType].getEditExtraForm());
+			}
+		}
+	}
+
+</script>

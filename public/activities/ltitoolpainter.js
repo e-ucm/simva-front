@@ -83,7 +83,7 @@ var LTIToolPainter = {
 		let formdata = Utils.getFormData(jform);
 		let method = $('#new_activity_extras .tab.selected').attr('method');
 
-		activity.name = formdata.name;
+		activity.name = formdata.activityName;
 		activity.activity_type = this.supportedType;
 
 		switch(method){
@@ -105,8 +105,8 @@ var LTIToolPainter = {
 		let formdata = Utils.getFormData(jform);
 		let activity = {};
 
-		if(actualActivity.activity_name !== formdata.name) {
-			activity.name = formdata.name;
+		if(actualActivity.activity_name !== formdata.activityName) {
+			activity.name = formdata.activityName;
 		}
 		callback(null, activity);
 	},

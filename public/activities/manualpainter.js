@@ -95,7 +95,7 @@ var ManualActivityPainter = {
 		console.log('FormData:', formdata);
 		console.log('Method:', method);
 
-		activity.activity_name = formdata.name;
+		activity.activity_name = formdata.activityName;
 		activity.activity_type = this.supportedType;
 		activity.manual_user_managed = formdata.user_managed === 'on';
 		activity.activity_trace_storage = true; // Storage is always enabled for manual activities
@@ -139,8 +139,8 @@ var ManualActivityPainter = {
 		console.log('FormData:', formdata);
 		console.log('actualActivity:', actualActivity);
 
-		if(actualActivity.activity_name !== formdata.name) {
-			activity.activity_name = formdata.name;
+		if(actualActivity.activity_name !== formdata.activityName) {
+			activity.activity_name = formdata.activityName;
 		}
     
 		const actualUserManaged = actualActivity.manual_user_managed;

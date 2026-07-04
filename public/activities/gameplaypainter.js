@@ -76,22 +76,27 @@ var GameplayActivityPainter = {
 	},
 
 	updateInputEditExtraForm(activity) {
-		var gameplay_trace_storage = document.getElementById('edit_gameplay_trace_storage');
+		let gameplay_trace_storage = document.getElementById('edit_gameplay_trace_storage');
 		gameplay_trace_storage.checked = Boolean(activity.activity_trace_storage);
-		var gameplay_backup = document.getElementById('edit_gameplay_backup');
+		
+		let gameplay_backup = document.getElementById('edit_gameplay_backup');
 		gameplay_backup.checked = Boolean(activity.game_backup);
-		var gameplay_scorm_xAPI = document.getElementById('edit_gameplay_scorm_xAPI');
+		
+		let gameplay_scorm_xAPI = document.getElementById('edit_gameplay_scorm_xAPI');
 		gameplay_scorm_xAPI.checked = Boolean(activity.game_scorm_xapi);
-		var gameplay_restarted = document.getElementById('edit_gameplay_restarted');
+		
+		let gameplay_restarted = document.getElementById('edit_gameplay_restarted');
 		gameplay_restarted.checked = Boolean(activity.activity_can_be_restarted);
-		var gameplay_game_uri = document.getElementById('edit_gameplay_game_uri');
+
+		let gameplay_game_uri = document.getElementById('edit_gameplay_game_uri');
 		gameplay_game_uri.value = activity.game_url || "";
+
 		if (activity.game_type === 'DESKTOP') {
-			let desktopTab = document.querySelector('#edit_activity_extras .tab[method="DESKTOP"]');
-			if (desktopTab) Utils.changeTab(desktopTab, 'edit_activity_extras', 'edit_gameplay_desktop');
+			let desktopTab = document.querySelector('#edit_gameplay_tabs .tab[method="DESKTOP"]');
+			if (desktopTab) Utils.changeTab(desktopTab, 'edit_gameplay_tabs', 'edit_gameplay_desktop');
 		} else {
-			let webTab = document.querySelector('#edit_activity_extras .tab[method="WEB"]');
-			if (webTab) Utils.changeTab(webTab, 'edit_activity_extras', 'edit_gameplay_web');
+			let webTab = document.querySelector('#edit_gameplay_tabs .tab[method="WEB"]');
+			if (webTab) Utils.changeTab(webTab, 'edit_gameplay_tabs', 'edit_gameplay_web');
 		}
 	},
 
@@ -106,7 +111,7 @@ var GameplayActivityPainter = {
 		console.log('FormData:', formdata);
 		console.log('Method:', method);
 
-		activity.activity_name = formdata.name;
+		activity.activity_name = formdata.activityName;
 		activity.activity_type = this.supportedType;
 		activity.activity_trace_storage = formdata.trace_storage === 'on';
 		activity.game_backup = formdata.backup === 'on';
@@ -154,8 +159,8 @@ var GameplayActivityPainter = {
 		let method = $('#edit_activity_extras .tab.selected').attr('method') || 'WEB';
 		let selectedGameType = method === 'DESKTOP' ? 'DESKTOP' : 'WEB';
 
-		if(actualActivity.activity_name !== formdata.name) {
-			activity.activity_name = formdata.name;
+		if(actualActivity.activity_name !== formdata.activityName) {
+			activity.activity_name = formdata.activityName;
 		}
 		const actualTraceStorage = actualActivity.activity_trace_storage;
 		let trace_storage = formdata.trace_storage === 'on';
@@ -213,7 +218,7 @@ var GameplayActivityPainter = {
 	},
 	
 	downloadXasuConfig: function(activityId, studyId){
-		var content = JSON.stringify({
+		const content = JSON.stringify({
 			online: true,
 			simva :true,
 			homepage:`${Simva.url}`,
@@ -230,7 +235,7 @@ var GameplayActivityPainter = {
 			}
 		}, null, 2);
 
-		var filename = "tracker_config.json";
+		const filename = "tracker_config.json";
 
 		Utils.download(filename, content);
 	},

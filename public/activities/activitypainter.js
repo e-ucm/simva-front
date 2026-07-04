@@ -161,8 +161,8 @@ var ActivityPainter = {
 		console.log('Form:', form);
 		console.log('FormData:', formdata);
 		console.log('actualActivity:', actualActivity);
-		if(actualActivity.activity_name !== formdata.name) {
-			activity.activity_name = formdata.name;
+		if(actualActivity.activity_name !== formdata.activityName) {
+			activity.activity_name = formdata.activityName;
 		}
 		callback(null, activity);
 	},
@@ -178,7 +178,7 @@ var ActivityPainter = {
 		console.log('Form:', form);
 		console.log('FormData:', formdata);
 
-		activity.activity_name = formdata.name;
+		activity.activity_name = formdata.activityName;
 		activity.activity_type = this.supportedType;
 
 		callback(null, activity);
@@ -219,16 +219,16 @@ var ActivityPainter = {
 
 	paintActivityTopBar: function(activity, extraItems) {
 		return `<div class="top"><h3>${activity.activity_name}</h3>
-			<div class="activityTopActions">
-				<div class="activityDownload text-with-icon icon-download" title="${this.commun.download_tooltip}" onclick="openActivityDownloadForm(${activity.activity_id})"><b>${this.commun.download_title}</b></div>
+			<div class="activityTopActions" data-${this.ACTIVITY_DATA_ID_KEY}=${activity.activity_id} data-${this.ACTIVITY_DATA_NAME_KEY}=${activity.activity_name}>
+				<div class="activityDownload text-with-icon icon-download" title="${this.commun.download_tooltip}"><b>${this.commun.download_title}</b></div>
 				
 				<div class="kebab">
 					<ul class="kebab-dropdown">
-						<li class="text-with-icon icon-edit" title="${this.commun.edit_title}" onclick="openEditActivityForm('${activity.activity_id}')">${this.commun.edit_title}</li>
-						<li class="text-with-icon icon-export" title="${this.commun.export_title}" onclick="PainterFactory.Painters['activity'].exportActivity('${activity.activity_id}','${activity.session_id}','${activity.study}')">${this.commun.export_title}</li>
-						<li class="text-with-icon icon-url" title="${this.commun.tmon_title}" onclick="PainterFactory.Painters['activity'].getTMonUrl('${activity.activity_id}','${activity.session_id}','${activity.study}')">${this.commun.tmon_title}</li>
+						<li class="text-with-icon icon-edit" title="${this.commun.edit_title}">${this.commun.edit_title}</li>
+						<li class="text-with-icon icon-export" title="${this.commun.export_title}">${this.commun.export_title}</li>
+						<li class="text-with-icon icon-url" title="${this.commun.tmon_title}">${this.commun.tmon_title}</li>
 						${extraItems}
-						<li class="text-with-icon icon-delete" title="${this.commun.delete_title}" onclick="deleteActivity('${activity.activity_id}', '${activity.activity_name}', '${activity.session_id}')">${this.commun.delete_title}</li>
+						<li class="text-with-icon icon-delete" title="${this.commun.delete_title}">${this.commun.delete_title}</li>
 					</ul>
 				</div>
 			</div></div>`;

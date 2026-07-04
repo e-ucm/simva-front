@@ -6,23 +6,26 @@
     "no_activities.message": "Il n'y a pas d'activités dans ce session. Ajoutez-en une en utilisant le bouton [...] à droite",
 
     "add.title": "Ajouter une activité",
-        "add.new.title": "Nouvelle activité",
-            "add.new.web.no_url_message": "",
-        "add.existing.title": "Sélectionner parmi les existantes",
+        "add.new.tab": "Nouvelle activité",
+        "add.submit": "",
+        "add.new.web.no_url_message": "",
+
+         "import.tab": "Import",
+        "import.message": "Sélectionner le fichier à importer",
+        "import.upload.error": "Sélectionnez le fichier à importer en premier",
+        "import.error.invalid_file": "Fichier invalide",
 
     "edit.title": "Modifier",
+    "edit.submit": "",
     
     "delete.title": "Supprimer",
     "delete.confirm": "Êtes-vous sûr de vouloir supprimer l'activité '{{activity}}' de la session '{{session}}' de la SIMLET '{{SIMLET}}'?\nToutes les données relatives à l'activité seront également supprimées",
     
     "export.title": "Export",
-    "import.title": "Import",
-    "import.message": "Sélectionner le fichier à importer",
-    "import.error": "Sélectionnez le fichier à importer en premier",
-    "import.upload.error": "Sélectionnez le fichier à importer en premier",
-    "import.error.invalid_file": "Fichier invalide",
     
+    "name.title": "Nom",
     "name.placeholder": "Nom de l'activité",
+    
     "activity.type.title": "Type d'activité",
     "type.title": "Type",
 

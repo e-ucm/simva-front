@@ -35,7 +35,7 @@ var RageMinioActivityPainter = {
 		let jform = $(form);
 		let formdata = Utils.getFormData(jform);
 
-		activity.name = formdata.name;
+		activity.name = formdata.activityName;
 		activity.activity_type = this.supportedType;
 
 		callback(null, activity);
@@ -47,8 +47,8 @@ var RageMinioActivityPainter = {
 		
 		let activity = {};
 
-		if(actualActivity.activity_name !== formdata.name) {
-			activity.name = formdata.name;
+		if(actualActivity.activity_name !== formdata.activityName) {
+			activity.name = formdata.activityName;
 		}
 	
 		callback(null, activity);

@@ -148,7 +148,7 @@ var LimeSurveyPainter = {
 		console.log('FormData:', formdata);
 		console.log('Method:', method);
 
-		activity.activity_name = formdata.name;
+		activity.activity_name = formdata.activityName;
 		activity.activity_type = this.supportedType;
 		activity.activity_trace_storage = true; // Always enable trace storage for limesurvey activities
 		activity.activity_can_be_restarted = false; // Limesurvey activities cannot be restarted
@@ -203,8 +203,8 @@ var LimeSurveyPainter = {
 		console.log('FormData:', formdata);
 		console.log('actualActivity:', actualActivity);
 
-		if(actualActivity.activity_name !== formdata.name) {
-			activity.activity_name = formdata.name;
+		if(actualActivity.activity_name !== formdata.activityName) {
+			activity.activity_name = formdata.activityName;
 		}
 		let actualSurveyid=actualActivity.survey_id;
 		if(typeof(actualSurveyid) == "string") {
