@@ -1,9 +1,9 @@
 { 
-    "users.add.title": "",
+    "users.add.title": "Ajouter utilisateurs",
     
     "coordinators.title": "Coordinateurs",
         "coordinators.table.username.title": "Nom d'utilisateur",
-        "coordinators.table.permissions.title": "",
+        "coordinators.table.permissions.title": "Permissions",
 
         "coordinators.delete.title": "Supprimer",
             "coordinators.delete.confirm": "Êtes-vous sûr de vouloir supprimer le coordinateur '{{owner}}' du SIMLET '{{SIMLET}}'?",
@@ -11,16 +11,16 @@
         "coordinators.add.title": "Ajouter un coordinateur",
             "coordinators.name.title": "Nom",
             "coordinators.name.placeholder": "Nom d'utilisateur du coordinateur",
-            "coordinators.permission.placeholder": "",
-            "coordinators.permission.title": "",
-            "coordinators.permissions.full": "",
-            "coordinators.permissions.read": "",
-            "coordinators.permissions.write": "",
+            "coordinators.permission.placeholder": "Nom d'utilisateur du coordinateur",
+            "coordinators.permission.title": "Permissions",
+            "coordinators.permissions.full": "Complet",
+            "coordinators.permissions.read": "Lecture",
+            "coordinators.permissions.write": "Écriture",
             "coordinators.error.already_in": "Le coordinateur est déjà dans le SIMLET.",
-            "coordinators.error.permission": "",
-            "coordinators.error.not_found": "",
+            "coordinators.error.permission": "Permission invalide.",
+            "coordinators.error.not_found": "Le coordinateur n'a pas été trouvé.",
         
-    "searchBar.placeholder": "",
+    "searchBar.placeholder": "Recherchez un groupe par son nom ou sa description",
 
     "groups.title": "Groups",
         "groups.no_groups.message": "You have 0 groups yet. Create one using the bottom right (+) button",
@@ -58,7 +58,7 @@
                 "groups.import.input": "Fichier d'import du groupe",
                 "groups.import.submit": "Importer le groupe",
                 "groups.import.upload.error": "Sélectionnez le fichier à charger en premier",
-                "groups.import.error.invalid_file": "",
+                "groups.import.error.invalid_file": "Le fichier sélectionné n'est pas un fichier de groupe valide.",
 
         "groups.settings.groups.edit.title": "Modifier",
             "groups.edit.title": "Modifier groupe",
@@ -66,18 +66,18 @@
             "groups.edit.no_changes.message": "Aucun changement n'a été détecté avec groupe nom !",
         "groups.settings.add.title": "Ajouter des participants",
             "participants.username.placeholder": "Nom d'utilisateur du participant",
-            "participants.username.placeholder.batch": "",
+            "participants.username.placeholder.batch": "Nombre de participants à ajouter",
             
             "participants.add.existing.tab": "Ajouter existant",
                 "participants.add.existing.submit": "Ajouter existant",
                 "participants.errormessage.alreadyInGroup": "Le participant '{{participant}}' est déjà dans le groupe '{{group}}'.",
-                "participants.errormessage.notFound": "",
-                "participants.errormessage.reloadManually": "",
+                "participants.errormessage.notFound": "Le participant '{{participant}}' n'a pas été trouvé dans le groupe '{{group}}'.",
+                "participants.errormessage.reloadManually": "Rafraîchissez la page pour voir les changements dans le groupe '{{group}}'.",
 
             "participants.add.new.tab": "Ajouter un nouveau",
                 "participants.add.new.email.placeholder": "email@example.com",
                 "participants.add.new.password.placeholder": "Mot de passe",
-                "participants.add.new.groups.add.new.submit": "Cree participant",
+                "participants.add.new.groups.add.new.submit": "Ajouter participant",
 
             "participants.add.batch.tab": "Ajouter un lot de jeton",
                 "participants.add.batch.number.title": "Combien ?",

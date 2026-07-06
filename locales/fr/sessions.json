@@ -3,9 +3,9 @@
     "single.title": "Session",
     "no_sessions.message": "Il n'y a pas de sessions pour cette SIMLET. Essayez d'en ajouter une en utilisant le bouton en bas à droite (+)",
 
-    "searchBar.placeholder": "",
-    "filters.status.title": "",
-        "filters.status.all": "",
+    "searchBar.placeholder": "Rechercher une session par nom ou description",
+    "filters.status.title": "Statut",
+        "filters.status.all": "Tous",
 
     "createdAt": "Créé le",
     "updatedAt": "Mis à jour le",
@@ -17,11 +17,11 @@
         "download.session.title": "Télécharger les données de la session",
         "download.test.title": "Télécharger les données de test",
             "download.test.description": "Télécharger vos propres données de trace de test pour cette session.",
-    "download.description": "",
+    "download.description": "Télécharger les données pour cette session.",
 
     "add.title": "Ajouter une session",
         "add.new.tab": "Ajouter nouveau",
-        "status.title": "",
+        "status.title": "Statut initial",
         "add.submit": "Ajouter une session",
     
         "import.tab": "Importer une session",
@@ -74,8 +74,8 @@
     "reset_tester.title": "Réinitialiser testeur (retirer et remettre)",
     "unset_tester.title": "Me retirer comme testeur",
 
-    "status.description": "",
-        "active.description": "",
-        "paused.description": "",
-        "finished.description": ""
+    "status.description": "Dépend du statut de la session, les participants peuvent ou non jouer le SIMLET. Le statut peut être modifié à tout moment.",
+        "active.description": "Une session active est une session qui est actuellement en cours d'exécution et qui peut être jouée par les participants.",
+        "paused.description": "Une session en pause est une session qui est temporairement interrompue et ne peut pas être jouée par les participants.",
+        "finished.description": "Une session terminée est une session qui a été complétée et ne peut plus être jouée par les participants."
 }

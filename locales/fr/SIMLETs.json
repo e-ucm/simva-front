@@ -6,22 +6,23 @@
     "no_simlets.message": "Vous n'avez pas encore de SIMLETs. Créez-en un en utilisant le bouton en bas à droite (+)",
     "no_archived.message": "Pas de SIMLETs archivés. Les SIMLETs archivés apparaîtront ici.",
 
-    "searchBar.placeholder": "",
-    "filters.sortBy.title": "",
-        "filters.sortBy.id": "",
-        "filters.sortBy.name.asc": "",
-        "filters.sortBy.name.desc": "",
-        "filters.sortBy.createdAt.asc": "",
-        "filters.sortBy.createdAt.desc": "",
-        "filters.sortBy.updatedAt.asc": "",
-        "filters.sortBy.updatedAt.desc": "",
+    "searchBar.placeholder": "Recherchez un SIMLET par nom ou description",
+    "filters.sortBy.title": "Ordonner par",
+        "filters.sortBy.id": "Défaut",
+        "filters.sortBy.name.asc": "Nom (A-Z)",
+        "filters.sortBy.name.desc": "Nom (Z-A)",
+        "filters.sortBy.createdAt.asc": "Date de création (ancien)",
+        "filters.sortBy.createdAt.desc": "Date de création (récent)",
+        "filters.sortBy.updatedAt.asc": "Date de mise à jour (ancien)",
 
-    "filters.tags.title": "",
-        "filters.tags.selected.title": "",
-        "filters.tags.searchBar.placeholder": " ",
-    
-    "search.no_matches": "",
-        
+        "filters.sortBy.updatedAt.desc": "Date de mise à jour (récent)",
+
+    "filters.tags.title": "Tags",
+        "filters.tags.selected.title": "Tags sélectionnés",
+        "filters.tags.searchBar.placeholder": "Rechercher un tag...",
+
+    "search.no_matches": "Aucune correspondance trouvée",
+
     "card.createdAt": "Crée le",
     "card.updatedAt": "Mis à jour le",
     "card.sessions": "Sessions",
@@ -80,7 +81,6 @@
         "sessions.tab.title": "Sessions",
         "users.tab.title": "Users",
 
-        
     "scheduler.noSIMLET.title": "Vous n'avez pas encore de SIMLETs à participer.",
     "scheduler.title": "Cliquez ici pour commencer ou poursuivre votre session dans le SIMLET.",
     "scheduler.current": "Activité actuelle : ",

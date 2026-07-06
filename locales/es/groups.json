@@ -56,8 +56,8 @@
             "groups.import.tab": "Importar grupo",
                 "groups.import.input": "Fichero de importación de grupo",
                 "groups.import.submit": "Importar grupo",
-                "groups.import.upload.error": "",
-                "groups.import.error.invalid_file": "",
+                "groups.import.upload.error": "Seleccione el archivo para cargar primero",
+                "groups.import.error.invalid_file": "El archivo seleccionado no es un archivo de grupo válido.",
 
         "groups.settings.groups.edit.title": "Editar",
             "groups.edit.title": "Editar grupo",
