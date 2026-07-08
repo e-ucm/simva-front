@@ -100,8 +100,10 @@ var Simva = {
 	},
 
 
-	// TODO: Document
-	
+	/**
+	 * Refresh authentication token
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	refreshAuth : function(callback){
 		Utils.get(`/users/refresh_auth`, callback);
 	},
@@ -288,7 +290,13 @@ var Simva = {
 		Utils.get(`/bff/simlets/${simletId}/shlink`, callback);
 	},
 
-	// TODO: Document / remove?
+	/**
+	 * Update shlink URL for SIMLET
+	 * @param {number} simletId - ID of the SIMLET
+	 * @param {string} customSlug - Custom slug for the URL
+	 * @param {number} length - Length of the custom slug
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	updateShLink(simletId, customSlug, length, callback){
 		let body = {
 			customSlug: customSlug, 
@@ -548,14 +556,15 @@ var Simva = {
 		Utils.get(`/bff/activities/${activityId}`, callback);
 	},
 
-	// TODO: Document / Which one to use?
+	/**
+	 * Export activity
+	 * @param {number} activityId - ID of the activity to export
+	 * @param {boolean} complete - Whether to export complete data
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	exportActivity: function(activityId, complete, callback){
 		Utils.get(`/bff/activities/${activityId}/export?complete=${complete}`, callback);
 	},
-	exportActivity: function(activityId, simletId, sessionId, callback){
-		Utils.get(`/bff/studies/${simletId}/tests/${sessionId}/activities/${activityId}/export`, callback);
-	},
-
 	/**
 	 * Send a PATCH request to the bff to update the specified activity info of the specified session of the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the session
@@ -583,7 +592,12 @@ var Simva = {
 		Utils.delete(`/bff/studies/${simletId}/tests/${sessionId}/activities/${activityId}`, callback);
 	},
 	
-	// TODO: Document / remove?
+	/**
+	 * Set activity test
+	 * @param {number} activityId - ID of the activity
+	 * @param {object} payload - Payload for the test
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	setActivityTest: function(activityId, payload, callback){
 		Utils.post(`/bff/activities/${activityId}/test`, payload, callback);
 	},
@@ -632,7 +646,11 @@ var Simva = {
 		Utils.get(`/bff/activities/${activityId}/openable`, callback);
 	},
 
-	// TODO: Document / remove?
+	/**
+	 * Open activity
+	 * @param {number} activityId - ID of the activity to open
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	openActivity: function(activityId, callback){
 		Utils.get(`/bff/activities/${activityId}/open`, callback);
 	},
@@ -646,7 +664,13 @@ var Simva = {
 		Utils.get(`/bff/activities/${activityId}/initialized`, callback);
 	},
 
-	// TODO: Document / remove?
+	/**
+	 * Set activity initialized status
+	 * @param {number} activityId - ID of the activity
+	 * @param {number} participantId - ID of the participant
+	 * @param {boolean} status - Initialization status
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	setActivityInitialized: function(activityId, participantId, status, callback){
 		Utils.post(`/bff/activities/${activityId}/initialized?user=${participantId}`, { status: status }, callback);
 	},
@@ -660,7 +684,13 @@ var Simva = {
 		Utils.get(`/bff/activities/${activityId}/progress`, callback);
 	},
 
-	// TODO: Document / remove?
+	/**
+	 * Set activity progress
+	 * @param {number} activityId - ID of the activity
+	 * @param {number} participantId - ID of the participant
+	 * @param {boolean} status - Progress status
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	setActivityProgress: function(activityId, participantId, status, callback){
 		const userQuery = participantId ? `?user=${participantId}` : '';
 		Utils.post(`/bff/activities/${activityId}/progress${userQuery}`, { status: status }, callback);
@@ -751,7 +781,11 @@ var Simva = {
 		Utils.get(`/bff/activities/${activityId}/result`, callback);
 	},
 	
-	// TODO: Document / remove?
+	/**
+	 * Get activity suspension
+	 * @param {number} activityId - ID of the activity
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	getActivitySuspension: function(activityId, callback){
 		Utils.get(`/bff/activities/${activityId}/suspension`, callback);
 	},
@@ -822,7 +856,12 @@ var Simva = {
 		Utils.post(`/bff/simlets/${simletId}/groups`, body, callback);
 	},
 	
-	// TODO: Document / remove?
+	/**
+	 * Add study group
+	 * @param {number} simletId - ID of the SIMLET
+	 * @param {number} groupId - ID of the group
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	addStudyGroup: function(simletId, groupId, callback){
 		Utils.post(`/bff/studies/${simletId}/groups/${groupId}`, {}, callback);
 	},
@@ -879,7 +918,12 @@ var Simva = {
 		Utils.delete(`/bff/simlets/${simletId}/groups/${groupId}`, callback);
 	},
 
-	// TODO: Document / remove?
+	/**
+	 * Delete study group
+	 * @param {number} simletId - ID of the SIMLET
+	 * @param {number} groupId - ID of the group
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	deleteStudyGroup: function(simletId, groupId, callback){
 		Utils.delete(`/bff/studies/${simletId}/groups/${groupId}`, callback);
 	},
@@ -904,7 +948,12 @@ var Simva = {
 		Utils.get(`/bff/studies/${simletId}/allocator`, callback);
 	},
 
-	// TODO: Document / remove?
+	/**
+	 * Update allocator
+	 * @param {number} simletId - ID of the SIMLET
+	 * @param {object} allocator - Allocator data
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	updateAllocator: function(simletId, allocator, callback){
 		Utils.patch(`/bff/studies/${simletId}/allocator`, allocator, callback);
 	},
@@ -1079,21 +1128,11 @@ var Simva = {
 		Utils.post(`/bff/simlets/${simletId}/groups/${groupid}/users`, body, callback);
 	},
 
-	// TODO: Document / remove?
-	linkUserAccount: function(data, callback){
-		Utils.post(`/bff/users/link`, data, callback);
-	},
-
-	// TODO: Document / remove?
-	processUserEvents: function(data, callback){
-		Utils.post(`/bff/users/events`, data, callback);
-	},
-
 	/**
-	 * TODO: Document / Remove?
-	 * @param {string} username 
-	 * @param {object} body 
-	 * @param {Callback} callback 
+	 * Set user role
+	 * @param {string} username - Username of the user
+	 * @param {object|string} body - Role data or string
+	 * @param {Callback} callback - Function to call when request completes
 	 */
 	setRole: function(username, body, callback){
 		const normalizedBody = (typeof body === 'string') ? { role: body } : body;
@@ -1101,7 +1140,7 @@ var Simva = {
 	},
 
 	/**
-	 * TODO: Document
+	 * Function to check if the current user is a LimeSurvey admin
 	 * @param {Callback} callback 
 	 */
 	islimesurveyadmin: function(callback){
@@ -1130,12 +1169,23 @@ var Simva = {
 		Utils.post(`/bff/studies/${simletId}/permissions`, permissions, callback);
 	},
 
-	// TODO: Document / remove?
+	/**
+	 * Get permissions for user in SIMLET
+	 * @param {number} simletId - ID of the SIMLET
+	 * @param {number} userId - ID of the user
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	getSimletPermissionsForUser: function(simletId, userId, callback){
 		Utils.get(`/bff/studies/${simletId}/permissions/${userId}`, callback);
 	},
 
-	// TODO: Document / remove?
+	/**
+	 * Patch permissions for user in SIMLET
+	 * @param {number} simletId - ID of the SIMLET
+	 * @param {number} userId - ID of the user
+	 * @param {object} permissions - Permissions data
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	patchSimletPermissionsForUser: function(simletId, userId, permissions, callback){
 		Utils.patch(`/bff/studies/${simletId}/permissions/${userId}`, permissions, callback);
 	},
@@ -1151,84 +1201,168 @@ var Simva = {
 	},
 
 
-	// TODO: Document / remove?
+	/**
+	 * Get session permissions
+	 * @param {number} simletId - ID of the SIMLET
+	 * @param {number} sessionId - ID of the session
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	getSessionPermissions: function(simletId, sessionId, callback){
 		Utils.get(`/bff/studies/${simletId}/tests/${sessionId}/permissions`, callback);
 	},
 
-	// TODO: Document / remove?
+	/**
+	 * Create session permissions
+	 * @param {number} simletId - ID of the SIMLET
+	 * @param {number} sessionId - ID of the session
+	 * @param {object} permissions - Permissions data
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	createSessionPermissions: function(simletId, sessionId, permissions, callback){
 		Utils.post(`/bff/studies/${simletId}/tests/${sessionId}/permissions`, permissions, callback);
 	},
 
-	// TODO: Document / remove?
+	/**
+	 * Get session permissions for user
+	 * @param {number} simletId - ID of the SIMLET
+	 * @param {number} sessionId - ID of the session
+	 * @param {number} userId - ID of the user
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	getSessionPermissionsForUser: function(simletId, sessionId, userId, callback){
 		Utils.get(`/bff/studies/${simletId}/tests/${sessionId}/permissions/${userId}`, callback);
 	},
 
-	// TODO: Document / remove?
+	/**
+	 * Patch session permissions for user
+	 * @param {number} simletId - ID of the SIMLET
+	 * @param {number} sessionId - ID of the session
+	 * @param {number} userId - ID of the user
+	 * @param {object} permissions - Permissions data
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	patchSessionPermissionsForUser: function(simletId, sessionId, userId, permissions, callback){
 		Utils.patch(`/bff/studies/${simletId}/tests/${sessionId}/permissions/${userId}`, permissions, callback);
 	},
 
-	// TODO: Document / remove?
+	/**
+	 * Delete session permissions for user
+	 * @param {number} simletId - ID of the SIMLET
+	 * @param {number} sessionId - ID of the session
+	 * @param {number} userId - ID of the user
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	deleteSessionPermissionsForUser: function(simletId, sessionId, userId, callback){
 		Utils.delete(`/bff/studies/${simletId}/tests/${sessionId}/permissions/${userId}`, callback);
 	},
 
 
-	// TODO: Document / remove?
+	/**
+	 * Get group direct permissions
+	 * @param {number} simletId - ID of the SIMLET
+	 * @param {number} groupId - ID of the group
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	getGroupDirectPermissions: function(simletId,groupId, callback){
 		Utils.get(`/bff/simlets/${simletId}/groups/${groupId}/permissions`, callback);
 	},
 
-	// TODO: Document / remove?
+	/**
+	 * Create group permissions
+	 * @param {number} simletId - ID of the SIMLET
+	 * @param {number} groupId - ID of the group
+	 * @param {object} permissions - Permissions data
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	createGroupPermissions: function(simletId,groupId, permissions, callback){
 		Utils.post(`/bff/simlets/${simletId}/groups/${groupId}/permissions`, permissions, callback);
 	},
 
-	// TODO: Document / remove?
+	/**
+	 * Get group permissions for user
+	 * @param {number} simletId - ID of the SIMLET
+	 * @param {number} groupId - ID of the group
+	 * @param {number} userId - ID of the user
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	getGroupPermissionsForUser: function(simletId,groupId, userId, callback){
 		Utils.get(`/bff/simlets/${simletId}/groups/${groupId}/permissions/${userId}`, callback);
 	},
 
-	// TODO: Document / remove?
+	/**
+	 * Patch group permissions for user
+	 * @param {number} simletId - ID of the SIMLET
+	 * @param {number} groupId - ID of the group
+	 * @param {number} userId - ID of the user
+	 * @param {object} permissions - Permissions data
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	patchGroupPermissionsForUser: function(simletId, groupId, userId, permissions, callback){
 		Utils.patch(`/bff/simlets/${simletId}/groups/${groupId}/permissions/${userId}`, permissions, callback);
 	},
 
-	// TODO: Document / remove?
+	/**
+	 * Delete group permissions for user
+	 * @param {number} simletId - ID of the SIMLET
+	 * @param {number} groupId - ID of the group
+	 * @param {number} userId - ID of the user
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	deleteGroupPermissionsForUser: function(simletId,groupId, userId, callback){
 		Utils.delete(`/bff/simlets/${simletId}/groups/${groupId}/permissions/${userId}`, callback);
 	},
 
 
-	// TODO: Document + classify / remove?
-
+	/**
+	 * Get SIMLET events presigned URL
+	 * @param {number} simletId - ID of the SIMLET
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	getSimletEventsPresignedUrl: function(simletId, callback){
 		Utils.get(`/simlets/${simletId}/events/getPresignedUrl`, callback);
 	},
 
+	/**
+	 * Get schedule events presigned URL
+	 * @param {number} simletId - ID of the SIMLET
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	getScheduleEventsPresignedUrl: function(simletId, callback){
 		Utils.get(`/simlets/${simletId}/schedule/events/getPresignedUrl`, callback);
 	},
 
+	/**
+	 * Get group events presigned URL
+	 * @param {number} simletId - ID of the SIMLET
+	 * @param {number} groupId - ID of the group
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	getGroupEventsPresignedUrl: function(simletId, groupId, callback) {
 		Utils.get(`/groups/${simletId}/${groupId}/events/getPresignedUrl`, callback);
 	},
 
+	/**
+	 * Get events presigned URL
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	getEventsPresignedUrl: function(callback){
 		Utils.get(`/events/getPresignedUrl`, callback);
 	},
 
+	/**
+	 * Get MinIO data URL
+	 * @param {number} activityId - ID of the activity
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	getMinioDataUrl: function(activityId, callback){
 		Utils.get(`/bff/activities/${activityId}/presignedurl`, callback);
 	},
 	
 
-	// TODO: Document
-	// LTI
-
+	/**
+	 * Get LTI tools
+	 * @param {Callback} callback - Function to call when request completes
+	 */
 	getLtiTools: function(callback){
 		Utils.get(`/bff/lti/tools`, callback);
 	},

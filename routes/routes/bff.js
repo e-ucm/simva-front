@@ -1331,6 +1331,14 @@ module.exports = function(auth, redirectToLogin, config){
                     res.status(200).send(result);
                 }
             });
+        } else if (query.username_like) {
+            Simva.getUsers(query, req.session.id, (error, result) => {
+                if(error) {
+                    next(error.response?.data || error);
+                } else {
+                    res.status(200).send(result);
+                }
+            });
         } 
         // Get users by matching (either partially or completely) username
         else {
@@ -1437,7 +1445,12 @@ module.exports = function(auth, redirectToLogin, config){
         });
     });
 
-    // TODO: Document
+    /**
+     * Check if current user is LimeSurvey admin
+     * @param {Request} req - HTTP request object
+     * @param {Response} res - HTTP response object
+     * @param {function} next - Next middleware function
+     */
     router.get('/users/islimesurveyadmin', auth, redirectToLogin, async (req, res, next) => {
         Simva.islimesurveyadmin(req.session.id, (error, result) => {
             if(error) {
@@ -1644,6 +1657,12 @@ module.exports = function(auth, redirectToLogin, config){
         });
     });
 
+    /**
+     * Get MinIO data URL for activity
+     * @param {Request} req - HTTP request object
+     * @param {Response} res - HTTP response object
+     * @param {function} next - Next middleware function
+     */
     router.get('/activities/:activityid/presignedurl', auth, redirectToLogin, async (req, res, next) => {
         Simva.getMinioDataUrl(req.params["activityid"], req.session.id, (error, result) => {
             if(error) {

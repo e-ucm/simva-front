@@ -343,7 +343,11 @@ var Utils = {
 		return /^(https?:)?\/\//.test(url) || url.startsWith('/');
 	},
 
-	// TODO: Document
+	/**
+	 * Download text content as a file
+	 * @param {string} filename - Name of the file to download
+	 * @param {string} text - Text content to download
+	 */
 	download: function(filename, text) {
 		let element = document.createElement('a');
 		element.setAttribute('href', `data:text/plain;charset=utf-8, ${encodeURIComponent(text)}`);
@@ -357,7 +361,12 @@ var Utils = {
 		document.body.removeChild(element);
 	},
 
-	// TODO: Document
+	/**
+	 * Download content from a source as a file
+	 * @param {string} source - URL or text content to download
+	 * @param {string} filename - Name of the file to download
+	 * @param {string} errorHeading - Heading to display in case of error
+	 */
 	downloadContent: function(source, filename, errorHeading){
 		if(!this.isDownloadUrl(source)) {
 			this.download(filename, source);
@@ -395,7 +404,11 @@ var Utils = {
 			});
 	},
 
-	// TODO: Document
+	/**
+	 * Display content in a floating frame
+	 * @param {string} content - Content to display
+	 * @param {string} floatingId - ID of the floating element
+	 */
 	displayResultInFloatingFrame: function(content, floatingId){
 		const stringifyres = String(content)
 			.replace(/</g, '&lt;')
@@ -405,7 +418,10 @@ var Utils = {
 		Utils.toggleHTMLInFloating(renderedContent);
 	},
 
-	// TODO: Document
+	/**
+	 * Open content result in a frame
+	 * @param {string} source - Source of the content to open
+	 */
 	openResultContent: function(source){
 		if(!this.isDownloadUrl(source)) {
 			this.displayResultInFloatingFrame(source);
@@ -436,7 +452,11 @@ var Utils = {
 	},
 
 
-	// TODO: Document
+	/**
+	 * Decode a JWT token
+	 * @param {string} token - JWT token to decode
+	 * @returns {object} - Decoded JWT payload
+	 */
 	decodeJWT: function (token) {
 	    let base64Url = token.split('.')[1];
 	    let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
