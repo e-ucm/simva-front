@@ -43,10 +43,10 @@ the elements and scripts defined in the simlet_commons partial -->
 					</div>
 
 					<div id="download_activity_data" class="subform">
-						<!-- onClick functions defined on the simlet_activities partial -->
+						<!-- onClick functions defined on the simlet_activities partial (except downloadActivityXasuConfig, which is defined on the gameplay_activity partial) -->
 						<input class="yellow" type="button" value="<%- t('download.activity.title', { ns : 'activities' }) %>" onclick="downloadActivityData()">
 						<input class="yellow" id="global_backup_download" type="button" value="<%- t('download.backup.global.title', { ns : 'activities' }) %>" onclick="downloadGlobalActivityBackup()">
-						<input class="yellow" id="activity_test_data_download" type="button" title="<%- t('download.test.description', { ns : 'activities' }) %>" value="<%- t('download.test.title', { ns : 'sessions' }) %>" onclick="downloadActivityTestData()">
+						<input class="yellow" id="activity_test_data_download" type="button" value="<%- t('download.test.title', { ns : 'sessions' }) %>" onclick="downloadActivityTestData()">
 						<input class="yellow" id="xasu_download" type="button" value="<%- t('download.xasu.title', { ns : 'activities' }) %>" onclick="downloadActivityXasuConfig()">
 						<input class="yellow" id="backup_download" type="button" value="<%- t('download.backup.user.title', { ns : 'activities' }) %>" onclick="downloadUsersActivityBackup()">
 					</div>
@@ -77,128 +77,6 @@ the elements and scripts defined in the simlet_commons partial -->
 		</tbody>
 	</table>
 </div>
-
-
-<!-- SSE -->
-<script type="text/javascript">
-	if (true)  {
-		// Create an instance of SSEClientManager
-		Simva.getSimletEventsPresignedUrl('<%= study %>', function(error, result) {
-			if (!error) {
-				const presignedUrl = result.url;
-				const sseClient = new SSEClientManager(presignedUrl);
-
-				// Listen for general messages (default "message" event)
-				sseClient.on('message', (data) => {
-					console.debug('New message from server:', data);
-					// Update UI or process data here
-				});
-
-				// Listen for connection open event
-				sseClient.on('open', () => {
-					console.log('Connection to SSE server established.');
-				});
-
-				const resolveParticipantKey = (activityId, data) => {
-					const candidates = [data.userId, data.user_id, data.participant_id, data.username, data.user]
-						.filter((candidate) => candidate !== undefined && candidate !== null)
-						.map((candidate) => String(candidate));
-
-					for (const candidate of candidates) {
-						if (
-							document.getElementById(`progress_${activityId}_${candidate}`) ||
-							document.getElementById(`completion_${activityId}_${candidate}`) ||
-							document.getElementById(`result_${activityId}_${candidate}`) ||
-							document.getElementById(`init_${activityId}_${candidate}`)
-						) {
-							return candidate;
-						}
-					}
-
-					return candidates[0];
-				};
-
-				// Handle custom event types from the server (if applicable)
-				// Example: You might send events like "activity_initialized" from the server
-				sseClient.triggerEvent('activity_initialized');
-				sseClient.on('activity_initialized', (data) => {
-					const activityType = data.activity_type;
-					const activityId = data.activity_id;
-					const participantKey = resolveParticipantKey(activityId, data);
-					if (activityType == "gameplay") {
-						PainterFactory.Painters[activityType].updateActivityProgress(activityId, participantKey, 0);
-					}
-					if (activityType == "limesurvey") {
-						PainterFactory.Painters[activityType].updateActivityResult(activityId, participantKey, "Started");
-					}
-				});
-
-				// Handle custom event types from the server (if applicable)
-				// Example: You might send events like "activity_progressed" from the server
-				sseClient.triggerEvent('activity_progressed');
-				sseClient.on('activity_progressed', (data) => {
-					const activityType = data.activity_type;
-					const activityId = data.activity_id;
-					const participantKey = resolveParticipantKey(activityId, data);
-					const val = data.progress ?? data.value;
-					if (activityType == "gameplay") {
-						PainterFactory.Painters[activityType].updateActivityProgress(activityId, participantKey, val);
-					}
-					if (activityType == "limesurvey") {
-						PainterFactory.Painters[activityType].updateActivityProgress(activityId, participantKey, val);
-					}
-				});
-
-				// Handle custom event types from the server (if applicable)
-				// Example: You might send events like "activity_completed" from the server
-				sseClient.triggerEvent('activity_completed');
-				sseClient.on('activity_completed', (data) => {
-					const activityType = data.activity_type;
-					const activityId = data.activity_id;
-					const participantKey = resolveParticipantKey(activityId, data);
-					const status = data.status ?? data.value ?? true;
-					if (activityType == "gameplay") {
-						PainterFactory.Painters[activityType].updateActivityCompletion(activityId, participantKey, status);
-					}
-					if (activityType == "manual") {
-						PainterFactory.Painters[activityType].updateActivityCompletion(activityId, participantKey, status);
-					}
-					if (activityType == "limesurvey") {
-						PainterFactory.Painters[activityType].updateActivityCompletion(activityId, participantKey, status);
-						PainterFactory.Painters[activityType].updateActivityResult(activityId, participantKey, "Completed");
-					}
-					if (activityType == "activity") {
-						PainterFactory.Painters[activityType].updateActivityCompletion(activityId, participantKey, status, true);
-					}
-				});
-
-				sseClient.triggerEvent('ping');
-				sseClient.on('ping', (data) => {
-					console.debug('ping:', data);
-				});
-
-				sseClient.triggerEvent('refresh_auth');
-				sseClient.on('refresh_auth', (data) => {
-					console.debug('refresh_auth:', data);
-					Simva.refreshAuth((error, data) => {
-						if (error) {
-							console.error(error);
-						} else {
-							console.debug(data);
-						}
-					});
-				});
-
-				// Close the SSE connection when it's no longer needed
-				window.addEventListener('beforeunload', () => {
-					if (sseClient) {
-						sseClient.closeConnection(); // Call closeConnection method
-					}
-				});
-			}
-		});
-	}
-</script>
 
 
 <script type="text/javascript">
@@ -258,6 +136,8 @@ the elements and scripts defined in the simlet_commons partial -->
 		// Delete the add and import SIMLET tabs from the name/description menu
 		$("#add_study_tabs").remove();
 		$("#import_study_tab").remove();
+		
+		refreshFunc();
 	});
 
 	const openSessionsTab = function() {
@@ -339,6 +219,7 @@ the elements and scripts defined in the simlet_commons partial -->
 	const reloadSimlet = function() {
 		// Clear the stored variables in case of deletion/edit, as they were only stored to 
 		// avoid fetching them from the database every time the search parameters change 
+		sessionsById.clear();
 		completeSessionsById.clear();
 		completeActivitiesById.clear();
 		completeGroupsById.clear();
@@ -419,7 +300,7 @@ the elements and scripts defined in the simlet_commons partial -->
 				// Check if all sessions are finished
 				let allSessionsFinished = true;
 
-				sessionsById.forEach((id, session) => {
+				sessionsById.forEach((session, id) => {
 																					// Defined in the simlet_sessions partial
 					allSessionsFinished = allSessionsFinished && session.session_status == SESSION_FINISHED_STATUS;
 				});
@@ -437,6 +318,7 @@ the elements and scripts defined in the simlet_commons partial -->
 						}
 					});
 				}
+
 			}
 
 			// If all sessions have already been fetched, call the callback directly
@@ -481,3 +363,107 @@ the elements and scripts defined in the simlet_commons partial -->
 	}
 
 </script>
+
+
+<!-- SSE -->
+<script type="text/javascript">
+	if (true)  {
+		const resolveParticipantKey = (activityId, data) => {
+			const candidates = [data.userId, data.user_id, data.participant_id, data.username, data.user]
+				.filter((candidate) => candidate !== undefined && candidate !== null)
+				.map((candidate) => String(candidate));
+
+			for (const candidate of candidates) {
+				if (
+					document.getElementById(`progress_${activityId}_${candidate}`) ||
+					document.getElementById(`completion_${activityId}_${candidate}`) ||
+					document.getElementById(`result_${activityId}_${candidate}`) ||
+					document.getElementById(`init_${activityId}_${candidate}`)
+				) {
+					return candidate;
+				}
+			}
+
+			return candidates[0];
+		};
+
+		// Create an instance of SSEClientManager
+		Simva.getSimletEventsPresignedUrl('<%= study %>', function(error, result) {
+			if (!error) {
+				const sseClient = new SSEClientManager(result.url);
+
+				// Listen for connection open event
+				sseClient.on('open', () => {
+					console.log('Connection to SSE server established.');
+				});
+
+				// Listen for general messages (default "message" event)
+				sseClient.on('message', (data) => {
+					console.debug('New message from server:', data);
+					// Update UI or process data here
+				});
+
+				// Handle custom event types from the server (if applicable)
+				// Example: You might send events like "activity_initialized" from the server
+				sseClient.triggerEvent('activity_initialized');
+				sseClient.on('activity_initialized', (data) => {
+					const activityId = data.activity_id;
+					const painter = getActivityPainterByType(data.activity_type);
+					if (painter != null) {
+						painter.updateActivityProgress(activityId, resolveParticipantKey(activityId, data), 0);
+						
+					}
+				});
+
+				// Handle custom event types from the server (if applicable)
+				// Example: You might send events like "activity_progressed" from the server
+				sseClient.triggerEvent('activity_progressed');
+				sseClient.on('activity_progressed', (data) => {
+					const activityId = data.activity_id;
+					const val = data.progress ?? data.value;
+					const painter = getActivityPainterByType(data.activity_type);
+					if (painter != null) {
+						painter.updateActivityProgress(activityId, resolveParticipantKey(activityId, data), val);
+					}
+				});
+
+				// Handle custom event types from the server (if applicable)
+				// Example: You might send events like "activity_completed" from the server
+				sseClient.triggerEvent('activity_completed');
+				sseClient.on('activity_completed', (data) => {
+					const activityId = data.activity_id;
+					const status = data.status ?? data.value ?? true;
+					const painter = getActivityPainterByType(data.activity_type);
+					if (painter != null) {
+						painter.updateActivityCompletion(activityId, resolveParticipantKey(activityId, data), status);
+					}
+				});
+
+				sseClient.triggerEvent('ping');
+				sseClient.on('ping', (data) => {
+					console.debug('ping:', data);
+				});
+
+				sseClient.triggerEvent('refresh_auth');
+				sseClient.on('refresh_auth', (data) => {
+					console.debug('refresh_auth:', data);
+					Simva.refreshAuth((error, data) => {
+						if (error) {
+							console.error(error);
+						} else {
+							console.debug(data);
+						}
+					});
+				});
+
+				// Close the SSE connection when it's no longer needed
+				window.addEventListener('beforeunload', () => {
+					if (sseClient) {
+						sseClient.closeConnection(); // Call closeConnection method
+					}
+				});
+			}
+		});
+	}
+</script>
+

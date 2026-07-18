@@ -720,45 +720,32 @@ class Simva {
 	/**
 	 * Send a GET request to the Axios wrapper to fetch the result data of the specified participant from the specified activity with the specified type
 	 * @param {number} activityId - id of the activity that has the participant
-	 * @param {string} type - type of result of the result data to fetch 
 	 * @param {number} participantId - id of the participant to fetch the result data from 
+	 * @param {string} resultType - type of result of the result data to fetch (full/code/traces)
 	 * @param {CurrSessionId} currSessionId
 	 * @param {Callback} callback 
 	 */
-	getActivityResultWithTypeForUser (activityId, type, participantId, currSessionId, callback){
-		this.get(`${this.apiurl}/activities/${activityId}/result?users=${participantId}&type=${type}`, currSessionId, callback);
-	}
-
-	/**
-	 * Send a GET request to the Axios wrapper to fetch the result data of for all the participants of the specified activity 
-	 * @param {number} activityId - id of the activity to fetch the results from
-	 * @param {string} type - type of result of the result data to fetch 
-	 * @param {CurrSessionId} currSessionId
-	 * @param {Callback} callback 
-	 */
-	getActivityResultWithType(activityId, type, currSessionId, callback){
-		this.get(`${this.apiurl}/activities/${activityId}/result?type=${type}`, currSessionId, callback);
-	}
-	
-	/**
-	 * Send a GET request to the Axios wrapper to fetch the result data of the specified participant from the specified activity
-	 * @param {number} activityId - id of the activity that has the participant
-	 * @param {number} participantId - id of the participant to fetch the result data from 
-	 * @param {CurrSessionId} currSessionId
-	 * @param {Callback} callback 
-	 */
-	getActivityResultForUser(activityId, participantId, currSessionId, callback){
-		this.get(`${this.apiurl}/activities/${activityId}/result?users=${participantId}&type=full`, currSessionId, callback);
-	}
-
-	/**
-	 * Send a GET request to the Axios wrapper to fetch the result data for all the participants of the specified activity 
-	 * @param {number} activityId - id of the activity to fetch the results from
-	 * @param {CurrSessionId} currSessionId
-	 * @param {Callback} callback 
-	 */
-	getActivityResult(activityId, currSessionId, callback){
-		this.get(`${this.apiurl}/activities/${activityId}/result?type=full`, currSessionId, callback);
+	getActivityResult(activityId, participantId, resultType, currSessionId, callback){
+		if (participantId != null) {
+			// getActivityResultWithTypeForUser
+			if (resultType != null) {
+				this.get(`${this.apiurl}/activities/${activityId}/result?users=${participantId}&type=${resultType}`, currSessionId, callback);
+			}
+			// getActivityResultForUser
+			else {
+				this.get(`${this.apiurl}/activities/${activityId}/result?users=${participantId}&type=full`, currSessionId, callback);
+			}
+		} 
+		else {
+			// getActivityResultWithType
+			if (resultType != null) {
+				this.get(`${this.apiurl}/activities/${activityId}/result?type=${resultType}`, currSessionId, callback);
+			}
+			// getActivityResult
+			else {
+				this.get(`${this.apiurl}/activities/${activityId}/result?type=full`, currSessionId, callback);
+			}
+		}
 	}
 
 	// TODO: Document / remove?

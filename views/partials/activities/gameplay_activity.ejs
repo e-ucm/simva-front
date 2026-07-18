@@ -1,0 +1,244 @@
+<!-- Elements and class for gameplay activities -->
+
+<!-- Template for the 3-dot menu of the activity  -->
+<div id="gameplay_extra_kebab_template" style="display: none;">
+    <li class="text-with-icon icon-activate" title="<%= t('completed.all.set', { ns : 'activities' }) %>"><%= t('completed.all.set', { ns : 'activities' }) %></li>
+    <li class="text-with-icon icon-pause" title="<%= t('completed.all.unset', { ns : 'activities' }) %>"><%= t('completed.all.unset', { ns : 'activities' }) %></li>
+</div>
+
+<!-- Template for the meta section of the activity -->
+<div id="gameplay_meta_template" style="display: none;">
+    <div class="gameplayMeta">
+        <i class="text-with-icon icon-url" style="margin-top: 5px;">   </i>
+        <ul>
+            <li class="storage"><%= t('storage.title', { ns : 'activities' }) %><input type="checkbox" style="pointer-events: none;"></li> 
+            <li class="backup"><%= t('gameplay.result.title', { ns : 'activities' }) %><input type="checkbox" style="pointer-events: none;"></li> 
+        </ul>
+    </div>
+</div>
+
+<!-- Template for the extra add/edit form of the activity -->
+<div id="gameplay_extra_form" style="display: none;">
+    <div class="activitySettingsCheckboxes">
+        <div class="activitySettigsCheckbox">
+            <input type="checkbox" id="gameplay_trace_storage" name="trace_storage" checked>
+            <div class="tooltipLine">
+                <label for="gameplay_trace_storage"><b><%= t('gameplay.storage.title', { ns : 'activities' }) %></b></label>
+                <div class="tooltip">
+                    &#x1F6C8;
+                    <span class="tooltiptext">
+                        <%= t('gameplay.storage.description', { ns : 'activities' }) %>
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="activitySettigsCheckbox">
+            <input type="checkbox" id="gameplay_backup" name="backup" checked>
+            <div class="tooltipLine">
+                <label for="gameplay_backup"><b><%= t('gameplay.result.title', { ns : 'activities' }) %></b></label>
+                <div class="tooltip">
+                    &#x1F6C8;
+                    <span class="tooltiptext">
+                        <%= t('gameplay.result.description', { ns : 'activities' }) %>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="activitySettigsCheckbox">
+            <input type="checkbox" id="gameplay_scorm_xAPI" name="scorm_xapi">
+            <div class="tooltipLine">
+                <label for="gameplay_scorm_xAPI"><b><%= t('gameplay.xapi_by_game.title', { ns : 'activities' }) %></b></label>
+                <div class="tooltip">
+                    &#x1F6C8;
+                    <span class="tooltiptext">
+                        <%= t('gameplay.xapi_by_game.description', { ns : 'activities' }) %>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="activitySettigsCheckbox">
+            <input type="checkbox" id="gameplay_restarted" name="restarted">
+            <div class="tooltipLine">
+                <label for="gameplay_restarted"><b><%= t('gameplay.restarted.title', { ns : 'activities' }) %></b></label>
+                <div class="tooltip">
+                    &#x1F6C8;
+                    <span class="tooltiptext">
+                        <%= t('gameplay.restarted.description', { ns : 'activities' }) %>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tooltipLine">
+        <h3><%= t('gameplay.platform.title', { ns : 'activities' }) %></h3>
+        <div class="tooltip">
+            &#x1F6C8;
+            <span class="tooltiptext">
+                <ul>
+                    <li><b><%= t('gameplay.web.title', { ns : 'activities' }) %></b>: <%= t('gameplay.web.description', { ns : 'activities' }) %></li>
+                    <li><b><%= t('gameplay.desktop.title', { ns : 'activities' }) %></b>: <%= t('gameplay.desktop.description', { ns : 'activities' }) %></li>
+                </ul>
+            </span>
+        </div>
+    </div>
+    
+    <div class="tabs">
+        <span class="tab selected text-with-icon icon-gameplay-web" id="gameplay_web_tab_button" method="WEB" onclick="Utils.changeTab(this, 'gameplay_extra_form','gameplay_web')">
+            <%= t('gameplay.web.title', { ns : 'activities' }) %>
+        </span>
+        <span class="tab text-with-icon icon-gameplay-desktop" id="gameplay_desktop_tab_button" method="DESKTOP" onclick="Utils.changeTab(this, 'gameplay_extra_form','gameplay_desktop')">
+            <%= t('gameplay.desktop.title', { ns : 'activities' }) %>
+        </span>
+    </div>
+    
+    <div id="gameplay_web" class="subform selected">
+        <div class="tooltipLine">
+            <h3><%= t('gameplay.game_uri.title', { ns : 'activities' }) %></h3>
+            <div class="tooltip">
+                &#x1F6C8;
+                <span class="tooltiptext">
+                    <%= t('gameplay.game_uri.description', { ns : 'activities' }) %>
+                </span>
+            </div>
+        </div>
+        <input id="gameplay_game_uri" type="text" name="game_uri">
+    </div>
+    <div id="gameplay_desktop" class="subform" style="display: none;">
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    // MUST BE INCLUDED IN THE HTML AFTER BaseActivityPainter 
+
+    class GameplayPainter extends BaseActivityPainter {
+        constructor() {
+            super();
+            
+            this.supportedType = "gameplay";
+        	this.simple_name = "<%= t('gameplay.name', { ns : 'activities' }) %>";
+            this.description = "<%= t('gameplay.description', { ns : 'activities' }) %>";
+            this.resultFilePrefix = "<%= t('gameplay.result.file.prefix', { ns : 'activities' }) %>";
+        }
+
+
+        // Menus
+        
+        paintExtraForm(activity) { 
+            $('#activity_extras').append($("#gameplay_extra_form").clone());
+            
+            Utils.changeTab("gameplay_web_tab_button", 'gameplay_extra_form','gameplay_web');
+            $("#gameplay_extra_form").show();
+
+            // When editing an existing activity, update the form fields with the activity info 
+            if (activity != null) {
+                $("#gameplay_trace_storage").prop("checked", Boolean(activity.activity_trace_storage));
+                $("#gameplay_backup").prop("checked", Boolean(activity.game_backup));
+                $("#gameplay_scorm_xAPI").prop("checked", Boolean(activity.game_scorm_xapi));
+                $("#gameplay_restarted").prop("checked", Boolean(activity.activity_can_be_restarted));
+                
+                $("#gameplay_game_uri").val(activity.game_url || "");
+
+                if (activity.game_type === 'DESKTOP') {
+                    Utils.changeTab("gameplay_desktop_tab_button", 'gameplay_extra_form','gameplay_desktop');
+
+                } else {
+                    Utils.changeTab("gameplay_web_tab_button", 'gameplay_extra_form','gameplay_web');
+                }
+            }
+        }
+
+        getActivityInfoFromForm(form) {
+            let activity = super.getActivityInfoFromForm(form);
+            
+            const method = $('#gameplay_extra_form .tab.selected').attr('method');
+
+            activity.activity_trace_storage = form.trace_storage === "on" ? true : false;
+            activity.game_backup = form.backup === "on" ? true : false;
+            activity.game_scorm_xapi = form.scorm_xapi === "on" ? true : false;
+            activity.activity_can_be_restarted = form.restarted === "on" ? true : false;
+            
+            activity.game_type = method;
+            activity.game_url = method == "DESKTOP" ? "" : (form.game_uri || "");
+
+            return activity;
+        }
+
+
+        // Functionality 
+        
+
+        // Render
+
+        async fillActivityCard(activity, participants, card) {
+            // Add the extra buttons to the 3-dot menu after the Tmon button
+            const extraKebab = $("#gameplay_extra_kebab_template li").clone();
+            card.find(".kebab-dropdown").find(".icon-url").after(extraKebab);
+
+            // Add the meta section and update the checkboxes based on the activity settings
+            const meta = $("#gameplay_meta_template .gameplayMeta").clone();
+            card.find(".activity-meta").append(meta);
+            meta.find(".storage input[type='checkbox']").attr("checked", activity.activity_trace_storage);
+            meta.find(".backup input[type='checkbox']").attr("checked", activity.game_backup);
+
+            // Determine the type icon and subtitle based on the activity type
+            let iconClass = ""
+            let prevSimpleName = this.simple_name;
+
+            if (activity.game_type === 'WEB') {
+                iconClass = "icon-gameplay-web"
+                this.simple_name += " - <%= t('gameplay.web.title', { ns : 'activities' }) %>"
+                this.description = "<%= t('gameplay.web.description', { ns : 'activities' }) %>";
+                meta.find("i").text(activity.game_url || "-");
+            }
+            else {
+                iconClass = "icon-gameplay-desktop"
+                this.simple_name += " - <%= t('gameplay.desktop.title', { ns : 'activities' }) %>"
+                this.description = "<%= t('gameplay.desktop.description', { ns : 'activities' }) %>";
+                meta.find(".icon-url").removeClass("icon-url");
+            }
+
+            // Add the type icon next to the activity name
+            card.find(".activityName").addClass("text-with-icon").addClass(iconClass);
+
+            super.fillActivityCard(activity, participants, card);
+            this.simple_name = prevSimpleName;
+        }
+        
+        fillParticipantsTable(card, activity, participants, checkbox = false, progress = true, result = true) {
+            super.fillParticipantsTable(card, activity, participants, true);
+        }
+        
+        paintActivityResult(activity, results, participants) {
+            // Result uses activity data hasresult, not result
+            super.paintActivityResult(activity, activity.data.hasresult, participants);
+        }
+    }
+    
+
+    const downloadActivityXasuConfig = function() {
+		const content = JSON.stringify({
+            online: true,
+            simva :true,
+            homepage:`${Simva.url}`,
+            lrs_endpoint : `${Simva.apiurl}/activities/${downloadActivityId}`,
+            auth_protocol : "oauth2",
+            auth_parameters : {
+                grant_type : "code",
+                auth_endpoint : `${Simva.ssoUrl}/realms/${Simva.ssoRealm}/protocol/openid-connect/auth`, 
+                token_endpoint : `${Simva.ssoUrl}/realms/${Simva.ssoRealm}/protocol/openid-connect/token`,
+                client_id : "simva-plugin",
+                code_challenge_method : "S256",
+                simva_user_token:"true",
+                login_hint: simletId
+            }
+        }, null, 2);
+        const filename = "tracker_config.json";
+        Utils.download(filename, content);
+	}
+
+</script>

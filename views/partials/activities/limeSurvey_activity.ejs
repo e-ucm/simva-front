@@ -1,0 +1,278 @@
+<!-- Elements and class for limesurvey activities -->
+ 
+<!-- Template for the 3-dot menu of the activity  -->
+<div id="limesurvey_extra_kebab_template" style="display: none;">
+    <li class="text-with-icon icon-edit-survey" title="<%= t('limesurvey.edit.title', { ns : 'activities' }) %>"><%= t('limesurvey.edit.title', { ns : 'activities' }) %></li>
+</div>
+
+<!-- Template for the meta section of the activity -->
+<div id="limesurvey_meta_template" style="display: none;">
+    <div class="limesurveyMeta">
+        <p style="padding: 0px; margin-top: 5px;">
+            <b><%= t('limesurvey.survey.title', { ns : 'activities' }) %>: </b><i><a class="surveyId"></a></i>
+        </p>
+         <p style="padding: 0px; margin-top: 5px;">
+            <b><%= t('limesurvey.language.title', { ns : 'activities' }) %>: </b><i class="surveyLang"></i>
+        </p>
+        
+    </div>
+</div>
+
+<!-- Template for the extra add/edit form of the activity -->
+<div id="limesurvey_extra_form" style="display: none; margin-top:15px;">
+    <div id="limesurvey_extra_form_tabs" class="tabs" style="margin-bottom: 10px;">
+        <span class="tab selected" id="limesurvey_id_tab_button" method="byid" onclick="openByIdTab()"><%= t('limesurvey.surveyid.title', { ns : 'activities' }) %></span>
+        <span class="tab" id="limesurvey_existing_tab_button" method="byexisting" onclick="openByExistingTab()"><%= t('limesurvey.existing.title', { ns : 'activities' }) %></span>
+        <span class="tab" id="limesurvey_upload_tab_button" method="byupload" onclick="openImportTab()"><%= t('limesurvey.upload.title', { ns : 'activities' }) %></span>
+    </div>
+
+    <div id="limesurvey_byid" class="subform selected">
+        <h3><%= t('limesurvey.surveyid.title', { ns : 'activities' }) %></h3>
+        <input id="survey_id_field" type="number" name="surveyid" placeholder="<%= t('limesurvey.surveyid.placeholder', { ns : 'activities' }) %>">
+
+    </div>
+    <div id="limesurvey_byexisting" class="subform">
+        <h3><%= t('limesurvey.survey.title', { ns : 'activities' }) %></h3>
+        <select name="existingid" id="existing_survey_field" onchange="loadSurveyLanguages()">
+        </select>
+        
+        <input type="button" class="green" value="<%= t('limesurvey.new.description', { ns : 'activities' }) %>" onclick="openNewLimesurvey()"></input>
+        <h3><%= t('limesurvey.language.title', { ns : 'activities' }) %></h3>
+        <select name="language" id="survey_language_field">
+        </select>
+    </div>
+    <div id="limesurvey_byupload" class="subform">
+        <h3><%= t('limesurvey.upload.message', { ns : 'activities' }) %></h3>
+        <input type="file" id="lss_field" name="lss">
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    // MUST BE INCLUDED IN THE HTML AFTER BaseActivityPainter 
+
+    let newLimesurveyUrl = "";
+    let editLimesurveyUrl = "";
+
+    class LimeSurveyPainter extends BaseActivityPainter {
+        constructor() {
+            super();
+
+            this.supportedType = "limesurvey";
+        	this.simple_name = "<%= t('limesurvey.name', { ns : 'activities' }) %>";
+            this.description = "<%= t('limesurvey.description', { ns : 'activities' }) %>";
+            this.resultFilePrefix = "<%= t('limesurvey.result.file.prefix', { ns : 'activities' }) %>";
+
+            // this.limesurveyurl = "https://limesurvey-dev.external.test/";
+
+            Simva.islimesurveyadmin((error, result) => {
+                if (error || (!error && !result.isAdmin)) {
+                    Utils.changeTab("limesurvey_existing_tab_button", 'limesurvey_extra_form','limesurvey_byexisting');
+                    $("#limesurvey_extra_form_tabs").hide();
+                }
+            });
+        }
+
+
+        // Menus
+
+        paintExtraForm(activity) { 
+            $('#activity_extras').append($("#limesurvey_extra_form").clone());
+            $("#limesurvey_extra_form").show();
+
+            // When editing an existing activity, hide the survey method tabs and open the existing survey tab
+            if (activity != null) {
+                $("#limesurvey_extra_form_tabs").hide();
+                openByExistingTab();
+            }
+            // Otherwise, show the tabs and open the survey id tab
+            else {
+                $("#limesurvey_extra_form_tabs").show();
+                openByIdTab();
+            }
+
+            // Fill the existing surveys select field and select one (+ its language) based on the activity info
+            $("#existing_survey_field").empty();
+            Simva.getSurveyList(function(error, result) {
+                if (error) {
+                    console.error('Error fetching survey list:', error);
+                    return;
+                }
+                else {
+                    if (result.length == 0) {
+                        $("#existing_survey_field").append($("<option>", {
+                            selected: true,
+                            disabled: true,
+                            hidden: true,
+                            text: "<%- t('limesurvey.existing.zero.message', { ns : 'activities' }) %>",
+                        }));
+                        return;
+                    }
+
+                    result.forEach((survey) => {
+                        $("#existing_survey_field").append($("<option>", {
+                            value: survey.sid,
+                            text: `${survey.surveyls_title} - ${survey.sid}`,
+                        }));
+                    });
+
+                    if (activity != null) {
+                        $("#existing_survey_field").val(activity.survey_id);
+                    }
+                    loadSurveyLanguages(activity);
+                }
+            });
+        
+        }
+        
+        getActivityInfoFromForm(form) {
+            let activity = super.getActivityInfoFromForm(form);
+            
+            const method = $('#limesurvey_extra_form .tab.selected').attr('method');
+            
+            activity.activity_trace_storage = true;         // Always enable trace storage for limesurvey activities
+		    activity.activity_can_be_restarted = false;     // Limesurvey activities cannot be restarted
+            
+            switch(method) {
+                case 'byid':
+                    // console.log('[limesurveypainter] byid case');
+                    activity.copysurvey = parseInt(form.surveyid);
+                    break;
+                case 'byexisting':
+                    // console.log('[limesurveypainter] byexisting case');
+                    activity.copysurvey = parseInt(form.existingid);
+                    activity.survey_language = $("#existing_survey_field").val();
+                    break;
+                case 'byupload':
+                    // console.log('[limesurveypainter] byupload case');
+                    let fileInput = $(form).find('input[name="lss"]').get(0);
+                    if(fileInput && fileInput.files[0]){
+                        console.log('[limesurveypainter] File selected for upload:', fileInput.files[0]);
+                        let reader = new FileReader();
+                        reader.onload = function(){
+                            let raw = reader.result;
+                            raw = raw.substr(raw.indexOf(',') + 1);
+                            activity.rawsurvey = raw;
+                            console.log('[limesurveypainter] File loaded and encoded');
+                        };
+                        reader.readAsDataURL(fileInput.files[0]);
+                    }
+                    break;
+                default:
+                    console.log('[limesurveypainter] default/no_method case');
+                    break;
+            }
+            
+            return activity;
+        }     
+
+
+        // Functionality 
+        
+
+        // Render
+
+        async fillActivityCard(activity, participants, card) {
+            // Add the type icon next to the activity name
+            card.find(".activityName").addClass("text-with-icon").addClass("icon-survey");
+            
+            // Add the extra buttons to the 3-dot menu after the Tmon button
+            const extraKebab = $("#limesurvey_extra_kebab_template li").clone();
+            $(`#activity_${activity.activity_id}`).find(".kebab-dropdown").find(".icon-url").after(extraKebab);
+            
+            const meta = $("#limesurvey_meta_template .limesurveyMeta").clone();
+            card.find(".activity-meta").append(meta);
+
+            meta.find(".surveyId").text(activity.survey_id);
+            meta.find(".surveyLang").text(activity.survey_language);
+
+            super.fillActivityCard(activity, participants, card);
+        }
+
+    }
+
+
+    /**
+	 * Fill the survey language select field and select one based on the activity info
+	 */
+    const loadSurveyLanguages = function(activity, callback) {
+        // Get the survey id from either the currently selected survey or from the activity info
+        let surveyId = activity == null ? $("#existing_survey_field").val() : activity.survey_id;
+        
+        $("#survey_language_field").empty();
+        Simva.getSurveyLanguages(surveyId, function(error, result) {
+            result.list.forEach((language) => {
+                $("#survey_language_field").append($("<option>", {
+                    value: language,
+                    text: language,
+                }));
+            });
+            $("#survey_language_field").val(result.default);
+
+            if (activity != null) {
+                $("#survey_language_field").val(activity.survey_language);
+            }
+        });
+    }
+
+
+    // When opening the different tabs, the current tab field has to be required but the rest of the
+    // tabs fields don't need to. Since the form that gets submitted is the same regardless of activity
+    // type and creation method, setting the required property directly in the html would make the
+    // fields required even if they're not being used, so they have to be manually set
+
+    const openByIdTab = function() {
+        Utils.changeTab('limesurvey_id_tab_button', 'limesurvey_extra_form','limesurvey_byid');
+        $("#survey_id_field").prop("required", true);
+        $("#existing_survey_field").prop("required", false);
+        $("#survey_language_field").prop("required", false);
+        $("#lss_field").prop("required", false);
+    }
+
+    const openByExistingTab = function() {
+        Utils.changeTab('limesurvey_existing_tab_button', 'limesurvey_extra_form','limesurvey_byexisting');
+        $("#survey_id_field").prop("required", false);
+        $("#existing_survey_field").prop("required", true);
+        $("#survey_language_field").prop("required", true);
+        $("#lss_field").prop("required", false);
+    }
+
+    const openImportTab = function() {
+        Utils.changeTab('limesurvey_upload_tab_button', 'limesurvey_extra_form','limesurvey_byupload');
+        $("#survey_id_field").prop("required", false);
+        $("#existing_survey_field").prop("required", false);
+        $("#survey_language_field").prop("required", false);
+        $("#lss_field").prop("required", true);
+    }
+
+
+	// Edit limesurvey by pressing either the survey id or the edit button 
+	$(document).on('click', ".activity-meta .limesurveyMeta a", function(e) {
+		openEditLimesurvey($(this).closest(".activity").data());
+	});
+	$(document).on('click', ".activityTopActions .icon-edit-survey", function(e) {
+		openEditLimesurvey($(this).closest(".activity").data());
+	});
+
+    /**
+	 * Open a floating window with the limesurvey page to create a new activity
+	 */
+	const openNewLimesurvey = function() {
+        Utils.hideIframeFloating();
+        Utils.toggleIframeInFloating(newLimesurveyUrl);
+    }
+
+	/**
+	 * Open a floating window with the limesurvey edit page for the selected survey
+	 */
+    const openEditLimesurvey = function(activityData) {
+		const act = getActivityFromId(activityData[ACTIVITY_DATA_ID_KEY]);
+
+		if (act != null && act.survey_id != null) {
+			Simva.setSurveyOwner(act.activity_id, (error, result) => {
+				Utils.toggleIframeInFloating(`${editLimesurveyUrl.replace('{{surveyId}}', act.survey_id)}`);
+			});
+		}
+    }
+    
+</script>

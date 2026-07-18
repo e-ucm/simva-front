@@ -1,12 +1,13 @@
 /**
- * @typedef {object} Query - object containing the parameters of the query (status and searchTags params ONLY FOR SIMLETS AND SESSIONS)
+ * @typedef {object} Query - object containing the parameters of the query
  * @property {number} skip - number of results to exclude from the beginning of the fetched results (after filtering and sorting)
  * @property {number} limit - maximum number of results to return after the skip offset (after filtering and sorting)
  * @property {string} searchString - fetch results whose name/description match (either partially or completely) the string
  * @property {string} orderBy - fetch results sorted by this parameter (id/name/createdAt/updatedAt)
  * @property {string} order - order of the sorted results (asc/desc)
- * @property {string} status - fetch results whose status parameter matches this value (active/archived for SIMLETs, active/inactive/terminated for sessions)
- * @property {Array} searchTags - fetch results whose tags ids contain any of the ids in the array
+ * @property {string} status - (ONLY FOR SIMLETS AND SESSIONS) fetch results whose status parameter matches this value (active/archived for SIMLETs, active/inactive/terminated for sessions)
+ * @property {Array} searchTags - (ONLY FOR SIMLETS AND SESSIONS) fetch results whose tags ids contain any of the ids in the array
+ * @property {Array} sandbox - (ONLY FOR GROUPS) fetch results whose sandbox parameter matches this value (true/false)
  */
 
 /** 
@@ -26,7 +27,7 @@ const getQueryString = function(query) {
 	// Filter out empty strings, null, and undefined values
 	const cleanQuery = Object.fromEntries(
 		Object.entries(query).filter(([_, value]) => 
-			value != '' && value != null
+			value !== '' && value !== null && value !== undefined
 		)
 	);
 	queryString = Object.keys(cleanQuery).length > 0 ? `?${new URLSearchParams(cleanQuery).toString()}` : '';
@@ -41,7 +42,7 @@ const getQueryString = function(query) {
 const getCountQueryString = function(query) {
 	const cleanQuery = Object.fromEntries(
 		Object.entries(query).filter(([key, value]) => 
-			key == "searchString" || key == "searchTags" || key == "status"
+			key == "searchString" || key == "searchTags" || key == "status" || key == "sandbox"
 		)
 	);
 	return getQueryString(cleanQuery);
@@ -735,51 +736,37 @@ var Simva = {
 		Utils.get(`/bff/activities/${activityId}/hasresult`, callback);
 	},
 
+
 	/**
 	 * Send a GET request to the bff to fetch the result data of the specified participant from the specified activity with the specified type
 	 * @param {number} activityId - id of the activity that has the participant
-	 * @param {string} type - type of result of the result data to fetch 
 	 * @param {number} participantId - id of the participant to fetch the result data from 
+	 * @param {string} resultType - type of result of the result data to fetch (full/code/traces)
 	 * @param {Callback} callback 
 	 */
-	getActivityResultWithTypeForUser : function(activityId, type, participantId, callback){
-		if(type === undefined) {
-			type = 'full';
+	getActivityResult : function(activityId, participantId, resultType, callback) {
+		if (participantId != null) {
+			// getActivityResultWithTypeForUser
+			if (resultType != null) {
+				Utils.get(`/bff/activities/${activityId}/result?users=${participantId}&type=${resultType}`, callback);
+			}
+			// getActivityResultForUser
+			else {
+				Utils.get(`/bff/activities/${activityId}/result?users=${participantId}&type=full`, callback);
+			}
+		} 
+		else {
+			// getActivityResultWithType
+			if (resultType != null) {
+				Utils.get(`/bff/activities/${activityId}/result?type=${resultType}`, callback);
+			}
+			// getActivityResult
+			else {
+				Utils.get(`/bff/activities/${activityId}/result?type=full`, callback);
+			}
 		}
-		Utils.get(`/bff/activities/${activityId}/result?users=${participantId}&type=${type}`, callback);
-	},
-
-	/**
-	 * Send a GET request to the bff to fetch the result data of for all the participants of the specified activity 
-	 * @param {number} activityId - id of the activity to fetch the results from
-	 * @param {string} type - type of result of the result data to fetch 
-	 * @param {Callback} callback 
-	 */
-	getActivityResultWithType: function(activityId, type, callback){
-		if(type === undefined) {
-			type = 'full';
-		}
-		Utils.get(`/bff/activities/${activityId}/result?type=${type}`, callback);
-	},
-
-	/**
-	 * Send a GET request to the bff to fetch the result data of the specified participant from the specified activity
-	 * @param {number} activityId - id of the activity that has the participant
-	 * @param {number} participantId - id of the participant to fetch the result data from 
-	 * @param {Callback} callback 
-	 */
-	getActivityResultForUser : function(activityId, participantId, callback){
-		Utils.get(`/bff/activities/${activityId}/result?users=${participantId}&type=full`, callback);
 	},
 	
-	/**
-	 * Send a GET request to the bff to fetch the result data for all the participants of the specified activity 
-	 * @param {number} activityId - id of the activity to fetch the results from
-	 * @param {Callback} callback 
-	 */
-	getActivityResult: function(activityId, callback){
-		Utils.get(`/bff/activities/${activityId}/result`, callback);
-	},
 	
 	/**
 	 * Get activity suspension
@@ -1144,7 +1131,7 @@ var Simva = {
 	 * @param {Callback} callback 
 	 */
 	islimesurveyadmin: function(callback){
-		Utils.get(`/bff/users/islimesurveyadmin`, callback);
+		Utils.get(`/bff/limesurvey/isAdmin`, callback);
 	},
 
 

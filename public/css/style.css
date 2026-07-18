@@ -540,11 +540,15 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	pointer-events: none;
 	opacity: 0.6;
 }
-.text-with-icon { vertical-align: middle; }
+.text-with-icon { display: flex;
+	align-items: center;
+}
 .text-with-icon::before {
 	--iconSize: 18px;
-	--iconMargin: 5px;
+	--iconMargin: 10px;
 
+	flex-shrink: 0; 
+	
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-position: center;
@@ -848,138 +852,6 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	margin-top: 10px;
 	box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3);
 }
-.content .test .sessionSummary, .content .test .activities {
-	overflow: auto;
-	overflow-y: hidden;
-}
-.content .test .activities { white-space: nowrap; padding-bottom: 10px;}
-.content .test .activities table { display: table; overflow: hidden; }
-.content .test .activities.collapsed table { display: none; }
-.content .test .activities .activity { vertical-align: top; background-color: gray; width: 250px; padding: 10px; margin-top: 10px; box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3); display: inline-block; margin-right: 10px; }
-.subform select.activityTypeSelector { flex: 1; margin-top: 10px; }
-
-.content .test .activities .activity.tactivity { background-color: gray; }
-
-.content .test .activities .activity.tlimesurvey {
-	background-color: #3f8446;
-	color: white;
-	width: 500px;
-}
-.content .test .activities .activity.tmanual {
-	background-color: blueviolet;
-	color: white;
-	width: 400px;
-}
-
-.icon-gameplay-web::before { width: 24px; height: 24px; background-image: url("../icon/browser.png"); }
-.icon-gameplay-desktop::before { width: 24px; height: 24px; background-image: url("../icon/electronics.png"); }
-.icon-survey::before { width: 24px; height: 24px; background-image: url("../icon/questionnaire.png"); }
-.content .test .activities .activity.tgameplay {
-	background-color: #163f67;
-	color: white;
-	width: 500px;
-}
-
-.content .test .activities .activity.tgameplay .kebab {
-	--kebabButtonColor: white;
-}
-
-.content .test .activities .activity.trageminio {
-	background-color: #c84949;
-	background: -webkit-linear-gradient(left, #ff7d7d 7%, #ffd17d 14%, #ffff7b 21%, #7bff7b 28%, #84ffff 35%, #8080ff 42%, #ff7aff 49%, white 49%, white 51%, #30819a 51%, #30819a 100%);
-	background: -o-linear-gradient(right, #ff7d7d 7%, #ffd17d 14%, #ffff7b 21%, #7bff7b 28%, #84ffff 35%, #8080ff 42%, #ff7aff 49%, white 49%, white 51%, #30819a 51%, #30819a 100%);
-	background: -moz-linear-gradient(right, #ff7d7d 7%, #ffd17d 14%, #ffff7b 21%, #7bff7b 28%, #84ffff 35%, #8080ff 42%, #ff7aff 49%, white 49%, white 51%, #30819a 51%, #30819a 100%);
-	background: linear-gradient(to right, #ff7d7d 7%, #ffd17d 14%, #ffff7b 21%, #7bff7b 28%, #84ffff 35%, #8080ff 42%, #ff7aff 49%, white 49%, white 51%, #30819a 51%, #30819a 100%);
-	width: 400px;
-}
-
-.content .test .activities .activity.tltitool {
-	background-color: #0f4d87;
-	color: white;
-}
-
-.content .test .activities .activity table,
-.content .test .activities .activity .progress {
-	color: black;
-}
-
-.analysis div { padding-left: 20px; }
-.analysis div { background-color: rgba(0,0,0,0.1); }
-
-.content .test .activities .activity .top input[type="button"] { float: right; margin-left: 10px; height: 15px; width: 15px; font-size: 10px; padding: 0px; text-align: center; }
-.content .test .activities .activity .subtitle { font-style: italic; font-size: 14px; width: 100%; white-space: normal; margin: 0px; padding: 0px; }
-
-.content .test .activities .activity table { width: 100%; font-size: 14px; border-collapse: collapse; }
-.content .test .activities .activity table tbody { width: 100%; }
-.content .test .activities .activity table tbody tr:nth-child(even) { background: #c5c5c5 }
-.content .test .activities .activity table tbody tr:nth-child(odd) { background: #a5a5a5 }
-.content .test .activities .activity table { table-layout: fixed; }
-.content .test .activities .activity table tbody tr { width: 100%; height: 32px; }
-.content .test .activities .activity table tbody tr td,
-.content .test .activities .activity table tbody tr th { border: solid 2px black; }
-.content .test .activities .activity table tbody tr th { padding: 5px; height: 32px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.content .test .activities .activity table tbody tr td { padding: 5px; width: 33.33%; height: 32px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; vertical-align: middle; }
-.content .test .activities .activity table tbody tr th:first-child,
-.content .test .activities .activity table tbody tr td:first-child { width: 92px; }
-
-/* LimeSurvey uses a long result label with a download icon; keep that column fully readable. */
-.content .test .activities .activity.tlimesurvey table tbody tr th:last-child,
-.content .test .activities .activity.tlimesurvey table tbody tr td:last-child {
-	width: 120px;
-	text-overflow: clip;
-}
-.content .test .activities .activity table tbody tr td.red { background-color: #ff9696; }
-.content .test .activities .activity table tbody tr td.green { background-color: #adffad; }
-.content .test .activities .activity table tbody tr td.yellow { background-color: #fff688; }
-.content .test .activities .activity table tbody tr td .red { color: #b70000; }
-.content .test .activities .activity table tbody tr td .green { color: #008800; }
-.content .test .activities .activity table tbody tr td .yellow { color: #fff145; }
-
-.content .test .activities .activity table tbody tr td.progress,
-.content .test .activities .activity table tbody tr td.progress div.done,
-.content .test .activities .activity table tbody tr td.progress div.partial { height: 28px; }
-
-/* Progress cells must not use generic td padding; otherwise 100% width leaves visible background strips. */
-.content .test .activities .activity table tbody tr td.progress {
-	padding: 0;
-	height: 32px;
-	position: relative;
-	overflow: hidden;
-}
-
-.content .test .activities .activity table tbody tr td.progress div.done,
-.content .test .activities .activity table tbody tr td.progress div.partial {
-	height: 100%;
-	top: 0;
-	left: 0;
-}
-
-.content .test .activities .activity table tbody tr td.progress span {
-	top: 50%;
-	transform: translateY(-50%);
-}
-
-.content .test .activities .activity .progress, .activityProgress.progress { position: relative; width: 100%; background-color: #ff9696; height: 30px; border: 2px solid black; overflow: hidden; margin-bottom: 10px; z-index: 0; padding: 0px; }
-.content .test .activities .activity .progress div.done, .activityProgress.progress div.done { height: 30px; float: left; position: absolute; background-color: #adffad; top: 0px; left: 0px; }
-.content .test .activities .activity .progress div.partial { height: 30px; float: left; position: absolute; background-color: #fff688; top: 0px; left: 0px; }
-.content .test .activities .activity .progress span, .activityProgress.progress span { float: left; width: 100%; position: absolute; top: 7px; left: 0px; text-align: center; font-size: 12px; font-weight: bold; }
-.content .test .activities .activity a { font-weight: bold; cursor: pointer; }
-
-.gameplayActivitySettings {
-	display: grid;
-	grid-template-columns: repeat(2, 1fr); 
-	gap: 10px;
-	margin: 20px;
-}
-
-.gameplaySetting {
-	display: flex;
-	align-items: center;   /* Keeps vertical alignment */
-	justify-content: center; /* Centers content horizontally */
-	gap: 10px;
-	min-width: 0;
-}
-.gameplaySetting input[type="checkbox"] { width: max-content; }
 
 .simletCardTitle {
 	display: flex;
@@ -1075,10 +947,6 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	border-bottom: 0px solid transparent;
 }
 
-.tooltipLine.collapsed, .activities.collapsed {
-	display: none;
-}
-
 .sessionSummary {
 	display: flex;
 	flex-wrap: wrap;
@@ -1086,6 +954,9 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	width: 100%;
 	align-items: center;
 	margin-top: 5px;
+}
+.sessionSummary .icon-download::before {
+	filter: none;
 }
 .sessionInfo {
 	width: max-content;
@@ -1118,12 +989,13 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	margin-bottom: 8px;
 }
 
-
-.activityDownload.text-with-icon.icon-download {
-	/* Change icon color from black to white */
-	filter: brightness(0) saturate(100%) invert(100%);
+.content .test .sessionSummary, .content .test .activities {
+	overflow: auto;
+	overflow-y: hidden;
 }
-
+.content .test .activities { white-space: nowrap; padding-bottom: 10px; }
+.content .test .activities .activity { vertical-align: top; background-color: gray; width: 500px; padding: 10px; margin-top: 10px; box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3); display: inline-block; margin-right: 10px; }
+.subform select.activityTypeSelector { flex: 1; margin-top: 10px; }
 
 /* Activity cards use .top; override legacy float layout so kebab dropdown stays in top-right and dropdown is not clipped. */
 .content .test .activities .activity .top {
@@ -1132,11 +1004,13 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	justify-content: space-between;
 	overflow: visible;
 }
+.content .test .activities .activity .top .activityName.text-with-icon::before {
+	--iconMargin: 5px;
+}
 
-.content .test .activities .activity .top h4 {
-	float: none;
-	margin: 0;
-	padding-right: 8px;
+.content .test .activities .kebab, .content .test .activities .expandButton {
+	--kebabButtonColor: white;
+	--triangleColor: white;
 }
 
 .content .test .activities .activity .top .kebab {
@@ -1147,14 +1021,13 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .content .test .activities .activity .top .activityTopActions {
 	display: flex;
 	align-items: center;
-	gap: 10px;
 	margin-left: auto;
 }
 
-.content .test .activities .activity .top .activityTopActions .kebab {
-	margin-left: 0;
+.activityDownload.text-with-icon.icon-download {
+	/* Change icon color from black to white */
+	filter: brightness(0) saturate(100%) invert(100%);
 }
-
 .content .test .activities .activity .activityDownload {
 	cursor: pointer;
 	font-weight: bold;
@@ -1162,11 +1035,6 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	display: inline-flex;
 	align-items: center;
 	line-height: 1;
-}
-
-/* Remove color change to show black icon */
-.content .test .activities .activity .activityDownload.icon-download::before {
-	filter: none;
 }
 
 .content .test .activities .activity .top .kebab .kebab-dropdown {
@@ -1177,37 +1045,149 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	margin-top: 4px;
 }
 
+.content .test .activities .activity .subtitle { font-style: italic; font-size: 14px; width: 100%; white-space: normal; margin-top: 5px; margin-bottom: 10px; padding: 0px; }
+
 .content .test .activities .activity .activity-meta {
-	min-height: 72px;
-	max-height: 72px;
-	overflow: hidden;
-	margin-bottom: 8px;
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
+		
+	min-height: 3lh;
+	max-height: 3lh;
+
+	overflow: hidden;
+	margin-left: 15px;
+	margin-bottom: 10px;
 	row-gap: 4px;
 }
+.content .test .activities .activity .activity-meta ul {
+	display: flex;
+	gap: 20px;
 
-.content .test .activities .activity .activity-meta p {
-	margin: 0;
-	line-height: 1.2;
-	white-space: nowrap;
+	list-style: none;
+	margin-top: 10px;
+	padding: 0px;
+}
+.content .test .activities .activity .activity-meta ul li {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 0px;
+}
+
+.content .test .activities .activity.tlimesurvey {
+	background-color: #3f8446;
+	color: white;
+}
+.icon-survey::before, .icon-edit-survey::before { background-image: url("../icon/questionnaire.png"); }
+.icon-survey::before { width: 24px; height: 24px; }
+
+.content .test .activities .activity.tgameplay {
+	background-color: #163f67;
+	color: white;
+}
+.icon-gameplay-web::before { width: 24px; height: 24px; background-image: url("../icon/browser.png"); }
+.icon-gameplay-desktop::before { width: 24px; height: 24px; background-image: url("../icon/electronics.png"); }
+
+.content .test .activities .activity.tmanual {
+	background-color: blueviolet;
+	color: white;
+}
+.icon-manual-external::before { width: 24px; height: 24px; background-image: url("../icon/export.png"); }
+
+.content .test .activities .activity.trageminio {
+	background-color: #c84949;
+	background: -webkit-linear-gradient(left, #ff7d7d 7%, #ffd17d 14%, #ffff7b 21%, #7bff7b 28%, #84ffff 35%, #8080ff 42%, #ff7aff 49%, white 49%, white 51%, #30819a 51%, #30819a 100%);
+	background: -o-linear-gradient(right, #ff7d7d 7%, #ffd17d 14%, #ffff7b 21%, #7bff7b 28%, #84ffff 35%, #8080ff 42%, #ff7aff 49%, white 49%, white 51%, #30819a 51%, #30819a 100%);
+	background: -moz-linear-gradient(right, #ff7d7d 7%, #ffd17d 14%, #ffff7b 21%, #7bff7b 28%, #84ffff 35%, #8080ff 42%, #ff7aff 49%, white 49%, white 51%, #30819a 51%, #30819a 100%);
+	background: linear-gradient(to right, #ff7d7d 7%, #ffd17d 14%, #ffff7b 21%, #7bff7b 28%, #84ffff 35%, #8080ff 42%, #ff7aff 49%, white 49%, white 51%, #30819a 51%, #30819a 100%);
+	width: 400px;
+}
+.content .test .activities .activity.tltitool {
+	background-color: #0f4d87;
+	color: white;
+}
+
+.analysis div { padding-left: 20px; }
+.analysis div { background-color: rgba(0,0,0,0.1); }
+
+.content .test .activities table { display: table; overflow: hidden; }
+.content .test .activities .activity.tactivity { background-color: gray; }
+.content .test .activities .activity table, .content .test .activities .activity .progress {
+	color: black;
+}
+
+.content .test .activities .activity table { table-layout: fixed; width: 100%; font-size: 14px; border-collapse: collapse; }
+.content .test .activities .activity table tr { width: 100%; height: 32px; }
+.content .test .activities .activity table thead tr td { width: 92px; }
+.content .test .activities .activity table thead, .content .test .activities .activity table tbody tr:nth-child(even) { background: #a5a5a5 }
+.content .test .activities .activity table tbody tr:nth-child(odd) { background: #c5c5c5 }
+.content .test .activities .activity table tr td, .content .test .activities .activity table tr th { border: solid 2px black; padding: 5px; height: 32px;  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; vertical-align: middle; }
+.content .test .activities .activity table tr td { width: 33.33%; }
+
+.content .test .activities .activity .red { background-color: #ff9696; }
+.content .test .activities .activity .green { background-color: #adffad; }
+.content .test .activities .activity .yellow { background-color: #fff688; }
+
+.content .test .activities .activity .legend { font-size: 14px; display: flex; gap:20px; justify-content: center; padding: 0px; margin-bottom: 10px; }
+.content .test .activities .activity .legend li { list-style: none; padding: 0px; }
+.content .test .activities .activity .legend span { border: 1px solid #ccc; float: left; width: 12px; height: 12px; margin: 2px; }
+.content .test .activities .activity .legend b { margin-left: 5px; }
+
+
+.content .test .activities .activity table tbody tr td.progress,
+.content .test .activities .activity table tbody tr td.progress div.done,
+.content .test .activities .activity table tbody tr td.progress div.partial { height: 28px; }
+
+.content .test .activities .activity table .showResult, .content .test .activities .activity table .downloadResult {
+	cursor: pointer;
+	margin-right: 7px;
+	height: 1lh;
+	width: auto;
+}
+
+/* Progress cells must not use generic td padding; otherwise 100% width leaves visible background strips. */
+.content .test .activities .activity table tbody tr td.progress {
+	padding: 0;
+	height: 32px;
+	position: relative;
 	overflow: hidden;
-	text-overflow: ellipsis;
 }
 
-.content .test .activities .activity .activity-meta p a,
-.content .test .activities .activity .activity-meta p img {
-	vertical-align: middle;
+.content .test .activities .activity table tbody tr td.progress div.done,
+.content .test .activities .activity table tbody tr td.progress div.partial {
+	height: 100%;
+	top: 0;
+	left: 0;
 }
 
-.content .test .activities .activity.tmanual .activity-meta {
-	min-height: 92px;
-	max-height: 92px;
+.content .test .activities .activity table tbody tr td.progress span {
+	top: 50%;
+	transform: translateY(-50%);
 }
-.sessionSummary .icon-download::before {
-	filter: none;
+
+.content .test .activities .activity .progress, .activityProgress.progress { position: relative; width: 100%; background-color: #ff9696; height: 30px; border: 2px solid black; overflow: hidden; margin-bottom: 10px; z-index: 0; padding: 0px; }
+.content .test .activities .activity .progress div.done, .activityProgress.progress div.done { height: 30px; float: left; position: absolute; background-color: #adffad; top: 0px; left: 0px; }
+.content .test .activities .activity .progress div.partial { height: 30px; float: left; position: absolute; background-color: #fff688; top: 0px; left: 0px; }
+.content .test .activities .activity .progress span, .activityProgress.progress span { float: left; width: 100%; position: absolute; top: 7px; left: 0px; text-align: center; font-size: 12px; font-weight: bold; }
+.content .test .activities .activity a { font-weight: bold; cursor: pointer; }
+
+.activitySettingsCheckboxes {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr); 
+	gap: 10px;
+	margin: 20px;
 }
+
+.activitySettigsCheckbox {
+	display: flex;
+	align-items: center;   /* Keeps vertical alignment */
+	justify-content: center; /* Centers content horizontally */
+	gap: 10px;
+	min-width: 0;
+}
+.activitySettigsCheckbox input[type="checkbox"] { width: max-content; }
+
 
 
 /* Groups + allocators */
@@ -1216,7 +1196,6 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	/* Must be set by the leftmost element in order for the other buttons to appear correctly aligned to the right */
 	margin-left: auto;
 }
-.owners.collapsed, .participants_container.collapsed { display: none; }
 .users .card { height: max-content; }
 
 .owners, .participants {

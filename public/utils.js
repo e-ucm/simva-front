@@ -419,7 +419,7 @@ var Utils = {
 	},
 
 	/**
-	 * Open content result in a frame
+	 * Open content result in a floating frame
 	 * @param {string} source - Source of the content to open
 	 */
 	openResultContent: function(source){

@@ -80,11 +80,15 @@
         "sessions.tab.title": "Sesiones",
         "users.tab.title": "Usuarios",
         
-    
+    "tester.play.title": "Ejecutar SIMLET como tester",
+    "tester.play.description": "Ejecute el SIMLET como tester como si tuviera el rol de participante. Esto le permite verificar que las actividades y el flujo funcionan correctamente antes de compartirlo con otros.",
+    "play.title": "Ejecutar SIMLET",
+    "play.description": "Ejecutar un SIMLET en el que participa",
+
     "scheduler.noSIMLET.title": "Aún no tiene SIMLETs en los que participar",
     "scheduler.title": "Haga clic aquí para iniciar o continuar su sesión en el SIMLET",
     "scheduler.current": "Actividad actual : ",
-    "scheduler.refresh": "Actualizar la página para continuar el SIMLET",
+    "scheduler.refresh": "Actualizar para continuar",
     "scheduler.complete": "Completa la Actividad",
     "scheduler.exit": "Salir del SIMLET"
 }

@@ -1,0 +1,691 @@
+<!-- Elements and base class for a generic activity -->
+
+<!-- Template for each element of the activities list -->
+<div id="activity_template" style="display: none;">
+    <div class="activity">
+        <div class="top">
+            <h3 class="activityName">    </h3>
+			<div class="activityTopActions">
+				<div class="activityDownload text-with-icon icon-download" title="<%= t('download.description', { ns : 'activities' }) %>"><b><%= t('download.title', { ns : 'activities' }) %></b></div>
+    			<div class="expandButton"></div>
+				<div class="kebab">
+					<ul class="kebab-dropdown">
+						<li class="text-with-icon icon-edit" title="<%= t('edit.title', { ns : 'activities' }) %>"><%= t('edit.title', { ns : 'activities' }) %></li>
+						<li class="text-with-icon icon-export" title="<%= t('export.title', { ns : 'activities' }) %>"><%= t('export.title', { ns : 'activities' }) %></li>
+						<li class="text-with-icon icon-url" title="<%= t('tmon.title', { ns : 'activities' }) %>"><%= t('tmon.title', { ns : 'activities' }) %></li>
+                        
+                        <li class="text-with-icon icon-delete" title="<%= t('delete.title', { ns : 'activities' }) %>"><%= t('delete.title', { ns : 'activities' }) %></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+        
+        <p class="subtitle">    </p>
+        
+        <div class="activity-meta"> </div>
+
+        <!-- Top progress bar -->
+        <div class="progress initCompProgress" title="<%= t('init.bar.tooltip', { ns : 'activities' }) %>">
+            <div class="partial"></div>
+            <div class="done"></div>
+        </div>
+        <!-- Top progress bar color legend -->
+        <ul class="legend">
+            <li class="total"><b><%= t('total.title', { ns : 'activities' }) %>:</b> <total>0</total></li>
+            <li class="init"><span class="yellow"></span> <b><%= t('init.title', { ns : 'activities' }) %>:</b> <done>0</done>% (<doneres>0</doneres>)</li>
+            <li class="comp"><span class="green"></span> <b><%= t('completed.title', { ns : 'activities' }) %>:</b> <done>0</done>% (<doneres>0</doneres>)</li>
+        </ul>
+
+        <!-- Participants table -->
+        <table>
+            <thead>
+                <th title="<%= t('participant.tooltip', { ns : 'activities' }) %>"><%= t('participant.title', { ns : 'activities' }) %></th>
+                <th class="actProgress" title="<%= t('progress.tooltip', { ns : 'activities' }) %>"><%= t('progress.title', { ns : 'activities' }) %></th>
+                <th class="compProgress" title="<%= t('completed.tooltip', { ns : 'activities' }) %>"><%= t('completed.title', { ns : 'activities' }) %></th>
+                <th class="resProgress" title="<%= t('result.tooltip', { ns : 'activities' }) %>"><%= t('result.title', { ns : 'activities' }) %></th>
+            </thead>
+            <tbody>
+                
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Template for each row of the activity participants table -->
+<div id="activity_participant_template" style="display: none;">
+    <!-- tr needs to be contained inside a table, otherwise the 
+    browser will delete it and won't be able to be cloned -->
+    <table>
+        <tr>
+            <td class="username"><a href="" target="_blank">  </a></td>
+            <td class="actProgress progress">
+                <div class="partial"></div>
+                <div class="done"></div>
+                <span><done>---</done> %</span>
+            </td>
+            <td class="compProgress"> </td>
+            <td class="resProgress">---</td>
+        </tr>
+    </table>
+
+    <!-- TODO: Add localization -->
+    <img src="/icon/eye.png" class="showResult" title="Open result in floating window">
+    <img src="/icon/download.png" class="downloadResult" title="Download results">
+</div>
+
+
+<script type="text/javascript">
+
+    class BaseActivityPainter {
+        constructor() {
+            this.supportedType = "activity";
+        	this.simple_name = "<%= t('activity.name', { ns : 'activities' }) %>";
+            this.description = "<%= t('activity.description', { ns : 'activities' }) %>";
+            this.resultFilePrefix = "<%= t('activity.result.file.prefix', { ns : 'activities' }) %>";
+        }
+
+        // Menus
+        
+        /**
+         * Render the create/edit extra form for the specific activity type
+         * @param {object} activity - object containing the activity info
+         */
+        paintExtraForm(activity) { }
+
+        /**
+         * Get the activity info from a form
+         * @param {object} form - object containing the info extracted from the form
+         * @returns {object} - object containing the activity info
+         */
+        getActivityInfoFromForm(form) { 
+            let activity = { }
+
+            // By default, just get the name and the type
+            activity.activity_name = form.activityName;
+            activity.activity_type = form.type;
+
+            return activity;
+        }
+        
+
+        /**
+         * Show the activity results of a participant in a floating menu
+         * @param {number} activityId - id of the activity that has the participant
+         * @param {number} participantId - id of the participant to show the results from 
+         * @param {string} resultType - type of result of data(full/code/traces)
+         */
+        openResults(activityId, participantId, resultType) {
+            let errorMsg = "<%= t('result.error.loading', { ns : 'activities' }) %>";
+            Simva.getActivityResult(activityId, participantId, resultType, (error, result) => {
+                if (error) {
+                    $.toast({
+                        heading: errorMsg,
+                        text: error.message,
+                        position: 'top-right',
+                        icon: 'error',
+                        stack: false
+                    });
+                } 
+                else {
+                    Utils.openResultContent(result[participantId], errorMsg);
+                }
+            });
+        }
+
+
+        // Functionality 
+
+        /**
+         * Download the activity results of a participant 
+         * @param {number} activityId - id of the activity that has the participant
+         * @param {number} participantId - id of the participant to download the results from 
+         * @param {string} resultType - type of the result data(full/code/traces)
+         */
+        downloadResults(activityId, participantId, type) {
+            let errorMsg = "<%= t('result.error.downloading', { ns : 'activities' }) %>";
+            Simva.getActivityResult(activityId, participantId, type, (error, result) => {
+                if (error) {
+                    $.toast({
+                        heading: errorMsg,
+                        text: error.message,
+                        position: 'top-right',
+                        icon: 'error',
+                        stack: false
+                    });
+                } 
+                else {
+                    const filename = `${this.resultFilePrefix}_${activityId}_${participantId}.json`
+                    if (participantId) {
+    					Utils.downloadContent(result[participantId], filename, errorMsg);
+                    }
+                    else {
+					    Utils.download(filename, JSON.stringify(result, null, 2));
+                    }
+                }
+            });
+        }
+
+        /**
+         * Download the entire activity backup in a single file 
+         * @param {number} activityId - id of the activity to download the info from
+         */
+        downloadGlobalActivityBackup(activityId) {
+            Simva.getMinioDataUrl(activityId, (error, result) => {
+                let errorMsg = "<%= t('result.error.downloading', { ns : 'activities' }) %>";
+                if(error){
+                    $.toast({
+                        heading: errorMsg,
+                        text: error.message,
+                        position: 'top-right',
+                        icon: 'error',
+                        stack: false
+                    });
+                } else {
+                    console.log('Minio URL for backup:', result);
+                    Utils.downloadContent(result.url, `${this.resultFilePrefix}_${activityId}.json`, errorMsg);
+                }
+            });
+        }
+
+        /**
+         * Download the activity backup in a file for each participant and compress them into a zip
+         * @param {number} activityId - id of the activity to download the info from
+         * @param {string} resultType - type of result of the result data(full/code/traces)
+         */
+        downloadBackup(activityId, resultType) {
+            let errorMsg = "<%= t('result.error.downloading', { ns : 'activities' }) %>";
+            Simva.getActivityResult(activityId, null, resultType, (error, result) => {
+				if (error) {
+					$.toast({
+                        heading: errorMsg,
+                        text: error.message,
+                        position: 'top-right',
+                        icon: 'error',
+                        stack: false
+                    });
+				} else {
+					let zip = new JSZip();
+					let hasResults = false;
+					let downloadPromises = [];
+					for(const participant in result) {
+						if(result.hasOwnProperty(participant) && result[participant] != null) {
+							downloadPromises.push(
+								fetch(result[participant])
+								.then((response) => {
+									if(!response.ok) {
+										throw new Error(`HTTP ${response.status}`);
+									}
+									return response.blob();
+								})
+								.then((blob) => {
+									zip.file(`${this.resultFilePrefix}_${activityId}_${participant}.json`, blob);
+								})
+								.catch((error) => {
+									console.error(`Error fetching result for participant ${participant}:`, error);
+								})
+							);
+							hasResults = true;
+						};
+					}
+					if(!hasResults) {
+						Utils.download(`${this.resultFilePrefix}_${activityId}_nodata.json`, JSON.stringify(result,null,2));
+					} else {
+						Promise.all(downloadPromises)
+						.then(() => zip.generateAsync({type:"blob"}))
+						.then((content) => {
+							// see FileSaver.js
+							saveAs(content, `${this.resultFilePrefix}_${activityId}.zip`);
+						});
+					}
+				}
+			});
+        }
+
+
+        getUsernameOrToken(user) {
+            return user.isToken ?  user.token : user.username;
+        }
+
+        getParticipantKey(participant) {
+            if (participant && participant.user_id !== undefined && participant.user_id !== null) {
+                return String(participant.user_id);
+            }
+            if (participant && participant.participant_id !== undefined && participant.participant_id !== null) {
+                return String(participant.participant_id);
+            }
+            if (participant && participant.id !== undefined && participant.id !== null) {
+                return String(participant.id);
+            }
+            if (participant && participant.isToken && participant.token !== undefined && participant.token !== null) {
+                return String(participant.token);
+            }
+            return String(participant.username);
+        }
+
+        getParticipantKeys(participant) {
+            let keys = [];
+            if (participant && participant.user_id !== undefined && participant.user_id !== null) {
+                keys.push(String(participant.user_id));
+            }
+            if (participant && participant.participant_id !== undefined && participant.participant_id !== null) {
+                keys.push(String(participant.participant_id));
+            }
+            if (participant && participant.id !== undefined && participant.id !== null) {
+                keys.push(String(participant.id));
+            }
+            if (participant && participant.username !== undefined && participant.username !== null) {
+                keys.push(String(participant.username));
+            }
+            if (participant && participant.token !== undefined && participant.token !== null) {
+                keys.push(String(participant.token));
+            }
+            if (participant && participant.isToken && participant.token !== undefined && participant.token !== null) {
+                keys.unshift(String(participant.token));
+            }
+            return Array.from(new Set(keys));
+        }
+
+        getParticipantMappedValue(map, participant) {
+            if (!map) {
+                return undefined;
+            }
+            const keys = this.getParticipantKeys(participant);
+            for (let i = 0; i < keys.length; i++) {
+                if (Object.prototype.hasOwnProperty.call(map, keys[i])) {
+                    return map[keys[i]];
+                }
+            }
+            return undefined;
+        }
+        
+                
+        // Render
+        
+        // Initial activity card rendering
+
+        addActivityCard(sessionId, activity, participants) {
+            // Add the session card synchronously to ensure they appear in order
+            const card = $("#activity_template .activity").clone();
+            $('#activities').append(card);
+            card.find(".kebab-dropdown").fadeOut(0);
+
+            card.data(SESSION_DATA_ID_KEY, sessionId);
+            card.data(ACTIVITY_DATA_ID_KEY, activity.activity_id);
+            card.data(ACTIVITY_DATA_NAME_KEY, activity.activity_name);
+            card.attr("id", `activity_${activity.activity_id}`);
+
+            this.fillActivityCard(activity, participants, card);
+        }
+
+        /**
+         * Fill the activity card info programatically to avoid XSS
+         * @param {object} activity - object containing the activity info
+         * @param {Array} participants - Array of objects containing the session participants info
+         * @param {object} card - jquery object reference of the card element
+         */
+        async fillActivityCard(activity, participants, card) {
+            card.addClass(`t${activity.activity_type}`);
+            card.find(".activityName").text(activity.activity_name);
+
+            card.find(".subtitle").attr("title", this.description);
+            card.find(".subtitle").text(this.simple_name);
+
+            card.find(".initCompProgress").attr("id", `init_comp_progress_${activity.activity_id}`);
+
+            // toggleActivityTable(activity.activity_id);
+            
+            this.fillParticipantsTable(card, activity, participants);
+            this.updateParticipants(activity, participants);
+        }
+
+
+        fillParticipantsTable(card, activity, participants, checkbox = false, progress = true, result = true) {
+            const table = card.find("table tbody");
+
+            participants.forEach((participant) => {
+                const row = $("#activity_participant_template tr").clone();
+                row.data(USER_DATA_ID_KEY, participant.user_id);
+                table.append(row);
+
+                const participantKey = this.getParticipantKey(participant);
+                row.attr("id", `user_${activity.activity_id}_${participantKey}`);
+                row.find(".actProgress").attr("id", `progress_${activity.activity_id}_${participantKey}`);
+                row.find(".compProgress").attr("id", `completion_${activity.activity_id}_${participantKey}`);
+                row.find(".resProgress").attr("id", `result_${activity.activity_id}_${participantKey}`);
+
+                const username = this.getUsernameOrToken(participant);
+                if (activity.data && activity.data.openable) {
+                    row.find("a").text(username);
+                    row.find("a").attr("id", `${activity.activity_id}_${participantKey}_target`);
+                }
+                else {
+                    row.find(".username").text(username);
+                    row.find("a").remove();
+                }
+
+                if (checkbox) {
+                    const col = row.find(".compProgress");
+                    col.text("");
+                    col.append($("<input>", { type: "checkbox" }));
+                }
+            });
+            
+            // Remove the activity progress column from the table
+            if (!progress) {
+                card.find(".actProgress").remove();
+            }
+            // Remove the activity completion column(the one with the checkbox) from the table
+            if (!checkbox) {
+                card.find(".compProgress").remove();
+            }
+            // Remove the activity result column from the table
+            if (!result) {
+                card.find(".resProgress").remove();
+            }
+        }
+
+
+        // Activity card table rendering
+
+        /**
+         * Update the participants table to display their status
+         * @param {object} activity - object containing the activity info
+         * @param {Array} participants - Array of objects containing the session participants info
+         */
+        updateParticipants(activity, participants) {
+            this.paintActivityInit(activity, activity.data.init, participants);
+            this.paintActivityProgress(activity, activity.data.progress, participants);
+            this.paintActivityCompletion(activity, activity.data.completion, participants);
+            this.paintActivityResult(activity, activity.data.result, participants);
+            if (activity.data.openable) {
+                this.paintActivityTargets(activity, activity.data.target, participants);
+            }
+        }
+
+        
+        paintActivityInit(activity, status, participants) {
+            let total = participants.length;
+            if (!status) {
+                // Even without status, update total if we have participant count
+                if (total > 0) {
+                    this.paintInitBarProgress(activity.activity_id, total, 0);
+                }
+                return;
+            }
+
+            // Count how many participants have initialized 
+            let done = 0;
+            participants.forEach((participant) => {
+                const participantKey = this.getParticipantKey(participant);
+                const value = this.getParticipantMappedValue(status, participant);
+                
+                if (value === true || (typeof value === "number" && value >= 1)) {
+                    done++;
+                    this.paintParticipantInit(activity.activity_id, participantKey);
+                }
+                else {
+                    this.paintParticipantNotInit(activity.activity_id, participantKey);
+                }
+            });
+
+            this.paintInitBarProgress(activity.activity_id, total, done);
+        }
+
+        // Paint a single participant row as not initialized
+        paintParticipantNotInit(activityId, participantId) {
+            // Set the participant progress bar to --- and make the progress, completion 
+            // and result columns to the same color to mark it hasn't initialized
+             $(`#progress_${activityId}_${participantId} span`).html($("<done>---</done>"));
+            $(`#progress_${activityId}_${participantId}`).removeClass('progress');
+
+            $(`#completion_${activityId}_${participantId}`).removeClass("red yellow green");
+            $(`#result_${activityId}_${participantId}`).removeClass("red yellow green");
+        }
+        
+        // Paint a single participant row as initialized
+        paintParticipantInit(activityId, participantId) {
+            // Set the participant progress bar to 0% and the completion and result columns colors to match the empty progress bar
+            $(`#progress_${activityId}_${participantId} .done`).css('width', '0%');
+            $(`#progress_${activityId}_${participantId} span`).html($("<done>0</done>")).append(" %");
+            $(`#progress_${activityId}_${participantId}`).addClass('progress');
+            $(`#progress_${activityId}_${participantId} .done`).addClass("partial");
+
+            $(`#completion_${activityId}_${participantId}`).removeClass("red yellow green");
+            $(`#completion_${activityId}_${participantId}`).addClass("red");
+            $(`#completion_${activityId}_${participantId} input[type="checkbox"]`).prop("checked", false);
+
+            $(`#result_${activityId}_${participantId}`).removeClass("red yellow green");
+            $(`#result_${activityId}_${participantId}`).addClass("red");
+        }
+
+        // Update the init progress of the activity top bar
+        paintInitBarProgress(activityId, total, progress) {
+            let visualProgress = Math.round((progress / total) * 1000) / 10;
+            if (isNaN(visualProgress)) {
+                visualProgress = 0;
+            }
+            $(`#init_comp_progress_${activityId} .partial`).css('width', `${visualProgress}%`);
+
+            $(`#activity_${activityId} .legend .total total`).text(total);
+            $(`#activity_${activityId} .legend .init done`).text(visualProgress);
+            $(`#activity_${activityId} .legend .init doneres`).text(progress);
+        }
+
+        
+        paintActivityProgress(activity, status, participants) {
+            if (!status) {
+                return;
+            }
+
+            participants.forEach((participant) => {
+                const participantKey = this.getParticipantKey(participant);
+                const value = this.getParticipantMappedValue(status, participant);
+
+                if (value != null && value !== 0) {
+                    this.paintParticipantProgress(activity.activity_id, participantKey, value);
+                }
+            });
+        }
+
+        // Paint the progress bar of a single participant
+        paintParticipantProgress(activityId, participantId, value) {
+            // Show the participant progress bar and completion and result columns in yellow (if the 
+            // activity, has been completed the color will be changed when checking the completion status)
+            let progress = Math.round(value * 1000) / 10;
+            $(`#progress_${activityId}_${participantId} .done`).css('width', `${progress}%`);
+            $(`#progress_${activityId}_${participantId} done`).text(progress);
+
+            $(`#completion_${activityId}_${participantId}`).removeClass("red yellow green");
+            $(`#completion_${activityId}_${participantId}`).addClass("yellow");
+            $(`#completion_${activityId}_${participantId} input[type="checkbox"]`).prop("checked", false);
+
+            $(`#result_${activityId}_${participantId}`).removeClass("red yellow green");
+            $(`#result_${activityId}_${participantId}`).addClass("yellow");
+                    
+        }
+
+        
+        paintActivityCompletion(activity, status, participants) {
+            let total = participants.length;
+            if (!status) {
+                // Even without status, update total if we have participant count
+                if (total > 0) {
+                    this.paintCompletionBarProgress(activity.activity_id, total, 0);
+                }
+                return;
+            }
+
+            let done = 0;
+
+            participants.forEach((participant) => {
+                const participantKey = this.getParticipantKey(participant);
+                const value = this.getParticipantMappedValue(status, participant);
+
+                // If the participant has completed the activity, make the progress bar and completion and result columns in green
+                if (value) {
+                    done++;
+                    $(`#progress_${activity.activity_id}_${participantKey} .done`).removeClass("partial");
+
+                    $(`#completion_${activity.activity_id}_${participantKey}`).removeClass("red yellow green");
+                    $(`#completion_${activity.activity_id}_${participantKey}`).addClass("green");
+                    $(`#completion_${activity.activity_id}_${participantKey} input[type="checkbox"]`).prop("checked", true);
+
+                    $(`#result_${activity.activity_id}_${participantKey}`).removeClass("red yellow green");
+                    $(`#result_${activity.activity_id}_${participantKey}`).addClass("green");
+                }
+            });
+            
+            this.paintCompletionBarProgress(activity.activity_id, total, done);
+        }
+        
+        // Update the completion progress of the activity top bar
+        paintCompletionBarProgress(activityId, total, progress) {
+            let visualProgress = Math.round((progress / total) * 1000) / 10;
+            if (isNaN(visualProgress)) {
+                visualProgress = 0;
+            }
+            $(`#init_comp_progress_${activityId} .done`).css('width', `${visualProgress}%`);
+
+            $(`#activity_${activityId} .legend .total total`).text(total);
+            $(`#activity_${activityId} .legend .comp done`).text(visualProgress);
+            $(`#activity_${activityId} .legend .comp doneres`).text(progress);
+        }
+
+
+        paintActivityResult(activity, results, participants) {
+            if (!results) {
+                return;
+            }
+
+            participants.forEach((participant) => {
+                const participantKey = this.getParticipantKey(participant);
+                const status = this.getParticipantMappedValue(results, participant);
+                
+                if (status != null) {
+                    this.paintParticipantResult(activity.activity_id, participantKey)
+                }
+                else {
+                    $(`#result_${activity.activity_id}_${participantKey}`).text("---");
+                }
+            });
+        }
+        
+        // Paint the result column of a single participant
+        paintParticipantResult(activityId, participantId) {
+            $(`#result_${activityId}_${participantId}`).text("");
+            const icons = $("#activity_participant_template img").clone();
+            $(`#result_${activityId}_${participantId}`).append(icons);
+        }
+
+
+        paintActivityTargets(activity, results, participants) {
+            if (!results) {
+                return;
+            }
+            participants.forEach((participant) => {
+                const participantKey = this.getParticipantKey(participant);
+                const target = this.getParticipantMappedValue(results, participant);
+                if (target) {
+                    $(`#${activity.activity_id}_${participantKey}_target`).attr('href', target);
+                }
+            });
+        }
+
+
+        // Activity card table updating
+
+        /**
+         * Update the progress of a specific participant (called by both init and progress events)
+         * @param {number} activityId - id of the activity that has the participant
+         * @param {number} participantId - id of the participant to update 
+         * @param {number} value - [0 - 1] progress value
+         */
+        updateActivityProgress(activityId, participantId, value) {
+            const progress = parseInt($(`#progress_${activityId}_${participantId} done`).text());
+
+            // If the activity wasn't initialized (the value is 0 and it wasn't a number), paint 
+            // the participant as initialized and update the initialized progress of the top bar
+            if (value == 0 && isNaN(progress)) {
+                this.paintParticipantInit(activityId, participantId, value);
+
+                const total = parseInt($(`#activity_${activityId} .legend .total total`).text());
+                let done = parseInt($(`#activity_${activityId} .legend .init doneres`).text());
+                done++;
+                this.paintInitBarProgress(activityId, total, done);
+            }
+            else {
+                this.paintParticipantProgress(activityId, participantId, value);
+            }
+        }
+
+        /**
+         * Update the completion of a specific participant
+         * @param {number} activityId - id of the activity that has the participant
+         * @param {number} participantId - id of the participant update 
+         * @param {number} completion - true if the activity will be set as completed for the participant, false otherwise 
+         */
+        updateActivityCompletion(activityId, participantId, completion) {
+            // The activity is initialized if its progress isn't NaN
+            const progress = parseInt($(`#progress_${activityId}_${participantId} done`).text());
+            const init = !(isNaN(progress));
+
+            // The activity was completed if it was initialized AND the progress bar was green 
+            // (didn't have the partial class), OR if the completion or results column were green 
+            const wasCompleted = (init && !$(`#progress_${activityId}_${participantId} .done`).hasClass("partial")) || 
+                $(`#completion_${activityId}_${participantId}`).hasClass("green") || $(`#result_${activityId}_${participantId}`).hasClass("green");
+            
+            // If the completion won't be changed to the same value it had before
+            if (completion != wasCompleted) {
+                const total = parseInt($(`#activity_${activityId} .legend .total total`).text());
+                let done = parseInt($(`#activity_${activityId} .legend .comp doneres`).text());
+
+                // By default, the color of the progress, complete and completion columns
+                // will be green if the activity is completed and red otherwise 
+                let colorClass = completion ? "green" : "red";
+
+                // If the activity will be marked as completed, add another participant to
+                // the completed progress of the top bar and make its progress bar green
+                if (completion) {
+                    done++;                
+                    $(`#progress_${activityId}_${participantId} .done`).removeClass("partial");
+                }
+                // Otherwise, remove a participant from the completed progress of the top bar
+                else {
+                    done--;
+                    
+                    // If the participant hasn't initialized the activity, the columns won't have any color
+                    if (!init) {
+                        colorClass = "";
+                    }
+                    // Otherwise, the columns will be yellow if the % is more than 0
+                    else if (progress > 0) {
+                        colorClass = "yellow"
+                    }
+
+                    // Make the progress bar yellow (unless the participant hasn't initalized the 
+                    // activity, in which case the progress bar will appear with no color)
+                    $(`#progress_${activityId}_${participantId} .done`).addClass("partial");
+                }
+
+                this.paintCompletionBarProgress(activityId, total, done);
+            
+                $(`#completion_${activityId}_${participantId}`).removeClass("red yellow green");
+                $(`#completion_${activityId}_${participantId}`).addClass(colorClass);
+
+                $(`#result_${activityId}_${participantId}`).removeClass("red yellow green");
+                $(`#result_${activityId}_${participantId}`).addClass(colorClass);
+
+                $(`#completion_${activityId}_${participantId} input[type="checkbox"]`).prop("checked", completion);
+            }
+            
+        }
+        
+        updateActivityResult(activityId, participantId, result) {
+            if (result) {
+                this.paintParticipantResult(activityId, participantId);
+            }
+        }
+   
+    }
+
+</script>

@@ -115,7 +115,7 @@
 				</span>
 			</div>
 		</div>
-        <div class="activities">
+        <div id="activities" class="activities">
             <div class="loader" style="margin-bottom: 20px;"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>
         </div>
     </div>
@@ -448,9 +448,9 @@
 	
 	// Expand/hide session info
 	const toggleSession = function(sessionId) {
-		$(`#test_${sessionId}`).find('.tooltipLine.activitiesTitle ').toggleClass('collapsed');
-		$(`#test_${sessionId}`).find('.activities').toggleClass('collapsed');
 		$(`#test_${sessionId}`).find('.expandButton').toggleClass('collapsed');
+		$(`#test_${sessionId}`).find('.tooltipLine.activitiesTitle ').toggle();
+		$(`#test_${sessionId}`).find('.activities').toggle();
 	}
 	
 	const openSessionDownloadForm = function(sessionId) {
@@ -758,15 +758,17 @@
 		// (called after fetching the complete session info from either the previously stored sessions info or from the database)
 		const fillCompleteFields = function(completeSession) {
 			const sessionParticipants = Array.isArray(completeSession.completeParticipants) ? completeSession.completeParticipants : [];
+			const activities = completeSession.completeActivities;
+
 			let userCount = sessionParticipants.length;
 			
+			card.find(".sessionActivities").after(activities.length);
 			card.find(".sessionUsers").after(userCount);
 
 			let completeUserCount = 0;
 			let lastActivityCompletion = 0;
 			
 			// If the session has any activities
-			const activities = completeSession.completeActivities;
 			if (activities.length > 0 && activities[activities.length - 1] != null) {
 				for (const [userId, completed] of Object.entries(activities[activities.length - 1].data.completion)) {
 					if (completed) {
@@ -785,10 +787,10 @@
 				lastActivityCompletion = (completeUserCount / userCount) * 100;
 			}
 			lastActivityCompletion = lastActivityCompletion.toFixed(2);
-			card.find(".done").css('width', `${lastActivityCompletion}%`);
-			card.find(".completionPercentage").append(lastActivityCompletion);
-			card.find(".completedUsers").append(completeUserCount);
-			card.find(".completedTotalUsers").append(userCount);
+			card.find(".sessionSummary .done").css('width', `${lastActivityCompletion}%`);
+			card.find(".sessionSummary .completionPercentage").append(lastActivityCompletion);
+			card.find(".sessionSummary .completedUsers").append(completeUserCount);
+			card.find(".sessionSummary .completedTotalUsers").append(userCount);
 
 			// Show/hide tester menu items based on participant status
 			if (isCurrentUserParticipant(sessionParticipants)) {
@@ -808,8 +810,9 @@
 		}
 		
 		// Get the complete session info and fill the card fields that depend on that info
-		if (completeSessionsById.has(session.session_id)) {
-			fillCompleteFields(completeSessionsById.get(session.session_id));
+		const act = completeSessionsById.get(session.session_id);
+		if (act != null) {
+			fillCompleteFields(act);
 		}
 		// If the complete info hasn't been stored yet, fetch it and store it for faster access
 		else {

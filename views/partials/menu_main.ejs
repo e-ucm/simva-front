@@ -27,12 +27,14 @@
 					<span><%= t('archived.title', { ns : 'SIMLETs' }) %></span>
 				</a>
 			</li>
-			<li>
-				<a href="/scheduler/" title="<%= t('play.description', { ns : 'SIMLETs' }) %>">
-					<span><img src="/icon/play.png" style="filter: invert(100%);"></span>
-					<span><%= t('play.title', { ns : 'SIMLETs' }) %></span>
-				</a>
-			</li>
+		<% } %>
+		<li>
+			<a href="/scheduler/" title="<%= t('play.description', { ns : 'SIMLETs' }) %>">
+				<span><img src="/icon/play.png" style="filter: invert(100%);"></span>
+				<span><%= t('play.title', { ns : 'SIMLETs' }) %></span>
+			</a>
+		</li>
+		<% if(user.data.role === 'teacher' || user.data.role === 'administrator') { %>
 			<% if(config.lti.enabled == 'true'){ %>
 				<li>
 					<a href="/lti-platform/" title="<%= t('LTIPlatfrom') %>">

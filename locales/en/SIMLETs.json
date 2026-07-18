@@ -88,7 +88,7 @@
     "scheduler.noSIMLET.title": "You have no SIMLETs yet to participate",
     "scheduler.title": "Click here to start or continue your session in the SIMLET",
     "scheduler.current": "Current Activity: ",
-    "scheduler.refresh": "Refresh Page to Continue SIMLET",
+    "scheduler.refresh": "Refresh to Continue",
     "scheduler.complete": "Complete Activity",
     "scheduler.exit": "Exit SIMLET"
 }

@@ -81,10 +81,15 @@
         "sessions.tab.title": "Sessions",
         "users.tab.title": "Users",
 
+    "tester.play.title": "",
+    "tester.play.description": "",
+    "play.title": "",
+    "play.description": "",
+        
     "scheduler.noSIMLET.title": "Vous n'avez pas encore de SIMLETs à participer.",
     "scheduler.title": "Cliquez ici pour commencer ou poursuivre votre session dans le SIMLET.",
     "scheduler.current": "Activité actuelle : ",
-    "scheduler.refresh": "Actualiser la page pour poursuivre le SIMLET",
+    "scheduler.refresh": "Actualiser pour poursuivre",
     "scheduler.complete": "Compléter Activité",
     "scheduler.exit": "Sortir du SIMLET"
 }

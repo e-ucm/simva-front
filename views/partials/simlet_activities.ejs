@@ -14,13 +14,11 @@
 			<div id="activity_name_desc_tab" class="subform selected">
 				<form id="activity_form">
 					<input hidden type="text" name="editingActivityId" id="edit_activity_id">
-					<input hidden type="text" name="prevActivityType" id="prev_activity_type">
-					<input hidden type="text" name="prevActivityName" id="prev_activity_name">
 
 					<h3 class="activity_form_name"><%- t('name.title', { ns : 'activities' }) %></h3>
 					<input type="text" class="name_field" name="activityName" id="activity_name" placeholder="<%- t('name.placeholder', { ns : 'activities' }) %>" required>
 					
-					<div style="display: flex; align-items: center; gap: 10px;">
+					<div id="activity_type" style="display: flex; align-items: center; gap: 10px;">
 						<div class="tooltipLine">
 							<h3><%- t('activity.type.title', { ns : 'activities' }) %></h3>
 							<div class="tooltip">
@@ -35,9 +33,9 @@
 							</div>
 						</div>
 						
-						<select class="activityTypeSelector" name="type" id="activity_type" onchange="changeActivityType()" required>
+						<select class="activityTypeSelector" name="type" id="activity_type_field" onchange="selectActivityType()" required>
 							<!-- Default 'no selected' option -->
-							<option value="\" selected disabled hidden><%- t('activity.type.select', { ns : 'activities' }) %>
+							<option selected disabled hidden><%- t('activity.type.select', { ns : 'activities' }) %>
 	                    </select>
 					</div>
                     <fieldset id="activity_extras">
@@ -65,17 +63,39 @@
 </div>
 
 
-<script type="text/javascript" src="/activities/activitypainter.js"></script>
-<script type="text/javascript" src="/activities/limesurveypainter.js"></script>
-<script type="text/javascript" src="/activities/rageanalyticspainter.js"></script>
+<!-- <script type="text/javascript" src="/activities/rageanalyticspainter.js"></script>
 <script type="text/javascript" src="/activities/miniopainter.js"></script>
 <script type="text/javascript" src="/activities/rageminiopainter.js"></script>
 <script type="text/javascript" src="/activities/gameplaypainter.js"></script>
-<script type="text/javascript" src="/activities/manualpainter.js"></script>
 <script type="text/javascript" src="/activities/ltitoolpainter.js"></script>
-<script type="text/javascript" src="/activities/imspackagepainter.js"></script>
+<script type="text/javascript" src="/activities/imspackagepainter.js"></script> -->
+
+<%- include('activities/base_activity') %>
+<%- include('activities/limeSurvey_activity') %>
+<%- include('activities/gameplay_activity') %>
+<%- include('activities/manual_activity') %>
+
 
 <script type="text/javascript">
+	let painters = new Map();  
+
+	const addPainter = function(painter) {
+        painters.set(painter.supportedType, painter);
+    }
+
+	addPainter(new BaseActivityPainter());
+    addPainter(new LimeSurveyPainter());
+    addPainter(new GameplayPainter());
+    addPainter(new ManualPainter());
+
+	const getActivityPainterByType = function(activityType) {
+		if (painters.has(activityType)) {
+			return painters.get(activityType);
+		}
+		return null;
+	}
+
+	
 	// Ids for the data-* attributes of each activity card
 	const ACTIVITY_DATA_ID_KEY = "activityId"
 	const ACTIVITY_DATA_NAME_KEY = "activityName"
@@ -84,56 +104,30 @@
 	let currSessionId = null;
 	let downloadActivityId = null;
 
+	let prevActivityInfo = null;
 
 	// Menus
 
     $(document).ready(function() {
-        let painters = Object.keys(PainterFactory.Painters);
+		$('#activity_extras').empty();
 
 		// Get all the available activity types and store extra info in the activityPainters
 		Simva.getActivityTypes(function(error, result) {
 			result.forEach((activityTypeInfo) => {
-				if (activityTypeInfo.commun && PainterFactory.Painters["activity"]) {
-					PainterFactory.Painters["activity"].commun = activityTypeInfo.commun;
-					PainterFactory.Painters["activity"].communSpecific = activityTypeInfo.communSpecific;
-				}
-
-				if (PainterFactory.Painters[activityTypeInfo.activity_type]) {
-					// data-* attributes are case-insensitive, so they must be set in kebab-case so the browser converts them to camelCase
-					PainterFactory.Painters[activityTypeInfo.activity_type].ACTIVITY_DATA_ID_KEY = "activity-id"
-					PainterFactory.Painters[activityTypeInfo.activity_type].ACTIVITY_DATA_NAME_KEY = "activity-name"
-
-					PainterFactory.Painters[activityTypeInfo.activity_type].setUtils(activityTypeInfo.activity_utils);
-					PainterFactory.Painters[activityTypeInfo.activity_type].simple_name = activityTypeInfo.name;
-					PainterFactory.Painters[activityTypeInfo.activity_type].description = activityTypeInfo.description;
-					PainterFactory.Painters[activityTypeInfo.activity_type].commun = activityTypeInfo.commun;
-					PainterFactory.Painters[activityTypeInfo.activity_type].communSpecific = activityTypeInfo.communSpecific;
-					PainterFactory.Painters[activityTypeInfo.activity_type].specific = activityTypeInfo.specific;
-					
-					let row = `<option value="${activityTypeInfo.activity_type}">${PainterFactory.Painters[activityTypeInfo.activity_type].simple_name}</option>`;
-					$('#activity_type').append(row);
-				}
-			});
-			
-			$('#activity_extras').empty();
-
-			Simva.getAllocatorTypes(function(error, result) {
-				result.forEach((allocatorType) => {
-					if (AllocatorFactory.Painters[allocatorType.allocator_type]) {
-						AllocatorFactory.Painters[allocatorType.allocator_type].simple_name = allocatorType.name;
-						AllocatorFactory.Painters[allocatorType.allocator_type].description = allocatorType.description;
-						AllocatorFactory.Painters[allocatorType.allocator_type].type_translated = allocatorType.type_t;
-						AllocatorFactory.Painters[allocatorType.allocator_type].add_message = allocatorType.add_message;
-						AllocatorFactory.Painters[allocatorType.allocator_type].add_error = allocatorType.add_error;
-						AllocatorFactory.Painters[allocatorType.allocator_type].type_title = allocatorType.type_title;
-						AllocatorFactory.Painters[allocatorType.allocator_type].participant_title = allocatorType.participant_title;
-						AllocatorFactory.Painters[allocatorType.allocator_type].test_title = allocatorType.test_title;
-						AllocatorFactory.Painters[allocatorType.allocator_type].add_title = allocatorType.add_title;
-						let row = `<div class="row"><input type="radio" name="type" id="allocator_${allocatorType.allocator_type}" value="${allocatorType.allocator_type}"><label for="allocator_${allocatorType.allocator_type}"><span class="name">${AllocatorFactory.Painters[allocatorType.allocator_type].simple_name}</span><span class="description">${AllocatorFactory.Painters[allocatorType.allocator_type].description}</span></label></div>`;
-						$('#change_allocator_content').append(row);
+				const painter = getActivityPainterByType(activityTypeInfo.activity_type);
+				if (painter != null) {
+					if (activityTypeInfo.activity_utils.newurl) {
+						newLimesurveyUrl = activityTypeInfo.activity_utils.newurl;
 					}
-				});
-				reloadSimlet();
+					if (activityTypeInfo.activity_utils.editurl) {
+						editLimesurveyUrl = activityTypeInfo.activity_utils.editurl;
+					}
+
+					$('#activity_type_field').append($("<option>", {
+						value: activityTypeInfo.activity_type,
+						text: painter.simple_name
+					}));
+				}
 			});
 		});
 
@@ -142,49 +136,52 @@
 			let errorbox = $('#activity_form_error');
 			let form = Utils.getFormData($(this));
 			Utils.toggleSubmit();
+			
+			// Require the user to select a type
+			if (!form.type) {
+				errorbox.text("<%- t('activity.type.select_required', { ns : 'activities' }) %>");
+				Utils.toggleSubmit();
+				return false;
+			}
+
+			const painter = getActivityPainterByType(form.type);
+			if (painter == null) {
+				errorbox.text("<%- t('activity.type.select_required', { ns : 'activities' }) %>");
+				Utils.toggleSubmit();
+				return false;
+			}
+
+			const activityInfo = painter.getActivityInfoFromForm(form);
 
 			// Creating new activity
 			if (form.editingActivityId == null || form.editingActivityId == "") {
-				// Require the user to select a type
-			   if (!form.type) {
-				   errorbox.text("<%- t('activity.type.select_required', { ns : 'activities' }) %>");
-				   Utils.toggleSubmit();
-				   return false;
-			   }
-
 			   const addActivity = function() {
-					// TODO: Make add new and edit menus share the same extract method
-				   PainterFactory.Painters[form.type].extractInformation('#activity_form', function(error, activity) {
-						console.log(activity)					
-						if (error) {
-							errorbox.text(error);
-						} 
-						else {
-							Simva.addActivityToSession(simletId, currSessionId, activity, function(error, result) {
-								Utils.toggleSubmit();
-								if (error && error.responseJSON) {
-									errorbox.text(error.responseJSON.message);
-								} else {
-									Utils.toggleFormInFloating('activity_form_menu');
-									reloadSimlet();
-								}
-							});
+					Simva.addActivityToSession(simletId, currSessionId, activityInfo, function(error, result) {
+						Utils.toggleSubmit();
+						if (error && error.responseJSON) {
+							errorbox.text(error.responseJSON.message);
+							return false;
+						} else {
+							Utils.toggleFormInFloating('activity_form_menu');
+							reloadSimlet();
 						}
-				   });
+					});
 			   }
 
 			   // If the activity is a web activity with no url, show a message asking confirmation
 			   const closestWebTab = $(this).find("[method='WEB']");
-			   if (closestWebTab.length > 0 && closestWebTab.is(".selected") && (form.game_uri == "" || form.game_uri == null)) {
-				   if (confirm(`<%- t('add.new.web.no_url_message', { ns : 'activities' }) %>`)) {
-					   addActivity();
-				   }
-			   }
-			   else {
-				   addActivity();
-			   }
-			   
-			   return false;
+				if (closestWebTab.length > 0 && closestWebTab.is(".selected") && (form.game_uri == "" || form.game_uri == null || form.uri == "" || form.uri == null)) 
+				{
+					if (confirm(`<%- t('add.new.web.no_url_message', { ns : 'activities' }) %>`)) {
+						addActivity();
+					}
+					else {
+						Utils.toggleSubmit();
+					}
+				}
+				else {
+					addActivity();
+				}
 			}
 			// Editing activity
 			else {
@@ -194,29 +191,26 @@
 					Utils.toggleSubmit();
 					return false;
 				}
-				// TODO: Make add new and edit menus share the same extract method
-				PainterFactory.Painters[form.type].extractEditInformation('#activity_form', activity, function(error, updatedActivity) {
-					if (error) {
-						errorbox.text(error);
-					} else {
-						if (Object.keys(updatedActivity).length == 0) {
-							errorbox.text("<%- t('edit.no_changes.message', { ns : 'SIMLETs' }) %>");
-							Utils.toggleSubmit();
+
+				// Compare the previous activity info with the updated one
+				if (JSON.stringify(prevActivityInfo) === JSON.stringify(activityInfo)) {
+					errorbox.text("<%- t('edit.no_changes.message', { ns : 'SIMLETs' }) %>");
+					Utils.toggleSubmit();
+					return false;
+				}
+				else {
+					Simva.updateActivity(simletId, currSessionId, form.editingActivityId, activityInfo, function(error, result) {
+						Utils.toggleSubmit();
+						if (error && error.responseJSON) {
+							errorbox.text(error.responseJSON.message);
 						} else {
-							Simva.updateActivity(simletId, currSessionId, form.editingActivityId, updatedActivity, function(error, result) {
-								Utils.toggleSubmit();
-								if (error && error.responseJSON) {
-									errorbox.text(error.responseJSON.message);
-								} else {
-									Utils.toggleFormInFloating('activity_form_menu');
-									reloadSimlet();
-								}
-							});
+							Utils.toggleFormInFloating('activity_form_menu');
+							reloadSimlet();
 						}
-					}
-				});
+					});
+				}
 			}
-			
+
 			return false;
 		});
 
@@ -265,11 +259,6 @@
 		// Always open form in the create/edit common tab
 		Utils.changeTab($('#activity_name_desc_tab_button'), 'activity_form_form','activity_name_desc_tab');
 
-		// Hide the activity type info and select the placeholder option
-		$("#new_activity_form").find("fieldset").empty();
-		$(".activityTypeSelector option").eq(0).prop("selected", true);
-
-
 		Utils.toggleFormInFloating('activity_form_menu');
 
 		$('#activity_form_error').text("");
@@ -277,9 +266,11 @@
 		$('#edit_activity_id').val(activityId);
 		currSessionId = sessionId;
 
+		// Creating new activity
 		if (activityId == null) {
-			// Show the add new/import tabs
+			// Show the add new/import tabs and unlock the activity type selector
 			$("#add_activity_tabs").show();
+			$("#activity_type option:not(:selected)").prop("disabled", false);
 
 			$("#activity_form_title").text("<%- t('add.title', { ns : 'activities' }) %>");
 			$("#activity_submit").val("<%- t('add.submit', { ns : 'activities' }) %>");
@@ -287,12 +278,17 @@
 			$('#prev_activity_name').val("");
 			$('#prev_activity_type').val("");
 			$('#activity_name').val("");
+
+			// Select the placeholder option
+			$("#activity_type_field option").eq(0).prop("selected", true);
+			selectActivityType();
 		}
+		// Editing activity
 		else {
 			const activity = getActivityFromId(activityId);
 
 			// Hide the add new/import tabs (only the name/description/tags tab is needed when editing session)
-			$("#add_session_tabs").hide();
+			$("#add_activity_tabs").hide();
 
 			$("#activity_form_title").text("<%- t('edit.title', { ns : 'activities' }) %>");
 			$("#activity_submit").val("<%- t('edit.submit', { ns : 'activities' }) %>");
@@ -301,11 +297,19 @@
 			$('#prev_activity_type').val(activity.activity_type);
 			
 			$('#activity_name').val(activity.activity_name);
-			$('#activity_type').val(activity.activity_type);
+			$('#activity_type_field').val(activity.activity_type);
 
-			// Paint the extra info depending on the activity type
-			changeActivityType();
-			PainterFactory.Painters[activity.activity_type].updateInputEditExtraForm(activity);
+			// Paint the extra form depending on the activity type
+			selectActivityType(activity);
+
+			// Lock the activity type selector once the extra form has been updated to avoid changing the activity type
+			$("#activity_type option:not(:selected)").prop("disabled", true);
+
+			// Save the activity info before editing to compare it with the info after submitting the form
+			const painter = getActivityPainterByType(activity.activity_type);
+			if (painter != null) {
+				prevActivityInfo = painter.getActivityInfoFromForm(Utils.getFormData($("#activity_form")));
+			}
 		}
 	}
 
@@ -320,13 +324,13 @@
 
 		const session = getSessionFromId(activity.session_id);
 
-		// Show test download button if the current user is participant of the session
+		// Show test download button only if the current user is participant of the session
 		$("#activity_test_data_download").hide();
 		if (isCurrentUserParticipant(session.completeParticipants)) {
 			$("#activity_test_data_download").show();
 		}
 
-		// Show xasu download button if the activity is a desktop gameplay activity
+		// Show xasu download button only if the activity is a desktop gameplay activity
 		$("#xasu_download").hide();
 		if (activity.activity_type == "gameplay") {
 			if (activity.game_type != "WEB" && activity.activity_trace_storage) {
@@ -335,41 +339,188 @@
 		}
 	}
 
+	// Expand/hide activity participants table
+	const toggleActivityTable = function(activityId) {
+		$(`#activity_${activityId}`).find('.expandButton').toggleClass('collapsed');
+		$(`#activity_${activityId}`).find('table').toggle();
+	}
+
 
 	// Activities buttons shared listeners using event delegation to ensure 
 	// the handler works even if element is added after the document ready event
 
 	$(document).on('click', ".activityTopActions .activityDownload", function(e) {
-		const data = $(this).closest(".activityTopActions").data();
+		const data = $(this).closest(".activity").data();
 		openActivityDownloadForm(data[ACTIVITY_DATA_ID_KEY])
 	});
 
+    $(document).on('click', ".activityTopActions .expandButton", function(e) {
+		const data = $(this).closest(".activity").data();
+		toggleActivityTable(data[ACTIVITY_DATA_ID_KEY]);
+	});
+	
 	$(document).on('click', ".activityTopActions .icon-edit", function(e) {
-		const data = $(this).closest(".activityTopActions").data();
+		const data = $(this).closest(".activity").data();
 		const sessionData = $(this).closest(".test").data();
 		openActivityForm(sessionData[SESSION_DATA_ID_KEY], data[ACTIVITY_DATA_ID_KEY]);
 	});
 
 	$(document).on('click', ".activityTopActions .icon-export", function(e) {
-		const data = $(this).closest(".activityTopActions").data();
+		const data = $(this).closest(".activity").data();
 		const sessionData = $(this).closest(".test").data();
-		PainterFactory.Painters['activity'].exportActivity(data[ACTIVITY_DATA_ID_KEY], sessionData[SESSION_DATA_ID_KEY], simletId);
+		exportActivity(data[ACTIVITY_DATA_ID_KEY]);
 	});
 
+	// Open a floating window with the Tmon page of the selected activity
 	$(document).on('click', ".activityTopActions .icon-url", function(e) {
-		const data = $(this).closest(".activityTopActions").data();
+		const data = $(this).closest(".activity").data();
 		const sessionData = $(this).closest(".test").data();
-		PainterFactory.Painters['activity'].getTMonUrl(data[ACTIVITY_DATA_ID_KEY], sessionData[SESSION_DATA_ID_KEY], simletId)
+		const url = `${Simva.tmonUrl}/${simletId}/${sessionData[SESSION_DATA_ID_KEY]}/${data[ACTIVITY_DATA_ID_KEY]}/${Simva.TMonFile}/dashboard/`;
+       	Utils.toggleIframeInFloating(url); 
+	});
+
+	// Set completion for all participants
+	$(document).on('click', ".activityTopActions .icon-activate", function(e) {
+		const data = $(this).closest(".activity").data();
+		setCompletionForAllParticipant(data[ACTIVITY_DATA_ID_KEY], true);
+	});
+	
+	// Unset completion for all participants
+	$(document).on('click', ".activityTopActions .icon-pause", function(e) {
+		const data = $(this).closest(".activity").data();
+		setCompletionForAllParticipant(data[ACTIVITY_DATA_ID_KEY], false);
 	});
 
 	$(document).on('click', ".activityTopActions .icon-delete", function(e) {
-		const data = $(this).closest(".activityTopActions").data();
+		const data = $(this).closest(".activity").data();
 		const sessionData = $(this).closest(".test").data();
 		deleteActivity(data[ACTIVITY_DATA_ID_KEY], data[ACTIVITY_DATA_NAME_KEY], sessionData[SESSION_DATA_ID_KEY])
 	});
+	// Checkbox to set/unset completion for user
+	$(document).on('change', ".compProgress input[type='checkbox']", function (e) {
+        const data = $(this).closest("tr").data();
+        const activityData = $(this).closest(".activity").data();
+		Simva.setActivityCompletion(activityData[ACTIVITY_DATA_ID_KEY], data[USER_DATA_ID_KEY], $(this).is(":checked"), function() {
+			console.log('saved');
+		});
+    });
 	
+	// Open results of user in floating menu 
+	$(document).on('click', ".activity table .showResult", function(e) {
+		const data = $(this).closest("tr").data();
+		const activityData = $(this).closest(".activity").data();
+
+		const act = getActivityFromId(activityData[ACTIVITY_DATA_ID_KEY]);
+		if (act != null) {
+			const painter = getActivityPainterByType(act.activity_type);
+			if (painter != null) {
+				painter.openResults(act.activity_id, data[USER_DATA_ID_KEY]);
+			}
+		}
+	});
+
+	// Download results for user
+	$(document).on('click', ".activity table .downloadResult", function(e) {
+		const data = $(this).closest("tr").data();
+		const activityData = $(this).closest(".activity").data();
+
+		const act = getActivityFromId(activityData[ACTIVITY_DATA_ID_KEY]);
+		if (act != null) {
+			const painter = getActivityPainterByType(act.activity_type);
+			if (painter != null) {
+				painter.downloadResults(act.activity_id, data[USER_DATA_ID_KEY]);
+			}
+		}
+	});
+
+
 
 	// Functionality
+	
+	const downloadActivityData = function () {
+		Simva.getActivityLRSData(downloadActivityId, (error, result) => {
+            let errorMsg = "<%= t('result.error.downloading', { ns : 'activities' }) %>";
+			if(error){
+				$.toast({
+					heading: errorMsg,
+					text: error.message,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+			} else {
+				Utils.downloadContent(result.data, `full_xapi_data_${downloadActivityId}.json`, errorMsg);
+			}
+		});
+	}
+
+	const downloadActivityTestData = function() {
+		Simva.getActivityTestLRSData(downloadActivityId, (error, result) => {
+            let errorMsg = "<%= t('result.error.downloading', { ns : 'activities' }) %>";
+			if(error){
+				$.toast({
+					heading: errorMsg,
+					text: error.message,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+			} else {
+				Utils.downloadContent(result.data, `test_xapi_data_${downloadActivityId}.json`, errorMsg);
+			}
+		});
+	}
+
+	const downloadGlobalActivityBackup = function() {
+		const act = getActivityFromId(downloadActivityId);
+		if (act != null) {
+			const painter = getActivityPainterByType(act.activity_type);
+			if (painter != null) {
+				painter.downloadGlobalActivityBackup(downloadActivityId);
+			}
+		}
+	}
+
+	const downloadUsersActivityBackup = function() {
+		const act = getActivityFromId(downloadActivityId);
+		if (act != null) {
+			const painter = getActivityPainterByType(act.activity_type);
+			if (painter != null) {
+				painter.downloadBackup(downloadActivityId);
+			}
+		}
+	}
+    
+	const exportActivity = function(activityId) {
+		Simva.exportActivity(activityId, true, (error, result) => {
+			if(error){
+				$.toast({
+					heading: error.message,
+					text: error.message,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+			} 
+			else {
+				Utils.downloadContent(JSON.stringify(result, null, 2), `activity_export_${activityId}.json`);
+			}
+		});
+	}
+
+	const setCompletionForAllParticipant = function(activityId, status) {
+		Simva.setMultiActivityCompletion(activityId, status, (error, result) => {
+			if (error){
+				$.toast({
+					heading: error.message,
+					text: "<%- t('completed.error.message', { ns : 'activities' }) %>",
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+			}
+		})
+	}
 
     const deleteActivity = function(activityId, activityName, sessionId) {
 		let test = getSessionFromId(sessionId);
@@ -379,26 +530,6 @@
 				reloadSimlet();
 			});
 		}
-	}
-
-	const downloadActivityData = function () {
-		PainterFactory.Painters['activity'].getLRSData(downloadActivityId);
-	}
-
-	const downloadActivityTestData = function() {
-		PainterFactory.Painters['activity'].getLRSTestData(downloadActivityId);
-	}
-
-	const downloadGlobalActivityBackup = function() {
-		PainterFactory.Painters['activity'].downloadGlobalMinioBackup(downloadActivityId);
-	}
-
-	const downloadActivityXasuConfig = function() {
-		GameplayActivityPainter.downloadXasuConfig(downloadActivityId, simletId);
-	}
-
-	const downloadUsersActivityBackup = function() {
-		PainterFactory.Painters['activity'].downloadBackup(downloadActivityId);
 	}
 
 
@@ -411,33 +542,21 @@
 	 * @param {Array} participants - Array of objects containing the session participants info
 	 */
     const paintSessionActivities = async function(session, activities, participants) {
-		window.participants = participants;
 		$(`#test_${session.session_id} .activities`).empty();
 
 		if (activities.length === 0) {
 			$(`#test_${session.session_id} .activities`).text("<%- t('no_activities.message', { ns : 'activities' }) %>");
-		} else {
+		} 
+		else {
 			activities.forEach((activity) => {
-				switch(activity.activity_type) {
-					case 'rageminio':
-					case 'miniokafka':
-					case 'rageanalytics':
-					case 'limesurvey':
-					case 'gameplay':
-					case 'activity':
-					case 'manual':
-					case 'ltitool':
-					case 'imspackage':
-						PainterFactory.Painters[activity.activity_type].fullyPaintActivity(activity, participants);
-						break;
-					default:
-						ActivityPainter.fullyPaintActivity(activity, participants);
-						break;
-				}
+				const painter = getActivityPainterByType(activity.activity_type);
+				if (painter != null) {
+                    painter.addActivityCard(simletId, activity, participants);
+                }
 			});
 		}
 
-		// Block activity changes when SIMLET is archived
+		// Block activity changes when session is finished
 		if (session.session_status == SESSION_FINISHED_STATUS) {
 			$(".activityTopActions").find(".kebab-dropdown").find(".icon-delete").hide();
 			$(".activityTopActions").find(".kebab-dropdown").find(".icon-activate").hide();
@@ -447,24 +566,18 @@
 		}
 	}
 
-
-	const changeActivityType = function() {
-		const selectedType = $("#activity_type").val();
+	
+	/**
+	 * Paint the extra form corresponding to the selected activity type
+	 * @param {object} activity - object containing the activity info
+	 */
+	const selectActivityType = function(activity) {
 		$('#activity_extras').empty();
-
-		// TODO: Make add new and edit menus share extra elements
-		if (PainterFactory.Painters[selectedType]) {
-			if ($('#edit_activity_id').val() == null) {
-				PainterFactory.Painters[selectedType].getExtraForm((error, result) => {
-					if (!error) {
-						$('#activity_extras').append(result);
-					}
-				});
-			}
-			else {
-				$('#activity_extras').append(PainterFactory.Painters[selectedType].getEditExtraForm());
-			}
+		const painter = getActivityPainterByType($("#activity_type_field").val());
+		if (painter != null) {
+			painter.paintExtraForm(activity);
 		}
 	}
 
 </script>
+

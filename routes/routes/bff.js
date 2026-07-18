@@ -787,9 +787,9 @@ module.exports = function(auth, redirectToLogin, config){
     });
 
     // Get the languages of the specified survey
-    router.get('/limesurvey/surveys/:activityid/languages', auth, redirectToLogin, async (req, res, next) => {
+    router.get('/limesurvey/surveys/:surveyid/languages', auth, redirectToLogin, async (req, res, next) => {
         try {
-            let result = await SimvaAsync.getSurveyLanguages(req.params["activityid"], req.session.id);
+            let result = await SimvaAsync.getSurveyLanguages(req.params["surveyid"], req.session.id);
             res.status(200).send(result);
         } catch(error) {
             next(error.response?.data || error);
@@ -797,7 +797,7 @@ module.exports = function(auth, redirectToLogin, config){
     });
 
     // Set the owner of a survey
-    router.patch('/limesurvey/surveys/:activityid/owner', auth, redirectToLogin, async (req, res, next) => {
+    router.patch('/limesurvey/surveys/owner', auth, redirectToLogin, async (req, res, next) => {
         try {
             let result = await SimvaAsync.setSurveyOwner(req.params["activityid"], req.session.id);
             res.status(200).send(result);
@@ -920,53 +920,13 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Get the result data of of the specified activity 
     router.get('/activities/:activityid/result', auth, redirectToLogin, async (req, res, next) => {
-        // Get the data with the specified type
-        if(req.query.type) {
-            // For a specific participant 
-            if(req.query.users) {
-                Simva.getActivityResultWithTypeForUser(req.params["activityid"], req.query.type, req.query.users, req.session.id, (error, result) => {
-                    if(error) {
-                        next(error.response?.data || error);
-                    } else {
-                        res.status(200).send(result);
-                    }
-                });
-            } 
-            // For all participants
-            else {
-                Simva.getActivityResultWithType(req.params["activityid"], req.query.type, req.session.id, (error, result) => {
-                    if(error) {
-                        next(error.response?.data || error);
-                    } else {
-                        res.status(200).send(result);
-                    }
-                });
+        Simva.getActivityResult(req.params["activityid"], req.query.users, req.query.type,  req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
             }
-        } 
-        // Get the data regardless of the type
-        else {
-            // For a specific participant 
-            if(req.query.users) {
-                Simva.getActivityResultForUser(req.params["activityid"], req.query.users, req.session.id, (error, result) => {
-                    if(error) {
-                        next(error.response?.data || error);
-                    } else {
-                        res.status(200).send(result);
-                    }
-                });
-            }
-            // For all participants
-            else {
-                Simva.getActivityResult(req.params["activityid"], req.session.id, (error, result) => {
-                    if(error) {
-                        next(error.response?.data || error);
-                    } else {
-                        res.status(200).send(result);
-                    }
-                });
-            }
-        }
-        
+        });
     });
 
     // TODO: Document / remove?
@@ -1451,7 +1411,7 @@ module.exports = function(auth, redirectToLogin, config){
      * @param {Response} res - HTTP response object
      * @param {function} next - Next middleware function
      */
-    router.get('/users/islimesurveyadmin', auth, redirectToLogin, async (req, res, next) => {
+    router.get('/limesurvey/isAdmin', auth, redirectToLogin, async (req, res, next) => {
         Simva.islimesurveyadmin(req.session.id, (error, result) => {
             if(error) {
                 next(error.response?.data || error);
