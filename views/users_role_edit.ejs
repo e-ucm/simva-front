@@ -1,9 +1,9 @@
 <%# views/users_role_edit.ejs %>
 
 <% extend('layout') %>
-<script type="text/javascript" src="/jquery.js"></script>
-<script type="text/javascript" src="/utils.js"></script>
-<script type="text/javascript" src="/simva.js"></script>
+<script type="text/javascript" src="/src/lib/jquery.js"></script>
+<script type="text/javascript" src="/src/utils.js"></script>
+<script type="text/javascript" src="/src/simva.js"></script>
 <script type="text/javascript">
 	document.addEventListener('DOMContentLoaded', function() {
 		// Assuming the configuration is outputted to a script tag like this:
@@ -41,7 +41,7 @@
 	});
 </script>
 <div id="role_selection" class="content">
-	<img id="logo" src="/logo_text.png" alt="logo" />
+	<img id="logo" src="/images/logo_text.png" alt="logo" />
 	<title><%= t('selection.title', { ns : 'roles'}) %></title>
 	<form method="post" id="role_form">
 		<fieldset>

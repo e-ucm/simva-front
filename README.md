@@ -7,4 +7,4 @@ Simva Backend can be found here: https://github.com/e-ucm/simva
 This is a simple frontend created with Express and JQuery to manage Simva without API calls.
 It has some additional functionality as random user creation in batch.
 
-![Simva-front login](https://raw.githubusercontent.com/e-ucm/simva-front/master/public/login.png)
+![Simva-front login](https://raw.githubusercontent.com/e-ucm/simva-front/master/public/images/login.png)

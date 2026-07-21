@@ -416,7 +416,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	background-size: var(--iconSize) var(--iconSize);
 	background-position: var(--iconMargin) 50%;
 	background-repeat: no-repeat;
-	background-image: url("../icon/search.png");
+	background-image: url("../images/icons/search.png");
 
 	--iconTextMargin: 10px;
 	padding-left: calc(var(--iconSize) + var(--iconMargin) + var(--iconTextMargin));
@@ -563,30 +563,30 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	/* Change icon color from black to white */
 	filter: invert(100%);
 }
-.icon-edit::before { background-image: url("../icon/pencil.png"); }
-.icon-add::before { background-image: url("../icon/add.png"); }
-.icon-download::before, .icon-export::before { background-image: url("../icon/download.png"); }
+.icon-edit::before { background-image: url("../images/icons/pencil.png"); }
+.icon-add::before { background-image: url("../images/icons/add.png"); }
+.icon-download::before, .icon-export::before { background-image: url("../images/icons/download.png"); }
 
-.icon-url::before { background-image: url("../icon/url.png"); }
-.icon-archive::before { background-image: url("../icon/archive.png"); }
-.icon-dearchive::before { background-image: url("../icon/dearchive.png"); }
+.icon-url::before { background-image: url("../images/icons/url.png"); }
+.icon-archive::before { background-image: url("../images/icons/archive.png"); }
+.icon-dearchive::before { background-image: url("../images/icons/dearchive.png"); }
 
-.icon-play::before { background-image: url("../icon/play.png"); }
-.icon-activate::before { background-image: url("../icon/play.png"); }
-.icon-pause::before { background-image: url("../icon/pause.png"); }
-.icon-finish::before { background-image: url("../icon/stop.png"); }
-/* .icon-duplicate::before { background-image: url("../icon/duplicate.png"); } */
+.icon-play::before { background-image: url("../images/icons/play.png"); }
+.icon-activate::before { background-image: url("../images/icons/play.png"); }
+.icon-pause::before { background-image: url("../images/icons/pause.png"); }
+.icon-finish::before { background-image: url("../images/icons/stop.png"); }
+/* .icon-duplicate::before { background-image: url("../images/icons/duplicate.png"); } */
 
-.icon-reset-tester::before { background-image: url("../icon/undo.png"); }
-.icon-tester::before { background-image: url("../icon/tube.png"); }
-.icon-untester::before { background-image: url("../icon/clean.png"); }
+.icon-reset-tester::before { background-image: url("../images/icons/undo.png"); }
+.icon-tester::before { background-image: url("../images/icons/tube.png"); }
+.icon-untester::before { background-image: url("../images/icons/clean.png"); }
 .icon-delete { color: #ff3d3d; }
 .icon-delete::before {
-	background-image: url("../icon/trash.png");
+	background-image: url("../images/icons/trash.png");
 	/* Change icon color from black to #ff3d3d */
 	filter: brightness(0) saturate(100%) invert(52%) sepia(61%) saturate(7367%) hue-rotate(339deg) brightness(114%) contrast(114%); 
 }
-.icon-gear::before { background-image: url("../icon/gear.png"); }
+.icon-gear::before { background-image: url("../images/icons/gear.png"); }
 
 
 /* Tags */
@@ -1079,21 +1079,21 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	background-color: #3f8446;
 	color: white;
 }
-.icon-survey::before, .icon-edit-survey::before { background-image: url("../icon/questionnaire.png"); }
+.icon-survey::before, .icon-edit-survey::before { background-image: url("../images/icons/questionnaire.png"); }
 .icon-survey::before { width: 24px; height: 24px; }
 
 .content .test .activities .activity.tgameplay {
 	background-color: #163f67;
 	color: white;
 }
-.icon-gameplay-web::before { width: 24px; height: 24px; background-image: url("../icon/browser.png"); }
-.icon-gameplay-desktop::before { width: 24px; height: 24px; background-image: url("../icon/electronics.png"); }
+.icon-gameplay-web::before { width: 24px; height: 24px; background-image: url("../images/icons/browser.png"); }
+.icon-gameplay-desktop::before { width: 24px; height: 24px; background-image: url("../images/icons/electronics.png"); }
 
 .content .test .activities .activity.tmanual {
 	background-color: blueviolet;
 	color: white;
 }
-.icon-manual-external::before { width: 24px; height: 24px; background-image: url("../icon/export.png"); }
+.icon-manual-external::before { width: 24px; height: 24px; background-image: url("../images/icons/export.png"); }
 
 .content .test .activities .activity.trageminio {
 	background-color: #c84949;

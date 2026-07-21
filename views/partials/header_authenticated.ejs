@@ -3,7 +3,7 @@
 <div class="header<%= schedulerMode ? ' black' : '' %>">
 	<div class="left">
 		<%- include('header_language_selector') %>
-		<img class="logo" src="/logo.png">
+		<img class="logo" src="/images/logo.png">
 		<span style="margin-left: 10px;"><%= schedulerMode ? t('scheduler.current', { ns : 'SIMLETs' }) : t('title') %></span>
 		<% if (schedulerMode) { %><span id="current_activity_name" style="margin-left: 5px;"></span><% } %>
 	</div>
@@ -12,25 +12,25 @@
 		<% if (schedulerMode) { %>
 			<li>
 				<a id="refresh" style="cursor: pointer;" onclick="location.reload()">
-					<img src="/icon/undo.png" style="filter: invert(100%);"> <%= t('scheduler.refresh', { ns : 'SIMLETs' }) %>
+					<img src="/images/icons/undo.png" style="filter: invert(100%);"> <%= t('scheduler.refresh', { ns : 'SIMLETs' }) %>
 				</a>
 			</li>
 			
 			<li id="complete_activity" style="display: none">
 				<a style="cursor: pointer;" onclick="completeActivity()">
-					<img src="/icon/check.png"> <%= t('scheduler.complete', { ns : 'SIMLETs' }) %>
+					<img src="/images/icons/check.png"> <%= t('scheduler.complete', { ns : 'SIMLETs' }) %>
 				</a>
 			</li>
 			<li>
 				<a>
-					<img src="/icon/user_white.png"> <span id="username" style="padding: 0px;">
+					<img src="/images/icons/user_white.png"> <span id="username" style="padding: 0px;">
 				</a>
 			</li>
 			
 			<% if(!schedulerTestMode) { %>
 				<li>
 					<a href="/scheduler/">
-						<img src="/icon/back.png"> <%= t('scheduler.exit', { ns : 'SIMLETs' }) %></span>
+						<img src="/images/icons/back.png"> <%= t('scheduler.exit', { ns : 'SIMLETs' }) %></span>
 					</a>
 				</li>
 			<% } %>
@@ -38,7 +38,7 @@
 		<% } else { %>
 			<li>
 				<a id="account_username" href="<%= config.sso.accountUrl%>">
-					<img src="/icon/user.png"> <span id="username" style="padding: 0px;">
+					<img src="/images/icons/user.png"> <span id="username" style="padding: 0px;">
 				</a>
 			</li>
 		<% } %>
@@ -46,7 +46,7 @@
 		<% if(!schedulerTestMode) { %>
 			<li>
 				<a class="logout" href="/users/logout">
-					<img src="/icon/power.png"> <%= t('logout.title') %>
+					<img src="/images/icons/power.png"> <%= t('logout.title') %>
 				</a>
 			</li>
 		<% } %>
