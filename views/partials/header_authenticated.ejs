@@ -18,19 +18,19 @@
 			
 			<li id="complete_activity" style="display: none">
 				<a style="cursor: pointer;" onclick="completeActivity()">
-					<img src="/images/icons/check.png"> <%= t('scheduler.complete', { ns : 'SIMLETs' }) %>
+					<img src="/images/icons/check.png" style="filter: invert(100%);"> <%= t('scheduler.complete', { ns : 'SIMLETs' }) %>
 				</a>
 			</li>
 			<li>
 				<a>
-					<img src="/images/icons/user_white.png"> <span id="username" style="padding: 0px;">
+					<img src="/images/icons/user.png" style="filter: invert(100%);"> <span id="username" style="padding: 0px;">
 				</a>
 			</li>
 			
 			<% if(!schedulerTestMode) { %>
 				<li>
 					<a href="/scheduler/">
-						<img src="/images/icons/back.png"> <%= t('scheduler.exit', { ns : 'SIMLETs' }) %></span>
+						<img src="/images/icons/back.png" style="filter: invert(100%);"> <%= t('scheduler.exit', { ns : 'SIMLETs' }) %></span>
 					</a>
 				</li>
 			<% } %>
@@ -46,7 +46,7 @@
 		<% if(!schedulerTestMode) { %>
 			<li>
 				<a class="logout" href="/users/logout">
-					<img src="/images/icons/power.png"> <%= t('logout.title') %>
+					<img src="/images/icons/power-button-off.png" style="filter: invert(100%);"> <%= t('logout.title') %>
 				</a>
 			</li>
 		<% } %>
