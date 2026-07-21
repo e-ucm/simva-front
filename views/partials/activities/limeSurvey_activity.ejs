@@ -94,21 +94,20 @@
             // Fill the existing surveys select field and select one (+ its language) based on the activity info
             $("#existing_survey_field").empty();
             Simva.getSurveyList(function(error, result) {
+                $("#existing_survey_field").append($("<option>", {
+                    selected: true,
+                    disabled: true,
+                    hidden: true,
+                    text: "<%- t('limesurvey.existing.zero.message', { ns : 'activities' }) %>",
+                }));
                 if (error) {
                     console.error('Error fetching survey list:', error);
                     return;
                 }
                 else {
                     if (result.length == 0) {
-                        $("#existing_survey_field").append($("<option>", {
-                            selected: true,
-                            disabled: true,
-                            hidden: true,
-                            text: "<%- t('limesurvey.existing.zero.message', { ns : 'activities' }) %>",
-                        }));
                         return;
                     }
-
                     result.forEach((survey) => {
                         $("#existing_survey_field").append($("<option>", {
                             value: survey.sid,

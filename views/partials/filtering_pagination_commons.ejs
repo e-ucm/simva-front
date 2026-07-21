@@ -101,11 +101,22 @@
         let data = $("#<%= id %>_filtering").data();
         
         data["totalPages"] = Math.ceil(data["totalResults"] / data["showAtOnce"]);
-
+        // Fix total and current pages so that there are always at least 1 page and
+        // the current page never is lower than 1 or bigger than the total pages
+        if (data["totalPages"] < 1) {
+            data["totalPages"] = 1;
+        }
+        if (data["currentPage"] > data["totalPages"]) {
+            data["currentPage"] = data["totalPages"];
+        }
+        else if (data["currentPage"] < 1) {
+            data["currentPage"] = 1;
+        }
+        
         // Set each parameter individually instead of setting the entire data["searchParams"]
         // object to allow extra parameters to be added from anywhere else
         data["searchParams"].skip = (data["currentPage"] - 1) * data["showAtOnce"];
-        data["searchParams"].limit = (data["currentPage"]) * data["showAtOnce"];
+        data["searchParams"].limit = data["currentPage"] * data["showAtOnce"];
         data["searchParams"].searchString = $("#<%= id %>_search_bar").val().trim().toLowerCase() || "";
         data["searchParams"].orderBy = $("#<%= id %>_sort_by").val() || "id";
         data["searchParams"].order = $("#<%= id %>_sort_by").find("option:selected").data("order") || "desc";

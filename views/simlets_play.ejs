@@ -25,7 +25,6 @@
 <script type="text/javascript">
 	const SHOW_AT_ONCE = 9;
 	let filteringPaginationData = $("#scheduler_filtering").data();
-	let totalResults = 0;
 
 	$(document).ready(function() {
 		// Set properties of filtering_pagination_commons partial
@@ -33,16 +32,10 @@
 		filteringPaginationData["updateSearchCallback"] = onSearch;
 		filteringPaginationData["loadMoreCallback"] = loadSimletBatch;
 
-		// Updates all the search parameters and calls onSearch
+		// Initially block the bottom reached check and call the updateSearch to 
+		// update the initial search parameters and paint the initial results
+		filteringPaginationData["checkBottomReached"] = false;
 		filteringPaginationData["updateSearch"]();
-
-		// At the same time, asynchronously get all the SIMLETs in this section and store
-		// them by id for faster access to its parameters when opening the edit menu
-		Simva.getSchedulerSimletsCount(function(error, result) {
-			if (!error) {
-				totalResults = result.count;
-			}
-		});
 	});
 
 	/**
@@ -101,7 +94,7 @@
 		
 		if (batch.length == 0) {
 			// There are no SIMLETs in the current section
-			if (totalResults == 0) {
+			if (filteringPaginationData["totalResults"] == 0) {
 				$('#simlets_list').text("<%- t('scheduler.noSIMLET.title', { ns : 'SIMLETs' }) %>");
 			}
 			// There are SIMLETs, but none of them matched the search parameters

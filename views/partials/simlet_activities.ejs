@@ -540,8 +540,9 @@
 	 * @param {object} sesion - object containing the session info
 	 * @param {Array} activities - Array of objects containing the activities info
 	 * @param {Array} participants - Array of objects containing the session participants info
+	 * @param {object} sessionCard - jquery object reference of the session card element
 	 */
-    const paintSessionActivities = async function(session, activities, participants) {
+    const paintSessionActivities = async function(session, activities, participants, sessionCard) {
 		$(`#test_${session.session_id} .activities`).empty();
 
 		if (activities.length === 0) {
@@ -551,7 +552,7 @@
 			activities.forEach((activity) => {
 				const painter = getActivityPainterByType(activity.activity_type);
 				if (painter != null) {
-                    painter.addActivityCard(simletId, activity, participants);
+                    painter.addActivityCard(simletId, activity, participants, sessionCard);
                 }
 			});
 		}

@@ -115,7 +115,7 @@
 				</span>
 			</div>
 		</div>
-        <div id="activities" class="activities">
+        <div class="activities">
             <div class="loader" style="margin-bottom: 20px;"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>
         </div>
     </div>
@@ -806,7 +806,7 @@
 			}
 
 			// Paint all the activities in this session (defined at simlet_activities)
-			paintSessionActivities(completeSession, completeSession.completeActivities, sessionParticipants);
+			paintSessionActivities(completeSession, completeSession.completeActivities, sessionParticipants, card);
 		}
 		
 		// Get the complete session info and fill the card fields that depend on that info

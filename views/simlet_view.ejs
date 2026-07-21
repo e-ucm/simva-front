@@ -128,10 +128,7 @@ the elements and scripts defined in the simlet_commons partial -->
 		kebab.find(".icon-url").click(() => { openUrlSettingsForm(simletId, simlet.simlet_name) });
 		kebab.find(".icon-download").click(() => { openConfigDownloadForm(simletId, simlet.simlet_name) });
 		kebab.find(".icon-export").click(() => { exportSimlet(simletId) });
-		kebab.find(".icon-delete").click(() => { 
-			deleteSimlet(simletId, simlet.simlet_name) 
-			refreshFunc();
-		});
+		kebab.find(".icon-delete").click(() => { deleteSimlet(simletId, simlet.simlet_name); });
 
 		// Delete the add and import SIMLET tabs from the name/description menu
 		$("#add_study_tabs").remove();
@@ -174,7 +171,12 @@ the elements and scripts defined in the simlet_commons partial -->
 		$('#study_description').val(simlet.simlet_description);
 	}
 	
-
+	// Declared on the simlet_commons partial
+	onDeleteSimlet = function(simletId) {
+		window.location.href="/simlets";
+	}
+	
+	
 	// Functionality
 
 	const getSessionFromId = function(sessionId) {
@@ -285,6 +287,11 @@ the elements and scripts defined in the simlet_commons partial -->
 		let archiveButton = $(".archivationButton");
 		let txt = ""
 		
+		archiveButton.prop("onclick", null).off("click");
+		archiveButton.removeClass('li-disabled');
+		archiveButton.removeClass('icon-dearchive');
+		archiveButton.removeClass('icon-archive');
+
 		// If the SIMLET is active
 		if (active == null || active) {
 			txt = "<%- t('settings.archive.title', { ns : 'SIMLETs' }) %>"
@@ -294,8 +301,7 @@ the elements and scripts defined in the simlet_commons partial -->
 
 			// Set the archive icon to the archive button
 			archiveButton.addClass('icon-archive');
-			archiveButton.removeClass('icon-dearchive');
-
+			
 			const checkAllSessionsFinished = () => {
 				// Check if all sessions are finished
 				let allSessionsFinished = true;
@@ -311,11 +317,9 @@ the elements and scripts defined in the simlet_commons partial -->
 				}
 				// Otherwise, enable it and set its onclick function to archive the SIMLET
 				else {
-					archiveButton.removeClass('li-disabled').click(() => { 
-						if(confirm(`<%- t('archive.confirm', { ns : 'SIMLETs', SIMLET : '${simlet.simlet_name}' }) %>`)){
-							// Defined in the simlet_commons partial
-							archiveSimlet(simletId, simlet.simlet_name);
-						}
+					archiveButton.click(() => { 
+						// Defined in the simlet_commons partial
+						archiveSimlet(simletId, simlet.simlet_name);
 					});
 				}
 
@@ -346,7 +350,6 @@ the elements and scripts defined in the simlet_commons partial -->
 
 			// TEST: Uncomment to allow dearchivation
 			archiveButton.addClass('icon-dearchive');
-			archiveButton.removeClass('icon-archive');
 			archiveButton.click(() => { 
 				Simva.updateSimlet(simletId, { simlet_archived: false }, function(error, result) {
 					if (!error) {
@@ -354,12 +357,36 @@ the elements and scripts defined in the simlet_commons partial -->
 					}
 				});
 			});
+			paintAllArchived();
 			
 			// TEST: Comment to allow dearchivation
 			// archiveButton.hide();
 		}
 
 		archiveButton.text(txt);
+	}
+
+	const paintAllArchived = function() {
+		paintSessionsArchived();
+		paintActivitiesArchived();
+		paintCoordinatorsArchived();
+		paintParticipantsArchived();
+	}
+	
+	const paintSessionsArchived = function() {
+
+	}
+
+	const paintActivitiesArchived = function() {
+
+	}
+	
+	const paintCoordinatorsArchived = function() {
+
+	}
+
+	const paintParticipantsArchived = function() {
+		
 	}
 
 </script>

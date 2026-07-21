@@ -157,7 +157,13 @@
 	const START_WARNING_PERCENTAGE = 30;	// When the caracter count has this % of character remaining, its color changes to warn the user 
 
 	let currSimletId = null;	// Id of the SIMLET that is currently being edited
-	let refreshFunc = null;		// Function to call when needing to refresh/reload the page info
+	
+	// Functions to call to avoid reloading the whole view when updating info of any SIMLET 
+	let onCreateSimlet = null;
+	let onEditSimlet = null;
+	let onArchiveSimlet = null;
+	let onDeleteSimlet = null;
+
     let shlink = null;
 
 	
@@ -291,11 +297,9 @@
 						Utils.toggleSubmit();
 						Utils.toggleFormInFloating('study_form');
 						$("#study_form_error").text("");
-						Simva.getSimlets(function(error, result) {
-							if (!error && refreshFunc) {
-								refreshFunc();
-							}
-						});
+						if (onCreateSimlet != null) {
+							onCreateSimlet(result);
+						}
 					}
 				});
 			}
@@ -311,8 +315,8 @@
 						Utils.toggleSubmit();
 						Utils.toggleFormInFloating('study_form');
 
-						if (refreshFunc != null) {
-							refreshFunc();
+						if (onEditSimlet != null) {
+							onEditSimlet(result);
 						}
 					});
 				}
@@ -341,12 +345,7 @@
                     // Alert Short URL
                     alert(shortUrl);
                     Utils.toggleFormInFloating('generate_study_link');
-
-					if (refreshFunc != null) {
-						refreshFunc();
-					}
                     $('#generate_link_error').text("");
-
                 } 
                 else {
                     $('#generate_link_error').text(error.message);
@@ -379,9 +378,6 @@
                     // Alert Short URL
                     alert(shortUrl);
                     Utils.toggleFormInFloating('generate_study_link');
-					if (refreshFunc != null) {
-						refreshFunc();
-					}
                     $('#generate_link_error').text("");
                 } 
                 else {
@@ -445,9 +441,6 @@
 					Simva.deleteShLink(currSimletId, (error, result) => {
 						if (!error) {
 							shlink = null;
-							if (refreshFunc != null) {
-								refreshFunc();
-							}
 							Utils.toggleFormInFloating('study_url_settings');
 						}
 						Utils.toggleSubmit($("#generate_study_link"));
@@ -510,8 +503,8 @@
 	const archiveSimlet = function(simletId, simletName) {
 		if(confirm(`<%- t('archive.confirm', { ns : 'SIMLETs', SIMLET : '${simletName}' }) %>`)){
 			Simva.updateSimlet(simletId, { simlet_archived: true }, function(error, result) {
-				if (!error  && refreshFunc != null) {
-					refreshFunc();
+				if (!error  && onArchiveSimlet != null) {
+					onArchiveSimlet(simletId);
 				}
 			});
 		}
@@ -523,9 +516,9 @@
 			Simva.deleteSimlet(simletId, function(response) {
 				if(response.status !== 200) {
 					// Muestra el error real para depuración
-					alert(response || "Error eliminando el simlet");
-				} else if(refreshFunc != null) {
-					refreshFunc();
+					alert(response);
+				} else if(onDeleteSimlet != null) {
+					onDeleteSimlet(simletId);
 				}
 			});
 		}

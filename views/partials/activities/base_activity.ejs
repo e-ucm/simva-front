@@ -303,10 +303,10 @@
         
         // Initial activity card rendering
 
-        addActivityCard(sessionId, activity, participants) {
+        addActivityCard(sessionId, activity, participants, sessionCard) {
             // Add the session card synchronously to ensure they appear in order
             const card = $("#activity_template .activity").clone();
-            $('#activities').append(card);
+            sessionCard.find(".activities").append(card);
             card.find(".kebab-dropdown").fadeOut(0);
 
             card.data(SESSION_DATA_ID_KEY, sessionId);
