@@ -15,7 +15,6 @@
     "axios": "^1.7.4",
     "base58-universal": "^2.0.0",
     "body-parser": "1.20.3",
-    "connect-mongo": "3",
     "cookie-parser": "^1.4.7",
     "ejs": "^3.1.10",
     "express": "^4.21.2",

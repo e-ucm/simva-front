@@ -1,30 +1,35 @@
-FROM node:22.14.0-bullseye
+ # stick with Debian, not Alpine
+FROM node:26.5.0-bullseye-slim AS base
+WORKDIR /app
 
-# Install ca-certificates and update them
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates && \
-    update-ca-certificates && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+# Entrypoint runs scripts with /bin/sh; ensure it's bash (not dash) for -o pipefail support
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates bash && \
+    ln -sf /bin/bash /bin/sh && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
+FROM base AS deps
+COPY  --chown=node:node package.json package-lock.json ./
+RUN --mount=type=cache,target=/root/.npm npm ci
 
-# Set the working directory
-WORKDIR /home/node/app
+FROM deps AS dev
 
-COPY --chown=node:node package*.json ./
-
-RUN npm install -g clinic pm2
+RUN npm install -g clinic
+RUN chown -R node:node /app/node_modules
 
 USER node
+EXPOSE 3050
 
-RUN npm install
+# Default CMD, can be overridden by docker-compose
+CMD [ "npm", "run", "dev" ]
 
-# Copy the current directory contents into the container at /app
+FROM base AS prod
+
+COPY --from=deps /app/node_modules ./node_modules
 COPY --chown=node:node . .
 
-RUN mkdir -p /home/node/logs && chown -R node:node /home/node/logs
+USER node
 
 # Make port 3050 available to the world outside this container
 EXPOSE 3050
 
-CMD [ "pm2-runtime", "ecosystem.config.js" ]
+CMD [ "npm", "start" ]

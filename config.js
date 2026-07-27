@@ -17,11 +17,6 @@ config.simva.profiling = process.env.ENABLE_DEBUG_PROFILING == undefined ? "fals
 config.simva.ping_task = process.env.PING_TASK !== undefined ? ms(process.env.PING_TASK) : ms("3min")
 config.simva.auth_expired_task = process.env.AUTH_EXPIRED_TASK !== undefined ? ms(process.env.AUTH_EXPIRED_TASK) : ms("30min")
 
-config.mongo = {}
-config.mongo.host = process.env.MONGO_HOST || 'localhost:27017'
-config.mongo.db = process.env.MONGO_DB || '/simva-front'
-config.mongo.url = `mongodb://${config.mongo.host}${config.mongo.db}`
-config.mongo.test = config.mongo.url
 
 config.sso = {}
 config.sso.host = process.env.SSO_HOST || 'sso.external.test'
