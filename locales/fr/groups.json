@@ -35,7 +35,7 @@
         "participants.table.role.title": "Rôle",
         "participant.delete.title": "Supprimer",
             "participants.delete.confirm" : "Êtes-vous sûr de vouloir supprimer le participant '{{participant}}' du groupe '{{group}}' ?",
-        "participants.table.sessopm.title": "Session",
+        "participants.table.session.title": "Session",
         
         "allocator.type.title": "Allocateur type",
         "allocator.sessions.title": "Session",

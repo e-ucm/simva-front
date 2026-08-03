@@ -16,22 +16,22 @@ thead { display: table-header-group; }
 .hidden { display: none; }
 
 /* Input elements */
-input[type="text"], input[type="email"], input[type="password"], input[type="file"], input[type="date"], input[type="time"], input[type="number"], select, textarea { padding:6px; font-size:15px; border: 1px solid black; }
-.button, 		input[type="submit"], 		 input[type="button"] 		 { width:auto; border:0; padding:6px; background:#f0913f; font-size:15px; color:#fff; cursor:pointer; }
-.button.violet, input[type="submit"].violet, input[type="button"].violet { border:1px solid #6b5faa; background:#6b5faa }
-.button.blue, 	input[type="submit"].blue, 	 input[type="button"].blue 	 { border:0px solid #F6D44E; background:#F6D44E }
-.button.green, 	input[type="submit"].green,  input[type="button"].green  { border:0px solid #52B846; background:#52B846; }
-.button.red, 	input[type="submit"].red, 	 input[type="button"].red 	 { border:0px solid #f64e4e; background:#f64e4e }
-input[type="button"]:disabled { border:1px solid lightgray; background: darkgray; color: gray; cursor: default; }
+input[type="text"], input[type="email"], input[type="password"], input[type="file"], input[type="date"], input[type="time"], input[type="number"], select, textarea { padding: 6px; font-size: 15px; border: 1px solid black; }
+.button, 		input[type="submit"], 		 input[type="button"] 		 { width: auto; border: 0; padding: 6px; background: #f0913f; font-size: 15px; color: #fff; cursor: pointer; }
+.button.violet, input[type="submit"].violet, input[type="button"].violet { border: 1px solid #6b5faa; background: #6b5faa }
+.button.blue, 	input[type="submit"].blue, 	 input[type="button"].blue 	 { border: 0px solid #F6D44E; background: #F6D44E }
+.button.green, 	input[type="submit"].green,  input[type="button"].green  { border: 0px solid #52B846; background: #52B846; }
+.button.red, 	input[type="submit"].red, 	 input[type="button"].red 	 { border: 0px solid #f64e4e; background: #f64e4e }
+input[type="button"]:disabled { border: 1px solid lightgray; background: darkgray; color: gray; cursor: default; }
 textarea { 	resize: vertical; width: 100%; max-height: 5rem; }
 
 
-.login { background:#332d26; } 
-.login #login_box, .login #register_box { width:260px; background:#fff6ec; padding:20px; display: inline-block; }
-.login #login_box img, .login #register_box img { width:100% }
-.login #login_box form, .login #register_box form { margin:4px 0 0 }
-.login #login_box input, .login #register_box form input { width:100% }
-.login #login_box .small, .login #register_box .small { margin:14px 0 0 }
+.login { background: #332d26; }
+.login #login_box, .login #register_box { width: 260px; background: #fff6ec; padding: 20px; display: inline-block; }
+.login #login_box img, .login #register_box img { width: 100% }
+.login #login_box form, .login #register_box form { margin: 4px 0 0 }
+.login #login_box input, .login #register_box form input { width: 100% }
+.login #login_box .small, .login #register_box .small { margin: 14px 0 0 }
 .login #error, .error { width: 100%; color: red; font-size: 14px; text-align: center; }
 .login .role_selector { text-align: left; margin-bottom: 10px; }
 
@@ -43,19 +43,19 @@ textarea { 	resize: vertical; width: 100%; max-height: 5rem; }
 .header.black a { color: white; }
 .header img { height: 30px; width: auto; }
 .header span { font-weight: bold; display: flex; align-items: center; }
-.header .right .logout, .header .right .login { 
+.header .right .logout, .header .right .login {
 	height: 30px;
-	background-color: black; 
-	color: white; 
+	background-color: black;
+	color: white;
 	padding: 5px;
 	padding-right: 10px;
 }
-.header.black .right .logout, .header.black .right .login { 
-	background-color: white; 
-	color: black; 
+.header.black .right .logout, .header.black .right .login {
+	background-color: white;
+	color: black;
 }
 .header.black .right .logout img {  filter: none !important;  }
-.header .right ul li { 
+.header .right ul li {
 	display: inline-flex;
 	align-items: center;
 	height: 30px;
@@ -65,11 +65,11 @@ textarea { 	resize: vertical; width: 100%; max-height: 5rem; }
 	border-left: 1px solid black;
 }
 .header.black .right ul li {  border-left: 1px solid white; }
-.header .right ul li a { 
+.header .right ul li a {
 	display: inline-flex;
 	align-items: center;
 }
-.header .right ul li img { 
+.header .right ul li img {
 	height: 20px;
 	width: 20px;
 	margin-right: 5px;
@@ -165,7 +165,7 @@ textarea { 	resize: vertical; width: 100%; max-height: 5rem; }
 	display: inline-block;
 	vertical-align: top;
 	margin: 0;
-	line-height: 1; 
+	line-height: 1;
 }
 
 .tooltip {
@@ -360,12 +360,14 @@ form .role_selector label {
 form .role_selector input[type="radio"]:checked+label { font-weight: bold; background-color: #de6700; color: white; }
 .form select:invalid { color: #999; }
 .form select option { color: black; }
-.form h1, .form h2 { margin-bottom: 10px; text-align: center; }
+.form h1, .form h2 { text-align: center; }
+.form h1 { margin-bottom: 20px; }
+.form h2 { margin-bottom: 10px; }
 .form h3, .form .error { margin-top: 10px; margin-bottom: 5px; }
 .form input[type="submit"] { margin-top: 20px; margin-bottom: 5px; }
 .new_element .form .yellow, .new_element .form .blue, .new_element .form .red, .new_element .form .green {
-	margin-top:10px;
-	margin-bottom:10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 	padding: 10px;
 }
 .form .char-count { display: flex; justify-content: flex-end; margin-right: 10px; margin-top: 5px; }
@@ -429,7 +431,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	border-radius: 5px;
 	border: 1px solid black;
 
-	--filterSelectBgColor:  white;
+	--filterSelectBgColor: white;
 	--filterSelectHoverBgColor: #c0c0c0;
 }
 .filtering .filters span {
@@ -514,8 +516,9 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	align-items: center;
 	margin-right: 0px;
 }
-.kebab-dropdown { display: none; }
-.kebab ul {
+.kebab-dropdown {
+	display: none;
+
 	--kebabBgColor: rgb(73, 73, 73);
 	--kebabHoverColor: rgb(39, 39, 39);
 	--kebabTextColor: rgb(255, 255, 255);
@@ -547,8 +550,8 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	--iconSize: 18px;
 	--iconMargin: 10px;
 
-	flex-shrink: 0; 
-	
+	flex-shrink: 0;
+
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-position: center;
@@ -584,7 +587,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .icon-delete::before {
 	background-image: url("../images/icons/trash-bin.png");
 	/* Change icon color from black to #ff3d3d */
-	filter: brightness(0) saturate(100%) invert(52%) sepia(61%) saturate(7367%) hue-rotate(339deg) brightness(114%) contrast(114%); 
+	filter: brightness(0) saturate(100%) invert(52%) sepia(61%) saturate(7367%) hue-rotate(339deg) brightness(114%) contrast(114%);
 }
 .icon-gear::before { background-image: url("../images/icons/setting.png"); }
 
@@ -990,11 +993,28 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 }
 
 .content .test .sessionSummary, .content .test .activities {
-	overflow: auto;
-	overflow-y: hidden;
+  overflow-x: auto;
+  overflow-y: visible;
 }
-.content .test .activities { white-space: nowrap; padding-bottom: 10px; }
-.content .test .activities .activity { vertical-align: top; background-color: gray; width: 500px; padding: 10px; margin-top: 10px; box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3); display: inline-block; margin-right: 10px; }
+.content .test .activities {
+	white-space: nowrap;
+	padding-bottom: 10px;
+	display: flex;
+	vertical-align: top;
+	gap: 10px;
+}
+
+.content .test .activities .activity {
+	background-color: gray;
+	height: fit-content;
+	min-width: 500px;
+	max-width: 500px;
+	padding: 10px;
+	margin-top: 10px;
+	box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3);
+	
+}
+
 .subform select.activityTypeSelector { flex: 1; margin-top: 10px; }
 
 /* Activity cards use .top; override legacy float layout so kebab dropdown stays in top-right and dropdown is not clipped. */
@@ -1024,7 +1044,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	margin-left: auto;
 }
 
-.activityDownload.text-with-icon.icon-download { color:white; }
+.activityDownload.text-with-icon.icon-download { color: white; }
 .content .test .activities .activity .activityDownload {
 	cursor: pointer;
 	font-weight: bold;
@@ -1034,21 +1054,13 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	line-height: 1;
 }
 
-.content .test .activities .activity .top .kebab .kebab-dropdown {
-	left: auto;
-	right: 0;
-	top: 100%;
-	transform: none;
-	margin-top: 4px;
-}
-
 .content .test .activities .activity .subtitle { font-style: italic; font-size: 14px; width: 100%; white-space: normal; margin-top: 5px; margin-bottom: 10px; padding: 0px; }
 
 .content .test .activities .activity .activity-meta {
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
-		
+
 	min-height: 3lh;
 	max-height: 3lh;
 
@@ -1126,7 +1138,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .content .test .activities .activity .green { background-color: #adffad; }
 .content .test .activities .activity .yellow { background-color: #fff688; }
 
-.content .test .activities .activity .legend { font-size: 14px; display: flex; gap:20px; justify-content: center; padding: 0px; margin-bottom: 10px; }
+.content .test .activities .activity .legend { font-size: 14px; display: flex; gap: 20px; justify-content: center; padding: 0px; margin-bottom: 10px; }
 .content .test .activities .activity .legend li { list-style: none; padding: 0px; }
 .content .test .activities .activity .legend span { border: 1px solid #ccc; float: left; width: 12px; height: 12px; margin: 2px; }
 .content .test .activities .activity .legend b { margin-left: 5px; }
@@ -1163,19 +1175,19 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	transform: translateY(-50%);
 }
 
-.content .test .activities .activity .progress, .activityProgress.progress { position: relative; width: 100%; background-color: #ff9696; height: 30px; border: 2px solid black; overflow: hidden; margin-bottom: 10px; z-index: 0; padding: 0px; }
-.content .test .activities .activity .progress div.done, .activityProgress.progress div.done { height: 30px; float: left; position: absolute; background-color: #adffad; top: 0px; left: 0px; }
-.content .test .activities .activity .progress div.partial { height: 30px; float: left; position: absolute; background-color: #fff688; top: 0px; left: 0px; }
-.content .test .activities .activity .progress span, .activityProgress.progress span { float: left; width: 100%; position: absolute; top: 7px; left: 0px; text-align: center; font-size: 12px; font-weight: bold; }
+.content .test .progress { position: relative; width: 100%; background-color: #ff9696; height: 30px; border: 1px solid black; overflow: hidden; padding: 0px; }
+.content .test .activity .progress { height: 20px;  margin-bottom: 10px; }
+.content .test .progress div.done { height: 100%; float: left; position: absolute; background-color: #adffad; top: 0px; left: 0px; }
+.content .test .progress div.partial { height: 100%; float: left; position: absolute; background-color: #fff688; top: 0px; left: 0px; }
+.content .test .progress span { float: left; width: 100%; position: absolute; top: 7px; left: 0px; text-align: center; font-size: 12px; font-weight: bold; }
 .content .test .activities .activity a { font-weight: bold; cursor: pointer; }
 
 .activitySettingsCheckboxes {
 	display: grid;
-	grid-template-columns: repeat(2, 1fr); 
+	grid-template-columns: repeat(2, 1fr);
 	gap: 10px;
 	margin: 20px;
 }
-
 .activitySettigsCheckbox {
 	display: flex;
 	align-items: center;   /* Keeps vertical alignment */
@@ -1193,11 +1205,10 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	/* Must be set by the leftmost element in order for the other buttons to appear correctly aligned to the right */
 	margin-left: auto;
 }
-.users .card { height: max-content; }
 
 .owners, .participants {
-	table-layout:fixed;
-    width:100%;
+	table-layout: fixed;
+    width: 100%;
 	overflow: auto;
 	border-collapse: collapse;
 	box-shadow: none;
@@ -1227,17 +1238,22 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .owners tr:nth-child(even), .owners thead tr th, .participants tr:nth-child(even), .participants thead tr th { background: #e8e8e8 }
 .owners tr:nth-child(odd), .participants tr:nth-child(odd) { background: #f5f5f5 }
 
-.groupTop { margin-bottom: 10px; }
+.groupTop, .allocatorContent { margin-bottom: 10px; }
+.allocatorContent p { padding-top: 10px; padding-left: 10px; }
 
-.allocatorContent p { padding-top: 0px; padding-left: 10px; }
-.allocatorContent .subtitle.italic { font-style: italic; }
-.allocatorContent .subtitle.justified { text-align: justify;  }
-
-#change_allocator_content .row { margin-top: 10px; }
-#change_allocator_content input[type="radio"] { width: 10%; height: 20px; margin-top: 5px; vertical-align: top; }
-#change_allocator_content label { display: inline-block; width: 89%; text-align: left; }
-#change_allocator_content label .name { display: inline-block; font-size: 20px; font-weight: bold; width: 100%; }
-#change_allocator_content label .description { display: inline-block; font-size: 16px; font-style: italic; width: 100%; }
+#change_allocator { height: fit-content; }
+#change_allocator_form .row {
+	display: flex;
+    align-items: center;
+	justify-content: center;
+    gap: 10px;
+	margin-top: 7px;
+	margin-bottom: 7px;
+}
+#change_allocator_form .row input[type="radio"] { width: 20px; }
+#change_allocator_form .row h2 { margin-bottom: 0px; }
+/* #change_allocator_form label .name { display: inline-block; font-size: 20px; font-weight: bold; width: 100%; }
+#change_allocator_form label .description { display: inline-block; font-size: 16px; font-style: italic; width: 100%; } */
 
 
 #pdf_printable {

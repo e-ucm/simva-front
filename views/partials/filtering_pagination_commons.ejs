@@ -119,7 +119,7 @@
         data["searchParams"].limit = data["currentPage"] * data["showAtOnce"];
         data["searchParams"].searchString = $("#<%= id %>_search_bar").val().trim().toLowerCase() || "";
         data["searchParams"].orderBy = $("#<%= id %>_sort_by").val() || "id";
-        data["searchParams"].order = $("#<%= id %>_sort_by").find("option:selected").data("order") || "desc";
+        data["searchParams"].order = $("#<%= id %>_sort_by option:selected").data("order") || "desc";
 
         if ($("#<%= id %>_status").length) {
             data["searchParams"].status = $("#<%= id %>_status").val() || "";

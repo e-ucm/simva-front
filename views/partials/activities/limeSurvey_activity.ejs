@@ -108,6 +108,7 @@
                     if (result.length == 0) {
                         return;
                     }
+                    $("#existing_survey_field").empty();
                     result.forEach((survey) => {
                         $("#existing_survey_field").append($("<option>", {
                             value: survey.sid,
@@ -145,10 +146,10 @@
                 case 'byupload':
                     // console.log('[limesurveypainter] byupload case');
                     let fileInput = $(form).find('input[name="lss"]').get(0);
-                    if(fileInput && fileInput.files[0]){
+                    if (fileInput && fileInput.files[0]) {
                         console.log('[limesurveypainter] File selected for upload:', fileInput.files[0]);
                         let reader = new FileReader();
-                        reader.onload = function(){
+                        reader.onload = function() {
                             let raw = reader.result;
                             raw = raw.substr(raw.indexOf(',') + 1);
                             activity.rawsurvey = raw;
@@ -177,7 +178,7 @@
             
             // Add the extra buttons to the 3-dot menu after the Tmon button
             const extraKebab = $("#limesurvey_extra_kebab_template li").clone();
-            $(`#activity_${activity.activity_id}`).find(".kebab-dropdown").find(".icon-url").after(extraKebab);
+            $(`#activity_${activity.activity_id} .kebab-dropdown .icon-url`).after(extraKebab);
             
             const meta = $("#limesurvey_meta_template .limesurveyMeta").clone();
             card.find(".activity-meta").append(meta);

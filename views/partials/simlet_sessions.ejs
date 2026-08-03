@@ -1,31 +1,30 @@
 <!-- Elements of the sessions tab in the SIMLET view (not including the activities) -->
 
 <!-- Section where all sessions will be painted -->
-<div id="study">
-	<div class="card">
-		<div class="top">
-			<div class="tooltipLine">
-				<h2><%- t('title', { ns : 'sessions' }) %></h2>
-				<div class="tooltip">
-					&#x1F6C8;
-					<span class="tooltiptext">
-						<%= t('session.description', { ns : 'about' }) %>
-					</span>
-				</div>
+<div class="card">
+	<div class="top">
+		<div class="tooltipLine">
+			<h2><%- t('title', { ns : 'sessions' }) %></h2>
+			<div class="tooltip">
+				&#x1F6C8;
+				<span class="tooltiptext">
+					<%= t('session.description', { ns : 'about' }) %>
+				</span>
 			</div>
-        </div>
-		
-		<% const searchBarPlaceholder = t('searchBar.placeholder', { ns: 'sessions' }); %>
-		<%- include('filtering_pagination_commons', { id:"sessions", searchBarPlaceholderText: searchBarPlaceholder }) %>
+		</div>
+	</div>
+	
+	<% const searchBarPlaceholder = t('searchBar.placeholder', { ns: 'sessions' }); %>
+	<%- include('filtering_pagination_commons', { id:"sessions", searchBarPlaceholderText: searchBarPlaceholder }) %>
 
-		<!-- Container for all the session cards -->
-		<div id="tests" class="tests">
-			
-        </div>
-
-		<div id="sessions_loader" class="loader" style="margin-bottom: 20px;"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>
+	<!-- Container for all the session cards -->
+	<span id="no_sessions_msg"></span>
+	<div id="sessions" class="tests">
 		
-    </div>
+	</div>
+
+	<div id="sessions_loader" class="loader" style="margin-bottom: 20px;"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>
+	
 </div>
 
 <!-- Template for each element of the sessions list -->
@@ -68,9 +67,6 @@
                     <li class="text-with-icon icon-finish" title="<%- t('settings.finish.title', { ns : 'sessions' }) %>">
                         <%- t('settings.finish.title', { ns : 'sessions' }) %>
                     </li>
-                    <li class="text-with-icon icon-delete" title="<%- t('settings.delete.title', { ns : 'sessions' }) %>">
-                        <%- t('settings.delete.title', { ns : 'sessions' }) %>
-                    </li>
 					<li class="text-with-icon icon-tester" title="<%- t('set_tester.title', { ns : 'sessions' }) %>">
 						<%- t('set_tester.title', { ns : 'sessions' }) %>
 					</li>
@@ -80,29 +76,36 @@
 					<li class="text-with-icon icon-untester" title="<%- t('unset_tester.title', { ns : 'sessions' }) %>">
 						<%- t('unset_tester.title', { ns : 'sessions' }) %>
 					</li>
+                    <li class="text-with-icon icon-delete" title="<%- t('settings.delete.title', { ns : 'sessions' }) %>">
+                        <%- t('settings.delete.title', { ns : 'sessions' }) %>
+                    </li>
                 </ul>
             </div>
         </div>
         <div class="sessionDescription" style="padding:10px;">	 </div>
         <div class="sessionSummary">
             <div class="sessionInfo">
-                <strong class="sessionCreateDate"><%- t('createdAt', { ns : 'sessions' }) %>: 	</strong>
+                <strong><%- t('createdAt', { ns : 'sessions' }) %>: </strong> <span class="sessionCreateDate">	</span>
                 <br>
-                <strong class="sessionActivities"><%- t('activities', { ns : 'sessions' }) %>:	</strong>  &nbsp; <strong class="sessionUsers"><%- t('users', { ns : 'sessions' }) %>:	</strong>
+                <strong><%- t('activities', { ns : 'sessions' }) %>: </strong> <span class="sessionActivities">	</span>  
+					&nbsp; 
+				<strong><%- t('users', { ns : 'sessions' }) %>: </strong> <span class="sessionUsers">	</span>
             </div>
-            <div class="activityProgress sessionProgress progress">
+            <div class="sessionProgress progress">
                 <div class="done">	</div>
                 <span>
                     <%- t('completed.title', { ns : 'activities' }) %>: 
                     <done class="completionPercentage">		</done>% [ <doneres class="completedUsers">		</doneres> / <total class="completedTotalUsers">		</total> ]
                 </span>
             </div>
-			<div class="text-with-icon icon-play sessionTestLauch" onclick="Utils.toggleIframeInFloating(`/scheduler/${simlet.simlet_id}?testMode=true`)" title="<%- t('play.description', { ns : 'SIMLETs' }) %>">
-				<b><%- t('play', { ns : 'sessions' }) %></b>
+			<div class="sessionInfo">
+				<div class="text-with-icon icon-download sessionDownload" title="<%- t('download.description', { ns : 'sessions' }) %>" style="margin-bottom: 10px;">
+					<b><%- t('download.title', { ns : 'sessions' }) %></b>
+				</div>
+				<div class="text-with-icon icon-play sessionTestLauch" title="<%- t('play.description', { ns : 'SIMLETs' }) %>" style="margin-top: 10px;">
+					<b><%- t('play', { ns : 'sessions' }) %></b>
+				</div>
 			</div>
-            <div class="text-with-icon icon-download sessionDownload" title="<%- t('download.description', { ns : 'sessions' }) %>">
-                <b><%- t('download.title', { ns : 'sessions' }) %></b>
-            </div>
         </div>
         <div class="sessionTags" style="margin-top: 8px;">	</div>
 		<div class="tooltipLine activitiesTitle">
@@ -116,8 +119,8 @@
 			</div>
 		</div>
         <div class="activities">
-            <div class="loader" style="margin-bottom: 20px;"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>
-        </div>
+		</div>
+		<div class="loader activities_loader" style="margin-bottom: 20px;"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>
     </div>
 </div>
 
@@ -236,7 +239,7 @@
 	
 	// Id of the session that opened the download session data menu
 	let downloadSessionId = null;
-
+	let currentUserTesterSessionId = null;
 	
     // Menus
 
@@ -264,7 +267,7 @@
 								return;
 							}
 							Utils.toggleFormInFloating('session_form_menu');
-							reloadSimlet();
+							onCreateOrEditSession(result);
 						});
 					} catch (parseError) {
 						console.error('Import error:', parseError);
@@ -290,7 +293,9 @@
 
 			// Creating new session
 			if (form.editingSessionId == null || form.editingSessionId == "") {
-				Simva.addSessionToSimlet(simletId, { session_name: form.sessionName, session_description: form.sessionDescription, session_can_be_manually_activated: true, session_status: form.sessionStatus }, function(error, result) {
+				Simva.addSessionToSimlet(simletId, { session_name: form.sessionName, session_description: form.sessionDescription, 
+					session_can_be_manually_activated: true, session_status: form.sessionStatus }, function(error, result) 
+				{
 					if (error && error.responseJSON) {
 						Utils.toggleSubmit();
 						errorbox.text(error.responseJSON.message);
@@ -300,23 +305,32 @@
 						errorbox.text(error.message || error);
 					}
 					else {
-						const newSessionId = result && result.session_id ? Number(result.session_id) : null;
-						if (!newSessionId || selectedTagIds.length === 0) {
+						const createSession = function(resultTags) {
 							Utils.toggleSubmit();
 							Utils.toggleFormInFloating('session_form_menu');
-							reloadSimlet();
-							return;
+
+							// Since the sesion needs to be created before adding the tags, add them manually to the result info
+							if (resultTags != null) {
+								result.tags = resultTags;
+							}
+							onCreateOrEditSession(result);
 						}
 
-						syncSessionTags(simletId, newSessionId, [], selectedTagIds, function(syncError) {
-							Utils.toggleSubmit();
-							if (syncError) {
-								errorbox.text(syncError.responseJSON ? syncError.responseJSON.message : syncError.message || syncError);
-								return;
-							}
-							Utils.toggleFormInFloating('session_form_menu');
-							reloadSimlet();
-						});
+						if (selectedTagIds.length === 0) {
+							createSession();	
+						}
+						else {
+							syncSessionTags(simletId, result.session_id, [], selectedTagIds, function(syncError, resultTags) {
+								Utils.toggleSubmit();
+								if (syncError) {
+									errorbox.text(syncError.responseJSON ? syncError.responseJSON.message : syncError.message || syncError);
+								}
+								else {
+									createSession(resultTags);	
+								}
+							});
+						
+						}
 					}
 				});	
 			}
@@ -335,30 +349,33 @@
 				else {
 					errorbox.text("");
 
-					const finishSync = function() {
+					const updateSession = () => {
+						Simva.updateSession(simletId, Number(sessionId), { session_name : form.sessionName, session_description : form.sessionDescription }, function(error, result) {
+							if (error) {
+								Utils.toggleSubmit();
+								errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+							}
+							else {
+								onCreateOrEditSession(result);
+								Utils.toggleFormInFloating('session_form_menu');
+							}
+						});
+					}
+
+					// Update the tags first and then update the session so the result info contains the updated tags
+					if (tagsChanged) {
 						syncSessionTags(simletId, Number(sessionId), originalTagsIds, selectedTagIds, function(syncError) {
 							Utils.toggleSubmit();
 							if (syncError) {
 								errorbox.text(syncError.responseJSON ? syncError.responseJSON.message : syncError.message || syncError);
-								return;
 							}
-							Utils.toggleFormInFloating('session_form_menu');
-							reloadSimlet();
+							else {
+								updateSession();
+							}
 						});
 					}
-					
-					if (nameChanged || descriptionChanged) {
-						Simva.updateSession("<%= study %>", Number(sessionId), { session_name : form.sessionName, session_description : form.sessionDescription }, function(error) {
-							if (error) {
-								Utils.toggleSubmit();
-								errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
-								return;
-							}
-							finishSync();
-						});
-					} 
 					else {
-						finishSync();
+						updateSession();
 					}
 				}
 			}
@@ -447,10 +464,10 @@
 	}
 	
 	// Expand/hide session info
-	const toggleSession = function(sessionId) {
-		$(`#test_${sessionId}`).find('.expandButton').toggleClass('collapsed');
-		$(`#test_${sessionId}`).find('.tooltipLine.activitiesTitle ').toggle();
-		$(`#test_${sessionId}`).find('.activities').toggle();
+	const toggleSession = function(sessionId, forceVisible) {
+		$(`#session_${sessionId} .expandButton`).toggleClass('collapsed');
+		$(`#session_${sessionId} .tooltipLine.activitiesTitle`).toggle();
+		$(`#session_${sessionId} .activities`).toggle();
 	}
 	
 	const openSessionDownloadForm = function(sessionId) {
@@ -540,7 +557,12 @@
 		openSessionDownloadForm(data[SESSION_DATA_ID_KEY]);
 	});
 	
+	$(document).on('click', ".sessionSummary .icon-play", function(e) {
+		const data = $(this).closest(".test").data();
+		Utils.toggleIframeInFloating(`/scheduler/${simlet.simlet_id}?testMode=true`)
+	});
 	
+
 	// Functionality
 
 	/**
@@ -557,11 +579,10 @@
 	const deleteSession = function(sessionId, sessionName) {
 		if (confirm(`<%- t('delete.confirm', { ns : 'sessions', session : '${sessionName}', SIMLET : '${simlet.simlet_name}' }) %>`)) {
 			Simva.deleteSession(simletId, sessionId, function(error, result) {
-				reloadSimlet();
+				onDeleteSession(sessionId);
 			});
 		}
 	}
-
 
 	/**
 	 * Change a session status
@@ -571,7 +592,8 @@
 	const changeSessionStatus = function(sessionId, nextStatus) {
 		Simva.activateSession(simletId, sessionId, { activate: nextStatus }, function(error, result) {
 			if (!error) {
-				reloadSimlet();
+				onEditSession(result);
+				paintSessionStatus(result);
 			}
 		})
 	}
@@ -614,19 +636,22 @@
 		});
 	}
 
+	/**
+	 * Add current user as tester (participant) for the session
+	 */
 	const setTesterForSession = function (sessionId) {
         Simva.setTesterForSession(simletId, sessionId, function(error, result) {
             if (error) {
                 $.toast({ heading: 'Error', text: 'Failed to set tester.', position: 'top-right', icon: 'error', stack: false });
             } else {
                 $.toast({ heading: 'Tester set', text: 'You are now a tester in this session.', position: 'top-right', icon: 'success', stack: false });
-				reloadSimlet();
+				onSessionUsersChange(sessionId);
             }
         });
     }
 
 	/**
-	 * Remove current user as tester (participant) from the session
+	 * Remove current user as tester (participant) for the session
 	 */
 	const unsetTesterForSession = function(sessionId) {
 		Simva.unsetTesterForSession(simletId, sessionId, function(error, result) {
@@ -634,7 +659,7 @@
 				$.toast({ heading: 'Error', text: 'Failed to unset tester.', position: 'top-right', icon: 'error', stack: false });
 			} else {
 				$.toast({ heading: 'Tester unset', text: 'You are no longer a tester in this session.', position: 'top-right', icon: 'success', stack: false });
-				reloadSimlet();
+				onSessionUsersChange(sessionId);
 			}
 		});
 	}
@@ -645,7 +670,6 @@
 				$.toast({ heading: 'Error', text: 'Failed to reset tester.', position: 'top-right', icon: 'error', stack: false });
 			} else {
 				$.toast({ heading: 'Tester reset', text: 'Your tester data has been reset for this session.', position: 'top-right', icon: 'success', stack: false });
-				reloadSimlet();
 			}
 		});
 	}
@@ -672,7 +696,7 @@
 	 * (called by updateSearch in filtering_pagination_commons)
 	 */
 	const onSessionSearch = function() {
-		$('#tests').empty();
+		$('#sessions').empty();
 
 		// Recalculate the total count of matching results
 		Simva.getSimletSessionsCount(simletId, sessionsFilteringPaginationData["searchParams"], function(error, result) {
@@ -680,7 +704,6 @@
 				// Update the total results and recalculate the number of pages (but don't perform the search again)
 				sessionsFilteringPaginationData["totalResults"] = result.count;
 				sessionsFilteringPaginationData["updateSearchOptions"]();
-
 				loadSessionBatch();
 			}
 		});
@@ -712,35 +735,59 @@
 	 */
 	const paintSessionBatch = function(batch) {
 		batch.forEach((session) => {
-			// Add the session card synchronously to ensure they appear in order
-			const card = $("#session_template .test").clone();
-			$('#tests').append(card);
-			card.find(".kebab-dropdown").fadeOut(0);
+			// Provisionally store the incomplete info (which will be replaced later)  
+			completeSessionsById.set(session.session_id, session);
+			sessionsById.set(session.session_id, session);
 
-			card.data(SESSION_DATA_ID_KEY, session.session_id);
-			card.data(SESSION_DATA_NAME_KEY, session.session_name);
-			card.attr("id", `test_${session.session_id}`);
+			const elemId = `session_${session.session_id}`;
+			let card = $(`#${elemId}`);
 
-			// Then, fill its details asynchronously since the order of execution doesn't matter once the card has been added
-			fillSessionCard(session, card);
+			// If the session card is not already painted, add it synchronously to ensure it appears in order
+			if (card.length == 0) {
+				card = $("#session_template .test").clone();
+				$('#sessions').append(card);
+				card.find(".kebab-dropdown").hide();
+
+				card.data(SESSION_DATA_ID_KEY, session.session_id);
+				card.data(SESSION_DATA_NAME_KEY, session.session_name);
+				card.attr("id", `session_${session.session_id}`);
+
+				toggleSession(session.session_id);
+			}
+			
+			// Then, update and fill the card info asynchronously since the order of execution doesn't matter once it's been added
+			Simva.getSimletSessionComplete(simletId, session.session_id, (error, result) => {
+				if(!error) {
+					session = result;
+					completeSessionsById.set(session.session_id, session);
+					
+					// Store the complete participants and activities
+					session.completeParticipants.forEach((participant) => {
+						participantsById.set(participant.user_id, participant);
+						participantsByUsername.set(participant.username, participant);
+					});
+					session.completeActivities.forEach((activity) => {
+						completeActivitiesById.set(activity.activity_id, activity);
+					})
+					
+					fillSessionCard(session, card);
+				}
+			});
+
+			
 		});
+
+		paintNoSessionsMessage();
 		
-		// No results
-		if (batch.length == 0) {
-			// No sessions
-			if (simlet.sessions.length == 0) {
-				$('#tests').append("<p><%- t('no_sessions.message', { ns : 'sessions' }) %></p>");
-			}
-			// There are sessions, but none of them matched the search parameters
-			else {
-				$('#tests').text("<%- t('search.no_matches', { ns : 'SIMLETs' }) %>");
+		// If there's only one result, automatically expand the card to show its activities
+		if (batch.length > 0 && simlet.sessions.length == 1) {
+			if ($(`#session_${batch[0].session_id} .expandButton`).hasClass('collapsed')) {
+				toggleSession(batch[0].session_id);
 			}
 		}
-		// There's only one result
-		else if (batch.length == 1) {
-			// Automatically expand the card to show its activities
-			toggleSession(batch[0].session_id);
-		}
+		
+		// Block any session from being deleted if the SIMLET is archived
+		paintSessionsArchived();
 	}
 
 	/**
@@ -754,79 +801,82 @@
 		card.find(".icon-untester").hide();
 		card.find(".sessionTestLauch").hide();
 		
-		// Callback to set the summary completion bar progress and other info that depends on the number of activities or users
-		// (called after fetching the complete session info from either the previously stored sessions info or from the database)
-		const fillCompleteFields = function(completeSession) {
-			const sessionParticipants = Array.isArray(completeSession.completeParticipants) ? completeSession.completeParticipants : [];
-			const activities = completeSession.completeActivities;
+		paintSessionStatus(session);
 
-			let userCount = sessionParticipants.length;
-			
-			card.find(".sessionActivities").after(activities.length);
-			card.find(".sessionUsers").after(userCount);
+		card.find(".sessionTitle").text(session.session_name);
+		card.find(".sessionDescription").text(session.session_description);
+		card.find(".sessionCreateDate").text(getFormattedDate(session.createdAt, currentlanguageCode));
+		
+		const activities = session.completeActivities;
+		card.find(".sessionActivities").text(activities.length);
 
-			let completeUserCount = 0;
-			let lastActivityCompletion = 0;
-			
-			// If the session has any activities
-			if (activities.length > 0 && activities[activities.length - 1] != null) {
-				for (const [userId, completed] of Object.entries(activities[activities.length - 1].data.completion)) {
-					if (completed) {
-						completeUserCount++;
-					}
+		// If the session has any activities and the last activity is not null, iterate 
+		// over its data.completion property and get how many users have completed it
+		let completeUserCount = 0;
+		if (activities.length > 0 && activities[activities.length - 1] != null) {
+			for (const [userId, completed] of Object.entries(activities[activities.length - 1].data.completion)) {
+				if (completed) {
+					completeUserCount++;
 				}
 			}
-
-			// Store the activities for faster access 
-			activities.forEach((activity) => {
-				completeActivitiesById.set(activity.activity_id, activity);
-			})
-
-			// If there are any users, calculate the percentage of users that have completed the last activity
-			if (userCount > 0) {
-				lastActivityCompletion = (completeUserCount / userCount) * 100;
-			}
-			lastActivityCompletion = lastActivityCompletion.toFixed(2);
-			card.find(".sessionSummary .done").css('width', `${lastActivityCompletion}%`);
-			card.find(".sessionSummary .completionPercentage").append(lastActivityCompletion);
-			card.find(".sessionSummary .completedUsers").append(completeUserCount);
-			card.find(".sessionSummary .completedTotalUsers").append(userCount);
-
-			// Show/hide tester menu items based on participant status
-			if (isCurrentUserParticipant(sessionParticipants)) {
-				card.find(".icon-tester").hide();
-				card.find(".icon-reset-tester").show();
-				card.find(".icon-untester").show();
-				card.find(".sessionTestLauch").show();
-			} else {
-				card.find(".icon-tester").show();
-				card.find(".icon-reset-tester").hide();
-				card.find(".icon-untester").hide();
-				card.find(".sessionTestLauch").hide();
-			}
-
-			// Paint all the activities in this session (defined at simlet_activities)
-			paintSessionActivities(completeSession, completeSession.completeActivities, sessionParticipants, card);
 		}
+
+		const participants = session.completeParticipants;
+		let userCount = participants.length;
+		card.find(".sessionUsers").text(userCount);
+
+		// If there are any users, calculate the percentage of users that have completed the last activity
+		let lastActivityCompletion = 0;
+		if (userCount > 0) {
+			lastActivityCompletion = (completeUserCount / userCount) * 100;
+		}
+		lastActivityCompletion = lastActivityCompletion.toFixed(2);
+
+		card.find(".sessionSummary .done").css('width', `${lastActivityCompletion}%`);
+		card.find(".sessionSummary .completionPercentage").text(lastActivityCompletion);
+		card.find(".sessionSummary .completedUsers").text(completeUserCount);
+		card.find(".sessionSummary .completedTotalUsers").text(userCount);
+
+		// Show/hide tester menu items based on current user status
+		paintCurrentUserTester(session.session_id, participants, card);
+
+		// Paint all the activities in this session (defined at simlet_activities)
+		paintSessionActivities(session, activities, participants, card);
 		
-		// Get the complete session info and fill the card fields that depend on that info
-		const act = completeSessionsById.get(session.session_id);
-		if (act != null) {
-			fillCompleteFields(act);
+		card.find(".sessionTags").empty();
+		card.find(".sessionTags").append(renderTags(session));
+	}
+
+	/**
+	 * Update the no sessions message depending on the search result
+	 */
+	const paintNoSessionsMessage = async function() {
+		// No results
+		if (sessionsFilteringPaginationData["totalResults"] == 0) {
+			// No sessions
+			if (simlet.sessions.length == 0) {
+				$('#no_sessions_msg').text("<%- t('no_sessions.message', { ns : 'sessions' }) %>");
+			}
+			// There are sessions, but none of them matched the search parameters
+			else {
+				$('#no_sessions_msg').text("<%- t('search.no_matches', { ns : 'SIMLETs' }) %>");
+			}
 		}
-		// If the complete info hasn't been stored yet, fetch it and store it for faster access
 		else {
-			Simva.getSimletSessionComplete(simletId, session.session_id, function(error, result) {
-				if(!error) {
-					completeSessionsById.set(session.session_id, result);
-					fillCompleteFields(result);
-				}
-			})
+			$('#no_sessions_msg').text("");
 		}
-		
+	}
+	
+	/**
+	 * Update the session status tag and the buttons that get affected by the status change
+	 * @param {object} session - object containing the session info
+	 */
+	const paintSessionStatus = async function(session) {
 		let sessionClass = session.session_status;
 		let sessionStatusLabel = "";
 		
+		const card = $(`#session_${session.session_id}`);
+
 		// Show/hide action buttons based on session status
 		if (sessionClass === SESSION_ACTIVE_STATUS) {
 			// Only show pause and finalize
@@ -858,19 +908,166 @@
 			}
 		}
 		
-		// Block the session from being deleted if the SIMLET is archived
-		if (simlet.simlet_archived) {
-			card.find(".icon-delete").hide();
+		card.find(".sessionStatusLabel").removeClass(`${SESSION_ACTIVE_STATUS} ${SESSION_PAUSED_STATUS} ${SESSION_FINISHED_STATUS}`);
+		card.find(".sessionStatusLabel").addClass(sessionClass);
+		card.find(".sessionStatusLabel").text(sessionStatusLabel);
+
+		// Declared in the simlet_activities partial
+		paintSessionStatusForActivities(session, card);
+	}
+	
+	/**
+	 * Update the session buttons that get affected by the current user participation in the session
+	 * @param {number} sessionId - id of the session to check if the current user is participant
+	 * @param {Array} participants - Array of objects containing the session participants info
+	 * @param {object} card - jquery object reference of the session card element
+	 */
+	const paintCurrentUserTester = async function(sessionId, participants, card) {
+		if (isCurrentUserParticipant(participants)) {
+			currentUserTesterSessionId = sessionId;
+			card.find(".icon-tester").hide();
+			card.find(".icon-reset-tester").show();
+			card.find(".icon-untester").show();
+			card.find(".sessionTestLauch").show();
+		} else {
+			card.find(".icon-tester").show();
+			card.find(".icon-reset-tester").hide();
+			card.find(".icon-untester").hide();
+			card.find(".sessionTestLauch").hide();
 		}
+	}
 
-		card.find(".sessionTitle").text(session.session_name);
-		card.find(".sessionStatusLabel").addClass(sessionClass).attr("title", sessionStatusLabel).text(sessionStatusLabel);
-		card.find(".sessionDescription").text(session.session_description);
-		card.find(".sessionCreateDate").after(getFormattedDate(session.createdAt, currentlanguageCode));
-		
-		card.find(".sessionTags").append(renderTags(session));
+	
+	// Functions to call to avoid reloading the whole view when updating info of any session 
 
-		toggleSession(session.session_id);
+	const onCreateOrEditSession = function(newSessionInfo) {		
+		const isNew = getSessionFromId(newSessionInfo.session_id) == null;
+
+		// Update the basic SIMLET info without repainting everything to get the new session and tags
+		updateSimletInfo(false, () => {
+			// Paint/repaint the session card (which also updates the sessionsById and completeSessionsById)
+			paintSessionBatch([newSessionInfo]);
+
+			// If the session is new, update the searching parameters and move the card to the correct order
+			if (isNew) {
+				sessionsFilteringPaginationData["totalResults"]++;
+				sessionsFilteringPaginationData["updateSearchOptions"]();
+			}
+
+			// Determine the sort order callback
+			let sortOrder = (a, b) => a.session_id - b.session_id;
+			// From lower to higher
+			if (sessionsFilteringPaginationData["searchParams"].order.toLowerCase() == "asc") {
+				if (sessionsFilteringPaginationData["searchParams"].orderBy.toLowerCase() == "id") {
+					sortOrder = (a, b) => a.session_id - b.session_id;
+				}
+				else if (sessionsFilteringPaginationData["searchParams"].orderBy.toLowerCase() == "name") {
+					sortOrder = (a, b) => a.session_name.localeCompare(b.session_name);
+				}
+				else if (sessionsFilteringPaginationData["searchParams"].orderBy.toLowerCase() == "createdAt") {
+					sortOrder = (a, b) => a.createdAt - b.createdAt;
+				}
+				else if (sessionsFilteringPaginationData["searchParams"].orderBy.toLowerCase() == "updatedAt") {
+					sortOrder = (a, b) => a.updatedAt - b.updatedAt;
+				} 
+			}
+			// From higher to lower
+			else {
+				if (sessionsFilteringPaginationData["searchParams"].orderBy.toLowerCase() == "id") {
+					sortOrder = (a, b) => b.session_id - a.session_id;
+				}
+				else if (sessionsFilteringPaginationData["searchParams"].orderBy.toLowerCase() == "name") {
+					sortOrder = (a, b) => b.session_name.localeCompare(a.session_name);
+				}
+				else if (sessionsFilteringPaginationData["searchParams"].orderBy.toLowerCase() == "createdAt") {
+					sortOrder = (a, b) => b.createdAt - a.createdAt;
+				}
+				else if (sessionsFilteringPaginationData["searchParams"].orderBy.toLowerCase() == "updatedAt") {
+					sortOrder = (a, b) => b.updatedAt - a.updatedAt;
+				} 
+			}
+
+			// Sort sessionsById and get an array of only the sorted ids
+			const sorted = Array.from(sessionsById.values()).sort(sortOrder);
+			const sortedIds = sorted.map(obj => obj.session_id);
+
+			// Determine what position will take the new card 
+			const cardPosition = sortedIds.indexOf(newSessionInfo.session_id);
+			const currentMaxVisible = sessionsFilteringPaginationData["searchParams"].limit;
+
+			// If the card should be visible after being added
+			if (cardPosition < currentMaxVisible) {
+				// If all the cards that should be visible are painted, remove the last one
+				if ($("#sessions").children().length == currentMaxVisible) {
+					$("#sessions").children().last().remove();
+				}
+
+				// If the new card should take the first place, move it before the first card of the list
+				if (cardPosition == 0) {
+					$("#sessions").children().first().before($(`#session_${newSessionInfo.session_id}`));
+				}
+				// Otherwise, move it after the card that goes before 
+				else if (cardPosition < currentMaxVisible) {
+					const prevId = sortedIds[cardPosition - 1];
+					$(`#session_${prevId}`).after($(`#session_${newSessionInfo.session_id}`));
+				}
+			}
+			else {
+				$(`#session_${newSessionInfo.session_id}`).remove();
+			}
+			
+			// Update the allocators to add the new session or edit the existing session name of the dropdowns
+			allocatorsOnSessionsChanged(newSessionInfo.session_id);
+		});
+	}
+
+	const onDeleteSession = function(sessionId) {
+		// Delete the session from the stored sessions
+		if (sessionsById.delete(sessionId)) {
+			completeSessionsById.delete(sessionId);
+
+			// Update the pagination parameters
+			sessionsFilteringPaginationData["totalResults"]--;
+			sessionsFilteringPaginationData["updateSearchOptions"]();
+
+			updateSimletInfo(false, () => {
+				// If the session card was painted, remove it and potentially paint the one that will take the free space or the no sessions message
+				const card = $(`#session_${sessionId}`);
+				if (card.length > 0) {
+					card.remove();
+
+					const currentMaxVisible = sessionsFilteringPaginationData["searchParams"].limit;
+
+					// If there could be more cards painted after removing the session AND there are at least enough total results to fill the maximum, 
+					// load a new batch of sessions (the page will be the same as the current one, but the already painted sessions will be omitted and 
+					// only the new ones will be added to the page)
+					if ($("#sessions").find(".test").length < currentMaxVisible && sessionsFilteringPaginationData["totalResults"] >= currentMaxVisible) {
+						loadSessionBatch();
+					}
+					// Otherwise, the already existing cards will just move to take the removed one position
+
+					paintNoSessionsMessage();
+				}
+				
+				// Update the allocators to remove the session from the dropdowns
+				allocatorsOnSessionsChanged(sessionId);
+			});
+		}
+	}
+
+	const updateEntireSession = function(sessionId) {
+		// Repaint the entire session if it exists
+		const session = getSessionFromId(sessionId); 
+		if (session != null) {
+			onCreateOrEditSession(session);
+		}
+	}
+
+	const onEditSessionActivities = function(sessionId) {
+		updateEntireSession(sessionId);
+	}
+	const onSessionUsersChange = function(sessionId) {
+		updateEntireSession(sessionId);
 	}
 
 </script>
@@ -996,7 +1193,7 @@
 			...toAdd.map((tagId) => addTagToSessionAsync(simletId, sessionId, tagId)),
 			...toDelete.map((tagId) => deleteTagFromSessionAsync(simletId, sessionId, tagId))
 		])
-			.then(() => callback())
+			.then((result) => callback(null, result))
 			.catch((error) => callback(error));
 	}
 

@@ -20,6 +20,7 @@ the elements and scripts defined in the simlet_commons partial -->
 <% const searchBarPlaceholder = t('searchBar.placeholder', { ns: 'SIMLETs' }); %>
 <%- include('partials/filtering_pagination_commons', { id:"simlets", searchBarPlaceholderText: searchBarPlaceholder }) %>
 
+<span id="no_simlets_msg"></span>
 <div id="simlets_list" class="simletsCardsList">
 </div>
 
@@ -36,13 +37,13 @@ the elements and scripts defined in the simlet_commons partial -->
 				<div class="kebab"></div>
 			</div>
 			<p class="cardDescription"> 	</p>
-			<p class="cardCreationDate"><strong><%- t('card.createdAt', { ns : 'SIMLETs' }) %>: </strong><span>		</span></p>
-			<p class="cardUpdateDate"><strong><%- t('card.updatedAt', { ns : 'SIMLETs' }) %>: </strong><span>		</span></p>
-			<p class="cardSessions"><strong><%- t('card.sessions', { ns : 'SIMLETs' }) %>: </strong><span>		</span></p>
+			<p><strong><%- t('card.createdAt', { ns : 'SIMLETs' }) %>: </strong><span class="cardCreationDate">		</span></p>
+			<p><strong><%- t('card.updatedAt', { ns : 'SIMLETs' }) %>: </strong><span class="cardUpdateDate">		</span></p>
+			<p><strong><%- t('card.sessions', { ns : 'SIMLETs' }) %>: </strong><span class="cardSessions">		</span></p>
 			<p>
-				<strong class="cardGroups"><%- t('card.groups', { ns : 'SIMLETs' }) %>: </strong><span>		</span>
+				<strong><%- t('card.groups', { ns : 'SIMLETs' }) %>: </strong><span class="cardGroups">		</span>
 				&nbsp; 
-				<strong class="cardUsers"><%- t('card.users', { ns : 'SIMLETs' }) %>: </strong><span>		</span>
+				<strong><%- t('card.users', { ns : 'SIMLETs' }) %>: </strong><span class="cardUsers">		</span>
 			</p>
 			<div class="simletTagsRow">
 				<strong><%- t('card.tags', { ns : 'SIMLETs' }) %>:</strong>
@@ -75,12 +76,9 @@ the elements and scripts defined in the simlet_commons partial -->
 	// Add the floating class to the content element to add space at the bottom 
 	// of the page so the floating button doesnt cover any other element
 	$(".content").addClass("floating");
-
+	
 	
 	$(document).ready(function() {
-		// When creating, archiving and deleting simlets, all simlets need to be refreshed to correctly 
-		onArchiveSimlet = onDeleteSimlet = onRemoveSimletFromView;
-
 		// Assign properties and functions of filtering_pagination_commons partial
 		filteringPaginationData["showAtOnce"] = SHOW_AT_ONCE;
 		filteringPaginationData["searchParams"].status = ARCHIVED ? "archived" : "active";
@@ -102,19 +100,19 @@ the elements and scripts defined in the simlet_commons partial -->
 			let errorbox = $("#study_form_error");
 			// Check for file presence
 			const fileInput = $(this).find('input[name="jsonFile"]').get(0);
-			if(fileInput && fileInput.files[0]){
+			if (fileInput && fileInput.files[0]) {
 				let reader = new FileReader();
-				reader.onload = function(){
+				reader.onload = function() {
 					try {
 						let raw = reader.result;
 						// Always extract base64 payload from data URL
 						raw = raw.substr(raw.indexOf(',') + 1);
 						const newStudy = raw;
-						Simva.importSimlet({file: newStudy, simlet_name: form.studyName}, function(error, result) {
+						Simva.importSimlet( {file: newStudy, simlet_name: form.studyName}, function(error, result) {
 							Utils.toggleSubmit();
-							if(!error) {
+							if (!error) {
 								Utils.toggleFormInFloating('study_form');
-								onCreateSimlet();
+								onCreateSimlet(result);
 							} else {
 								$("#study_form_error").text(error);
 							}
@@ -125,7 +123,7 @@ the elements and scripts defined in the simlet_commons partial -->
 					}
 				};
 				reader.readAsDataURL(fileInput.files[0]);
-			}else{
+			}else {
 				$("#study_form_error").text("<%- t('import.upload.error', { ns : 'SIMLETs' }) %>");
 				Utils.toggleSubmit();
 			}
@@ -133,7 +131,98 @@ the elements and scripts defined in the simlet_commons partial -->
 		});
 		
 	});
+	
 
+	// Menus
+	
+	const openSimletForm = function(simletId) {
+		// Always open form in the create/edit common tab
+		Utils.changeTab($('#study_name_desc_tab_button'), 'study_form_form','study_name_desc_tab');
+
+		$('#study_form_error').text("");
+
+		// Creating new SIMLET
+		if (simletId == null) {
+			// Open form always and show the add new/import tabs
+			Utils.toggleFormInFloating("study_form");
+			$("#add_study_tabs").show();
+			
+			$("#study_form_title").text("<%- t('add.title', { ns : 'SIMLETs' }) %>");
+			$("#study_name_desc_submit").val("<%- t('new.submit', { ns : 'SIMLETs' }) %>");
+
+			$('#prev_study_name').val("");
+			$('#prev_study_description').val("");
+
+			$('#study_name').val("");
+			$('#study_description').val("");
+		}
+		// Editing SIMLET
+		else {
+			const simlet = simletsById.get(simletId);
+			if (simlet != null) {
+				// Open form only if the SIMLET exists and hide the add new/import tabs (only the name/description tab is needed)
+				Utils.toggleFormInFloating('study_form');
+				$('#edit_study_id').val(simletId);
+
+				$("#add_study_tabs").hide();
+
+				$("#study_form_title").text("<%- t('edit.title', { ns : 'SIMLETs' }) %>");
+				$("#study_name_desc_submit").val("<%- t('edit.submit', { ns : 'SIMLETs' }) %>");
+
+				$('#prev_study_name').val(simlet.simlet_name);
+				$('#prev_study_description').val(simlet.simlet_description);
+
+				$('#study_name').val(simlet.simlet_name);
+				$('#study_description').val(simlet.simlet_description);
+			}
+		}
+	}
+
+
+	// 3-dot menus buttons shared listeners using event delegation to ensure 
+	// the handler works even if element is added after the document ready event
+
+	$(document).on('click', ".simletCardTitle .icon-edit", function(e) {
+		const data = $(this).closest("a").data();
+		openSimletForm(data[SIMLET_DATA_ID_KEY]);
+	});
+
+	$(document).on('click', ".simletCardTitle .icon-url", function(e) {
+		const data = $(this).closest("a").data();
+		// Defined in the simlet_commons partial
+		openUrlSettingsForm(data[SIMLET_DATA_ID_KEY], data[SIMLET_DATA_NAME_KEY]);
+	});
+
+	$(document).on('click', ".simletCardTitle .icon-download", function(e) {
+		const data = $(this).closest("a").data();
+		// Defined in the simlet_commons partial
+		openConfigDownloadForm(data[SIMLET_DATA_ID_KEY], data[SIMLET_DATA_NAME_KEY]);
+	});
+
+	$(document).on('click', ".simletCardTitle .icon-archive", function(e) {
+		if ($(this).hasClass("li-disabled")) {
+			return;
+		}
+		
+		const data = $(this).closest("a").data();
+		// Defined in the simlet_commons partial
+		archiveSimlet(data[SIMLET_DATA_ID_KEY], data[SIMLET_DATA_NAME_KEY], true);
+	});
+
+	$(document).on('click', ".simletCardTitle .icon-dearchive", function(e) {
+		const data = $(this).closest("a").data();
+		// Defined in the simlet_commons partial
+		archiveSimlet(data[SIMLET_DATA_ID_KEY], data[SIMLET_DATA_NAME_KEY], false);
+	});
+
+	$(document).on('click', ".simletCardTitle .icon-delete", function(e) {
+		const data = $(this).closest("a").data();
+		// Defined in the simlet_commons partial
+		deleteSimlet(data[SIMLET_DATA_ID_KEY], data[SIMLET_DATA_DESCRIPTION_KEY]);
+	});	
+	
+	
+	// Render
 	
 	/**
 	 * When updating any filter parameter, remove all the painted SIMLETs and update the pagination parameters
@@ -147,7 +236,6 @@ the elements and scripts defined in the simlet_commons partial -->
 				// Update the total results and recalculate the number of pages (but don't perform the search again)
 				filteringPaginationData["totalResults"] = result.count;
 				filteringPaginationData["updateSearchOptions"]();
-				
 				loadSimletBatch();
 			}
 		});
@@ -161,7 +249,7 @@ the elements and scripts defined in the simlet_commons partial -->
 	const loadSimletBatch = function() {
 		$("#loader").show();
 		
-		Simva.getSimlets(filteringPaginationData["searchParams"], function(error, result){
+		Simva.getSimlets(filteringPaginationData["searchParams"], function(error, result) {
 			if (!error) {
 				paintSimletBatch(result);
 				$("#loader").hide();
@@ -199,21 +287,7 @@ the elements and scripts defined in the simlet_commons partial -->
 			}
 		});
 
-		if (batch.length == 0) {
-			// There are no SIMLETs in the current section (active/archived)
-			if (simletsById.size == 0) {
-				if (!ARCHIVED) {
-					$('#simlets_list').text("<%- t('no_simlets.message', { ns : 'SIMLETs' }) %>");
-				}
-				else {
-					$('#simlets_list').text("<%- t('no_archived.message', { ns : 'SIMLETs' }) %>");
-				}
-			}
-			// There are SIMLETs, but none of them matched the search parameters
-			else {
-				$('#simlets_list').text("<%- t('search.no_matches', { ns : 'SIMLETs' }) %>");
-			}
-		}
+		paintNoSimletsMessage();
 	}
 
 	/**
@@ -228,38 +302,34 @@ the elements and scripts defined in the simlet_commons partial -->
 		card.find(".kebab").append(kebab);
 		if (ARCHIVED) {
 			kebab.find(".icon-archive").hide();
+
+			// TEST: Uncomment to allow dearchivation 
+			// kebab.find(".icon-dearchive").show();
 		} 
 		else {
+			kebab.find(".icon-archive").show();
+			kebab.find(".icon-dearchive").hide();
+
 			// Disable archive button if not all sessions are finished
-			const total = simlet.sessions.length;
-			if (total > 0) {
-				let completed = 0;
-				let allSessionsFinished = true;
-				simlet.sessions.forEach(sessionId => {
-					Simva.getSimletSession(simlet.simlet_id, sessionId, function(error, result) {
-						if (!error) {
-							let prev = allSessionsFinished;
-							allSessionsFinished = allSessionsFinished && (result.session_status == "terminated" || result.session_status == "inactive");
-						}
-						completed++;
-						if (completed == total && !allSessionsFinished) {
-							kebab.find(".icon-archive").addClass('li-disabled').removeAttr('onclick');
-						} else if (completed == total && allSessionsFinished) {
-							kebab.find(".icon-archive").removeClass('li-disabled');
-						}
+			Simva.getSimletSessions(simlet.simlet_id, function(error, result) {
+				if (!error) {
+					let allSessionsFinished = true;
+					result.forEach((session, id) => {
+						allSessionsFinished = allSessionsFinished && (result.session_status == "terminated");
 					});
-				});
-			} else {
-				kebab.find(".icon-archive").removeClass('li-disabled');
-			}
+					if (!allSessionsFinished) {
+						kebab.find(".icon-archive").addClass('li-disabled');
+					}
+				}
+			});
 		}
 		
 		card.find(".simletCardTitle h1").text(simlet.simlet_name);
 		card.find(".cardDescription").text(simlet.simlet_description);
-		card.find(".cardCreationDate span").text(getFormattedDate(simlet.createdAt, currentlanguageCode));
-		card.find(".cardUpdateDate span").text(getFormattedDate(simlet.updatedAt, currentlanguageCode));
-		card.find(".cardSessions span").text(simlet.sessions.length);
-		card.find(".cardGroups").nextAll("span:first").text(simlet.groups.length);
+		card.find(".cardCreationDate").text(getFormattedDate(simlet.createdAt, currentlanguageCode));
+		card.find(".cardUpdateDate").text(getFormattedDate(simlet.updatedAt, currentlanguageCode));
+		card.find(".cardSessions").text(simlet.sessions.length);
+		card.find(".cardGroups").text(simlet.groups.length);
 		card.find(".simletTagsRow").append(renderTags(simlet));
 		
 		Simva.getSimletGroupsParticipantsCount(simlet.simlet_id, function(error, result) {
@@ -268,140 +338,150 @@ the elements and scripts defined in the simlet_commons partial -->
 				Object.entries(result).forEach(([group, count]) => {
 					total += count;
 				});
-				card.find(".cardUsers").nextAll("span:first").text(total);
+				card.find(".cardUsers").text(total);
 			}
 		});
 	}
 
-
-	const openSimletForm = function(simletId) {
-		// Always open form in the create/edit common tab
-		Utils.changeTab($('#study_name_desc_tab_button'), 'study_form_form','study_name_desc_tab');
-
-		$('#study_form_error').text("");
-
-		// Creating new SIMLET
-		if (simletId == null) {
-			// Open form always and show the add new/import tabs
-			Utils.toggleFormInFloating("study_form");
-			$("#add_study_tabs").show();
-			
-			$("#study_form_title").text("<%- t('add.title', { ns : 'SIMLETs' }) %>");
-			$("#study_name_desc_submit").val("<%- t('new.submit', { ns : 'SIMLETs' }) %>");
-
-			$('#prev_study_name').val("");
-			$('#prev_study_description').val("");
-
-			$('#study_name').val("");
-			$('#study_description').val("");
-		}
-		// Editing SIMLET
-		else {
-			const simlet = simletsById.get(simletId);
-			if(simlet != null) {
-				// Open form only if the SIMLET exists and hide the add new/import tabs (only the name/description tab is needed)
-				Utils.toggleFormInFloating('study_form');
-				$('#edit_study_id').val(simletId);
-
-				$("#add_study_tabs").hide();
-
-				$("#study_form_title").text("<%- t('edit.title', { ns : 'SIMLETs' }) %>");
-				$("#study_name_desc_submit").val("<%- t('edit.submit', { ns : 'SIMLETs' }) %>");
-
-				$('#prev_study_name').val(simlet.simlet_name);
-				$('#prev_study_description').val(simlet.simlet_description);
-
-				$('#study_name').val(simlet.simlet_name);
-				$('#study_description').val(simlet.simlet_description);
+	const paintNoSimletsMessage = async function() {
+		if (filteringPaginationData["totalResults"] == 0) {
+			// There are no SIMLETs in the current section (active/archived)
+			if (simletsById.size == 0) {
+				if (!ARCHIVED) {
+					$('#no_simlets_msg').text("<%- t('no_simlets.message', { ns : 'SIMLETs' }) %>");
+				}
+				else {
+					$('#no_simlets_msg').text("<%- t('no_archived.message', { ns : 'SIMLETs' }) %>");
+				}
 			}
+			// There are SIMLETs, but none of them matched the search parameters
+			else {
+				$('#no_simlets_msg').text("<%- t('search.no_matches', { ns : 'SIMLETs' }) %>");
+			}
+		}
+		else {
+			$('#no_simlets_msg').text("");
 		}
 	}
 
 
 	// Declared on the simlet_commons partial
-	onCreateSimlet = function(simlet) {
-		if (!simletsById.has(simlet.simlet_id)) {
-			simletsById.set(simlet.simlet_id, simlet);
+	onCreateSimlet = function(newSimletInfo) {
+		if (!simletsById.has(newSimletInfo.simlet_id)) {
+			simletsById.set(newSimletInfo.simlet_id, newSimletInfo);
 
 			filteringPaginationData["totalResults"]++;
 			filteringPaginationData["updateSearchOptions"]();
 			
-			const currentMaxVisible = filteringPaginationData["currentPage"] * filteringPaginationData["showAtOnce"];
-			// Find in what position the card will be painted depending on the search parameters
-			// Check if the position is within any of the currently loaded pages
-				// If it is, remove the last painted card and call paintSimletBatch([simlet]) to add the new simlet card at the end
-					// If the simlets are not rendering in the default order, move the added card to the correct position    
-	
-				// Otherwise, do nothing
-		}
-	}
+			// Determine sort order callback
+			let sortOrder = (a, b) => a.simlet_id - b.simlet_id;
+			// From lower to higher
+			if (filteringPaginationData["searchParams"].order.toLowerCase() == "asc") {
+				if (filteringPaginationData["searchParams"].orderBy.toLowerCase() == "id") {
+					sortOrder = (a, b) => a.simlet_id - b.simlet_id;
+				}
+				else if (filteringPaginationData["searchParams"].orderBy.toLowerCase() == "name") {
+					sortOrder = (a, b) => a.simlet_name.localeCompare(b.simlet_name);
+				}
+				else if (filteringPaginationData["searchParams"].orderBy.toLowerCase() == "createdAt") {
+					sortOrder = (a, b) => a.createdAt - b.createdAt;
+				}
+				else if (filteringPaginationData["searchParams"].orderBy.toLowerCase() == "updatedAt") {
+					sortOrder = (a, b) => a.updatedAt - b.updatedAt;
+				} 
+			}
+			// From higher to lower
+			else {
+				if (filteringPaginationData["searchParams"].orderBy.toLowerCase() == "id") {
+					sortOrder = (a, b) => b.simlet_id - a.simlet_id;
+				}
+				else if (filteringPaginationData["searchParams"].orderBy.toLowerCase() == "name") {
+					sortOrder = (a, b) => b.simlet_name.localeCompare(a.simlet_name);
+				}
+				else if (filteringPaginationData["searchParams"].orderBy.toLowerCase() == "createdAt") {
+					sortOrder = (a, b) => b.createdAt - a.createdAt;
+				}
+				else if (filteringPaginationData["searchParams"].orderBy.toLowerCase() == "updatedAt") {
+					sortOrder = (a, b) => b.updatedAt - a.updatedAt;
+				} 
+			}
 
-	// Declared on the simlet_commons partial
-	onEditSimlet = function(simlet) {
-		if (simletsById.has(simlet.simlet_id)) {
-			simletsById.set(simlet.simlet_id, simlet);
-			
-			const card = $(`#simlet_${simlet.simlet_id}`);
-			card.data(SIMLET_DATA_NAME_KEY, simlet.simlet_name);
-			card.data(SIMLET_DATA_DESCRIPTION_KEY, simlet.simlet_description);
+			// Sort simletsById and get an array of only the sorted ids
+			const sorted = Array.from(simletsById.values()).sort(sortOrder);
+			const sortedIds = sorted.map(obj => obj.simlet_id);
 
-			card.find(".simletCardTitle h1").text(simlet.simlet_name);
-			card.find(".cardDescription").text(simlet.simlet_description);
-			card.find(".cardUpdateDate span").text(getFormattedDate(simlet.updatedAt, currentlanguageCode));
-		}
-	}
-	
-	// Handle both onArchiveSimlet and onDeleteSimlet declared on the simlet_commons partial
-	onRemoveSimletFromView = function(simletId) {
-		simletsById.delete(simletId);
+			// Determine what position will take the new card 
+			const cardPosition = sortedIds.indexOf(newSimletInfo.simlet_id);
+			const currentMaxVisible = filteringPaginationData["searchParams"].limit;
 
-		// If the SIMLET card was painted, remove it and update the pagination parameters
-		const card = $(`#simlet_${simletId}`);
-		if (card.length > 0) {			
-			card.remove();
-			filteringPaginationData["totalResults"]--;
-			filteringPaginationData["updateSearchOptions"]();
+			// If the card should be visible after being added
+			if (cardPosition < currentMaxVisible) {
+				// If all the cards that should be visible are painted, remove the last one
+				if ($("#simlets_list").children().length == currentMaxVisible) {
+					$("#simlets_list").children().last().remove();
+				}
+				
+				// Add the new card at the end
+				paintSimletBatch([newSimletInfo]);
 
-			const currentMaxVisible = filteringPaginationData["currentPage"] * filteringPaginationData["showAtOnce"];
-			// If there could be more cards painted after removing the SIMLET AND there are at least enough total results to fill the maximum, 
-			// load a new batch of SIMLETs (the page will be the same as the current one, but the already painted SIMLETs will be omitted and 
-			// only the new ones will be added to the page). Otherwise, the already existing cards will just move to take the removed one position
-			if ($("#simlets_list").find(".cardColumn").length < currentMaxVisible && filteringPaginationData["totalResults"] >= currentMaxVisible) {
-				loadSimletBatch();
+				// If the new card should take the first place, move it before the first card of the list
+				if (cardPosition == 0) {
+					$("#simlets_list").children().first().before($(`#simlet_${newSimletInfo.simlet_id}`));
+				}
+				// Otherwise, move it after the card that goes before 
+				else if (cardPosition < currentMaxVisible) {
+					const prevId = sortedIds[cardPosition - 1];
+					$(`#simlet_${prevId}`).after($(`#simlet_${newSimletInfo.simlet_id}`));
+				}
 			}
 		}
 	}
 
-	// 3-dot menus buttons shared listeners using event delegation to ensure 
-	// the handler works even if element is added after the document ready event
+	// Declared on the simlet_commons partial
+	onEditSimlet = function(newSimletInfo) {
+		if (simletsById.has(newSimletInfo.simlet_id)) {
+			simletsById.set(newSimletInfo.simlet_id, newSimletInfo);
+			
+			const card = $(`#simlet_${newSimletInfo.simlet_id}`);
+			card.data(SIMLET_DATA_NAME_KEY, newSimletInfo.simlet_name);
+			card.data(SIMLET_DATA_DESCRIPTION_KEY, newSimletInfo.simlet_description);
 
-	$(document).on('click', ".simletCardTitle .icon-edit", function(e) {
-		const data = $(this).closest("a").data();
-		openSimletForm(data[SIMLET_DATA_ID_KEY])
-	});
+			card.find(".simletCardTitle h1").text(newSimletInfo.simlet_name);
+			card.find(".cardDescription").text(newSimletInfo.simlet_description);
+			card.find(".cardUpdateDate").text(getFormattedDate(newSimletInfo.updatedAt, currentlanguageCode));
+		}
+	}
+	
+	// Declared on the simlet_commons partial
+	onArchiveSimlet = function(newSimletInfo) {
+		onDeleteSimlet(newSimletInfo.simlet_id);
+	}
+	
+	// Declared on the simlet_commons partial
+	onDeleteSimlet = function(simletId) {
+		simletsById.delete(simletId);
 
-	$(document).on('click', ".simletCardTitle .icon-url", function(e) {
-		const data = $(this).closest("a").data();
-		// Defined in the simlet_commons partial
-		openUrlSettingsForm(data[SIMLET_DATA_ID_KEY], data[SIMLET_DATA_NAME_KEY])
-	});
+		// Update the pagination parameters
+		filteringPaginationData["totalResults"]--;
+		filteringPaginationData["updateSearchOptions"]();
 
-	$(document).on('click', ".simletCardTitle .icon-download", function(e) {
-		const data = $(this).closest("a").data();
-		// Defined in the simlet_commons partial
-		openConfigDownloadForm(data[SIMLET_DATA_ID_KEY], data[SIMLET_DATA_NAME_KEY])
-	});
+		// If the SIMLET card was painted, remove it and potentially paint the one that will take the free space or the no SIMLETs message
+		const card = $(`#simlet_${simletId}`);
+		if (card.length > 0) {
+			card.remove();
 
-	$(document).on('click', ".simletCardTitle .icon-archive", function(e) {
-		const data = $(this).closest("a").data();
-		// Defined in the simlet_commons partial
-		archiveSimlet(data[SIMLET_DATA_ID_KEY], data[SIMLET_DATA_NAME_KEY])
-	});
+			const currentMaxVisible = filteringPaginationData["searchParams"].limit;
 
-	$(document).on('click', ".simletCardTitle .icon-delete", function(e) {
-		const data = $(this).closest("a").data();
-		// Defined in the simlet_commons partial
-		deleteSimlet(data[SIMLET_DATA_ID_KEY], data[SIMLET_DATA_DESCRIPTION_KEY])
-	});	
+			// If there could be more cards painted after removing the SIMLET AND there are at least enough total results to fill the maximum, 
+			// load a new batch of SIMLETs (the page will be the same as the current one, but the already painted SIMLETs will be omitted and 
+			// only the new ones will be added to the page)
+			if ($("#simlets_list").find(".cardColumn").length < currentMaxVisible && filteringPaginationData["totalResults"] >= currentMaxVisible) {
+				loadSimletBatch();
+			}
+			// Otherwise, the already existing cards will just move to take the removed one position
+
+			paintNoSimletsMessage();
+		}
+	}
 	
 </script>

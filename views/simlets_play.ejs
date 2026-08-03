@@ -5,6 +5,7 @@
 <% const searchBarPlaceholder = t('searchBar.placeholder', { ns: 'SIMLETs' }); %>
 <%- include('partials/filtering_pagination_commons', { id:"scheduler", searchBarPlaceholderText: searchBarPlaceholder }) %>
 
+<span id="no_simlets_msg"></span>
 <div id="simlets_list" class="simletsCardsList">
 </div>
 
@@ -63,7 +64,7 @@
 	const loadSimletBatch = function() {
 		$("#loader").show();
 		
-		Simva.getSchedulerSimlets(filteringPaginationData["searchParams"], function(error, result){
+		Simva.getSchedulerSimlets(filteringPaginationData["searchParams"], function(error, result) {
 			if (!error) {
 				paintSimletBatch(result);
 				$("#loader").hide();
@@ -95,12 +96,15 @@
 		if (batch.length == 0) {
 			// There are no SIMLETs in the current section
 			if (filteringPaginationData["totalResults"] == 0) {
-				$('#simlets_list').text("<%- t('scheduler.noSIMLET.title', { ns : 'SIMLETs' }) %>");
+				$('#no_simlets_msg').text("<%- t('scheduler.noSIMLET.title', { ns : 'SIMLETs' }) %>");
 			}
 			// There are SIMLETs, but none of them matched the search parameters
 			else {
-				$('#simlets_list').text("<%- t('search.no_matches', { ns : 'SIMLETs' }) %>");
+				$('#no_simlets_msg').text("<%- t('search.no_matches', { ns : 'SIMLETs' }) %>");
 			}
+		}
+		else {
+			$('#no_simlets_msg').text("");
 		}
 	}
 

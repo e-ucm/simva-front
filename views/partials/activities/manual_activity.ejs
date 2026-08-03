@@ -158,17 +158,17 @@
             meta.find(".complete input[type='checkbox']").attr("checked", activity.manual_user_managed);
 
             // Determine the type icon and subtitle based on the activity type
-            let iconClass = ""
+            let iconClass = "";
             let prevSimpleName = this.simple_name;
             
             if (activity.manual_ressource_type === 'WEB') {
-                iconClass = "icon-gameplay-web"
+                iconClass = "icon-gameplay-web";
                 this.simple_name += " - <%= t('manual.web.title', { ns : 'activities' }) %>"
                 this.description = "<%= t('manual.web.description', { ns : 'activities' }) %>";
                 meta.find("i").text(activity.manual_ressource_url || "-");
             }
             else {
-                iconClass = "icon-manual-external"
+                iconClass = "icon-manual-external";
                 this.simple_name += " - <%= t('manual.external.title', { ns : 'activities' }) %>"
                 this.description = "<%= t('manual.external.description', { ns : 'activities' }) %>";
                 meta.find(".icon-url").removeClass("icon-url");

@@ -1,0 +1,75 @@
+
+<!-- Elements and class for default allocator -->
+
+<div id="default_allocator_template" style="display: none;">
+    <!-- td needs to be contained inside a table, otherwise the 
+    browser will delete it and won't be able to be cloned -->
+    <table>
+        <tr>
+            <th class="defaultAllocatorCol">
+                <%= t('allocator.sessions.title', { ns : 'groups' }) %>
+            </th>
+        </tr>
+        <tr>
+            <td class="defaultAllocatorCol">
+                <select>
+                </select>
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+<script type="text/javascript">
+
+    class DefaultAllocator extends BaseAllocator {
+        constructor() {
+            super();
+
+            this.supportedType = "default";
+            this.name = "<%= t('allocator.default.title', { ns : 'groups' }) %>";
+            this.description = "<%= t('allocator.default.description', { ns : 'groups' }) %>";
+        }
+
+        getCurrentAllocation(group, participant = null) { 
+            // If the group has the allocations property and the property has the participant
+            // id, return the session id stored for the group id. Otherwise return null
+            return (group.allocations != null && group.allocations[participant.user_id] != null) ? Number(group.allocations[participant.user_id]) : null;
+        }
+
+        paintInGroup(group) {
+            super.paintInGroup(group);
+            
+            const table = $(`#group_${group.group_id} .participants`);
+			let row = $(table.find("thead tr")).first();
+			row.find('th:last').before($("#default_allocator_template th").clone());
+            
+            const participants = group.participants;
+            for (let i = 0; i < participants.length; i++) {
+                const participant = getParticipantFromId(participants[i]);
+                
+                const content = $("#default_allocator_template td").clone();
+                const dropdown = content.find("select");
+                dropdown.attr("id", `allocation_${group.group_id}_${participant.user_id}`);
+                sessionsById.forEach((session, id) => {
+                    dropdown.append($("<option>", {
+                        value: id,
+                        text: session.session_name,
+                    }));
+                });
+                
+                dropdown.val(this.getCurrentAllocation(group, participant));
+                
+                row = $(table.find("tbody tr")).eq(i);
+                row.find('td:last').before(content);
+            }
+        }
+    }
+    
+    $(document).on('change', ".test .participants td select", function(e) {
+        const groupData = $(this).closest(".test").data();
+		const userData = $(this).closest("tr").data();
+        allocateToSession(groupData[GROUP_DATA_ID_KEY], Number($(this).val()), userData[USER_DATA_ID_KEY]);
+	});
+    
+</script>

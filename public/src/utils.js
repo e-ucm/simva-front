@@ -195,7 +195,7 @@ var Utils = {
 
 	hideIframeFloating: function() {
 		$('#iframe_floating').removeClass('shown is-iframe');
-		$('#iframe_floating').find('.iframe_content').empty();
+		$('#iframe_floating .iframe_content').empty();
 	},
 
 	
@@ -287,8 +287,8 @@ var Utils = {
 	 * Hides the submit button of the floating form and shows the loader
 	 */
 	toggleSubmit : function(){
-		$('#iframe_floating').find('input[type="submit"]').toggle();
-		$('#iframe_floating').find('.loader').toggle();
+		$('#iframe_floating input[type="submit"]').toggle();
+		$('#iframe_floating .loader').toggle();
 	},
 
 

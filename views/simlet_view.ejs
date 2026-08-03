@@ -80,16 +80,12 @@ the elements and scripts defined in the simlet_commons partial -->
 
 
 <script type="text/javascript">
-	// Add the floating class to the content element to add space at the bottom 
-	// of the page so the floating button doesnt cover any other element
-	$(".content").addClass("floating");
-	
 	let simletId = "<%= study %>";
 	let currentUser = null;
 	let simlet = null;
 
 	// Needs to contain all the sessions from the start to show them as options in the group allocator
-	let sessionsById = new Map();	// Defined on reloadSimlet or on paintAllocator in the simlet_users partial (whichever loads first)
+	let sessionsById = new Map();	// Defined when loading the SIMLET or on paintAllocator in the simlet_users partial (whichever loads first)
 	
 	// Stored to avoid having to fetch them every time the search parameters change 
 	// They don't need to contain all the data from the start since they're only neeeded
@@ -102,43 +98,60 @@ the elements and scripts defined in the simlet_commons partial -->
 	
 	// TODO: Declare platforms
 
-
+	
 	// Menus
 
+	// Add the floating class to the content element to add space at the bottom 
+	// of the page so the floating button doesnt cover any other element
+	$(".content").addClass("floating");
+	
 	$(document).ready(function() {
-		// Set refresh function of the simlet_commons partial
-		refreshFunc = reloadSimlet;
-		
-		Simva.getCurrentUser((error, user) => {
-			if(!error) {
-				currentUser = user;
-			} else {
-				console.error("Error fetching current user:", error);
-				currentUser = null;
-				// Optionally, display an error message to the user
-				alert("Error fetching user information. Some features may not work properly.");
-				//reloadSimlet();
-			}
-		});
-
 		// Create the SIMLET 3-dot button from the template 
 		const kebab = $("#kebab_template .kebab-dropdown").clone();
 		$(".simletSettings .kebab").append(kebab);
-		kebab.find(".icon-edit").click(() => { openSimletForm(simletId) });
-		kebab.find(".icon-url").click(() => { openUrlSettingsForm(simletId, simlet.simlet_name) });
-		kebab.find(".icon-download").click(() => { openConfigDownloadForm(simletId, simlet.simlet_name) });
-		kebab.find(".icon-export").click(() => { exportSimlet(simletId) });
-		kebab.find(".icon-delete").click(() => { deleteSimlet(simletId, simlet.simlet_name); });
+		kebab.find(".icon-edit").on("click", () => { openSimletForm(simletId) });
+		kebab.find(".icon-url").on("click", () => { openUrlSettingsForm(simletId, simlet.simlet_name) });
+		kebab.find(".icon-download").on("click", () => { openConfigDownloadForm(simletId, simlet.simlet_name) });
+		kebab.find(".icon-export").on("click", () => { exportSimlet(simletId) });
+		kebab.find(".icon-delete").on("click", () => { deleteSimlet(simletId, simlet.simlet_name); });
+		kebab.find(".icon-archive").on("click", (e) => { 
+			if($(e.target).hasClass("li-disabled") || simlet == null) {
+				return;
+			}
+			archiveSimlet(simlet.simlet_id, simlet.simlet_name, true);
+		});
+		kebab.find(".icon-dearchive").on("click", () => {
+			if (simlet == null) {
+				return;
+			}
+			archiveSimlet(simlet.simlet_id, simlet.simlet_name, false);
+		});
 
 		// Delete the add and import SIMLET tabs from the name/description menu
 		$("#add_study_tabs").remove();
 		$("#import_study_tab").remove();
 		
-		refreshFunc();
+		// Get the current user, store it, and paint the rest of the SIMLET
+		Simva.getCurrentUser((error, user) => {
+			if (!error) {
+				currentUser = user;
+				Simva.getUser(user.username, function(error, result) {
+					participantsById.set(user.user_id, result);
+					participantsByUsername.set(user.username, result);
+					
+					updateSimletInfo(true);
+				});
+			} else {
+				console.error("Error fetching current user:", error);
+				currentUser = null;
+				// Optionally, display an error message to the user
+				alert("Error fetching user information. Some features may not work properly.");
+			}
+		});
 	});
 
 	const openSessionsTab = function() {
-		Utils.changeTab("sessions_tab_button", 'study_tabs','sessions_tab')
+		Utils.changeTab("sessions_tab_button", 'study_tabs','sessions_tab');
 
 		// Check if the bottom has been reached just in case more results fit on the screen,
 		// since the check is based on the current tab height, it can be different when
@@ -147,7 +160,7 @@ the elements and scripts defined in the simlet_commons partial -->
 	}
 
 	const openUsersTab = function() {
-		Utils.changeTab("users_tab_button", 'study_tabs','users_tab')
+		Utils.changeTab("users_tab_button", 'study_tabs','users_tab');
 
 		// Check if the bottom has been reached just in case more results fit on the screen,
 		// since the check is based on the current tab height, it can be different when
@@ -161,8 +174,8 @@ the elements and scripts defined in the simlet_commons partial -->
 		$('#study_form_error').text("");
 		$('#edit_study_id').val(simletId);
 		
-		$("#study_form_title").text("<%- t('edit.title', { ns : 'SIMLETs' }) %>")
-		$("#study_name_desc_submit").val("<%- t('edit.submit', { ns : 'SIMLETs' }) %>")
+		$("#study_form_title").text("<%- t('edit.title', { ns : 'SIMLETs' }) %>");
+		$("#study_name_desc_submit").val("<%- t('edit.submit', { ns : 'SIMLETs' }) %>");
 
 		$('#prev_study_name').val(simlet.simlet_name);
 		$('#prev_study_description').val(simlet.simlet_description);
@@ -171,14 +184,84 @@ the elements and scripts defined in the simlet_commons partial -->
 		$('#study_description').val(simlet.simlet_description);
 	}
 	
+
+	// Declared on the simlet_commons partial
+	onEditSimlet = function(newSimletInfo) {
+		simlet = newSimletInfo;
+		$('#simlet_name').text(newSimletInfo.simlet_name);
+	}
+
 	// Declared on the simlet_commons partial
 	onDeleteSimlet = function(simletId) {
 		window.location.href="/simlets";
 	}
 	
+	// Declared on the simlet_commons partial
+	onArchiveSimlet = function(newSimletInfo) {
+		simlet = newSimletInfo;
+		paintArchived();
+	}
+	
 	
 	// Functionality
 
+	/**
+	 * Update the basic SIMLET info (name, description, and sessions, groups and tags ids)
+	 * @param {boolean} paintAll - true to paint all the SIMLET info by performing a search with no parameters, false to not paint it
+	 * @returns {function} callback - function to call after the info has been updated 
+	 */
+	const updateSimletInfo = function(paintAll = false, callback = null) {
+		// Get the SIMLET essential parameters such as the name or its status and paint the different 
+		// independent sections of the SIMLET asynchronously since the order of execution doesn't matter
+		Simva.getSimlet(simletId, function(error, result) {
+			if (!error) {
+				simlet = result;
+
+				$('#simlet_name').text(simlet.simlet_name);
+				$("#simlet_tags").remove();
+				$(".simletTop").after($(renderTags(simlet)).attr("id", "simlet_tags"));
+
+				if (paintAll) {
+					// Update all the sessions search parameters and calls its onSearch to paint them
+					// No need to paint the activities here as they will be painted when painting the sessions
+					// Defined in the simlet_sessions partial
+					sessionsFilteringPaginationData["checkBottomReached"] = false;
+					sessionsFilteringPaginationData["updateSearch"]();
+
+					paintCoordinators();
+
+					// Update all the groups search parameters and calls its onSearch to paint them
+					// Defined in the simlet_groups partial
+					groupsFilteringPaginationData["checkBottomReached"] = false;
+					groupsFilteringPaginationData["updateSearch"]();
+
+					// TODO: Store platforms
+				}
+
+				// Try fetching the sessions and groups before paintAllocator in the simlet_users partial
+				// to potentially avoid fetching them multiple times, since the first paintAllocator calls
+				// run asynchronously and practically at the same time 
+				if (sessionsById.size != simlet.sessions.length) {
+					Simva.getSimletSessions(simletId, function(error, result) {
+						if (!error) {
+							sessionsById = new Map(result.map(obj => [obj.session_id, obj]));
+						}
+					});
+				}
+			
+				paintArchived();
+			} 
+			else {
+				console.error(error);
+			}
+
+			if (callback != null && typeof callback === "function") {
+				callback();
+			}
+		});
+	}
+
+		
 	const getSessionFromId = function(sessionId) {
 		if (completeSessionsById.has(Number(sessionId))) {
 			return completeSessionsById.get(Number(sessionId));
@@ -217,66 +300,9 @@ the elements and scripts defined in the simlet_commons partial -->
 		return sorted[0];
 	}
 
+
+	// Render
 	
-	const reloadSimlet = function() {
-		// Clear the stored variables in case of deletion/edit, as they were only stored to 
-		// avoid fetching them from the database every time the search parameters change 
-		sessionsById.clear();
-		completeSessionsById.clear();
-		completeActivitiesById.clear();
-		completeGroupsById.clear();
-		participantsById.clear();
-		participantsByUsername.clear();
-		
-		// Get the SIMLET essential parameters such as the name or its status and paint the different 
-		// independent sections of the SIMLET asynchronously since the order of execution doesn't matter
-		Simva.getSimlet(simletId, function(error, result) {
-			if (!error) {
-				simlet = result;
-
-				$('#simlet_name').text(simlet.simlet_name);
-				$("#simlet_tags").remove();
-				$(".simletTop").after($(renderTags(simlet)).attr("id", "simlet_tags"));
-				
-				paintArchived();
-				
-				// Update all the sessions search parameters and calls its onSearch to paint them
-				// No need to paint the activities here as they will be painted when painting the sessions
-				// Defined in the simlet_sessions partial
-				sessionsFilteringPaginationData["checkBottomReached"] = false;
-				sessionsFilteringPaginationData["updateSearch"]();
-
-				paintCoordinators();
-
-				// Update all the groups search parameters and calls its onSearch to paint them
-				// Defined in the simlet_groups partial
-				groupsFilteringPaginationData["checkBottomReached"] = false;
-				groupsFilteringPaginationData["updateSearch"]();
-
-				// Try fetching the sessions and groups before paintAllocator in the simlet_users partial
-				// to potentially avoid fetching them multiple times, since the first paintAllocator calls
-				// run asynchronously and practically at the same time 
-				if (sessionsById.size < simlet.sessions.length) {
-					Simva.getSimletSessions(simletId, function(error, result) {
-						if (!error) {
-							sessionsById = new Map(
-								result.map(obj => [obj.session_id, obj])
-							);
-						}
-					})
-				}
-			} 
-			else {
-				console.error(error);
-				window.location.href="/simlets";
-			}
-		});
-
-		// TODO: Store platforms
-
-	}
-
-
 	/**
 	 * Paint the corresponding archivation button depending of the SIMLET status (active/archived) 
 	 * and activate/deactivate it depending on all the sessions status  
@@ -284,23 +310,19 @@ the elements and scripts defined in the simlet_commons partial -->
 	const paintArchived = async function() {
 		const active = !simlet.simlet_archived;
 
-		let archiveButton = $(".archivationButton");
-		let txt = ""
+		const archiveButton = $(".icon-archive");
+		const dearchiveButton = $(".icon-dearchive");
 		
-		archiveButton.prop("onclick", null).off("click");
-		archiveButton.removeClass('li-disabled');
-		archiveButton.removeClass('icon-dearchive');
-		archiveButton.removeClass('icon-archive');
+		archiveButton.hide();
+		dearchiveButton.hide();
+		archiveButton.addClass("li-disabled");
 
 		// If the SIMLET is active
 		if (active == null || active) {
-			txt = "<%- t('settings.archive.title', { ns : 'SIMLETs' }) %>"
-
 			// Show the add session/users floating buttons
 			$(".basic").show();
 
-			// Set the archive icon to the archive button
-			archiveButton.addClass('icon-archive');
+			archiveButton.show();
 			
 			const checkAllSessionsFinished = () => {
 				// Check if all sessions are finished
@@ -311,18 +333,10 @@ the elements and scripts defined in the simlet_commons partial -->
 					allSessionsFinished = allSessionsFinished && session.session_status == SESSION_FINISHED_STATUS;
 				});
 
-				// If not all sessions are finished, disable the archive button
-				if (!allSessionsFinished) {
-					archiveButton.addClass('li-disabled').removeAttr('onclick');
+				// If all sessions are finished, enable the archive button
+				if (allSessionsFinished) {
+					archiveButton.removeClass("li-disabled");
 				}
-				// Otherwise, enable it and set its onclick function to archive the SIMLET
-				else {
-					archiveButton.click(() => { 
-						// Defined in the simlet_commons partial
-						archiveSimlet(simletId, simlet.simlet_name);
-					});
-				}
-
 			}
 
 			// If all sessions have already been fetched, call the callback directly
@@ -333,61 +347,70 @@ the elements and scripts defined in the simlet_commons partial -->
 			else {
 				Simva.getSimletSessions(simletId, function(error, result) {
 					if (!error) {
-						sessionsById = new Map(
-							result.map(obj => [obj.session_id, obj])
-						);
+						sessionsById = new Map(result.map(obj => [obj.session_id, obj]));
 						checkAllSessionsFinished();
 					}
-				})
+				});
 			}
 		}
 		// If the SIMLET is archived
 		else {
-			txt = "<%- t('settings.dearchive.title', { ns : 'SIMLETs' }) %>"
-
 			// Hide the add session/users floating buttons
 			$(".basic").hide();
 
 			// TEST: Uncomment to allow dearchivation
-			archiveButton.addClass('icon-dearchive');
-			archiveButton.click(() => { 
-				Simva.updateSimlet(simletId, { simlet_archived: false }, function(error, result) {
-					if (!error) {
-						refreshFunc();
-					}
-				});
-			});
-			paintAllArchived();
-			
-			// TEST: Comment to allow dearchivation
-			// archiveButton.hide();
+			dearchiveButton.show();
 		}
-
-		archiveButton.text(txt);
+		
+		paintAllArchived();
 	}
 
 	const paintAllArchived = function() {
 		paintSessionsArchived();
-		paintActivitiesArchived();
 		paintCoordinatorsArchived();
+		paintGroupsArchived();
 		paintParticipantsArchived();
 	}
 	
+	// Hide the delete button from the sessions 3-dot menus
 	const paintSessionsArchived = function() {
-
+		if (simlet.simlet_archived) {
+			$("#sessions .test .sessionTop .kebab .icon-delete").hide();
+		}
+		else {
+			$("#sessions .test .sessionTop .kebab .icon-delete").show();
+		}
 	}
 
-	const paintActivitiesArchived = function() {
-
-	}
-	
+	// Disable the delete button from the coordinators table
 	const paintCoordinatorsArchived = function() {
-
+		$("#coordinators .red").prop("disabled", simlet.simlet_archived);
+		$(`#coordinators .username:contains("${currentUser.username}")`).parent().find(".red").prop("disabled", true);
 	}
 
+	// Hide the groups 3-dot menus buttons that allow modifying the group users 
+	// and disable the unselected options from the allocator dropdowns
+	const paintGroupsArchived = function() {
+		if (simlet.simlet_archived) {
+			$("#groups .test .groupTop .kebab .icon-delete").hide();
+			$("#groups .test .groupTop .kebab .icon-add").hide();
+			$("#groups .test .groupTop .kebab .icon-gear").hide();
+		}
+		else {
+			$("#groups .test .groupTop .kebab .icon-delete").show();
+			$("#groups .test .groupTop .kebab .icon-add").show();
+			$("#groups .test .groupTop .kebab .icon-gear").show();
+		}
+
+		$("#groups .test select option:not(:selected)").prop("disabled", simlet.simlet_archived);
+	}
+
+	// Disable the delete button from the participants table
 	const paintParticipantsArchived = function() {
-		
+		$(".participants .red").prop("disabled", simlet.simlet_archived);
 	}
+
+	
 
 </script>
 
@@ -415,7 +438,7 @@ the elements and scripts defined in the simlet_commons partial -->
 		};
 
 		// Create an instance of SSEClientManager
-		Simva.getSimletEventsPresignedUrl('<%= study %>', function(error, result) {
+		Simva.getSimletEventsPresignedUrl(simletId, function(error, result) {
 			if (!error) {
 				const sseClient = new SSEClientManager(result.url);
 

@@ -172,7 +172,7 @@
         downloadGlobalActivityBackup(activityId) {
             Simva.getMinioDataUrl(activityId, (error, result) => {
                 let errorMsg = "<%= t('result.error.downloading', { ns : 'activities' }) %>";
-                if(error){
+                if (error) {
                     $.toast({
                         heading: errorMsg,
                         text: error.message,
@@ -208,11 +208,11 @@
 					let hasResults = false;
 					let downloadPromises = [];
 					for(const participant in result) {
-						if(result.hasOwnProperty(participant) && result[participant] != null) {
+						if (result.hasOwnProperty(participant) && result[participant] != null) {
 							downloadPromises.push(
 								fetch(result[participant])
 								.then((response) => {
-									if(!response.ok) {
+									if (!response.ok) {
 										throw new Error(`HTTP ${response.status}`);
 									}
 									return response.blob();
@@ -227,7 +227,7 @@
 							hasResults = true;
 						};
 					}
-					if(!hasResults) {
+					if (!hasResults) {
 						Utils.download(`${this.resultFilePrefix}_${activityId}_nodata.json`, JSON.stringify(result,null,2));
 					} else {
 						Promise.all(downloadPromises)
@@ -307,7 +307,7 @@
             // Add the session card synchronously to ensure they appear in order
             const card = $("#activity_template .activity").clone();
             sessionCard.find(".activities").append(card);
-            card.find(".kebab-dropdown").fadeOut(0);
+            card.find(".kebab-dropdown").hide();
 
             card.data(SESSION_DATA_ID_KEY, sessionId);
             card.data(ACTIVITY_DATA_ID_KEY, activity.activity_id);
@@ -435,7 +435,7 @@
         paintParticipantNotInit(activityId, participantId) {
             // Set the participant progress bar to --- and make the progress, completion 
             // and result columns to the same color to mark it hasn't initialized
-             $(`#progress_${activityId}_${participantId} span`).html($("<done>---</done>"));
+            $(`#progress_${activityId}_${participantId} span`).html($("<done>---</done>"));
             $(`#progress_${activityId}_${participantId}`).removeClass('progress');
 
             $(`#completion_${activityId}_${participantId}`).removeClass("red yellow green");
@@ -659,7 +659,7 @@
                     }
                     // Otherwise, the columns will be yellow if the % is more than 0
                     else if (progress > 0) {
-                        colorClass = "yellow"
+                        colorClass = "yellow";
                     }
 
                     // Make the progress bar yellow (unless the participant hasn't initalized the 

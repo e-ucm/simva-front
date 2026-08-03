@@ -186,17 +186,17 @@
             meta.find(".backup input[type='checkbox']").attr("checked", activity.game_backup);
 
             // Determine the type icon and subtitle based on the activity type
-            let iconClass = ""
+            let iconClass = "";
             let prevSimpleName = this.simple_name;
 
             if (activity.game_type === 'WEB') {
-                iconClass = "icon-gameplay-web"
+                iconClass = "icon-gameplay-web";
                 this.simple_name += " - <%= t('gameplay.web.title', { ns : 'activities' }) %>"
                 this.description = "<%= t('gameplay.web.description', { ns : 'activities' }) %>";
                 meta.find("i").text(activity.game_url || "-");
             }
             else {
-                iconClass = "icon-gameplay-desktop"
+                iconClass = "icon-gameplay-desktop";
                 this.simple_name += " - <%= t('gameplay.desktop.title', { ns : 'activities' }) %>"
                 this.description = "<%= t('gameplay.desktop.description', { ns : 'activities' }) %>";
                 meta.find(".icon-url").removeClass("icon-url");

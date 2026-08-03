@@ -163,7 +163,7 @@
 							return false;
 						} else {
 							Utils.toggleFormInFloating('activity_form_menu');
-							reloadSimlet();
+							onEditSessionActivities(currSessionId);
 						}
 					});
 			   }
@@ -205,7 +205,7 @@
 							errorbox.text(error.responseJSON.message);
 						} else {
 							Utils.toggleFormInFloating('activity_form_menu');
-							reloadSimlet();
+							onEditSessionActivities(currSessionId);
 						}
 					});
 				}
@@ -234,7 +234,7 @@
 								errorbox.text(importError.responseJSON ? importError.responseJSON.message : importError.message || importError);
 								return;
 							} else {
-								reloadSimlet();
+								onEditSessionActivities(currSessionId);
 								Utils.toggleFormInFloating('activity_form_menu');
 							}
 						});
@@ -341,8 +341,8 @@
 
 	// Expand/hide activity participants table
 	const toggleActivityTable = function(activityId) {
-		$(`#activity_${activityId}`).find('.expandButton').toggleClass('collapsed');
-		$(`#activity_${activityId}`).find('table').toggle();
+		$(`#activity_${activityId} .expandButton`).toggleClass('collapsed');
+		$(`#activity_${activityId} table`).toggle();
 	}
 
 
@@ -523,11 +523,11 @@
 	}
 
     const deleteActivity = function(activityId, activityName, sessionId) {
-		let test = getSessionFromId(sessionId);
-		let testName = test && test.session_name ? test.session_name : sessionId;
-		if (confirm(`<%- t('delete.confirm', { ns : 'activities', activity : '${activityName}', session: '${testName}' , SIMLET : '${simlet.simlet_name}' }) %>`)) {
+		let session = getSessionFromId(sessionId);
+		let sessionName = session && session.session_name ? session.session_name : sessionId;
+		if (confirm(`<%- t('delete.confirm', { ns : 'activities', activity : '${activityName}', session: '${sessionName}' , SIMLET : '${simlet.simlet_name}' }) %>`)) {
 			Simva.deleteActivity(simletId, sessionId, activityId, function(error, result) {
-				reloadSimlet();
+				onEditSessionActivities(sessionId);
 			});
 		}
 	}
@@ -543,10 +543,12 @@
 	 * @param {object} sessionCard - jquery object reference of the session card element
 	 */
     const paintSessionActivities = async function(session, activities, participants, sessionCard) {
-		$(`#test_${session.session_id} .activities`).empty();
+		sessionCard.find(".activities").empty();
+		sessionCard.find(".activities_loader").show();
 
 		if (activities.length === 0) {
-			$(`#test_${session.session_id} .activities`).text("<%- t('no_activities.message', { ns : 'activities' }) %>");
+			$(`#session_${session.session_id} .activities`).text("<%- t('no_activities.message', { ns : 'activities' }) %>");
+			sessionCard.find(".activities_loader").hide();
 		} 
 		else {
 			activities.forEach((activity) => {
@@ -555,16 +557,11 @@
                     painter.addActivityCard(simletId, activity, participants, sessionCard);
                 }
 			});
+			sessionCard.find(".activities_loader").hide();
 		}
 
 		// Block activity changes when session is finished
-		if (session.session_status == SESSION_FINISHED_STATUS) {
-			$(".activityTopActions").find(".kebab-dropdown").find(".icon-delete").hide();
-			$(".activityTopActions").find(".kebab-dropdown").find(".icon-activate").hide();
-			$(".activityTopActions").find(".kebab-dropdown").find(".icon-pause").hide();
-
-			$($(".activity").find("table")).find("input:checkbox").prop("disabled", true);
-		}
+		paintSessionStatusForActivities(session, sessionCard);
 	}
 
 	
@@ -579,6 +576,21 @@
 			painter.paintExtraForm(activity);
 		}
 	}
-
+	
+	const paintSessionStatusForActivities = function(session, card) {
+		// Block activity changes when session is finished
+		if (session.session_status == SESSION_FINISHED_STATUS) {
+			card.find(".activityTopActions .kebab-dropdown .icon-delete").hide();
+			card.find(".activityTopActions .kebab-dropdown .icon-activate").hide();
+			card.find(".activityTopActions .kebab-dropdown .icon-pause").hide();
+		}
+		else {
+			card.find(".activityTopActions .kebab-dropdown .icon-delete").show();
+			card.find(".activityTopActions .kebab-dropdown .icon-activate").show();
+			card.find(".activityTopActions .kebab-dropdown .icon-pause").show();
+		}
+		card.find(".activity table input:checkbox").prop("disabled", session.session_status === SESSION_FINISHED_STATUS);
+	}
+	
 </script>
 

@@ -1,0 +1,69 @@
+
+<!-- Elements and base class for a generic allocator -->
+
+<!-- Template for option in the select allocator menu -->
+<div id="allocator_option_template" style="display: none;">
+    <div class="row">
+        <input type="radio" name="type">
+        <label>
+            <div class="tooltipLine">
+                <h2 class="name">   </h2>
+                <div class="tooltip">
+                    &#x1F6C8;
+                    <span class="tooltiptext">  </span>
+                </div>
+            </div>
+        </label>
+    </div>
+</div>
+
+<!-- Template for the allocator info -->
+<div id="allocator_info_template" style="display: none;">
+    <div class="tooltipLine">
+        <b><%- t('allocator.type.title', { ns : 'groups' }) %></b>: <span class="name"> </span>
+        <div class="tooltip">
+            &#x1F6C8;
+            <span class="tooltiptext">
+                <%= t('allocator.group.description', { ns : 'groups' }) %>
+            </span>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    class BaseAllocator {
+        constructor() {
+            this.supportedType = "";
+            this.name = "";
+            this.description = "";
+        }
+
+        getCurrentAllocation(group, participant = null) { return null; }
+
+        paintExtraForm() { 
+            const content = $("#allocator_option_template .row").clone();
+            const optionName = `${this.supportedType}_allocator_option`;
+
+            content.find("input[type='radio']").attr("id", optionName);
+            content.find("input[type='radio']").val(this.supportedType);
+            content.find("label").attr("for", optionName);
+            content.find(".name").text(this.name);
+            content.find(".tooltiptext").text(this.description);
+
+            $("#change_allocator_form").append(content);
+
+            // Move the submit button bellow the options
+            $("#change_allocator_form").children().last().after($("#change_allocator_form  input[type='submit']"));
+        }
+
+        paintInGroup(group) {
+            const content = $("#allocator_info_template").clone();
+            content.find(".name").text(this.name);
+            content.find(".tooltiptext").text(this.description);
+            
+            $(`#allocator_content_${group.group_id}`).append(content.children());
+        }
+    }
+
+</script>

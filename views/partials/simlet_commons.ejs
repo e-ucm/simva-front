@@ -121,8 +121,11 @@
 		<li class="text-with-icon icon-download" title="<%- t('settings.download.title', { ns : 'SIMLETs' }) %>">
 			<%- t('settings.download.title', { ns : 'SIMLETs' }) %>
 		</li>
-		<li class="text-with-icon archivationButton icon-archive" title="<%- t('settings.archive.title', { ns : 'SIMLETs' }) %>">
+		<li class="text-with-icon icon-archive" title="<%- t('settings.archive.title', { ns : 'SIMLETs' }) %>">
 			<%- t('settings.archive.title', { ns : 'SIMLETs' }) %>
+		</li>
+		<li class="text-with-icon icon-dearchive" title="<%- t('settings.dearchive.title', { ns : 'SIMLETs' }) %>">
+			<%- t('settings.dearchive.title', { ns : 'SIMLETs' }) %>
 		</li>
 		<li class="text-with-icon icon-delete" title="<%- t('settings.delete.title', { ns : 'SIMLETs' }) %>">
 			<%- t('settings.delete.title', { ns : 'SIMLETs' }) %>
@@ -293,7 +296,6 @@
 						$("#study_form_error").text(error.responseJSON.message);
 					}
 					else {
-						$('#simlets_list').html(roller);
 						Utils.toggleSubmit();
 						Utils.toggleFormInFloating('study_form');
 						$("#study_form_error").text("");
@@ -500,11 +502,11 @@
 
 	// --- ARCHIVE/DELETE ---
 	
-	const archiveSimlet = function(simletId, simletName) {
+	const archiveSimlet = function(simletId, simletName, archive = true) {
 		if(confirm(`<%- t('archive.confirm', { ns : 'SIMLETs', SIMLET : '${simletName}' }) %>`)){
-			Simva.updateSimlet(simletId, { simlet_archived: true }, function(error, result) {
+			Simva.updateSimlet(simletId, { simlet_archived: archive }, function(error, result) {
 				if (!error  && onArchiveSimlet != null) {
-					onArchiveSimlet(simletId);
+					onArchiveSimlet(result);
 				}
 			});
 		}
