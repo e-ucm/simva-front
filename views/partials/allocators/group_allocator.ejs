@@ -22,6 +22,7 @@
         }
 
         getCurrentAllocation(group, participant = null) { 
+            if (group == null) return null;
             // If the group has the allocations property and the property has the group 
             // id, return the session id stored for the group id. Otherwise return null
             return (group.allocations != null && group.allocations[group.group_id] != null) ? Number(group.allocations[group.group_id]) : null;

@@ -593,7 +593,6 @@
 		Simva.activateSession(simletId, sessionId, { activate: nextStatus }, function(error, result) {
 			if (!error) {
 				onEditSession(result);
-				paintSessionStatus(result);
 			}
 		})
 	}
@@ -747,6 +746,7 @@
 				card = $("#session_template .test").clone();
 				$('#sessions').append(card);
 				card.find(".kebab-dropdown").hide();
+				card.find(".sessionTestLauch").hide();
 
 				card.data(SESSION_DATA_ID_KEY, session.session_id);
 				card.data(SESSION_DATA_NAME_KEY, session.session_name);
@@ -773,8 +773,7 @@
 					fillSessionCard(session, card);
 				}
 			});
-
-			
+		
 		});
 
 		paintNoSessionsMessage();
@@ -801,8 +800,6 @@
 		card.find(".icon-untester").hide();
 		card.find(".sessionTestLauch").hide();
 		
-		paintSessionStatus(session);
-
 		card.find(".sessionTitle").text(session.session_name);
 		card.find(".sessionDescription").text(session.session_description);
 		card.find(".sessionCreateDate").text(getFormattedDate(session.createdAt, currentlanguageCode));
@@ -837,11 +834,13 @@
 		card.find(".sessionSummary .completedUsers").text(completeUserCount);
 		card.find(".sessionSummary .completedTotalUsers").text(userCount);
 
+		// Paint all the activities in this session (defined at simlet_activities)
+		paintSessionActivities(session, activities, participants, card);
+
 		// Show/hide tester menu items based on current user status
 		paintCurrentUserTester(session.session_id, participants, card);
 
-		// Paint all the activities in this session (defined at simlet_activities)
-		paintSessionActivities(session, activities, participants, card);
+		paintSessionStatus(session);
 		
 		card.find(".sessionTags").empty();
 		card.find(".sessionTags").append(renderTags(session));
@@ -871,7 +870,7 @@
 	 * Update the session status tag and the buttons that get affected by the status change
 	 * @param {object} session - object containing the session info
 	 */
-	const paintSessionStatus = async function(session) {
+	const paintSessionStatus = function(session) {
 		let sessionClass = session.session_status;
 		let sessionStatusLabel = "";
 		
@@ -883,17 +882,13 @@
 			card.find(".icon-activate").hide();
 			card.find(".icon-pause").show();
 			card.find(".icon-finish").show();
-			if (sessionStatusLabel == "") {
-				sessionStatusLabel = `<%- t('active.title', { ns : 'sessions' }) %>`;
-			}
+			sessionStatusLabel = `<%- t('active.title', { ns : 'sessions' }) %>`;
 		} else if (sessionClass == SESSION_PAUSED_STATUS) {
 			// Only show activate and finalize
 			card.find(".icon-pause").hide();
 			card.find(".icon-activate").show();
 			card.find(".icon-finish").show();
-			if (sessionStatusLabel == "") {
-				sessionStatusLabel = `<%- t('paused.title', { ns : 'sessions' }) %>`;
-			}
+			sessionStatusLabel = `<%- t('paused.title', { ns : 'sessions' }) %>`;
 		} else if (sessionClass == SESSION_FINISHED_STATUS) {
 			// Hide all action, add, and tester buttons
 			card.find(".icon-activate").hide();
@@ -903,9 +898,18 @@
 			card.find(".icon-tester").hide();
 			card.find(".icon-reset-tester").hide();
 			card.find(".icon-untester").hide();
-			if (sessionStatusLabel == "") {
-				sessionStatusLabel = `<%- t('finished.title', { ns : 'sessions' }) %>`;
-			}
+			sessionStatusLabel = `<%- t('finished.title', { ns : 'sessions' }) %>`;
+		}
+
+		if (simlet.current_user_permission == "READ") {
+			card.find(".icon-edit").hide();
+			card.find(".icon-activate").hide();
+			card.find(".icon-pause").hide();
+			card.find(".icon-finish").hide();
+			card.find(".icon-add").hide();
+			card.find(".icon-tester").hide();
+			card.find(".icon-reset-tester").hide();
+			card.find(".icon-untester").hide();
 		}
 		
 		card.find(".sessionStatusLabel").removeClass(`${SESSION_ACTIVE_STATUS} ${SESSION_PAUSED_STATUS} ${SESSION_FINISHED_STATUS}`);
@@ -922,7 +926,7 @@
 	 * @param {Array} participants - Array of objects containing the session participants info
 	 * @param {object} card - jquery object reference of the session card element
 	 */
-	const paintCurrentUserTester = async function(sessionId, participants, card) {
+	const paintCurrentUserTester = function(sessionId, participants, card) {
 		if (isCurrentUserParticipant(participants)) {
 			currentUserTesterSessionId = sessionId;
 			card.find(".icon-tester").hide();

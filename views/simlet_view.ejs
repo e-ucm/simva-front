@@ -313,6 +313,7 @@ the elements and scripts defined in the simlet_commons partial -->
 		const archiveButton = $(".icon-archive");
 		const dearchiveButton = $(".icon-dearchive");
 		
+		$(".basic").hide();
 		archiveButton.hide();
 		dearchiveButton.hide();
 		archiveButton.addClass("li-disabled");
@@ -363,6 +364,15 @@ the elements and scripts defined in the simlet_commons partial -->
 		}
 		
 		paintAllArchived();
+		if (simlet.current_user_permission == "READ") {
+			$(".simletTop .kebab .icon-edit").hide();
+			$(".simletTop .kebab .icon-delete").hide();
+			$("#generate_shlink_url").remove();
+			$("#delete_shlink_url").remove();
+			$(".basic").hide();
+			archiveButton.addClass("li-disabled");
+			dearchiveButton.addClass("li-disabled");
+		}
 	}
 
 	const paintAllArchived = function() {
@@ -374,7 +384,7 @@ the elements and scripts defined in the simlet_commons partial -->
 	
 	// Hide the delete button from the sessions 3-dot menus
 	const paintSessionsArchived = function() {
-		if (simlet.simlet_archived) {
+		if (simlet.simlet_archived || simlet.current_user_permission == "READ") {
 			$("#sessions .test .sessionTop .kebab .icon-delete").hide();
 		}
 		else {
@@ -384,33 +394,37 @@ the elements and scripts defined in the simlet_commons partial -->
 
 	// Disable the delete button from the coordinators table
 	const paintCoordinatorsArchived = function() {
-		$("#coordinators .red").prop("disabled", simlet.simlet_archived);
+		$("#coordinators .red").prop("disabled", simlet.simlet_archived || simlet.current_user_permission == "READ");
 		$(`#coordinators .username:contains("${currentUser.username}")`).parent().find(".red").prop("disabled", true);
 	}
 
 	// Hide the groups 3-dot menus buttons that allow modifying the group users 
 	// and disable the unselected options from the allocator dropdowns
 	const paintGroupsArchived = function() {
-		if (simlet.simlet_archived) {
+		if (simlet.simlet_archived || simlet.current_user_permission == "READ") {
 			$("#groups .test .groupTop .kebab .icon-delete").hide();
 			$("#groups .test .groupTop .kebab .icon-add").hide();
 			$("#groups .test .groupTop .kebab .icon-gear").hide();
+
+			if (simlet.current_user_permission == "READ") {
+				$("#groups .test .groupTop .kebab .icon-edit").hide();
+			}
 		}
 		else {
 			$("#groups .test .groupTop .kebab .icon-delete").show();
 			$("#groups .test .groupTop .kebab .icon-add").show();
 			$("#groups .test .groupTop .kebab .icon-gear").show();
 		}
-
-		$("#groups .test select option:not(:selected)").prop("disabled", simlet.simlet_archived);
 	}
 
 	// Disable the delete button from the participants table
 	const paintParticipantsArchived = function() {
-		$(".participants .red").prop("disabled", simlet.simlet_archived);
+		$(".participants .red").prop("disabled", simlet.simlet_archived || simlet.current_user_permission == "READ");
 	}
-
 	
+	const paintAllocatorsArchived = function () {
+		$("#groups .test select option:not(:selected)").prop("disabled", simlet.simlet_archived || simlet.current_user_permission == "READ");
+	}
 
 </script>
 

@@ -179,6 +179,10 @@
             // Add the extra buttons to the 3-dot menu after the Tmon button
             const extraKebab = $("#limesurvey_extra_kebab_template li").clone();
             $(`#activity_${activity.activity_id} .kebab-dropdown .icon-url`).after(extraKebab);
+
+            if (simlet.simlet_archived || simlet.current_user_permission == "READ") {
+                extraKebab.find(".icon-edit-survey").hide();
+            }
             
             const meta = $("#limesurvey_meta_template .limesurveyMeta").clone();
             card.find(".activity-meta").append(meta);

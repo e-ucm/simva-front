@@ -579,7 +579,7 @@
 	
 	const paintSessionStatusForActivities = function(session, card) {
 		// Block activity changes when session is finished
-		if (session.session_status == SESSION_FINISHED_STATUS) {
+		if (session.session_status == SESSION_FINISHED_STATUS || simlet.current_user_permission == "READ") {
 			card.find(".activityTopActions .kebab-dropdown .icon-delete").hide();
 			card.find(".activityTopActions .kebab-dropdown .icon-activate").hide();
 			card.find(".activityTopActions .kebab-dropdown .icon-pause").hide();
@@ -590,6 +590,14 @@
 			card.find(".activityTopActions .kebab-dropdown .icon-pause").show();
 		}
 		card.find(".activity table input:checkbox").prop("disabled", session.session_status === SESSION_FINISHED_STATUS);
+
+		if (simlet.current_user_permission == "READ") {
+			card.find(".activityTopActions .kebab-dropdown .icon-delete").hide();
+			card.find(".activityTopActions .kebab-dropdown .icon-activate").hide();
+			card.find(".activityTopActions .kebab-dropdown .icon-pause").hide();
+			card.find(".activityTopActions .kebab-dropdown .icon-edit").hide();
+			card.find(".activity table input:checkbox").prop("disabled", true);
+		}
 	}
 	
 </script>
