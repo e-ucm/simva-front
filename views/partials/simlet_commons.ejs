@@ -1,37 +1,37 @@
 <!-- Elements that are common both the SIMLETs/archived SIMLETs list view and the individual SIMLET view -->
 
 <!-- Add/edit SIMLET form -->
-<div id ="study_form" class="new_element floating">
+<div id ="simlet_form_menu" class="new_element floating">
 	<div class="floater">
-		<div class="form" id="study_form_form">
-			<h1 id="study_form_title">	</h1>
+		<div class="form" id="simlet_form">
+			<h1 id="simlet_form_title">	</h1>
 			
 			<% if (typeof archived !== 'undefined' && !archived) { %>
-			<div class="tabs" id="add_study_tabs">
-				<span id="study_name_desc_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'study_form_form','study_name_desc_tab')"><%- t('new.tab', { ns : 'SIMLETs' }) %></span>
-				<span class="tab" onclick="Utils.changeTab(this, 'study_form_form','import_study_tab')"><%- t('import.tab', { ns : 'SIMLETs' }) %></span>
+			<div class="tabs" id="add_simlet_tabs">
+				<span id="simlet_name_desc_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'simlet_form','simlet_name_desc_tab')"><%- t('new.tab', { ns : 'SIMLETs' }) %></span>
+				<span id="simlet_import_tab_button" class="tab" onclick="Utils.changeTab(this, 'simlet_form','import_simlet_tab')"><%- t('import.tab', { ns : 'SIMLETs' }) %></span>
 			</div>
 			<% } %>
 
 			<!-- Create/edit SIMLET -->
-			<div id="study_name_desc_tab" class="subform selected">
-				<form id="study_name_desc_form">
-					<input hidden type="text" name="editingStudyId" id="edit_study_id">
-					<input hidden type="text" name="prevStudyName" id="prev_study_name">
-					<input hidden type="text" name="prevStudyDescription" id="prev_study_description">
-					<h3 class="study_form_name"><%- t('name.title', { ns : 'SIMLETs' }) %></h3>
-					<input type="text" class="study_form_name name_field" name="studyName" id="study_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
+			<div id="simlet_name_desc_tab" class="subform selected">
+				<form id="simlet_name_desc_form">
+					<input hidden type="text" name="editingSimletId" id="edit_simlet_id">
+					<input hidden type="text" name="prevSimletName" id="prev_simlet_name">
+					<input hidden type="text" name="prevSimletDescription" id="prev_simlet_description">
+					<h3><%- t('name.title', { ns : 'SIMLETs' }) %></h3>
+					<input type="text" class="name_field" name="simletName" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
 					<h3><%- t('description.title', { ns : 'SIMLETs' }) %></h3>
-					<textarea class="description_field" name="studyDescription" id="study_description" placeholder="<%- t('description.placeholder', { ns : 'SIMLETs' }) %>"></textarea>
-					<input type="submit" id="study_name_desc_submit" value="">
+					<textarea class="description_field" name="simletDescription" id="simlet_description" placeholder="<%- t('description.placeholder', { ns : 'SIMLETs' }) %>"></textarea>
+					<input type="submit" id="simlet_name_desc_submit" value="">
 				</form>
 			</div>
 
 			<!-- Import SIMLET -->
-			<div hidden id="import_study_tab" class="subform" style="display: none;">
-				<form id="import_study_form">
-					<h3 class="import_study_form_name"><%- t('name.title', { ns : 'SIMLETs' }) %></h3>
-					<input type="text" class="import_study_form_name name_field" name="studyName" id="study_name" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
+			<div hidden id="import_simlet_tab" class="subform" style="display: none;">
+				<form id="simlet_import_form">
+					<h3><%- t('name.title', { ns : 'SIMLETs' }) %></h3>
+					<input type="text" class="name_field" name="simletName" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
 					<h3><%- t('import.input', { ns : 'SIMLETs' }) %></h3>
 					<input type="file" name="jsonFile" accept=".json" required>
 					<input type="submit" value="<%- t('import.submit', { ns : 'SIMLETs' }) %>">
@@ -39,59 +39,52 @@
 			</div>
 
 			<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
-			<span class="error" id="study_form_error"></span>
+			<span class="error" id="simlet_form_error"></span>
 		</div>
 	</div>
 </div>
 
 <!-- Manage SIMLET URL form -->
-<div id="study_url_settings" class="new_element floating">
+<div id="simlet_url_settings" class="new_element floating">
 	<div class="floater">
 		<div class="form">
 			<h1 class="formSimletTitle">		</h1>
 			<div id="edit_url_tab" class="subform selected">
-				<p id="generate_shlink_url" >
-					<input type="button" class="blue" value="<%- t('scheduler.shlink.generate.title', { ns : 'SIMLETs' }) %>" onclick="openGenerateLinkForm()">
-				</p>
-				<p id="shlink_url">
-					<input type="button" class="green" id="shlink_url_short" onclick="copyShortURL()" style="white-space: normal; word-wrap: break-word;">
-				</p>
-				<p id="delete_shlink_url" >
-					<input type="button" class="red" value="<%- t('scheduler.shlink.delete.title', { ns : 'SIMLETs' }) %>" onclick="deleteShLink()">
-				</p>
+				<input type="button" id="generate_shlink_url" class="blue" value="<%- t('scheduler.shlink.generate.title', { ns : 'SIMLETs' }) %>" onclick="openGenerateLinkForm()">
+				<input type="button" id="shlink_url_short" class="green" onclick="copyShortURL()" style="white-space: normal; word-wrap: break-word;">
+				<input type="button" id="delete_shlink_url" class="red" value="<%- t('scheduler.shlink.delete.title', { ns : 'SIMLETs' }) %>" onclick="deleteShLink()">
 			</div>
 		</div>
 	</div>
 </div>
 
 <!-- Genrate SIMLET URL form -->
-<div id="generate_study_link" class="new_element floating">
+<div id="generate_simlet_link_menu" class="new_element floating">
 	<div class="floater">
-		<div class="form" id="generate_study_link_form">
+		<div class="form" id="generate_simlet_link_form">
 			<h2><%- t('scheduler.shlink.generate.title', { ns : 'SIMLETs' }) %></h2>
 			<div class="tabs">
-				<span id="generate_link_length_tab_button" class="tab selected" type="hidden" onclick="Utils.changeTab(this, 'generate_study_link_form','generate_study_link_length_tab')"><%- t('scheduler.shlink.generate.randomly_length.title', { ns : 'SIMLETs' }) %></span>
-				<span class="tab" onclick="Utils.changeTab(this, 'generate_study_link_form','generate_study_custom_slug_link_tab')"><%- t('scheduler.shlink.generate.custom_slug.title', { ns : 'SIMLETs' }) %></span>
+				<span id="generate_link_length_tab_button" class="tab selected" type="hidden" onclick="Utils.changeTab(this, 'generate_simlet_link_form','generate_simlet_link_length_tab')"><%- t('scheduler.shlink.generate.randomly_length.title', { ns : 'SIMLETs' }) %></span>
+				<span class="tab" onclick="Utils.changeTab(this, 'generate_simlet_link_form','generate_simlet_custom_slug_link_tab')"><%- t('scheduler.shlink.generate.custom_slug.title', { ns : 'SIMLETs' }) %></span>
 			</div>
 
-			<div id="generate_study_link_length_tab" class="subform selected">
-				<form id="generate_study_link_length_form">
+			<div id="generate_simlet_link_length_tab" class="subform selected">
+				<form id="generate_simlet_link_length_form">
 					<h3><%- t('scheduler.shlink.generate.randomly_length.title', { ns : 'SIMLETs' }) %></h3>
-					<input hidden type="text" name="study">
 					<p><%- t('scheduler.shlink.generate.randomly_length.message', { ns : 'SIMLETs' }) %></p>
 					<input type="number" step=1 min=4 name="link_length_shlink" id="link_length_shlink" onchange="this.value = Math.max(4, parseInt(this.value));" value=4 required>
 					<input type="submit" value="<%- t('scheduler.shlink.generate.submit', { ns : 'SIMLETs' }) %>">
 				</form>
 			</div>
 
-			<div id="generate_study_custom_slug_link_tab" class="subform" style="display: none;">
-				<form id="generate_study_custom_slug_link_form">
+			<div id="generate_simlet_custom_slug_link_tab" class="subform" style="display: none;">
+				<form id="generate_simlet_custom_slug_link_form">
 					<h3><%- t('scheduler.shlink.generate.custom_slug.title', { ns : 'SIMLETs' }) %></h3>
-					<input hidden type="text" name="study">
 					<input type="text" name="custom_slug" id="custom_slug_shlink" placeholder="<%- t('scheduler.shlink.custom_slug.placeholder', { ns : 'SIMLETs' }) %>" required>
 					<input type="submit" value="<%- t('scheduler.shlink.generate.submit', { ns : 'SIMLETs' }) %>">
 				</form>
 			</div>
+
 			<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
             <span class="error" id="generate_link_error"></span>
 		</div>
@@ -99,16 +92,6 @@
 </div>
 
 <!-- Download SIMLET config form -->
-<div id="download_config" class="new_element floating">
-	<div class="floater">
-		<div class="form">
-			<h1 class="formSimletTitle">		</h1>
-			<input class="yellow" type="button" value="<%- t('config.download.simlet', { ns : 'SIMLETs' }) %>" onclick="downloadStudyConfig()">
-			<input class="yellow" type="button" value="<%- t('config.download.uadventure', { ns : 'SIMLETs' }) %>" onclick="downloadUAConfig()">
-		</div>
-	</div>
-</div>
-
 <!-- Template for the 3-dot menu of an entire SIMLET  -->
 <div id="kebab_template" style="display: none;">
 	<ul class="kebab-dropdown" style="display: none;">
@@ -118,8 +101,8 @@
 		<li class="text-with-icon icon-url" title="<%- t('settings.url.title', { ns : 'SIMLETs' }) %>">
 			<%- t('settings.url.title', { ns : 'SIMLETs' }) %>
 		</li>
-		<li class="text-with-icon icon-download" title="<%- t('settings.download.title', { ns : 'SIMLETs' }) %>">
-			<%- t('settings.download.title', { ns : 'SIMLETs' }) %>
+		<li class="text-with-icon icon-download" title="<%- t('settings.export.title', { ns : 'SIMLETs' }) %>">
+			<%- t('settings.export.title', { ns : 'SIMLETs' }) %>
 		</li>
 		<li class="text-with-icon icon-archive" title="<%- t('settings.archive.title', { ns : 'SIMLETs' }) %>">
 			<%- t('settings.archive.title', { ns : 'SIMLETs' }) %>
@@ -160,14 +143,14 @@
 	const START_WARNING_PERCENTAGE = 30;	// When the caracter count has this % of character remaining, its color changes to warn the user 
 
 	let currSimletId = null;	// Id of the SIMLET that is currently being edited
+    let shlink = null;
 	
 	// Functions to call to avoid reloading the whole view when updating info of any SIMLET 
 	let onCreateSimlet = null;
 	let onEditSimlet = null;
 	let onArchiveSimlet = null;
 	let onDeleteSimlet = null;
-
-    let shlink = null;
+	let onEditShlink = null;
 
 	
 	// --- UTILITIEs --- 
@@ -273,7 +256,7 @@
 		}
 	}
 
-    
+
 	// --- MENUS ---
 	
     $(document).ready(function() {
@@ -281,25 +264,25 @@
 		// loading everything to ensure all elements get their counter added)
 		addInputCharCountToClass(NAME_FIELD_CLASS, MAX_NAME_LENGTH);
 		addInputCharCountToClass(DESCRIPTION_DIELD_CLASS, MAX_DESC_LENGTH);
-		
+
 		// When submitting the add/edit SIMLET form
-		$(document).on('submit', "#study_name_desc_tab", function(event) {
+		$(document).on('submit', "#simlet_name_desc_tab", function(event) {
 			let currentform = this;
-			let form = Utils.getFormData($("#study_name_desc_form"));
+			let form = Utils.getFormData($("#simlet_name_desc_form"));
 			Utils.toggleSubmit();
 
 			// Creating new SIMLET
-			if (form.editingStudyId == null || form.editingStudyId == "") {
-				Simva.addSimlet({ simlet_name : form.studyName, simlet_description : form.studyDescription }, function(error, result) {
+			if (form.editingSimletId == null || form.editingSimletId == "") {
+				Simva.addSimlet({ simlet_name : form.simletName, simlet_description : form.simletDescription }, function(error, result) {
 					if (error && error.responseJSON) {
 						Utils.toggleSubmit();
-						$("#study_form_error").text(error.responseJSON.message);
+						$("#simlet_form_error").text(error.responseJSON.message);
 					}
 					else {
 						Utils.toggleSubmit();
-						Utils.toggleFormInFloating('study_form');
-						$("#study_form_error").text("");
-						if (onCreateSimlet != null) {
+						Utils.toggleFormInFloating('simlet_form_menu');
+						$("#simlet_form_error").text("");
+						if (onCreateSimlet != null && typeof onCreateSimlet === "function") {
 							onCreateSimlet(result);
 						}
 					}
@@ -307,17 +290,17 @@
 			}
 			// Editing SIMLET
 			else {
-				if (form.prevStudyName == form.studyName && form.prevStudyDescription == form.studyDescription) {
-					$('#study_form_error').text("<%- t('edit.no_changes.message', { ns : 'SIMLETs' }) %>");
+				if (form.prevSimletName == form.simletName && form.prevSimletDescription == form.simletDescription) {
+					$('#simlet_form_error').text("<%- t('edit.no_changes.message', { ns : 'SIMLETs' }) %>");
 					Utils.toggleSubmit();
 				}
 				else {
-					$('#study_form_error').text("");
-					Simva.updateSimlet(form.editingStudyId, { simlet_name : form.studyName, simlet_description : form.studyDescription }, function(error, result) {
+					$('#simlet_form_error').text("");
+					Simva.updateSimlet(form.editingSimletId, { simlet_name : form.simletName, simlet_description : form.simletDescription }, function(error, result) {
 						Utils.toggleSubmit();
-						Utils.toggleFormInFloating('study_form');
+						Utils.toggleFormInFloating('simlet_form_menu');
 
-						if (onEditSimlet != null) {
+						if (onEditSimlet != null && typeof onEditSimlet === "function") {
 							onEditSimlet(result);
 						}
 					});
@@ -328,12 +311,10 @@
 		});
 
 		// When submitting the generate custom shlink form
-        $(document).on('submit',"#generate_study_custom_slug_link_form", function(event) {
+        $(document).on('submit',"#generate_simlet_custom_slug_link_form", function(event) {
             event.preventDefault();
             let currentform = this;
-
             let custom_slug = null;
-            
             let form = Utils.getFormData($(this));
             custom_slug = form.custom_slug;
             Utils.toggleSubmit();
@@ -346,8 +327,11 @@
                     navigator.clipboard.writeText(shortUrl);
                     // Alert Short URL
                     alert(shortUrl);
-                    Utils.toggleFormInFloating('generate_study_link');
+                    Utils.toggleFormInFloating('generate_simlet_link_menu');
                     $('#generate_link_error').text("");
+					if (onEditShlink != null && typeof onEditShlink === "function") {
+						onEditShlink();
+					}
                 } 
                 else {
                     $('#generate_link_error').text(error.message);
@@ -359,12 +343,10 @@
         });
     
 		// When submitting the generate random shlink form
-		$(document).on('submit',"#generate_study_link_length_form", function(event) {
+		$(document).on('submit',"#generate_simlet_link_length_form", function(event) {
         	event.preventDefault();
         	let currentform = this;
-
         	let length = null;
-            
        		form = Utils.getFormData($(this));
         	if (form.link_length_shlink != "") {
             	length = form.link_length_shlink;
@@ -379,8 +361,11 @@
                     navigator.clipboard.writeText(shortUrl);
                     // Alert Short URL
                     alert(shortUrl);
-                    Utils.toggleFormInFloating('generate_study_link');
+                    Utils.toggleFormInFloating('generate_simlet_link_menu');
                     $('#generate_link_error').text("");
+					if (onEditShlink != null && typeof onEditShlink === "function") {
+						onEditShlink();
+					}
                 } 
                 else {
                     $('#generate_link_error').text(error.message);
@@ -393,35 +378,35 @@
 
 
     // --- URL FORM ---
+
     const openUrlSettingsForm = function(simletId, simletName) {
 		// Always open form in the generate random link with length tab
-		Utils.changeTab($('#generate_link_length_tab_button'), 'generate_study_link_form','generate_study_link_length_tab');
+		Utils.changeTab($('#generate_link_length_tab_button'), 'generate_simlet_link_form','generate_simlet_link_length_tab');
 
 		$(".formSimletTitle").text(`<%- t('single.title', { ns : 'SIMLETs' }) %>: ${simletName}`);
 
         currSimletId = simletId;
 
+		shlink = null;
+		$("#generate_shlink_url").show();
+		$("#shlink_url_short").hide();
+		$("#delete_shlink_url").hide();
+
 		Simva.getShLink(simletId, (error, result) => {
-			Utils.toggleFormInFloating('study_url_settings');
+			Utils.toggleFormInFloating('simlet_url_settings');
 			if (!error) {
 				shlink = result;
-				$('#shlink_url_short').val(`<%- t('scheduler.shlink.message', { ns : 'SIMLETs', shlink : '${shlink.shortUrl}' }) %>`);
 				$("#generate_shlink_url").hide();
-				$("#shlink_url").show();
+				$("#shlink_url_short").show();
+				$('#shlink_url_short').val(`<%- t('scheduler.shlink.message', { ns : 'SIMLETs', shlink : '${shlink.shortUrl}' }) %>`);
 				$("#delete_shlink_url").show();
-			} 
-			else {
-				shlink = null;
-				$("#generate_shlink_url").show();
-				$("#shlink_url").hide();
-				$("#delete_shlink_url").hide();
 			}
 		});
 	}
 
     const openGenerateLinkForm = function() {
-        Utils.toggleFormInFloating('study_url_settings');
-        Utils.toggleFormInFloating('generate_study_link');
+        Utils.toggleFormInFloating('simlet_url_settings');
+        Utils.toggleFormInFloating('generate_simlet_link_menu');
         $('#generate_link_error').text("");
         $('#custom_slug_shlink').val("");
         $('#link_length_shlink').val($('#link_length_shlink').prop("min"));
@@ -435,7 +420,7 @@
 	}
 
     const deleteShLink = function() {
-		Utils.toggleSubmit($("#generate_study_link"));
+		Utils.toggleSubmit($("#generate_simlet_link_menu"));
         Simva.getSimlet(currSimletId, (error, result) => {
 			if (!error) {
 				let shortCode = shlink.shortCode;
@@ -443,9 +428,12 @@
 					Simva.deleteShLink(currSimletId, (error, result) => {
 						if (!error) {
 							shlink = null;
-							Utils.toggleFormInFloating('study_url_settings');
+							Utils.toggleFormInFloating('simlet_url_settings');
+							if (onEditShlink != null && typeof onEditShlink === "function") {
+								onEditShlink();
+							}
 						}
-						Utils.toggleSubmit($("#generate_study_link"));
+						Utils.toggleSubmit($("#generate_simlet_link_menu"));
 					});
 				}
 			}
@@ -453,13 +441,7 @@
 	}
 
 
-    // --- DOWNLOAD FORM ---
-
-    const openConfigDownloadForm = function(simletId, simletName) {
-        currSimletId = simletId;
-		Utils.toggleFormInFloating('download_config');
-		$(".formSimletTitle").text(`<%- t('single.title', { ns : 'SIMLETs' }) %>: ${simletName}`);
-	}
+	// --- EXPORT ---
 
 	const exportSimlet = function(simletId) {
 		Simva.exportSimlet(simletId, function(error, result) {
@@ -471,41 +453,12 @@
 		})
 	}
 
-    const downloadUAConfig = function() {
-		const content = JSON.stringify({
-			study: currSimletId,
-			host: "<%= config.api.host %>",
-			protocol: "<%= config.api.protocol %>",
-			port: "<%= config.api.port %>",
-			url: "<%= config.simva.url %>",			
-			sso: "<%= config.sso.url %>/realms/<%= config.sso.realm %>/protocol/openid-connect", 
-    		client_id: "uadventure"
-		}, null, 2);
-
-		const filename = "simva.conf";
-
-		Utils.download(filename, content);
-	}
-
-	const downloadStudyConfig = function() {
-		Simva.exportSimlet(currSimletId, function(error, result) {
-			if (!error) {
-				const simletExport = result;
-				const content = JSON.stringify(simletExport, null, 2);
-				const filename = `simva-${simletExport.simlet_name}-export.json`;
-
-				Utils.download(filename, content);
-			}
-		})
-	}
-
-
 	// --- ARCHIVE/DELETE ---
 	
 	const archiveSimlet = function(simletId, simletName, archive = true) {
 		if(confirm(`<%- t('archive.confirm', { ns : 'SIMLETs', SIMLET : '${simletName}' }) %>`)){
 			Simva.updateSimlet(simletId, { simlet_archived: archive }, function(error, result) {
-				if (!error  && onArchiveSimlet != null) {
+				if (!error  && onArchiveSimlet != null && typeof onArchiveSimlet === "function") {
 					onArchiveSimlet(result);
 				}
 			});
@@ -519,7 +472,7 @@
 				if(response.status !== 200) {
 					// Muestra el error real para depuración
 					alert(response);
-				} else if(onDeleteSimlet != null) {
+				} else if(onDeleteSimlet != null && typeof onDeleteSimlet === "function") {
 					onDeleteSimlet(simletId);
 				}
 			});

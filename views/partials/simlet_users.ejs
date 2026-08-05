@@ -156,7 +156,7 @@
 			<div class="tabs" id="add_group_tabs">
 				<span id="group_name_desc_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'group_form','group_name_desc_tab')"><%- t('groups.add.new.tab', { ns : 'groups' }) %></span>
 				<span class="tab" onclick="Utils.changeTab(this, 'group_form','import_group_tab')"><%- t('groups.import.tab', { ns : 'groups' }) %></span>
-				<span id="owners_tab_button" class="tab" onclick="Utils.changeTab(this, 'group_form','owner_tab')"><%- t('coordinators.add.title', { ns : 'groups' }) %></span>
+				<span class="tab" onclick="Utils.changeTab(this, 'group_form','coordinators_tab')"><%- t('coordinators.add.title', { ns : 'groups' }) %></span>
 			</div>
 
 			<!-- Create/edit group -->
@@ -186,10 +186,10 @@
 			</div>
 
 			<!-- Add coordinator -->
-			<div id="owner_tab" class="subform">
-				<form id="existing_owner_form">
+			<div id="coordinators_tab" class="subform">
+				<form id="existing_coordinator_form">
 					<h3><%- t('coordinators.name.title', { ns : 'groups' }) %></h3>
-					<input type="text" class="name_field" id="owner_name" name="name" placeholder="<%- t('coordinators.name.placeholder', { ns : 'groups' }) %>" required>
+					<input type="text" class="name_field" id="coordinator_name" name="name" placeholder="<%- t('coordinators.name.placeholder', { ns : 'groups' }) %>" required>
 					<div class="tooltipLine">
 						<h3><%- t('coordinators.permission.title', { ns : 'groups' }) %></h3>
 						<div class="tooltip">
@@ -221,7 +221,7 @@
 			<h1><%= t('groups.settings.add.title' , { ns : 'groups' }) %></h1>
 			<div class="tabs">
 				<span id="existing_participant_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'add_participant_form','existing_participant_tab')"><%= t('participants.add.existing.tab' , { ns : 'groups' }) %></span>
-				<span class="tab" onclick="Utils.changeTab(this, 'add_participant_form','new_participant_tab')"><%= t('participants.add.new.tab' , { ns : 'groups' }) %></span>
+				<!-- <span class="tab" onclick="Utils.changeTab(this, 'add_participant_form','new_participant_tab')"><%= t('participants.add.new.tab' , { ns : 'groups' }) %></span> -->
 				<span id="add_batch_tab_button" class="tab" onclick="Utils.changeTab(this, 'add_participant_form','batch_participant_tab')"><%= t('participants.add.batch.tab' , { ns : 'groups' }) %></span>
 			</div>
 
@@ -419,14 +419,14 @@
 		});
 
 
-		// When submitting the add owner form
-		$(document).on('submit', "#existing_owner_form", function(event) {
+		// When submitting the add coordinator form
+		$(document).on('submit', "#existing_coordinator_form", function(event) {
 			let form = Utils.getFormData($(this));
 			let errorbox = $('#users_error');
-			const owners = simlet.direct_permissions || simlet.owners || [];
+			const coordinators = simlet.direct_permissions || simlet.owners || [];
 
-			owners.forEach((owner) => {
-				if (owner.username == form.name) {
+			coordinators.forEach((coordinator) => {
+				if (coordinator.username == form.name) {
 					errorbox.text("<%- t('coordinators.error.already_in', { ns : 'groups' }) %>");
 					return false;
 				}
@@ -471,7 +471,7 @@
 			let currentform = this;
 			let form = Utils.getFormData($(this));
 			Utils.toggleSubmit();
-			let errorbox = $('#import_group_error_modal');
+			let errorbox = $('#users_error');
 			const fileInput = $(this).find('input[name="jsonFile"]').get(0);
 			if(fileInput && fileInput.files[0]){
 				let reader = new FileReader();
@@ -783,7 +783,7 @@
 		Utils.toggleFormInFloating("users_form_menu");
 
 		// Reset tab state when opening modal
-		$("#owner_name").val("");
+		$("#coordinator_name").val("");
 		$('#users_error').text("");
 		$('#edit_group_id').val("");
 		$('#group_name').val("");
@@ -836,6 +836,15 @@
 		$(`#${currentGroup.group_allocator_type}_allocator_option`).prop('checked', true);
 	}
 
+	// Sync add group and import group name input 
+	$(document).on("input", $(`#group_form .${NAME_FIELD_CLASS}`), function(e) {
+		$(`#group_form .${NAME_FIELD_CLASS}`).each(function() {
+			// Ignore the add coordinator input box
+			if (this != e.target && $(e.target).is("input:text") && $(this).closest("#coordinators_tab").length == 0) {
+				$(this).val($(e.target).val());
+			} 
+		});
+	});
 	
 	// Groups buttons shared listeners using event delegation to ensure 
 	// the handler works even if element is added after the document ready event
@@ -900,10 +909,10 @@
 		deleteGroup(data[GROUP_DATA_ID_KEY], data[GROUP_DATA_NAME_KEY]);
 	});
 
-	// Delete owner
+	// Delete coordinator
 	$(document).on('click', ".owners .red", function(e) {
 		const data = $(this).closest("tr").data();
-		deleteOwner(data[USER_DATA_ID_KEY], data[USER_DATA_NAME_KEY]);
+		deleteCoordinator(data[USER_DATA_ID_KEY], data[USER_DATA_NAME_KEY]);
 	});
 	
 	// Delete participant
@@ -921,7 +930,7 @@
 
 	// Functionality
     
-	const deleteOwner = function(userId, coordinatorName) {
+	const deleteCoordinator = function(userId, coordinatorName) {
 		if (confirm(`<%- t('coordinators.delete.confirm', { ns : 'groups', coordinator : '${coordinatorName}', SIMLET : '${simlet.simlet_name}' }) %>`)) {
 			Simva.deleteSimletPermissionsForUser(simletId, userId, function(response) {
 				if (response.status === 200) {
@@ -1529,7 +1538,6 @@
 	const onChangeGroupAllocator = function(newGroupInfo) {
 		onCreateOrEditGroup(newGroupInfo);
 	}
-
 
 	// Iterate over all dropdowns of the groups/participants allocators to update its options (in case of session creation/deletion/name change)
 	const allocatorsOnSessionsChanged = function(sessionId) {

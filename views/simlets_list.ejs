@@ -92,12 +92,12 @@ the elements and scripts defined in the simlet_commons partial -->
 
 
 		// When submitting the import SIMLET form
-		$(document).on('submit', "#import_study_form", function(event) {
+		$(document).on('submit', "#simlet_import_form", function(event) {
 			event.preventDefault();
 			let currentform = this;
 			let form = Utils.getFormData($(this));
 			Utils.toggleSubmit();
-			let errorbox = $("#study_form_error");
+			let errorbox = $("#simlet_form_error");
 			// Check for file presence
 			const fileInput = $(this).find('input[name="jsonFile"]').get(0);
 			if (fileInput && fileInput.files[0]) {
@@ -108,23 +108,23 @@ the elements and scripts defined in the simlet_commons partial -->
 						// Always extract base64 payload from data URL
 						raw = raw.substr(raw.indexOf(',') + 1);
 						const newStudy = raw;
-						Simva.importSimlet( {file: newStudy, simlet_name: form.studyName}, function(error, result) {
+						Simva.importSimlet( {file: newStudy, simlet_name: form.simletName}, function(error, result) {
 							Utils.toggleSubmit();
 							if (!error) {
-								Utils.toggleFormInFloating('study_form');
+								Utils.toggleFormInFloating('simlet_form_menu');
 								onCreateSimlet(result);
 							} else {
-								$("#study_form_error").text(error);
+								$("#simlet_form_error").text(error);
 							}
 						});
 					} catch (e) {
 						Utils.toggleSubmit();
-						$("#study_form_error").text(e.message);
+						$("#simlet_form_error").text(e.message);
 					}
 				};
 				reader.readAsDataURL(fileInput.files[0]);
 			}else {
-				$("#study_form_error").text("<%- t('import.upload.error', { ns : 'SIMLETs' }) %>");
+				$("#simlet_form_error").text("<%- t('import.upload.error', { ns : 'SIMLETs' }) %>");
 				Utils.toggleSubmit();
 			}
 			return false;
@@ -137,47 +137,56 @@ the elements and scripts defined in the simlet_commons partial -->
 	
 	const openSimletForm = function(simletId) {
 		// Always open form in the create/edit common tab
-		Utils.changeTab($('#study_name_desc_tab_button'), 'study_form_form','study_name_desc_tab');
+		Utils.changeTab($('#simlet_name_desc_tab_button'), 'simlet_form','simlet_name_desc_tab');
 
-		$('#study_form_error').text("");
+		$('#simlet_form_error').text("");
 
 		// Creating new SIMLET
 		if (simletId == null) {
 			// Open form always and show the add new/import tabs
-			Utils.toggleFormInFloating("study_form");
-			$("#add_study_tabs").show();
+			Utils.toggleFormInFloating("simlet_form_menu");
+			$("#add_simlet_tabs").show();
 			
-			$("#study_form_title").text("<%- t('add.title', { ns : 'SIMLETs' }) %>");
-			$("#study_name_desc_submit").val("<%- t('new.submit', { ns : 'SIMLETs' }) %>");
+			$("#simlet_form_title").text("<%- t('add.title', { ns : 'SIMLETs' }) %>");
+			$("#simlet_name_desc_submit").val("<%- t('new.submit', { ns : 'SIMLETs' }) %>");
 
-			$('#prev_study_name').val("");
-			$('#prev_study_description').val("");
+			$('#prev_simlet_name').val("");
+			$('#prev_simlet_description').val("");
 
-			$('#study_name').val("");
-			$('#study_description').val("");
+			$('#simlet_name').val("");
+			$('#simlet_description').val("");
 		}
 		// Editing SIMLET
 		else {
 			const simlet = simletsById.get(simletId);
 			if (simlet != null) {
 				// Open form only if the SIMLET exists and hide the add new/import tabs (only the name/description tab is needed)
-				Utils.toggleFormInFloating('study_form');
-				$('#edit_study_id').val(simletId);
+				Utils.toggleFormInFloating('simlet_form_menu');
+				$('#edit_simlet_id').val(simletId);
 
-				$("#add_study_tabs").hide();
+				$("#add_simlet_tabs").hide();
 
-				$("#study_form_title").text("<%- t('edit.title', { ns : 'SIMLETs' }) %>");
-				$("#study_name_desc_submit").val("<%- t('edit.submit', { ns : 'SIMLETs' }) %>");
+				$("#simlet_form_title").text("<%- t('edit.title', { ns : 'SIMLETs' }) %>");
+				$("#simlet_name_desc_submit").val("<%- t('edit.submit', { ns : 'SIMLETs' }) %>");
 
-				$('#prev_study_name').val(simlet.simlet_name);
-				$('#prev_study_description').val(simlet.simlet_description);
+				$('#prev_simlet_name').val(simlet.simlet_name);
+				$('#prev_simlet_description').val(simlet.simlet_description);
 
-				$('#study_name').val(simlet.simlet_name);
-				$('#study_description').val(simlet.simlet_description);
+				$('#simlet_name').val(simlet.simlet_name);
+				$('#simlet_description').val(simlet.simlet_description);
 			}
 		}
 	}
 
+
+	// Sync add SIMLET and import SIMLET name input 
+	$(document).on("input", $(`#simlet_form .${NAME_FIELD_CLASS}`), function(e) {
+		$(`#simlet_form .${NAME_FIELD_CLASS}`).each(function() {
+			if (this != e.target && $(e.target).is("input:text")) {
+				$(this).val($(e.target).val());
+			} 
+		});
+	});
 
 	// 3-dot menus buttons shared listeners using event delegation to ensure 
 	// the handler works even if element is added after the document ready event
@@ -196,7 +205,7 @@ the elements and scripts defined in the simlet_commons partial -->
 	$(document).on('click', ".simletCardTitle .icon-download", function(e) {
 		const data = $(this).closest("a").data();
 		// Defined in the simlet_commons partial
-		openConfigDownloadForm(data[SIMLET_DATA_ID_KEY], data[SIMLET_DATA_NAME_KEY]);
+		exportSimlet(data[SIMLET_DATA_ID_KEY]);
 	});
 
 	$(document).on('click', ".simletCardTitle .icon-archive", function(e) {

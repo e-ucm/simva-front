@@ -59,9 +59,7 @@
         "scheduler.shlink.delete.title": "Supprimer l'URL du lien du planificateur",
         "scheduler.shlink.delete.confirm": "Êtes-vous sûr de vouloir supprimer le lien court '{{shlink}}' du SIMLET '{{SIMLET}}'?",
         
-    "settings.download.title": "Télécharger",
-        "config.download.simlet": "Télécharger la configuration du SIMLET",
-        "config.download.uadventure": "Télécharger la configuration du SIMLET pour uAdventure",
+    "settings.export.title": "Exporter",
         
     "settings.archive.title": "Archiver",
             "archive.confirm": "Êtes-vous sûr de vouloir archiver la SIMLET '{{SIMLET}}'?\nCette action ne peut pas être annulée et la SIMLET sera déplacée dans l'onglet archivé",

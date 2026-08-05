@@ -58,9 +58,7 @@
         "scheduler.shlink.delete.title": "Borrar URL Shlink del Programador",
         "scheduler.shlink.delete.confirm": "¿Está seguro de que desea eliminar el enlace corto '{{shlink}}' del SIMLET '{{SIMLET}}'?",
         
-    "settings.download.title": "Descargar configuración",
-        "config.download.simlet": "Exportar SIMLET a .json",
-        "config.download.uadventure": "Descargar configuración para uAdventure",
+    "settings.export.title": "Exportar",
         
     "settings.archive.title": "Archivar",
         "archive.confirm": "¿Está seguro de que desea archivar el SIMLET '{{SIMLET}}'?\nEsta acción no se puede revertir y el SIMLET se moverá a la pestaña de archivados",

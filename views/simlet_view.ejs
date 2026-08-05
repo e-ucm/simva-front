@@ -5,6 +5,7 @@
 <!-- Top part of the view, which includes the SIMLET name and the 3-dot menu button -->
 <div class="simletTop">
 	<h1 title="<%- t('single.description', { ns : 'SIMLETs' }) %>"><%- t('single.title', { ns : 'SIMLETs' }) %>: <span id="simlet_name"></span></h1>
+	<img src="../images/icons/link.png" style="display: none;" onclick="copyShortURL()">
 	<div class="simletSettings">
 		<div class="kebab">
 			
@@ -43,11 +44,10 @@ the elements and scripts defined in the simlet_commons partial -->
 					</div>
 
 					<div id="download_activity_data" class="subform">
-						<!-- onClick functions defined on the simlet_activities partial (except downloadActivityXasuConfig, which is defined on the gameplay_activity partial) -->
+						<!-- onClick functions defined on the simlet_activities partial -->
 						<input class="yellow" type="button" value="<%- t('download.activity.title', { ns : 'activities' }) %>" onclick="downloadActivityData()">
 						<input class="yellow" id="global_backup_download" type="button" value="<%- t('download.backup.global.title', { ns : 'activities' }) %>" onclick="downloadGlobalActivityBackup()">
 						<input class="yellow" id="activity_test_data_download" type="button" value="<%- t('download.test.title', { ns : 'sessions' }) %>" onclick="downloadActivityTestData()">
-						<input class="yellow" id="xasu_download" type="button" value="<%- t('download.xasu.title', { ns : 'activities' }) %>" onclick="downloadActivityXasuConfig()">
 						<input class="yellow" id="backup_download" type="button" value="<%- t('download.backup.user.title', { ns : 'activities' }) %>" onclick="downloadUsersActivityBackup()">
 					</div>
 				</div>
@@ -80,7 +80,7 @@ the elements and scripts defined in the simlet_commons partial -->
 
 
 <script type="text/javascript">
-	let simletId = "<%= study %>";
+	const simletId = "<%= study %>";
 	let currentUser = null;
 	let simlet = null;
 
@@ -109,10 +109,10 @@ the elements and scripts defined in the simlet_commons partial -->
 		// Create the SIMLET 3-dot button from the template 
 		const kebab = $("#kebab_template .kebab-dropdown").clone();
 		$(".simletSettings .kebab").append(kebab);
-		kebab.find(".icon-edit").on("click", () => { openSimletForm(simletId) });
-		kebab.find(".icon-url").on("click", () => { openUrlSettingsForm(simletId, simlet.simlet_name) });
-		kebab.find(".icon-download").on("click", () => { openConfigDownloadForm(simletId, simlet.simlet_name) });
-		kebab.find(".icon-export").on("click", () => { exportSimlet(simletId) });
+		kebab.find(".icon-edit").on("click", () => { openSimletForm(simletId); });
+		kebab.find(".icon-url").on("click", () => { openUrlSettingsForm(simletId, simlet.simlet_name); });
+		kebab.find(".icon-download").on("click", () => { exportSimlet(simletId); });
+		kebab.find(".icon-export").on("click", () => { exportSimlet(simletId); });
 		kebab.find(".icon-delete").on("click", () => { deleteSimlet(simletId, simlet.simlet_name); });
 		kebab.find(".icon-archive").on("click", (e) => { 
 			if($(e.target).hasClass("li-disabled") || simlet == null) {
@@ -128,8 +128,8 @@ the elements and scripts defined in the simlet_commons partial -->
 		});
 
 		// Delete the add and import SIMLET tabs from the name/description menu
-		$("#add_study_tabs").remove();
-		$("#import_study_tab").remove();
+		$("#add_simlet_tabs").remove();
+		$("#import_simlet_tab").remove();
 		
 		// Get the current user, store it, and paint the rest of the SIMLET
 		Simva.getCurrentUser((error, user) => {
@@ -147,6 +147,11 @@ the elements and scripts defined in the simlet_commons partial -->
 				// Optionally, display an error message to the user
 				alert("Error fetching user information. Some features may not work properly.");
 			}
+		});
+
+		Simva.getShLink(simletId, (error, result) => {
+			shlink = result;
+			paintShlink();
 		});
 	});
 
@@ -169,19 +174,19 @@ the elements and scripts defined in the simlet_commons partial -->
 	}
 	
 	const openSimletForm = function() {
-		Utils.toggleFormInFloating('study_form');
+		Utils.toggleFormInFloating('simlet_form_menu');
 
-		$('#study_form_error').text("");
-		$('#edit_study_id').val(simletId);
+		$('#simlet_form_error').text("");
+		$('#edit_simlet_id').val(simletId);
 		
-		$("#study_form_title").text("<%- t('edit.title', { ns : 'SIMLETs' }) %>");
-		$("#study_name_desc_submit").val("<%- t('edit.submit', { ns : 'SIMLETs' }) %>");
+		$("#simlet_form_title").text("<%- t('edit.title', { ns : 'SIMLETs' }) %>");
+		$("#simlet_name_desc_submit").val("<%- t('edit.submit', { ns : 'SIMLETs' }) %>");
 
-		$('#prev_study_name').val(simlet.simlet_name);
-		$('#prev_study_description').val(simlet.simlet_description);
+		$('#prev_simlet_name').val(simlet.simlet_name);
+		$('#prev_simlet_description').val(simlet.simlet_description);
 		
-		$('#study_name').val(simlet.simlet_name);
-		$('#study_description').val(simlet.simlet_description);
+		$('#simlet_name').val(simlet.simlet_name);
+		$('#simlet_description').val(simlet.simlet_description);
 	}
 	
 
@@ -200,6 +205,11 @@ the elements and scripts defined in the simlet_commons partial -->
 	onArchiveSimlet = function(newSimletInfo) {
 		simlet = newSimletInfo;
 		paintArchived();
+	}
+	
+	// Declared on the simlet_commons partial
+	onEditShlink = function() {
+		paintShlink();
 	}
 	
 	
@@ -399,7 +409,6 @@ the elements and scripts defined in the simlet_commons partial -->
 	}
 
 	// Hide the groups 3-dot menus buttons that allow modifying the group users 
-	// and disable the unselected options from the allocator dropdowns
 	const paintGroupsArchived = function() {
 		if (simlet.simlet_archived || simlet.current_user_permission == "READ") {
 			$("#groups .test .groupTop .kebab .icon-delete").hide();
@@ -422,9 +431,25 @@ the elements and scripts defined in the simlet_commons partial -->
 		$(".participants .red").prop("disabled", simlet.simlet_archived || simlet.current_user_permission == "READ");
 	}
 	
+	// Disable the unselected options from the allocator dropdowns
 	const paintAllocatorsArchived = function () {
 		$("#groups .test select option:not(:selected)").prop("disabled", simlet.simlet_archived || simlet.current_user_permission == "READ");
 	}
+
+	/**
+	 * Paint/hide the icon to copy the shlink next to the SIMLET title
+	 */
+	const paintShlink = async function() {
+		if (shlink != null && shlink.shortUrl != null && shlink.shortUrl != "") {
+			$(".simletTop img").show();
+			$(".simletTop img").attr("title", `<%- t('scheduler.shlink.message', { ns : 'SIMLETs', shlink : '${shlink.shortUrl}' }) %>`);
+		}
+		else {
+			$(".simletTop img").hide();
+			$(".simletTop img").attr("title", "");
+		}
+	}
+	
 
 </script>
 

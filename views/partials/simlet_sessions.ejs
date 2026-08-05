@@ -127,11 +127,11 @@
 <!-- Add/edit session menu -->
 <div id ="session_form_menu" class="new_element floating">
 	<div class="floater">
-		<div class="form" id="session_form_form">
+		<div class="form" id="session_form">
 			<h1 id="session_form_title">	</h1>
 			<div class="tabs" id="add_session_tabs">
-				<span id="session_name_desc_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'session_form_form','session_name_desc_tab')"><%- t('add.new.tab', { ns : 'sessions' }) %></span>
-				<span class="tab" onclick="Utils.changeTab(this, 'session_form_form','import_session_tab')"><%- t('import.tab', { ns : 'sessions' }) %></span>
+				<span id="session_name_desc_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'session_form','session_name_desc_tab')"><%- t('add.new.tab', { ns : 'sessions' }) %></span>
+				<span class="tab" onclick="Utils.changeTab(this, 'session_form','import_session_tab')"><%- t('import.tab', { ns : 'sessions' }) %></span>
 			</div>
 
 			<!-- Create/edit session -->
@@ -385,7 +385,7 @@
 
     const openSessionForm = function(sessionId) {
 		// Always open form in the create/edit common tab
-		Utils.changeTab($('#session_name_desc_tab_button'), 'session_form_form','session_name_desc_tab');
+		Utils.changeTab($('#session_name_desc_tab_button'), 'session_form','session_name_desc_tab');
 
 		const session = getSessionFromId(sessionId);
 		
@@ -488,6 +488,14 @@
 		}
 	}
     
+	// Sync add session and import session name input 
+	$(document).on("input", $(`#session_form .${NAME_FIELD_CLASS}`), function(e) {
+		$(`#session_form .${NAME_FIELD_CLASS}`).each(function() {
+			if (this != e.target && $(e.target).is("input:text")) {
+				$(this).val($(e.target).val());
+			} 
+		});
+	});
 
 	// Sessions buttons shared listeners using event delegation to ensure 
 	// the handler works even if element is added after the document ready event
@@ -1070,6 +1078,7 @@
 	const onEditSessionActivities = function(sessionId) {
 		updateEntireSession(sessionId);
 	}
+	
 	const onSessionUsersChange = function(sessionId) {
 		updateEntireSession(sessionId);
 	}

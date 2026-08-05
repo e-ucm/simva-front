@@ -517,8 +517,6 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	margin-right: 0px;
 }
 .kebab-dropdown {
-	display: none;
-
 	--kebabBgColor: rgb(73, 73, 73);
 	--kebabHoverColor: rgb(39, 39, 39);
 	--kebabTextColor: rgb(255, 255, 255);
@@ -536,6 +534,8 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .kebab li {
 	list-style-type: none;
 	max-width: 200px;
+	white-space: normal;
+	word-wrap: break-word;
 }
 .kebab li:hover { background-color: var(--kebabHoverColor); }
 .kebab .li-disabled {
@@ -885,9 +885,12 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	margin-left: auto;
 }
 
-.simletTop.h1 {
-	margin: 0;
-	padding: 0;
+.simletTop img {
+	height: 15px;
+	width: auto;
+	cursor: pointer;
+	margin-bottom: 20px;
+	margin-left: 5px;
 }
 .simletSettings {
 	display: flex;
@@ -1188,6 +1191,9 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	gap: 10px;
 	margin: 20px;
 }
+/* .activitySettingsCheckboxes > :last-child:nth-child(odd) {
+	grid-column: span 2;
+} */
 .activitySettigsCheckbox {
 	display: flex;
 	align-items: center;   /* Keeps vertical alignment */

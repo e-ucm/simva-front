@@ -3,16 +3,16 @@
 <!-- Add/edit activity menu -->
 <div id="activity_form_menu" class="new_element floating">
 	<div class="floater">
-        <div class="form" id="activity_form_form">
+        <div class="form" id="activity_form">
 			<h1 id="activity_form_title">	</h1>
 
 			<div class="tabs" id="add_activity_tabs">
-				<span id="activity_name_desc_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'activity_form_form','activity_name_desc_tab')"><%- t('add.new.tab', { ns : 'activities' }) %></span>
-				<span class="tab" onclick="Utils.changeTab(this, 'activity_form_form','import_activity_tab')"><%- t('import.tab', { ns : 'activities' }) %></span>
+				<span id="activity_name_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'activity_form','activity_name_ab')"><%- t('add.new.tab', { ns : 'activities' }) %></span>
+				<span class="tab" onclick="Utils.changeTab(this, 'activity_form','import_activity_tab')"><%- t('import.tab', { ns : 'activities' }) %></span>
 			</div>
 
-			<div id="activity_name_desc_tab" class="subform selected">
-				<form id="activity_form">
+			<div id="activity_name_ab" class="subform selected">
+				<form id="activity_name_form">
 					<input hidden type="text" name="editingActivityId" id="edit_activity_id">
 
 					<h3 class="activity_form_name"><%- t('name.title', { ns : 'activities' }) %></h3>
@@ -132,7 +132,7 @@
 		});
 
 		// When submitting the add/edit activity form
-        $(document).on('submit','#activity_form', function(event) {
+        $(document).on('submit','#activity_name_form', function(event) {
 			let errorbox = $('#activity_form_error');
 			let form = Utils.getFormData($(this));
 			Utils.toggleSubmit();
@@ -257,7 +257,7 @@
 
     const openActivityForm = function(sessionId, activityId) {
 		// Always open form in the create/edit common tab
-		Utils.changeTab($('#activity_name_desc_tab_button'), 'activity_form_form','activity_name_desc_tab');
+		Utils.changeTab($('#activity_name_tab_button'), 'activity_form','activity_name_ab');
 
 		Utils.toggleFormInFloating('activity_form_menu');
 
@@ -308,7 +308,7 @@
 			// Save the activity info before editing to compare it with the info after submitting the form
 			const painter = getActivityPainterByType(activity.activity_type);
 			if (painter != null) {
-				prevActivityInfo = painter.getActivityInfoFromForm(Utils.getFormData($("#activity_form")));
+				prevActivityInfo = painter.getActivityInfoFromForm(Utils.getFormData($("#activity_name_form")));
 			}
 		}
 	}
@@ -329,14 +329,6 @@
 		if (isCurrentUserParticipant(session.completeParticipants)) {
 			$("#activity_test_data_download").show();
 		}
-
-		// Show xasu download button only if the activity is a desktop gameplay activity
-		$("#xasu_download").hide();
-		if (activity.activity_type == "gameplay") {
-			if (activity.game_type != "WEB" && activity.activity_trace_storage) {
-				$("#xasu_download").show();
-			}
-		}
 	}
 
 	// Expand/hide activity participants table
@@ -345,6 +337,14 @@
 		$(`#activity_${activityId} table`).toggle();
 	}
 
+	// Sync add activity and import activity name input 
+	$(document).on("input", $(`#activity_form .${NAME_FIELD_CLASS}`), function(e) {
+		$(`#activity_form .${NAME_FIELD_CLASS}`).each(function() {
+			if (this != e.target && $(e.target).is("input:text")) {
+				$(this).val($(e.target).val());
+			} 
+		});
+	});
 
 	// Activities buttons shared listeners using event delegation to ensure 
 	// the handler works even if element is added after the document ready event
@@ -432,7 +432,6 @@
 			}
 		}
 	});
-
 
 
 	// Functionality
