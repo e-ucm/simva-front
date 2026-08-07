@@ -2,6 +2,7 @@
 
 <!-- Template for the 3-dot menu of the activity  -->
 <div id="gameplay_extra_kebab_template" style="display: none;">
+    <li class="text-with-icon icon-download" title="<%= t('settings.download.trackerConfig', { ns : 'activities' }) %>"><%= t('settings.download.trackerConfig', { ns : 'activities' }) %></li>
     <li class="text-with-icon icon-activate" title="<%= t('completed.all.set', { ns : 'activities' }) %>"><%= t('completed.all.set', { ns : 'activities' }) %></li>
     <li class="text-with-icon icon-pause" title="<%= t('completed.all.unset', { ns : 'activities' }) %>"><%= t('completed.all.unset', { ns : 'activities' }) %></li>
 </div>
@@ -194,12 +195,14 @@
                 this.simple_name += " - <%= t('gameplay.web.title', { ns : 'activities' }) %>"
                 this.description = "<%= t('gameplay.web.description', { ns : 'activities' }) %>";
                 meta.find("i").text(activity.game_url || "-");
+                card.find(".kebab-dropdown .icon-download").hide();
             }
             else {
                 iconClass = "icon-gameplay-desktop";
                 this.simple_name += " - <%= t('gameplay.desktop.title', { ns : 'activities' }) %>"
                 this.description = "<%= t('gameplay.desktop.description', { ns : 'activities' }) %>";
                 meta.find(".icon-url").removeClass("icon-url");
+                card.find(".kebab-dropdown .icon-download").show();
             }
 
             // Add the type icon next to the activity name
@@ -240,5 +243,13 @@
         const filename = "tracker_config.json";
         Utils.download(filename, content);
 	}
+
+    $(document).on('click', ".activityTopActions .kebab .icon-download", function(e) {
+		const data = $(this).closest(".activity").data();
+		Simva.getActivityXasuConfig(data[SESSION_DATA_ID_KEY], function(error, result) {
+            const content = JSON.stringify(result.file_content, null, 2);
+            Utils.download(result.file_name, content);
+        });
+	});
 
 </script>

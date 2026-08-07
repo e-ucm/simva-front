@@ -22,6 +22,7 @@
     "delete.confirm": "Are you sure you want to delete the activity '{{activity}}' of session '{{session}}' from SIMLET '{{SIMLET}}'?\nAll the data of the activity will be deleted too",
     
     "export.title": "Export",
+    "settings.download.trackerConfig": "Download tracker config",
     
     "name.title": "Name",
     "name.placeholder": "Activity name",

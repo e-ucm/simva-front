@@ -22,7 +22,8 @@
     "delete.confirm": "¿Está seguro de que desea eliminar la actividad '{{activity}}' de la sesión '{{session}}' del SIMLET '{{SIMLET}}'?\nTambién se eliminarán todos los datos de la actividad",
     
     "export.title": "Exportar",
-        
+    "settings.download.trackerConfig": "Descargar configuración del tracker",
+
     "name.title": "Nombre",
     "name.placeholder": "Nombre de la actividad",
 

@@ -594,6 +594,16 @@ var Simva = {
 	},
 
 	/**
+	 * Send a GET request to the bff to get the Xasu config of the specified activity
+	 * @param {number} activityId - id of the activity the config will be fetched from
+	 * @param {Callback} callback 
+	 */
+	getActivityXasuConfig(activityId, callback) {
+		Utils.get(`/bff/activities/${activityId}/tracker_config`, callback);
+	},
+	
+
+	/**
 	 * Set activity test
 	 * @param {number} activityId - ID of the activity
 	 * @param {object} payload - Payload for the test

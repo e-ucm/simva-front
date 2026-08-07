@@ -584,6 +584,16 @@ class Simva {
 		this.delete(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/activities/${activityId}`, currSessionId, callback);
 	}
 
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the Xasu config of the specified activity
+	 * @param {number} activityId - id of the activity the config will be fetched from
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getActivityXasuConfig(activityId, currSessionId, callback){
+		this.get(`${this.apiurl}/activities/${activityId}/tracker_config`, currSessionId, callback);
+	}
+
 	// TODO: Document / remove?
 	setActivityTest(activityId, payload, currSessionId, callback){
 		this.post(`${this.apiurl}/activities/${activityId}/test`, null, payload, currSessionId, callback);

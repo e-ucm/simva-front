@@ -43,7 +43,7 @@
     </div>
     <div id="limesurvey_byupload" class="subform">
         <h3><%= t('limesurvey.upload.message', { ns : 'activities' }) %></h3>
-        <input type="file" id="lss_field" name="lss">
+        <input type="file" accept=".lss"  id="lss_field" name="lss">
     </div>
 </div>
 
@@ -145,7 +145,7 @@
                     break;
                 case 'byupload':
                     // console.log('[limesurveypainter] byupload case');
-                    let fileInput = $(form).find('input[name="lss"]').get(0);
+                    let fileInput = $("#lss_field").get(0);
                     if (fileInput && fileInput.files[0]) {
                         console.log('[limesurveypainter] File selected for upload:', fileInput.files[0]);
                         let reader = new FileReader();
