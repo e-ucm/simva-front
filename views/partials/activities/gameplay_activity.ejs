@@ -48,19 +48,6 @@
         </div>
 
         <div class="activitySettigsCheckbox">
-            <input type="checkbox" id="gameplay_scorm_xAPI" name="scorm_xapi">
-            <div class="tooltipLine">
-                <label for="gameplay_scorm_xAPI"><b><%= t('gameplay.xapi_by_game.title', { ns : 'activities' }) %></b></label>
-                <div class="tooltip">
-                    &#x1F6C8;
-                    <span class="tooltiptext">
-                        <%= t('gameplay.xapi_by_game.description', { ns : 'activities' }) %>
-                    </span>
-                </div>
-            </div>
-        </div>
-
-        <div class="activitySettigsCheckbox">
             <input type="checkbox" id="gameplay_restarted" name="restarted">
             <div class="tooltipLine">
                 <label for="gameplay_restarted"><b><%= t('gameplay.restarted.title', { ns : 'activities' }) %></b></label>
@@ -109,9 +96,36 @@
         <input id="gameplay_game_uri" type="text" name="game_uri">
     </div>
     <div id="gameplay_desktop" class="subform" style="display: none;">
+        <div class="activitySettigsCheckbox" style="grid-column: span 2; margin-top: 15px;">
+            <input type="checkbox" id="gameplay_scorm_xAPI" name="scorm_xapi">
+            <div class="tooltipLine">
+                <label for="gameplay_scorm_xAPI"><b><%= t('gameplay.xapi_by_game.title', { ns : 'activities' }) %></b></label>
+                <div class="tooltip">
+                    &#x1F6C8;
+                    <span class="tooltiptext">
+                        <%= t('gameplay.xapi_by_game.description', { ns : 'activities' }) %>
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- <input type="checkbox" id="gameplay_use_simvaUnity" name="use_simvaUnity"> -->
+        <div class="tooltipLine">
+            <h3><%= t('gameplay.trackerSettings.title', { ns : 'activities' }) %></h3>
+            <div class="tooltip">
+                &#x1F6C8;
+                <span class="tooltiptext">
+                    <%= t('gameplay.trackerSettings.description', { ns : 'activities' }) %>
+                </span>
+            </div>
+        </div>
+        <select  id="gameplay_tracker_settings" name="tracker_settings">
+            <option value="Xasu"><%= t('gameplay.trackerSettings.xasu.title', { ns : 'activities' }) %></option>
+            <option value="Xasu+Simva_Plugin"><%= t('gameplay.trackerSettings.simvaUnity.title', { ns : 'activities' }) %></option>
+            <option value="None"><%= t('gameplay.trackerSettings.other.title', { ns : 'activities' }) %></option>
+        </select>
     </div>
 </div>
-
 
 <script type="text/javascript">
     // MUST BE INCLUDED IN THE HTML AFTER BaseActivityPainter 
@@ -139,10 +153,14 @@
             if (activity != null) {
                 $("#gameplay_trace_storage").prop("checked", Boolean(activity.activity_trace_storage));
                 $("#gameplay_backup").prop("checked", Boolean(activity.game_backup));
-                $("#gameplay_scorm_xAPI").prop("checked", Boolean(activity.game_scorm_xapi));
                 $("#gameplay_restarted").prop("checked", Boolean(activity.activity_can_be_restarted));
                 
+                // Web only
                 $("#gameplay_game_uri").val(activity.game_url || "");
+
+                // Desktop only
+                $("#gameplay_scorm_xAPI").prop("checked", Boolean(activity.game_scorm_xapi));
+                $("#gameplay_tracker_settings").val(activity.game_tracker_technology || "None");
 
                 if (activity.game_type === 'DESKTOP') {
                     Utils.changeTab("gameplay_desktop_tab_button", 'gameplay_extra_form','gameplay_desktop');
@@ -160,11 +178,16 @@
 
             activity.activity_trace_storage = form.trace_storage === "on" ? true : false;
             activity.game_backup = form.backup === "on" ? true : false;
-            activity.game_scorm_xapi = form.scorm_xapi === "on" ? true : false;
             activity.activity_can_be_restarted = form.restarted === "on" ? true : false;
             
             activity.game_type = method;
+
+            // Web only
             activity.game_url = method == "DESKTOP" ? "" : (form.game_uri || "");
+
+            // Desktop only
+            activity.game_scorm_xapi = form.scorm_xapi === "on" ? true : false;
+            activity.game_tracker_technology = $("#gameplay_tracker_settings").val() == "None" ? null : $("#gameplay_tracker_settings").val();
 
             return activity;
         }
@@ -190,19 +213,22 @@
             let iconClass = "";
             let prevSimpleName = this.simple_name;
 
+            card.find(".kebab-dropdown .icon-download").hide();
             if (activity.game_type === 'WEB') {
                 iconClass = "icon-gameplay-web";
                 this.simple_name += " - <%= t('gameplay.web.title', { ns : 'activities' }) %>"
                 this.description = "<%= t('gameplay.web.description', { ns : 'activities' }) %>";
                 meta.find("i").text(activity.game_url || "-");
-                card.find(".kebab-dropdown .icon-download").hide();
             }
             else {
                 iconClass = "icon-gameplay-desktop";
                 this.simple_name += " - <%= t('gameplay.desktop.title', { ns : 'activities' }) %>"
                 this.description = "<%= t('gameplay.desktop.description', { ns : 'activities' }) %>";
                 meta.find(".icon-url").removeClass("icon-url");
-                card.find(".kebab-dropdown .icon-download").show();
+
+                if (activity.game_tracker_technology != null) {
+                    card.find(".kebab-dropdown .icon-download").show();
+                }
             }
 
             // Add the type icon next to the activity name
@@ -221,29 +247,8 @@
             super.paintActivityResult(activity, activity.data.hasresult, participants);
         }
     }
+
     
-
-    const downloadActivityXasuConfig = function() {
-		const content = JSON.stringify({
-            online: true,
-            simva :true,
-            homepage:`${Simva.url}`,
-            lrs_endpoint : `${Simva.apiurl}/activities/${downloadActivityId}`,
-            auth_protocol : "oauth2",
-            auth_parameters : {
-                grant_type : "code",
-                auth_endpoint : `${Simva.ssoUrl}/realms/${Simva.ssoRealm}/protocol/openid-connect/auth`, 
-                token_endpoint : `${Simva.ssoUrl}/realms/${Simva.ssoRealm}/protocol/openid-connect/token`,
-                client_id : "simva-plugin",
-                code_challenge_method : "S256",
-                simva_user_token:"true",
-                login_hint: simletId
-            }
-        }, null, 2);
-        const filename = "tracker_config.json";
-        Utils.download(filename, content);
-	}
-
     $(document).on('click', ".activityTopActions .kebab .icon-download", function(e) {
 		const data = $(this).closest(".activity").data();
 		Simva.getActivityXasuConfig(data[SESSION_DATA_ID_KEY], function(error, result) {
