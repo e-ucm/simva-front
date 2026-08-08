@@ -4,7 +4,7 @@
 	<div class="left">
 		<%- include('header_language_selector') %>
 		<img class="logo" src="/images/logo.png">
-		<span style="margin-left: 10px;"><%= schedulerMode ? t('scheduler.current', { ns : 'SIMLETs' }) : t('title') %></span>
+		<span style="margin: 10px; white-space: nowrap;"><%= schedulerMode ? t('scheduler.current', { ns : 'SIMLETs' }) : t('title') %></span>
 		<% if (schedulerMode) { %><span id="current_activity_name" style="margin-left: 5px;"></span><% } %>
 	</div>
 	<div class="right">
@@ -36,6 +36,11 @@
 			<% } %>
 			
 		<% } else { %>
+			<li>
+				<a href="https://www.e-ucm.es/es/people/" target="_blank" rel="noopener noreferrer">
+					<img src="/images/icons/eucm_icon.ico"> <%= t('contact.title') %>
+				</a>
+			</li>
 			<li>
 				<a id="account_username" href="<%= config.sso.accountUrl%>">
 					<img src="/images/icons/user.png"> <span id="username" style="padding: 0px;">

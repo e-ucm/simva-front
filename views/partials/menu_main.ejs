@@ -2,14 +2,14 @@
 	<ul>
 		<li>
 			<a href="/" title="<%= t('home.description') %>">
-				<span><img src="/images/icons/home.png"></span>
+				<span><img src="/images/icons/home.png" style="filter: invert(100%);"></span>
 				<span><%= t('home.title') %></span>
 			</a>
 		</li>
 		<% if(user.data.role === 'teacher' || user.data.role === 'administrator') { %>
 			<li>
 				<a href="/simlets/" title="<%- t('simlets.description', { ns : 'SIMLETs' }) %>">
-					<span><img src="/images/icons/study.png"></span>
+					<span><img src="/images/icons/study.png" style="filter: invert(100%);"></span>
 					<span><%= t('title', { ns : 'SIMLETs' }) %></span>
 				</a>
 			</li>

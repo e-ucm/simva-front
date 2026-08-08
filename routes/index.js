@@ -36,6 +36,7 @@ app.set('view engine', 'ejs');
 const i18next = require('./routes/i18n.js');
 const middleware = require('i18next-http-middleware');
 const { setLanguage } = require('../middleware/setLanguageMiddleware.js');
+
 app.use(setLanguage);
 app.use(middleware.handle(i18next));
 
@@ -49,13 +50,43 @@ app.use('/activities', require('./routes/activities.js')(usertools.auth(1), user
 app.use('/scheduler', require('./routes/scheduler.js')(usertools.auth(1), usertools.redirectToLogin(1), config));
 app.use('/archived', require('./routes/archived.js')(usertools.auth(1), usertools.redirectToLogin(1), config));
 
+const fs = require('fs');
+const ejs = require('ejs');
+const { marked } = require('marked');
+const customHeadingIdModule = require('marked-custom-heading-id');
+marked.use(customHeadingIdModule.default ? customHeadingIdModule.default() : customHeadingIdModule());
+const { JSDOM } = require('jsdom');
+const createDOMPurify = require('dompurify');
+const window = new JSDOM('').window;
+const DOMPurify = createDOMPurify(window);
+
 router.get('/about', function(req, res, next) {
   const isAuthenticated = !!(req.session && req.session.user);
-  res.render('about', {
-    config: config,
-    user: isAuthenticated ? req.session.user : undefined,
-    layoutTemplate: isAuthenticated ? 'layout_with_menu_and_sse' : 'layout_logout',
-    t: req.t
+  
+  // Read the about.md file
+  const docPath = path.join(__dirname, '/../public', "about.md");
+  fs.readFile(docPath, 'utf8', (err, content) => {
+    if (err) {
+      return next(err); 
+    }
+
+    // Translate the keys in the markdown, then parse the content to html
+    const localizedMd = ejs.render(content, { 
+      t: (key, options) => req.t(key, options),
+      user: isAuthenticated ? req.session.user : undefined,
+    });
+    let parsedHmtl = marked(localizedMd);
+    parsedHmtl = DOMPurify.sanitize(parsedHmtl);
+    
+    res.render('about', {
+      config: config,
+      user: isAuthenticated ? req.session.user : undefined,
+      layoutTemplate: isAuthenticated ? 'layout_with_menu_and_sse' : 'layout_logout',
+      t: req.t,
+      aboutContent: parsedHmtl,
+      // md: localizedMd
+    });
+
   });
 });
 

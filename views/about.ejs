@@ -1,24 +1,43 @@
 <%# views/about.ejs %>
 
 <% extend(layoutTemplate || 'layout_logout') %>
-<% if (!user) { %>
-<div class="content about_page">
-	<%- include('partials/about_content') %>
-</div>
-<% } else { %>
-<%- include('partials/about_content') %>
-<% } %>
 
-<div class="content">
-	<div class="floating_buttons">
-		<div id="scroll_top_button" unselectable="on" class="basic scrollTop" onclick="scrollToTop()" style="opacity: 75%; width: 60px; height: 60px;">
-			<img src="../images/icons/up-arrow.png" style="transform: translate(0%, 0%);">
+<% if (!user) { %>
+	<!-- The logout layout doesn't include the container section -->
+	<div class="content">
+		<div class="card aboutPage">
+			<%- aboutContent %>
 		</div>
 	</div>
+<% } else { %>
+	<div class="card aboutPage">
+		<%- aboutContent %>
+	</div>
+<% } %>
+		
+<div class="floating_buttons">
+	<div id="scroll_top_button" unselectable="on" class="basic scrollTop" onclick="scrollToTop()" style="opacity: 75%; width: 60px; height: 60px;">
+		<img src="../images/icons/up-arrow.png" style="transform: translate(0%, 0%);">
+	</div>
+</div>
+	
 </div>
 
+
 <script>
+	
 	const MIN_SCROLL = 300;
+
+	$(document).ready(function() {
+		// Move the floating buttons to the content container 
+		$(".content").append($(".floating_buttons"));
+		$(".content").addClass("floating");
+
+		if ($(".menu").length <= 0) {
+			$(".content").css({ "padding-left": "10px" });
+		}
+	});
+
 	
 	$("#scroll_top_button").hide();
 
@@ -33,5 +52,6 @@
 
 	const scrollToTop = function() {
 		window.scrollTo(0, 0);
+		history.pushState("", document.title, window.location.pathname + window.location.search);
 	}
 </script>

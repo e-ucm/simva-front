@@ -2,6 +2,8 @@
     "title": "Acerca de",
     "description": "¡Bienvenido al front-end de SIMVA! Esta sección proporciona una visión general de la plataforma, sus principales características y una guía para ayudarte a navegar por la interfaz. Ya seas un profesor, estudiante, investigador o desarrollador, encontrarás información útil para comenzar y aprovechar al máximo SIMVA.",
     "text": "Esta sección reúne ayuda de navegación, tutoriales y explicaciones breves sobre SIMVA.\nSiga los pasos de abajo para moverse por las páginas principales. Algunas opciones solo aparecen para profesores, coordinadores o administradores.",
+    "index.title": "Contenidos",
+    
     "header.logout.title": "Guía del encabezado para visitantes",
     "header.logout.description": "Esta es la barra superior antes de iniciar sesión. Da acceso a las páginas públicas y al botón de inicio de sesión.",
     "header.logout.note": "Estos son los únicos botones superiores disponibles antes de entrar en el sistema.",
@@ -10,9 +12,7 @@
     "header.logout.about.title": "Acerca de",
     "header.logout.about.description": "Abra esta página para leer la información general de SIMVA y la ayuda de navegación.",
     "header.logout.research.title": "e-UCM Research",
-    "header.logout.research.description": "Vaya al sitio de investigación para información del proyecto y material relacionado.",
-    "header.logout.contact.title": "Contáctenos",
-    "header.logout.contact.description": "Use este enlace para acceder a la información de contacto mostrada en el encabezado.",
+    "header.logout.research.description": "Vaya al sitio de investigación para información del proyecto, material relacionado, o acceder a la información de contacto.",
     "header.logout.login.title": "Inicio de sesión",
     "header.logout.login.description": "Pulse este botón para entrar y cambiar a la interfaz autenticada.",
     "header.login.title": "Guía del encabezado para usuarios conectados",
@@ -29,7 +29,7 @@
     "menu.note": "Algunas entradas solo aparecen para profesores, coordinadores o administradores.",
     "menu.home.title": "Inicio",
     "menu.home.description": "Vuelva a la pantalla principal con la información más reciente de bienvenida y de su cuenta.",
-    "menu.play.title": "Play SIMLETs",
+    "menu.play.title": "Ejecutar SIMLET",
     "menu.play.description": "Abra la entrada del programador para los participantes que tengan que realizar SIMLETs asignados.",
     "menu.simlets.title": "SIMLETs",
     "menu.simlets.description": "Gestione estudios, sesiones, participantes y resultados desde el área de SIMLETs.",
@@ -64,6 +64,7 @@
     "participant.title": "Participante",
     "participant.description": "Un usuario (por ejemplo, un estudiante) cuyo rol es realizar actividades como responder encuestas y jugar juegos. Cada participante también puede ver sus propios resultados.",
     
+    "integration.title": "Integración en juegos",
     "gameclient.title": "Cliente de juego",
     "gameclient.description": "Un cliente de juego es todos los metadatos del juego como título, descripción, categoría (conciencia o educación) y área temática (matemáticas, programación, bullying, etc). Es la URL del juego para un juego web o el archivo comprimido del juego para un juego de escritorio.",
     
@@ -89,6 +90,8 @@
     "activityinstance.title": "Instancia de actividad",
     "activityinstance.description": "Una instancia de actividad representa una ejecución concreta de una plantilla de actividad. Almacena datos específicos de los participantes, como respuestas de encuestas, rendimiento de actividades manuales, interacciones de actividades de jugabilidad, como rastros y resultados. Cuando el usuario agrega una actividad a una sesión particular, se crea automáticamente una instancia de esa plantilla de actividad. En caso de actividad de jugabilidad, la instancia de actividad se referencia al ID del juego integrado. Sin embargo, los datos recopilados del juego se almacenarán al nivel de actividad de jugabilidad de la sesión.",
     
+    "sessionManagement.title": "Gestión de sesiones",
+
     "manualcompletion.title": "Finalización manual para actividades",
     "manualcompletion.description": "En caso de que un participante complete una actividad pero su estado no se establezca automáticamente en 'completado' por alguna razón, hay un botón que permite al supervisor/coordinador cambiar manualmente el estado a 'completado'. También es posible cambiar manualmente el estado de una actividad a 'completado' para todos los participantes a la vez.",
     
@@ -114,12 +117,12 @@
     "xapi.dashboard.visibledata.title": "Datos del Panel y Rastros xAPI Correspondientes",
     "xapi.dashboard.visibledata.desc": "En las siguientes líneas, estamos definiendo los datos visibles en los paneles con sus correspondientes rastros xAPI rastreados.",
     "xapi.dashboard.initialized.title": "Inicializado",
-    "xapi.dashboard.initialized.desc": "Esto representa si el participante ha comenzado la actividad o no. Su valor puede ser 'true' o 'false'. El valor predeterminado es 'false', y se volverá 'true' cuando el participante inicialice la actividad. Esto significa que en el backend el servidor SIMVA ha recibido un rastro xAPI con el id del verbo: 'http://adlnet.gov/expapi/verbs/initialized'.",
+    "xapi.dashboard.initialized.desc": "Esto representa si el participante ha comenzado la actividad o no. Su valor puede ser 'true' o 'false'. El valor predeterminado es 'false', y se volverá 'true' cuando el participante inicialice la actividad. Esto significa que en el backend el servidor SIMVA ha recibido un rastro xAPI con el id del verbo: http://adlnet.gov/expapi/verbs/initialized.",
     "xapi.dashboard.progress.title": "Progreso",
-    "xapi.dashboard.progress.desc": "Esto representa el porcentaje de finalización de la actividad. Su valor está entre 0% y 100% ambos incluidos. Si la actividad no está inicializada aún, el valor predeterminado del progreso es '-', mientras que si está inicializada pero sin progreso, el valor del progreso es '0%'. Si está completamente finalizada, el valor del progreso es '100%'. Esto significa que en el backend el servidor SIMVA ha recibido un rastro xAPI con el id del verbo: 'http://adlnet.gov/expapi/verbs/progressed', y también el valor del resultado escalado entre 0 y 1 (ambos incluidos) desde la etiqueta de resultado mostrada en la tabla:",
+    "xapi.dashboard.progress.desc": "Esto representa el porcentaje de finalización de la actividad. Su valor está entre 0% y 100% ambos incluidos. Si la actividad no está inicializada aún, el valor predeterminado del progreso es '-', mientras que si está inicializada pero sin progreso, el valor del progreso es '0%'. Si está completamente finalizada, el valor del progreso es '100%'. Esto significa que en el backend el servidor SIMVA ha recibido un rastro xAPI con el id del verbo: http://adlnet.gov/expapi/verbs/progressed, y también el valor del resultado escalado entre 0 y 1 (ambos incluidos) desde la etiqueta de resultado mostrada en la tabla:",
     "xapi.dashboard.progress.col1": "Tipo de Actividad",
     "xapi.dashboard.progress.col2": "Etiqueta de resultado mostrada en rastros xAPI para el progreso",
     "xapi.dashboard.completed.title": "Completado",
-    "xapi.dashboard.completed.desc": "Esto representa si el participante ha completado la actividad o no. Su valor puede ser 'true' o 'false'. El valor predeterminado es 'false', y se volverá 'true' cuando el participante complete la actividad. Esto significa que en el backend el servidor SIMVA ha recibido un rastro xAPI con el id del verbo: 'http://adlnet.gov/expapi/verbs/completed', y también el valor del resultado de finalización tiene que ser establecido a 'true'."
+    "xapi.dashboard.completed.desc": "Esto representa si el participante ha completado la actividad o no. Su valor puede ser 'true' o 'false'. El valor predeterminado es 'false', y se volverá 'true' cuando el participante complete la actividad. Esto significa que en el backend el servidor SIMVA ha recibido un rastro xAPI con el id del verbo: http://adlnet.gov/expapi/verbs/completed, y también el valor del resultado de finalización tiene que ser establecido a 'true'."
 
 }

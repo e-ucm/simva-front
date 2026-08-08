@@ -35,10 +35,31 @@ textarea { 	resize: vertical; width: 100%; max-height: 5rem; }
 .login #error, .error { width: 100%; color: red; font-size: 14px; text-align: center; }
 .login .role_selector { text-align: left; margin-bottom: 10px; }
 
-.header { width: 100%; background-color: var(--themeOrangeColor); height: 50px; overflow: hidden; box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.3); padding: 10px; position: fixed; z-index: 100; }
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: nowrap;
+	box-sizing: border-box;
+
+	width: 100%;
+	background-color: var(--themeOrangeColor);
+	height: 50px;
+	overflow-x: auto;
+	overflow-y: hidden;
+	box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.3);
+	padding: 10px;
+	position: fixed;
+	z-index: 100;
+}
+.header .left,
+.header .right {
+	display: inline-flex;
+	align-items: center;
+	flex-shrink: 0;
+	height: 100%;
+}
 .header.black { background-color: black; color: white; }
-.header .left, .header .right { height: 100%; display: inline-flex; align-items: center; }
-.header .right { float: right; }
 .header a { text-decoration: none; color: black }
 .header.black a { color: white; }
 .header img { height: 30px; width: auto; }
@@ -145,18 +166,19 @@ textarea { 	resize: vertical; width: 100%; max-height: 5rem; }
 
 
 /* About page sections styling */
-.about_page { padding: 60px 20px 20px 20px !important; width: 100% !important; }
-.about_page h1 { display: block !important; margin: 20px 0 30px 0 !important; padding: 0 !important; font-size: 2.2em !important; color: var(--themeOrangeColor) !important; font-weight: bold !important; }
-.aboutSections { padding: 20px; max-width: 1200px; margin: 0 auto; display: block !important; }
-.aboutSections h1 { margin: 20px 0 30px 0; padding: 0; font-size: 2.2em; color: var(--themeOrangeColor); font-weight: bold; }
-.aboutSection { margin-bottom: 30px; border-bottom: 2px solid #ddd; padding: 15px 0 20px 0; display: block !important; scroll-margin-top: 60px; }
-.aboutSection:last-child { border-bottom: none; }
-.aboutSection h2 { margin: 20px 0 15px 0; padding: 0; font-size: 1.8em; font-weight: bold; color: var(--themeOrangeColor); }
-.aboutSection h3 { margin: 15px 0 15px 0; padding: 0; font-size: 1.4em; font-weight: bold; color: #0B617D; }
-.aboutSection p { margin: 10px 0; padding: 0; line-height: 1.6; color: #333; }
-.aboutSubSection { margin-left: 20px; margin-top: 15px; margin-bottom: 15px; padding: 15px; background-color: #f9f9f9; border-left: 4px solid var(--themeOrangeColor); display: block !important; }
-.aboutSubSection h4 { margin: 0 0 10px 0; padding: 0; font-size: 1.1em; font-weight: bold; color: #0B617D; }
-.aboutSubSection p { margin: 0; padding: 0; line-height: 1.5; color: #444; }
+.aboutPage h1 {padding: 20px; }
+.aboutPage h2, .aboutPage h3, .aboutPage h4, .aboutPage h5, .aboutPage h6 { scroll-margin-top: 70px; margin-left: 30px; margin-right: 30px; }
+.aboutPage hr { width: 98%; margin-left: auto; margin-right: auto; margin-top: 30px; margin-bottom: 30px; border: none; height: 1px; background-color: #444; }
+.aboutPage img { max-width: 100%; display: block; margin-left: auto; margin-right: auto; }
+.aboutPage h4 { display: flex; align-items: center; }
+.aboutPage h4 img { margin-left: 0px; margin-right: 10px; height: 1lh; width: auto; }
+.aboutPage p { margin-left: 40px; margin-right: 40px; }
+.aboutPage ul { margin-left: 30px; margin-right: 40px; }
+.aboutPage ul li { padding: 5px; }
+.aboutPage pre { margin-left: 70px; margin-right: 70px; background-color: #e7e7e7; }
+.aboutPage code { word-wrap: break-word; }
+.aboutPage table { margin-left: 70px; border-collapse: collapse; }
+.aboutPage table th, .aboutPage table td { border: solid 1px black; padding: 5px; text-align: center; vertical-align: middle; }
 
 
 /* Tooltips */
@@ -1125,16 +1147,14 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 
 .content .test .activities table { display: table; overflow: hidden; }
 .content .test .activities .activity.tactivity { background-color: gray; }
-.content .test .activities .activity table, .content .test .activities .activity .progress {
-	color: black;
-}
+.content .test .activities .activity table, .content .test .activities .activity .progress { color: black; }
 
 .content .test .activities .activity table { table-layout: fixed; width: 100%; font-size: 14px; border-collapse: collapse; }
 .content .test .activities .activity table tr { width: 100%; height: 32px; }
 .content .test .activities .activity table thead tr td { width: 92px; }
 .content .test .activities .activity table thead, .content .test .activities .activity table tbody tr:nth-child(even) { background: #a5a5a5 }
 .content .test .activities .activity table tbody tr:nth-child(odd) { background: #c5c5c5 }
-.content .test .activities .activity table tr td, .content .test .activities .activity table tr th { border: solid 2px black; padding: 5px; height: 32px;  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; vertical-align: middle; }
+.content .test .activities .activity table tr td, .content .test .activities .activity table tr th { border: solid 1px black; padding: 5px; height: 32px;  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; vertical-align: middle; }
 .content .test .activities .activity table tr td { width: 33.33%; }
 
 .content .test .activities .activity .red { background-color: #ff9696; }
