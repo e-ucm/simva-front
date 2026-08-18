@@ -33,8 +33,8 @@
 		browser will delete it and won't be able to be cloned -->
 		<table>
 			<tr>
-				<td class="username"> </td>
-				<td class="permissions"> </td>
+				<td class="username">-</td>
+				<td class="permissions">-</td>
 				<td><input class="red" type="button" value="<%- t('coordinators.delete.title', { ns : 'groups' }) %>"></td>
 			</tr>
 		</table>
@@ -102,7 +102,7 @@
             </div>
             <div class="allocatorContent">
             </div>
-			<strong><%- t('participants.title', { ns : 'groups' }) %>:</strong> <span  class="groupParticipantsCount">	</span>
+			<strong><%- t('participants.title', { ns : 'groups' }) %>:</strong><span  class="groupParticipantsCount">-</span>
 			<div class="tooltipLine participantsTitle" style="margin-top: 15px; margin-bottom: 15px;">
 				<h3><%- t('participants.title', { ns : 'groups' }) %></h3>
 				<div class="tooltip">
@@ -352,7 +352,7 @@
 	browser will delete it and won't be able to be cloned -->
 	<table>
 		<tr>
-			<td class="index"> </td>
+			<td class="index">-</td>
 			<td></td>
 			<td class="username">	</td><td class="username">	</td><td class="username">	</td><td class="username">	</td>
 		</tr>
@@ -623,17 +623,17 @@
 						foundUsers.forEach((user, username) => {
 							Simva.addGroupParticipant(simletId, currGroupId, user.user_id, function(addError, result){
 								// If there are any erorrs, add them to the error message
-							    if(addError && addError.responseJSON) {
+								if(addError && addError.responseJSON) {
 									errorText += `${addError.responseJSON.message} <br> `
-							    }
+								}
 								else if(addError) {
 									errorText += `${(addError.message || addError)} <br> ` 
-							    }
+								}
 								// Otherwise, increase the added users count
 								else{
-							        added++;
+								    added++;
 									createdUsersInfo.add(user);
-							    }
+								}
 								addUsersComplete();
 							});
 						});
@@ -840,7 +840,7 @@
 	$(document).on("input", $(`#group_form .${NAME_FIELD_CLASS}`), function(e) {
 		$(`#group_form .${NAME_FIELD_CLASS}`).each(function() {
 			// Ignore the add coordinator input box
-			if (this != e.target && $(e.target).is("input:text") && $(this).closest("#coordinators_tab").length == 0) {
+			if (this != e.target && $(e.target).is("input:text") && $(e.target).is(`.${NAME_FIELD_CLASS}`) && $(this).closest("#coordinators_tab").length == 0) {
 				$(this).val($(e.target).val());
 			} 
 		});

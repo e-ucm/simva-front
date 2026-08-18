@@ -182,7 +182,7 @@ the elements and scripts defined in the simlet_commons partial -->
 	// Sync add SIMLET and import SIMLET name input 
 	$(document).on("input", $(`#simlet_form .${NAME_FIELD_CLASS}`), function(e) {
 		$(`#simlet_form .${NAME_FIELD_CLASS}`).each(function() {
-			if (this != e.target && $(e.target).is("input:text")) {
+			if (this != e.target && $(e.target).is("input:text") && $(e.target).is(`.${NAME_FIELD_CLASS}`)) {
 				$(this).val($(e.target).val());
 			} 
 		});

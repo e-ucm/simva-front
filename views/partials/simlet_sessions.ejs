@@ -85,11 +85,11 @@
         <div class="sessionDescription" style="padding:10px;">	 </div>
         <div class="sessionSummary">
             <div class="sessionInfo">
-                <strong><%- t('createdAt', { ns : 'sessions' }) %>: </strong> <span class="sessionCreateDate">	</span>
+                <strong><%- t('createdAt', { ns : 'sessions' }) %>: </strong><span class="sessionCreateDate">-</span>
                 <br>
-                <strong><%- t('activities', { ns : 'sessions' }) %>: </strong> <span class="sessionActivities">	</span>  
+                <strong><%- t('activities', { ns : 'sessions' }) %>: </strong><span class="sessionActivities">-</span>  
 					&nbsp; 
-				<strong><%- t('users', { ns : 'sessions' }) %>: </strong> <span class="sessionUsers">	</span>
+				<strong><%- t('users', { ns : 'sessions' }) %>: </strong><span class="sessionUsers">-</span>
             </div>
             <div class="sessionProgress progress">
                 <div class="done">	</div>
@@ -491,7 +491,7 @@
 	// Sync add session and import session name input 
 	$(document).on("input", $(`#session_form .${NAME_FIELD_CLASS}`), function(e) {
 		$(`#session_form .${NAME_FIELD_CLASS}`).each(function() {
-			if (this != e.target && $(e.target).is("input:text")) {
+			if (this != e.target && $(e.target).is("input:text") && $(e.target).is(`.${NAME_FIELD_CLASS}`)) {
 				$(this).val($(e.target).val());
 			} 
 		});
@@ -1076,6 +1076,10 @@
 	}
 
 	const onEditSessionActivities = function(sessionId) {
+		const card = $(`#session_${sessionId}`);
+		card.find(".activities").empty();
+		card.find(".activities_loader").show();
+		
 		updateEntireSession(sessionId);
 	}
 	

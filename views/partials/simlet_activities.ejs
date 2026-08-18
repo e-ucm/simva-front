@@ -155,7 +155,7 @@
 
 			// Creating new activity
 			if (form.editingActivityId == null || form.editingActivityId == "") {
-			   const addActivity = function() {
+			   		const addActivity = function() {
 					Simva.addActivityToSession(simletId, currSessionId, activityInfo, function(error, result) {
 						Utils.toggleSubmit();
 						if (error && error.responseJSON) {
@@ -166,11 +166,13 @@
 							onEditSessionActivities(currSessionId);
 						}
 					});
-			   }
+			   	}
 
-			   // If the activity is a web activity with no url, show a message asking confirmation
-			   const closestWebTab = $(this).find("[method='WEB']");
-				if (closestWebTab.length > 0 && closestWebTab.is(".selected") && (form.game_uri == "" || form.game_uri == null || form.uri == "" || form.uri == null)) 
+			   	// If the activity is a web activity with no url, show a message asking confirmation
+			   	const closestWebTab = $(this).find("[method='WEB']");
+				if (closestWebTab.length > 0 && closestWebTab.is(".selected") && (
+					(form.game_uri == "" || form.game_uri == null) && (form.uri == "" || form.uri == null))
+				) 
 				{
 					if (confirm(`<%- t('add.new.web.no_url_message', { ns : 'activities' }) %>`)) {
 						addActivity();
@@ -340,7 +342,7 @@
 	// Sync add activity and import activity name input 
 	$(document).on("input", $(`#activity_form .${NAME_FIELD_CLASS}`), function(e) {
 		$(`#activity_form .${NAME_FIELD_CLASS}`).each(function() {
-			if (this != e.target && $(e.target).is("input:text")) {
+			if (this != e.target && $(e.target).is("input:text") && $(e.target).is(`.${NAME_FIELD_CLASS}`)) {
 				$(this).val($(e.target).val());
 			} 
 		});

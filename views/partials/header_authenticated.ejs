@@ -21,11 +21,6 @@
 					<img src="/images/icons/check.png" style="filter: invert(100%);"> <%= t('scheduler.complete', { ns : 'SIMLETs' }) %>
 				</a>
 			</li>
-			<li>
-				<a>
-					<img src="/images/icons/user.png" style="filter: invert(100%);"> <span id="username" style="padding: 0px;">
-				</a>
-			</li>
 			
 			<% if(!schedulerTestMode) { %>
 				<li>
@@ -34,6 +29,12 @@
 					</a>
 				</li>
 			<% } %>
+
+			<li>
+				<a>
+					<img src="/images/icons/user.png" style="filter: invert(100%);"> <span id="username" style="padding: 0px;">
+				</a>
+			</li>
 			
 		<% } else { %>
 			<li>
