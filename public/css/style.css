@@ -175,8 +175,8 @@ textarea { 	resize: vertical; width: 100%; max-height: 5rem; }
 .aboutPage p { margin-left: 40px; margin-right: 40px; }
 .aboutPage ul { margin-left: 30px; margin-right: 40px; }
 .aboutPage ul li { padding: 5px; }
-.aboutPage pre { margin-left: 70px; margin-right: 70px; background-color: #e7e7e7; }
-.aboutPage code { word-wrap: break-word; }
+.aboutPage pre { margin-left: 70px; margin-right: 70px; background-color: #e7e7e7; padding: 10px; white-space: pre-wrap; word-wrap: break-word; }
+.aboutPage code { display: block; }
 .aboutPage table { margin-left: 70px; border-collapse: collapse; }
 .aboutPage table th, .aboutPage table td { border: solid 1px black; padding: 5px; text-align: center; vertical-align: middle; }
 

@@ -6,7 +6,7 @@
         "coordinators.table.permissions.title": "Permissions",
 
         "coordinators.delete.title": "Delete",
-            "coordinators.delete.confirm": "Are you sure you want to delete the coordinator '{{owner}}' from SIMLET '{{SIMLET}}'?",
+            "coordinators.delete.confirm": "Are you sure you want to delete the coordinator '{{coordinator}}' from SIMLET '{{SIMLET}}'?",
         
         "coordinators.add.title": "Add coordinator",
             "coordinators.name.title": "Username",

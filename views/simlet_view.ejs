@@ -90,9 +90,11 @@ the elements and scripts defined in the simlet_commons partial -->
 	// Stored to avoid having to fetch them every time the search parameters change 
 	// They don't need to contain all the data from the start since they're only neeeded
 	// when they're getting painted and when interacting with the elements they're painted on
-	let completeSessionsById = new Map();		// Defined on fillSessionCard in the simlet_sessions partial 
+	let completeSessionsById = new Map();		// Defined on paintSessionBatch in the simlet_sessions partial 
 	let	completeActivitiesById = new Map();		// Defined on fillSessionCard in the simlet_sessions partial
-	let completeGroupsById = new Map();			// Defined on paintAllocator in the simlet_users partial
+	let completeGroupsById = new Map();			// Defined on paintGroupBatch in the simlet_users partial
+	let completeSandboxGroupsById = new Map();	// Defined when loading the SIMLET info or when checking if the current 
+												// user is participant of a session in the simlet_sessions partial
 	let participantsById = new Map();			// Defined on paintAllocator in the simlet_users partial
 	let participantsByUsername = new Map();		// Defined on paintAllocator in the simlet_users partial
 	
@@ -134,10 +136,10 @@ the elements and scripts defined in the simlet_commons partial -->
 		// Get the current user, store it, and paint the rest of the SIMLET
 		Simva.getCurrentUser((error, user) => {
 			if (!error) {
-				currentUser = user;
 				Simva.getUser(user.username, function(error, result) {
-					participantsById.set(user.user_id, result);
-					participantsByUsername.set(user.username, result);
+					currentUser = result;
+					participantsById.set(currentUser.user_id, currentUser);
+					participantsByUsername.set(currentUser.username, currentUser);
 					
 					updateSimletInfo(true);
 				});
@@ -271,6 +273,33 @@ the elements and scripts defined in the simlet_commons partial -->
 		});
 	}
 
+	// Get and store the sandbox groups
+	const updateSandboxGroups = function(callback = null) {
+		Simva.getSimletGroups(simletId, { sandbox: true }, function(error, result) {
+			let completed = 0;
+			const checkCompleted = () => {
+				completed++;
+				if (completed >= result.length) {
+					if (callback != null && typeof callback === "function") {
+						callback();
+					}
+				}
+			};
+			
+			result.forEach((group) => {
+				Simva.getGroup(simletId, group.group_id, (error, result) => {
+					if(!error) {
+						completeSandboxGroupsById.set(group.group_id, result);
+					}
+					checkCompleted();
+				});
+			});
+			if (result.length == 0) {
+				checkCompleted();
+			}
+		});
+		
+	}
 		
 	const getSessionFromId = function(sessionId) {
 		if (completeSessionsById.has(Number(sessionId))) {

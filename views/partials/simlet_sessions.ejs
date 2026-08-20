@@ -482,9 +482,12 @@
 	
 			// Show session download button based on participant status
 			$("#session_test_data_download").hide();
-			if (isCurrentUserParticipant(session.completeParticipants)) {
-				$("#session_test_data_download").show();
-			}
+
+			isCurrentUserParticipant(sessionId).then((result) => {
+				if (result) {
+					$("#session_test_data_download").show();
+				}
+			});
 		}
 	}
     
@@ -574,14 +577,35 @@
 	// Functionality
 
 	/**
-	 * Check if the current user is a participant of a session based on its participants array
-	 * @param {Array} participants - array of objects where each object is the participant data with the property user_id
+	 * Check if the current user is a participant of a session based whether its group is allocated to it
+	 * (Can't be done by checking the session participants, since it stores the info of all the previous participants to paint their data)
+	 * @param {number} sessionId - id of the sesssion to check if the current user is participant
 	 * @returns {boolean} - true if the current user is in the session participants, false otherwise
 	 */
-	const isCurrentUserParticipant = function(participants) {
-		return currentUser.user_id !== null && participants.some(function(p) {
-			return p.user_id === currentUser.user_id || String(p.user_id) === String(currentUser.user_id);
-		});
+	const isCurrentUserParticipant = function(sessionId) {
+		// Common function to return if the user is participant
+		const isParticipant = () => {
+			// Iterate over all sandbox groups and, if the owner of the group is the 
+			// current user, return if the group is allocated to the session or not 
+			return Array.from(completeSandboxGroupsById).some(([groupId, group]) => {
+				return group.group_owner_user_id != null && group.group_owner_user_id == currentUser.user_id 
+					&& Object.values(group.allocations).includes(sessionId);
+			});
+		}
+		
+		// If there are no sandbox groups stored, update them in case the function has been called before fetching them
+		if (completeSandboxGroupsById.size == 0) {
+			// Wait for the request to return a response (since the function is expected to return a value)
+			return new Promise((resolve, reject) => {
+				updateSandboxGroups(() => {
+					resolve();
+				});
+			}).then(() => { return isParticipant(); })
+		}
+		else {
+			// Wrap synchronous return in a resolved promise to keep return type consistent
+			return Promise.resolve(isParticipant());
+		}
 	}
 
 	const deleteSession = function(sessionId, sessionName) {
@@ -594,7 +618,7 @@
 
 	/**
 	 * Change a session status
-	 * @param {number} sessionId - id of the sesssion
+	 * @param {number} sessionId - id of the sesssion to change the status for
 	 * @param {string} nextStatus - status the session will be changed to (active, inactive, terminated)
 	 */
 	const changeSessionStatus = function(sessionId, nextStatus) {
@@ -652,7 +676,7 @@
                 $.toast({ heading: 'Error', text: 'Failed to set tester.', position: 'top-right', icon: 'error', stack: false });
             } else {
                 $.toast({ heading: 'Tester set', text: 'You are now a tester in this session.', position: 'top-right', icon: 'success', stack: false });
-				onSessionUsersChange(sessionId);
+				onSessionUsersChange(sessionId, true);
             }
         });
     }
@@ -666,7 +690,7 @@
 				$.toast({ heading: 'Error', text: 'Failed to unset tester.', position: 'top-right', icon: 'error', stack: false });
 			} else {
 				$.toast({ heading: 'Tester unset', text: 'You are no longer a tester in this session.', position: 'top-right', icon: 'success', stack: false });
-				onSessionUsersChange(sessionId);
+				onSessionUsersChange(sessionId, true);
 			}
 		});
 	}
@@ -846,7 +870,7 @@
 		paintSessionActivities(session, activities, participants, card);
 
 		// Show/hide tester menu items based on current user status
-		paintCurrentUserTester(session.session_id, participants, card);
+		paintCurrentUserTester(session.session_id, card);
 
 		paintSessionStatus(session);
 		
@@ -931,22 +955,23 @@
 	/**
 	 * Update the session buttons that get affected by the current user participation in the session
 	 * @param {number} sessionId - id of the session to check if the current user is participant
-	 * @param {Array} participants - Array of objects containing the session participants info
 	 * @param {object} card - jquery object reference of the session card element
 	 */
-	const paintCurrentUserTester = function(sessionId, participants, card) {
-		if (isCurrentUserParticipant(participants)) {
-			currentUserTesterSessionId = sessionId;
-			card.find(".icon-tester").hide();
-			card.find(".icon-reset-tester").show();
-			card.find(".icon-untester").show();
-			card.find(".sessionTestLauch").show();
-		} else {
-			card.find(".icon-tester").show();
-			card.find(".icon-reset-tester").hide();
-			card.find(".icon-untester").hide();
-			card.find(".sessionTestLauch").hide();
-		}
+	const paintCurrentUserTester = function(sessionId, card) {
+		isCurrentUserParticipant(sessionId).then((result) => {
+			if (result) {
+				currentUserTesterSessionId = sessionId;
+				card.find(".icon-tester").hide();
+				card.find(".icon-reset-tester").show();
+				card.find(".icon-untester").show();
+				card.find(".sessionTestLauch").show();
+			} else {
+				card.find(".icon-tester").show();
+				card.find(".icon-reset-tester").hide();
+				card.find(".icon-untester").hide();
+				card.find(".sessionTestLauch").hide();
+			}
+		})
 	}
 
 	
@@ -1083,8 +1108,19 @@
 		updateEntireSession(sessionId);
 	}
 	
-	const onSessionUsersChange = function(sessionId) {
-		updateEntireSession(sessionId);
+	const onSessionUsersChange = function(sessionId, updatingCurrentUser = false) {
+		if (!updatingCurrentUser) {
+			updateEntireSession(sessionId);
+		}
+		else {
+			// Remove all sandbox groups from the stored groups to correctly update them 
+			// (when setting the current user as tester of a session, a new sandbox group 
+			// is created, and when unsetting the tester, the entire sandbox group is deleted)
+			completeSandboxGroupsById.clear();
+			updateSandboxGroups(() => {
+				updateEntireSession(sessionId);
+			});
+		}
 	}
 
 </script>

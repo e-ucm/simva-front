@@ -324,13 +324,13 @@
 
 		$("#downloadFormTitle").text(`<%- t('single.title', { ns : 'activities' }) %>: ${activity.activity_name}`);
 
-		const session = getSessionFromId(activity.session_id);
-
 		// Show test download button only if the current user is participant of the session
 		$("#activity_test_data_download").hide();
-		if (isCurrentUserParticipant(session.completeParticipants)) {
-			$("#activity_test_data_download").show();
-		}
+		isCurrentUserParticipant(activity.session_id).then((result) => {
+			if (result) {
+				$("#activity_test_data_download").show();
+			}
+		});
 	}
 
 	// Expand/hide activity participants table
