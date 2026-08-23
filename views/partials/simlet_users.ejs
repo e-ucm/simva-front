@@ -586,7 +586,7 @@
 			let added = 0;
 
 			// Callback to wait for all the addGroupParticipant calls to finish
-			const addUsersComplete = () => {
+			const allUsersAdded = () => {
 				completed++;
 				if (completed == usernames.length) {
 					// If all users have been correctly added, close the form
@@ -634,7 +634,7 @@
 								    added++;
 									createdUsersInfo.add(user);
 								}
-								addUsersComplete();
+								allUsersAdded();
 							});
 						});
 					}
@@ -1512,7 +1512,7 @@
 			let completed = 0;
 
 			// Callback to call each time an user id gets fetched
-			const onParticipantsFetched = () => {
+			const allParticipantsFetched = () => {
 				completed++;
 				if (completed >= creationResult.length) {
 					registerAndAdd();
@@ -1525,7 +1525,7 @@
 					if (!error) {
 						newParticipants.push(result);
 					}
-					onParticipantsFetched();
+					allParticipantsFetched();
 				});
 			})
 		}

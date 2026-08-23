@@ -1153,8 +1153,8 @@ input[type="button"].openLimesurveyButton {
 .content .test .activities .activity table tbody tr:nth-child(odd) { background: #c5c5c5 }
 .content .test .activities .activity table tr td, .content .test .activities .activity table tr th { border: solid 1px black; padding: 5px; height: 32px;  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; vertical-align: middle; }
 .content .test .activities .activity table tr td { width: 33.33%; }
-.content .test .activities .activity table tr.off { opacity: 0.5; }
-.content .test .activities .activity table tr.off td a { pointer-events: none; }
+.content .test .activities .activity table tr.off { opacity: 0.5; filter: brightness(40%); color: #000; }
+.content .test .activities .activity table tr.off td a, .content .test .activities .activity table tr.off td input[type="checkbox"] { pointer-events: none; }
 .content .test .activities .activity .red { background-color: #ff9696; }
 .content .test .activities .activity .green { background-color: #adffad; }
 .content .test .activities .activity .yellow { background-color: #fff688; }

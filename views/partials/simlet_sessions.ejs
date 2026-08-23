@@ -1091,16 +1091,34 @@
 	}
 	
 	const onSessionUsersChange = function(sessionId, updatingCurrentUser = false) {
-		if (!updatingCurrentUser) {
-			updateEntireSession(sessionId);
-		}
-		else {
-			// Remove all sandbox groups from the stored groups to correctly update them 
-			// (when setting the current user as tester of a session, a new sandbox group 
-			// is created, and when unsetting the tester, the entire sandbox group is deleted)
+		// If only updating the current user, clear all the stored sandbox groups to 
+		// correctly update them (when setting the current user as tester of a session,
+		// a new sandbox group is created, and when unsetting the tester, the entire
+		// sandbox group is deleted). Then, update the entire session
+		if (updatingCurrentUser) {
 			completeSandboxGroupsById.clear();
 			updateSandboxGroups(() => {
 				updateEntireSession(sessionId);
+			});
+		}
+		// If updating the users of a group, update all the currently stored groups
+		// to store the allocators info correctly and then update the entire session
+		else {
+			let completed = 0;
+			const allGroupsUpdated = () => {
+				completed++;
+				if (completed >= completeGroupsById.size) {
+					updateEntireSession(sessionId);
+				}
+			}
+			
+			completeGroupsById.forEach((group, groupId) => {
+				Simva.getGroup(simletId, group.group_id, (error, result) => {
+					if(!error) {
+						completeGroupsById.set(group.group_id, result);
+					};
+					allGroupsUpdated();
+				});
 			});
 		}
 	}

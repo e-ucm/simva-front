@@ -279,7 +279,7 @@ the elements and scripts defined in the simlet_commons partial -->
 	const updateSandboxGroups = function(callback = null) {
 		Simva.getSimletGroups(simletId, { sandbox: true }, function(error, result) {
 			let completed = 0;
-			const checkCompleted = () => {
+			const allGroupsFetched = () => {
 				completed++;
 				if (completed >= result.length) {
 					if (callback != null && typeof callback === "function") {
@@ -293,11 +293,11 @@ the elements and scripts defined in the simlet_commons partial -->
 					if(!error) {
 						completeSandboxGroupsById.set(group.group_id, result);
 					}
-					checkCompleted();
+					allGroupsFetched();
 				});
 			});
 			if (result.length == 0) {
-				checkCompleted();
+				allGroupsFetched();
 			}
 		});
 		
