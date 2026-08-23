@@ -31,7 +31,7 @@
 <div id="session_template" style="display: none;">
 	<div class="test">
 		<div class="sessionTop" >
-			<h2 class="sessionTitle">	</h2>
+			<h2 class="sessionTitle">-</h2>
 			<div class="tooltipLine">
 				<div class="tooltip">
 					&#x1F6C8;
@@ -82,7 +82,7 @@
                 </ul>
             </div>
         </div>
-        <div class="sessionDescription" style="padding:10px;">	 </div>
+        <div class="sessionDescription">	 </div>
         <div class="sessionSummary">
             <div class="sessionInfo">
                 <strong><%- t('createdAt', { ns : 'sessions' }) %>: </strong><span class="sessionCreateDate">-</span>
@@ -98,7 +98,7 @@
                     <done class="completionPercentage">		</done>% [ <doneres class="completedUsers">		</doneres> / <total class="completedTotalUsers">		</total> ]
                 </span>
             </div>
-			<div class="sessionInfo">
+			<div>
 				<div class="text-with-icon icon-download sessionDownload" title="<%- t('download.description', { ns : 'sessions' }) %>" style="margin-bottom: 10px;">
 					<b><%- t('download.title', { ns : 'sessions' }) %></b>
 				</div>
@@ -465,7 +465,7 @@
 	
 	// Expand/hide session info
 	const toggleSession = function(sessionId, forceVisible) {
-		$(`#session_${sessionId} .expandButton`).toggleClass('collapsed');
+		$(`#session_${sessionId} .sessionTop .expandButton`).toggleClass('collapsed');
 		$(`#session_${sessionId} .tooltipLine.activitiesTitle`).toggle();
 		$(`#session_${sessionId} .activities`).toggle();
 	}
@@ -483,11 +483,9 @@
 			// Show session download button based on participant status
 			$("#session_test_data_download").hide();
 
-			isCurrentUserParticipant(sessionId).then((result) => {
-				if (result) {
-					$("#session_test_data_download").show();
-				}
-			});
+			if (isCurrentUserParticipant(sessionId)) {
+				$("#session_test_data_download").show();
+			}
 		}
 	}
     
@@ -583,29 +581,13 @@
 	 * @returns {boolean} - true if the current user is in the session participants, false otherwise
 	 */
 	const isCurrentUserParticipant = function(sessionId) {
-		// Common function to return if the user is participant
-		const isParticipant = () => {
-			// Iterate over all sandbox groups and, if the owner of the group is the 
-			// current user, return if the group is allocated to the session or not 
-			return Array.from(completeSandboxGroupsById).some(([groupId, group]) => {
-				return group.group_owner_user_id != null && group.group_owner_user_id == currentUser.user_id 
-					&& Object.values(group.allocations).includes(sessionId);
-			});
-		}
-		
-		// If there are no sandbox groups stored, update them in case the function has been called before fetching them
-		if (completeSandboxGroupsById.size == 0) {
-			// Wait for the request to return a response (since the function is expected to return a value)
-			return new Promise((resolve, reject) => {
-				updateSandboxGroups(() => {
-					resolve();
-				});
-			}).then(() => { return isParticipant(); })
-		}
-		else {
-			// Wrap synchronous return in a resolved promise to keep return type consistent
-			return Promise.resolve(isParticipant());
-		}
+		// Iterate over all sandbox groups (since the current user info doesn't store the group it belongs to)
+		return Array.from(completeSandboxGroupsById).some(([groupId, group]) => {
+			// The current user is participant of the session if the group is allocated to the session 
+			return group.group_owner_user_id != null && group.group_owner_user_id == currentUser.user_id
+				&& group.allocations != null && Object.values(group.allocations).includes(sessionId);
+		});
+		return false
 	}
 
 	const deleteSession = function(sessionId, sessionName) {
@@ -867,7 +849,7 @@
 		card.find(".sessionSummary .completedTotalUsers").text(userCount);
 
 		// Paint all the activities in this session (defined at simlet_activities)
-		paintSessionActivities(session, activities, participants, card);
+		paintSessionActivities(session, activities, card);
 
 		// Show/hide tester menu items based on current user status
 		paintCurrentUserTester(session.session_id, card);
@@ -958,27 +940,25 @@
 	 * @param {object} card - jquery object reference of the session card element
 	 */
 	const paintCurrentUserTester = function(sessionId, card) {
-		isCurrentUserParticipant(sessionId).then((result) => {
-			if (result) {
-				currentUserTesterSessionId = sessionId;
-				card.find(".icon-tester").hide();
-				card.find(".icon-reset-tester").show();
-				card.find(".icon-untester").show();
-				card.find(".sessionTestLauch").show();
-			} else {
-				card.find(".icon-tester").show();
-				card.find(".icon-reset-tester").hide();
-				card.find(".icon-untester").hide();
-				card.find(".sessionTestLauch").hide();
-			}
-		})
+		if (isCurrentUserParticipant(sessionId)) {
+			currentUserTesterSessionId = sessionId;
+			card.find(".icon-tester").hide();
+			card.find(".icon-reset-tester").show();
+			card.find(".icon-untester").show();
+			card.find(".sessionTestLauch").show();
+		} else {
+			card.find(".icon-tester").show();
+			card.find(".icon-reset-tester").hide();
+			card.find(".icon-untester").hide();
+			card.find(".sessionTestLauch").hide();
+		}
 	}
 
 	
 	// Functions to call to avoid reloading the whole view when updating info of any session 
 
 	const onCreateOrEditSession = function(newSessionInfo) {		
-		const isNew = getSessionFromId(newSessionInfo.session_id) == null;
+		const prevInfo = getSessionFromId(newSessionInfo.session_id);
 
 		// Update the basic SIMLET info without repainting everything to get the new session and tags
 		updateSimletInfo(false, () => {
@@ -986,9 +966,14 @@
 			paintSessionBatch([newSessionInfo]);
 
 			// If the session is new, update the searching parameters and move the card to the correct order
-			if (isNew) {
+			if (prevInfo == null) {
 				sessionsFilteringPaginationData["totalResults"]++;
 				sessionsFilteringPaginationData["updateSearchOptions"]();
+			}
+
+			// If the session is new or its name changed, update it in the allocators dropdowns
+			if (prevInfo == null || prevInfo.session_name != newSessionInfo.session_name) {
+				allocatorsOnSessionsChanged(newSessionInfo.session_id);
 			}
 
 			// Determine the sort order callback
@@ -1052,9 +1037,6 @@
 			else {
 				$(`#session_${newSessionInfo.session_id}`).remove();
 			}
-			
-			// Update the allocators to add the new session or edit the existing session name of the dropdowns
-			allocatorsOnSessionsChanged(newSessionInfo.session_id);
 		});
 	}
 

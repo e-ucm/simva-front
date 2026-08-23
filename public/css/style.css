@@ -975,16 +975,14 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	border-bottom: 0px solid transparent;
 }
 
+.sessionDescription { padding:10px; }
 .sessionSummary {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: stretch;
 	width: 100%;
 	align-items: center;
-	margin-top: 5px;
-}
-.sessionSummary .icon-download::before {
-	filter: none;
+	padding:10px;
 }
 .sessionInfo {
 	width: max-content;
@@ -1000,17 +998,9 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	margin: 0;
 	margin-right: 20px;
 }
-.sessionProgress.progress span {
-	top: 3px;
-}
-.sessionTestLauch, .sessionDownload {
-	margin-left: auto;
-	margin-right: 15px;
-	cursor: pointer;
-}
-.sessionTestLauch::before {
-	filter: none;
-}
+.sessionProgress.progress span { top: 3px; }
+.sessionTestLauch, .sessionDownload { cursor: pointer; }
+.sessionTestLauch::before, .sessionDownload::before  { filter: none; }
 
 .sessionTags {
 	margin-top: 8px;
@@ -1115,6 +1105,13 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 }
 .icon-survey::before, .icon-edit-survey::before { background-image: url("../images/icons/questionnaire.png"); }
 .icon-survey::before { width: 24px; height: 24px; }
+input[type="button"].openLimesurveyButton { 
+	background-color: #3f8446;
+	width: auto;
+	margin-left: auto;
+	margin-right: 0;
+	margin-top: 10px;
+}
 
 .content .test .activities .activity.tgameplay {
 	background-color: #163f67;
@@ -1156,7 +1153,8 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .content .test .activities .activity table tbody tr:nth-child(odd) { background: #c5c5c5 }
 .content .test .activities .activity table tr td, .content .test .activities .activity table tr th { border: solid 1px black; padding: 5px; height: 32px;  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; vertical-align: middle; }
 .content .test .activities .activity table tr td { width: 33.33%; }
-
+.content .test .activities .activity table tr.off { opacity: 0.5; }
+.content .test .activities .activity table tr.off td a { pointer-events: none; }
 .content .test .activities .activity .red { background-color: #ff9696; }
 .content .test .activities .activity .green { background-color: #adffad; }
 .content .test .activities .activity .yellow { background-color: #fff688; }

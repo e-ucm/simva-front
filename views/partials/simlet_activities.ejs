@@ -66,7 +66,6 @@
 <!-- <script type="text/javascript" src="/src/activities/rageanalyticspainter.js"></script>
 <script type="text/javascript" src="/src/activities/miniopainter.js"></script>
 <script type="text/javascript" src="/src/activities/rageminiopainter.js"></script>
-<script type="text/javascript" src="/src/activities/gameplaypainter.js"></script>
 <script type="text/javascript" src="/src/activities/ltitoolpainter.js"></script>
 <script type="text/javascript" src="/src/activities/imspackagepainter.js"></script> -->
 
@@ -326,16 +325,14 @@
 
 		// Show test download button only if the current user is participant of the session
 		$("#activity_test_data_download").hide();
-		isCurrentUserParticipant(activity.session_id).then((result) => {
-			if (result) {
-				$("#activity_test_data_download").show();
-			}
-		});
+		if (isCurrentUserParticipant(activity.session_id)) {
+			$("#activity_test_data_download").show();
+		}
 	}
 
 	// Expand/hide activity participants table
 	const toggleActivityTable = function(activityId) {
-		$(`#activity_${activityId} .expandButton`).toggleClass('collapsed');
+		$(`#activity_${activityId} .activityTopActions .expandButton`).toggleClass('collapsed');
 		$(`#activity_${activityId} table`).toggle();
 	}
 
@@ -398,6 +395,7 @@
 		const sessionData = $(this).closest(".test").data();
 		deleteActivity(data[ACTIVITY_DATA_ID_KEY], data[ACTIVITY_DATA_NAME_KEY], sessionData[SESSION_DATA_ID_KEY])
 	});
+	
 	// Checkbox to set/unset completion for user
 	$(document).on('change', ".compProgress input[type='checkbox']", function (e) {
         const data = $(this).closest("tr").data();
@@ -540,10 +538,9 @@
 	 * Paint all the activities cards of a session
 	 * @param {object} sesion - object containing the session info
 	 * @param {Array} activities - Array of objects containing the activities info
-	 * @param {Array} participants - Array of objects containing the session participants info
 	 * @param {object} sessionCard - jquery object reference of the session card element
 	 */
-    const paintSessionActivities = async function(session, activities, participants, sessionCard) {
+    const paintSessionActivities = async function(session, activities, sessionCard) {
 		sessionCard.find(".activities").empty();
 		sessionCard.find(".activities_loader").show();
 
@@ -555,7 +552,7 @@
 			activities.forEach((activity) => {
 				const painter = getActivityPainterByType(activity.activity_type);
 				if (painter != null) {
-                    painter.addActivityCard(simletId, activity, participants, sessionCard);
+                    painter.addActivityCard(simletId, activity, sessionCard);
                 }
 			});
 			sessionCard.find(".activities_loader").hide();

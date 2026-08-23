@@ -985,7 +985,7 @@
 
 
 	const getCurrentAllocation = function(groupId, participantId = null) {
-		const group = getGroupFromId(groupId);
+		const group = getGroupFromId(groupId) || getSandboxGroupFromId(groupId);
 		if (group != null) {
 			const painter = getAllocatorPainterByType(group.group_allocator_type || 'default');
 			if (painter != null) {

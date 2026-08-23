@@ -45,9 +45,7 @@
             });
 
             // Determine the session the group is allocated to and select the option in the dropdown
-            
             dropdown.val(this.getCurrentAllocation(group));
-            console.log(dropdown.val())
 
             $(`#allocator_content_${group.group_id}`).append(content);
         }

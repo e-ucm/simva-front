@@ -303,7 +303,7 @@
         
         // Initial activity card rendering
 
-        addActivityCard(sessionId, activity, participants, sessionCard) {
+        addActivityCard(sessionId, activity, sessionCard) {
             // Add the session card synchronously to ensure they appear in order
             const card = $("#activity_template .activity").clone();
             sessionCard.find(".activities").append(card);
@@ -314,16 +314,15 @@
             card.data(ACTIVITY_DATA_NAME_KEY, activity.activity_name);
             card.attr("id", `activity_${activity.activity_id}`);
 
-            this.fillActivityCard(activity, participants, card);
+            this.fillActivityCard(activity, card);
         }
 
         /**
          * Fill the activity card info programatically to avoid XSS
          * @param {object} activity - object containing the activity info
-         * @param {Array} participants - Array of objects containing the session participants info
          * @param {object} card - jquery object reference of the card element
          */
-        async fillActivityCard(activity, participants, card) {
+        async fillActivityCard(activity, card) {
             card.addClass(`t${activity.activity_type}`);
             card.find(".activityName").text(activity.activity_name);
 
@@ -333,6 +332,14 @@
             card.find(".initCompProgress").attr("id", `init_comp_progress_${activity.activity_id}`);
 
             // toggleActivityTable(activity.activity_id);
+
+            let participants = [];
+            Object.keys(activity.data.completion).forEach((participantId) => {
+                const participant = getParticipantFromId(participantId);
+                if (participant != null) {
+                    participants.push(participant);
+                }
+            });
             
             this.fillParticipantsTable(card, activity, participants);
             this.updateParticipants(activity, participants);
@@ -346,6 +353,10 @@
                 const row = $("#activity_participant_template tr").clone();
                 row.data(USER_DATA_ID_KEY, participant.user_id);
                 table.append(row);
+
+                if (getCurrentAllocation(participant.group_id, participant.user_id) != activity.session_id) {
+                    row.addClass("off");
+                }
 
                 const participantKey = this.getParticipantKey(participant);
                 row.attr("id", `user_${activity.activity_id}_${participantKey}`);
@@ -552,16 +563,15 @@
         }
 
 
-        paintActivityResult(activity, results, participants) {
+        paintActivityResult(activity, results, participants, resultsInvalidValue = null) {
             if (!results) {
                 return;
             }
-
             participants.forEach((participant) => {
                 const participantKey = this.getParticipantKey(participant);
                 const status = this.getParticipantMappedValue(results, participant);
                 
-                if (status != null) {
+                if (status != null && status != resultsInvalidValue) {
                     this.paintParticipantResult(activity.activity_id, participantKey)
                 }
                 else {
@@ -646,7 +656,7 @@
                 // If the activity will be marked as completed, add another participant to
                 // the completed progress of the top bar and make its progress bar green
                 if (completion) {
-                    done++;                
+                    done++;
                     $(`#progress_${activityId}_${participantId} .done`).removeClass("partial");
                 }
                 // Otherwise, remove a participant from the completed progress of the top bar
@@ -676,16 +686,10 @@
                 $(`#result_${activityId}_${participantId}`).addClass(colorClass);
 
                 $(`#completion_${activityId}_${participantId} input[type="checkbox"]`).prop("checked", completion);
-            }
-            
-        }
-        
-        updateActivityResult(activityId, participantId, result) {
-            if (result) {
+
                 this.paintParticipantResult(activityId, participantId);
             }
         }
-   
     }
 
 </script>

@@ -146,7 +146,7 @@
 
         // Render
         
-        async fillActivityCard(activity, participants, card) {
+        async fillActivityCard(activity, card) {
             // Add the extra buttons to the 3-dot menu after the Tmon button
             const extraKebab = $("#manual_extra_kebab_template li").clone();
             card.find(".kebab-dropdown").find(".icon-url").after(extraKebab);
@@ -177,7 +177,7 @@
             // Add the type icon next to the activity name
             card.find(".activityName").addClass("text-with-icon").addClass(iconClass);
 
-            super.fillActivityCard(activity, participants, card);
+            super.fillActivityCard(activity, card);
             this.simple_name = prevSimpleName;
         }
 

@@ -141,7 +141,9 @@ the elements and scripts defined in the simlet_commons partial -->
 					participantsById.set(currentUser.user_id, currentUser);
 					participantsByUsername.set(currentUser.username, currentUser);
 					
-					updateSimletInfo(true);
+					updateSandboxGroups(() => {
+						updateSimletInfo(true);
+					});
 				});
 			} else {
 				console.error("Error fetching current user:", error);
@@ -318,6 +320,13 @@ the elements and scripts defined in the simlet_commons partial -->
 	const getGroupFromId = function (groupId) {
 		if (completeGroupsById.has(Number(groupId))) {
 			return completeGroupsById.get(Number(groupId));
+		}
+		return null;
+	}
+
+	const getSandboxGroupFromId = function (groupId) {
+		if (completeSandboxGroupsById.has(Number(groupId))) {
+			return completeSandboxGroupsById.get(Number(groupId));
 		}
 		return null;
 	}

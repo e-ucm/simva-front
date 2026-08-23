@@ -31,12 +31,12 @@
         <input id="survey_id_field" type="number" name="surveyid" placeholder="<%= t('limesurvey.surveyid.placeholder', { ns : 'activities' }) %>">
 
     </div>
-    <div id="limesurvey_byexisting" class="subform">
+    <div id="limesurvey_byexisting" class="subform" style="display: flex; flex-direction: column;">
         <h3><%= t('limesurvey.survey.title', { ns : 'activities' }) %></h3>
         <select name="existingid" id="existing_survey_field" onchange="loadSurveyLanguages()">
         </select>
         
-        <input type="button" class="green" value="<%= t('limesurvey.new.description', { ns : 'activities' }) %>" onclick="openNewLimesurvey()"></input>
+        <input type="button" class="openLimesurveyButton" value="<%= t('limesurvey.new.description', { ns : 'activities' }) %>" onclick="openNewLimesurvey()"></input>
         <h3><%= t('limesurvey.language.title', { ns : 'activities' }) %></h3>
         <select name="language" id="survey_language_field">
         </select>
@@ -172,7 +172,7 @@
 
         // Render
 
-        async fillActivityCard(activity, participants, card) {
+        async fillActivityCard(activity, card) {
             // Add the type icon next to the activity name
             card.find(".activityName").addClass("text-with-icon").addClass("icon-survey");
             
@@ -190,7 +190,7 @@
             meta.find(".surveyId").text(activity.survey_id);
             meta.find(".surveyLang").text(activity.survey_language);
 
-            super.fillActivityCard(activity, participants, card);
+            super.fillActivityCard(activity, card);
         }
 
     }
