@@ -2,7 +2,7 @@
 
 <!-- Template for the 3-dot menu of the activity  -->
 <div id="gameplay_extra_kebab_template" style="display: none;">
-    <li class="text-with-icon icon-download" title="<%= t('settings.download.trackerConfig', { ns : 'activities' }) %>"><%= t('settings.download.trackerConfig', { ns : 'activities' }) %></li>
+    <li class="text-with-icon icon-download" title="<%= t('settings.download.trackerConfig.title', { ns : 'activities' }) %>"><%= t('settings.download.trackerConfig.title', { ns : 'activities' }) %></li>
     <li class="text-with-icon icon-activate" title="<%= t('completed.all.set', { ns : 'activities' }) %>"><%= t('completed.all.set', { ns : 'activities' }) %></li>
     <li class="text-with-icon icon-pause" title="<%= t('completed.all.unset', { ns : 'activities' }) %>"><%= t('completed.all.unset', { ns : 'activities' }) %></li>
 </div>
@@ -137,7 +137,6 @@
             this.supportedType = "gameplay";
         	this.simple_name = "<%= t('gameplay.name', { ns : 'activities' }) %>";
             this.description = "<%= t('gameplay.description', { ns : 'activities' }) %>";
-            this.resultFilePrefix = "<%= t('gameplay.result.file.prefix', { ns : 'activities' }) %>";
         }
 
 

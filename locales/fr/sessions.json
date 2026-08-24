@@ -27,8 +27,9 @@
         "import.tab": "Importer une session",
         "import.input": "Sélectionnez fichier de session exporté",
         "import.submit": "Importer une session",
-    
-    "edit.title": "Modifier le session",
+
+    "settings.edit.title": "Modifier",
+        "edit.title": "Modifier le session",
         "edit.submit": "Modifier le session",
     
     "name.title": "Nom",
@@ -46,10 +47,8 @@
         "tags.edit.placeholder": "Nom du tag",
         "tags.save": "Enregistrer",
         "tags.edit.cancel": "Annuler",
-
     "can_be_manually_activated": "La session peut être activée manuellement",
 
-    "settings.edit.title": "Modifier",
     "settings.add_activity.title": "Ajouter une activité",
 
     "settings.duplicate.title": "Dupliquer",

@@ -10,11 +10,11 @@
     			<div class="expandButton"></div>
 				<div class="kebab">
 					<ul class="kebab-dropdown">
-						<li class="text-with-icon icon-edit" title="<%= t('edit.title', { ns : 'activities' }) %>"><%= t('edit.title', { ns : 'activities' }) %></li>
-						<li class="text-with-icon icon-export" title="<%= t('export.title', { ns : 'activities' }) %>"><%= t('export.title', { ns : 'activities' }) %></li>
-						<li class="text-with-icon icon-url" title="<%= t('tmon.title', { ns : 'activities' }) %>"><%= t('tmon.title', { ns : 'activities' }) %></li>
+						<li class="text-with-icon icon-edit" title="<%= t('settings.edit.title', { ns : 'activities' }) %>"><%= t('settings.edit.title', { ns : 'activities' }) %></li>
+						<li class="text-with-icon icon-export" title="<%= t('settings.export.title', { ns : 'activities' }) %>"><%= t('settings.export.title', { ns : 'activities' }) %></li>
+						<li class="text-with-icon icon-url" title="<%= t('settings.tmon.title', { ns : 'activities' }) %>"><%= t('settings.tmon.title', { ns : 'activities' }) %></li>
                         
-                        <li class="text-with-icon icon-delete" title="<%= t('delete.title', { ns : 'activities' }) %>"><%= t('delete.title', { ns : 'activities' }) %></li>
+                        <li class="text-with-icon icon-delete" title="<%= t('settings.delete.title', { ns : 'activities' }) %>"><%= t('settings.delete.title', { ns : 'activities' }) %></li>
 					</ul>
 				</div>
 			</div>
@@ -81,7 +81,6 @@
             this.supportedType = "activity";
         	this.simple_name = "<%= t('activity.name', { ns : 'activities' }) %>";
             this.description = "<%= t('activity.description', { ns : 'activities' }) %>";
-            this.resultFilePrefix = "<%= t('activity.result.file.prefix', { ns : 'activities' }) %>";
         }
 
         // Menus
@@ -136,7 +135,7 @@
         // Functionality 
 
         /**
-         * Download the activity results of a participant 
+         * Download the results (from the LRS) of the entire activity or a participant 
          * @param {number} activityId - id of the activity that has the participant
          * @param {number} participantId - id of the participant to download the results from 
          * @param {string} resultType - type of the result data(full/code/traces)
@@ -154,11 +153,16 @@
                     });
                 } 
                 else {
-                    const filename = `${this.resultFilePrefix}_${activityId}_${participantId}.json`
+                    const activity = getActivityFromId(activityId);
+                    const session = getSessionFromId(activity.session_id);
+                    let filename = `simlet_${simlet.simlet_name}-session_${session.session_name}-activity_${activity.activity_name}`;
                     if (participantId) {
+                        const participant = getParticipantFromId(participantId);
+                        filename += `-participant_${participant.username}-${this.supportedType}_results.json`;
     					Utils.downloadContent(result[participantId], filename, errorMsg);
                     }
                     else {
+                        filename += `-${this.supportedType}_results.json`;
                         Utils.download(filename, JSON.stringify(result, null, 2));
                     }
                 }
@@ -166,7 +170,7 @@
         }
 
         /**
-         * Download the entire activity backup in a single file 
+         * Download (from MinIO) the entire activity backup in a single file 
          * @param {number} activityId - id of the activity to download the info from
          */
         downloadGlobalActivityBackup(activityId) {
@@ -182,13 +186,16 @@
                     });
                 } else {
                     console.log('Minio URL for backup:', result);
-                    Utils.downloadContent(result.url, `${this.resultFilePrefix}_${activityId}.json`, errorMsg);
+                    const activity = getActivityFromId(activityId);
+                    const session = getSessionFromId(activity.session_id);
+                    const filename = `simlet_${simlet.simlet_name}-session_${session.session_name}-activity_${activity.activity_name}-${this.supportedType}_backup.json`;
+                    Utils.downloadContent(result.url, filename, errorMsg);
                 }
             });
         }
 
         /**
-         * Download the activity backup in a file for each participant and compress them into a zip
+         * Download (from MinIO) the activity backup for each participant (a file for each) and compress them into a zip
          * @param {number} activityId - id of the activity to download the info from
          * @param {string} resultType - type of result of the result data(full/code/traces)
          */
@@ -204,13 +211,17 @@
                         stack: false
                     });
 				} else {
-					let zip = new JSZip();
+                    const activity = getActivityFromId(activityId);
+                    const session = getSessionFromId(activity.session_id);
+                    let filename = `simlet_${simlet.simlet_name}-session_${session.session_name}-activity_${activity.activity_name}`;
+
+                    let zip = new JSZip();
 					let hasResults = false;
 					let downloadPromises = [];
-					for(const participant in result) {
-						if (result.hasOwnProperty(participant) && result[participant] != null) {
+					for(const participantId in result) {
+						if (result.hasOwnProperty(participantId) && result[participantId] != null) {
 							downloadPromises.push(
-								fetch(result[participant])
+								fetch(result[participantId])
 								.then((response) => {
 									if (!response.ok) {
 										throw new Error(`HTTP ${response.status}`);
@@ -218,23 +229,27 @@
 									return response.blob();
 								})
 								.then((blob) => {
-									zip.file(`${this.resultFilePrefix}_${activityId}_${participant}.json`, blob);
+                                    const participant = getParticipantFromId(participantId);
+                                    const userFilename = filename + `-participant_${participant.username}-${this.supportedType}_backup.json`;
+									zip.file(userFilename, blob);
 								})
 								.catch((error) => {
-									console.error(`Error fetching result for participant ${participant}:`, error);
+									console.error(`Error fetching result for participant ${participantId}:`, error);
 								})
 							);
 							hasResults = true;
 						};
 					}
 					if (!hasResults) {
-						Utils.download(`${this.resultFilePrefix}_${activityId}_nodata.json`, JSON.stringify(result,null,2));
+                        filename += "_backup_no_data.json";
+						Utils.download(filename, JSON.stringify(result,null,2));
 					} else {
 						Promise.all(downloadPromises)
 						.then(() => zip.generateAsync({type:"blob"}))
 						.then((content) => {
+                            filename += `-${this.supportedType}_backup.zip`;
 							// see FileSaver.js
-							saveAs(content, `${this.resultFilePrefix}_${activityId}.zip`);
+							saveAs(content, filename);
 						});
 					}
 				}

@@ -1012,17 +1012,6 @@ module.exports = function(auth, redirectToLogin, config){
                 next(error.response?.data || error);
             } else {
                 logger.info("Allocator types before i18n processing:", result);
-                result.forEach(element => {
-                    element['description'] = req.t(`allocator.${element.allocator_type}.description`, { ns : 'groups' } );
-                    element['name'] = req.t(`allocator.${element.allocator_type}.title`, { ns : 'groups' } );
-                    element['type_t'] = req.t(`allocator.${element.allocator_type}.type`, { ns : 'groups' } );
-                    element['type_title'] = req.t(`allocator.type.title`, { ns : 'groups' } );
-                    element['test_title'] = req.t(`allocator.sessions.title`, { ns : 'groups' } );
-                    element['participant_title'] = req.t(`allocator.participants.title`, { ns : 'groups' } );
-                    element['add_error'] = req.t(`allocator.add.error`, { ns : 'groups' } );
-                    element['add_message'] = req.t(`allocator.add.message`, { ns : 'groups' } );
-                    element['add_title'] = req.t(`allocator.add.title`, { ns : 'groups' } );
-                });
                 res.status(200).send(result);
             }
         });

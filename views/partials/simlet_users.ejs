@@ -871,7 +871,7 @@
 
 	$(document).on('click', ".groupTop .icon-export", function(e) {
 		const data = $(this).closest(".test").data();
-		exportGroup(data[GROUP_DATA_ID_KEY], data[GROUP_DATA_NAME_KEY]);
+		exportGroup(data[GROUP_DATA_ID_KEY]);
 	});
 
 	// Export group to PDF printable table
@@ -940,11 +940,11 @@
 		}
 	}
 
-	const exportGroup = function(groupId, groupName) {
+	const exportGroup = function(groupId) {
 		Simva.exportGroup(simletId, groupId, true, function(error, result) {
 			if (!error) {
 				const content = JSON.stringify(result, null, 2);
-				const filename = `simlet-group-${groupName}-export.json`;
+				const filename = `simlet_${simlet.simlet_name}-group_${result.group_name}-export.json`;
 				Utils.download(filename, content);
 			} else {
 				alert(error.responseJSON ? error.responseJSON.message : (error.message || error));

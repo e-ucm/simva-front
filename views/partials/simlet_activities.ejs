@@ -448,7 +448,10 @@
 					stack: false
 				});
 			} else {
-				Utils.downloadContent(result.data, `full_xapi_data_${downloadActivityId}.json`, errorMsg);
+				const activity = getActivityFromId(downloadActivityId);
+				const session = getSessionFromId(activity.session_id);
+				const filename = `simlet_${simlet.simlet_name}-session_${session.session_name}-activity_${activity.activity_name}-full_xapi_data_.json`;
+				Utils.downloadContent(result.data, filename, errorMsg);
 			}
 		});
 	}
@@ -465,7 +468,10 @@
 					stack: false
 				});
 			} else {
-				Utils.downloadContent(result.data, `test_xapi_data_${downloadActivityId}.json`, errorMsg);
+				const activity = getActivityFromId(downloadActivityId);
+				const session = getSessionFromId(activity.session_id);
+				const filename = `simlet_${simlet.simlet_name}-session_${session.session_name}-activity_${activity.activity_name}-test_xapi_data_.json`;
+				Utils.downloadContent(result.data, filename, errorMsg);
 			}
 		});
 	}
@@ -502,7 +508,9 @@
 				});
 			} 
 			else {
-				Utils.downloadContent(JSON.stringify(result, null, 2), `activity_export_${activityId}.json`);
+				const session = getSessionFromId(result.session_id);
+				const filename = `simlet_${simlet.simlet_name}-session_${session.session_name}-activity_${result.activity_name}-export.json`;
+				Utils.downloadContent(JSON.stringify(result, null, 2), filename);
 			}
 		});
 	}

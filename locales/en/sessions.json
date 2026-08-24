@@ -28,7 +28,8 @@
         "import.input": "Select exported session file",
         "import.submit": "Import session",
 
-    "edit.title": "Edit session",
+    "settings.edit.title": "Edit",
+        "edit.title": "Edit session",
         "edit.submit": "Edit session",
     
     "name.title": "Name",
@@ -46,10 +47,8 @@
         "tags.edit.placeholder": "Tag name",
         "tags.edit.save": "Save",
         "tags.edit.cancel": "Cancel",
-
     "can_be_manually_activated": "Can be manually activated",
 
-    "settings.edit.title": "Edit",
     "settings.add_activity.title": "Add activity",
 
     "settings.duplicate.title": "Duplicate",

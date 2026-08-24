@@ -457,7 +457,7 @@
 		Simva.exportSession(simletId, sessionId, function(error, result) {
 			if(!error) {
 				const content = JSON.stringify(result, null, 2);
-				const filename = `simlet-${simlet.simlet_name}-session-${sessionId}-export.json`;
+				const filename = `simlet_${simlet.simlet_name}-session_${result.session_name}-export.json`;
 				Utils.download(filename, content);
 			}
 		})
@@ -625,7 +625,7 @@
 				return;
 			}
 			const content = result.data;
-			const filename = `simva-${simlet.simlet_name}-session-${downloadSessionId}-data.json`;
+			const filename = `simlet_${simlet.simlet_name}-session_${getSessionFromId(downloadSessionId).session_name}-data.json`;
 			Utils.downloadContent(content, filename, 'Session data error');
 		});
 	}
@@ -644,7 +644,7 @@
 				return;
 			}
 			const content = result.data;
-			const filename = `simva-${simlet.simlet_name}-session-${downloadSessionId}-test-data.json`;
+			const filename = `simlet_${simlet.simlet_name}-session_${getSessionFromId(downloadSessionId).session_name}-test_data.json`;
 			Utils.downloadContent(content, filename, 'Session test data error');
 		});
 	}

@@ -447,7 +447,7 @@
 		Simva.exportSimlet(simletId, function(error, result) {
 			if (!error) {
 				const content = JSON.stringify(result, null, 2);
-				const filename = `simlet-${result.simlet_name}-export.json`;
+				const filename = `simlet_${result.simlet_name}-export.json`;
 				Utils.download(filename, content);
 			}
 		})
