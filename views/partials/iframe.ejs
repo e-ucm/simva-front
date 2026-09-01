@@ -1,7 +1,7 @@
-<div id="iframe_floating" class="new_element floating">
+<div id="iframe_floating" class="iframe_floating new_element floating">
 	<div class="iframe_backdrop"></div>
 	<div class="floater">
-		<button id="iframe_floating_close" aria-label="Close">&times;</button>
+		<button class="iframe_floating_close" aria-label="Close">&times;</button>
 		<div class="iframe_content">
 		</div>
 	</div>
@@ -9,7 +9,7 @@
 
 <script>
 	$(document).ready(function () {
-		$('#iframe_floating_close').on('click', function () {
+		$('#iframe_floating .iframe_floating_close').on('click', function () {
 			Utils.hideIframeFloating();
 		});
 		

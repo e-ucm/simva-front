@@ -48,6 +48,16 @@
 </div>
 
 
+<div id="limesurvey_iframe" class="iframe_floating new_element floating">
+	<div class="iframe_backdrop"></div>
+	<div class="floater">
+		<button class="iframe_floating_close" aria-label="Close">&times;</button>
+		<div class="iframe_content">
+		</div>
+	</div>
+</div>
+
+
 <script type="text/javascript">
     // MUST BE INCLUDED IN THE HTML AFTER BaseActivityPainter 
 
@@ -57,6 +67,8 @@
     class LimeSurveyPainter extends BaseActivityPainter {
         constructor() {
             super();
+
+            $("#iframe_floating").after($("#limesurvey_iframe"));
 
             this.supportedType = "limesurvey";
         	this.simple_name = "<%= t('limesurvey.name', { ns : 'activities' }) %>";
@@ -255,6 +267,19 @@
     }
 
 
+    $(document).ready(function () {
+		$('#limesurvey_iframe .iframe_floating_close').on('click', function (e) {
+			Utils.hideIframeFloating("limesurvey_iframe");
+		});
+
+		$(document).on('keydown', function(e) {
+			if (e.key === 'Escape') {
+				Utils.hideIframeFloating("limesurvey_iframe");
+			}
+		});
+	});
+    
+
 	// Edit limesurvey by pressing either the survey id or the edit button 
 	$(document).on('click', ".activity-meta .limesurveyMeta a", function(e) {
 		openEditLimesurvey($(this).closest(".activity").data());
@@ -267,8 +292,8 @@
 	 * Open a floating window with the limesurvey page to create a new activity
 	 */
 	const openNewLimesurvey = function() {
-        Utils.hideIframeFloating();
-        Utils.toggleIframeInFloating(newLimesurveyUrl);
+        Utils.hideIframeFloating("limesurvey_iframe");
+        Utils.toggleIframeInFloating(newLimesurveyUrl, "limesurvey_iframe");
     }
 
 	/**

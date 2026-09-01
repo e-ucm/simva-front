@@ -231,24 +231,24 @@ textarea { 	resize: vertical; width: 100%; max-height: 5rem; }
 
 
 /* Floating menus */
-#iframe_floating {
+.iframe_floating {
 	display: none !important;
-	position: fixed;
+	position: fixed !important;
 	inset: 0;
 	z-index: 9999;
 	justify-content: center;
 	align-items: center;
 }
-#iframe_floating.shown { display: flex !important; }
+.iframe_floating.shown { display: flex !important; }
 
-#iframe_floating .iframe_backdrop {
+.iframe_floating .iframe_backdrop {
 	position: fixed;
 	inset: 0;
 	background: rgba(0, 0, 0, 0.5);
 	z-index: 0;
 }
 
-#iframe_floating .floater {
+.iframe_floating .floater {
 	position: relative;
 	z-index: 1;
 	width: calc(100vw - 32px);	 /* 16px border each side */
@@ -264,9 +264,9 @@ textarea { 	resize: vertical; width: 100%; max-height: 5rem; }
 }
 
 /* Iframe mode: fixed height so iframe can fill it */
-#iframe_floating.is-iframe .floater { height: calc(100vh - 32px); }
+.iframe_floating.is-iframe .floater { height: calc(100vh - 32px); }
 
-#iframe_floating .iframe_content {
+.iframe_floating .iframe_content {
 	display: flex;
 	flex-direction: column;
 	flex: 1;
@@ -278,13 +278,13 @@ textarea { 	resize: vertical; width: 100%; max-height: 5rem; }
 }
 
 /* Iframe mode: no padding, fill edge to edge */
-#iframe_floating.is-iframe .iframe_content {
+.iframe_floating.is-iframe .iframe_content {
 	padding: 0;
 	overflow: auto;
 }
 
 /* The injected form wrapper */
-#iframe_floating .iframe_content > .new_element {
+.iframe_floating .iframe_content > .new_element {
 	flex: 1;
 	display: flex !important;
 	flex-direction: column;
@@ -295,7 +295,7 @@ textarea { 	resize: vertical; width: 100%; max-height: 5rem; }
 }
 
 /* The iframe itself */
-#iframe_floating .iframe_content .iframe {
+.iframe_floating .iframe_content .iframe {
 	flex: 1;
 	width: 100%;
 	height: 100%;
@@ -303,14 +303,14 @@ textarea { 	resize: vertical; width: 100%; max-height: 5rem; }
 }
 
 /* Loader fills the space too */
-#iframe_floating .iframe_content .iframe_loader {
+.iframe_floating .iframe_content .iframe_loader {
 	flex: 1;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 }
 
-#iframe_floating_close {
+.iframe_floating_close {
 	position: absolute;
 	top: 8px;
 	right: 8px;
@@ -329,7 +329,7 @@ textarea { 	resize: vertical; width: 100%; max-height: 5rem; }
 	color: #666;
 }
 
-#iframe_floating_close:hover {
+.iframe_floating_close:hover {
 	background: rgba(0, 0, 0, 0.08);
 }
 

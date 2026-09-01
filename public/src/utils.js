@@ -189,13 +189,15 @@ var Utils = {
 	},
 	
 
-	showIframeFloating: function() {
-		$('#iframe_floating').addClass('shown');
+	showIframeFloating: function(iframeId = "iframe_floating") {
+		const $el = $(`#${iframeId}`);
+		$el.addClass('shown');
 	},
 
-	hideIframeFloating: function() {
-		$('#iframe_floating').removeClass('shown is-iframe');
-		$('#iframe_floating .iframe_content').empty();
+	hideIframeFloating: function(iframeId = "iframe_floating") {
+		const $el = $(`#${iframeId}`);
+		$el.removeClass('shown is-iframe');
+		$el.find('.iframe_content').empty();
 	},
 
 	
@@ -203,10 +205,10 @@ var Utils = {
 	 * Show/hide a floating menu that contains an iframe 
 	 * @param {string} url - url to open in the iframe  
 	 */
-	toggleIframeInFloating: function(url) {
-		const $el = $('#iframe_floating');
+	toggleIframeInFloating: function(url, iframeId = "iframe_floating") {
+		const $el = $(`#${iframeId}`);
 		if ($el.hasClass('shown')) {
-			this.hideIframeFloating();
+			this.hideIframeFloating(iframeId);
 		} else {
 			// Remove all previous contents from the floating menu
 			const $content = $el.find('.iframe_content').empty();
@@ -231,7 +233,7 @@ var Utils = {
 				$loader.remove();
 			});
 
-			this.showIframeFloating();
+			this.showIframeFloating(iframeId);
 		}
 	},
 
@@ -239,17 +241,16 @@ var Utils = {
 	 * Show/hide html contents in a floating menu 
 	 * @param {string} html - html string to show in the floating menu
 	 */
-	toggleHTMLInFloating: function(html) {
-		const $el = $('#iframe_floating');
+	toggleHTMLInFloating: function(html, iframeId = "iframe_floating") {
+		const $el = $(`#${iframeId}`);
 		if ($el.hasClass('shown')) {
-			this.hideIframeFloating();
+			this.hideIframeFloating(iframeId);
 		} else {
-			const $modal = $('#iframe_floating');
 			// Remove all previous contents from the floating menu and append the html contents 
-			$modal.find('.iframe_content')
+			 $el.find('.iframe_content')
 					.empty()
 					.append(html);
-			this.showIframeFloating();
+			this.showIframeFloating(iframeId);
 		}
 	},
 
@@ -257,15 +258,14 @@ var Utils = {
 	 * Show/hide a form inside a floating menu
 	 * @param {string} id - id attribute of the form 
 	 */
-	toggleFormInFloating: function(id) {
-		const $el = $('#iframe_floating');
+	toggleFormInFloating: function(id, iframeId = "iframe_floating") {
+		const $el = $(`#${iframeId}`);
 		if ($el.hasClass('shown')) {
-			this.hideIframeFloating();
+			this.hideIframeFloating(iframeId);
 		} else {
-			if (id === 'iframe_floating') {
-				this.showIframeFloating();
+			if (id === iframeId) {
+				this.showIframeFloating(iframeId);
 			} else {
-				const $modal = $('#iframe_floating');
 				const form = $(`#${id}`);
 
 				// Grab the deepest .form content, skipping .new_element/.floater wrappers
@@ -274,11 +274,11 @@ var Utils = {
 					: form;
 
 				// Remove all previous contents from the floating menu and append the form elements to it
-				$modal.find('.iframe_content')
+				$el.find('.iframe_content')
 					.empty()
 					.append(formContent.html());
 
-				this.showIframeFloating();
+				this.showIframeFloating(iframeId);
 			};
 		}
 	},
@@ -286,9 +286,10 @@ var Utils = {
 	/**
 	 * Hides the submit button of the floating form and shows the loader
 	 */
-	toggleSubmit : function(){
-		$('#iframe_floating input[type="submit"]').toggle();
-		$('#iframe_floating .loader').toggle();
+	toggleSubmit : function(iframeId = "iframe_floating") {
+		const $el = $(`#${iframeId}`);
+		$el.find('input[type="submit"]').toggle();
+		$el.find('.loader').toggle();
 	},
 
 
