@@ -147,14 +147,20 @@
                     let fileInput = $("#lss_field").get(0);
                     if (fileInput && fileInput.files[0]) {
                         console.log('[limesurveypainter] File selected for upload:', fileInput.files[0]);
-                        let reader = new FileReader();
-                        reader.onload = function() {
-                            let raw = reader.result;
-                            raw = raw.substr(raw.indexOf(',') + 1);
-                            activity.rawsurvey = raw;
-                            console.log('[limesurveypainter] File loaded and encoded');
-                        };
-                        reader.readAsDataURL(fileInput.files[0]);
+                        return new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onload = function() {
+                                let raw = reader.result;
+                                raw = raw.substr(raw.indexOf(',') + 1);
+                                activity.rawsurvey = raw;
+                                console.log('[limesurveypainter] File loaded and encoded');
+                                resolve(activity);
+                            };
+                            reader.readAsDataURL(fileInput.files[0]);
+                        });
+                    }
+                    else {
+                        resolve(activity);
                     }
                     break;
                 default:

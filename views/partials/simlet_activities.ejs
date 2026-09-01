@@ -149,69 +149,80 @@
 				Utils.toggleSubmit();
 				return false;
 			}
+			
+			let activityInfo = painter.getActivityInfoFromForm(form);
+			
+			const submitForm = () => {
+				// Creating new activity
+				if (form.editingActivityId == null || form.editingActivityId == "") {
+					const addActivity = function() {
+						Simva.addActivityToSession(simletId, currSessionId, activityInfo, function(error, result) {
+							Utils.toggleSubmit();
+							if (error && error.responseJSON) {
+								errorbox.text(error.responseJSON.message);
+								return false;
+							} else {
+								Utils.toggleFormInFloating('activity_form_menu');
+								onEditSessionActivities(currSessionId);
+							}
+						});
+					}
 
-			const activityInfo = painter.getActivityInfoFromForm(form);
-
-			// Creating new activity
-			if (form.editingActivityId == null || form.editingActivityId == "") {
-			   		const addActivity = function() {
-					Simva.addActivityToSession(simletId, currSessionId, activityInfo, function(error, result) {
-						Utils.toggleSubmit();
-						if (error && error.responseJSON) {
-							errorbox.text(error.responseJSON.message);
-							return false;
-						} else {
-							Utils.toggleFormInFloating('activity_form_menu');
-							onEditSessionActivities(currSessionId);
+					// If the activity is a web activity with no url, show a message asking confirmation
+					const closestWebTab = $(this).find("[method='WEB']");
+					if (closestWebTab.length > 0 && closestWebTab.is(".selected") && (
+						(form.game_uri == "" || form.game_uri == null) && (form.uri == "" || form.uri == null))
+					) {
+						if (confirm(`<%- t('add.new.web.no_url_message', { ns : 'activities' }) %>`)) {
+							addActivity();
 						}
-					});
-			   	}
-
-			   	// If the activity is a web activity with no url, show a message asking confirmation
-			   	const closestWebTab = $(this).find("[method='WEB']");
-				if (closestWebTab.length > 0 && closestWebTab.is(".selected") && (
-					(form.game_uri == "" || form.game_uri == null) && (form.uri == "" || form.uri == null))
-				) 
-				{
-					if (confirm(`<%- t('add.new.web.no_url_message', { ns : 'activities' }) %>`)) {
-						addActivity();
+						else {
+							Utils.toggleSubmit();
+						}
 					}
 					else {
-						Utils.toggleSubmit();
+						addActivity();
 					}
 				}
+				// Editing activity
 				else {
-					addActivity();
-				}
-			}
-			// Editing activity
-			else {
-				let activity = getActivityFromId(form.editingActivityId);
-				if (activity == null) {
-					errorbox.text("Activity not found");
-					Utils.toggleSubmit();
-					return false;
-				}
-
-				// Compare the previous activity info with the updated one
-				if (JSON.stringify(prevActivityInfo) === JSON.stringify(activityInfo)) {
-					errorbox.text("<%- t('edit.no_changes.message', { ns : 'SIMLETs' }) %>");
-					Utils.toggleSubmit();
-					return false;
-				}
-				else {
-					Simva.updateActivity(simletId, currSessionId, form.editingActivityId, activityInfo, function(error, result) {
+					let activity = getActivityFromId(form.editingActivityId);
+					if (activity == null) {
+						errorbox.text("Activity not found");
 						Utils.toggleSubmit();
-						if (error && error.responseJSON) {
-							errorbox.text(error.responseJSON.message);
-						} else {
-							Utils.toggleFormInFloating('activity_form_menu');
-							onEditSessionActivities(currSessionId);
-						}
-					});
+						return false;
+					}
+
+					// Compare the previous activity info with the updated one
+					if (JSON.stringify(prevActivityInfo) === JSON.stringify(activityInfo)) {
+						errorbox.text("<%- t('edit.no_changes.message', { ns : 'SIMLETs' }) %>");
+						Utils.toggleSubmit();
+						return false;
+					}
+					else {
+						Simva.updateActivity(simletId, currSessionId, form.editingActivityId, activityInfo, function(error, result) {
+							Utils.toggleSubmit();
+							if (error && error.responseJSON) {
+								errorbox.text(error.responseJSON.message);
+							} else {
+								Utils.toggleFormInFloating('activity_form_menu');
+								onEditSessionActivities(currSessionId);
+							}
+						});
+					}
 				}
 			}
 
+			// If the activity info returns a promise, wait for it to complete before submitting the info 
+			if (typeof activityInfo.then === 'function') {
+				activityInfo.then((activity) => {
+					activityInfo = activity;
+					submitForm();
+				});
+			}
+			else {
+				submitForm();
+			}
 			return false;
 		});
 

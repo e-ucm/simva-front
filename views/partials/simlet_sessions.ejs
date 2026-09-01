@@ -253,7 +253,7 @@
 			// Check for file
 			const fileInput = $(this).find('input[name="jsonFile"]').get(0);
 			if(fileInput && fileInput.files[0]){
-				let reader = new FileReader();
+				const reader = new FileReader();
 				reader.onload = function(){
 					try {
 						let raw = reader.result;
