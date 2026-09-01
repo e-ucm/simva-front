@@ -474,7 +474,9 @@
 		Utils.toggleFormInFloating('download_data_menu');
 		Utils.changeTab(null, 'download_data_form','download_session_data');
 		
-        downloadSessionId = sessionId;
+		$("#download_session_loader").hide();
+        
+		downloadSessionId = sessionId;
 		const session = getSessionFromId(sessionId);
 
 		if (session != null) {
@@ -612,8 +614,16 @@
 	}
 	
 	const downloadSessionData = function() {
+		$("#session_data_download").hide();
+		$("#session_test_data_download").hide();
+		$("#download_session_loader").show();
+		
 		console.log("downloading data for session id:", downloadSessionId);
 		Simva.getSessionLRSData(simletId, downloadSessionId, function(error, result){
+			$("#session_data_download").show();
+			$("#session_test_data_download").show();
+			$("#download_session_loader").hide();
+
 			if(error) {
 				$.toast({
 					heading: 'Session data error',
@@ -625,14 +635,22 @@
 				return;
 			}
 			const content = result.data;
-			const filename = `simlet_${simlet.simlet_name}-session_${getSessionFromId(downloadSessionId).session_name}-data.json`;
+			const filename = `simlet_${simlet.simlet_name}-session_${getSessionFromId(downloadSessionId).session_name}-data.ndjson`;
 			Utils.downloadContent(content, filename, 'Session data error');
 		});
 	}
 
 	const downloadSessionTestData = function() {
+		$("#session_data_download").hide();
+		$("#download_session_loader").show();
+		$("#session_test_data_download").hide();
+		
 		console.log("downloading test data for session id:", downloadSessionId);
 		Simva.getSessionTestLRSData(simletId, downloadSessionId, function(error, result){
+			$("#session_data_download").show();
+			$("#session_test_data_download").show();
+			$("#download_session_loader").hide();
+			
 			if(error) {
 				$.toast({
 					heading: 'Session test data error',
@@ -644,7 +662,7 @@
 				return;
 			}
 			const content = result.data;
-			const filename = `simlet_${simlet.simlet_name}-session_${getSessionFromId(downloadSessionId).session_name}-test_data.json`;
+			const filename = `simlet_${simlet.simlet_name}-session_${getSessionFromId(downloadSessionId).session_name}-test_data.ndjson`;
 			Utils.downloadContent(content, filename, 'Session test data error');
 		});
 	}

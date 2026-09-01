@@ -174,7 +174,19 @@
          * @param {number} activityId - id of the activity to download the info from
          */
         downloadGlobalActivityBackup(activityId) {
+            $("#activity_data_download").hide();
+            $("#activity_test_data_download").hide();
+            $("#global_backup_download").hide();
+            $("#backup_download").hide();
+            $("#download_activity_loader").show();
+            
             Simva.getMinioDataUrl(activityId, (error, result) => {
+                $("#activity_data_download").show();
+                $("#activity_test_data_download").show();
+                $("#global_backup_download").show();
+                $("#backup_download").show();
+                $("#download_activity_loader").hide();
+                
                 let errorMsg = "<%= t('result.error.downloading', { ns : 'activities' }) %>";
                 if (error) {
                     $.toast({
@@ -188,7 +200,7 @@
                     console.log('Minio URL for backup:', result);
                     const activity = getActivityFromId(activityId);
                     const session = getSessionFromId(activity.session_id);
-                    const filename = `simlet_${simlet.simlet_name}-session_${session.session_name}-activity_${activity.activity_name}-${this.supportedType}_backup.json`;
+                    const filename = `simlet_${simlet.simlet_name}-session_${session.session_name}-activity_${activity.activity_name}-${this.supportedType}_backup.ndjson`;
                     Utils.downloadContent(result.url, filename, errorMsg);
                 }
             });
@@ -200,8 +212,20 @@
          * @param {string} resultType - type of result of the result data(full/code/traces)
          */
         downloadBackup(activityId, resultType) {
-            let errorMsg = "<%= t('result.error.downloading', { ns : 'activities' }) %>";
+            $("#activity_data_download").hide();
+            $("#activity_test_data_download").hide();
+            $("#global_backup_download").hide();
+            $("#backup_download").hide();
+            $("#download_activity_loader").show();
+            
             Simva.getActivityResult(activityId, null, resultType, (error, result) => {
+                $("#activity_data_download").show();
+                $("#activity_test_data_download").show();
+                $("#global_backup_download").show();
+                $("#backup_download").show();
+                $("#download_activity_loader").hide();
+                
+                let errorMsg = "<%= t('result.error.downloading', { ns : 'activities' }) %>";
 				if (error) {
 					$.toast({
                         heading: errorMsg,

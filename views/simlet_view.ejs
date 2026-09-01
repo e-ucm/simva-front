@@ -39,16 +39,20 @@ the elements and scripts defined in the simlet_commons partial -->
 
 					<div id="download_session_data" class="subform selected">
 						<!-- onClick functions defined on the simlet_sessions partial -->
-						<input class="yellow" type="button" value="<%- t('download.session.title', { ns : 'sessions' }) %>" onclick="downloadSessionData()">
-						<input class="yellow" id="session_test_data_download" type="button" title="<%- t('download.test.description', { ns : 'sessions' }) %>" value="<%- t('download.test.title', { ns : 'sessions' }) %>" onclick="downloadSessionTestData()">
+						<input class="yellow" id="session_data_download" type="button" value="<%- t('download.session.title', { ns : 'sessions' }) %>" onclick="downloadSessionData()">
+						<input class="yellow" id="session_test_data_download" type="button" value="<%- t('download.test.title', { ns : 'sessions' }) %>" onclick="downloadSessionTestData()" title="<%- t('download.test.description', { ns : 'sessions' }) %>" >
+						
+						<div id="download_session_loader" class="loader" style="margin-bottom: 20px;"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>
 					</div>
 
 					<div id="download_activity_data" class="subform">
 						<!-- onClick functions defined on the simlet_activities partial -->
-						<input class="yellow" type="button" value="<%- t('download.activity.title', { ns : 'activities' }) %>" onclick="downloadActivityData()">
-						<input class="yellow" id="global_backup_download" type="button" value="<%- t('download.backup.global.title', { ns : 'activities' }) %>" onclick="downloadGlobalActivityBackup()">
+						<input class="yellow" id="activity_data_download" type="button" value="<%- t('download.activity.title', { ns : 'activities' }) %>" onclick="downloadActivityData()">
 						<input class="yellow" id="activity_test_data_download" type="button" value="<%- t('download.test.title', { ns : 'sessions' }) %>" onclick="downloadActivityTestData()">
+						<input class="yellow" id="global_backup_download" type="button" value="<%- t('download.backup.global.title', { ns : 'activities' }) %>" onclick="downloadGlobalActivityBackup()">
 						<input class="yellow" id="backup_download" type="button" value="<%- t('download.backup.user.title', { ns : 'activities' }) %>" onclick="downloadUsersActivityBackup()">
+
+						<div id="download_activity_loader" class="loader" style="margin-bottom: 20px;"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div>
 					</div>
 				</div>
 			</div>
@@ -179,7 +183,7 @@ the elements and scripts defined in the simlet_commons partial -->
 	
 	const openSimletForm = function() {
 		Utils.toggleFormInFloating('simlet_form_menu');
-
+		
 		$('#simlet_form_error').text("");
 		$('#edit_simlet_id').val(simletId);
 		

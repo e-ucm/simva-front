@@ -20,9 +20,9 @@
 					<input hidden type="text" name="prevSimletName" id="prev_simlet_name">
 					<input hidden type="text" name="prevSimletDescription" id="prev_simlet_description">
 					<h3><%- t('name.title', { ns : 'SIMLETs' }) %></h3>
-					<input type="text" class="name_field" name="simletName" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
+					<input type="text" id="simlet_name" class="name_field" name="simletName" placeholder="<%- t('name.placeholder', { ns : 'SIMLETs' }) %>" required>
 					<h3><%- t('description.title', { ns : 'SIMLETs' }) %></h3>
-					<textarea class="description_field" name="simletDescription" id="simlet_description" placeholder="<%- t('description.placeholder', { ns : 'SIMLETs' }) %>"></textarea>
+					<textarea id="simlet_description" class="description_field" name="simletDescription" placeholder="<%- t('description.placeholder', { ns : 'SIMLETs' }) %>"></textarea>
 					<input type="submit" id="simlet_name_desc_submit" value="">
 				</form>
 			</div>

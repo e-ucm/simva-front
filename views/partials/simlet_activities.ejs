@@ -318,6 +318,8 @@
 		Utils.toggleFormInFloating('download_data_menu');
 		Utils.changeTab(null, 'download_data_form','download_activity_data');
 
+		$("#download_activity_loader").hide();
+
         downloadActivityId = activityId;
 		const activity = getActivityFromId(activityId);
 
@@ -437,7 +439,19 @@
 	// Functionality
 	
 	const downloadActivityData = function () {
+		$("#activity_data_download").hide();
+		$("#activity_test_data_download").hide();
+		$("#global_backup_download").hide();
+		$("#backup_download").hide();
+		$("#download_activity_loader").show();
+		
 		Simva.getActivityLRSData(downloadActivityId, (error, result) => {
+			$("#activity_data_download").show();
+			$("#activity_test_data_download").show();
+			$("#global_backup_download").show();
+			$("#backup_download").show();
+			$("#download_activity_loader").hide();
+
             let errorMsg = "<%= t('result.error.downloading', { ns : 'activities' }) %>";
 			if(error){
 				$.toast({
@@ -450,14 +464,26 @@
 			} else {
 				const activity = getActivityFromId(downloadActivityId);
 				const session = getSessionFromId(activity.session_id);
-				const filename = `simlet_${simlet.simlet_name}-session_${session.session_name}-activity_${activity.activity_name}-full_xapi_data_.json`;
+				const filename = `simlet_${simlet.simlet_name}-session_${session.session_name}-activity_${activity.activity_name}-full_xapi_data_.ndjson`;
 				Utils.downloadContent(result.data, filename, errorMsg);
 			}
 		});
 	}
 
 	const downloadActivityTestData = function() {
+		$("#activity_data_download").hide();
+		$("#activity_test_data_download").hide();
+		$("#global_backup_download").hide();
+		$("#backup_download").hide();
+		$("#download_activity_loader").show();
+
 		Simva.getActivityTestLRSData(downloadActivityId, (error, result) => {
+			$("#activity_data_download").show();
+			$("#activity_test_data_download").show();
+			$("#global_backup_download").show();
+			$("#backup_download").show();
+			$("#download_activity_loader").hide();
+
             let errorMsg = "<%= t('result.error.downloading', { ns : 'activities' }) %>";
 			if(error){
 				$.toast({
@@ -470,7 +496,7 @@
 			} else {
 				const activity = getActivityFromId(downloadActivityId);
 				const session = getSessionFromId(activity.session_id);
-				const filename = `simlet_${simlet.simlet_name}-session_${session.session_name}-activity_${activity.activity_name}-test_xapi_data_.json`;
+				const filename = `simlet_${simlet.simlet_name}-session_${session.session_name}-activity_${activity.activity_name}-test_xapi_data_.ndjson`;
 				Utils.downloadContent(result.data, filename, errorMsg);
 			}
 		});

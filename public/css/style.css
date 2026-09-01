@@ -10,7 +10,7 @@ body {
 body.black { background-color: #171717; }
 ul, ol, dl { list-style: none }
 a, img, input, select, textarea, fieldset { border: 0; outline: 0; font-family: sans-serif; }
-img { border: 0; user-drag: none; -moz-user-drag: none; 	-webkit-user-drag: none; user-select: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none }
+img { border: 0; user-drag: none; -moz-user-drag: none; -webkit-user-drag: none; user-select: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none }
 hr { margin: 10px 0 0; border: 1px solid #000 }
 thead { display: table-header-group; }
 .hidden { display: none; }
@@ -18,10 +18,10 @@ thead { display: table-header-group; }
 /* Input elements */
 input[type="text"], input[type="email"], input[type="password"], input[type="file"], input[type="date"], input[type="time"], input[type="number"], select, textarea { padding: 6px; font-size: 15px; border: 1px solid black; }
 .button, 		input[type="submit"], 		 input[type="button"] 		 { width: auto; border: 0; padding: 6px; background: #f0913f; font-size: 15px; color: #fff; cursor: pointer; }
-.button.violet, input[type="submit"].violet, input[type="button"].violet { border: 1px solid #6b5faa; background: #6b5faa }
-.button.blue, 	input[type="submit"].blue, 	 input[type="button"].blue 	 { border: 0px solid #F6D44E; background: #F6D44E }
-.button.green, 	input[type="submit"].green,  input[type="button"].green  { border: 0px solid #52B846; background: #52B846; }
-.button.red, 	input[type="submit"].red, 	 input[type="button"].red 	 { border: 0px solid #f64e4e; background: #f64e4e }
+.button.violet, input[type="submit"].violet, input[type="button"].violet { background: #6b5faa }
+.button.blue, 	input[type="submit"].blue, 	 input[type="button"].blue 	 { background: #2b8eff }
+.button.green, 	input[type="submit"].green, input[type="button"].green { background: #52B846; }
+.button.red, 	input[type="submit"].red, 	 input[type="button"].red 	 { background: #f64e4e }
 input[type="button"]:disabled { border: 1px solid lightgray; background: darkgray; color: gray; cursor: default; }
 textarea { 	resize: vertical; width: 100%; max-height: 5rem; }
 
@@ -75,7 +75,7 @@ textarea { 	resize: vertical; width: 100%; max-height: 5rem; }
 	background-color: white;
 	color: black;
 }
-.header.black .right .logout img {  filter: none !important;  }
+.header.black .right .logout img { filter: none !important; }
 .header .right ul li {
 	display: inline-flex;
 	align-items: center;
@@ -85,7 +85,7 @@ textarea { 	resize: vertical; width: 100%; max-height: 5rem; }
 	margin-right: 5px;
 	border-left: 1px solid black;
 }
-.header.black .right ul li {  border-left: 1px solid white; }
+.header.black .right ul li { border-left: 1px solid white; }
 .header .right ul li a {
 	display: inline-flex;
 	align-items: center;
@@ -131,7 +131,7 @@ textarea { 	resize: vertical; width: 100%; max-height: 5rem; }
 
 
 .content .floating_buttons .basic {
-	/* display: inline-block;  */
+	/* display: inline-block; */
 	width: 80px;
 	height: 80px;
 	background-color: var(--themeOrangeColor);
@@ -232,66 +232,66 @@ textarea { 	resize: vertical; width: 100%; max-height: 5rem; }
 
 /* Floating menus */
 #iframe_floating {
-    display: none !important;
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
+	display: none !important;
+	position: fixed;
+	inset: 0;
+	z-index: 9999;
 	justify-content: center;
-    align-items: center;
+	align-items: center;
 }
 #iframe_floating.shown { display: flex !important; }
 
 #iframe_floating .iframe_backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 0;
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.5);
+	z-index: 0;
 }
 
 #iframe_floating .floater {
-    position: relative;
-    z-index: 1;
-    width: calc(100vw - 32px);      /* 16px border each side */
-    display: flex;
-    flex-direction: column;
-    border-radius: 8px;
-    overflow: hidden;
-    background: white;
+	position: relative;
+	z-index: 1;
+	width: calc(100vw - 32px);	 /* 16px border each side */
+	display: flex;
+	flex-direction: column;
+	border-radius: 8px;
+	overflow: hidden;
+	background: white;
 
-    /* Default: auto height for forms */
-    height: auto;
-    max-height: calc(100vh - 32px); /* 16px border top and bottom */
+	/* Default: auto height for forms */
+	height: auto;
+	max-height: calc(100vh - 32px); /* 16px border top and bottom */
 }
 
 /* Iframe mode: fixed height so iframe can fill it */
 #iframe_floating.is-iframe .floater { height: calc(100vh - 32px); }
 
 #iframe_floating .iframe_content {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;              /* prevents flex overflow */
-    overflow: auto;
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;			 /* prevents flex overflow */
+	overflow: auto;
 
-    /* Default: padding for forms */
-    padding: 48px 20px 20px 20px;
+	/* Default: padding for forms */
+	padding: 48px 20px 20px 20px;
 }
 
 /* Iframe mode: no padding, fill edge to edge */
 #iframe_floating.is-iframe .iframe_content {
-    padding: 0;
+	padding: 0;
 	overflow: auto;
 }
 
 /* The injected form wrapper */
 #iframe_floating .iframe_content > .new_element {
-    flex: 1;
-    display: flex !important;
-    flex-direction: column;
-    position: static;
-    background: none;
-    width: 100%;
-    height: 100%;
+	flex: 1;
+	display: flex !important;
+	flex-direction: column;
+	position: static;
+	background: none;
+	width: 100%;
+	height: 100%;
 }
 
 /* The iframe itself */
@@ -304,69 +304,69 @@ textarea { 	resize: vertical; width: 100%; max-height: 5rem; }
 
 /* Loader fills the space too */
 #iframe_floating .iframe_content .iframe_loader {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 #iframe_floating_close {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    z-index: 10;
-    font-size: 1.4rem;
-    line-height: 1;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    border-radius: 4px;
-    background: none;
-    cursor: pointer;
-    color: #666;
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	z-index: 10;
+	font-size: 1.4rem;
+	line-height: 1;
+	width: 32px;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: none;
+	border-radius: 4px;
+	background: none;
+	cursor: pointer;
+	color: #666;
 }
 
 #iframe_floating_close:hover {
-    background: rgba(0, 0, 0, 0.08);
+	background: rgba(0, 0, 0, 0.08);
 }
 
 
 /* Floating menus forms */
 
 .new_element {
-    display: none;
-    position: relative;
-    z-index: 9999;
-    background: rgba(0, 0, 0, 0.4);
-    transition: all 0.2s;
+	display: none;
+	position: relative;
+	z-index: 9999;
+	background: rgba(0, 0, 0, 0.4);
+	transition: all 0.2s;
 }
 
 .new_element .form {
 	display: flex;
-    cursor: default;
-    overflow: auto;
-    flex-direction: column;
+	cursor: default;
+	overflow: auto;
+	flex-direction: column;
 	/*
 		justify-content: center makes elements unreachable by the scrollbar
-		when width is too small.  margin: auto needs to be used instead
+		when width is too small. margin: auto needs to be used instead
 	*/
-    /* justify-content: center; */
-    align-items: center;
-    background: white;
-    min-width: 320px;
-    min-height: 100px;
-    max-width: 95vw;
-    max-height: 95vh;
-    box-shadow: 0 2px 24px rgba(0, 0, 0, 0.25);
-    border-radius: 8px;
-    padding: 24px;          /* add padding so content isn't flush to edges */
+	/* justify-content: center; */
+	align-items: center;
+	background: white;
+	min-width: 320px;
+	min-height: 100px;
+	max-width: 95vw;
+	max-height: 95vh;
+	box-shadow: 0 2px 24px rgba(0, 0, 0, 0.25);
+	border-radius: 8px;
+	padding: 24px;		 /* add padding so content isn't flush to edges */
 }
 
-.new_element .subform { width: 90%;  margin: auto; }
-.new_element .form input  { width: 100%; }
+.new_element .subform { width: 90%; margin: auto; }
+.new_element .form input { width: 100%; }
 .new_element .form select { width: 100%; }
 
 form .role_selector input[type="radio"] { width: 0%; display: none; }
@@ -400,24 +400,24 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .tabs { width: 100%; display: flex; }
 
 .tab {
-    flex: 1;
-    display: flex;
-    height: auto;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    color: black;
-    background-color: lightgray;
-    padding: 10px;
-    border: 1px solid white;
-    cursor: pointer;
+	flex: 1;
+	display: flex;
+	height: auto;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	color: black;
+	background-color: lightgray;
+	padding: 10px;
+	border: 1px solid white;
+	cursor: pointer;
 }
 
 .tab.selected {
-    color: white;
-    background-color: #f0913f;
-    cursor: default;
-    font-weight: 700;
+	color: white;
+	background-color: #f0913f;
+	cursor: default;
+	font-weight: 700;
 }
 
 
@@ -492,8 +492,8 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	z-index: 10;
 
 	display: flex;
-    flex-direction: column;
-    overflow: hidden;
+	flex-direction: column;
+	overflow: hidden;
 	
 	width: 400px;
 	max-height: 50vh;
@@ -832,10 +832,10 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .selectable.card { background-color: #c1c1c1; color: black; transition: all 0.2s; }
 .selectable.card:hover { color: white; background-color: #909090; cursor: pointer; }
 .selectable.card {
-	overflow: hidden;     	 /* Clips overflowing content */
-	word-wrap: break-word;   /* Breaks long words to fit */
-	white-space: normal;     /* Allows text to wrap */
-	box-sizing: border-box;  /* Includes padding in width/height */
+	overflow: hidden;	 	 /* Clips overflowing content */
+	word-wrap: break-word;	/* Breaks long words to fit */
+	white-space: normal;	 /* Allows text to wrap */
+	box-sizing: border-box; /* Includes padding in width/height */
 }
 .card .cardTitle, .card .sessionTagList {
 	max-width: 95%;
@@ -889,7 +889,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .simletTagsRow {
 	padding: 10px;
 	display: flex;
-    gap: 5px;
+	gap: 5px;
 	height: min-content;
 	align-items: center;
 	text-align: center;
@@ -992,7 +992,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	display: flex;
 	justify-content: center;
 	flex: 1;
-    min-width: 200px;
+	min-width: 200px;
 	height: 20px;
 	border: 1px solid black;
 	margin: 0;
@@ -1000,7 +1000,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 }
 .sessionProgress.progress span { top: 3px; }
 .sessionTestLauch, .sessionDownload { cursor: pointer; }
-.sessionTestLauch::before, .sessionDownload::before  { filter: none; }
+.sessionTestLauch::before, .sessionDownload::before { filter: none; }
 
 .sessionTags {
 	margin-top: 8px;
@@ -1008,8 +1008,8 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 }
 
 .content .test .sessionSummary, .content .test .activities {
-  overflow-x: auto;
-  overflow-y: visible;
+ overflow-x: auto;
+ overflow-y: visible;
 }
 .content .test .activities {
 	white-space: nowrap;
@@ -1151,7 +1151,7 @@ input[type="button"].openLimesurveyButton {
 .content .test .activities .activity table thead tr td { width: 92px; }
 .content .test .activities .activity table thead, .content .test .activities .activity table tbody tr:nth-child(even) { background: #a5a5a5 }
 .content .test .activities .activity table tbody tr:nth-child(odd) { background: #c5c5c5 }
-.content .test .activities .activity table tr td, .content .test .activities .activity table tr th { border: solid 1px black; padding: 5px; height: 32px;  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; vertical-align: middle; }
+.content .test .activities .activity table tr td, .content .test .activities .activity table tr th { border: solid 1px black; padding: 5px; height: 32px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; vertical-align: middle; }
 .content .test .activities .activity table tr td { width: 33.33%; }
 .content .test .activities .activity table tr.off { opacity: 0.5; filter: brightness(40%); color: #000; }
 .content .test .activities .activity table tr.off td a, .content .test .activities .activity table tr.off td input[type="checkbox"] { pointer-events: none; }
@@ -1197,7 +1197,7 @@ input[type="button"].openLimesurveyButton {
 }
 
 .content .test .progress { position: relative; width: 100%; background-color: #ff9696; height: 30px; border: 1px solid black; overflow: hidden; padding: 0px; }
-.content .test .activity .progress { height: 20px;  margin-bottom: 10px; }
+.content .test .activity .progress { height: 20px; margin-bottom: 10px; }
 .content .test .progress div.done { height: 100%; float: left; position: absolute; background-color: #adffad; top: 0px; left: 0px; }
 .content .test .progress div.partial { height: 100%; float: left; position: absolute; background-color: #fff688; top: 0px; left: 0px; }
 .content .test .progress span { float: left; width: 100%; position: absolute; top: 7px; left: 0px; text-align: center; font-size: 12px; font-weight: bold; }
@@ -1214,7 +1214,7 @@ input[type="button"].openLimesurveyButton {
 } */
 .activitySettigsCheckbox {
 	display: flex;
-	align-items: center;   /* Keeps vertical alignment */
+	align-items: center;	/* Keeps vertical alignment */
 	justify-content: center; /* Centers content horizontally */
 	gap: 10px;
 	min-width: 0;
@@ -1232,7 +1232,7 @@ input[type="button"].openLimesurveyButton {
 
 .owners, .participants {
 	table-layout: fixed;
-    width: 100%;
+	width: 100%;
 	overflow: auto;
 	border-collapse: collapse;
 	box-shadow: none;
@@ -1268,9 +1268,9 @@ input[type="button"].openLimesurveyButton {
 #change_allocator { height: fit-content; }
 #change_allocator_form .row {
 	display: flex;
-    align-items: center;
+	align-items: center;
 	justify-content: center;
-    gap: 10px;
+	gap: 10px;
 	margin-top: 7px;
 	margin-bottom: 7px;
 }
@@ -1288,11 +1288,11 @@ input[type="button"].openLimesurveyButton {
 }
 #pdf_printable h3 { margin-bottom: 10px; font-weight: normal; }
 #pdf_printable table { width: 100%; position: relative; border-collapse: collapse; }
-#pdf_printable table, #pdf_printable th, #pdf_printable td { padding: 5px; border: solid 1px black;  font-weight: normal; }
-@page { size: A4;  margin: 4mm 4mm 4mm 4mm; }
+#pdf_printable table, #pdf_printable th, #pdf_printable td { padding: 5px; border: solid 1px black; font-weight: normal; }
+@page { size: A4; margin: 4mm 4mm 4mm 4mm; }
 @media print {
 	body { font-family: serif; background-color: white; }
-	.content { padding: 0px;  width: 210mm;  height: 297mm; }
+	.content { padding: 0px; width: 210mm; height: 297mm; }
 	.header, .menu, .content .simletTop, #simlet_tags, .sessionTagList, #study_tabs { display: none; }
 	#pdf_printable { display: contents; }
 }
