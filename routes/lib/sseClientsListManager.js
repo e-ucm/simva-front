@@ -32,9 +32,9 @@ class SSEClientsListManager {
         let clientsToSend = [];
         for (let [clientId, clientData] of this.clients) {
             let client = clientData; // Parse the stored client data
-            let fiveMinutesLater = new Date(client.lastTime).getTime() + minutes * 60 * 1000; // Add 5 minutes in milliseconds
+            let xMinutesLater = new Date(client.lastTime).getTime() + minutes * 60 * 1000; // Add x minutes in milliseconds
 
-            if (fiveMinutesLater <= Date.now()) { // Check if 5 minutes have passed
+            if (xMinutesLater <= Date.now()) { // Check if 5 minutes have passed
                 clientsToSend.push(clientId);
                 client.lastTime= Date.now();
                 this.clients.set(clientId, client);
@@ -52,9 +52,10 @@ class SSEClientsListManager {
 
         for (let [clientId, clientData] of this.clients) {
             let client = clientData; // Parse the stored client data
+            logger.info({message:message, clientData:clientData}, "Message + client data")
             if (client.userRole === 'teacher') {
                 // Check if the client's study includes the studyId or the groupId
-                if (client.id == studyId || client.id == groupId) {
+                if (client.id == studyId || client.id == groupId || client.user == messageUser) {
                     clientsToSend.push(clientId); // Add to the list if conditions are met
                     client.lastTime= Date.now();
                     this.clients.set(clientId, client);
