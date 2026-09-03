@@ -68,13 +68,11 @@ module.exports = function(auth, redirectToLogin, config){
     
     router.get('/languages/', (req, res, next) => {
         const displayNames = new Intl.DisplayNames([req.cookies.i18next], { type: 'language' });
-        res.status(200).send({ current : req.cookies.i18next, default: defaultLanguage, languages : 
-            config.i18n.languages.map(
-                code => ({
-                    name: displayNames.of(code),
-                    code
-                })
-            )
+        res.status(200).send({ 
+            current : req.cookies.i18next, 
+            default: defaultLanguage, 
+            languages : config.i18n.languages.map(code => ({ name: displayNames.of(code), code })),
+            flags: config.i18n.flags
         });
     });
 

@@ -7,7 +7,6 @@
 	let currentlanguageCode = null;
 
 	$(document).ready(function () {
-
 		Simva.getLanguage(function (error, result) {
 			if (error) {
 				console.log(error.message);
@@ -54,7 +53,7 @@
 						// Add a new option to the dropdown
 						$("#language-dropdown").append($('<option>', {
 							value: lang.code,
-							text: `${getFlagEmoji(lang.code)} ${lang.name}`
+							text: `${result.flags[lang.code] || result.flags["default"]} ${lang.name}`
 						}));
 
 						// Set the current language as the selected option
@@ -67,15 +66,6 @@
 			}
 		});
 	});
-
-	const getFlagEmoji = function(languageCode) {
-		const countryCode = languageCode.split('-')[1] || languageCode;
-		const codePoints = countryCode
-			.toUpperCase()
-			.split('')
-			.map(char => 127397 + char.charCodeAt(0));
-		return String.fromCodePoint(...codePoints);
-	}
 
 	const changeLanguage = function (langCode) {
 		const selectedLang = $("#language-dropdown").val();

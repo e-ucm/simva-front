@@ -68,7 +68,13 @@ config.lti.enabled = process.env.LTI_ENABLED || 'false'
 config.i18n = {}
 config.i18n.debug = process.env.I18N_DEBUG === "true"
 languages = process.env.SIMVA_LOCALES || "en,es";
-config.i18n.languages = languages.split(",").map(s => s.trim());;
+config.i18n.languages = languages.split(",").map(s => s.trim());
+config.i18n.flags = {
+	"es": "🇪🇸",
+	"en": "🇬🇧",
+	"fr": "🇫🇷",
+	"default": String.fromCodePoint(..."xx".toUpperCase().split('').map(char => 127397 + char.charCodeAt(0)))	// unknown flag (invalid ISO 3166-1 code) 
+}
 config.i18n.defaultLanguage = languages[0];
 
 config.kafka = {}
