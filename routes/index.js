@@ -43,6 +43,14 @@ app.use(middleware.handle(i18next));
 router = express.Router();
 app.use('/', router);
 app.use('/users', require('./routes/users.js')(usertools.auth(1), usertools.redirectToLogin(1), config));
+app.use('/bff', (req, res, next) => {
+  // Only redirect on direct browser navigation
+  if (req.headers['sec-fetch-mode'] === 'navigate' || (req.method === 'GET' && req.headers.accept?.includes('text/html'))) {
+    return res.redirect('/');
+  }
+  // API requests pass through normally
+  next(); 
+});
 app.use('/bff', require('./routes/bff.js')(usertools.auth(1), usertools.redirectToLogin(1), config));
 app.use('/events', require('./routes/events.js')(usertools.auth(1), usertools.redirectToLogin(1), config));
 app.use('/simlets', require('./routes/studies.js')(usertools.auth(1), usertools.redirectToLogin(1), config));
