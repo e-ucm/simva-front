@@ -137,7 +137,7 @@ app.use((err, req, res, next) => {
     return res.redirect(res.frontendRedirect);
   }
 
-  if (!req.session.user) {
+  if (!req.session || !req.session.user) {
     return res.redirect('/users/login');
   }
   
