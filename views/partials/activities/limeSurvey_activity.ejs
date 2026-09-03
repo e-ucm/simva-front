@@ -102,38 +102,7 @@
                 openByIdTab();
             }
 
-            // Fill the existing surveys select field and select one (+ its language) based on the activity info
-            $("#existing_survey_field").empty();
-            Simva.getSurveyList(function(error, result) {
-                $("#existing_survey_field").append($("<option>", {
-                    selected: true,
-                    disabled: true,
-                    hidden: true,
-                    text: "<%- t('limesurvey.existing.zero.message', { ns : 'activities' }) %>",
-                }));
-                if (error) {
-                    console.error('Error fetching survey list:', error);
-                    return;
-                }
-                else {
-                    if (result.length == 0) {
-                        return;
-                    }
-                    $("#existing_survey_field").empty();
-                    result.forEach((survey) => {
-                        $("#existing_survey_field").append($("<option>", {
-                            value: survey.sid,
-                            text: `${survey.surveyls_title} - ${survey.sid}`,
-                        }));
-                    });
-
-                    if (activity != null) {
-                        $("#existing_survey_field").val(activity.survey_id);
-                    }
-                    loadSurveyLanguages(activity);
-                }
-            });
-        
+            paintSurveysList(activity);
         }
         
         getActivityInfoFromForm(form) {
@@ -212,11 +181,56 @@
 
     }
 
+    /**
+	 * Fill the existing surveys select field and select one (+ its language)
+	 */
+    const paintSurveysList = function(activity, autoSelectSurveyId) {
+        $("#existing_survey_field").empty();
+        Simva.getSurveyList(function(error, result) {
+            // Add a default no surveys option
+            $("#existing_survey_field").append($("<option>", {
+                selected: true,
+                disabled: true,
+                hidden: true,
+                text: "<%- t('limesurvey.existing.zero.message', { ns : 'activities' }) %>",
+            }));
+            if (error) {
+                console.error('Error fetching survey list:', error);
+                return;
+            }
+            else {
+                if (result.length == 0) {
+                    return;
+                }
+
+                // If there are any surveys, remove the default no surveys option and fill the dropdown
+                $("#existing_survey_field").empty();                
+                result.forEach((survey) => {
+                    $("#existing_survey_field").append($("<option>", {
+                        value: survey.sid,
+                        text: `${survey.surveyls_title} - ${survey.sid}`,
+                    }));
+                });
+
+                // Select the first returned survey by default. If a survey has been selected by default, select it. 
+                // Otherwise, if the activity has info about the associated survey, select it 
+                let selectId = result[0].sid;
+                if (autoSelectSurveyId != null) {
+                    selectId = autoSelectSurveyId;
+                }
+                else if (activity != null) {
+                    selectId = activity.survey_id
+                }
+                $("#existing_survey_field").val(selectId);
+                loadSurveyLanguages(activity);
+            }
+        });
+    }
 
     /**
 	 * Fill the survey language select field and select one based on the activity info
 	 */
-    const loadSurveyLanguages = function(activity, callback) {
+    const loadSurveyLanguages = function(activity) {
         // Get the survey id from either the currently selected survey or from the activity info
         let surveyId = activity == null ? $("#existing_survey_field").val() : activity.survey_id;
         

@@ -569,7 +569,15 @@ the elements and scripts defined in the simlet_commons partial -->
 						painter.updateActivityCompletion(activityId, resolveParticipantKey(activityId, data), status);
 					}
 				});
-
+				
+				sseClient.triggerEvent('survey_saved');
+				sseClient.on('survey_saved', (data) => {
+					if ($("#limesurvey_extra_form").is(":visible")) {
+						paintSurveysList(null, data.surveyId);
+					}
+					
+				});
+				
 				sseClient.triggerEvent('ping');
 				sseClient.on('ping', (data) => {
 					console.debug('ping:', data);
