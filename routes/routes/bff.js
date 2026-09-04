@@ -452,45 +452,39 @@ module.exports = function(auth, redirectToLogin, config){
     router.post('/studies/:studyid/tests/:testid/set-tester', auth, redirectToLogin, async (req, res, next) => {
         const studyid = req.params['studyid'];
         const testid = req.params['testid'];
-        const user = await SimvaAsync.getCurrentUser(req.session.id);
-        const userId = user.user_id;
-        const username = user.username;
-        try {
-            const group = await groupcontroler.setTesterGroup(studyid, testid, userId, username, req.session.id);
-            res.status(200).send({ message: 'Tester set', group_id: group.group_id });
-        } catch (err) {
-            next(err);
-        }
+        Simva.setTesterToSession(studyid, testid, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
     });
 
     // Remove the current user as tester from the specified session (remove from group, delete group if sandbox)
     router.post('/studies/:studyid/tests/:testid/unset-tester', auth, redirectToLogin, async (req, res, next) => {
         const studyid = req.params['studyid'];
         const testid = req.params['testid'];
-        const user = await SimvaAsync.getCurrentUser(req.session.id);
-        const userId = user.user_id;
-        const username = user.username;
-        try {
-            await groupcontroler.unsetTesterGroup(studyid, testid, userId, username, req.session.id);
-            res.status(200).send({ message: 'Tester removed' });
-        } catch (err) {
-            next(err);
-        }
+        Simva.unsetTesterToSession(studyid, testid, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send({ message: 'Tester removed' });
+            }
+        });
     });
     
     // Remove the current user as tester from the specified session and add it again
     router.post('/studies/:studyid/tests/:testid/reset-tester', auth, redirectToLogin, async (req, res, next) => {
         const studyid = req.params['studyid'];
         const testid = req.params['testid'];
-        const user = await SimvaAsync.getCurrentUser(req.session.id);
-        const userId = user.user_id;
-        const username = user.username;
-        try {
-            const group = await groupcontroler.resetTesterGroup(studyid, testid, userId, username, req.session.id);
-            res.status(200).send({ message: 'Tester reset', group_id: group.group_id });
-        } catch (err) {
-            next(err);
-        }
+        Simva.resetTesterToSession(studyid, testid, req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send({ message: 'Tester removed' });
+            }
+        });
     });
     
 

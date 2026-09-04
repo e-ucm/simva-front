@@ -475,6 +475,38 @@ class Simva {
 		this.delete(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/tags/${tag}`, currSessionId, callback);
 	}
 	
+	/**
+	 * Set tester to session
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to update
+	 * @param {*} currSessionId 
+	 * @param {*} callback 
+	 */
+	setTesterToSession(simletId, sessionId, currSessionId, callback){
+		this.post(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/tester`, null, {}, currSessionId, callback);
+	}
+
+	/**
+	 * Reset tester to session
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to update
+	 * @param {*} currSessionId
+	 * @param {*} callback
+	 */
+	resetTesterToSession(simletId, sessionId, currSessionId, callback){
+		this.patch(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/tester`, null, {}, currSessionId, callback);
+	}
+
+	/**
+	 * Unset tester to session
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to update
+	 * @param {*} currSessionId
+	 * @param {*} callback
+	 */
+	unsetTesterToSession(simletId, sessionId, currSessionId, callback){
+		this.delete(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/tester`, currSessionId, callback);
+	}
 
 	/**
 	 * Send a GET request to the Axios wrapper to fetch the LRS data of the specified session from the specified SIMLET
