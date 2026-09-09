@@ -623,6 +623,25 @@ var Simva = {
 	},
 
 	/**
+	 * Send a POST request to the bff to initiate the OAuth2 Device Authorization Grant flow
+	 * @param {number} activityId - id of the gameplay activity to initiate the device flow for
+	 * @param {function} callback 
+	 */
+	initDeviceAuth: function(activityId, callback) {
+		Utils.post(`/bff/auth2/${activityId}/device`, {}, callback);
+	},
+
+	/**
+	 * Send a POST request to the bff to poll for an access token in the device flow
+	 * @param {number} activityId - id of the gameplay activity
+	 * @param {string} deviceCode - the device_code returned by initDeviceAuth
+	 * @param {function} callback 
+	 */
+	pollDeviceToken: function(activityId, deviceCode, callback) {
+		Utils.post(`/bff/auth2/${activityId}/token`, { device_code: deviceCode }, callback);
+	},
+
+	/**
 	 * Send a GET request to the bff to fetch all the available surveys
 	 * @param {Callback} callback 
 	 */

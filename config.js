@@ -29,6 +29,7 @@ config.sso.clientId = process.env.SSO_CLIENT_ID || 'simva'
 config.sso.clientSecret = process.env.SSO_CLIENT_SECRET || 'th1s_1s_th3_s3cr3t'
 config.sso.sslRequired = process.env.SSO_SSL_REQUIRED || 'external'
 config.sso.publicClient = process.env.SSO_PUBLIC_CLIENT || 'false'
+config.sso.deviceUrl = `${config.sso.url}/realms/${config.sso.realm}/device`
 
 config.sso.accountPath = process.env.SSO_ACCOUNT_PATH || '/account'
 config.sso.accountUrl = `${config.sso.url}/realms/${config.sso.realm}${config.sso.accountPath}?referrer=${config.sso.clientId}&referrer_uri=${config.simva.url}`

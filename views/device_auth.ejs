@@ -1,0 +1,36 @@
+<%# views/device_auth.ejs %>
+
+<!DOCTYPE html>
+<html>
+<head>
+	<%- include('partials/layout_head_assets') %>
+	<%- include('partials/layout_common_script', { includeSimvaBase: true }) %>
+	<script type="text/javascript">
+		let studyId = "<%= study %>";
+		let expectedUserCode = "<%= usercode %>";
+
+		$(document).ready(function() {
+			if (expectedUserCode) {
+				console.log('Authorizing device for study ' + studyId + ' (requested code: ' + expectedUserCode + ')');
+			}
+
+			const iframe = document.getElementById('sso_device');
+			iframe.addEventListener('load', () => {
+				try {
+					const currentUrl = iframe.contentWindow.location.href;
+					console.log('SSO device flow completed, redirecting to:', currentUrl);
+					window.location.href = currentUrl;
+				} catch(e) {
+					console.log('Cross-origin, cannot access URL');
+				}
+			});
+		});
+	</script>
+</head>
+<body class="black">
+	<%- include('partials/header_authenticated') %>
+	<div style="width:100%; height:100vh;">
+		<iframe id="sso_device" class="content_filled" src="<%= config.sso.deviceUrl %>?user_code=<%= usercode %>"></iframe>
+	</div>
+</body>
+</html>

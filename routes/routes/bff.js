@@ -651,6 +651,43 @@ module.exports = function(auth, redirectToLogin, config){
         });
     });
 
+    // Initiate the OAuth2 Device Authorization Grant flow for a gameplay activity
+    // Proxies to the simva backend /auth2/:activityid/device endpoint
+    router.post('/auth2/:activityid/device', auth, redirectToLogin, async (req, res, next) => {
+        const login_hint = req.query.login_hint;
+        try {
+            const response = await axios.post(
+                `${config.api.url}/auth2/${req.params.activityid}/device`,
+                null,
+                {
+                    params: login_hint ? { login_hint } : {},
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                }
+            );
+            res.status(200).send(response.data);
+        } catch(error) {
+            next(error.response?.data || error);
+        }
+    });
+
+    // Poll for an access token in the device flow
+    // Proxies to the simva backend /auth2/:activityid/token endpoint
+    router.post('/auth2/:activityid/token', auth, redirectToLogin, async (req, res, next) => {
+        try {
+            const response = await axios.post(
+                `${config.api.url}/auth2/${req.params.activityid}/token`,
+                req.body,
+                { headers: { 'Content-Type': 'application/json' } }
+            );
+            res.status(200).send(response.data);
+        } catch(error) {
+            const status = error.response ? error.response.status : 500;
+            const data = error.response ? error.response.data : error;
+            // The backend relays Keycloak errors (authorization_pending, etc.) as-is
+            res.status(status).send(data);
+        }
+    });
+
     // Get all the available surveys
     router.get('/limesurvey/surveys', auth, redirectToLogin, async (req, res, next) => {
         Simva.getSurveyList(req.session.id, (error, result) => {
