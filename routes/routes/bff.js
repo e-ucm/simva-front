@@ -652,15 +652,14 @@ module.exports = function(auth, redirectToLogin, config){
     });
 
     // Initiate the OAuth2 Device Authorization Grant flow for a gameplay activity
-    // Proxies to the simva backend /auth2/:activityid/device endpoint
-    router.post('/auth2/:activityid/device', auth, redirectToLogin, async (req, res, next) => {
+    // Proxies to the simva backend /simlets/:simletid/scheduler/device endpoint
+    router.post('/simlets/:simletid/scheduler/device', auth, redirectToLogin, async (req, res, next) => {
         const login_hint = req.query.login_hint;
         try {
             const response = await axios.post(
-                `${config.api.url}/auth2/${req.params.activityid}/device`,
+                `${config.api.url}/auth2/${req.params.simletid}/device`,
                 null,
                 {
-                    params: login_hint ? { login_hint } : {},
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
                 }
             );
@@ -671,11 +670,11 @@ module.exports = function(auth, redirectToLogin, config){
     });
 
     // Poll for an access token in the device flow
-    // Proxies to the simva backend /auth2/:activityid/token endpoint
-    router.post('/auth2/:activityid/token', auth, redirectToLogin, async (req, res, next) => {
+    // Proxies to the simva backend /simlets/:simletid/scheduler/auth2/token endpoint
+    router.post('/simlets/:simletid/scheduler/auth2/token', auth, redirectToLogin, async (req, res, next) => {
         try {
             const response = await axios.post(
-                `${config.api.url}/auth2/${req.params.activityid}/token`,
+                `${config.api.url}/auth2/${req.params.simletid}/token`,
                 req.body,
                 { headers: { 'Content-Type': 'application/json' } }
             );

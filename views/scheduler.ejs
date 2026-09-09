@@ -253,9 +253,6 @@
 									}
 								}
 								if(result.openable){
-									if (authMethod === 'simva_device_oauth2') {
-										startDeviceAuthAndLoad(activity.activity_id);
-									} else {
 										Simva.getActivityTarget(activity.activity_id, function(error, result){
 											if (error) {
 												console.error("Error getting the URL of the activity target:", error);
@@ -274,7 +271,6 @@
 												return;
 											}
 										});
-									}
 								}else{
 									$('#activity_content').hide(10, function(){
 										$('#activity_content').attr('src', 'about:blank');
@@ -295,38 +291,6 @@
 		let paintCurrentActivity = function(name){
 			$("#current_activity_name").text(name);
 		}
-
-		let startDeviceAuthAndLoad = function(activityId) {
-			Utils.post('/bff/auth2/' + studyId + '/device?login_hint=' + encodeURIComponent(studyId), {}, function(err, deviceData) {
-				if (err) {
-					console.error('Failed to initiate device auth:', err);
-					return;
-				}
-				deviceData._activityId = studyId;
-				showDeviceAuthModal(deviceData,
-					function onAuthSuccess() {
-						Simva.getActivityTarget(activityId, function(error, result) {
-							if (error) {
-								console.error("Error getting activity target:", error);
-								return;
-							}
-							try {
-								Simva.getCurrentUser(function(error, user) {
-									if (!error) {
-										$('#activity_content').attr('src', result[user.user_id]);
-									}
-								});
-							} catch (error) {
-								console.error("Error loading activity:", error);
-							}
-						});
-					},
-					function onAuthError(reason) {
-						console.warn('Device auth cancelled or failed:', reason);
-					}
-				);
-			});
-		};
 
 		let completeActivity = function(){
 			Simva.setActivityCompletion(current_activity_id, currentUserId, true, function(){
