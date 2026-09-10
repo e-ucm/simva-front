@@ -1,5 +1,5 @@
  # stick with Debian, not Alpine
-FROM node:26.5.0-bullseye-slim AS base
+FROM node:26.8.1-bullseye-slim AS base
 WORKDIR /app
 
 # Entrypoint runs scripts with /bin/sh; ensure it's bash (not dash) for -o pipefail support
