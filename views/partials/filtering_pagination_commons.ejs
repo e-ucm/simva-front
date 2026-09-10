@@ -316,6 +316,7 @@
         $('#<%= id %>_tags_list').empty();
 
         // No tags
+        // allTags defined on the simlet_commons partial
         if (allTags.size == 0) {
             $('#<%= id %>_tags_list').append($("#no_tags_template .sessionTagList").clone());
             return;

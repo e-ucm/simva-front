@@ -235,7 +235,7 @@ class UserTools {
 	}
 
 	refreshAuth(session, config, callback){
-		if(session.user && session.user.refreshToken){
+		if(session && session.user && session.user.refreshToken){
 			logger.info(`refreshAuth() - Refresh Token : ${session.user.refreshToken}`);
 			const clientConfig= `${config.sso.clientId}:${config.sso.clientSecret}`;
 			const querystring = new URLSearchParams({
