@@ -129,6 +129,22 @@ var Simva = {
 	},
 
 	/**
+	 * Send a GET request to the bff to fetch all the existing tags
+	 * @param {Callback} callback
+	 */
+	getTagsForSimlets: function(callback) {
+		Utils.get(`/bff/simlets/tags`, callback);
+	},
+
+	/**
+	 * Send a GET request to the bff to fetch all the existing tags
+	 * @param {Callback} callback
+	 */
+	getTagsForSimlet: function(simlet_id, callback) {
+		Utils.get(`/bff/simlets/${simlet_id}/tags`, callback);
+	},
+
+	/**
 	 * Send a POST request to the bff to create a new tag
 	 * @param {object} body - object containing the tag_name and tag_color of the tag
 	 * @param {Callback} callback

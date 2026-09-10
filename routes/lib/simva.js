@@ -166,6 +166,24 @@ class Simva {
 	getTags(currSessionId, callback){
 		this.get(`${this.apiurl}/tags`, currSessionId, callback);
 	}
+
+	/**
+	 * Send a GET request to the Axios wrapper to fetch all the existing tags
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getTagsForSimlets(currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/tags`, currSessionId, callback);
+	}
+	
+	/**
+	 * Send a GET request to the Axios wrapper to fetch all the existing tags
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getTagsForSimlet(simlet_id, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simlet_id}/tags`, currSessionId, callback);
+	}
 	
 	/**
 	 * Send a POST request to the Axios wrapper to create a new tag

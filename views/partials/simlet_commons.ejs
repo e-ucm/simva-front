@@ -489,7 +489,7 @@
 	let remainingTags =  new Set();
 
 	// Get all the existing tags and store them in allTags, tagsById, tagsByName and remainingTags
-	Simva.getTags(function(error, result) {
+	Simva.getTagsForSimlets(function(error, result) {
 		result.forEach(tag => {
 			if (!tagsById.has(tag.tag_id)) {
 				allTags.add(tag);

@@ -96,6 +96,27 @@ module.exports = function(auth, redirectToLogin, config){
         });
     });
 
+    // Get the all the existing tags
+    router.get('/simlets/tags', auth, redirectToLogin, async (req, res, next) => {
+        Simva.getTagsForSimlets(req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    router.get('/simlets/:simlet_id/tags', auth, redirectToLogin, async (req, res, next) => {
+        Simva.getTagsForSimlet(req.params['simlet_id'], req.session.id, (error, result) => {
+            if(error) {
+                next(error.response?.data || error);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
     // Add a new tag
     router.post('/tags', auth, redirectToLogin, async (req, res, next) => {
         Simva.createTag(req.body, req.session.id, (error, result) => {
