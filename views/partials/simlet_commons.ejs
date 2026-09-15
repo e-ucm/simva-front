@@ -441,18 +441,6 @@
 	}
 
 
-	// --- EXPORT ---
-
-	const exportSimlet = function(simletId) {
-		Simva.exportSimlet(simletId, function(error, result) {
-			if (!error) {
-				const content = JSON.stringify(result, null, 2);
-				const filename = `simlet_${result.simlet_name}-export.json`;
-				Utils.download(filename, content);
-			}
-		})
-	}
-
 	// --- ARCHIVE/DELETE ---
 	
 	const archiveSimlet = function(simletId, simletName, archive = true) {
@@ -463,7 +451,6 @@
 				}
 			});
 		}
-		
 	}
 
 	const deleteSimlet = function(simletId, simletName){
@@ -477,6 +464,19 @@
 				}
 			});
 		}
+	}
+
+	
+	// --- EXPORT ---
+
+	const exportSimlet = function(simletId) {
+		Simva.exportSimlet(simletId, function(error, result) {
+			if (!error) {
+				const content = JSON.stringify(result, null, 2);
+				const filename = `simlet_${result.simlet_name}-export.json`;
+				Utils.download(filename, content);
+			}
+		})
 	}
 
 

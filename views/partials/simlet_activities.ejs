@@ -329,20 +329,41 @@
 		Utils.toggleFormInFloating('download_data_menu');
 		Utils.changeTab(null, 'download_data_form','download_activity_data');
 
-		$("#download_activity_loader").hide();
+		showActivityDownloadFormButtons(activityId);
 
         downloadActivityId = activityId;
 		const activity = getActivityFromId(activityId);
 
 		$("#downloadFormTitle").text(`<%- t('single.title', { ns : 'activities' }) %>: ${activity.activity_name}`);
+	}
+
+	const showActivityDownloadFormButtons = function(activityId) {
+		$("#download_activity_loader").hide();
+		$("#activity_data_download").show();
+		$("#activity_test_data_download").hide();
+		$("#global_backup_download").show();
+		$("#backup_download").show();
 
 		// Show test download button only if the current user is participant of the session
-		$("#activity_test_data_download").hide();
+		$("#session_test_data_download").hide();
+		
+		const activity = getActivityFromId(activityId);
+		if (activity == null) {
+			return;
+		}
 		if (isCurrentUserParticipant(activity.session_id)) {
 			$("#activity_test_data_download").show();
 		}
 	}
 
+	const showActivityDownloadFormLoader = function() {
+		$("#download_activity_loader").show();
+		$("#activity_data_download").hide();
+		$("#activity_test_data_download").hide();
+		$("#global_backup_download").hide();
+		$("#backup_download").hide();
+	}
+	
 	// Expand/hide activity participants table
 	const toggleActivityTable = function(activityId) {
 		$(`#activity_${activityId} .activityTopActions .expandButton`).toggleClass('collapsed');
@@ -449,19 +470,40 @@
 
 	// Functionality
 	
+    const deleteActivity = function(activityId, activityName, sessionId) {
+		let session = getSessionFromId(sessionId);
+		let sessionName = session && session.session_name ? session.session_name : sessionId;
+		if (confirm(`<%- t('delete.confirm', { ns : 'activities', activity : '${activityName}', session: '${sessionName}' , SIMLET : '${simlet.simlet_name}' }) %>`)) {
+			Simva.deleteActivity(simletId, sessionId, activityId, function(error, result) {
+				onEditSessionActivities(sessionId);
+			});
+		}
+	}
+
+	const exportActivity = function(activityId) {
+		Simva.exportActivity(activityId, true, (error, result) => {
+			if(error){
+				$.toast({
+					heading: error.message,
+					text: error.message,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+			} 
+			else {
+				const session = getSessionFromId(result.session_id);
+				const filename = `${getActivityFilenamePrefix(session, result)}-export.json`;
+				Utils.downloadContent(JSON.stringify(result, null, 2), filename);
+			}
+		});
+	}
+
 	const downloadActivityData = function () {
-		$("#activity_data_download").hide();
-		$("#activity_test_data_download").hide();
-		$("#global_backup_download").hide();
-		$("#backup_download").hide();
-		$("#download_activity_loader").show();
+		showActivityDownloadFormLoader();
 		
 		Simva.getActivityLRSData(downloadActivityId, (error, result) => {
-			$("#activity_data_download").show();
-			$("#activity_test_data_download").show();
-			$("#global_backup_download").show();
-			$("#backup_download").show();
-			$("#download_activity_loader").hide();
+			showActivityDownloadFormButtons(downloadActivityId);
 
             let errorMsg = "<%= t('result.error.downloading', { ns : 'activities' }) %>";
 			if(error){
@@ -482,18 +524,10 @@
 	}
 
 	const downloadActivityTestData = function() {
-		$("#activity_data_download").hide();
-		$("#activity_test_data_download").hide();
-		$("#global_backup_download").hide();
-		$("#backup_download").hide();
-		$("#download_activity_loader").show();
+		showActivityDownloadFormLoader();
 
 		Simva.getActivityTestLRSData(downloadActivityId, (error, result) => {
-			$("#activity_data_download").show();
-			$("#activity_test_data_download").show();
-			$("#global_backup_download").show();
-			$("#backup_download").show();
-			$("#download_activity_loader").hide();
+			showActivityDownloadFormButtons(downloadActivityId);
 
             let errorMsg = "<%= t('result.error.downloading', { ns : 'activities' }) %>";
 			if(error){
@@ -532,25 +566,6 @@
 			}
 		}
 	}
-    
-	const exportActivity = function(activityId) {
-		Simva.exportActivity(activityId, true, (error, result) => {
-			if(error){
-				$.toast({
-					heading: error.message,
-					text: error.message,
-					position: 'top-right',
-					icon: 'error',
-					stack: false
-				});
-			} 
-			else {
-				const session = getSessionFromId(result.session_id);
-				const filename = `simlet_${simlet.simlet_name}-session_${session.session_name}-activity_${result.activity_name}-export.json`;
-				Utils.downloadContent(JSON.stringify(result, null, 2), filename);
-			}
-		});
-	}
 
 	const setCompletionForAllParticipant = function(activityId, status) {
 		Simva.setMultiActivityCompletion(activityId, status, (error, result) => {
@@ -564,16 +579,6 @@
 				});
 			}
 		})
-	}
-
-    const deleteActivity = function(activityId, activityName, sessionId) {
-		let session = getSessionFromId(sessionId);
-		let sessionName = session && session.session_name ? session.session_name : sessionId;
-		if (confirm(`<%- t('delete.confirm', { ns : 'activities', activity : '${activityName}', session: '${sessionName}' , SIMLET : '${simlet.simlet_name}' }) %>`)) {
-			Simva.deleteActivity(simletId, sessionId, activityId, function(error, result) {
-				onEditSessionActivities(sessionId);
-			});
-		}
 	}
 
 

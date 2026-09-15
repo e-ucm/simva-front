@@ -940,18 +940,6 @@
 		}
 	}
 
-	const exportGroup = function(groupId) {
-		Simva.exportGroup(simletId, groupId, true, function(error, result) {
-			if (!error) {
-				const content = JSON.stringify(result, null, 2);
-				const filename = `simlet_${simlet.simlet_name}-group_${result.group_name}-export.json`;
-				Utils.download(filename, content);
-			} else {
-				alert(error.responseJSON ? error.responseJSON.message : (error.message || error));
-			}
-		});
-	}
-
 	const deleteGroup = function(groupId, groupName) {
 		if (confirm(`<%- t('groups.delete.confirm', { ns : 'groups', group : '${groupName}', SIMLET : '${simlet.simlet_name}' }) %>`)) {
 			Simva.deleteStudyGroup(simletId, groupId, function(response) {
@@ -982,6 +970,18 @@
 	// 		});
 	// 	}
 	// }
+
+	const exportGroup = function(groupId) {
+		Simva.exportGroup(simletId, groupId, true, function(error, result) {
+			if (!error) {
+				const content = JSON.stringify(result, null, 2);
+				const filename = `simlet_${simlet.simlet_name}-group_${result.group_name}-export.json`;
+				Utils.download(filename, content);
+			} else {
+				alert(error.responseJSON ? error.responseJSON.message : (error.message || error));
+			}
+		});
+	}
 
 
 	const getCurrentAllocation = function(groupId, participantId = null) {

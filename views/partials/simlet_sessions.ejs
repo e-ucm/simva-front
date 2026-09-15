@@ -453,42 +453,43 @@
 		});
 	}
 
-	const exportSession = function(sessionId) {
-		Simva.exportSession(simletId, sessionId, function(error, result) {
-			if(!error) {
-				const content = JSON.stringify(result, null, 2);
-				const filename = `simlet_${simlet.simlet_name}-session_${result.session_name}-export.json`;
-				Utils.download(filename, content);
-			}
-		})
-	}
-	
-	// Expand/hide session info
-	const toggleSession = function(sessionId, forceVisible) {
-		$(`#session_${sessionId} .sessionTop .expandButton`).toggleClass('collapsed');
-		$(`#session_${sessionId} .tooltipLine.activitiesTitle`).toggle();
-		$(`#session_${sessionId} .activities`).toggle();
-	}
 	
 	const openSessionDownloadForm = function(sessionId) {
 		Utils.toggleFormInFloating('download_data_menu');
 		Utils.changeTab(null, 'download_data_form','download_session_data');
-		
-		$("#download_session_loader").hide();
         
+		showSessionDownloadFormButtons(sessionId);
+		
 		downloadSessionId = sessionId;
 		const session = getSessionFromId(sessionId);
 
 		if (session != null) {
 			$("#downloadFormTitle").text(`<%- t('single.title', { ns : 'sessions' }) %>: ${session.session_name}`);
-	
-			// Show session download button based on participant status
-			$("#session_test_data_download").hide();
-
-			if (isCurrentUserParticipant(sessionId)) {
-				$("#session_test_data_download").show();
-			}
 		}
+	}
+
+	const showSessionDownloadFormButtons = function(sessionId) {
+		$("#download_session_loader").hide();
+		$("#session_data_download").show();
+		
+		// Show session download button based on participant status
+		$("#session_test_data_download").hide();
+		if (isCurrentUserParticipant(sessionId)) {
+			$("#session_test_data_download").show();
+		}
+	}
+
+	const showSessionDownloadFormLoader = function() {
+		$("#download_session_loader").show();
+		$("#session_data_download").hide();
+		$("#session_test_data_download").hide();
+	}
+
+    // Expand/hide session info
+	const toggleSession = function(sessionId, forceVisible) {
+		$(`#session_${sessionId} .sessionTop .expandButton`).toggleClass('collapsed');
+		$(`#session_${sessionId} .tooltipLine.activitiesTitle`).toggle();
+		$(`#session_${sessionId} .activities`).toggle();
 	}
     
 	// Sync add session and import session name input 
@@ -613,16 +614,22 @@
 		})
 	}
 	
+	const exportSession = function(sessionId) {
+		Simva.exportSession(simletId, sessionId, function(error, result) {
+			if(!error) {
+				const content = JSON.stringify(result, null, 2);
+				const filename = `${getSessionFilenamePrefix(result)}-export.json`;
+				Utils.download(filename, content);
+			}
+		})
+	}
+	
 	const downloadSessionData = function() {
-		$("#session_data_download").hide();
-		$("#session_test_data_download").hide();
-		$("#download_session_loader").show();
+		showSessionDownloadFormLoader(downloadSessionId);
 		
 		console.log("downloading data for session id:", downloadSessionId);
 		Simva.getSessionLRSData(simletId, downloadSessionId, function(error, result){
-			$("#session_data_download").show();
-			$("#session_test_data_download").show();
-			$("#download_session_loader").hide();
+			showSessionDownloadFormButtons(downloadSessionId);
 
 			if(error) {
 				$.toast({
@@ -641,15 +648,11 @@
 	}
 
 	const downloadSessionTestData = function() {
-		$("#session_data_download").hide();
-		$("#download_session_loader").show();
-		$("#session_test_data_download").hide();
+		showSessionDownloadFormLoader();
 		
 		console.log("downloading test data for session id:", downloadSessionId);
 		Simva.getSessionTestLRSData(simletId, downloadSessionId, function(error, result){
-			$("#session_data_download").show();
-			$("#session_test_data_download").show();
-			$("#download_session_loader").hide();
+			showSessionDownloadFormButtons(downloadSessionId);
 			
 			if(error) {
 				$.toast({

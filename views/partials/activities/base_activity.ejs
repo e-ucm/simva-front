@@ -174,18 +174,10 @@
          * @param {number} activityId - id of the activity to download the info from
          */
         downloadGlobalActivityBackup(activityId) {
-            $("#activity_data_download").hide();
-            $("#activity_test_data_download").hide();
-            $("#global_backup_download").hide();
-            $("#backup_download").hide();
-            $("#download_activity_loader").show();
+            showActivityDownloadFormLoader();
             
             Simva.getMinioDataUrl(activityId, (error, result) => {
-                $("#activity_data_download").show();
-                $("#activity_test_data_download").show();
-                $("#global_backup_download").show();
-                $("#backup_download").show();
-                $("#download_activity_loader").hide();
+                showActivityDownloadFormButtons(downloadActivityId);
                 
                 let errorMsg = "<%= t('result.error.downloading', { ns : 'activities' }) %>";
                 if (error) {
@@ -212,18 +204,10 @@
          * @param {string} resultType - type of result of the result data(full/code/traces)
          */
         downloadBackup(activityId, resultType) {
-            $("#activity_data_download").hide();
-            $("#activity_test_data_download").hide();
-            $("#global_backup_download").hide();
-            $("#backup_download").hide();
-            $("#download_activity_loader").show();
+            showActivityDownloadFormLoader();
             
             Simva.getActivityResult(activityId, null, resultType, (error, result) => {
-                $("#activity_data_download").show();
-                $("#activity_test_data_download").show();
-                $("#global_backup_download").show();
-                $("#backup_download").show();
-                $("#download_activity_loader").hide();
+                showActivityDownloadFormButtons(downloadActivityId);
                 
                 let errorMsg = "<%= t('result.error.downloading', { ns : 'activities' }) %>";
 				if (error) {
@@ -665,6 +649,7 @@
             else {
                 this.paintParticipantProgress(activityId, participantId, value);
             }
+            this.paintParticipantResult(activityId, participantId);
         }
 
         /**
