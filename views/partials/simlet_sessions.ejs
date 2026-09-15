@@ -614,6 +614,11 @@
 		})
 	}
 	
+	
+	const getSessionFilenamePrefix = function(session) {
+		return `simlet_${simlet.simlet_name}-session_${session.session_name}`;
+	}
+
 	const exportSession = function(sessionId) {
 		Simva.exportSession(simletId, sessionId, function(error, result) {
 			if(!error) {
@@ -642,7 +647,7 @@
 				return;
 			}
 			const content = result.data;
-			const filename = `simlet_${simlet.simlet_name}-session_${getSessionFromId(downloadSessionId).session_name}-data.ndjson`;
+			const filename = `${getSessionFilenamePrefix(getSessionFromId(downloadSessionId))}-data.ndjson`;
 			Utils.downloadContent(content, filename, 'Session data error');
 		});
 	}
@@ -665,7 +670,7 @@
 				return;
 			}
 			const content = result.data;
-			const filename = `simlet_${simlet.simlet_name}-session_${getSessionFromId(downloadSessionId).session_name}-test_data.ndjson`;
+			const filename = `${getSessionFilenamePrefix(getSessionFromId(downloadSessionId))}-test_data.ndjson`;
 			Utils.downloadContent(content, filename, 'Session test data error');
 		});
 	}

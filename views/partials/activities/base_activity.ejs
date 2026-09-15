@@ -155,7 +155,7 @@
                 else {
                     const activity = getActivityFromId(activityId);
                     const session = getSessionFromId(activity.session_id);
-                    let filename = `simlet_${simlet.simlet_name}-session_${session.session_name}-activity_${activity.activity_name}`;
+                    let filename = getActivityFilenamePrefix(session, activity);
                     if (participantId) {
                         const participant = getParticipantFromId(participantId);
                         filename += `-participant_${participant.username}-${this.supportedType}_results.json`;
@@ -221,7 +221,7 @@
 				} else {
                     const activity = getActivityFromId(activityId);
                     const session = getSessionFromId(activity.session_id);
-                    let filename = `simlet_${simlet.simlet_name}-session_${session.session_name}-activity_${activity.activity_name}`;
+                    let filename = getActivityFilenamePrefix(session, activity);
 
                     let zip = new JSZip();
 					let hasResults = false;
