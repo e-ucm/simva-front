@@ -81,6 +81,9 @@
             this.supportedType = "activity";
         	this.simple_name = "<%= t('activity.name', { ns : 'activities' }) %>";
             this.description = "<%= t('activity.description', { ns : 'activities' }) %>";
+
+            this.individualDataExtension = "json";
+            this.globalDataExtension = "ndjson";
         }
 
         // Menus
@@ -158,11 +161,11 @@
                     let filename = getActivityFilenamePrefix(session, activity);
                     if (participantId) {
                         const participant = getParticipantFromId(participantId);
-                        filename += `-participant_${participant.username}-${this.supportedType}_results.json`;
+                        filename += `-participant_${participant.username}-${this.supportedType}_results.${this.individualDataExtension}`;
     					Utils.downloadContent(result[participantId], filename, errorMsg);
                     }
                     else {
-                        filename += `-${this.supportedType}_results.json`;
+                        filename += `-${this.supportedType}_results.${this.globalDataExtension}`;
                         Utils.download(filename, JSON.stringify(result, null, 2));
                     }
                 }
@@ -192,7 +195,7 @@
                     console.log('Minio URL for backup:', result);
                     const activity = getActivityFromId(activityId);
                     const session = getSessionFromId(activity.session_id);
-                    const filename = `simlet_${simlet.simlet_name}-session_${session.session_name}-activity_${activity.activity_name}-${this.supportedType}_backup.ndjson`;
+                    const filename = `${getActivityFilenamePrefix(session, activity)}-${this.supportedType}_backup.${this.globalDataExtension}`;
                     Utils.downloadContent(result.url, filename, errorMsg);
                 }
             });
@@ -238,7 +241,7 @@
 								})
 								.then((blob) => {
                                     const participant = getParticipantFromId(participantId);
-                                    const userFilename = filename + `-participant_${participant.username}-${this.supportedType}_backup.json`;
+                                    const userFilename = filename + `-participant_${participant.username}-${this.supportedType}_backup.${this.individualDataExtension}`;
 									zip.file(userFilename, blob);
 								})
 								.catch((error) => {
