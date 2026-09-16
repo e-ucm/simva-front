@@ -108,7 +108,7 @@
 			</div>
         </div>
         <div class="sessionTags" style="margin-top: 8px;">	</div>
-		<div class="tooltipLine activitiesTitle">
+		<div class="tooltipLine activitiesTitle" style="margin-bottom: 10px;">
 			<h3><%- t('title', { ns : 'activities' }) %></h3>
 			<div class="tooltip">
 				&#x1F6C8;
@@ -818,10 +818,11 @@
 
 		paintNoSessionsMessage();
 		
-		// If there's only one result, automatically expand the card to show its activities
-		if (batch.length > 0 && simlet.sessions.length == 1) {
-			if ($(`#session_${batch[0].session_id} .expandButton`).hasClass('collapsed')) {
-				toggleSession(batch[0].session_id);
+		// Automatically expand the first session card
+		if (batch.length > 0 && $("#sessions").length > 0) {
+			const firstSessionCard = $("#sessions").children().first();
+			if (firstSessionCard.find(".expandButton").hasClass("collapsed")) {
+				toggleSession(firstSessionCard.data()[SESSION_DATA_ID_KEY]);
 			}
 		}
 		

@@ -102,7 +102,7 @@
             </div>
             <div class="allocatorContent">
             </div>
-			<strong><%- t('participants.title', { ns : 'groups' }) %>:</strong><span  class="groupParticipantsCount">-</span>
+			<strong><%- t('participants.title', { ns : 'groups' }) %>: </strong><span  class="groupParticipantsCount">-</span>
 			<div class="tooltipLine participantsTitle" style="margin-top: 15px; margin-bottom: 15px;">
 				<h3><%- t('participants.title', { ns : 'groups' }) %></h3>
 				<div class="tooltip">
@@ -113,8 +113,8 @@
 				</div>
 			</div>
 
-			<span class="no_participants_msg"></span>
             <div class="participants_container">
+				<span class="no_participants_msg"></span>
                 <table class="participants">
                     <thead>
                         <th><%- t('participants.table.username.title', { ns : 'groups' }) %></th>
@@ -1108,7 +1108,7 @@
 	}
 
 	
-	const GROUPS_SHOW_AT_ONCE = 5;
+	const GROUPS_SHOW_AT_ONCE = 4;
 	let groupsFilteringPaginationData = $("#groups_filtering").data();
 
 	$(document).ready(function() {
@@ -1208,9 +1208,12 @@
 		
 		paintNoGroupsMessage();
 		
-		// If there's only one result, automatically expand the card to show its participants
-		if (batch.length > 0 && simlet.groups.length == 1) {
-			toggleGroup(batch[0].group_id);
+		// Automatically expand the first group card
+		if (batch.length > 0 && $("#groups").length > 0) {
+			const firstGroupCard = $("#groups").children().first();
+			if (firstGroupCard.find(".expandButton").hasClass("collapsed")) {
+				toggleGroup(firstGroupCard.data()[GROUP_DATA_ID_KEY]);
+			}
 		}
 
 		// Block group/user addition/deletion/allocation of all groups cards when SIMLET is archived
