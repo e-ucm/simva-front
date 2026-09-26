@@ -7,8 +7,8 @@
     "filters.status.title": "Statut",
         "filters.status.all": "Tous",
 
-    "createdAt": "Créé le",
-    "updatedAt": "Mis à jour le",
+    "created_at": "Créé le",
+    "updated_at": "Mis à jour le",
     "activities": "Activités",
     "users": "Utilisateurs",
     "play": "Jouer le SIMLET",

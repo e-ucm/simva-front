@@ -7,8 +7,8 @@
     "filters.status.title": "Estado",
         "filters.status.all": "Todos",
 
-    "createdAt": "Creado el",
-    "updatedAt": "Actualizado el",
+    "created_at": "Creado el",
+    "updated_at": "Actualizado el",
     "activities": "Actividades",
     "users": "Usuarios",
     "play": "Jugar al SIMLET",
