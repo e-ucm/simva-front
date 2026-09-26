@@ -14,6 +14,7 @@
 		<%- aboutContent %>
 	</div>
 <% } %>
+
 		
 <div class="floating_buttons">
 	<div id="scroll_top_button" unselectable="on" class="basic scrollTop" onclick="scrollToTop()" style="opacity: 75%; width: 60px; height: 60px;">
@@ -32,6 +33,9 @@
 		// Move the floating buttons to the content container 
 		$(".content").append($(".floating_buttons"));
 		$(".content").addClass("floating");
+
+		$(".aboutPage a").attr("target", "_blank");
+		$(".aboutPage a").attr("rel", "noopener noreferrer");
 
 		if ($(".menu").length <= 0) {
 			$(".content").css({ "padding-left": "10px" });

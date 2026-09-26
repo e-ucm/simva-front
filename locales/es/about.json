@@ -139,5 +139,7 @@
             "xapi.dashboard.progress.col2": "Etiqueta de resultado mostrada en rastros xAPI para el progreso",
 
         "xapi.dashboard.completed.title": "Completado",
-        "xapi.dashboard.completed.desc": "Esto representa si el participante ha completado la actividad o no. Su valor puede ser 'true' o 'false'. El valor predeterminado es 'false', y se volverá 'true' cuando el participante complete la actividad. Esto significa que en el backend el servidor SIMVA ha recibido un rastro xAPI con el id del verbo: http://adlnet.gov/expapi/verbs/completed, y también el valor del resultado de finalización tiene que ser establecido a 'true'."
+        "xapi.dashboard.completed.desc": "Esto representa si el participante ha completado la actividad o no. Su valor puede ser 'true' o 'false'. El valor predeterminado es 'false', y se volverá 'true' cuando el participante complete la actividad. Esto significa que en el backend el servidor SIMVA ha recibido un rastro xAPI con el id del verbo: http://adlnet.gov/expapi/verbs/completed, y también el valor del resultado de finalización tiene que ser establecido a 'true'.",
+
+    "credits.title": "Créditos"
 }

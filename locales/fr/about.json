@@ -139,5 +139,7 @@
             "xapi.dashboard.progress.col2": "Étiquette de résultat affichée dans les traces xAPI",
             
         "xapi.dashboard.completed.title": "Complété",
-        "xapi.dashboard.completed.desc": "Cela représente si le participant a complété l'activité ou non. Sa valeur peut être 'true' ou 'false'. La valeur par défaut est 'false', et elle deviendra 'true' lorsque le participant complétera l'activité. Cela signifie que dans le backend le serveur SIMVA a reçu une trace xAPI avec l'id du verbe: http://adlnet.gov/expapi/verbs/completed, et aussi la valeur du résultat de finalisation doit être définie à 'true'."
+        "xapi.dashboard.completed.desc": "Cela représente si le participant a complété l'activité ou non. Sa valeur peut être 'true' ou 'false'. La valeur par défaut est 'false', et elle deviendra 'true' lorsque le participant complétera l'activité. Cela signifie que dans le backend le serveur SIMVA a reçu une trace xAPI avec l'id du verbe: http://adlnet.gov/expapi/verbs/completed, et aussi la valeur du résultat de finalisation doit être définie à 'true'.",
+
+    "credits.title": ""
 }

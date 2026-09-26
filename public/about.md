@@ -20,6 +20,7 @@
 - [<%= t("integration.title", { ns : "about" }) %>](#integration-section)
 - [<%= t("sessionManagement.title", { ns : "about" }) %>](#session-management-section)
 - [<%= t("xapi.dashboard.title", { ns : "about" }) %>](#xapi-section)
+- [<%= t("credits.title", { ns : "about" }) %>](#credits-section)
 
 <hr>
 
@@ -348,3 +349,36 @@
 }
 ```
 <br>
+
+<hr>
+
+## <%= t("credits.title", { ns : "about" }) %> {#credits-section}
+* [Information (Magnific) - Flaticon](https://www.flaticon.com/free-icon/information_1076745)
+* [User (Magnific) - Flaticon](https://www.flaticon.com/free-icon/user_747376)
+* [Power Button Off (Dave Gandy) - Flaticon](https://www.flaticon.com/free-icon/power-button-off_25706)
+* [Documents (Magnific) - Flaticon](https://www.flaticon.com/free-icon/documents_86101)
+* [Play Button (abdul allib) - Flaticon](https://www.flaticon.com/free-icon/play-button_3874990)
+* [Magnifying Glass (Chanut) - Flaticon](https://www.flaticon.com/free-icon/magnifying-glass_151773)
+* [Pencil (Anggara) - Flaticon](https://www.flaticon.com/free-icon/pencil_9458316)
+* [Link (Bharat Icons) - Flaticon](https://www.flaticon.com/free-icon/link_7640062)
+* [Direct download (Pixel perfect) - Flaticon](https://www.flaticon.com/free-icon/direct-download_2810390)
+* [Inbox-in (SeyfDesigner) - Flaticon](https://www.flaticon.com/free-icon/inbox-in_8299969)
+* [Inbox (SeyfDesigner) - Flaticon](https://www.flaticon.com/free-icon/inbox_8299984)
+* [Trash Bin (Bharat Icons) - Flaticon](https://www.flaticon.com/free-icon/trash-bin_6997199)
+* [Plus (Pixel perfect) - Flaticon](https://www.flaticon.com/free-icon/plus_1828921)
+* [Pause (inkubators) - Flaticon](https://www.flaticon.com/free-icon/pause_2920686)
+* [Play Button (NajmunNahar) - Flaticon](https://www.flaticon.com/free-icon/play-button_9073187)
+* [Stop Button (Pixel perfect) - Flaticon](https://www.flaticon.com/free-icon/stop-button_4029077)
+* [Tube (HideMaru) - Flaticon](https://www.flaticon.com/free-icon/tube_6992820)
+* [Undo (KP Arts) - Flaticon](https://www.flaticon.com/free-icon/undo_7468538)
+* [Clear (LAFS) - Flaticon](https://www.flaticon.com/free-icon/clean_9755169)
+* [Eye (Icon Mart) - Flaticon](https://www.flaticon.com/free-icon/eye_10353546)
+* [Hidden (sonnycandra) - Flaticon](https://www.flaticon.com/free-icon/hidden_10812267)
+* [Web (gravisio) - Flaticon](https://www.flaticon.com/free-icon/web_11502452)
+* [Electronics (Magnific) - Flaticon](https://www.flaticon.com/free-icon/electronics_9479378)
+* [Questionnaire (RIkas Dzihab) - Flaticon](https://www.flaticon.com/free-icon/questionnaire_10748894)
+* [New window (sonnycandra) - Flaticon](https://www.flaticon.com/free-icon/new-window_16799159)
+* [Setting (Phoenix Group) - Flaticon](https://www.flaticon.com/free-icon/setting_3019014)
+* [Back (Magnific) - Flaticon](https://www.flaticon.com/free-icon/back_2099238)
+* [Check (Pixel perfect) - Flaticon](https://www.flaticon.com/free-icon/check_1828743)
+* [Up arrow (Roundicons) - Flaticon](https://www.flaticon.com/free-icon/up-arrow_271239)

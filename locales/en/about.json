@@ -139,5 +139,7 @@
                 "xapi.dashboard.progress.col2": "Result label displayed in xAPI traces",
 
             "xapi.dashboard.completed.title": "Completed",
-            "xapi.dashboard.completed.desc": "This represents whether the participant has completed the activity or not. Its value could be 'true' or 'false'. The default value is 'false', and it will become 'true' when the participant completes the activity. This means that in the backend the SIMVA server has received an xAPI trace with the verb id: http://adlnet.gov/expapi/verbs/completed, and also the result completion value has to be set to 'true'."
+            "xapi.dashboard.completed.desc": "This represents whether the participant has completed the activity or not. Its value could be 'true' or 'false'. The default value is 'false', and it will become 'true' when the participant completes the activity. This means that in the backend the SIMVA server has received an xAPI trace with the verb id: http://adlnet.gov/expapi/verbs/completed, and also the result completion value has to be set to 'true'.",
+
+    "credits.title": "Credits"
 }
