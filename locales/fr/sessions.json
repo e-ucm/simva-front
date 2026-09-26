@@ -73,6 +73,9 @@
     "settings.reset_tester.title": "Réinitialiser testeur (retirer et remettre)",
     "settings.unset_tester.title": "Me retirer comme testeur",
 
+    "settings.hide_inactive_participants.title": "",
+    "settings.show_inactive_participants.title": "",
+
     "status.description": "Dépend du statut de la session, les participants peuvent ou non jouer le SIMLET. Le statut peut être modifié à tout moment.",
         "active.description": "Une session active est une session qui est actuellement en cours d'exécution et qui peut être jouée par les participants.",
         "paused.description": "Une session en pause est une session qui est temporairement interrompue et ne peut pas être jouée par les participants.",

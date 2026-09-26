@@ -73,7 +73,8 @@
     "settings.reset_tester.title": "Reset tester (unset and set again)",
     "settings.unset_tester.title": "Unset myself as tester",
 
-    
+    "settings.hide_inactive_participants.title": "Show inactive participants",
+    "settings.show_inactive_participants.title": "Hide inactive participants",
 
     "status.description": "Depending on its status, a session will behave differently:",
         "active.description": "An active session will receive data, its activities can be modified, and it can be paused at any time",

@@ -606,6 +606,8 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 .icon-reset-tester::before { background-image: url("../images/icons/undo.png"); }
 .icon-tester::before { background-image: url("../images/icons/tube.png"); }
 .icon-untester::before { background-image: url("../images/icons/clean.png"); }
+.icon-show::before { background-image: url("../images/icons/eye.png"); }
+.icon-hide::before { background-image: url("../images/icons/hidden.png"); }
 .icon-delete { color: #ff3d3d; }
 .icon-delete::before {
 	background-image: url("../images/icons/trash-bin.png");
@@ -1158,6 +1160,8 @@ input[type="button"].openLimesurveyButton {
 .content .test .activities .activity .red { background-color: #ff9696; }
 .content .test .activities .activity .green { background-color: #adffad; }
 .content .test .activities .activity .yellow { background-color: #fff688; }
+
+.activities.hideInactiveParticipants tr.off { display: none; }
 
 .content .test .activities .activity .legend { font-size: 14px; display: flex; gap: 20px; justify-content: center; padding: 0px; margin-bottom: 10px; }
 .content .test .activities .activity .legend li { list-style: none; padding: 0px; }

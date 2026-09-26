@@ -76,6 +76,12 @@
 					<li class="text-with-icon icon-untester" title="<%- t('settings.unset_tester.title', { ns : 'sessions' }) %>">
 						<%- t('settings.unset_tester.title', { ns : 'sessions' }) %>
 					</li>
+					<li class="text-with-icon icon-show" title="<%- t('settings.hide_inactive_participants.title', { ns : 'sessions' }) %>">
+						<%- t('settings.hide_inactive_participants.title', { ns : 'sessions' }) %>
+					</li>
+					<li class="text-with-icon icon-hide" title="<%- t('settings.show_inactive_participants.title', { ns : 'sessions' }) %>">
+						<%- t('settings.show_inactive_participants.title', { ns : 'sessions' }) %>
+					</li>
                     <li class="text-with-icon icon-delete" title="<%- t('settings.delete.title', { ns : 'sessions' }) %>">
                         <%- t('settings.delete.title', { ns : 'sessions' }) %>
                     </li>
@@ -486,12 +492,19 @@
 	}
 
     // Expand/hide session info
-	const toggleSession = function(sessionId, forceVisible) {
+	const toggleSession = function(sessionId) {
 		$(`#session_${sessionId} .sessionTop .expandButton`).toggleClass('collapsed');
 		$(`#session_${sessionId} .tooltipLine.activitiesTitle`).toggle();
 		$(`#session_${sessionId} .activities`).toggle();
 	}
     
+	// Show/hide inactive participants in the activities tables
+	const toggleInactiveParticipants = function(sessionId) {
+		$(`#session_${sessionId} .activities`).toggleClass('hideInactiveParticipants');
+		$(`#session_${sessionId} .sessionTop .icon-show`).toggle();
+		$(`#session_${sessionId} .sessionTop .icon-hide`).toggle();
+	}
+
 	// Sync add session and import session name input 
 	$(document).on("input", $(`#session_form .${NAME_FIELD_CLASS}`), function(e) {
 		$(`#session_form .${NAME_FIELD_CLASS}`).each(function() {
@@ -548,6 +561,12 @@
 		deleteSession(data[SESSION_DATA_ID_KEY], data[SESSION_DATA_NAME_KEY]);
 	});
 
+	$(document).on('click', ".sessionTop .icon-tester", function(e) {
+		const data = $(this).closest(".test").data();
+		console.log("setting tester for session id:", data[SESSION_DATA_ID_KEY]);
+		setTesterForSession(data[SESSION_DATA_ID_KEY]);
+	});
+
 	$(document).on('click', ".sessionTop .icon-untester", function(e) {
 		const data = $(this).closest(".test").data();
 		unsetTesterForSession(data[SESSION_DATA_ID_KEY]);
@@ -558,11 +577,21 @@
 		resetTesterForSession(data[SESSION_DATA_ID_KEY]);
 	});
 
-	$(document).on('click', ".sessionTop .icon-tester", function(e) {
+	$(document).on('click', ".sessionTop .icon-reset-tester", function(e) {
 		const data = $(this).closest(".test").data();
-		console.log("setting tester for session id:", data[SESSION_DATA_ID_KEY]);
-		setTesterForSession(data[SESSION_DATA_ID_KEY]);
+		resetTesterForSession(data[SESSION_DATA_ID_KEY]);
 	});
+	
+	$(document).on('click', ".sessionTop .icon-show", function(e) {
+		const data = $(this).closest(".test").data();
+		toggleInactiveParticipants(data[SESSION_DATA_ID_KEY]);
+	});
+
+	$(document).on('click', ".sessionTop .icon-hide", function(e) {
+		const data = $(this).closest(".test").data();
+		toggleInactiveParticipants(data[SESSION_DATA_ID_KEY]);
+	});
+
 
 	$(document).on('click', ".sessionSummary .icon-download", function(e) {
 		const data = $(this).closest(".test").data();
@@ -839,6 +868,7 @@
 		card.find(".icon-tester").show();
 		card.find(".icon-reset-tester").hide();
 		card.find(".icon-untester").hide();
+		card.find(".icon-show").hide();
 		card.find(".sessionTestLauch").hide();
 		
 		card.find(".sessionTitle").text(session.session_name);
@@ -984,7 +1014,7 @@
 	
 	// Functions to call to avoid reloading the whole view when updating info of any session 
 
-	const onCreateOrEditSession = function(newSessionInfo) {		
+	const onCreateOrEditSession = function(newSessionInfo) {
 		const prevInfo = getSessionFromId(newSessionInfo.session_id);
 
 		// Update the basic SIMLET info without repainting everything to get the new session and tags
@@ -992,7 +1022,7 @@
 			// Paint/repaint the session card (which also updates the sessionsById and completeSessionsById)
 			paintSessionBatch([newSessionInfo]);
 
-			// If the session is new, update the searching parameters and move the card to the correct order
+			// If the session is new, update the searching parameters
 			if (prevInfo == null) {
 				sessionsFilteringPaginationData["totalResults"]++;
 				sessionsFilteringPaginationData["updateSearchOptions"]();
@@ -1044,7 +1074,7 @@
 			const cardPosition = sortedIds.indexOf(newSessionInfo.session_id);
 			const currentMaxVisible = sessionsFilteringPaginationData["searchParams"].limit;
 
-			// If the card should be visible after being added
+			// If the card should be visible after being added/edited
 			if (cardPosition < currentMaxVisible) {
 				// If all the cards that should be visible are painted, remove the last one
 				if ($("#sessions").children().length == currentMaxVisible) {
@@ -1061,6 +1091,7 @@
 					$(`#session_${prevId}`).after($(`#session_${newSessionInfo.session_id}`));
 				}
 			}
+			// Otherwise, remove it 
 			else {
 				$(`#session_${newSessionInfo.session_id}`).remove();
 			}

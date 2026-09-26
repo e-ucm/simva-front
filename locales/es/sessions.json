@@ -73,6 +73,9 @@
     "settings.reset_tester.title": "Reiniciar tester",
     "settings.unset_tester.title": "Quitarme como tester",
 
+    "settings.hide_inactive_participants.title": "Mostrar participantes inactivos",
+    "settings.show_inactive_participants.title": "Ocultar participantes inactivos",
+
     "status.description": "Dependiendo de su estado, una sesión se comportará de manera diferente:",
         "active.description": "Una sesión activa recibirá datos, sus actividades pueden ser modificadas, y puede ser pausada en cualquier momento",
         "paused.description": "Una sesión pausada no recibirá datos, pero es posible modificar sus actividades o reactivarla en cualquier momento",
