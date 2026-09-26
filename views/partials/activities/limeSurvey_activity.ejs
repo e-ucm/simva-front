@@ -21,14 +21,14 @@
 <!-- Template for the extra add/edit form of the activity -->
 <div id="limesurvey_extra_form" style="display: none; margin-top:15px;">
     <div id="limesurvey_extra_form_tabs" class="tabs" style="margin-bottom: 10px;">
-        <span class="tab selected" id="limesurvey_id_tab_button" method="byid" onclick="openByIdTab()"><%= t('limesurvey.surveyid.title', { ns : 'activities' }) %></span>
+        <span class="tab selected" id="limesurvey_id_tab_button" method="byid" onclick="openByIdTab()"><%= t('limesurvey.survey_id.title', { ns : 'activities' }) %></span>
         <span class="tab" id="limesurvey_existing_tab_button" method="byexisting" onclick="openByExistingTab()"><%= t('limesurvey.existing.title', { ns : 'activities' }) %></span>
         <span class="tab" id="limesurvey_upload_tab_button" method="byupload" onclick="openImportTab()"><%= t('limesurvey.upload.title', { ns : 'activities' }) %></span>
     </div>
 
     <div id="limesurvey_byid" class="subform selected">
-        <h3><%= t('limesurvey.surveyid.title', { ns : 'activities' }) %></h3>
-        <input id="survey_id_field" type="number" name="surveyid" placeholder="<%= t('limesurvey.surveyid.placeholder', { ns : 'activities' }) %>">
+        <h3><%= t('limesurvey.survey_id.title', { ns : 'activities' }) %></h3>
+        <input id="survey_id_field" type="number" name="surveyid" placeholder="<%= t('limesurvey.survey_id.placeholder', { ns : 'activities' }) %>">
 
     </div>
     <div id="limesurvey_byexisting" class="subform" style="display: flex; flex-direction: column;">

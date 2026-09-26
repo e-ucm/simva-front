@@ -39,7 +39,7 @@
     "settings.delete.title": "Delete",
         "delete.confirm": "Are you sure you want to delete the activity '{{activity}}' of session '{{session}}' from SIMLET '{{SIMLET}}'?\nAll the data of the activity will be deleted too",
 
-    "settings.download.trackerConfig.title": "Download tracker config",
+    "settings.download.tracker_config.title": "Download tracker config",
 
     "activity.name": "Default Activity",
     "activity.description": "A basic activity with completion state and a place to save results.",    
@@ -48,8 +48,8 @@
     "limesurvey.description": "A survey-based activity that uses LimeSurvey as service, allowing participants to answer pre and post surveys and enabling the owners to collect data effectively",
         "limesurvey.survey.title": "Survey",
         
-        "limesurvey.surveyid.title": "Survey ID",
-        "limesurvey.surveyid.placeholder": "Survey ID",
+        "limesurvey.survey_id.title": "Survey ID",
+        "limesurvey.survey_id.placeholder": "Survey ID",
         
         "limesurvey.existing.title": "Existing Survey",
         "limesurvey.existing.zero.message": "You don't have surveys",
@@ -85,11 +85,11 @@
                 "gameplay.xapi_by_game.title": "Basic xAPI Data Management By Game",
                 "gameplay.xapi_by_game.description": "Enable the management of basic xAPI data (activity initialized, suspended/resumed, activity terminated) directly by the game.",
 
-                "gameplay.trackerSettings.title": "Tracker type",
-                "gameplay.trackerSettings.description": "Depending on the type of tracker the game uses, the activity will provide a specific settings file",
-                    "gameplay.trackerSettings.xasu.title": "Standalone Xasu Tracker",
-                    "gameplay.trackerSettings.simvaUnity.title": "Xasu Tracker along with the Simva Unity plugin",
-                    "gameplay.trackerSettings.other.title": "Custom tracker",
+                "gameplay.tracker_settings.title": "Tracker type",
+                "gameplay.tracker_settings.description": "Depending on the type of tracker the game uses, the activity will provide a specific settings file",
+                    "gameplay.tracker_settings.xasu.title": "Standalone Xasu Tracker",
+                    "gameplay.tracker_settings.simva_unity.title": "Xasu Tracker along with the Simva Unity plugin",
+                    "gameplay.tracker_settings.other.title": "Custom tracker",
     
                 "gameplay.xasu.title": "Xasu Config",
                 "gameplay.xasu.description": "The xAPI statement configuration (xASU) can be specified to customize the xAPI data collection during the gameplay activity.",

@@ -17,7 +17,7 @@
 <!-- Needs to be added before other partials to allow them to use
 the elements and scripts defined in the simlet_commons partial -->
 <%- include('partials/simlet_commons') %>
-<% const searchBarPlaceholder = t('searchBar.placeholder', { ns: 'SIMLETs' }); %>
+<% const searchBarPlaceholder = t('search_bar.placeholder', { ns: 'SIMLETs' }); %>
 <%- include('partials/filtering_pagination_commons', { id:"simlets", searchBarPlaceholderText: searchBarPlaceholder }) %>
 
 <span id="no_simlets_msg"></span>
@@ -37,8 +37,8 @@ the elements and scripts defined in the simlet_commons partial -->
 				<div class="kebab"></div>
 			</div>
 			<p class="cardDescription"> 	</p>
-			<p><strong><%- t('card.createdAt', { ns : 'SIMLETs' }) %>: </strong><span class="cardCreationDate">		</span></p>
-			<p><strong><%- t('card.updatedAt', { ns : 'SIMLETs' }) %>: </strong><span class="cardUpdateDate">		</span></p>
+			<p><strong><%- t('card.created_at', { ns : 'SIMLETs' }) %>: </strong><span class="cardCreationDate">		</span></p>
+			<p><strong><%- t('card.updated_at', { ns : 'SIMLETs' }) %>: </strong><span class="cardUpdateDate">		</span></p>
 			<p><strong><%- t('card.sessions', { ns : 'SIMLETs' }) %>: </strong><span class="cardSessions">		</span></p>
 			<p>
 				<strong><%- t('card.groups', { ns : 'SIMLETs' }) %>: </strong><span class="cardGroups">		</span>

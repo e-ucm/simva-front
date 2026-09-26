@@ -39,7 +39,7 @@
     "delete.title": "Supprimer",
     "delete.confirm": "Êtes-vous sûr de vouloir supprimer l'activité '{{activity}}' de la session '{{session}}' de la SIMLET '{{SIMLET}}'?\nToutes les données relatives à l'activité seront également supprimées",
     
-    "settings.download.trackerConfig": "",
+    "settings.download.tracker_config": "",
     
     "activity.name": "Activité par défaut",
     "activity.description": "Une activité de base avec un état d'achèvement et un endroit où enregistrer les résultats.",    
@@ -48,8 +48,8 @@
     "limesurvey.description": "Une activité basée sur des sondages qui utilise LimeSurvey comme service, permettant aux participants de répondre à des sondages avant et après d'autres activités et aux coordinateurs de collecter efficacement des données.",
         "limesurvey.survey.title": "Enquête",
 
-        "limesurvey.surveyid.title": "ID de l'enquête",
-        "limesurvey.surveyid.placeholder": "ID de l'enquête",
+        "limesurvey.survey_id.title": "ID de l'enquête",
+        "limesurvey.survey_id.placeholder": "ID de l'enquête",
 
         "limesurvey.existing.title": "Enquête existante",
         "limesurvey.existing.zero.message": "Vous n'avez pas d'enquêtes.",
@@ -85,11 +85,11 @@
                 "gameplay.xapi_by_game.title": "Gestion des données xAPI basiques par jeu",
                 "gameplay.xapi_by_game.description": "Activer la gestion des données xAPI basiques (initialisation de l'activité, suspendue/reprise, activité terminée) directement par le jeu, ce qui permet de différencier les données d'interaction en fonction du jeu spécifique joué, facilitant ainsi l'analyse et la compréhension des performances des participants dans différents contextes de jeu.",
                     
-                "gameplay.trackerSettings.title": "",
-                "gameplay.trackerSettings.description": "",
-                    "gameplay.trackerSettings.xasu.title": "",
-                    "gameplay.trackerSettings.simvaUnity.title": "",
-                    "gameplay.trackerSettings.other.title": "",
+                "gameplay.tracker_settings.title": "",
+                "gameplay.tracker_settings.description": "",
+                    "gameplay.tracker_settings.xasu.title": "",
+                    "gameplay.tracker_settings.simva_unity.title": "",
+                    "gameplay.tracker_settings.other.title": "",
                     
                 "gameplay.xasu.title": "Configuration de Xasu",
                 "gameplay.xasu.description": "Configurer Xasu pour la collecte de données xAPI, y compris les paramètres tels que l'endpoint et les clés d'authentification, afin d'assurer une intégration fluide et sécurisée des données d'interaction des participants pendant l'activité de jeu.",

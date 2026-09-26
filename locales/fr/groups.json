@@ -20,7 +20,7 @@
             "coordinators.error.permission": "Permission invalide.",
             "coordinators.error.not_found": "Le coordinateur n'a pas été trouvé.",
         
-    "searchBar.placeholder": "Recherchez un groupe par son nom ou sa description",
+    "search_bar.placeholder": "Recherchez un groupe par son nom ou sa description",
 
     "groups.title": "Groups",
         "groups.no_groups.message": "You have 0 groups yet. Create one using the bottom right (+) button",
@@ -60,6 +60,9 @@
                 "groups.import.upload.error": "Sélectionnez le fichier à charger en premier",
                 "groups.import.error.invalid_file": "Le fichier sélectionné n'est pas un fichier de groupe valide.",
 
+            "groups.allocate_to.title": "",
+            "groups.allocate_to.noSession": "",
+            
         "groups.settings.groups.edit.title": "Modifier",
             "groups.edit.title": "Modifier groupe",
             "groups.edit.submit": "Modifier groupe",
@@ -70,9 +73,9 @@
             
             "participants.add.existing.tab": "Ajouter existant",
                 "participants.add.existing.submit": "Ajouter existant",
-                "participants.errormessage.alreadyInGroup": "Le participant '{{participant}}' est déjà dans le groupe '{{group}}'.",
-                "participants.errormessage.notFound": "Le participant '{{participant}}' n'a pas été trouvé dans le groupe '{{group}}'.",
-                "participants.errormessage.reloadManually": "Rafraîchissez la page pour voir les changements dans le groupe '{{group}}'.",
+                "participants.error_message.already_in_group": "Le participant '{{participant}}' est déjà dans le groupe '{{group}}'.",
+                "participants.error_message.not_found": "Le participant '{{participant}}' n'a pas été trouvé dans le groupe '{{group}}'.",
+                "participants.error_message.reload_manually": "Rafraîchissez la page pour voir les changements dans le groupe '{{group}}'.",
 
             "participants.add.new.tab": "Ajouter un nouveau",
                 "participants.add.new.email.placeholder": "email@example.com",
@@ -81,10 +84,10 @@
 
             "participants.add.batch.tab": "Ajouter un lot de jeton",
                 "participants.add.batch.number.title": "Combien ?",
-                "participants.add.batch.algorithFormat": "Les participants seront ajoutés avec des noms d'utilisateur aléatoires créés à l'aide de :",
-                    "participants.add.batch.algorithFormat.letters": "Uniquement des lettres",
-                    "participants.add.batch.algorithFormat.alphanumeric": "Lettres et chiffres",
-                    "participants.add.batch.algorithFormat.base58": "Alphanumérique simplifié (Base58)",
+                "participants.add.batch.algorithm_format": "Les participants seront ajoutés avec des noms d'utilisateur aléatoires créés à l'aide de :",
+                    "participants.add.batch.algorithm_format.letters": "Uniquement des lettres",
+                    "participants.add.batch.algorithm_format.alphanumeric": "Lettres et chiffres",
+                    "participants.add.batch.algorithm_format.base58": "Alphanumérique simplifié (Base58)",
                 "participants.add.batch.length.title": "Et une longueur de :",
                 "participants.add.batch.submit": "Ajouter lot",
 

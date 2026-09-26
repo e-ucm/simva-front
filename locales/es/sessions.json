@@ -3,7 +3,7 @@
     "single.title": "Sesión",
     "no_sessions.message": "No hay sesiones para este SIMLET. Intente añadir una utilizando el botón inferior derecho (+)",
 
-    "searchBar.placeholder": "Busque una sesión por su nombre o descripción",
+    "search_bar.placeholder": "Busque una sesión por su nombre o descripción",
     "filters.status.title": "Estado",
         "filters.status.all": "Todos",
 
@@ -69,9 +69,9 @@
         "delete.confirm": "¿Está seguro de que desea eliminar la sesión '{{session}}' del SIMLET '{{SIMLET}}'?\nTambién se eliminarán todas las actividades y datos",
 
     "settings.export.title": "Exportar",
-    "set_tester.title": "Convertirme en tester en esta sesión",
-    "reset_tester.title": "Reiniciar tester",
-    "unset_tester.title": "Quitarme como tester",
+    "settings.set_tester.title": "Convertirme en tester en esta sesión",
+    "settings.reset_tester.title": "Reiniciar tester",
+    "settings.unset_tester.title": "Quitarme como tester",
 
     "status.description": "Dependiendo de su estado, una sesión se comportará de manera diferente:",
         "active.description": "Una sesión activa recibirá datos, sus actividades pueden ser modificadas, y puede ser pausada en cualquier momento",

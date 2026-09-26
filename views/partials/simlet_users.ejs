@@ -54,7 +54,7 @@
 			</div>
 		</div>
 		
-		<% const searchBarPlaceholder = t('searchBar.placeholder', { ns: 'groups' }); %>
+		<% const searchBarPlaceholder = t('search_bar.placeholder', { ns: 'groups' }); %>
 		<%- include('filtering_pagination_commons', { id:"groups", searchBarPlaceholderText: searchBarPlaceholder }) %>
 
 		<!-- Container for all the groups cards -->
@@ -258,11 +258,11 @@
 				<form id="batch_participant_form">
 					<p><%= t('participants.add.batch.number.title' , { ns : 'groups' }) %></p>
 					<input type="number" step="1" min='1' max="100" name="amount" value="1">
-					<p><%= t('participants.add.batch.algorithFormat' , { ns : 'groups' }) %></p>
+					<p><%= t('participants.add.batch.algorithm_format' , { ns : 'groups' }) %></p>
 					<select name="algorithm">
-						<option value="letters"><%= t('participants.add.batch.algorithFormat.letters' , { ns : 'groups' }) %></option>
-						<option value="alphanumeric"><%= t('participants.add.batch.algorithFormat.alphanumeric' , { ns : 'groups' }) %></option>
-						<option value="base58"><%= t('participants.add.batch.algorithFormat.base58' , { ns : 'groups' }) %></option>
+						<option value="letters"><%= t('participants.add.batch.algorithm_format.letters' , { ns : 'groups' }) %></option>
+						<option value="alphanumeric"><%= t('participants.add.batch.algorithm_format.alphanumeric' , { ns : 'groups' }) %></option>
+						<option value="base58"><%= t('participants.add.batch.algorithm_format.base58' , { ns : 'groups' }) %></option>
 					</select>
 					<p><%= t('participants.add.batch.length.title' , { ns : 'groups' }) %></p>
 					<input type="number" step="1" min='4' max="10" name="length" value="4">
@@ -602,7 +602,7 @@
 						// If some users have been added, add an extra message asking for 
 						// manual refreshing (to allow the user to see the error message)
 						if (added > 0) {
-							errorText += `<%- t("participants.errormessage.reloadManually", { ns : "groups" }) %> <br> `
+							errorText += `<%- t("participants.error_message.reload_manually", { ns : "groups" }) %> <br> `
 						}
 						errorbox.html(errorText);
 						return false;
@@ -650,7 +650,7 @@
 			usernames.forEach((username) => {
 				// If any participant is already in the group, add each user to the error message 
 				if (groupParticipants.has(username)) {
-					errorText += `<%- t("participants.errormessage.alreadyInGroup", { ns : "groups", group : "${group.group_name}", participant : "${username}" }) %> <br> `;
+					errorText += `<%- t("participants.error_message.already_in_group", { ns : "groups", group : "${group.group_name}", participant : "${username}" }) %> <br> `;
 					checkUserComplete();
 				}
 				// Otherwise, try to fetch an user from the database with said username
@@ -663,7 +663,7 @@
 						else {
 							const foundUser = Array.isArray(result) ? result[0] : result;
                 			if(!foundUser || !foundUser.user_id){
-								errorText += `<%- t("participants.errormessage.alreadyInGroup", { ns : "groups", participant : "${username}" }) %> <br> `
+								errorText += `<%- t("participants.error_message.already_in_group", { ns : "groups", participant : "${username}" }) %> <br> `
 							}
 							// If there's a user with that username, add it to the found users
 							else {

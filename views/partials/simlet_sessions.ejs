@@ -14,7 +14,7 @@
 		</div>
 	</div>
 	
-	<% const searchBarPlaceholder = t('searchBar.placeholder', { ns: 'sessions' }); %>
+	<% const searchBarPlaceholder = t('search_bar.placeholder', { ns: 'sessions' }); %>
 	<%- include('filtering_pagination_commons', { id:"sessions", searchBarPlaceholderText: searchBarPlaceholder }) %>
 
 	<!-- Container for all the session cards -->
@@ -67,14 +67,14 @@
                     <li class="text-with-icon icon-finish" title="<%- t('settings.finish.title', { ns : 'sessions' }) %>">
                         <%- t('settings.finish.title', { ns : 'sessions' }) %>
                     </li>
-					<li class="text-with-icon icon-tester" title="<%- t('set_tester.title', { ns : 'sessions' }) %>">
-						<%- t('set_tester.title', { ns : 'sessions' }) %>
+					<li class="text-with-icon icon-tester" title="<%- t('settings.set_tester.title', { ns : 'sessions' }) %>">
+						<%- t('settings.set_tester.title', { ns : 'sessions' }) %>
 					</li>
-					<li class="text-with-icon icon-reset-tester" title="<%- t('reset_tester.title', { ns : 'sessions' }) %>">
-						<%- t('reset_tester.title', { ns : 'sessions' }) %>
+					<li class="text-with-icon icon-reset-tester" title="<%- t('settings.reset_tester.title', { ns : 'sessions' }) %>">
+						<%- t('settings.reset_tester.title', { ns : 'sessions' }) %>
 					</li>
-					<li class="text-with-icon icon-untester" title="<%- t('unset_tester.title', { ns : 'sessions' }) %>">
-						<%- t('unset_tester.title', { ns : 'sessions' }) %>
+					<li class="text-with-icon icon-untester" title="<%- t('settings.unset_tester.title', { ns : 'sessions' }) %>">
+						<%- t('settings.unset_tester.title', { ns : 'sessions' }) %>
 					</li>
                     <li class="text-with-icon icon-delete" title="<%- t('settings.delete.title', { ns : 'sessions' }) %>">
                         <%- t('settings.delete.title', { ns : 'sessions' }) %>
@@ -85,7 +85,7 @@
         <div class="sessionDescription">	 </div>
         <div class="sessionSummary">
             <div class="sessionInfo">
-                <strong><%- t('createdAt', { ns : 'sessions' }) %>: </strong><span class="sessionCreateDate">-</span>
+                <strong><%- t('created_at', { ns : 'sessions' }) %>: </strong><span class="sessionCreateDate">-</span>
                 <br>
                 <strong><%- t('activities', { ns : 'sessions' }) %>: </strong><span class="sessionActivities">-</span>  
 					&nbsp; 

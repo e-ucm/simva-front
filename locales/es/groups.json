@@ -20,7 +20,7 @@
             "coordinators.error.permission": "",
             "coordinators.error.not_found": "",
 
-    "searchBar.placeholder": "Busque un grupo por su nombre o descripción",
+    "search_bar.placeholder": "Busque un grupo por su nombre o descripción",
 
     "groups.title": "Grupos",
         "groups.no_groups.message": "Aún no tiene grupos. Cree uno utilizando el botón inferior derecho (+)",
@@ -59,6 +59,9 @@
                 "groups.import.upload.error": "Seleccione el archivo para cargar primero",
                 "groups.import.error.invalid_file": "El archivo seleccionado no es un archivo de grupo válido.",
 
+            "groups.allocate_to.title": "Asignar grupo a",
+            "groups.allocate_to.noSession": "Ninguna sesión",
+    
         "groups.settings.groups.edit.title": "Editar",
             "groups.edit.title": "Editar grupo",
             "groups.edit.submit": "Editar grupo",
@@ -70,9 +73,9 @@
             
             "participants.add.existing.tab": "Añadir existente",
                 "participants.add.existing.submit": "Añadir usuario",
-                "participants.errormessage.alreadyInGroup": "El participante '{{participant}}' ya está en el grupo '{{group}}'",
-                "participants.errormessage.notFound": "No se encontró el usuario '{{participant}}'",
-                "participants.errormessage.reloadManually": "Por favor, refresque la página para ver los cambios",
+                "participants.error_message.already_in_group": "El participante '{{participant}}' ya está en el grupo '{{group}}'",
+                "participants.error_message.not_found": "No se encontró el usuario '{{participant}}'",
+                "participants.error_message.reload_manually": "Por favor, refresque la página para ver los cambios",
 
             "participants.add.new.tab": "Añadir nuevo",
                 "participants.add.new.email.placeholder": "email@ejemplo.com",
@@ -81,10 +84,10 @@
 
             "participants.add.batch.tab": "Añadir tanda de códigos",
                 "participants.add.batch.number.title": "¿Cuántos?",
-                "participants.add.batch.algorithFormat": "Los participantes se añadirán con nombres de usuario aleatorios creados con:",
-                    "participants.add.batch.algorithFormat.letters": "Sólo letras",
-                    "participants.add.batch.algorithFormat.alphanumeric": "Letras y números",
-                    "participants.add.batch.algorithFormat.base58": "Alfanumérico simplificado (Base58)",
+                "participants.add.batch.algorithm_format": "Los participantes se añadirán con nombres de usuario aleatorios creados con:",
+                    "participants.add.batch.algorithm_format.letters": "Sólo letras",
+                    "participants.add.batch.algorithm_format.alphanumeric": "Letras y números",
+                    "participants.add.batch.algorithm_format.base58": "Alfanumérico simplificado (Base58)",
                 "participants.add.batch.length.title": "Y una longitud de:",
                 "participants.add.batch.submit": "Crear tanda",
 

@@ -20,7 +20,7 @@
             "coordinators.error.permission": "",
             "coordinators.error.not_found": "",
         
-    "searchBar.placeholder": "Search a group by name or description",
+    "search_bar.placeholder": "Search a group by name or description",
     
     "groups.title": "Groups",
         "groups.no_groups.message": "You have 0 groups yet. Create one using the bottom right (+) button",
@@ -59,6 +59,9 @@
                 "groups.import.upload.error": "Select the file to upload first",
                 "groups.import.error.invalid_file": "",
 
+            "groups.allocate_to.title": "Allocate group to",
+            "groups.allocate_to.noSession": "No session",
+
         "groups.settings.groups.edit.title": "Edit",
             "groups.edit.title": "Edit group",
             "groups.edit.submit": "Edit group",
@@ -70,9 +73,9 @@
             
             "participants.add.existing.tab": "Add existing",
                 "participants.add.existing.submit": "Add existing",
-                "participants.errormessage.alreadyInGroup": "The participant '{{participant}}' is already in the group '{{group}}'",
-                "participants.errormessage.notFound": "User '{{participant}}' not found",
-                "participants.errormessage.reloadManually": "Please refresh the page to see the changes",
+                "participants.error_message.already_in_group": "The participant '{{participant}}' is already in the group '{{group}}'",
+                "participants.error_message.not_found": "User '{{participant}}' not found",
+                "participants.error_message.reload_manually": "Please refresh the page to see the changes",
                 
             "participants.add.new.tab": "Add new",
                 "participants.add.new.email.placeholder": "email@example.com",
@@ -81,10 +84,10 @@
 
             "participants.add.batch.tab": "Add batch of tokens",
                 "participants.add.batch.number.title": "How many?",
-                "participants.add.batch.algorithFormat": "Participants will be added with random usernames created using:",
-                    "participants.add.batch.algorithFormat.letters": "Only letters",
-                    "participants.add.batch.algorithFormat.alphanumeric": "Letters and numbers",
-                    "participants.add.batch.algorithFormat.base58": "Simplified alphanumeric (Base58)",
+                "participants.add.batch.algorithm_format": "Participants will be added with random usernames created using:",
+                    "participants.add.batch.algorithm_format.letters": "Only letters",
+                    "participants.add.batch.algorithm_format.alphanumeric": "Letters and numbers",
+                    "participants.add.batch.algorithm_format.base58": "Simplified alphanumeric (Base58)",
                 "participants.add.batch.length.title": "And a length of:",
                 "participants.add.batch.submit": "Add batch",
 

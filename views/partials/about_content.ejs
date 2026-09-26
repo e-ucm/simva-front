@@ -219,8 +219,8 @@ const managementSection = {
 	subsections: [
 		{
 			id: 'manualcompletion',
-			title: getLocaleText('manualcompletion.title', 'about'),
-			description: getLocaleText('manualcompletion.description', 'about'),
+			title: getLocaleText('manual_completion.title', 'about'),
+			description: getLocaleText('manual_completion.description', 'about'),
 		},
 		{
 			id: 'dashboard',
@@ -336,20 +336,20 @@ const otherSections = [];
 }
 		</pre>
 
-		<h3><%= t('xapi.dashboard.activitytypes.title', { ns: 'about' }) %></h3>
+		<h3><%= t('xapi.dashboard.activity_types.title', { ns: 'about' }) %></h3>
 		<table class="aboutTable">
 			<thead>
-				<tr><th><%= t('xapi.dashboard.activitytypes.col1', { ns: 'about' }) %></th><th><%= t('xapi.dashboard.activitytypes.col2', { ns: 'about' }) %></th></tr>
+				<tr><th><%= t('xapi.dashboard.activity_types.col1', { ns: 'about' }) %></th><th><%= t('xapi.dashboard.activity_types.col2', { ns: 'about' }) %></th></tr>
 			</thead>
 			<tbody>
-				<tr><td><%= t('xapi.dashboard.activitytypes.game', { ns: 'about' }) %></td><td>https://w3id.org/xapi/seriousgames/activity-types/serious-game</td></tr>
-				<tr><td><%= t('xapi.dashboard.activitytypes.limesurvey', { ns: 'about' }) %></td><td>http://adlnet.gov/expapi/activities/assessment</td></tr>
-				<tr><td><%= t('xapi.dashboard.activitytypes.manual', { ns: 'about' }) %></td><td>http://adlnet.gov/expapi/activities/???</td></tr>
+				<tr><td><%= t('xapi.dashboard.activity_types.game', { ns: 'about' }) %></td><td>https://w3id.org/xapi/seriousgames/activity-types/serious-game</td></tr>
+				<tr><td><%= t('xapi.dashboard.activity_types.limesurvey', { ns: 'about' }) %></td><td>http://adlnet.gov/expapi/activities/assessment</td></tr>
+				<tr><td><%= t('xapi.dashboard.activity_types.manual', { ns: 'about' }) %></td><td>http://adlnet.gov/expapi/activities/???</td></tr>
 			</tbody>
 		</table>
 
-		<h3><%= t('xapi.dashboard.visibledata.title', { ns: 'about' }) %></h3>
-		<p><%= t('xapi.dashboard.visibledata.desc', { ns: 'about' }) %></p>
+		<h3><%= t('xapi.dashboard.visible_data.title', { ns: 'about' }) %></h3>
+		<p><%= t('xapi.dashboard.visible_data.desc', { ns: 'about' }) %></p>
 
 		<h4><%= t('xapi.dashboard.initialized.title', { ns: 'about' }) %></h4>
 		<p><%= t('xapi.dashboard.initialized.desc', { ns: 'about' }) %></p>
@@ -389,9 +389,9 @@ const otherSections = [];
 				<tr><th><%= t('xapi.dashboard.progress.col1', { ns: 'about' }) %></th><th><%= t('xapi.dashboard.progress.col2', { ns: 'about' }) %></th></tr>
 			</thead>
 			<tbody>
-				<tr><td><%= t('xapi.dashboard.activitytypes.game', { ns: 'about' }) %></td><td>result.extensions['https://w3id.org/xapi/seriousgames/extensions/progress']</td></tr>
-				<tr><td><%= t('xapi.dashboard.activitytypes.limesurvey', { ns: 'about' }) %></td><td>result.score.scaled</td></tr>
-				<tr><td><%= t('xapi.dashboard.activitytypes.manual', { ns: 'about' }) %></td><td>result.score.scaled</td></tr>
+				<tr><td><%= t('xapi.dashboard.activity_types.game', { ns: 'about' }) %></td><td>result.extensions['https://w3id.org/xapi/seriousgames/extensions/progress']</td></tr>
+				<tr><td><%= t('xapi.dashboard.activity_types.limesurvey', { ns: 'about' }) %></td><td>result.score.scaled</td></tr>
+				<tr><td><%= t('xapi.dashboard.activity_types.manual', { ns: 'about' }) %></td><td>result.score.scaled</td></tr>
 			</tbody>
 		</table>
 		<pre style="background:#f8f8f8;padding:1em;overflow-x:auto;">

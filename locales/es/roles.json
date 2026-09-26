@@ -6,7 +6,7 @@
     "teachingAssistant": "Asistente de enseñanza",
     "student": "Estudiante",
     "choose.title": "Elija esta papel",
-    "contactadmin.title": "Contacto Administrador",
-    "contactadmin.message" : "Póngase en contacto con su administrador de SIMVA en {{ email }} atribuir un nuevo papel.",
+    "contact_admin.title": "Contacto Administrador",
+    "contact_admin.message" : "Póngase en contacto con su administrador de SIMVA en {{ email }} atribuir un nuevo papel.",
     "not_defined": "Indefinido"
 }

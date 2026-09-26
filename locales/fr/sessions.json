@@ -3,7 +3,7 @@
     "single.title": "Session",
     "no_sessions.message": "Il n'y a pas de sessions pour cette SIMLET. Essayez d'en ajouter une en utilisant le bouton en bas à droite (+)",
 
-    "searchBar.placeholder": "Rechercher une session par nom ou description",
+    "search_bar.placeholder": "Rechercher une session par nom ou description",
     "filters.status.title": "Statut",
         "filters.status.all": "Tous",
 
@@ -69,9 +69,9 @@
         "delete.confirm": "Êtes-vous sûr de vouloir supprimer la session '{{session}}' de l'SIMLET '{{SIMLET}}'?\nToutes les activités et les données seront également supprimées",
     
     "settings.export.title": "Exporter",
-    "set_tester.title": "Me définir comme testeur dans cette session",
-    "reset_tester.title": "Réinitialiser testeur (retirer et remettre)",
-    "unset_tester.title": "Me retirer comme testeur",
+    "settings.set_tester.title": "Me définir comme testeur dans cette session",
+    "settings.reset_tester.title": "Réinitialiser testeur (retirer et remettre)",
+    "settings.unset_tester.title": "Me retirer comme testeur",
 
     "status.description": "Dépend du statut de la session, les participants peuvent ou non jouer le SIMLET. Le statut peut être modifié à tout moment.",
         "active.description": "Une session active est une session qui est actuellement en cours d'exécution et qui peut être jouée par les participants.",

@@ -4,15 +4,15 @@
 	<input type="text" id="<%= id %>_search_bar" placeholder="<%= searchBarPlaceholderText %>">
     
 	<div class="filters">
-		<span><%- t('filters.sortBy.title', { ns : 'SIMLETs' }) %></span>
+		<span><%- t('filters.sort_by.title', { ns : 'SIMLETs' }) %></span>
 		<select id="<%= id %>_sort_by">
-			<option value="id" data-order="asc" ><%- t('filters.sortBy.id', { ns : 'SIMLETs' }) %></option>
-			<option value="name" data-order="asc"><%- t('filters.sortBy.name.asc', { ns : 'SIMLETs' }) %></option>
-			<option value="name" data-order="desc"><%- t('filters.sortBy.name.desc', { ns : 'SIMLETs' }) %></option>
-			<option value="createdAt" data-order="desc"><%- t('filters.sortBy.createdAt.desc', { ns : 'SIMLETs' }) %></option>
-			<option value="createdAt" data-order="asc"><%- t('filters.sortBy.createdAt.asc', { ns : 'SIMLETs' }) %></option>
-			<option value="updatedAt" data-order="desc"><%- t('filters.sortBy.updatedAt.desc', { ns : 'SIMLETs' }) %></option>
-			<option value="updatedAt" data-order="asc"><%- t('filters.sortBy.updatedAt.asc', { ns : 'SIMLETs' }) %></option>
+			<option value="id" data-order="asc" ><%- t('filters.sort_by.id', { ns : 'SIMLETs' }) %></option>
+			<option value="name" data-order="asc"><%- t('filters.sort_by.name.asc', { ns : 'SIMLETs' }) %></option>
+			<option value="name" data-order="desc"><%- t('filters.sort_by.name.desc', { ns : 'SIMLETs' }) %></option>
+			<option value="createdAt" data-order="desc"><%- t('filters.sort_by.created_at.desc', { ns : 'SIMLETs' }) %></option>
+			<option value="createdAt" data-order="asc"><%- t('filters.sort_by.created_at.asc', { ns : 'SIMLETs' }) %></option>
+			<option value="updatedAt" data-order="desc"><%- t('filters.sort_by.updated_at.desc', { ns : 'SIMLETs' }) %></option>
+			<option value="updatedAt" data-order="asc"><%- t('filters.sort_by.updated_at.asc', { ns : 'SIMLETs' }) %></option>
 		</select>
 	</div>
 
@@ -41,7 +41,7 @@
         
         <!-- Fake select dropdown that will appear instead of the default one -->
         <div id="<%= id %>_tags_dropdown" class="filtersTagsDropdown">
-            <input type="text" id="<%= id %>_tags_search_bar" placeholder="<%- t('filters.tags.searchBar.placeholder', { ns : 'SIMLETs' }) %>">
+            <input type="text" id="<%= id %>_tags_search_bar" placeholder="<%- t('filters.tags.search_bar.placeholder', { ns : 'SIMLETs' }) %>">
             <ul id="<%= id %>_tags_list" class="filtersTagsList">
                 
             </ul>

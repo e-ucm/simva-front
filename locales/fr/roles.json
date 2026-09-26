@@ -6,7 +6,7 @@
     "teachingAssistant": "Assistant d'enseignement",
     "student": "Étudiant",
     "choose.title": "Choisir ce rôle",
-    "contactadmin.title": "Contact Administrateur",
-    "contactadmin.message" : "Veuillez contacter votre administrateur SIMVA à l'adresse suivante {{ email }} pour lui attribuer un nouveau rôle.",
+    "contact_admin.title": "Contact Administrateur",
+    "contact_admin.message" : "Veuillez contacter votre administrateur SIMVA à l'adresse suivante {{ email }} pour lui attribuer un nouveau rôle.",
     "not_defined": "Non défini"
 }
