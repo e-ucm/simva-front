@@ -35,17 +35,9 @@
             const content = $("#group_allocator_template p").clone();
             const dropdown = content.find("select");
             dropdown.attr("id", `allocation_group_${group.group_id}`);
-
-            // Add all the sessions to the dropdown
-            sessionsById.forEach((session, id) => {
-                dropdown.append($("<option>", {
-                    value: id,
-                    text: session.session_name,
-                }));
-            });
-
-            // Determine the session the group is allocated to and select the option in the dropdown
-            dropdown.val(this.getCurrentAllocation(group));
+            
+            fillSessionsDropdown(dropdown);
+            selectAllocatedSession(dropdown, this.getCurrentAllocation(group));
 
             $(`#allocator_content_${group.group_id}`).append(content);
         }

@@ -52,14 +52,9 @@
                 const content = $("#default_allocator_template td").clone();
                 const dropdown = content.find("select");
                 dropdown.attr("id", `allocation_${group.group_id}_${participant.user_id}`);
-                sessionsById.forEach((session, id) => {
-                    dropdown.append($("<option>", {
-                        value: id,
-                        text: session.session_name,
-                    }));
-                });
                 
-                dropdown.val(this.getCurrentAllocation(group, participant));
+                fillSessionsDropdown(dropdown);
+                selectAllocatedSession(dropdown, this.getCurrentAllocation(group, participant));
                 
                 row = $(table.find("tbody tr")).eq(i);
                 row.find('td:last').before(content);

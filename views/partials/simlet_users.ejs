@@ -166,6 +166,8 @@
 					<input hidden type="text" name="prevGroupName" id="prev_group_name">
 					<h3><%- t('groups.name.title', { ns : 'groups' }) %></h3>
 					<input type="text" class="name_field" name="groupName" id="group_name" placeholder="<%- t('groups.name.placeholder', { ns : 'groups' }) %>" required>
+					<h3 class="group_allocate_title"><%- t('groups.allocate_to.title', { ns : 'groups' }) %></h3>
+					<select class="group_allocate_dropdown"></select>
 					<!-- TEST -->
 					<!-- <h3><%- t('deprecated.title', { ns : 'groups' }) %></h3> -->
 					<!-- <input type="checkbox" name="group_use_deprecated_generation" id="group_use_deprecated_generation" title="<%- t('deprecated.tooltip', { ns : 'groups' }) %>"><label for="group_use_deprecated_generation" ><%- t('deprecated.title', { ns : 'groups' }) %></label> -->
@@ -181,6 +183,8 @@
 					<input type="text" class="name_field" name="groupName" id="import_group_name_modal" placeholder="<%- t('groups.name.placeholder', { ns : 'groups' }) %>" required>
 					<h3><%- t('groups.import.input', { ns : 'groups' }) %></h3>
 					<input type="file" name="jsonFile" accept=".json" required>
+					<h3 class="group_allocate_title"><%- t('groups.allocate_to.title', { ns : 'groups' }) %></h3>
+					<select class="group_allocate_dropdown"></select>
 					<input type="submit" value="<%- t('groups.import.submit', { ns : 'groups' }) %>">
 				</form>
 			</div>
@@ -771,7 +775,7 @@
 	}
 
 	// Expand/hide group info
-    const toggleGroup = function(groupId, forceVisible) {
+    const toggleGroup = function(groupId) {
 		$(`#group_${groupId} .expandButton`).toggleClass('collapsed');
 		$(`#group_${groupId} .tooltipLine.participantsTitle`).toggle();
 		$(`#group_${groupId} .participants_container`).toggle();
@@ -794,6 +798,15 @@
 
 		// Set form title to common title
 		$("#users_form_title").text("<%- t('users.add.title', { ns : 'groups' }) %>");
+
+		const dropdown = $(".group_allocate_dropdown");
+		fillSessionsDropdown(dropdown);
+		let session = getLatestCreatedSession();
+		if (session != null) {
+			selectAllocatedSession(dropdown, session.session_id);
+		}
+		$(".group_allocate_title").show();
+		dropdown.show();
 	}
 
 	const openEditGroupForm = function(groupId) {
@@ -816,6 +829,9 @@
 			$('#prev_group_name').val(group.group_name);
 			$('#group_name').val(group.group_name);
 		}
+		
+		$(".group_allocate_title").hide();
+		$(".group_allocate_dropdown").hide();
 	}
 
 	const openParticipantForm = function(groupId) {
@@ -846,6 +862,13 @@
 		});
 	});
 	
+	// Sync add group and import group session allocation 
+	$(document).on("change", $(`#group_form .group_allocate_dropdown`), function(e) {
+		$(`#group_form .group_allocate_dropdown`).each(function() {
+			$(this).val($(e.target).val());
+		});
+	});
+
 	// Groups buttons shared listeners using event delegation to ensure 
 	// the handler works even if element is added after the document ready event
 
@@ -1028,22 +1051,6 @@
 		});
 	}
 
-	const allocateToLatestSession = function(groupId, participantId = null) {
-		let session = getLatestCreatedSession();
-		if (session != null && session.session_status != SESSION_FINISHED_STATUS) {
-			// Update the group/participant dropdown
-			if (participantId == null) {
-				$(`#group_${groupId} select`).val(session.session_id);
-			}
-			else {
-				$(`#allocation_${groupId}_${participantId}`).val(session.session_id);
-			}
-
-			// Allocate the participant
-			allocateToSession(groupId, session.session_id, participantId);
-		}
-	}
-	
 
 	// Render
 
@@ -1056,6 +1063,39 @@
 			table.find("tbody").empty();
 		}
 	}
+	
+	/**
+	 * Fill a dropdown with all the available sessions to allocate a group to
+	 * @param {object} dropdown - jquery object reference of the select element to add the options to
+	 */
+	const fillSessionsDropdown = function(dropdown) {
+        dropdown.empty();
+
+        dropdown.append($("<option>", {
+			selected: true,
+			disabled: true,
+			hidden: true,
+            value: -1,
+            text: "<%= t('groups.allocate_to.noSession', { ns : 'groups' }) %>",
+        }));
+        
+        sessionsById.forEach((session, id) => {
+            dropdown.append($("<option>", {
+                value: id,
+                text: session.session_name,
+            }));
+        });
+    }
+
+	const selectAllocatedSession = function(dropdown, sessionId) {
+		if (sessionsById.has(sessionId)) {
+			dropdown.val(sessionId);
+		}
+		else {
+			dropdown.children().first().prop('disabled', false);
+		}
+	}
+	
 	
 	/**
 	 * Fill the coordinators table
@@ -1337,16 +1377,20 @@
 	
 	const onCreateOrEditGroup = function(newGroupInfo) {
 		const isNew = getGroupFromId(newGroupInfo.group_id) == null;
-
+		
 		// Update the basic SIMLET info without repainting everything to get the new group
 		updateSimletInfo(false, () => {
 			// Paint/repaint the group card (which also updates the completeGroupsById)
 			paintGroupBatch([newGroupInfo]);
 			
-			// If the group is new, update the searching parameters and move the card to the correct order
+			// If the group is new, update the searching parameters and allocate it to the selected session
 			if (isNew) {
 				groupsFilteringPaginationData["totalResults"]++;
 				groupsFilteringPaginationData["updateSearchOptions"]();
+				
+				if ($(".group_allocate_dropdown").val() != null) {
+					allocateToSession(newGroupInfo.group_id, $(".group_allocate_dropdown").val());
+				}
 			}
 
 			// Determine sort order callback
@@ -1390,15 +1434,12 @@
 			const cardPosition = sortedIds.indexOf(newGroupInfo.group_id);
 			const currentMaxVisible = groupsFilteringPaginationData["searchParams"].limit;
 
-			// If the card should be visible after being added
+			// If the card should be visible after being added/edited
 			if (cardPosition < currentMaxVisible) {
 				// If all the cards that should be visible are painted, remove the last one
 				if ($("#groups").children().length == currentMaxVisible) {
 					$("#groups").children().last().remove();
 				}
-				
-				// Automatically allocate the group to latest created group
-				allocateToLatestSession(newGroupInfo.group_id);
 
 				// If the new card should take the first place, move it before the first card of the list
 				if (cardPosition == 0) {
@@ -1410,6 +1451,7 @@
 					$(`#group_${prevId}`).after($(`#group_${newGroupInfo.group_id}`));
 				}
 			}
+			// Otherwise, remove it 
 			else {
 				$(`#group_${newGroupInfo.group_id}`).remove();
 			}
@@ -1506,12 +1548,11 @@
 		}
 		// If adding a new user, the creationResult returns an object with the created user info
 		else if (addMethod == ADD_METHOD_NEW) {
-			participantsInfo.push(creationResult);
+			participantsInfo.add(creationResult);
 			registerAndAdd();
 		}
 		// If adding a batch of users, the creationResult returns an array with the created usernames
 		else if (addMethod == ADD_METHOD_BATCH) {
-			let newParticipants = [];
 			let completed = 0;
 
 			// Callback to call each time an user id gets fetched
@@ -1526,7 +1567,7 @@
 			creationResult.forEach((username) => {
 				Simva.getUser(username, (error, result) => {
 					if (!error) {
-						newParticipants.push(result);
+						participantsInfo.add(result);
 					}
 					allParticipantsFetched();
 				});
@@ -1546,30 +1587,15 @@
 	const allocatorsOnSessionsChanged = function(sessionId) {
 		$("#groups .test select").each(function() {
 			const dropdown = $(this);
-			dropdown.empty();
+			fillSessionsDropdown(dropdown);
 
-			// Add all sessions to the dropdown
-			sessionsById.forEach((session, sessionId) => {
-				dropdown.append($("<option>", {
-					value: sessionId,
-					text: session.session_name,
-				}));
-			});
-
-			// Determine the session the group/participant is currently allocated to
+			// Determine the session the group/participant is currently allocated to and select it again
 			const data = dropdown.closest(".test").data();
 			const userData = dropdown.closest("tr").data();
 			const participantId = (userData == null) ? null : userData[USER_DATA_ID_KEY]; 
 			const currentAllocation = getCurrentAllocation(data[GROUP_DATA_ID_KEY], participantId);
 
-			// If the session exists, select it in the dropdown 
-			if (sessionsById.has(currentAllocation)) {
-				dropdown.val(currentAllocation);
-			}
-			// Otherwise, allocate the group/participant to the latest created session
-			else {
-				allocateToLatestSession(data[GROUP_DATA_ID_KEY], participantId);
-			}
+			selectAllocatedSession(dropdown, currentAllocation);
 		});
 	}
 
