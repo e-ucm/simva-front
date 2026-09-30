@@ -34,8 +34,8 @@
 		$(".content").append($(".floating_buttons"));
 		$(".content").addClass("floating");
 
-		$(".aboutPage a").attr("target", "_blank");
-		$(".aboutPage a").attr("rel", "noopener noreferrer");
+		// Make the links in the credits section open in a new tab
+		$(".aboutPage #credits-section").nextAll("ul").find("a").attr("target", "_blank").attr("rel", "noopener noreferrer");
 
 		if ($(".menu").length <= 0) {
 			$(".content").css({ "padding-left": "10px" });

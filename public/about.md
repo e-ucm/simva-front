@@ -18,7 +18,7 @@
 - [<%= t("activity.title", { ns : "about" }) %>](#activity-section)
 - [<%= t("users.title", { ns : "about" }) %>](#users-section)
 - [<%= t("integration.title", { ns : "about" }) %>](#integration-section)
-- [<%= t("sessionManagement.title", { ns : "about" }) %>](#session-management-section)
+- [<%= t("session_management.title", { ns : "about" }) %>](#session-management-section)
 - [<%= t("xapi.dashboard.title", { ns : "about" }) %>](#xapi-section)
 - [<%= t("credits.title", { ns : "about" }) %>](#credits-section)
 
@@ -165,11 +165,11 @@
 
 <hr>
 
-## <%= t("sessionManagement.title", { ns : "about" }) %> {#session-management-section}
+## <%= t("session_management.title", { ns : "about" }) %> {#session-management-section}
 <br>
 
-#### <%= t("manualcompletion.title", { ns : "about" }) %>
-<%= t("manualcompletion.description", { ns : "about" }) %>
+#### <%= t("manual_completion.title", { ns : "about" }) %>
+<%= t("manual_completion.description", { ns : "about" }) %>
 
 #### <%= t("dashboard.title", { ns : "about" }) %>
 <%= t("dashboard.description", { ns : "about" }) %>
@@ -216,20 +216,20 @@
 <br>
 <br>
 
-#### <%= t("xapi.dashboard.activitytypes.title", { ns : "about" }) %>
+#### <%= t("xapi.dashboard.activity_types.title", { ns : "about" }) %>
 <br>
 
-| <%= t("xapi.dashboard.activitytypes.col1", { ns : "about" }) %>       	| <%= t("xapi.dashboard.activitytypes.col2", { ns : "about" }) %> 	|
+| <%= t("xapi.dashboard.activity_types.col1", { ns : "about" }) %>       	| <%= t("xapi.dashboard.activity_types.col2", { ns : "about" }) %> 	|
 |----------|----------|
-| <%= t("xapi.dashboard.activitytypes.game", { ns : "about" }) %>       	| https://w3id.org/xapi/seriousgames/activity-types/serious-game  	|
-| <%= t("xapi.dashboard.activitytypes.limesurvey", { ns : "about" }) %> 	| http://adlnet.gov/expapi/activities/assessment                  	|
-| <%= t("xapi.dashboard.activitytypes.manual", { ns : "about" }) %>     	| http://adlnet.gov/expapi/activities/???                         	|
+| <%= t("xapi.dashboard.activity_types.game", { ns : "about" }) %>       	| https://w3id.org/xapi/seriousgames/activity-types/serious-game  	|
+| <%= t("xapi.dashboard.activity_types.limesurvey", { ns : "about" }) %> 	| http://adlnet.gov/expapi/activities/assessment                  	|
+| <%= t("xapi.dashboard.activity_types.manual", { ns : "about" }) %>     	| http://adlnet.gov/expapi/activities/???                         	|
 
 <br>
 <br>
 
-#### <%= t("xapi.dashboard.visibledata.title", { ns : "about" }) %>
-<%= t("xapi.dashboard.visibledata.desc", { ns : "about" }) %>
+#### <%= t("xapi.dashboard.visible_data.title", { ns : "about" }) %>
+<%= t("xapi.dashboard.visible_data.desc", { ns : "about" }) %>
 
 **<%= t("xapi.dashboard.initialized.title", { ns : "about" }) %>**
 \
@@ -271,9 +271,9 @@
 
 | <%= t("xapi.dashboard.progress.col1", { ns : "about" }) %>       	        | <%= t("xapi.dashboard.progress.col2", { ns : "about" }) %> 	|
 |----------|----------|
-| <%= t("xapi.dashboard.activitytypes.game", { ns : "about" }) %>       	| result.extensions['https://w3id.org/xapi/seriousgames/extensions/progress']  	|
-| <%= t("xapi.dashboard.activitytypes.limesurvey", { ns : "about" }) %> 	| result.score.scaled                  	                                        |
-| <%= t("xapi.dashboard.activitytypes.manual", { ns : "about" }) %>     	| result.score.scaled                         	                                |
+| <%= t("xapi.dashboard.activity_types.game", { ns : "about" }) %>       	| result.extensions['https://w3id.org/xapi/seriousgames/extensions/progress']  	|
+| <%= t("xapi.dashboard.activity_types.limesurvey", { ns : "about" }) %> 	| result.score.scaled                  	                                        |
+| <%= t("xapi.dashboard.activity_types.manual", { ns : "about" }) %>     	| result.score.scaled                         	                                |
 
 <br>
 
