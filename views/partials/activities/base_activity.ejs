@@ -42,6 +42,7 @@
                 <th title="<%= t('participant.tooltip', { ns : 'activities' }) %>"><%= t('participant.title', { ns : 'activities' }) %></th>
                 <th class="actProgress" title="<%= t('progress.tooltip', { ns : 'activities' }) %>"><%= t('progress.title', { ns : 'activities' }) %></th>
                 <th class="compProgress" title="<%= t('completed.tooltip', { ns : 'activities' }) %>"><%= t('completed.title', { ns : 'activities' }) %></th>
+                <th class="lrsProgress" title="<%= t('lrs.tooltip', { ns : 'activities' }) %>"><%= t('lrs.title', { ns : 'activities' }) %></th>
                 <th class="resProgress" title="<%= t('result.tooltip', { ns : 'activities' }) %>"><%= t('result.title', { ns : 'activities' }) %></th>
             </thead>
             <tbody>
@@ -64,13 +65,20 @@
                 <span><done>---</done> %</span>
             </td>
             <td class="compProgress"> </td>
+            <td class="lrsProgress">---</td>
             <td class="resProgress">---</td>
         </tr>
     </table>
 
     <!-- TODO: Add localization -->
-    <img src="/images/icons/eye.png" class="showResult" title="Open result in floating window">
-    <img src="/images/icons/direct-download.png" class="downloadResult" title="Download results">
+     <div class="activity_backup_result">
+        <img src="/images/icons/eye.png" class="showResult" title="Open result in floating window">
+        <img src="/images/icons/direct-download.png" class="downloadResult" title="Download results">
+    </div>
+    <div class="activity_lrs_result">
+        <img src="/images/icons/eye.png" class="showLRSData" title="Open LRS Data in floating window">
+        <img src="/images/icons/direct-download.png" class="downloadLRSData" title="Download LRS Data">
+    </div>
 </div>
 
 
@@ -134,11 +142,34 @@
             });
         }
 
+        /**
+         * Show the LRS data of a participant in a floating menu
+         * @param {number} activityId - id of the activity that has the participant
+         * @param {number} participantId - id of the participant to show the LRS data from
+         */
+        showLRSData(activityId, participantId) {
+            let errorMsg = "<%= t('result.error.loading', { ns : 'activities' }) %>";
+            const participant = getParticipantFromId(participantId);
+            Simva.getActivityLRSData(activityId, participant ? participant.username : null, (error, result) => {
+                if (error) {
+                    $.toast({
+                        heading: errorMsg,
+                        text: error.message,
+                        position: 'top-right',
+                        icon: 'error',
+                        stack: false
+                    });
+                } 
+                else {
+                    Utils.openResultContent(result.data, errorMsg);
+                }
+            });
+        }
 
         // Functionality 
 
         /**
-         * Download the results (from the LRS) of the entire activity or a participant 
+         * Download the results (from the backup) of the entire activity or a participant 
          * @param {number} activityId - id of the activity that has the participant
          * @param {number} participantId - id of the participant to download the results from 
          * @param {string} resultType - type of the result data(full/code/traces)
@@ -162,12 +193,45 @@
                     if (participantId) {
                         const participant = getParticipantFromId(participantId);
                         filename += `-participant_${participant.username}-${this.supportedType}_results.${this.individualDataExtension}`;
-    					Utils.downloadContent(result[participantId], filename, errorMsg);
+                        Utils.downloadContent(result[participantId], filename, errorMsg);
                     }
                     else {
                         filename += `-${this.supportedType}_results.${this.globalDataExtension}`;
                         Utils.download(filename, JSON.stringify(result, null, 2));
                     }
+                }
+            });
+        }
+
+        /**
+         * Download (from the LRS) the data of a participant 
+         * @param {number} activityId - id of the activity that has the participant
+         * @param {number} participantId - id of the participant to download the LRS data from 
+         */
+        downloadLRSData(activityId, participantId) {
+            let errorMsg = "<%= t('result.error.downloading', { ns : 'activities' }) %>";
+            const participant = getParticipantFromId(participantId);
+            Simva.getActivityLRSData(activityId, participant ? participant.username : null, (error, result) => {
+                if (error) {
+                    $.toast({
+                        heading: errorMsg,
+                        text: error.message,
+                        position: 'top-right',
+                        icon: 'error',
+                        stack: false
+                    });
+                } else {
+                    const activity = getActivityFromId(activityId);
+                    const session = getSessionFromId(activity.session_id);
+                    let filename = getActivityFilenamePrefix(session, activity);
+
+                    if (participantId) {
+                        filename += `-participant_${participant.username}-${this.supportedType}_lrs_data.${this.globalDataExtension}`;
+                        
+                    } else {
+                        filename += `-${this.supportedType}_lrs_data.${this.globalDataExtension}`;
+                    }
+                    Utils.downloadContent(result.data, filename, errorMsg);
                 }
             });
         }
@@ -200,7 +264,6 @@
                 }
             });
         }
-
         /**
          * Download (from MinIO) the activity backup for each participant (a file for each) and compress them into a zip
          * @param {number} activityId - id of the activity to download the info from
@@ -388,6 +451,7 @@
                 row.attr("id", `user_${activity.activity_id}_${participantKey}`);
                 row.find(".actProgress").attr("id", `progress_${activity.activity_id}_${participantKey}`);
                 row.find(".compProgress").attr("id", `completion_${activity.activity_id}_${participantKey}`);
+                row.find(".lrsProgress").attr("id", `lrs_${activity.activity_id}_${participantKey}`);
                 row.find(".resProgress").attr("id", `result_${activity.activity_id}_${participantKey}`);
 
                 const username = this.getUsernameOrToken(participant);
@@ -415,7 +479,7 @@
             if (!checkbox) {
                 card.find(".compProgress").remove();
             }
-            // Remove the activity result column from the table
+                        // Remove the activity result column from the table
             if (!result) {
                 card.find(".resProgress").remove();
             }
@@ -434,6 +498,7 @@
             this.paintActivityProgress(activity, activity.data.progress, participants);
             this.paintActivityCompletion(activity, activity.data.completion, participants);
             this.paintActivityResult(activity, activity.data.result, participants);
+            this.paintActivityLRS(activity, activity.data.progress, participants);
             if (activity.data.openable) {
                 this.paintActivityTargets(activity, activity.data.target, participants);
             }
@@ -468,6 +533,12 @@
             this.paintInitBarProgress(activity.activity_id, total, done);
         }
 
+        // Check if a participant has started the activity (its progress is a number >= 0, not ---)
+        hasProgress(activityId, participantId) {
+            const progress = parseFloat($(`#progress_${activityId}_${participantId} done`).text());
+            return !isNaN(progress) && progress >= 0;
+        }
+
         // Paint a single participant row as not initialized
         paintParticipantNotInit(activityId, participantId) {
             // Set the participant progress bar to --- and make the progress, completion 
@@ -477,6 +548,11 @@
 
             $(`#completion_${activityId}_${participantId}`).removeClass("red yellow green");
             $(`#result_${activityId}_${participantId}`).removeClass("red yellow green");
+            $(`#lrs_${activityId}_${participantId}`).removeClass("red yellow green");
+
+            // Hide the result and LRS buttons of participants that haven't initialized
+            $(`#result_${activityId}_${participantId}`).text("---");
+            $(`#lrs_${activityId}_${participantId}`).text("---");
         }
         
         // Paint a single participant row as initialized
@@ -493,6 +569,9 @@
 
             $(`#result_${activityId}_${participantId}`).removeClass("red yellow green");
             $(`#result_${activityId}_${participantId}`).addClass("red");
+
+            $(`#lrs_${activityId}_${participantId}`).removeClass("red yellow green");
+            $(`#lrs_${activityId}_${participantId}`).addClass("red");
         }
 
         // Update the init progress of the activity top bar
@@ -538,7 +617,9 @@
 
             $(`#result_${activityId}_${participantId}`).removeClass("red yellow green");
             $(`#result_${activityId}_${participantId}`).addClass("yellow");
-                    
+            
+            $(`#lrs_${activityId}_${participantId}`).removeClass("red yellow green");
+            $(`#lrs_${activityId}_${participantId}`).addClass("yellow");           
         }
 
         
@@ -569,6 +650,10 @@
 
                     $(`#result_${activity.activity_id}_${participantKey}`).removeClass("red yellow green");
                     $(`#result_${activity.activity_id}_${participantKey}`).addClass("green");
+
+
+                    $(`#lrs_${activity.activity_id}_${participantKey}`).removeClass("red yellow green");
+                    $(`#lrs_${activity.activity_id}_${participantKey}`).addClass("green");
                 }
             });
             
@@ -608,11 +693,36 @@
         
         // Paint the result column of a single participant
         paintParticipantResult(activityId, participantId) {
-            $(`#result_${activityId}_${participantId}`).text("");
-            const icons = $("#activity_participant_template img").clone();
-            $(`#result_${activityId}_${participantId}`).append(icons);
+            const cell = $(`#result_${activityId}_${participantId}`);
+            cell.text("");
+            // Only show the buttons if the participant has started the activity (progress >= 0)
+            if (!this.hasProgress(activityId, participantId)) {
+                cell.text("---");
+                return;
+            }
+            const icons = $("#activity_participant_template .activity_backup_result").clone();
+            cell.append(icons);
         }
 
+        paintActivityLRS(activity, results, participants) {
+            participants.forEach((participant) => {
+                const participantKey = this.getParticipantKey(participant);
+                this.paintParticipantLRS(activity.activity_id, participantKey);
+            });
+        }
+
+        // Paint the LRS column of a single participant
+        paintParticipantLRS(activityId, participantId) {
+            const cell = $(`#lrs_${activityId}_${participantId}`);
+            cell.text("");
+            // Only show the buttons if the participant has started the activity (progress >= 0)
+            if (!this.hasProgress(activityId, participantId)) {
+                cell.text("---");
+                return;
+            }
+            const icons = $("#activity_participant_template .activity_lrs_result").clone();
+            cell.append(icons);
+        }
 
         paintActivityTargets(activity, results, participants) {
             if (!results) {
@@ -711,6 +821,9 @@
 
                 $(`#result_${activityId}_${participantId}`).removeClass("red yellow green");
                 $(`#result_${activityId}_${participantId}`).addClass(colorClass);
+
+                $(`#lrs_${activityId}_${participantId}`).removeClass("red yellow green");
+                $(`#lrs_${activityId}_${participantId}`).addClass(colorClass);
 
                 $(`#completion_${activityId}_${participantId} input[type="checkbox"]`).prop("checked", completion);
 

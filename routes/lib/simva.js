@@ -155,6 +155,23 @@ class Simva {
 		return queryString;
 	}
 
+	/**
+	 * Convert the username of a participant into the query string needed to fetch only the LRS statements of that participant
+	 * @param {string | undefined} actorName - username of the participant whose statements to fetch (statements of every
+	 * participant if it isn't set)
+	 * @returns {string} - string of the query parameters, including the starting ? if there are any parameters
+	 */
+	getLrsActorQueryString(actorName) {
+		if (!actorName) {
+			return "";
+		}
+		// The api filters the statements by the agent (the xAPI 2.0 name of the actor) as a json string, whose
+		// account is identified by the username of the participant and the external url of the platform
+		// (the homePage the LRS clients send)
+		const agent = JSON.stringify({ account: { name: actorName, homePage: config.simva.url } });
+		return this.getQueryString({ agent: agent });
+	}
+
 	
 	// TAGS
 
@@ -530,11 +547,13 @@ class Simva {
 	 * Send a GET request to the Axios wrapper to fetch the LRS data of the specified session from the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the session
 	 * @param {number} sessionId - id of the session to fetch the data from
+	 * @param {string | undefined} actorName - username of the participant whose statements to fetch (statements of every
+	 * participant if it isn't set)
 	 * @param {CurrSessionId} currSessionId
 	 * @param {Callback} callback 
 	 */
-	getSessionLRSData(simletId, sessionId, currSessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/lrs/statements`, currSessionId, callback);
+	getSessionLRSData(simletId, sessionId, actorName, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/lrs/statements${this.getLrsActorQueryString(actorName)}`, currSessionId, callback);
 	}
 		
 	// TODO: Document
@@ -829,11 +848,13 @@ class Simva {
 	/**
 	 * Send a GET request to the Axios wrapper to fetch the LRS data for the specified activity
 	 * @param {number} activityId - id of the activity to fetch the data from
+	 * @param {string | undefined} actorName - username of the participant whose statements to fetch (statements of every
+	 * participant if it isn't set)
 	 * @param {CurrSessionId} currSessionId
 	 * @param {Callback} callback 
 	 */
-	getActivityLRSData(activityId, currSessionId, callback){
-		this.get(`${this.apiurl}/activities/${activityId}/lrs/statements`, currSessionId, callback);
+	getActivityLRSData(activityId, actorName, currSessionId, callback){
+		this.get(`${this.apiurl}/activities/${activityId}/lrs/statements${this.getLrsActorQueryString(actorName)}`, currSessionId, callback);
 	}
 
 	// TODO: Document

@@ -500,11 +500,17 @@ var Simva = {
 	/**
 	 * Send a GET request to the bff to fetch the LRS data of the specified session from the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {string | undefined} participantName - username of the participant to fetch the data from (data of every
+	 * participant if it isn't set)
 	 * @param {number} sessionId - id of the session to fetch the data from
 	 * @param {Callback} callback 
 	 */
-	getSessionLRSData: function(simletId, sessionId, callback) {
-		Utils.get(`/bff/simlets/${simletId}/sessions/${sessionId}/lrs/statements`, callback);
+	getSessionLRSData: function(simletId, participantName, sessionId, callback) {
+		let query="";
+		if(participantName) {
+			query=`?actorName=${encodeURIComponent(participantName)}`;
+		}
+		Utils.get(`/bff/simlets/${simletId}/sessions/${sessionId}/lrs/statements${query}`, callback);
 	},
 
 	/**
@@ -820,10 +826,16 @@ var Simva = {
 	/**
 	 * Send a GET request to the bff to fetch the LRS data for the specified activity
 	 * @param {number} activityId - id of the activity to fetch the data from
+	 * @param {string | undefined} participantName - username of the participant to fetch the data from (data of every
+	 * participant if it isn't set)
 	 * @param {Callback} callback 
 	 */
-	getActivityLRSData: function(activityId, callback) {
-		Utils.get(`/bff/activities/${activityId}/lrs/statements`, callback);
+	getActivityLRSData: function(activityId, participantName, callback) {
+		let query="";
+		if(participantName) {
+			query=`?actorName=${encodeURIComponent(participantName)}`;
+		}
+		Utils.get(`/bff/activities/${activityId}/lrs/statements${query}`, callback);
 	},
 
 	/**

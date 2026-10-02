@@ -513,7 +513,7 @@ module.exports = function(auth, redirectToLogin, config){
     router.get('/simlets/:simletid/sessions/:sessionid/lrs/statements', auth, redirectToLogin, async (req, res, next) => {
         try {
             const data = await collectLrsStatements(
-                () => SimvaAsync.getSessionLRSData(req.params["simletid"], req.params["sessionid"], req.session.id),
+                () => SimvaAsync.getSessionLRSData(req.params["simletid"], req.params["sessionid"], req.query["actorName"], req.session.id),
                 (more) => SimvaAsync.getSessionMoreLRSData(req.params["simletid"], req.params["sessionid"], more, req.session.id)
             );
             res.status(200).send({ data });
@@ -888,7 +888,7 @@ module.exports = function(auth, redirectToLogin, config){
     router.get('/activities/:activityid/lrs/statements', auth, redirectToLogin, async (req, res, next) => {
         try {
             const data = await collectLrsStatements(
-                () => SimvaAsync.getActivityLRSData(req.params["activityid"], req.session.id),
+                () => SimvaAsync.getActivityLRSData(req.params["activityid"], req.query["actorName"], req.session.id),
                 (more) => SimvaAsync.getActivityMoreLRSData(req.params["activityid"], more, req.session.id)
             );
             res.status(200).send({ data });

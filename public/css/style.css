@@ -1173,12 +1173,21 @@ input[type="button"].openLimesurveyButton {
 .content .test .activities .activity table tbody tr td.progress div.done,
 .content .test .activities .activity table tbody tr td.progress div.partial { height: 28px; }
 
-.content .test .activities .activity table .showResult, .content .test .activities .activity table .downloadResult {
+.content .test .activities .activity table .showResult,
+.content .test .activities .activity table .downloadResult,
+.content .test .activities .activity table .showLRSData,
+.content .test .activities .activity table .downloadLRSData {
 	cursor: pointer;
 	margin-right: 7px;
 	height: 1lh;
 	width: auto;
+	max-width: 20px;
+	max-height: 20px;
 }
+
+/* LRS and result cells only hold small icons, keep them compact */
+.content .test .activities .activity table tbody tr td.lrsProgress,
+.content .test .activities .activity table tbody tr td.resProgress { width: 60px; padding: 2px; }
 
 /* Progress cells must not use generic td padding; otherwise 100% width leaves visible background strips. */
 .content .test .activities .activity table tbody tr td.progress {
