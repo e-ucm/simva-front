@@ -443,7 +443,7 @@
                 row.data(USER_DATA_ID_KEY, participant.user_id);
                 table.append(row);
 
-                if (getCurrentAllocation(participant.group_id, participant.user_id) != activity.session_id) {
+                if (this.isParticipantOff(activity, participant)) {
                     row.addClass("off");
                 }
 
@@ -522,7 +522,11 @@
                 const value = this.getParticipantMappedValue(status, participant);
                 
                 if (value === true || (typeof value === "number" && value >= 1)) {
-                    done++;
+                    // Participants that aren't allocated to this session anymore keep their
+                    // status, but aren't counted in the initialized progress
+                    if (!this.isParticipantOff(activity, participant)) {
+                        done++;
+                    }
                     this.paintParticipantInit(activity.activity_id, participantKey);
                 }
                 else {
@@ -537,6 +541,24 @@
         hasProgress(activityId, participantId) {
             const progress = parseFloat($(`#progress_${activityId}_${participantId} done`).text());
             return !isNaN(progress) && progress >= 0;
+        }
+
+        // Check if a participant isn't allocated to the activity session anymore (their row is
+        // dimmed), so their status is kept but isn't counted in the activity progress bars
+        isParticipantOff(activity, participant) {
+            return getCurrentAllocation(participant.group_id, participant.user_id) != activity.session_id;
+        }
+
+        // Same check as isParticipantOff, but using the ids used to build the row ids of the
+        // participants table (used when the status is updated by the simlet events)
+        isParticipantOffByKey(activityId, participantKey) {
+            const activity = getActivityFromId(activityId);
+            const participant = getParticipantFromId(participantKey);
+            if (activity == null || participant == null) {
+                // If the participant or the activity can't be found, count it as usual
+                return false;
+            }
+            return this.isParticipantOff(activity, participant);
         }
 
         // Paint a single participant row as not initialized
@@ -641,7 +663,11 @@
 
                 // If the participant has completed the activity, make the progress bar and completion and result columns in green
                 if (value) {
-                    done++;
+                    // Participants that aren't allocated to this session anymore keep their
+                    // status, but aren't counted in the completed progress
+                    if (!this.isParticipantOff(activity, participant)) {
+                        done++;
+                    }
                     $(`#progress_${activity.activity_id}_${participantKey} .done`).removeClass("partial");
 
                     $(`#completion_${activity.activity_id}_${participantKey}`).removeClass("red yellow green");
@@ -754,15 +780,20 @@
             if (value == 0 && isNaN(progress)) {
                 this.paintParticipantInit(activityId, participantId, value);
 
-                const total = parseInt($(`#activity_${activityId} .legend .total total`).text());
-                let done = parseInt($(`#activity_${activityId} .legend .init doneres`).text());
-                done++;
-                this.paintInitBarProgress(activityId, total, done);
+                // Participants that aren't allocated to this session anymore keep their
+                // status, but aren't counted in the initialized progress
+                if (!this.isParticipantOffByKey(activityId, participantId)) {
+                    const total = parseInt($(`#activity_${activityId} .legend .total total`).text());
+                    let done = parseInt($(`#activity_${activityId} .legend .init doneres`).text());
+                    done++;
+                    this.paintInitBarProgress(activityId, total, done);
+                }
             }
             else {
                 this.paintParticipantProgress(activityId, participantId, value);
             }
             this.paintParticipantResult(activityId, participantId);
+            this.paintParticipantLRS(activityId, participantId);
         }
 
         /**
@@ -790,15 +821,23 @@
                 // will be green if the activity is completed and red otherwise 
                 let colorClass = completion ? "green" : "red";
 
+                // Participants that aren't allocated to this session anymore keep their
+                // status, but aren't counted in the completed progress
+                const count = !this.isParticipantOffByKey(activityId, participantId);
+
                 // If the activity will be marked as completed, add another participant to
                 // the completed progress of the top bar and make its progress bar green
                 if (completion) {
-                    done++;
+                    if (count) {
+                        done++;
+                    }
                     $(`#progress_${activityId}_${participantId} .done`).removeClass("partial");
                 }
                 // Otherwise, remove a participant from the completed progress of the top bar
                 else {
-                    done--;
+                    if (count) {
+                        done--;
+                    }
                     
                     // If the participant hasn't initialized the activity, the columns won't have any color
                     if (!init) {
@@ -828,6 +867,7 @@
                 $(`#completion_${activityId}_${participantId} input[type="checkbox"]`).prop("checked", completion);
 
                 this.paintParticipantResult(activityId, participantId);
+                this.paintParticipantLRS(activityId, participantId);
             }
         }
     }
