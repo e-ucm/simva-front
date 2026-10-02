@@ -662,7 +662,7 @@
 		showSessionDownloadFormLoader(downloadSessionId);
 		
 		console.log("downloading data for session id:", downloadSessionId);
-		Simva.getSessionLRSData(simletId, downloadSessionId, null, function(error, result){
+		Simva.getSessionLRSData(simletId, null, downloadSessionId, function(error, result){
 			showSessionDownloadFormButtons(downloadSessionId);
 
 			if(error) {
