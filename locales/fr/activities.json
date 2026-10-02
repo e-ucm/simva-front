@@ -114,7 +114,7 @@
             "manual.web.title": "Web",
             "manual.web.description": "L'activité manuelle est basée sur une ressource web lancée dans une iframe, et les données d'interaction sont collectées via des déclarations xAPI envoyées de la ressource à SIMVA.",
                 "manual.uri.title": "URI",
-                "manual.uri.description": "L'URL de la ressource à accéder dans l'activité manuelle.",
+                "manual.uri.description": "L'URL de la ressource à accéder dans l'activité manuelle. L'URI peut inclure des balises : {username} et {activityId}.",
     
             "manual.external.title": "Ressource externe",
             "manual.external.description": "L'activité manuelle est basée sur une ressource externe lancée en dehors de SIMVA, et les données d'interaction sont collectées via des déclarations xAPI envoyées de la ressource à SIMVA.",
@@ -144,7 +144,6 @@
     "result.download.title": "Télécharger les résultats",
 
     "lrs.title": "Données LRS",
-    "lrs.disabled": "désactivé",
     "lrs.view.title": "Ouvrir les données LRS dans une fenêtre flottante",
     "lrs.download.title": "Télécharger les données LRS",
 
@@ -164,7 +163,7 @@
     "completed.bar.tooltip": "Barre de resumé d'achevement: participants ayant termine sur le total des participants.",
     "result.tooltip": "Etat du resultat et acces aux donnees de resultat ou de sauvegarde.",
     "result.bar.tooltip": "Barre de resumé des resultats: participants avec des resultats partiels ou finaux sur le total des participants.",
-    "lrs.tooltip": "État des données LRS et accès aux instructions xAPI stockées dans le LRS pour cette activité.",
+    "lrs.tooltip": "État des données LRS et accès aux déclarations xAPI stockées dans le LRS pour cette activité.",
 
     
     "ltitool.name": "Activité de l'outil LTI",

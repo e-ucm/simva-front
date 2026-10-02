@@ -17,8 +17,8 @@
             "coordinators.permissions.read": "Read",
             "coordinators.permissions.write": "Write",
             "coordinators.error.already_in": "The coordinator is already in the SIMLET",
-            "coordinators.error.permission": "Invalid permission.",
-            "coordinators.error.not_found": "The coordinator has not been found.",
+            "coordinators.error.permission": "The selected permission is not valid.",
+            "coordinators.error.not_found": "The user has not been found.",
         
     "search_bar.placeholder": "Search a group by name or description",
     

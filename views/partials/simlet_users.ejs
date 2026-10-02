@@ -436,7 +436,6 @@
 				}
 			});
 			if (form.permission !== "READ" && form.permission !== "WRITE") {
-				// TODO: add localization
 				errorbox.text("<%- t('coordinators.error.permission', { ns : 'groups' }) %>");
 				return false;
 			}
@@ -497,7 +496,6 @@
 					} catch (parseError) {
 						console.error('Import error:', parseError);
 						Utils.toggleSubmit();
-						// TODO: add localization
 						errorbox.text("<%- t('groups.import.error.invalid_file', { ns : 'groups' }) %> " + (parseError.message ? (': ' + parseError.message) : ''));
 					}
 				};

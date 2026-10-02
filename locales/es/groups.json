@@ -17,8 +17,8 @@
             "coordinators.permissions.read": "Lectura",
             "coordinators.permissions.write": "Escritura",
             "coordinators.error.already_in": "El coordinador ya está en el SIMLET",
-            "coordinators.error.permission": "Permiso no válido.",
-            "coordinators.error.not_found": "No se ha encontrado el coordinador.",
+            "coordinators.error.permission": "El permiso seleccionado no es válido.",
+            "coordinators.error.not_found": "No se ha encontrado el usuario.",
 
     "search_bar.placeholder": "Busque un grupo por su nombre o descripción",
 

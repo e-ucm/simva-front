@@ -17,8 +17,8 @@
             "coordinators.permissions.read": "Lecture",
             "coordinators.permissions.write": "Écriture",
             "coordinators.error.already_in": "Le coordinateur est déjà dans le SIMLET.",
-            "coordinators.error.permission": "Permission invalide.",
-            "coordinators.error.not_found": "Le coordinateur n'a pas été trouvé.",
+            "coordinators.error.permission": "La permission sélectionnée n'est pas valide.",
+            "coordinators.error.not_found": "L'utilisateur est introuvable.",
         
     "search_bar.placeholder": "Recherchez un groupe par son nom ou sa description",
 
