@@ -17,6 +17,9 @@
         "header.logout.research.title": "e-UCM Research",
         "header.logout.research.description": "Go to the research site for project information, related material, or reach the contact information.",
 
+        "header.logout.contact.title": "Contact",
+        "header.logout.contact.description": "Reach the contact information of the research group.",
+
         "header.logout.login.title": "Login",
         "header.logout.login.description": "Press this button to sign in and switch to the authenticated interface.",
 

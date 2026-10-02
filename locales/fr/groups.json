@@ -60,8 +60,8 @@
                 "groups.import.upload.error": "Sélectionnez le fichier à charger en premier",
                 "groups.import.error.invalid_file": "Le fichier sélectionné n'est pas un fichier de groupe valide.",
 
-            "groups.allocate_to.title": "",
-            "groups.allocate_to.noSession": "",
+            "groups.allocate_to.title": "Affecter le groupe à",
+            "groups.allocate_to.noSession": "Aucune session",
             
         "groups.settings.groups.edit.title": "Modifier",
             "groups.edit.title": "Modifier groupe",

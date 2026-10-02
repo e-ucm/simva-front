@@ -79,10 +79,10 @@
         "sessions.tab.title": "Sessions",
         "users.tab.title": "Users",
 
-    "tester.play.title": "",
-    "tester.play.description": "",
-    "play.title": "",
-    "play.description": "",
+    "tester.play.title": "Jouer au SIMLET en tant que testeur",
+    "tester.play.description": "Jouez au SIMLET en tant que testeur pour le vivre comme un participant. Cela permet de vérifier que les activités et le déroulement fonctionnent comme prévu avant de le partager avec d'autres.",
+    "play.title": "Jouer au SIMLET",
+    "play.description": "Jouer pour participer à un SIMLET",
         
     "scheduler.no_simlet.title": "Vous n'avez pas encore de SIMLETs à participer.",
     "scheduler.title": "Cliquez ici pour commencer ou poursuivre votre session dans le SIMLET.",

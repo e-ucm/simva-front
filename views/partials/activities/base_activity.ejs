@@ -70,14 +70,13 @@
         </tr>
     </table>
 
-    <!-- TODO: Add localization -->
-     <div class="activity_backup_result">
-        <img src="/images/icons/eye.png" class="showResult" title="Open result in floating window">
-        <img src="/images/icons/direct-download.png" class="downloadResult" title="Download results">
+    <div class="activity_backup_result">
+        <img src="/images/icons/eye.png" class="showResult" title="<%= t('result.view.title', { ns : 'activities' }) %>">
+        <img src="/images/icons/direct-download.png" class="downloadResult" title="<%= t('result.download.title', { ns : 'activities' }) %>">
     </div>
     <div class="activity_lrs_result">
-        <img src="/images/icons/eye.png" class="showLRSData" title="Open LRS Data in floating window">
-        <img src="/images/icons/direct-download.png" class="downloadLRSData" title="Download LRS Data">
+        <img src="/images/icons/eye.png" class="showLRSData" title="<%= t('lrs.view.title', { ns : 'activities' }) %>">
+        <img src="/images/icons/direct-download.png" class="downloadLRSData" title="<%= t('lrs.download.title', { ns : 'activities' }) %>">
     </div>
 </div>
 

@@ -27,6 +27,8 @@
         "import.tab": "Import session",
         "import.input": "Select exported session file",
         "import.submit": "Import session",
+        "import.upload.error": "Select the file to upload first",
+        "import.error.invalid_file": "Invalid file",
 
     "settings.edit.title": "Edit",
         "edit.title": "Edit session",

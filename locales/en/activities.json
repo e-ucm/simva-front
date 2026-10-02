@@ -1,6 +1,8 @@
 { 
     "title": "Activities",
     "single.title": "Activity",
+    "description": "Global list of the activities of every SIMLET you have access to",
+    "text": "The global activities view is temporally disabled.\nUse the activities tab of a session to manage its activities.\nIt will be available in a future version.",
     "template.text": "Activities view is temporally disabled.\nThis tab is designed to create \"template activities\" for them later to be copied into tests.\nThese \"template activities\" help the creation of multiple test cases similar with small modifications.\nIt will be available in a future version.",
     "no_activities.message": "There are no activities in this session. Add one using the 3-dot menu button on the right",
 
@@ -135,6 +137,13 @@
     "result.disabled": "disabled",
     "result.error.loading": "Error loading the result",
     "result.error.downloading": "Error downloading the result",
+    "result.view.title": "Open result in floating window",
+    "result.download.title": "Download results",
+
+    "lrs.title": "LRS Data",
+    "lrs.disabled": "disabled",
+    "lrs.view.title": "Open LRS Data in floating window",
+    "lrs.download.title": "Download LRS Data",
 
     "storage.title": "Storage",
     "storage.disabled": "disabled",
@@ -152,6 +161,7 @@
     "completed.bar.tooltip": "Completion summary bar: completed participants over total participants.",
     "result.tooltip": "Result status and access to available result or backup data.",
     "result.bar.tooltip": "Result summary bar: participants with partial or final results over total participants.",
+    "lrs.tooltip": "LRS data status and access to the xAPI statements stored in the LRS for this activity.",
         
         
     "ltitool.name": "LTI Tool Activity",

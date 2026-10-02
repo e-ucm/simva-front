@@ -17,8 +17,8 @@
             "coordinators.permissions.read": "Read",
             "coordinators.permissions.write": "Write",
             "coordinators.error.already_in": "The coordinator is already in the SIMLET",
-            "coordinators.error.permission": "",
-            "coordinators.error.not_found": "",
+            "coordinators.error.permission": "Invalid permission.",
+            "coordinators.error.not_found": "The coordinator has not been found.",
         
     "search_bar.placeholder": "Search a group by name or description",
     
@@ -57,7 +57,7 @@
                 "groups.import.input": "Import file of group",
                 "groups.import.submit": "Import group",
                 "groups.import.upload.error": "Select the file to upload first",
-                "groups.import.error.invalid_file": "",
+                "groups.import.error.invalid_file": "The selected file is not a valid group file.",
 
             "groups.allocate_to.title": "Allocate group to",
             "groups.allocate_to.noSession": "No session",

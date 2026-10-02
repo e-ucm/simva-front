@@ -16,6 +16,9 @@
         
         "header.logout.research.title": "e-UCM Research",
         "header.logout.research.description": "Vaya al sitio de investigación para información del proyecto, material relacionado, o acceder a la información de contacto.",
+
+        "header.logout.contact.title": "Contacto",
+        "header.logout.contact.description": "Acceda a la información de contacto del grupo de investigación.",
         
         "header.logout.login.title": "Inicio de sesión",
         "header.logout.login.description": "Pulse este botón para entrar y cambiar a la interfaz autenticada.",

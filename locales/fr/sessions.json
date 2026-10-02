@@ -27,6 +27,8 @@
         "import.tab": "Importer une session",
         "import.input": "Sélectionnez fichier de session exporté",
         "import.submit": "Importer une session",
+        "import.upload.error": "Sélectionnez d'abord le fichier à envoyer",
+        "import.error.invalid_file": "Fichier invalide",
 
     "settings.edit.title": "Modifier",
         "edit.title": "Modifier le session",
@@ -45,7 +47,7 @@
         "tags.create": "Créer",
         "tags.create.cancel": "Annuler",
         "tags.edit.placeholder": "Nom du tag",
-        "tags.save": "Enregistrer",
+        "tags.edit.save": "Enregistrer",
         "tags.edit.cancel": "Annuler",
     "can_be_manually_activated": "La session peut être activée manuellement",
 
@@ -73,8 +75,8 @@
     "settings.reset_tester.title": "Réinitialiser testeur (retirer et remettre)",
     "settings.unset_tester.title": "Me retirer comme testeur",
 
-    "settings.hide_inactive_participants.title": "",
-    "settings.show_inactive_participants.title": "",
+    "settings.hide_inactive_participants.title": "Afficher les participants inactifs",
+    "settings.show_inactive_participants.title": "Masquer les participants inactifs",
 
     "status.description": "Dépend du statut de la session, les participants peuvent ou non jouer le SIMLET. Le statut peut être modifié à tout moment.",
         "active.description": "Une session active est une session qui est actuellement en cours d'exécution et qui peut être jouée par les participants.",

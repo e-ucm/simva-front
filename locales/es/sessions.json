@@ -27,6 +27,8 @@
         "import.tab": "Importar sesión",
         "import.input": "Seleccione un fichero de sesión exportada",
         "import.submit": "Importar sesión",
+        "import.upload.error": "Seleccione el fichero a subir primero",
+        "import.error.invalid_file": "Fichero inválido",
     
     "settings.edit.title": "Editar",
         "edit.title": "Editar sesión",
@@ -45,7 +47,7 @@
         "tags.create": "Crear",
         "tags.create.cancel": "Cancelar",
         "tags.edit.placeholder": "Nombre de la etiqueta",
-        "tags.save": "Guardar",
+        "tags.edit.save": "Guardar",
         "tags.edit.cancel": "Cancelar",
     "can_be_manually_activated": "Se puede activar manualmente",
 
