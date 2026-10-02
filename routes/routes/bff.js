@@ -30,16 +30,27 @@ module.exports = function(auth, redirectToLogin, config){
     const axios = require('axios');
     
 
+    /**
+     * Number of participants whose LRS statements are fetched at the same time when no participant is selected
+     */
+    const LRS_STATEMENTS_CONCURRENCY = 4;
+
+    /**
+     * Collect every page of an LRS statements query into a single list of statements
+     * @param {Function} fetchFirstPage - async function that fetches the first page of statements
+     * @param {Function} fetchNextPage - async function that fetches the page of statements of a "more" url
+     * @returns {Promise<Array>} - all the statements of the query
+     */
     async function collectLrsStatements(fetchFirstPage, fetchNextPage) {
         const statements = [];
         let result = await fetchFirstPage();
         let previousFromCursor = null;
         while (result) {
             for (let i = 0; i < (result.statements || []).length; i++) {
-                statements.push(JSON.stringify(result.statements[i]));
+                statements.push(result.statements[i]);
             }
 
-            more = result.more;
+            const more = result.more;
             logger.info(`Fetched ${statements.length} statements so far...`);
             logger.info(`More statements available: ${more}`);
             
@@ -62,7 +73,84 @@ module.exports = function(auth, redirectToLogin, config){
             result = await fetchNextPage(more);
         }
 
-        return statements.join('\n');
+        return statements;
+    }
+
+    /**
+     * Convert a list of statements into the ndjson content of a downloadable file
+     * @param {Array} statements - statements to serialize, one per line
+     * @returns {string} - the content of the file
+     */
+    function statementsToContent(statements) {
+        return (statements || []).map((statement) => JSON.stringify(statement)).join('\n');
+    }
+
+    /**
+     * Map a list of items running, at most, the given amount of workers at the same time
+     * @param {Array} items - items to process
+     * @param {number} limit - maximum amount of workers running at the same time
+     * @param {Function} worker - async function that receives an item and its index
+     * @returns {Promise<Array>} - the results of the worker, in the same order as the items
+     */
+    async function mapWithConcurrency(items, limit, worker) {
+        const results = new Array(items.length);
+        let nextIndex = 0;
+        const workers = Array.from({ length: Math.min(limit, items.length) }, async () => {
+            while (true) {
+                const index = nextIndex++;
+                if (index >= items.length) {
+                    break;
+                }
+                results[index] = await worker(items[index], index);
+            }
+        });
+        await Promise.all(workers);
+        return results;
+    }
+
+    /**
+     * Fetch the LRS statements of every participant of a session and join them into a single, unique and
+     * chronologically ordered list, which is used when no participant is selected
+     * @param {Array<string>} usernames - usernames of the participants of the session
+     * @param {Function} fetchFirstPage - async function that receives a username and fetches the first page of its statements
+     * @param {Function} fetchNextPage - async function that fetches the page of statements of a "more" url
+     * @returns {Promise<Array>} - the statements of every participant, without duplicates
+     */
+    async function collectLrsStatementsForParticipants(usernames, fetchFirstPage, fetchNextPage) {
+        logger.info(`Fetching the LRS statements of ${usernames.length} participants...`);
+        // Statements of the participants are stored in a map, using their id as key, to skip the duplicated ones
+        const statements = new Map();
+        const participantsStatements = await mapWithConcurrency(usernames, LRS_STATEMENTS_CONCURRENCY, async (username) => {
+            logger.info(`Fetching the LRS statements of the participant ${username}...`);
+            return await collectLrsStatements(() => fetchFirstPage(username), fetchNextPage);
+        });
+        participantsStatements.forEach((participantStatements, i) => {
+            participantStatements.forEach((statement, j) => {
+                // The id is the identifier of a statement in the LRS, so it is used to skip the repeated ones.
+                // Statements without id, which should never happen, are kept using a key that cannot be repeated
+                statements.set(statement.id || `${usernames[i]}/${j}`, statement);
+            });
+        });
+        const result = Array.from(statements.values()).sort((a, b) => {
+            const dateDiff = new Date(a.timestamp || a.stored || 0).getTime() - new Date(b.timestamp || b.stored || 0).getTime();
+            return dateDiff !== 0 ? dateDiff : String(a.id || '').localeCompare(String(b.id || ''));
+        });
+        logger.info(`Fetched ${result.length} unique statements of ${usernames.length} participants`);
+        return result;
+    }
+
+    /**
+     * Get the usernames of the participants that have been allocated to a session
+     * @param {string | number} simletId - id of the SIMLET that has the session
+     * @param {string | number} sessionId - id of the session to get the participants from
+     * @param {number} currSessionId - id of the session of the user of the platform
+     * @returns {Promise<Array<string>>} - usernames of the participants of the session
+     */
+    async function getSessionParticipantsUsernames(simletId, sessionId, currSessionId) {
+        const participants = await SimvaAsync.getSessionParticipants(simletId, sessionId, currSessionId);
+        const usernames = (participants || []).map((participant) => participant.username).filter((username) => !!username);
+        logger.info(`Session ${sessionId} of SIMLET ${simletId} has ${usernames.length} participants`);
+        return usernames;
     }
     
     
@@ -512,11 +600,18 @@ module.exports = function(auth, redirectToLogin, config){
     // Get the LRS data of the specified session
     router.get('/simlets/:simletid/sessions/:sessionid/lrs/statements', auth, redirectToLogin, async (req, res, next) => {
         try {
-            const data = await collectLrsStatements(
-                () => SimvaAsync.getSessionLRSData(req.params["simletid"], req.params["sessionid"], req.query["actorName"], req.session.id),
-                (more) => SimvaAsync.getSessionMoreLRSData(req.params["simletid"], req.params["sessionid"], more, req.session.id)
-            );
-            res.status(200).send({ data });
+            const actorName = req.query["actorName"];
+            const fetchFirstPage = (username) => SimvaAsync.getSessionLRSData(req.params["simletid"], req.params["sessionid"], username, req.session.id);
+            const fetchNextPage = (more) => SimvaAsync.getSessionMoreLRSData(req.params["simletid"], req.params["sessionid"], more, req.session.id);
+            let statements;
+            if (actorName) {
+                statements = await collectLrsStatements(() => fetchFirstPage(actorName), fetchNextPage);
+            } else {
+                // No participant selected: the statements of every participant of the session are joined
+                const usernames = await getSessionParticipantsUsernames(req.params["simletid"], req.params["sessionid"], req.session.id);
+                statements = await collectLrsStatementsForParticipants(usernames, fetchFirstPage, fetchNextPage);
+            }
+            res.status(200).send({ data: statementsToContent(statements) });
         } catch(error) {
             next(error.response?.data || error);
         }
@@ -525,11 +620,11 @@ module.exports = function(auth, redirectToLogin, config){
     // Get the LRS data for the test users of the specified session
     router.get('/simlets/:simletid/sessions/:sessionid/lrs_test_statements', auth, redirectToLogin, async (req, res, next) => {
         try {
-            const data = await collectLrsStatements(
+            const statements = await collectLrsStatements(
                 () => SimvaAsync.getSessionTestLRSData(req.params["simletid"], req.params["sessionid"], req.session.id),
                 (more) => SimvaAsync.getSessionMoreTestLRSData(req.params["simletid"], req.params["sessionid"], more, req.session.id)
             );
-            res.status(200).send({ data });
+            res.status(200).send({ data: statementsToContent(statements) });
         } catch(error) {
             next(error.response?.data || error);
         }
@@ -887,11 +982,23 @@ module.exports = function(auth, redirectToLogin, config){
     // Get the LRS data for the specified activity
     router.get('/activities/:activityid/lrs/statements', auth, redirectToLogin, async (req, res, next) => {
         try {
-            const data = await collectLrsStatements(
-                () => SimvaAsync.getActivityLRSData(req.params["activityid"], req.query["actorName"], req.session.id),
-                (more) => SimvaAsync.getActivityMoreLRSData(req.params["activityid"], more, req.session.id)
-            );
-            res.status(200).send({ data });
+            const actorName = req.query["actorName"];
+            const simletId = req.query["simletId"];
+            const sessionId = req.query["sessionId"];
+            const fetchFirstPage = (username) => SimvaAsync.getActivityLRSData(req.params["activityid"], username, req.session.id);
+            const fetchNextPage = (more) => SimvaAsync.getActivityMoreLRSData(req.params["activityid"], more, req.session.id);
+            let statements;
+            if (actorName) {
+                statements = await collectLrsStatements(() => fetchFirstPage(actorName), fetchNextPage);
+            } else if (simletId && sessionId) {
+                // No participant selected: the statements of every participant of the session of the activity are joined
+                const usernames = await getSessionParticipantsUsernames(simletId, sessionId, req.session.id);
+                statements = await collectLrsStatementsForParticipants(usernames, fetchFirstPage, fetchNextPage);
+            } else {
+                logger.warn(`The SIMLET and the session of the activity ${req.params["activityid"]} are unknown, fetching the statements of every actor`);
+                statements = await collectLrsStatements(() => fetchFirstPage(undefined), fetchNextPage);
+            }
+            res.status(200).send({ data: statementsToContent(statements) });
         } catch(error) {
             next(error.response?.data || error);
         }
@@ -900,11 +1007,11 @@ module.exports = function(auth, redirectToLogin, config){
     // Get the LRS data for the test users of the specified activity
     router.get('/activities/:activityid/lrs_test_statements', auth, redirectToLogin, async (req, res, next) => {
         try {
-            const data = await collectLrsStatements(
+            const statements = await collectLrsStatements(
                 () => SimvaAsync.getActivityTestLRSData(req.params["activityid"], req.session.id),
                 (more) => SimvaAsync.getActivityMoreTestLRSData(req.params["activityid"], more, req.session.id)
             );
-            res.status(200).send({ data });
+            res.status(200).send({ data: statementsToContent(statements) });
         } catch(error) {
             next(error.response?.data || error);
         }

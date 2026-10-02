@@ -828,14 +828,18 @@ var Simva = {
 	 * @param {number} activityId - id of the activity to fetch the data from
 	 * @param {string | undefined} participantName - username of the participant to fetch the data from (data of every
 	 * participant if it isn't set)
+	 * @param {object | undefined} session - object with the id of the SIMLET (simletId) and the id of the session
+	 * (sessionId) that have the activity, needed to join the data of every participant of the session
 	 * @param {Callback} callback 
 	 */
-	getActivityLRSData: function(activityId, participantName, callback) {
-		let query="";
+	getActivityLRSData: function(activityId, participantName, session, callback) {
+		const query=[];
 		if(participantName) {
-			query=`?actorName=${encodeURIComponent(participantName)}`;
+			query.push(`actorName=${encodeURIComponent(participantName)}`);
+		} else if(session) {
+			query.push(`simletId=${encodeURIComponent(session.simletId)}`, `sessionId=${encodeURIComponent(session.sessionId)}`);
 		}
-		Utils.get(`/bff/activities/${activityId}/lrs/statements${query}`, callback);
+		Utils.get(`/bff/activities/${activityId}/lrs/statements${query.length > 0 ? `?${query.join('&')}` : ""}`, callback);
 	},
 
 	/**

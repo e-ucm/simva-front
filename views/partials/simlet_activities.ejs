@@ -534,7 +534,8 @@
 	const downloadActivityData = function () {
 		showActivityDownloadFormLoader();
 		
-		Simva.getActivityLRSData(downloadActivityId, null, (error, result) => {
+		const activity = getActivityFromId(downloadActivityId);
+		Simva.getActivityLRSData(downloadActivityId, null, { simletId: simletId, sessionId: activity.session_id }, (error, result) => {
 			showActivityDownloadFormButtons(downloadActivityId);
 
             let errorMsg = "<%= t('result.error.downloading', { ns : 'activities' }) %>";
@@ -547,7 +548,6 @@
 					stack: false
 				});
 			} else {
-				const activity = getActivityFromId(downloadActivityId);
 				const session = getSessionFromId(activity.session_id);
 				const filename = `${getActivityFilenamePrefix(session, activity)}-full_xapi_data_.ndjson`;
 				Utils.downloadContent(result.data, filename, errorMsg);

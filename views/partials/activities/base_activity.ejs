@@ -150,7 +150,8 @@
         showLRSData(activityId, participantId) {
             let errorMsg = "<%= t('result.error.loading', { ns : 'activities' }) %>";
             const participant = getParticipantFromId(participantId);
-            Simva.getActivityLRSData(activityId, participant ? participant.username : null, (error, result) => {
+            const activity = getActivityFromId(activityId);
+            Simva.getActivityLRSData(activityId, participant ? participant.username : null, { simletId: simletId, sessionId: activity.session_id }, (error, result) => {
                 if (error) {
                     $.toast({
                         heading: errorMsg,
@@ -211,7 +212,9 @@
         downloadLRSData(activityId, participantId) {
             let errorMsg = "<%= t('result.error.downloading', { ns : 'activities' }) %>";
             const participant = getParticipantFromId(participantId);
-            Simva.getActivityLRSData(activityId, participant ? participant.username : null, (error, result) => {
+            const activity = getActivityFromId(activityId);
+            const session = getSessionFromId(activity.session_id);
+            Simva.getActivityLRSData(activityId, participant ? participant.username : null, { simletId: simletId, sessionId: activity.session_id }, (error, result) => {
                 if (error) {
                     $.toast({
                         heading: errorMsg,
@@ -221,8 +224,6 @@
                         stack: false
                     });
                 } else {
-                    const activity = getActivityFromId(activityId);
-                    const session = getSessionFromId(activity.session_id);
                     let filename = getActivityFilenamePrefix(session, activity);
 
                     if (participantId) {
