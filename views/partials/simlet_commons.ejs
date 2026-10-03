@@ -50,7 +50,6 @@
 		<div class="form">
 			<h1 class="formSimletTitle">		</h1>
 			<div id="edit_url_tab" class="subform selected">
-				<input type="button" id="generate_shlink_url" class="blue" value="<%- t('scheduler.shlink.generate.title', { ns : 'SIMLETs' }) %>" onclick="openGenerateLinkForm()">
 				<input type="button" id="shlink_url_short" class="green" onclick="copyShortURL()" style="white-space: normal; word-wrap: break-word;">
 				<input type="button" id="delete_shlink_url" class="red" value="<%- t('scheduler.shlink.delete.title', { ns : 'SIMLETs' }) %>" onclick="deleteShLink()">
 			</div>
@@ -321,8 +320,7 @@
             
             Simva.generateShlink(currSimletId, custom_slug, null, (error, result) => {
                 if (!error) {
-                    shlink = result;
-                    let shortUrl=shlink.shortUrl;
+                    const shortUrl = result.shortUrl;
                     // Copy the text inside the text field
                     navigator.clipboard.writeText(shortUrl);
                     // Alert Short URL
@@ -355,8 +353,7 @@
             
             Simva.generateShlink(currSimletId, null, length, (error, result) => {
                 if (!error) {
-                    shlink = result;
-                    let shortUrl=shlink.shortUrl;
+                    const shortUrl = result.shortUrl;
                     // Copy the text inside the text field
                     navigator.clipboard.writeText(shortUrl);
                     // Alert Short URL
@@ -386,26 +383,20 @@
 		$(".formSimletTitle").text(`<%- t('single.title', { ns : 'SIMLETs' }) %>: ${simletName}`);
 
         currSimletId = simletId;
-
 		shlink = null;
-		$("#generate_shlink_url").show();
-		$("#shlink_url_short").hide();
-		$("#delete_shlink_url").hide();
-
 		Simva.getShLink(simletId, (error, result) => {
-			Utils.toggleFormInFloating('simlet_url_settings');
 			if (!error) {
 				shlink = result;
-				$("#generate_shlink_url").hide();
-				$("#shlink_url_short").show();
-				$('#shlink_url_short').val(`<%- t('scheduler.shlink.message', { ns : 'SIMLETs', shlink : '${shlink.shortUrl}' }) %>`);
-				$("#delete_shlink_url").show();
+				Utils.toggleFormInFloating('simlet_url_settings');
+				$('#shlink_url_short').val(`<%- t('scheduler.shlink.message', { ns : 'SIMLETs', shlink : '${result.shortUrl}' }) %>`);
+			}
+			else {
+				openGenerateLinkForm();
 			}
 		});
 	}
 
     const openGenerateLinkForm = function() {
-        Utils.toggleFormInFloating('simlet_url_settings');
         Utils.toggleFormInFloating('generate_simlet_link_menu');
         $('#generate_link_error').text("");
         $('#custom_slug_shlink').val("");
@@ -420,22 +411,25 @@
 	}
 
     const deleteShLink = function() {
-		Utils.toggleSubmit($("#generate_simlet_link_menu"));
+		Utils.toggleSubmit();
         Simva.getSimlet(currSimletId, (error, result) => {
 			if (!error) {
 				let shortCode = shlink.shortCode;
 				if (confirm(`<%- t('scheduler.shlink.delete.confirm', { ns : 'SIMLETs', shlink : '${shortCode}', SIMLET : '${result.simlet_name}' }) %>`)) {
 					Simva.deleteShLink(currSimletId, (error, result) => {
 						if (!error) {
-							shlink = null;
 							Utils.toggleFormInFloating('simlet_url_settings');
 							if (onEditShlink != null && typeof onEditShlink === "function") {
 								onEditShlink();
 							}
 						}
-						Utils.toggleSubmit($("#generate_simlet_link_menu"));
 					});
 				}
+				shlink = null;
+			}
+			else {
+				shlink = null;
+				Utils.toggleSubmit();
 			}
 		});
 	}

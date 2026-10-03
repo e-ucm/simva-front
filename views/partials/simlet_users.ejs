@@ -799,6 +799,7 @@
 
 		const dropdown = $(".group_allocate_dropdown");
 		fillSessionsDropdown(dropdown);
+		// dropdown.children().first().prop("hidden", false).prop("disabled", false);
 		let session = getLatestCreatedSession();
 		if (session != null) {
 			selectAllocatedSession(dropdown, session.session_id);
