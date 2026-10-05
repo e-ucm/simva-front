@@ -477,6 +477,7 @@
 	const showSessionDownloadFormButtons = function(sessionId) {
 		$("#download_session_loader").hide();
 		$("#session_data_download").show();
+		$(".iframe_floating_close").prop("disabled", false);
 		
 		// Show session download button based on participant status
 		$("#session_test_data_download").hide();
@@ -489,6 +490,7 @@
 		$("#download_session_loader").show();
 		$("#session_data_download").hide();
 		$("#session_test_data_download").hide();
+		$(".iframe_floating_close").prop("disabled", true);
 	}
 
     // Expand/hide session info

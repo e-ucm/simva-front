@@ -69,8 +69,7 @@
 
 			<div id="generate_simlet_link_length_tab" class="subform selected">
 				<form id="generate_simlet_link_length_form">
-					<h3><%- t('scheduler.shlink.generate.randomly_length.title', { ns : 'SIMLETs' }) %></h3>
-					<p><%- t('scheduler.shlink.generate.randomly_length.message', { ns : 'SIMLETs' }) %></p>
+					<h3><%- t('scheduler.shlink.generate.randomly_length.message', { ns : 'SIMLETs' }) %></h3>
 					<input type="number" step=1 min=4 name="link_length_shlink" id="link_length_shlink" onchange="this.value = Math.max(4, parseInt(this.value));" value=4 required>
 					<input type="submit" value="<%- t('scheduler.shlink.generate.submit', { ns : 'SIMLETs' }) %>">
 				</form>

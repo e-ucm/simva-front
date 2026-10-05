@@ -354,6 +354,7 @@
 		if (isCurrentUserParticipant(activity.session_id)) {
 			$("#activity_test_data_download").show();
 		}
+		$(".iframe_floating_close").prop("disabled", false);
 	}
 
 	const showActivityDownloadFormLoader = function() {
@@ -362,6 +363,7 @@
 		$("#activity_test_data_download").hide();
 		$("#global_backup_download").hide();
 		$("#backup_download").hide();
+		$(".iframe_floating_close").prop("disabled", true);
 	}
 	
 	// Expand/hide activity participants table
