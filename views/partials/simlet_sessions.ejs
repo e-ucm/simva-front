@@ -640,7 +640,7 @@
 	const changeSessionStatus = function(sessionId, nextStatus) {
 		Simva.activateSession(simletId, sessionId, { activate: nextStatus }, function(error, result) {
 			if (!error) {
-				onEditSession(result);
+				onCreateOrEditSession(result);
 			}
 		})
 	}
@@ -831,7 +831,6 @@
 				if(!error) {
 					session = result;
 					completeSessionsById.set(session.session_id, session);
-					
 					// Store the complete participants and activities
 					session.completeParticipants.forEach((participant) => {
 						participantsById.set(participant.user_id, participant);
@@ -841,6 +840,7 @@
 						completeActivitiesById.set(activity.activity_id, activity);
 					})
 					
+					paintArchived();
 					fillSessionCard(session, card);
 				}
 			});

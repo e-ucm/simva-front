@@ -318,6 +318,8 @@ the elements and scripts defined in the simlet_commons partial -->
 				
 		const kebab = $("#kebab_template .kebab-dropdown").clone();
 		card.find(".kebab").append(kebab);
+		
+		kebab.find(".icon-dearchive").hide();
 		if (ARCHIVED) {
 			kebab.find(".icon-archive").hide();
 
@@ -326,7 +328,6 @@ the elements and scripts defined in the simlet_commons partial -->
 		} 
 		else {
 			kebab.find(".icon-archive").show();
-			kebab.find(".icon-dearchive").hide();
 
 			// Disable archive button if not all sessions are finished
 			Simva.getSimletSessions(simlet.simlet_id, function(error, result) {
