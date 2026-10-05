@@ -1029,7 +1029,6 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 	max-width: 500px;
 	padding: 10px;
 	box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3);
-	
 }
 
 .subform select.activityTypeSelector { flex: 1; margin-top: 10px; }
@@ -1293,19 +1292,36 @@ input[type="button"].openLimesurveyButton {
 #change_allocator_form label .description { display: inline-block; font-size: 16px; font-style: italic; width: 100%; } */
 
 
-#pdf_printable {
-	display: none;
-	font-size: 20px;
-	text-align: center;
-	padding: 10px;
+/* Styles for vertical/portrait display */
+@media (orientation: portrait) {
+	/* Make the left menu width as big as just the icons and hide the text */
+	.menu { width: max-content; }
+	.menu li span:first-child { width: max-content; }
+	.menu li span:last-child { display: none; }
+	.content { padding: 60px 10px 10px 83px; }
+	
+	/* Make the activities cards almost as big as its container */
+	.content .test .activities .activity {
+		min-width: 95%;
+		max-width: 95%;
+	}
 }
-#pdf_printable h3 { margin-bottom: 10px; font-weight: normal; }
-#pdf_printable table { width: 100%; position: relative; border-collapse: collapse; }
-#pdf_printable table, #pdf_printable th, #pdf_printable td { padding: 5px; border: solid 1px black; font-weight: normal; }
+
+#pdf_printable { display: none; }
 @page { size: A4; margin: 4mm 4mm 4mm 4mm; }
 @media print {
-	body { font-family: serif; background-color: white; }
-	.content { padding: 0px; width: 210mm; height: 297mm; }
+	body { padding:0px; font-family: serif; background-color: white; }
+	.content { padding: 10px; width: 210mm; height: 297mm; }
 	.header, .menu, .content .simletTop, #simlet_tags, .sessionTagList, #study_tabs { display: none; }
-	#pdf_printable { display: contents; }
+
+	#pdf_printable { 
+		display: contents;
+		font-size: 20px;
+		text-align: center;
+		width: 100%;
+ 	}
+	#pdf_printable h3 { margin-bottom: 10px; }
+	#pdf_printable table { width: 100%; position: relative; border-collapse: collapse; }
+	#pdf_printable table, #pdf_printable th, #pdf_printable td { padding: 5px; border: solid 1px black; }
+
 }
