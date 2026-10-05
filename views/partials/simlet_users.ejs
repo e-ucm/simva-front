@@ -54,7 +54,7 @@
 			</div>
 		</div>
 		
-		<% const searchBarPlaceholder = t('search_bar.placeholder', { ns: 'groups' }); %>
+		<% const searchBarPlaceholder = t('search_bar.placeholder', { ns : 'groups' }); %>
 		<%- include('filtering_pagination_commons', { id:"groups", searchBarPlaceholderText: searchBarPlaceholder }) %>
 
 		<!-- Container for all the groups cards -->
@@ -181,10 +181,10 @@
 				<form id="import_group_form_modal">
 					<h3><%- t('groups.name.title', { ns : 'groups' }) %></h3>
 					<input type="text" class="name_field" name="groupName" id="import_group_name_modal" placeholder="<%- t('groups.name.placeholder', { ns : 'groups' }) %>" required>
-					<h3><%- t('groups.import.input', { ns : 'groups' }) %></h3>
-					<input type="file" name="jsonFile" accept=".json" required>
 					<h3 class="group_allocate_title"><%- t('groups.allocate_to.title', { ns : 'groups' }) %></h3>
 					<select class="group_allocate_dropdown"></select>
+					<h3><%- t('groups.import.input', { ns : 'groups' }) %></h3>
+					<input type="file" name="jsonFile" accept=".json" required>
 					<input type="submit" value="<%- t('groups.import.submit', { ns : 'groups' }) %>">
 				</form>
 			</div>

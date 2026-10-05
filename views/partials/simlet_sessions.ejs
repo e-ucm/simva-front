@@ -14,7 +14,7 @@
 		</div>
 	</div>
 	
-	<% const searchBarPlaceholder = t('search_bar.placeholder', { ns: 'sessions' }); %>
+	<% const searchBarPlaceholder = t('search_bar.placeholder', { ns : 'sessions' }); %>
 	<%- include('filtering_pagination_commons', { id:"sessions", searchBarPlaceholderText: searchBarPlaceholder }) %>
 
 	<!-- Container for all the session cards -->
@@ -108,8 +108,8 @@
 				<div class="text-with-icon icon-download sessionDownload" title="<%- t('download.description', { ns : 'sessions' }) %>" style="margin-bottom: 10px;">
 					<b><%- t('download.title', { ns : 'sessions' }) %></b>
 				</div>
-				<div class="text-with-icon icon-play sessionTestLauch" title="<%- t('play.description', { ns : 'SIMLETs' }) %>" style="margin-top: 10px;">
-					<b><%- t('play', { ns : 'sessions' }) %></b>
+				<div class="text-with-icon icon-play sessionTestLauch" title="<%- t('tester.play.description', { ns : 'sessions' }) %>" style="margin-top: 10px;">
+					<b><%- t('play.title', { ns : 'SIMLETs' }) %></b>
 				</div>
 			</div>
         </div>
@@ -550,7 +550,7 @@
 	$(document).on('click', ".sessionTop .icon-finish", function(e) {
 		const data = $(this).closest(".test").data();
 		const sessionName = data[SESSION_DATA_NAME_KEY] || '';
-		const confirmMsg = `<%- t('finish.confirm', { ns : 'sessions' }) %>${sessionName ? ' (' + sessionName + ')' : ''}`;
+		const confirmMsg = `<%- t('finish.confirm', { ns : 'sessions', session: '${sessionName}' }) %>`;
 		if (confirm(confirmMsg)) {
 			changeSessionStatus(data[SESSION_DATA_ID_KEY], "terminated");
 		}

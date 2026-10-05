@@ -1,8 +1,8 @@
 <% extend('layout_with_menu_and_sse') %>
 
-<h1><%- t('title', { ns : 'SIMLETs' }) %></h1>
+<h1><%- t('play.title', { ns : 'SIMLETs' }) %></h1>
 
-<% const searchBarPlaceholder = t('search_bar.placeholder', { ns: 'SIMLETs' }); %>
+<% const searchBarPlaceholder = t('search_bar.placeholder', { ns : 'SIMLETs' }); %>
 <%- include('partials/filtering_pagination_commons', { id:"scheduler", searchBarPlaceholderText: searchBarPlaceholder }) %>
 
 <span id="no_simlets_msg"></span>

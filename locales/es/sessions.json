@@ -1,34 +1,34 @@
 {
     "title": "Sesiones",
     "single.title": "Sesión",
-    "no_sessions.message": "No hay sesiones para este SIMLET. Intente añadir una utilizando el botón inferior derecho (+)",
+    "no_sessions.message": "Aún no hay sesiones en este SIMLET. Crea una utilizando el botón inferior derecho (+).",
 
-    "search_bar.placeholder": "Busque una sesión por su nombre o descripción",
+    "search_bar.placeholder": "Busca una sesión por su nombre o descripción",
     "filters.status.title": "Estado",
         "filters.status.all": "Todos",
 
-    "created_at": "Creado el",
-    "updated_at": "Actualizado el",
+    "created_at": "Creada el",
+    "updated_at": "Actualizada el",
     "activities": "Actividades",
     "users": "Usuarios",
-    "play": "Jugar al SIMLET",
 
     "download.title": "Descargar datos",
-        "download.session.title": "Descargar datos de la sesión",
-        "download.test.title": "Descargar datos de prueba",
-            "download.test.description": "Descargar tus propios datos de traza de prueba para esta sesión.",
+        "download.session.title": "Descargar datos de la sesión en formato xAPI",
+        "download.test.title": "Descargar datos de la sesión generados por el usuario de prueba",
     "download.description": "Descarga los datos de esta sesión",
+    
+    "tester.play.description": "Ejecutar SIMLET como tester",
 
     "add.title": "Añadir sesión",
-        "add.new.tab": "Añadir nuevo",
-        "status.title": "Estado inicial",
-        "add.submit": "Crear sesión",
+        "add.new.tab": "Nueva sesión",
+            "status.title": "Estado inicial",
+            "add.submit": "Crear sesión",
         
-        "import.tab": "Importar sesión",
-        "import.input": "Seleccione un fichero de sesión exportada",
-        "import.submit": "Importar sesión",
-        "import.upload.error": "Seleccione el fichero a subir primero",
-        "import.error.invalid_file": "Fichero inválido",
+        "import.tab": "Importar sesión existente",
+            "import.input": "Selecciona un archivo de sesión exportada",
+            "import.submit": "Importar sesión",
+            "import.upload.error": "Selecciona el archivo a importar.",
+            "import.error.invalid_file": "El archivo seleccionado no es un archivo de sesión válido.",
     
     "settings.edit.title": "Editar",
         "edit.title": "Editar sesión",
@@ -40,8 +40,8 @@
     "description.placeholder": "Descipción de la sesión",
     "tags.title": "Etiquetas",
         "tags.no_tags": "Sin etiquetas",
-        "tags.input.placeholder": "Escriba una etiqueta para encontrarla o créela",
-        "tags.dropdown.no_tags": "Aún no hay etiquetas. Presione + para crear una",
+        "tags.input.placeholder": "Escribe una etiqueta para encontrarla o créela",
+        "tags.dropdown.no_tags": "Aún no hay etiquetas. Pulsa el botón (+) para crear una.",
         "tags.dropdown.all_matches": "Todas las etiquetas que coinciden ya están en esta sesión",
         "tags.create.placeholder": "Nombre de la nueva etiqueta",
         "tags.create": "Crear",
@@ -52,10 +52,6 @@
     "can_be_manually_activated": "Se puede activar manualmente",
 
     "settings.add_activity.title": "Añadir actividad",
-
-    "settings.duplicate.title": "Duplicar",
-        "duplicate.title": "Duplicar Session",
-        "duplicate.submit": "Duplicar",
     
     "settings.activate.title": "Activar",
         "active.title": "Activa",
@@ -65,10 +61,10 @@
 
     "settings.finish.title": "Terminar",
         "finished.title": "Terminada",
-        "finish.confirm": "¿Está seguro de que desea terminar (finalizar) esta sesión? Esta acción no se puede deshacer",
+        "finish.confirm": "ADVERTENCIA:\n¿Estás seguro de que quieres finalizar la sesión '{{session}}'?\nEsta acción no se puede revertir.",
 
     "settings.delete.title": "Eliminar",
-        "delete.confirm": "¿Está seguro de que desea eliminar la sesión '{{session}}' del SIMLET '{{SIMLET}}'?\nTambién se eliminarán todas las actividades y datos",
+        "delete.confirm": "ADVERTENCIA:\n¿Estás seguro de que quieres eliminar la sesión '{{session}}' del SIMLET '{{SIMLET}}'?\nEsta acción no se puede revertir y se eliminarán todas las actividades y datos.",
 
     "settings.export.title": "Exportar",
     "settings.set_tester.title": "Convertirme en tester en esta sesión",
@@ -79,7 +75,7 @@
     "settings.show_inactive_participants.title": "Ocultar participantes inactivos",
 
     "status.description": "Dependiendo de su estado, una sesión se comportará de manera diferente:",
-        "active.description": "Una sesión activa recibirá datos, sus actividades pueden ser modificadas, y puede ser pausada en cualquier momento",
-        "paused.description": "Una sesión pausada no recibirá datos, pero es posible modificar sus actividades o reactivarla en cualquier momento",
-        "finished.description": "Una sesión terminada ya no podrá recibir datos, modificar sus actividades, o ser reactivada"
+        "active.description": "Una sesión activa recibirá datos, sus actividades pueden ser modificadas, y puede ser pausada en cualquier momento.",
+        "paused.description": "Una sesión pausada no recibirá datos, pero es posible modificar sus actividades o reactivarla en cualquier momento.",
+        "finished.description": "Una sesión terminada ya no podrá recibir datos, modificar sus actividades, o ser reactivada."
 }

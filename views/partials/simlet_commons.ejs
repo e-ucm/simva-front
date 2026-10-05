@@ -452,7 +452,7 @@
 			Simva.deleteSimlet(simletId, function(response) {
 				if(response.status !== 200) {
 					// Muestra el error real para depuración
-					alert(response);
+					alert(response.responseJSON.message);
 				} else if(onDeleteSimlet != null && typeof onDeleteSimlet === "function") {
 					onDeleteSimlet(simletId);
 				}

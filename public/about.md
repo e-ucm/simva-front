@@ -15,7 +15,7 @@
 - [<%= t("simva.title", { ns : "about" }) %>](#simva-section)
 - [<%= t("simlet.title", { ns : "about" }) %>](#simlet-section)
 - [<%= t("session.title", { ns : "about" }) %>](#session-section)
-- [<%= t("activity.title", { ns : "about" }) %>](#activity-section)
+- [<%= t("activity.title", { ns : "about" }) %>](#activity-section) 
 - [<%= t("users.title", { ns : "about" }) %>](#users-section)
 - [<%= t("integration.title", { ns : "about" }) %>](#integration-section)
 - [<%= t("session_management.title", { ns : "about" }) %>](#session-management-section)
@@ -31,21 +31,13 @@
 
 ![](./images/about/header_visitor.png)
 
-#### <%= t("header.logout.language.title", { ns : "about" }) %>
-<%= t("header.logout.language.description", { ns : "about" }) %>
-
-#### ![](./images/icons/information.png) <%= t("header.logout.about.title", { ns : "about" }) %>
-<%= t("header.logout.about.description", { ns : "about" }) %>
-
-#### ![](./images/icons/eucm_icon.ico) <%= t("header.logout.research.title", { ns : "about" }) %>
-<%= t("header.logout.research.description", { ns : "about" }) %>
-
-#### ![](./images/icons/power-button-off.png) <%= t("header.logout.login.title", { ns : "about" }) %>
-<%= t("header.logout.login.description", { ns : "about" }) %>
+<%= t("header.logout.note", { ns : "about" }) %>
+<br>
+<br>
 
 <% } else { %>
 
-## <%= t("header.login.title", { ns : "about" }) %> {#header-visitor-section}
+## <%= t("header.login.title", { ns : "about" }) %> {#header-user-section}
 <%= t("header.login.description", { ns : "about" }) %>
 
 ![](./images/about/header_user.png)
@@ -55,14 +47,30 @@
 ![](./images/about/header_scheduler.png)
 <br>
 
-#### <%= t("header.logout.language.title", { ns : "about" }) %>
-<%= t("header.logout.language.description", { ns : "about" }) %>
+<% } %>
+
+#### <%= t("header.language.title", { ns : "about" }) %>
+<%= t("header.language.description", { ns : "about" }) %>
+
+<% if (!user) { %>
+
+#### ![](./images/icons/information.png) <%= t("header.logout.about.title", { ns : "about" }) %>
+<%= t("header.logout.about.description", { ns : "about" }) %>
+
+<% } %>
+
+#### ![](./images/icons/eucm_icon.ico) <%= t("header.research.title", { ns : "about" }) %>
+<%= t("header.research.description", { ns : "about" }) %>
+
+<% if (!user) { %>
+
+#### ![](./images/icons/power-button-off.png) <%= t("header.logout.login.title", { ns : "about" }) %>
+<%= t("header.logout.login.description", { ns : "about" }) %>
+
+<% } else { %>
 
 #### ![](./images/icons/user.png) <%= t("header.login.account.title", { ns : "about" }) %>
 <%= t("header.login.account.description", { ns : "about" }) %>
-
-#### ![](./images/icons/eucm_icon.ico) <%= t("header.logout.research.title", { ns : "about" }) %>
-<%= t("header.logout.research.description", { ns : "about" }) %>
 
 #### ![](./images/icons/power-button-off.png) <%= t("header.login.logout.title", { ns : "about" }) %>
 <%= t("header.login.logout.description", { ns : "about" }) %>

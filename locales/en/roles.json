@@ -1,12 +1,12 @@
 {
-    "selection.title": "Simva Role Selection",
+    "selection.title": "Simva role selection",
     "admin": "Administrator",
     "researcher": "Researcher",
     "teacher": "Teacher",
     "teachingAssistant": "Teaching Assistant",
     "student": "Student",
-    "choose.title": "Choose this Role",
-    "contact_admin.title": "Contact Administrator",
-    "contact_admin.message" : "Please contact your SIMVA administrator at {{ email }} to attribute a new role.",
+    "choose.title": "Choose this role",
+    "contact_admin.title": "Contact an administrator",
+    "contact_admin.message" : "Contact a SIMVA administrator at {{email}} to attribute a new role.",
     "not_defined": "Not defined"
 }

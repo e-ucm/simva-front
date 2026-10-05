@@ -71,8 +71,8 @@
             $("#iframe_floating").after($("#limesurvey_iframe"));
 
             this.supportedType = "limesurvey";
-        	this.simple_name = "<%= t('limesurvey.name', { ns : 'activities' }) %>";
-            this.description = "<%= t('limesurvey.description', { ns : 'activities' }) %>";
+        	this.simple_name = "<%= t('limesurvey.title', { ns : 'about' }) %>";
+            this.description = "<%= t('limesurvey.description', { ns : 'about' }) %>";
 
             // this.limesurveyurl = "https://limesurvey-dev.external.test/";
 
@@ -111,7 +111,7 @@
             const method = $('#limesurvey_extra_form .tab.selected').attr('method');
             
             activity.activity_trace_storage = true;         // Always enable trace storage for limesurvey activities
-		    activity.activity_can_be_restarted = false;     // Limesurvey activities cannot be restarted
+		    activity.activity_can_be_restarted = false;     // LimeSurvey activities cannot be restarted
             
             switch(method) {
                 case 'byid':

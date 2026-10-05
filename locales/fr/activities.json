@@ -1,9 +1,11 @@
 { 
     "title": "Activités",
     "single.title": "Activité",
+    
     "description": "Liste globale des activités de tous les SIMLETs auxquels vous avez accès",
     "text": "L'affichage global des activités est temporairement désactivé.\nUtilisez l'onglet des activités d'une session pour gérer ses activités.\nIl sera disponible dans une prochaine version.",
     "template.text": "L'affichage des activités est temporairement désactivé.\nCet onglet est conçu pour créer des \"modèles d'activités\" pour qu'ils soient ensuite copiés dans les tests.\nCes \"modèles d'activités\" vont aider à la création de plusieurs cas de test similaires avec de petites modifications.\nIl sera disponible dans une prochaine version.",
+
     "no_activities.message": "Il n'y a pas d'activités dans ce session. Ajoutez-en une en utilisant le bouton [...] à droite",
 
     "download.title": "Telecharger les données",
@@ -11,7 +13,6 @@
         "download.test.title": "Telecharger les données de test",
         "download.backup.global.title": "Telecharger la copie de sécurité globale de l'activité (MINIO)",
         "download.backup.user.title": "Telecharger la copie de sécurité des utilisateurs dans un fichier ZIP (MINIO)",
-        "download.test.description": "Telecharger les donneés de test disponibles pour cette activité.",
     "download.description": "Telecharger toutes les donnees disponibles pour cette activité.",
 
     "add.title": "Ajouter une activité",
@@ -20,28 +21,26 @@
         "add.new.web.no_url_message": "L'URL de l'activité web est vide. Veuillez fournir une URL valide pour l'activité web.",
 
         "import.tab": "Import",
-        "import.message": "Sélectionner le fichier à importer",
-        "import.upload.error": "Sélectionnez le fichier à importer en premier",
-        "import.error.invalid_file": "Fichier invalide",
+            "import.input": "Sélectionner le fichier à importer",
+            "import.submit": "",
+            "import.upload.error": "Sélectionnez le fichier à importer en premier",
+            "import.error.invalid_file": "Fichier invalide",
 
     "settings.edit.title": "Modifier",
         "edit.title": "Modifier l'activité",
         "edit.submit": "Modifier l'activité",
-    "settings.export.title": "Exporter",
-    "settings.tmon.title": "Ouvrir le tableau de bord TMon",
-    "settings.delete.title": "Supprimer",
-    
+        
     "name.title": "Nom",
     "name.placeholder": "Nom de l'activité",
     "activity.type.title": "Type d'activité",
     "activity.type.select": "Sélectionner un type d'activité",
     "activity.type.select_required": "Le type d'activité est requis",
 
-    "export.title": "Export",
+    "settings.export.title": "Exporter",
 
-    "tmon.title": "Tableau de bord TMon",
-
-    "delete.title": "Supprimer",
+    "settings.tmon.title": "Ouvrir le tableau de bord TMon",
+    
+    "settings.delete.title": "Supprimer",
     "delete.confirm": "Êtes-vous sûr de vouloir supprimer l'activité '{{activity}}' de la session '{{session}}' de la SIMLET '{{SIMLET}}'?\nToutes les données relatives à l'activité seront également supprimées",
     
     "settings.download.tracker_config.title": "Télécharger la configuration du tracker",
@@ -49,8 +48,7 @@
     "activity.name": "Activité par défaut",
     "activity.description": "Une activité de base avec un état d'achèvement et un endroit où enregistrer les résultats.",    
 
-    "limesurvey.name": "Activité de Limesurvey",
-    "limesurvey.description": "Une activité basée sur des sondages qui utilise LimeSurvey comme service, permettant aux participants de répondre à des sondages avant et après d'autres activités et aux coordinateurs de collecter efficacement des données.",
+
         "limesurvey.survey.title": "Enquête",
 
         "limesurvey.survey_id.title": "ID de l'enquête",
@@ -67,9 +65,7 @@
         
         "limesurvey.edit.title": "Modifier l'enquête",
         
-    "gameplay.name": "Activité de jeu",
-    "gameplay.description": "L'action consistant à jouer à un jeu sérieux dans lequel les données d'interaction des participants sont collectées via le composant xAPI (trackers dans le code), conçu pour intégrer du contenu éducatif de manière attrayante.",
-
+        
         "gameplay.storage.title": "Stockage de traces",
         "gameplay.storage.description": "Activer la collecte et le téléchargement des données d'interaction xAPI collectées pendant l'activité de jeu.",
     
@@ -96,11 +92,7 @@
                     "gameplay.tracker_settings.simva_unity.title": "Tracker Xasu avec le plugin Simva Unity",
                     "gameplay.tracker_settings.other.title": "Tracker personnalisé",
                     
-                "gameplay.xasu.title": "Configuration de Xasu",
-                "gameplay.xasu.description": "Configurer Xasu pour la collecte de données xAPI, y compris les paramètres tels que l'endpoint et les clés d'authentification, afin d'assurer une intégration fluide et sécurisée des données d'interaction des participants pendant l'activité de jeu.",
-            
-    "manual.name": "Activité manuelle",
-    "manual.description": "Un exercice d'apprentissage traditionnel à réaliser par les participants, tel que la lecture d'un livre ou d'un article, le visionnage d'une vidéo ou toute autre tâche d'apprentissage passive.",
+        
         "manual.student_complete.title": "Permettre aux élèves de compléter ?",
         "manual.student_complete.description": "Permettre aux élèves de marquer l'activité comme terminée.",
     
@@ -120,15 +112,12 @@
             "manual.external.description": "L'activité manuelle est basée sur une ressource externe lancée en dehors de SIMVA, et les données d'interaction sont collectées via des déclarations xAPI envoyées de la ressource à SIMVA.",
 
         "manual.student_complete.ok": "Les élèves peuvent compléter.",
-        "manual.student_complete.nok": "Les étudiants ne peuvent pas compléter.",
     
     "total.title": "Total",
     "completed.title": "Complété",
     "completed.error.message": "Erreur dans la définition de l'achèvement",
     "completed.all.unset": "Complété TOUS OFF",
     "completed.all.set": "Complété TOUS ON",
-    "completed.on": "Oui",
-    "completed.off": "Non",
 
     "progress.title": "Progrès",
     "participant.title": "Participant",
@@ -137,7 +126,6 @@
     "init.off": "Non",
 
     "result.title": "Résultat",
-    "result.disabled": "Desactivé",
     "result.error.loading": "Erreur de chargement du résultat",
     "result.error.downloading": "Erreur de téléchargement du résultat",
     "result.view.title": "Ouvrir le résultat dans une fenêtre flottante",
@@ -148,11 +136,7 @@
     "lrs.download.title": "Télécharger les données LRS",
 
     "storage.title": "Stockage",
-    "storage.disabled": "Desactivé",
     "storage.error.downloading": "Erreur de téléchargement des données à partir de la mémoire",
-    "storage.file.title": "Télécharger en tant que",
-    "storage.file.array.title": "Tableau",
-    "storage.file.one_per_line.title": "Une trace par ligne",
 
     "participant.tooltip": "Identifiant du participant affiche en tant que nom d'utilisateur ou jeton.",
     "init.tooltip": "Etat d'initialisation: indique si le participant a commencé l'activité.",

@@ -8,17 +8,8 @@
     "header.logout.title": "Guide de l'en-tête pour les visiteurs",
     "header.logout.description": "Il s'agit de la barre du haut avant connexion. Elle donne accès aux pages publiques et au bouton de connexion.",
     "header.logout.note": "Ce sont les seuls boutons disponibles dans la barre supérieure avant la connexion.",
-        "header.logout.language.title": "Sélecteur de langue",
-        "header.logout.language.description": "Changez la langue de l'interface depuis le petit sélecteur à gauche.",
-
         "header.logout.about.title": "À propos",
         "header.logout.about.description": "Ouvrez cette page pour lire la présentation de SIMVA et l'aide à la navigation.",
-        
-        "header.logout.research.title": "e-UCM Research",
-        "header.logout.research.description": "Accédez au site de recherche pour les informations du projet, les documents associés ou accéder aux informations de contact.",
-
-        "header.logout.contact.title": "Contact",
-        "header.logout.contact.description": "Accédez aux informations de contact du groupe de recherche.",
 
         "header.logout.login.title": "Connexion",
         "header.logout.login.description": "Appuyez sur ce bouton pour vous connecter et passer à l'interface authentifiée.",
@@ -26,14 +17,17 @@
     "header.login.title": "Guide de l'en-tête pour les utilisateurs connectés",
     "header.login.description": "Il s'agit de la barre du haut après connexion. Elle affiche votre compte et l'action de déconnexion, ainsi que des commandes supplémentaires sur les pages de planification.",
     "header.login.note": "Sur les pages de planification, vous pouvez aussi voir les commandes actualiser, terminer l'activité et sortir.",
-        "header.login.language.title": "Sélecteur de langue",
-        "header.login.language.description": "Changez la langue de l'interface depuis le sélecteur à gauche.",
-        
         "header.login.account.title": "Nom du compte",
         "header.login.account.description": "Ouvrez votre espace compte ou les informations de profil depuis le bouton du nom d'utilisateur.",
 
         "header.login.logout.title": "Déconnexion",
         "header.login.logout.description": "Terminez la session en cours et revenez à l'interface publique.",
+
+    "header.language.title": "Sélecteur de langue",
+    "header.language.description": "Changez la langue de l'interface depuis le petit sélecteur à gauche.",
+
+    "header.research.title": "e-UCM Research",
+    "header.research.description": "Accédez au site de recherche pour les informations du projet, les documents associés ou accéder aux informations de contact.",
         
     "menu.title": "Guide du menu pour les utilisateurs connectés",
     "menu.description": "Voici le menu latéral affiché après connexion. Il vous mène aux principales zones de SIMVA.",
@@ -46,9 +40,6 @@
         
         "menu.simlets.title": "SIMLETs",
         "menu.simlets.description": "Gérez les études, les sessions, les participants et les résultats depuis la zone SIMLETs.",
-        
-        "menu.groups.title": "Groupes",
-        "menu.groups.description": "Organisez ici les utilisateurs et les permissions basées sur les groupes.",
         
         "menu.archived.title": "SIMLETs archivés",
         "menu.archived.description": "Consultez les études archivées et conservées pour référence.",

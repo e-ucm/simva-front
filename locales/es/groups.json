@@ -6,25 +6,25 @@
         "coordinators.table.permissions.title": "Permisos",
 
         "coordinators.delete.title": "Borrar",
-            "coordinators.delete.confirm": "¿Está seguro de que desea eliminar al coordinador '{{coordinator}}' del SIMLET '{{SIMLET}}'?",
+            "coordinators.delete.confirm": "ADVERTENCIA:\n¿Estás seguro de que quieres eliminar al coordinador '{{coordinator}}' del SIMLET '{{SIMLET}}'?\nPodrás volver a añadirlo después.",
             
         "coordinators.add.title": "Añadir coordinador",
             "coordinators.name.title": "Nombre",
             "coordinators.name.placeholder": "Nombre de usuario del coordinador",
             "coordinators.permission.title": "Permisos",
-            "coordinators.permission.placeholder": "Seleccione los permisos",
+            "coordinators.permission.placeholder": "Selecciona los permisos",
             "coordinators.permissions.full": "Completos",
             "coordinators.permissions.read": "Lectura",
             "coordinators.permissions.write": "Escritura",
-            "coordinators.error.already_in": "El coordinador ya está en el SIMLET",
+            "coordinators.error.already_in": "El coordinador ya está en el SIMLET.",
             "coordinators.error.permission": "El permiso seleccionado no es válido.",
             "coordinators.error.not_found": "No se ha encontrado el usuario.",
 
-    "search_bar.placeholder": "Busque un grupo por su nombre o descripción",
+    "search_bar.placeholder": "Busca un grupo por su nombre o descripción",
 
     "groups.title": "Grupos",
-        "groups.no_groups.message": "Aún no tiene grupos. Cree uno utilizando el botón inferior derecho (+)",
-        "participants.no_users.message": "No hay participantes en este grupo. Añada algunos utilizando el botón de el menú de 3 puntos a la derecha",
+        "groups.no_groups.message": "Aún no hay grupos en este SIMLET. Crea uno utilizando el botón inferior derecho (+).",
+        "participants.no_users.message": "Aún no hay participantes en este grupo. Añade algunos utilizando el botón de el menú de 3 puntos a la derecha.",
         
         "participants.title": "Participantes",
 
@@ -33,7 +33,7 @@
         "participants.table.email.title": "Correo electrónico",
         "participants.table.role.title": "Rol",
         "participant.delete.title": "Eliminar",
-            "participants.delete.confirm" : "¿Está seguro de que desea eliminar al participante '{{participant}}' del grupo '{{group}}'?",
+            "participants.delete.confirm" : "ADVERTENCIA:\n¿Estás seguro de que quieres eliminar al participante '{{participant}}' del grupo '{{group}}'?\nEsta acción no se puede revertir y todos los datos de este participante se eliminarán de las sesiones y actividades.",
         "participants.table.session.title": "Sesión",
     
         "allocator.type.title": "Tipo de asignador",
@@ -53,10 +53,10 @@
                 "deprecated.message": "/!\\ Este grupo utiliza la versión obsoleta de generación de códigos.",
                 "deprecated.tooltip": "/!\\ Este grupo utilizará la versión obsoleta de generación de códigos.",
 
-            "groups.import.tab": "Importar grupo",
-                "groups.import.input": "Fichero de importación de grupo",
+            "groups.import.tab": "Importar grupo existente",
+                "groups.import.input": "Selecciona un archivo de grupo exportado",
                 "groups.import.submit": "Importar grupo",
-                "groups.import.upload.error": "Seleccione el archivo para cargar primero",
+                "groups.import.upload.error": "Selecciona el archivo a importar.",
                 "groups.import.error.invalid_file": "El archivo seleccionado no es un archivo de grupo válido.",
 
             "groups.allocate_to.title": "Asignar grupo a",
@@ -65,7 +65,7 @@
         "groups.settings.groups.edit.title": "Editar",
             "groups.edit.title": "Editar grupo",
             "groups.edit.submit": "Editar grupo",
-            "groups.edit.no_changes.message": "No se han detectado cambios en el nombre del nuevo grupo",
+            "groups.edit.no_changes.message": "No se han detectado cambios en el nombre del nuevo grupo.",
 
         "groups.settings.add.title": "Añadir participantes",
             "participants.username.placeholder": "Nombre de usuario del participante",
@@ -73,14 +73,14 @@
             
             "participants.add.existing.tab": "Añadir existente",
                 "participants.add.existing.submit": "Añadir usuario",
-                "participants.error_message.already_in_group": "El participante '{{participant}}' ya está en el grupo '{{group}}'",
-                "participants.error_message.not_found": "No se encontró el usuario '{{participant}}'",
-                "participants.error_message.reload_manually": "Por favor, refresque la página para ver los cambios",
+                "participants.error_message.already_in_group": "El participante '{{participant}}' ya está en el grupo '{{group}}'.",
+                "participants.error_message.not_found": "No se encontró el usuario '{{participant}}'.",
+                "participants.error_message.reload_manually": "Recarga la página para ver los cambios.",
 
-            "participants.add.new.tab": "Añadir nuevo",
+            "participants.add.new.tab": "Nuevo usuario",
                 "participants.add.new.email.placeholder": "email@ejemplo.com",
                 "participants.add.new.password.placeholder": "Contraseña",
-                "participants.add.new.groups.add.new.submit": "Crear usuario",
+                "participants.add.new.groups.add.new.submit": "Crear y añadir usuario",
 
             "participants.add.batch.tab": "Añadir tanda de códigos",
                 "participants.add.batch.number.title": "¿Cuántos?",
@@ -89,20 +89,20 @@
                     "participants.add.batch.algorithm_format.alphanumeric": "Letras y números",
                     "participants.add.batch.algorithm_format.base58": "Alfanumérico simplificado (Base58)",
                 "participants.add.batch.length.title": "Y una longitud de:",
-                "participants.add.batch.submit": "Crear tanda",
+                "participants.add.batch.submit": "Crear y añadir tanda",
 
         "groups.settings.allocator.title": "Editar asignador",
-            "allocator.change.title": "Seleccione el nuevo tipo de asignador",
+            "allocator.change.title": "Selecciona el nuevo tipo de asignador",
 
             "allocator.default.title": "Asignador básico",
                 "allocator.default.type": "Por defecto",
-                "allocator.default.description": "Este asignador le permite asignar manualmente los participantes a las sesiones uno por uno. (Por defecto, el participante se asignará la primera sesión).",
+                "allocator.default.description": "Este asignador permite asignar manualmente los participantes a las sesiones uno por uno.",
 
             "allocator.group.title": "Asignador de grupos",
                 "allocator.group.type": "Grupo",
                 "allocator.group.description": "Este asignador permite asignar un grupo entero a una sesión",
             
-            "allocator.change.submit": "Cambia el Asignador",
+            "allocator.change.submit": "Cambiar asignador",
 
             "allocator.no_session_assigned.title": "Sin sesión",
 
@@ -115,7 +115,7 @@
         "groups.settings.export.title": "Exportar",
     
         "groups.settings.delete.title": "Eliminar",
-            "groups.delete.confirm": "¿Está seguro de que desea eliminar el grupo '{{group}}' del SIMLET '{{SIMLET}}'?\nEl grupo se retirará a todos los estudios, pruebas y actividades",
+            "groups.delete.confirm": "ADVERTENCIA:\n¿Estás seguro de que quieres eliminar el grupo '{{group}}' del SIMLET '{{SIMLET}}'?\nEsta acción no se puede revertir y todos los datos de sus participantes se eliminarán de las sesiones y actividades.",
 
 
     "lti_platform.title": "Plataforma LTI",

@@ -6,7 +6,7 @@
 	<div class="floater">
 		<img src="/images/logo_text.png" alt="logo" />
 		<h1><%= t("contact_admin.title", { ns : "roles" }) %></h1>
-		<p><%- t('welcome.user.text', { username: user.data.username }) %>
+		<p><%- t('welcome.user.text', { ns : "commons", username: user.data.username }) %>
 		<p><%- t('contact_admin.message', { ns : "roles", email: config.sso.administratorContact }).replace(/\n/g, '<br><br>') %></p>
 	</div>
 </div>

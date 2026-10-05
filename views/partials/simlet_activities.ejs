@@ -25,9 +25,9 @@
 								&#x1F6C8;
 								<span class="tooltiptext">
 									<ul>
-										<li><b><%- t('gameplay.name', { ns : 'activities' }) %></b>: <%- t('gameplay.description', { ns : 'activities' }) %></li>
-										<li><b><%- t('limesurvey.name', { ns : 'activities' }) %></b>: <%- t('limesurvey.description', { ns : 'activities' }) %></li>
-										<li><b><%- t('manual.name', { ns : 'activities' }) %></b>: <%- t('manual.description', { ns : 'activities' }) %></li>
+										<li><b><%- t('gameplay.title', { ns : 'about' }) %></b>: <%- t('gameplay.description', { ns : 'about' }) %></li>
+										<li><b><%- t('limesurvey.title', { ns : 'about' }) %></b>: <%- t('limesurvey.description', { ns : 'about' }) %></li>
+										<li><b><%- t('manual.title', { ns : 'about' }) %></b>: <%- t('manual.description', { ns : 'about' }) %></li>
 									</ul>
 								</span>
 							</div>
@@ -50,9 +50,9 @@
                 <form id="import_activity_form">
 					<h3><%- t('name.placeholder', { ns : 'activities' }) %></h3>
                     <input type="text" class="name_field" name="activityName" placeholder="<%- t('name.placeholder', { ns : 'activities' }) %>" required>
-                    <h3><%- t('import.message', { ns : 'activities' }) %></h3>
+                    <h3><%- t('import.input', { ns : 'activities' }) %></h3>
 					<input name="jsonFile" type="file" accept=".json" required>
-                    <input type="submit" value="<%- t('import.tab', { ns : 'activities' }) %>">
+                    <input type="submit" value="<%- t('import.submit', { ns : 'activities' }) %>">
                 </form>
             </div>
 

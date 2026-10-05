@@ -6,7 +6,7 @@
         "coordinators.table.permissions.title": "Permissions",
 
         "coordinators.delete.title": "Delete",
-            "coordinators.delete.confirm": "Are you sure you want to delete the coordinator '{{coordinator}}' from SIMLET '{{SIMLET}}'?",
+            "coordinators.delete.confirm": "WARNING:\nAre you sure you want to delete the coordinator '{{coordinator}}' from SIMLET '{{SIMLET}}'?\nYou will be able to add it agan later.",
         
         "coordinators.add.title": "Add coordinator",
             "coordinators.name.title": "Username",
@@ -16,15 +16,15 @@
             "coordinators.permissions.full": "Full",
             "coordinators.permissions.read": "Read",
             "coordinators.permissions.write": "Write",
-            "coordinators.error.already_in": "The coordinator is already in the SIMLET",
+            "coordinators.error.already_in": "The coordinator is already in the SIMLET.",
             "coordinators.error.permission": "The selected permission is not valid.",
             "coordinators.error.not_found": "The user has not been found.",
         
     "search_bar.placeholder": "Search a group by name or description",
     
     "groups.title": "Groups",
-        "groups.no_groups.message": "You have 0 groups yet. Create one using the bottom right (+) button",
-        "participants.no_users.message": "There are no participants in this group. Add some using the 3-dot menu on the right",
+        "groups.no_groups.message": "There are no groups in this SIMLET yet. Create one using the button on the bottom right (+).",
+        "participants.no_users.message": "There are no participants in this group yet. Add some using the 3-dot menu on the right.",
         
         "participants.title": "Participants",
 
@@ -33,7 +33,7 @@
         "participants.table.email.title": "Email",
         "participants.table.role.title": "Role",
         "participant.delete.title": "Delete",
-            "participants.delete.confirm" : "Are you sure you want to delete the participant '{{participant}}' of group '{{group}}'?",
+            "participants.delete.confirm" : "WARNING:\nAre you sure you want to delete the participant '{{participant}}' from the group '{{group}}'?\nThis action can't be reverted and all the data of this participant will be deleted from the sessions and activities too.",
         "participants.table.session.title": "Session",
         
         "allocator.type.title": "Allocator type",
@@ -53,10 +53,10 @@
                 "deprecated.message": "/!\\ This group use the deprecated version of token generation.",
                 "deprecated.tooltip": "/!\\ This group will use the deprecated version of token generation.",
 
-            "groups.import.tab": "Import group",
-                "groups.import.input": "Import file of group",
+            "groups.import.tab": "Import existing group",
+                "groups.import.input": "Select an exported group file",
                 "groups.import.submit": "Import group",
-                "groups.import.upload.error": "Select the file to upload first",
+                "groups.import.upload.error": "Select the file to import.",
                 "groups.import.error.invalid_file": "The selected file is not a valid group file.",
 
             "groups.allocate_to.title": "Allocate group to",
@@ -65,7 +65,7 @@
         "groups.settings.groups.edit.title": "Edit",
             "groups.edit.title": "Edit group",
             "groups.edit.submit": "Edit group",
-            "groups.edit.no_changes.message": "No changes detected in new group name!",
+            "groups.edit.no_changes.message": "No changes detected in new group name.",
 
         "groups.settings.add.title": "Add participants",
             "participants.username.placeholder": "Participant username",
@@ -73,34 +73,34 @@
             
             "participants.add.existing.tab": "Add existing",
                 "participants.add.existing.submit": "Add existing",
-                "participants.error_message.already_in_group": "The participant '{{participant}}' is already in the group '{{group}}'",
-                "participants.error_message.not_found": "User '{{participant}}' not found",
-                "participants.error_message.reload_manually": "Please refresh the page to see the changes",
+                "participants.error_message.already_in_group": "The participant '{{participant}}' is already in the group '{{group}}'.",
+                "participants.error_message.not_found": "User '{{participant}}' not found.",
+                "participants.error_message.reload_manually": "Refresh the page to see the changes.",
                 
-            "participants.add.new.tab": "Add new",
+            "participants.add.new.tab": "New user",
                 "participants.add.new.email.placeholder": "email@example.com",
                 "participants.add.new.password.placeholder": "Password",
-                "participants.add.new.groups.add.new.submit": "Create participant",
+                "participants.add.new.groups.add.new.submit": "Create and add user",
 
             "participants.add.batch.tab": "Add batch of tokens",
                 "participants.add.batch.number.title": "How many?",
-                "participants.add.batch.algorithm_format": "Participants will be added with random usernames created using:",
+                "participants.add.batch.algorithm_format": "The participants will be added with random usernames created using:",
                     "participants.add.batch.algorithm_format.letters": "Only letters",
                     "participants.add.batch.algorithm_format.alphanumeric": "Letters and numbers",
                     "participants.add.batch.algorithm_format.base58": "Simplified alphanumeric (Base58)",
                 "participants.add.batch.length.title": "And a length of:",
-                "participants.add.batch.submit": "Add batch",
+                "participants.add.batch.submit": "Create and add batch",
 
         "groups.settings.allocator.title": "Edit allocator",
             "allocator.change.title": "Select the new allocator type",
 
             "allocator.default.title": "Basic allocator",
                 "allocator.default.type": "Default",
-                "allocator.default.description": "This allocator allows you to manually assign the participants to the sessions one by one. (By default, the participant will be assigned to the first session)",
+                "allocator.default.description": "This allocator allows you to manually assign the participants to the sessions one by one.",
 
             "allocator.group.title": "Group allocator",
                 "allocator.group.type": "Group",
-                "allocator.group.description": "This allocator allows you assign the entire group to a session",
+                "allocator.group.description": "This allocator allows you assign the entire group to a session.",
             
             "allocator.change.submit": "Change allocator",
 
@@ -115,7 +115,7 @@
         "groups.settings.export.title": "Export",
         
         "groups.settings.delete.title": "Delete",
-            "groups.delete.confirm": "Are you sure you want to delete the group '{{group}}' from SIMLET '{{SIMLET}}'?\nGroup will be removed to all the studies, tests and activities",
+            "groups.delete.confirm": "WARNING:\nAre you sure you want to delete the group '{{group}}' from SIMLET '{{SIMLET}}'?\nThis action can't be reverted and all the data of its participants will be deleted from the sessions and activities too.",
     
 
     "lti_platform.title": "LTI Platform",

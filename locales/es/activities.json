@@ -1,28 +1,30 @@
 { 
     "title": "Actividades",
     "single.title": "Actividad",
+
     "description": "Listado global de las actividades de todos los SIMLETs a los que tiene acceso",
     "text": "La vista global de actividades está desactivada temporalmente.\nUse la pestaña de actividades de una sesión para gestionar sus actividades.\nEstará disponible en una futura versión.",
     "template.text": "La vista de actividades está desactivada temporalmente.\nEsta pestaña está diseñada para crear \"actividades de plantilla\" para luego copiarlos en pruebas.\nEstos \"actividades de plantilla\" ayudar a la creación de múltiples casos de prueba similares con pequeñas modificaciones.\nEstará disponible en una futura versión.",
-    "no_activities.message": "No hay actividades en esta Sesión. Añada una utilizando el botón del menú de 3 puntos a la derecha",
+    
+    "no_activities.message": "Aún no hay actividades en esta sesión. Añade una utilizando el botón del menú de 3 puntos a la derecha.",
 
     "download.title": "Descargar datos",
-        "download.activity.title": "Descargar datos de la actividad (LRS)",
-        "download.test.title": "Descargar datos de prueba",
-        "download.backup.global.title": "Descargar copia de seguridad global de la actividad (MINIO)",
-        "download.backup.user.title": "Descargar copia de seguridad de usuarios en un archivo ZIP (MINIO)",
-        "download.test.description": "Descargar datos de prueba disponibles para esta actividad.",
+        "download.activity.title": "Descargar datos de la actividad en formato xAPI",
+        "download.test.title": "Descargar datos de la actividad generados por el usuario de prueba",
+        "download.backup.global.title": "Descargar copia de seguridad de todos los usuarios en un solo archivo",
+        "download.backup.user.title": "Descargar copia de seguridad de cada usuario en un archivo ZIP",
     "download.description": "Descargar todos los datos disponibles de esta actividad.",
 
     "add.title": "Añadir actividad",
         "add.new.tab": "Nueva actividad",
-        "add.submit": "Crear actividad",
-        "add.new.web.no_url_message": "Está a punto de crear una actividad web sin URL. ¿Está seguro de que quiere continuar? (Podrá cambiar la URL más adelante)",
+            "add.submit": "Crear actividad",
+            "add.new.web.no_url_message": "ADVERTENCIA:\n¿Estás seguro de que quieres crear una actividad web sin URL?\nPodrás cambiar la URL más adelante.",
 
-        "import.tab": "Importar",
-        "import.message": "Seleccione el archivo a importar",
-        "import.upload.error": "Seleccione el archivo a subir primero",
-        "import.error.invalid_file": "Archivo inválido",
+        "import.tab": "Importar actividad existente",
+            "import.input": "Selecciona un archivo de actividad exportada",
+            "import.submit": "Importar actividad",
+            "import.upload.error": "Selecciona el archivo a importar.",
+            "import.error.invalid_file": "El archivo seleccionado no es un archivo de actividad válido.",
         
     "settings.edit.title": "Editar",
         "edit.title": "Editar actividad",
@@ -31,23 +33,22 @@
     "name.title": "Nombre",
     "name.placeholder": "Nombre de la actividad",
     "activity.type.title": "Tipo de actividad",
-    "activity.type.select": "Seleccione un tipo de actividad",
-    "activity.type.select_required": "El tipo de actividad es obligatorio",
+    "activity.type.select": "Selecciona un tipo de actividad",
+    "activity.type.select_required": "El tipo de actividad es obligatorio.",
 
     "settings.export.title": "Exportar",
         
     "settings.tmon.title": "Abrir el panel TMon",
     
     "settings.delete.title": "Eliminar",
-        "delete.confirm": "¿Está seguro de que desea eliminar la actividad '{{activity}}' de la sesión '{{session}}' del SIMLET '{{SIMLET}}'?\nTambién se eliminarán todos los datos de la actividad",
+        "delete.confirm": "ADVERTENCIA:\n¿Estás seguro de que quieres eliminar la actividad '{{activity}}' de la sesión '{{session}}' del SIMLET '{{SIMLET}}'?\nEsta acción no se puede revertir y se eliminarán todos los datos de la actividad.",
 
     "settings.download.tracker_config.title": "Descargar configuración del tracker",
 
     "activity.name": "Actividad por defecto",
     "activity.description": "Una actividad básica con estado de finalización y un lugar para guardar los resultados.",
 
-    "limesurvey.name": "Actividad de Limesurvey",
-    "limesurvey.description": "Una actividad basada en encuestas que utiliza LimeSurvey como servicio, permitiendo a los participantes responder a encuestas previas y posteriores a otras actividades y a los coordinadores recopilar datos de forma eficaz.",
+
         "limesurvey.survey.title": "Encuesta",
         
         "limesurvey.survey_id.title": "ID de Encuesta",
@@ -58,14 +59,12 @@
         "limesurvey.new.description": "Abrir LimeSurvey",
         "limesurvey.language.title": "Idioma de la encuesta",
 
-        "limesurvey.upload.title": "Cargar LSS",
-        "limesurvey.upload.message": "Seleccionar archivo LLS",
-        "limesurvey.upload.error": "Seleccione primero el archivo que desea cargar",
+        "limesurvey.upload.title": "Importar encuesta existente",
+        "limesurvey.upload.message": "Selecciona un archivo .lss",
+        "limesurvey.upload.error": "Selecciona el archivo a importar.",
 
         "limesurvey.edit.title": "Editar encuesta",
 
-    "gameplay.name": "Actividad de juego",
-    "gameplay.description": "La acción de jugar a un juego serio en el que se recopilan los datos de interacción de los participantes a través del componente xAPI (trackers en el código), diseñado para integrar contenido educativo de forma atractiva.",
 
     "gameplay.storage.title": "Almacenamiento de trazas",
     "gameplay.storage.description": "Activar la recopilación y descarga de los datos de interacción xAPI recopilados durante la actividad de juego.",
@@ -74,58 +73,51 @@
     "gameplay.result.description": "Activar la recopilación y descarga de las copias de seguridad durante la actividad de juego.",
 
     "gameplay.restarted.title": "¿Permitir reiniciar?",
-    "gameplay.restarted.description": "Los participantes pueden reiniciar.",
+    "gameplay.restarted.description": "Permitir a los participantes reiniciar la actividad de gameplay tras completarla, lo que puede ser útil para recolectar varias rondas de datos de interacción o para permitirles mejorar sus resultados.",
     
     "gameplay.platform.title": "Plataforma",
         "gameplay.web.title": "Web",
-        "gameplay.web.description": "La actividad de juego se basa en un juego web lanzado en un iframe, y los datos de interacción se recopilan a través de declaraciones xAPI enviadas desde el juego a SIMVA.",
+        "gameplay.web.description": "La actividad de juego se basa en un juego web lanzado en el navegador.",
             "gameplay.game_uri.title": "URI del juego",
-            "gameplay.game_uri.description": "La URI del juego a lanzar en la actividad de juego, que puede ser un juego web lanzado en un iframe o un juego de escritorio lanzado fuera de SIMVA, y los datos de interacción se recopilan a través de declaraciones xAPI enviadas desde el juego a SIMVA.",
+            "gameplay.game_uri.description": "URI del juego a lanzar en la actividad.",
     
         "gameplay.desktop.title": "Juego de escritorio",
-        "gameplay.desktop.description": "La actividad de juego se basa en un juego de escritorio lanzado en la máquina del usuario, y los datos de interacción se recopilan a través de declaraciones xAPI enviadas desde el juego a SIMVA.",
+        "gameplay.desktop.description": "La actividad de juego se basa en un juego de escritorio lanzado en la máquina del usuario.",
             "gameplay.xapi_by_game.title": "Gestión de datos xAPI básicos por juego",
-            "gameplay.xapi_by_game.description": "Activar la gestión de datos xAPI basicos (initializado la actividad, suspended/resumed, terminated la actividad) directamente por el juego.",
+            "gameplay.xapi_by_game.description": "Activar la gestión de datos xAPI basicos (actividad inicializada, suspendida/continuada, finalizada) directamente por el juego.",
             
             "gameplay.tracker_settings.title": "Tipo de tracker",
-            "gameplay.tracker_settings.description": "Dependiendo del tipo de tracker que utilice el juego, la actividad ofrecerá un archivo de configuración específico",
+            "gameplay.tracker_settings.description": "Dependiendo del tipo de tracker que utilice el juego, la actividad ofrecerá un archivo de configuración específico.",
                 "gameplay.tracker_settings.xasu.title": "Xasu Tracker independiente",
                 "gameplay.tracker_settings.simva_unity.title": "Xasu Tracker junto al Simva Unity plugin",
                 "gameplay.tracker_settings.other.title": "Tracker personalizado",
                 
-            "gameplay.xasu.title": "Configuración de Xasu",
-            "gameplay.xasu.description": "Configurar Xasu para la recopilación de datos xAPI, incluyendo parámetros como endpoint y claves de autenticación, para asegurar una integración fluida y segura de los datos de interacción de los participantes durante la actividad de juego.",
+        
+        "manual.student_complete.title": "¿Permitir completar a los estudiantes?",
+        "manual.student_complete.description": "Permitir a los estudiantes marcar por sí mismos la actividad como completada.",
 
-    "manual.name": "Actividad manual",
-    "manual.description": "Un ejercicio de aprendizaje tradicional que deben realizar los participantes, como leer un libro, leer un artículo, ver un vídeo o cualquier otra tarea de aprendizaje pasivo.",
-        "manual.student_complete.title": "Permitir que los estudiantes completen?",
-        "manual.student_complete.description": "Permitir a los estudiantes marcar la actividad como completada.",
-
-        "manual.restarted.title": "Permitir reiniciar?",
-        "manual.restarted.description": "Permitir a los participantes reiniciar la actividad manual después de haberla terminado, lo que puede ser útil para recopilar varias series de datos de interacción o permitir a los participantes mejorar sus rendimientos.",
+        "manual.restarted.title": "¿Permitir reiniciar?",
+        "manual.restarted.description": "Permitir a los participantes reiniciar la actividad manual tras completarla, lo que puede ser útil para recolectar varias rondas de datos de interacción o para permitirles mejorar sus resultados.",
 
         "manual.storage.title": "Almacenamiento de trazas",
         "manual.storage.description": "Activar la recopilación y descarga de los datos de interacción xAPI recopilados durante la actividad manual.",
 
         "manual.platform.title": "Plataforma",
             "manual.web.title": "Web",
-            "manual.web.description": "La actividad manual se basa en un recurso web lanzado en un iframe, y los datos de interacción se recopilan a través de declaraciones xAPI enviadas desde el recurso a SIMVA.",
+            "manual.web.description": "La actividad manual se basa en un recurso web lanzado en el navegador.",
                 "manual.uri.title": "URI",
-                "manual.uri.description": "La URL del recurso a acceder en la actividad manual. La URI puede incluir etiquetas: {username} y {activityId}.",
+                "manual.uri.description": "La URL del recurso a acceder en la actividad manual.",
         
             "manual.external.title": "Recurso externo",
-            "manual.external.description": "La actividad manual se basa en un recurso externo lanzado fuera de SIMVA, y los datos de interacción se recopilan a través de declaraciones xAPI enviadas desde el recurso a SIMVA.",
+            "manual.external.description": "La actividad manual se basa en un recurso externo lanzado fuera de SIMVA.",
 
-        "manual.student_complete.ok": "Los estudiantes pueden completar.",
-        "manual.student_complete.nok": "Los estudiantes no pueden completar.",
+        "manual.student_complete.ok": "Los estudiantes pueden completar",
 
     "total.title": "Total",
     "completed.title": "Completado",
     "completed.error.message": "Error al establecer la finalización",
-    "completed.all.unset": "Completar a ninguno",
-    "completed.all.set": "Completar a todos",
-    "completed.on": "Si",
-    "completed.off": "No",
+    "completed.all.unset": "Marcar todos como no completados",
+    "completed.all.set": "Marcar todos como completados",
 
     "progress.title": "Progreso",
     "participant.title": "Participante",
@@ -134,7 +126,6 @@
     "init.off": "No",
 
     "result.title": "Resultado",
-    "result.disabled": "Desactivado",
     "result.error.loading": "Error al cargar el resultado",
     "result.error.downloading": "Error al descargar el resultado",
     "result.view.title": "Abrir el resultado en una ventana flotante",
@@ -145,11 +136,7 @@
     "lrs.download.title": "Descargar los datos LRS",
     
     "storage.title": "Almacenamiento",
-    "storage.disabled": "Desactivado",
     "storage.error.downloading": "Error al descargar los datos del almacenamiento",
-    "storage.file.title": "Descargar como",
-    "storage.file.array.title": "Matriz",
-    "storage.file.one_per_line.title": "Una Traza Por Linea",
 
     "participant.tooltip": "Identificador del participante mostrado como usuario o token.",
     "init.tooltip": "Estado de inicializacion: indica si el participante ha iniciado la actividad.",

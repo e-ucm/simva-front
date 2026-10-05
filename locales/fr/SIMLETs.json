@@ -1,6 +1,6 @@
 { 
     "title": "SIMLETs",
-    "description": "Les SIMLETs sont le cœur de SIMVA, vous permettant de créer et de gérer vos propres simulations. Un SIMLET est un conteneur pour tous les éléments d'une simulation, y compris les sessions, les activités, les utilisateurs et les groupes. Vous pouvez créer de nouveaux SIMLETs, éditer ceux existants, archiver ceux dont vous n'avez plus besoin et gérer leurs paramètres et leur contenu.",
+    "simlets.description": "Liste des SIMLETs disponibles et acces rapide pour les creer, modifier, archiver ou supprimer.",
     "archived.title": "SIMLETS Archivés",
     "archived.description": "Liste des SIMLETs qui ont été archivés. Vous pouvez les désarchiver pour les réactiver.",
     "no_simlets.message": "Vous n'avez pas encore de SIMLETs. Créez-en un en utilisant le bouton en bas à droite (+)",
@@ -14,7 +14,6 @@
         "filters.sort_by.created_at.asc": "Date de création (ancien)",
         "filters.sort_by.created_at.desc": "Date de création (récent)",
         "filters.sort_by.updated_at.asc": "Date de mise à jour (ancien)",
-
         "filters.sort_by.updated_at.desc": "Date de mise à jour (récent)",
 
     "filters.tags.title": "Tags",
@@ -36,8 +35,8 @@
 
         "import.tab": "Importer à partir d'un fichier existant",
             "import.input": "Sélectionnez fichier de SIMLET exporté",
-            "import.upload.error": "Sélectionnez le fichier à charger en premier",
             "import.submit": "Importer SIMLET",
+            "import.upload.error": "Sélectionnez le fichier à charger en premier",
     
     "settings.edit.title": "Modifier",
         "edit.title": "Modifier SIMLET",
@@ -75,15 +74,14 @@
         "sessions.tab.description": "Gerer les sessions de ce SIMLET: creer, modifier, suivre la progression et telecharger les donnees de session.",
         "users.tab.description": "Gerer les utilisateurs, groupes, coordinateurs et leurs affectations dans ce SIMLET.",
         "sessions.download.description": "Telecharger toutes les donnees disponibles pour cette session, y compris les donnees des activites.",
-        "simlets.description": "Liste des SIMLETs disponibles et acces rapide pour les creer, modifier, archiver ou supprimer.",
         "sessions.tab.title": "Sessions",
         "users.tab.title": "Users",
 
-    "tester.play.title": "Jouer au SIMLET en tant que testeur",
-    "tester.play.description": "Jouez au SIMLET en tant que testeur pour le vivre comme un participant. Cela permet de vérifier que les activités et le déroulement fonctionnent comme prévu avant de le partager avec d'autres.",
     "play.title": "Jouer au SIMLET",
     "play.description": "Jouer pour participer à un SIMLET",
-        
+    
+    "download.wait_message": "",
+
     "scheduler.no_simlet.title": "Vous n'avez pas encore de SIMLETs à participer.",
     "scheduler.title": "Cliquez ici pour commencer ou poursuivre votre session dans le SIMLET.",
     "scheduler.current": "Activité actuelle : ",
