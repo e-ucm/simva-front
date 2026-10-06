@@ -1,6 +1,7 @@
 const activitiescontroler = require('../lib/activitiescontroler');
 const SimvaAsync = require('../lib/simvaAsync');
 const usertools = require('../lib/usertools');
+const xasujs = require('../lib/tracker');
 
 /**
  * Filter out empty strings, null, and undefined values
@@ -243,6 +244,12 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Get all the SIMLETs matching the query search parameters
     router.get('/studies', auth, redirectToLogin, async (req, res, next) => {
+        (await xasujs.trace(
+            xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED, 
+            xasujs.getSimletType(), 
+            "/simlets", 
+            req.session.id
+        )).send();
         Simva.getSimlets(getCleanQuery(req), req.session.id, (error, result, cleanQuery) => {
             if(error) {
                 next(error.response?.data || error);
@@ -265,10 +272,15 @@ module.exports = function(auth, redirectToLogin, config){
     
     // Add a new SIMLET
     router.post('/studies', auth, redirectToLogin, async (req, res, next) => {
-        Simva.addSimlet(req.body, req.session.id, (error, result) => {
+        Simva.addSimlet(req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_CREATED, 
+                                    xasujs.getSimletType(), 
+                                    xasujs.getSimletUrl(result.simlet_id), 
+                                    req.session.id)
+                ).send();
                 res.status(200).send(result);
             }
         });

@@ -29,10 +29,11 @@ config.sso.clientId = process.env.SSO_CLIENT_ID || 'simva'
 config.sso.clientSecret = process.env.SSO_CLIENT_SECRET || 'th1s_1s_th3_s3cr3t'
 config.sso.sslRequired = process.env.SSO_SSL_REQUIRED || 'external'
 config.sso.publicClient = process.env.SSO_PUBLIC_CLIENT || 'false'
-config.sso.deviceUrl = `${config.sso.url}/realms/${config.sso.realm}/device`
-
 config.sso.accountPath = process.env.SSO_ACCOUNT_PATH || '/account'
-config.sso.accountUrl = `${config.sso.url}/realms/${config.sso.realm}${config.sso.accountPath}?referrer=${config.sso.clientId}&referrer_uri=${config.simva.url}`
+config.sso.realmUrl = `${config.sso.url}/realms/${config.sso.realm}`
+config.sso.deviceUrl = `${config.sso.realmUrl}/device`
+config.sso.tokenUrl = `${config.sso.realmUrl}/protocol/openid-connect/token`
+config.sso.accountUrl = `${config.sso.realmUrl}${config.sso.accountPath}?referrer=${config.sso.clientId}&referrer_uri=${config.simva.url}`
 config.sso.userCanSelectRole=process.env.SSO_USER_CAN_SELECT_ROLE || "true"
 config.sso.administratorContact= process.env.SSO_ADMINISTRATOR_CONTACT || "contact@administrator.com"
 config.sso.studentAllowedRole = (process.env.SSO_STUDENT_ALLOWED_ROLE === "true") ? "student" : null
@@ -42,6 +43,9 @@ config.sso.researcherAllowedRole = (process.env.SSO_RESEARCHER_ALLOWED_ROLE === 
 config.sso.allowedRoles = [config.sso.researcherAllowedRole, config.sso.teacherAllowedRole, config.sso.teachingAssistantAllowedRole, config.sso.studentAllowedRole ]
 	.filter(role => role !== null)
 	.join(',');
+config.sso.lrs = {}
+config.sso.lrs.user = process.env.SSO_LRSMANAGER_USERNAME || 'mylrsmanager'
+config.sso.lrs.password = process.env.SSO_LRSMANAGER_PASSWORD || 'password';
 
 config.api = {}
 config.api.host = process.env.SIMVA_API_HOST || 'simva-api.external.test'
