@@ -249,7 +249,8 @@ module.exports = function(auth, redirectToLogin, config){
             xasujs.getSimletType(), 
             "/simlets", 
             req.session.id
-        )).send();
+        ))//.send();
+        //await xasujs.flush();
         Simva.getSimlets(getCleanQuery(req), req.session.id, (error, result, cleanQuery) => {
             if(error) {
                 next(error.response?.data || error);
@@ -280,7 +281,7 @@ module.exports = function(auth, redirectToLogin, config){
                                     xasujs.getSimletType(), 
                                     xasujs.getSimletUrl(result.simlet_id), 
                                     req.session.id)
-                ).send();
+                )//.send();
                 res.status(200).send(result);
             }
         });
