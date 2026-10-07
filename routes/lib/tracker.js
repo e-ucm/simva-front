@@ -4,6 +4,25 @@ const ms = require("ms");
 const logger = require("../../logger.js");
 const usertools = require('../lib/usertools.js');
 
+/**
+ * Actor used when the request cannot be associated with an identified user
+ */
+const UNKNOWN_ACTOR = "Not identified user";
+
+/**
+ * Statement stub returned when a statement cannot be built, so that a tracking
+ * problem never prevents a route from sending its response
+ */
+const NOOP_STATEMENT = {
+    withContextLanguage: () => NOOP_STATEMENT,
+    withContextPlatform: () => NOOP_STATEMENT,
+    withResultExtensions: () => NOOP_STATEMENT,
+    withContextExtensions: () => NOOP_STATEMENT,
+    withContextActivity: () => NOOP_STATEMENT,
+    withActor: () => NOOP_STATEMENT,
+    send: () => Promise.resolve()
+};
+
 class XasuJSClient {
     xapiTracker;
 
@@ -56,13 +75,39 @@ class XasuJSClient {
         await this.xapiTracker.flush();
     }
 
+    /**
+     * Get the username of the user that performed the request
+     * @param {string} jwtToken - token of the session of the request
+     * @returns {string} - username of the user, or the unknown actor when it cannot be identified
+     */
+    getActor(jwtToken) {
+        try {
+            const decoded = jwtToken ? usertools.decodeJWT(jwtToken) : null;
+            return decoded?.preferred_username || UNKNOWN_ACTOR;
+        } catch(err) {
+            logger.warn(err, 'Could not decode the JWT of the request');
+            return UNKNOWN_ACTOR;
+        }
+    }
+
+    /**
+     * Build a statement of the given verb. It never throws, so that a tracking
+     * problem cannot prevent a route from sending its response
+     * @param {string} verb - id of the verb of the statement
+     * @param {string} objectType - type of the object of the statement
+     * @param {string} objectId - id of the object of the statement
+     * @param {string} jwtToken - token of the session of the request
+     * @returns {Promise<object>} - statement builder, or a stub statement when the tracking fails
+     */
     async trace(verb, objectType, objectId, jwtToken) {
-        await this.ensureLoggedAndStarted().catch(err => {
-            logger.error(err, 'Tracker login failed');
-            return null;
-        });
-        const username = jwtToken ? usertools.decodeJWT(jwtToken).preferred_username : null;
-        return this.xapiTracker.trace(verb, objectType, objectId).withActorAccount(username || reqSessionId, config.simva.url);
+        try {
+            await this.ensureLoggedAndStarted();
+            return this.xapiTracker.trace(verb, objectType, objectId)
+                .withActorAccount(this.getActor(jwtToken), config.simva.url);
+        } catch(err) {
+            logger.error(err, `Could not trace ${verb} ${objectId}`);
+            return NOOP_STATEMENT;
+        }
     }
 
     getActivityUrl(simletId, sessionId, activityId, useTestUrls = false) {
@@ -93,9 +138,17 @@ class XasuJSClient {
 		return `${config.simva.url}/about#session`;
 	}
 
-	getActivityType() {
-		return `${config.simva.url}/about#activity`;
-	}
+    getActivityType() {
+    	return `${config.simva.url}/about#activity`;
+    }
+
+    getGroupType() {
+    	return `${config.simva.url}/about#group`;
+    }
+
+    getUserType() {
+    	return `${config.simva.url}/about#user`;
+    }
 }
 
 module.exports = new XasuJSClient();

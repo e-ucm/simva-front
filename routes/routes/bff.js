@@ -156,8 +156,14 @@ module.exports = function(auth, redirectToLogin, config){
     }
     
     
-    router.get('/languages/', (req, res, next) => {
+    router.get('/languages/', async (req, res, next) => {
         const displayNames = new Intl.DisplayNames([req.cookies.i18next], { type: 'language' });
+        (await xasujs.trace(
+            xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+            xasujs.getSimletType(),
+            "/languages/",
+            userClientsListManager.getJWT(req.session?.id)
+        )).withContextLanguage(req.cookies.i18next).send();
         res.status(200).send({ 
             current : req.cookies.i18next, 
             default: defaultLanguage, 
@@ -166,7 +172,7 @@ module.exports = function(auth, redirectToLogin, config){
         });
     });
 
-    router.get('/languages/:lng', (req, res, next) => {
+    router.get('/languages/:lng', async (req, res, next) => {
         const lng = req.params["lng"];  // Get the new language from query parameters
         res.cookie('i18next', lng, { maxAge: 900000, httpOnly: true });  // Set the new language in a cookie
         res.status(200).send({ message : "Language updated" });
@@ -177,7 +183,7 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Get the all the existing tags
     router.get('/tags', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getTags(req.session.id, (error, result) => {
+        Simva.getTags(req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -188,7 +194,7 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Get the all the existing tags
     router.get('/simlets/tags', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getTagsForSimlets(req.session.id, (error, result) => {
+        Simva.getTagsForSimlets(req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -198,7 +204,7 @@ module.exports = function(auth, redirectToLogin, config){
     });
 
     router.get('/simlets/:simlet_id/tags', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getTagsForSimlet(req.params['simlet_id'], req.session.id, (error, result) => {
+        Simva.getTagsForSimlet(req.params['simlet_id'], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -209,10 +215,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Add a new tag
     router.post('/tags', auth, redirectToLogin, async (req, res, next) => {
-        Simva.createTag(req.body, req.session.id, (error, result) => {
+        Simva.createTag(req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_CREATED, 
+                    xasujs.getSimletType(),
+                    `/tags/${req.body.tag_id}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
@@ -220,10 +232,17 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Update the specified tag
     router.patch('/tags/:tagid', auth, redirectToLogin, async (req, res, next) => {
-        Simva.updateTag(req.params['tagid'], req.body, req.session.id, (error, result) => {
+        const tagId = req.params['tagid'];
+        Simva.updateTag(tagId, req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_UPDATED, 
+                    xasujs.getSimletType(),
+                    `/tags/${tagId}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
@@ -231,10 +250,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Delete the specified tag
     router.delete('/tags/:tagid', auth, redirectToLogin, async (req, res, next) => {
-        Simva.deleteTag(req.params['tagid'], req.session.id, (error, result) => {
+        Simva.deleteTag(req.params['tagid'], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_DELETED, 
+                    xasujs.getSimletType(),
+                    `/tags/${req.params['tagid']}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).send();
                 res.status(200).send(result);
             }
         });
@@ -245,17 +270,17 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Get all the SIMLETs matching the query search parameters
     router.get('/studies', auth, redirectToLogin, async (req, res, next) => {
-        (await xasujs.trace(
-            xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED, 
-            xasujs.getSimletType(), 
-            "/simlets", 
-            userClientsListManager.getJWT(req.session.id)
-        )).send();
-        //await xasujs.flush();
-        Simva.getSimlets(getCleanQuery(req), req.session.id, (error, result, cleanQuery) => {
+        Simva.getSimlets(getCleanQuery(req), req.session.id, async (error, result, cleanQuery) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED, 
+                    xasujs.getSimletType(), 
+                    "/simlets", 
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(getCleanQuery(req)).send();
+                //await xasujs.flush();
                 res.status(200).send(result);
             }
         });
@@ -263,7 +288,7 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Get the amount of SIMLETs matching the query search parameters
     router.get('/studies/count', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getSimletsCount(getCleanQuery(req), req.session.id, (error, result, cleanQuery) => {
+        Simva.getSimletsCount(getCleanQuery(req), req.session.id, async (error, result, cleanQuery) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -282,7 +307,7 @@ module.exports = function(auth, redirectToLogin, config){
                                     xasujs.getSimletType(), 
                                     xasujs.getSimletUrl(result.simlet_id), 
                                     userClientsListManager.getJWT(req.session.id)
-                )).send();
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
@@ -295,6 +320,11 @@ module.exports = function(auth, redirectToLogin, config){
         let sessionid = req.session.id;
         try {
             let study = await studycontroler.importStudy(newstudy, sessionid);
+            (await xasujs.trace(xasujs.tracker().ALL.VERBS.ADLVOCABULARYPROFILE_IMPORTED, 
+                                    xasujs.getSimletType(), 
+                                    xasujs.getSimletUrl(study.simlet_id), 
+                                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
             res.status(200).send(study);
         } catch(error) {
             next(error);
@@ -307,6 +337,11 @@ module.exports = function(auth, redirectToLogin, config){
         let sessionid = req.session.id;
         try {
             let study = await SimvaAsync.getSimlet(studyId, sessionid);
+            (await xasujs.trace(xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED, 
+                                xasujs.getSimletType(), 
+                                xasujs.getSimletUrl(study.simlet_id), 
+                                userClientsListManager.getJWT(req.session.id)
+            )).withResultExtensions(getCleanQuery(req)).send();
             res.status(200).send(study);
         } catch(error) {
             next(error);
@@ -319,6 +354,11 @@ module.exports = function(auth, redirectToLogin, config){
         let sessionid = req.session.id;
         try {
             let study = await studycontroler.exportStudy(studyId, true, sessionid);
+            (await xasujs.trace(xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_SHARED, 
+                                    xasujs.getSimletType(),
+                                    xasujs.getSimletUrl(study.simlet_id || studyId),
+                                    userClientsListManager.getJWT(req.session.id)
+            )).withResultExtensions(getCleanQuery(req)).send();
             res.status(200).send(study);
         } catch(error) {
             next(error);
@@ -327,10 +367,15 @@ module.exports = function(auth, redirectToLogin, config){
     
     // Update the specified SIMLET
     router.patch('/studies/:studyid', auth, redirectToLogin, async (req, res, next) => {
-        Simva.updateSimlet(req.params['studyid'], req.body, req.session.id, (error, result) => {
+        Simva.updateSimlet(req.params['studyid'], req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_UPDATED, 
+                                        xasujs.getSimletType(), 
+                                        xasujs.getSimletUrl(result.simlet_id), 
+                                        userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
@@ -338,10 +383,15 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Delete the specified SIMLET
     router.delete('/studies/:studyid', auth, redirectToLogin, async (req, res, next) => {
-        Simva.deleteSimlet(req.params['studyid'], req.session.id, (error, result) => {
+        Simva.deleteSimlet(req.params['studyid'], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_DELETED, 
+                                        xasujs.getSimletType(), 
+                                        xasujs.getSimletUrl(result.simlet_id), 
+                                        userClientsListManager.getJWT(req.session.id)
+                )).send();
                 res.status(200).send(result);
             }
         });
@@ -350,10 +400,15 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Get all the scheduled SIMLETs matching the query search parameters
     router.get('/scheduler/studies', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getSchedulerSimlets(getCleanQuery(req), req.session.id, (error, result) => {
+        Simva.getSchedulerSimlets(getCleanQuery(req), req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED, 
+                                    xasujs.getSimletType(), 
+                                    `/scheduler`, 
+                                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
@@ -361,7 +416,7 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Get the amount of scheduled SIMLETs matching the query search parameters
     router.get('/scheduler/studies/count', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getSchedulerSimletsCount(getCleanQuery(req), req.session.id, (error, result) => {
+        Simva.getSchedulerSimletsCount(getCleanQuery(req), req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -372,10 +427,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Get the specified SIMLET scheduler 
     router.get('/studies/:studyid/schedule', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getSimletScheduler(req.params["studyid"], req.session.id, (error, result) => {
+        const studyId = req.params['studyid'];
+        Simva.getSimletScheduler(studyId, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED, 
+                    xasujs.getSimletType(), 
+                    `/scheduler/${studyId}`, 
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
@@ -386,10 +447,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Generate shlink for the specified SIMLET
     router.post('/simlets/:simletid/shlink', auth, redirectToLogin, async (req, res, next) => {
-        Simva.generateShlink(req.params['simletid'], req.body.customSlug, req.body.length, req.session.id, (error, result) => {
+        Simva.generateShlink(req.params['simletid'], req.body.customSlug, req.body.length, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_CREATED, 
+                    xasujs.getSimletType(),
+                    `${xasujs.getSimletUrl(result.simlet_id)}/shlink`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
@@ -397,10 +464,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Get shlink of the specified SIMLET
     router.get('/simlets/:simletid/shlink', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getShLink(req.params['simletid'], req.session.id, (error, result) => {
+        Simva.getShLink(req.params['simletid'], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED, 
+                    xasujs.getSimletType(), 
+                    `${xasujs.getSimletUrl(req.params['simletid'])}/shlink`, 
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
@@ -409,10 +482,16 @@ module.exports = function(auth, redirectToLogin, config){
     // TODO: Remove?
     // Update shlink for the specified SIMLET
     router.patch('/simlets/:simletid/shlink', auth, redirectToLogin, async (req, res, next) => {
-        Simva.updateShLink(req.params['simletid'], req.body.customSlug, req.body.length, req.session.id, (error, result) => {
+        Simva.updateShLink(req.params['simletid'], req.body.customSlug, req.body.length, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_UPDATED, 
+                    xasujs.getSimletType(), 
+                    `${xasujs.getSimletUrl(req.params['simletid'])}/shlink`, 
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
@@ -420,10 +499,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Delete shlink for the specified SIMLET
     router.delete('/simlets/:simletid/shlink', auth, redirectToLogin, async (req, res, next) => {
-        Simva.deleteShLink(req.params["simletid"], req.session.id, (error, result) => {
+        Simva.deleteShLink(req.params["simletid"], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_DELETED, 
+                    xasujs.getSimletType(), 
+                    `${xasujs.getSimletUrl(req.params['simletid'])}/shlink`, 
+                    userClientsListManager.getJWT(req.session.id)
+                )).send();
                 res.status(200).send({ message : "Short Link deleted" });
             }
         });
@@ -434,7 +519,7 @@ module.exports = function(auth, redirectToLogin, config){
     
     // Get all the sessions matching the query search parameters 
     router.get('/studies/:studyid/tests', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getSimletSessions(req.params["studyid"], getCleanQuery(req), req.session.id, (error, result) => {
+        Simva.getSimletSessions(req.params["studyid"], getCleanQuery(req), req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -445,7 +530,7 @@ module.exports = function(auth, redirectToLogin, config){
     
     // Get the amount of sessions matching the query search parameters
     router.get('/studies/:studyid/tests/count', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getSimletSessionsCount(req.params["studyid"], getCleanQuery(req), req.session.id, (error, result) => {
+        Simva.getSimletSessionsCount(req.params["studyid"], getCleanQuery(req), req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -456,10 +541,16 @@ module.exports = function(auth, redirectToLogin, config){
     
     // Add a new session
     router.post('/studies/:studyid/tests', auth, redirectToLogin, async (req, res, next) => {
-        Simva.addSessionToSimlet(req.params["studyid"], req.body, req.session.id, (error, result) => {
+        Simva.addSessionToSimlet(req.params["studyid"], req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_CREATED, 
+                    xasujs.getSessionType(), 
+                    `${xasujs.getSimletUrl(req.params['studyid'])}/sessions`, 
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
@@ -473,6 +564,12 @@ module.exports = function(auth, redirectToLogin, config){
         let sessionid = req.session.id;
         try {
             let test = await testscontroler.importTest(studyId, newtest, sessionid);
+            (await xasujs.trace(
+                xasujs.tracker().ALL.VERBS.ADLVOCABULARYPROFILE_IMPORTED, 
+                xasujs.getSessionType(), 
+                `${xasujs.getSimletUrl(studyId)}/sessions`, 
+                userClientsListManager.getJWT(sessionid)
+            )).withResultExtensions(req.body).send();
             res.status(200).send(test);
         } catch(error) {
             next(error);
@@ -481,10 +578,16 @@ module.exports = function(auth, redirectToLogin, config){
     
     // Get the specified session
     router.get('/studies/:studyid/tests/:testid', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getSimletSession(req.params["studyid"], req.params["testid"], req.session.id, (error, result) => {
+        Simva.getSimletSession(req.params["studyid"], req.params["testid"], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                    xasujs.getSessionType(),
+                    `${xasujs.getSessionUrl(studyId, testId)}`,
+                    userClientsListManager.getJWT(sessionid)
+            )).withResultExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
@@ -496,7 +599,13 @@ module.exports = function(auth, redirectToLogin, config){
         let testId = req.params['testid'];
         let sessionid = req.session.id;
         try {
-            let test = await testscontroler.getCompleteTest(studyId, testId, sessionid) 
+            let test = await testscontroler.getCompleteTest(studyId, testId, sessionid);
+            (await xasujs.trace(
+                xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                xasujs.getSessionType(),
+                `${xasujs.getSessionUrl(studyId, testId)}/complete`,
+                userClientsListManager.getJWT(sessionid)
+            )).withResultExtensions(getCleanQuery(req)).send();
             res.status(200).send(test);
         } catch(error) {
             next(error);
@@ -507,6 +616,12 @@ module.exports = function(auth, redirectToLogin, config){
     router.get('/studies/:studyid/tests/:testid/export', auth, redirectToLogin, async (req, res, next) => {
         try {
             let test = await testscontroler.exportSession(req.params["studyid"], req.params["testid"], true, req.session.id);
+            (await xasujs.trace(
+                xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_SHARED, 
+                xasujs.getSessionType(),
+                `${xasujs.getSimletUrl(req.params['studyid'])}/sessions/${req.params['testid']}`, 
+                userClientsListManager.getJWT(req.session.id)
+            )).withResultExtensions(getCleanQuery(req)).send();
             res.status(200).send(test);
         } catch(error) {
             next(error.response?.data || error);
@@ -515,10 +630,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Update the specified session
     router.patch('/studies/:studyid/tests/:testid', auth, redirectToLogin, async (req, res, next) => {
-        Simva.updateSession(req.params["studyid"], req.params["testid"], req.body, req.session.id, (error, result) => {
+        Simva.updateSession(req.params["studyid"], req.params["testid"], req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_UPDATED, 
+                    xasujs.getSessionType(), 
+                    `${xasujs.getSimletUrl(req.params['studyid'])}/sessions/${req.params['testid']}`, 
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
@@ -526,10 +647,16 @@ module.exports = function(auth, redirectToLogin, config){
     
     // Delete the specified session
     router.delete('/studies/:studyid/tests/:testid', auth, redirectToLogin, async (req, res, next) => {
-        Simva.deleteSession(req.params["studyid"], req.params["testid"], req.session.id, (error, result) => {
+        Simva.deleteSession(req.params["studyid"], req.params["testid"], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_DELETED, 
+                    xasujs.getSessionType(), 
+                    `${xasujs.getSimletUrl(req.params['studyid'])}/sessions/${req.params['testid']}`, 
+                    userClientsListManager.getJWT(req.session.id)
+                )).send();
                 res.status(200).send(result);
             }
         });
@@ -538,10 +665,16 @@ module.exports = function(auth, redirectToLogin, config){
     
     // Change the specified session status
     router.post('/studies/:studyid/tests/:testid/activate', auth, redirectToLogin, async (req, res, next) => {
-        Simva.activateSession(req.params["studyid"], req.params["testid"], req.body, req.session.id, (error, result) => {
+        Simva.activateSession(req.params["studyid"], req.params["testid"], req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_UPDATED, 
+                    xasujs.getSessionType(), 
+                    `${xasujs.getSimletUrl(req.params['studyid'])}/sessions/${req.params['testid']}`, 
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
@@ -550,10 +683,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Add the specified tag to the specified session
     router.post('/simlets/:studyid/tests/:testid/tags/:tag', auth, redirectToLogin, async (req, res, next) => {
-        Simva.addTagToSession(req.params["studyid"], req.params["testid"], req.params["tag"], req.session.id, (error, result) => {
+        Simva.addTagToSession(req.params["studyid"], req.params["testid"], req.params["tag"], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_UPDATED, 
+                    xasujs.getSessionType(), 
+                    `${xasujs.getSimletUrl(req.params['studyid'])}/sessions/${req.params['testid']}`, 
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
@@ -561,10 +700,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Delete the specified tag from the specified session
     router.delete('/simlets/:studyid/tests/:testid/tags/:tag', auth, redirectToLogin, async (req, res, next) => {
-        Simva.deleteTagFromSession(req.params["studyid"], req.params["testid"], req.params["tag"], req.session.id, (error, result) => {
+        Simva.deleteTagFromSession(req.params["studyid"], req.params["testid"], req.params["tag"], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_UPDATED, 
+                    xasujs.getSessionType(), 
+                    `${xasujs.getSimletUrl(req.params['studyid'])}/sessions/${req.params['testid']}`, 
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
@@ -575,10 +720,16 @@ module.exports = function(auth, redirectToLogin, config){
     router.post('/studies/:studyid/tests/:testid/set-tester', auth, redirectToLogin, async (req, res, next) => {
         const studyid = req.params['studyid'];
         const testid = req.params['testid'];
-        Simva.setTesterToSession(studyid, testid, req.session.id, (error, result) => {
+        Simva.setTesterToSession(studyid, testid, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_CREATED, 
+                    xasujs.getSessionType(), 
+                    `${xasujs.getSimletUrl(req.params['studyid'])}/sessions/${req.params['testid']}/tester`, 
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
@@ -588,10 +739,16 @@ module.exports = function(auth, redirectToLogin, config){
     router.post('/studies/:studyid/tests/:testid/unset-tester', auth, redirectToLogin, async (req, res, next) => {
         const studyid = req.params['studyid'];
         const testid = req.params['testid'];
-        Simva.unsetTesterToSession(studyid, testid, req.session.id, (error, result) => {
+        Simva.unsetTesterToSession(studyid, testid, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_DELETED, 
+                    xasujs.getSessionType(), 
+                    `${xasujs.getSimletUrl(req.params['studyid'])}/sessions/${req.params['testid']}/tester`, 
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send({ message: 'Tester removed' });
             }
         });
@@ -601,11 +758,17 @@ module.exports = function(auth, redirectToLogin, config){
     router.post('/studies/:studyid/tests/:testid/reset-tester', auth, redirectToLogin, async (req, res, next) => {
         const studyid = req.params['studyid'];
         const testid = req.params['testid'];
-        Simva.resetTesterToSession(studyid, testid, req.session.id, (error, result) => {
+        Simva.resetTesterToSession(studyid, testid, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
-                res.status(200).send({ message: 'Tester removed' });
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_CREATED, 
+                    xasujs.getSessionType(), 
+                    `${xasujs.getSimletUrl(req.params['studyid'])}/sessions/${req.params['testid']}/tester`, 
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
+                res.status(200).send({ message: 'Tester reset' });
             }
         });
     });
@@ -625,6 +788,12 @@ module.exports = function(auth, redirectToLogin, config){
                 const usernames = await getSessionParticipantsUsernames(req.params["simletid"], req.params["sessionid"], req.session.id);
                 statements = await collectLrsStatementsForParticipants(usernames, fetchFirstPage, fetchNextPage);
             }
+            (await xasujs.trace(
+                xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                xasujs.getSessionType(),
+                `/simlets/${req.params["simletid"]}/sessions/${req.params["sessionid"]}/lrs/statements`,
+                userClientsListManager.getJWT(req.session.id)
+            )).withResultExtensions(getCleanQuery(req)).send();
             res.status(200).send({ data: statementsToContent(statements) });
         } catch(error) {
             next(error.response?.data || error);
@@ -638,6 +807,12 @@ module.exports = function(auth, redirectToLogin, config){
                 () => SimvaAsync.getSessionTestLRSData(req.params["simletid"], req.params["sessionid"], req.session.id),
                 (more) => SimvaAsync.getSessionMoreTestLRSData(req.params["simletid"], req.params["sessionid"], more, req.session.id)
             );
+            (await xasujs.trace(
+                xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                xasujs.getSessionType(),
+                `/simlets/${req.params["simletid"]}/sessions/${req.params["sessionid"]}/lrs_test_statements`,
+                userClientsListManager.getJWT(req.session.id)
+            )).withResultExtensions(getCleanQuery(req)).send();
             res.status(200).send({ data: statementsToContent(statements) });
         } catch(error) {
             next(error.response?.data || error);
@@ -649,18 +824,23 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Get all the activities in the specified session of the specified SIMLET
     router.get('/studies/:studyid/tests/:testid/activities', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getSessionActivities(req.params["studyid"], req.params["testid"], req.session.id, (error, result) => {
-            if(error) {
-                next(error.response?.data || error);
-            } else {
-                res.status(200).send(result);
-            }
-        });
+        try {
+            const activities = await SimvaAsync.getSessionActivities(req.params["studyid"], req.params["testid"], req.session.id);
+            (await xasujs.trace(
+                xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                    xasujs.getActivityType(),
+                    `/simlets/${req.params["studyid"]}/sessions/${req.params["testid"]}/activities`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(getCleanQuery(req)).send();
+            res.status(200).send(activities);
+        } catch(error) {
+            next(error.response?.data || error);
+        }
     });
 
     // Get all the existing activity types
     router.get('/activitytypes', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getActivityTypes(req.session.id, (error, result) => {
+        Simva.getActivityTypes(req.session.id, async (error, result) => {
             if (error) {
                 next(error.response?.data || error);
             } else {
@@ -673,6 +853,12 @@ module.exports = function(auth, redirectToLogin, config){
     router.post('/studies/:studyid/tests/:testid/activities', auth, redirectToLogin, async (req, res, next) => {
         try {
             let activity = await SimvaAsync.addActivityToSession(req.params["studyid"], req.params["testid"], req, req.body, req.session.id);
+            (await xasujs.trace(
+                xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_CREATED,
+                xasujs.getActivityType(),
+                `/simlets/${req.params["studyid"]}/sessions/${req.params["testid"]}/activities`,
+                userClientsListManager.getJWT(req.session.id)
+            )).withResultExtensions(req.body).send();
             res.status(200).send(activity);
         } catch(error) {
             next(error.response?.data || error);
@@ -688,6 +874,12 @@ module.exports = function(auth, redirectToLogin, config){
         let sessionid = req.session.id;
         try {
             let activity = await activitiescontroler.importActivity(studyId, testId, newactivity, sessionid);
+            (await xasujs.trace(
+                xasujs.tracker().ALL.VERBS.ADLVOCABULARYPROFILE_IMPORTED,
+                xasujs.getActivityType(),
+                `/simlets/${studyId}/sessions/${testId}/activities`,
+                userClientsListManager.getJWT(sessionid)
+            )).withResultExtensions(req.body).send();
             res.status(200).send(activity);
         } catch(error) {
             next(error);
@@ -698,6 +890,12 @@ module.exports = function(auth, redirectToLogin, config){
     router.get('/activities/:activityid', auth, redirectToLogin, async (req, res, next) => {
         try {
             let activity = await SimvaAsync.getActivity(req.params["activityid"], req.session.id);
+            (await xasujs.trace(
+                xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                xasujs.getActivityType(),
+                xasujs.getStandaloneActivityUrl(req.params["activityid"]),
+                userClientsListManager.getJWT(req.session.id)
+            )).withResultExtensions(getCleanQuery(req)).send();
             res.status(200).send(activity);
         } catch(error) {
             next(error.response?.data || error);
@@ -708,11 +906,19 @@ module.exports = function(auth, redirectToLogin, config){
     router.get('/activities/:activityid/export', auth, redirectToLogin, async (req, res, next) => {
         try {
             let result = await SimvaAsync.exportActivity(req.params["activityid"], req.query.complete === 'true', req.session.id);
+            (await xasujs.trace(
+                xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_SHARED,
+                xasujs.getActivityType(),
+                `/simlets/${req.params["activityid"]}`,
+                userClientsListManager.getJWT(req.session.id)
+            )).withResultExtensions(getCleanQuery(req)).send();
             res.status(200).send(result);
         } catch(error) {
             next(error.response?.data || error);
         }
     });
+
+    // Export a specific activity within a study and test
     router.get('/studies/:studyid/tests/:testid/activities/:activityid/export', auth, redirectToLogin, async (req, res, next) => {
         let complete = req.query.complete === 'true';
         let studyId = req.params['studyid'];
@@ -721,6 +927,12 @@ module.exports = function(auth, redirectToLogin, config){
         let sessionid = req.session.id;
         try {
             let activity = await activitiescontroler.exportCompleteActivity(studyId, testId, activityId, complete, sessionid);
+            (await xasujs.trace(
+                xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_SHARED,
+                xasujs.getActivityType(),
+                `/simlets/${studyId}/sessions/${testId}/activities/${activityId}`,
+                userClientsListManager.getJWT(sessionid)
+            )).withResultExtensions(getCleanQuery(req)).send();
             res.status(200).send(activity);
         } catch(error) {
             next(error.response?.data || error);
@@ -731,6 +943,12 @@ module.exports = function(auth, redirectToLogin, config){
     router.patch('/studies/:studyid/tests/:testid/activities/:activityid', auth, redirectToLogin, async (req, res, next) => {
         try {
             let activity = await SimvaAsync.updateActivity(req.params["studyid"], req.params["testid"], req.params["activityid"], req, req.body, req.session.id);
+            (await xasujs.trace(
+                xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_UPDATED,
+                xasujs.getActivityType(),
+                `/simlets/${req.params["studyid"]}/sessions/${req.params["testid"]}/activities/${req.params["activityid"]}`,
+                userClientsListManager.getJWT(req.session.id)
+            )).withResultExtensions(req.body).send();
             res.status(200).send(activity);
         } catch(error) {
             next(error.response?.data || error);
@@ -739,10 +957,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Delete the specified activity
     router.delete('/studies/:studyid/tests/:testid/activities/:activityid', auth, redirectToLogin, async (req, res, next) => {
-        Simva.deleteActivity(req.params["studyid"], req.params["testid"], req.params["activityid"], req.session.id, (error, result) => {
+        Simva.deleteActivity(req.params["studyid"], req.params["testid"], req.params["activityid"], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_DELETED,
+                    xasujs.getActivityType(),
+                    `/simlets/${req.params["studyid"]}/sessions/${req.params["testid"]}/activities/${req.params["activityid"]}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).send();
                 res.status(200).send(result);
             }
         });
@@ -750,10 +974,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Get Xasu tracker config of the specified activity
     router.get('/activities/:activityid/tracker_config', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getActivityXasuConfig(req.params["activityid"], req.session.id, (error, result) => {
+        Simva.getActivityXasuConfig(req.params["activityid"], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                    xasujs.getActivityType(),
+                    `/activities/${req.params["activityid"]}/tracker_config`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
@@ -761,10 +991,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // TODO: Document / remove?
     router.post('/activities/:activityid/test', auth, redirectToLogin, async (req, res, next) => {
-        Simva.setActivityTest(req.params["activityid"], req.body, req.session.id, (error, result) => {
+        Simva.setActivityTest(req.params["activityid"], req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_CREATED,
+                    xasujs.getActivityType(),
+                    `/activities/${req.params["activityid"]}/test`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
@@ -772,10 +1008,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Get the target of the specified activity
     router.get('/activities/:activityid/target', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getActivityTarget(req.params["activityid"], req.session.id, (error, result) => {
+        Simva.getActivityTarget(req.params["activityid"], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                    xasujs.getActivityType(),
+                    `/activities/${req.params["activityid"]}/target`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
@@ -793,6 +1035,12 @@ module.exports = function(auth, redirectToLogin, config){
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
                 }
             );
+            (await xasujs.trace(
+                xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_CREATED,
+                xasujs.getSimletType(),
+                `/simlets/${req.params.simletid}/scheduler/device`,
+                userClientsListManager.getJWT(req.session.id)
+            )).withResultExtensions(req.body).send();
             res.status(200).send(response.data);
         } catch(error) {
             next(error.response?.data || error);
@@ -808,6 +1056,12 @@ module.exports = function(auth, redirectToLogin, config){
                 req.body,
                 { headers: { 'Content-Type': 'application/json' } }
             );
+            (await xasujs.trace(
+                xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_CREATED,
+                xasujs.getSimletType(),
+                `/simlets/${req.params.simletid}/scheduler/auth2/token`,
+                userClientsListManager.getJWT(req.session.id)
+            )).withResultExtensions(req.body).send();
             res.status(200).send(response.data);
         } catch(error) {
             const status = error.response ? error.response.status : 500;
@@ -819,10 +1073,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Get all the available surveys
     router.get('/limesurvey/surveys', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getSurveyList(req.session.id, (error, result) => {
+        Simva.getSurveyList(req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                    xasujs.getSimletType(),
+                    `/limesurvey/surveys`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
@@ -832,6 +1092,12 @@ module.exports = function(auth, redirectToLogin, config){
     router.get('/limesurvey/surveys/:surveyid/languages', auth, redirectToLogin, async (req, res, next) => {
         try {
             let result = await SimvaAsync.getSurveyLanguages(req.params["surveyid"], req.session.id);
+            (await xasujs.trace(
+                xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                xasujs.getSimletType(),
+                `/limesurvey/surveys/${req.params["surveyid"]}/languages`,
+                userClientsListManager.getJWT(req.session.id)
+            )).withResultExtensions(getCleanQuery(req)).send();
             res.status(200).send(result);
         } catch(error) {
             next(error.response?.data || error);
@@ -840,8 +1106,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Set the owner of a survey
     router.patch('/limesurvey/surveys/owner', auth, redirectToLogin, async (req, res, next) => {
+        // the survey is identified by the body: the route itself declares no path parameter
+        const surveyId = req.query.surveyid ?? req.body.survey_id ?? req.body.surveyId;
         try {
-            let result = await SimvaAsync.setSurveyOwner(req.params["activityid"], req.session.id);
+            let result = await SimvaAsync.setSurveyOwner(surveyId, req.session.id);
+            (await xasujs.trace(
+                xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_UPDATED,
+                xasujs.getSimletType(),
+                `/limesurvey/surveys/${surveyId ? surveyId + '/' : ''}owner`,
+                userClientsListManager.getJWT(req.session.id)
+            )).withResultExtensions(req.body).send();
             res.status(200).send(result);
         } catch(error) {
             next(error.response?.data || error);
@@ -850,7 +1124,7 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Check if the specified activity can be opened
     router.get('/activities/:activityid/openable', auth, redirectToLogin, async (req, res, next) => {
-        Simva.isActivityOpenable(req.params["activityid"], req.session.id, (error, result) => {
+        Simva.isActivityOpenable(req.params["activityid"], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -864,6 +1138,12 @@ module.exports = function(auth, redirectToLogin, config){
     router.get('/activities/:activityid/open', auth, redirectToLogin, async (req, res, next) => {
         try {
             let result = await SimvaAsync.openActivity(req.params["activityid"], req.session.id);
+            (await xasujs.trace(
+                xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                xasujs.getActivityType(),
+                `${xasujs.getStandaloneActivityUrl(req.params["activityid"])}/open`,
+                userClientsListManager.getJWT(req.session.id)
+            )).withResultExtensions(getCleanQuery(req)).send();
             res.status(200).send(result);
         } catch(error) {
             next(error.response?.data || error);
@@ -872,10 +1152,16 @@ module.exports = function(auth, redirectToLogin, config){
     
     // Get the initialized data of all participants of the specified activity 
     router.get('/activities/:activityid/initialized', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getActivityInitialized(req.params["activityid"], req.session.id, (error, result) => {
+        Simva.getActivityInitialized(req.params["activityid"], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                    xasujs.getActivityType(),
+                    `${xasujs.getStandaloneActivityUrl(req.params["activityid"])}/initialized`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
@@ -884,10 +1170,16 @@ module.exports = function(auth, redirectToLogin, config){
     // TODO: Remove?
     // Set the initialized status of the specified participant of the specified activity 
     router.post('/activities/:activityid/initialized', auth, redirectToLogin, async (req, res, next) => {
-        Simva.setActivityInitialized(req.params["activityid"], req.query.user, req.body, req.session.id, (error, result) => {
+        Simva.setActivityInitialized(req.params["activityid"], req.query.user, req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.INITIALIZED,
+                    xasujs.getActivityType(),
+                    `/activities/${req.params["activityid"]}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).withContextExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
@@ -895,10 +1187,16 @@ module.exports = function(auth, redirectToLogin, config){
     
     // Get the progress data of all participants of the specified activity 
     router.get('/activities/:activityid/progress', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getActivityProgress(req.params["activityid"], req.session.id, (error, result) => {
+        Simva.getActivityProgress(req.params["activityid"], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                    xasujs.getActivityType(),
+                    `/activities/${req.params["activityid"]}/progressed`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
@@ -907,10 +1205,16 @@ module.exports = function(auth, redirectToLogin, config){
     // TODO: Remove?
     // Set the progress status of the specified participant of the specified activity 
     router.post('/activities/:activityid/progress', auth, redirectToLogin, async (req, res, next) => {
-        Simva.setActivityProgress(req.params["activityid"], req.query.user, req.body, req.session.id, (error, result) => {
+        Simva.setActivityProgress(req.params["activityid"], req.query.user, req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.PROGRESSED,
+                    xasujs.getActivityType(),
+                    `/activities/${req.params["activityid"]}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).withContextExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
@@ -918,10 +1222,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Get the completion data of all participants of the specified activity 
     router.get('/activities/:activityid/completion', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getActivityCompletion(req.params["activityid"], req.session.id, (error, result) => {
+        Simva.getActivityCompletion(req.params["activityid"], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                    xasujs.getActivityType(),
+                    `/activities/${req.params["activityid"]}/completion`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
@@ -929,10 +1239,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Set the completion status of the specified participant of the specified activity 
     router.post('/activities/:activityid/completion', auth, redirectToLogin, async (req, res, next) => {
-        Simva.setActivityCompletion(req.params["activityid"], req.query.user, req.body.status, req.session.id, (error, result) => {
+        Simva.setActivityCompletion(req.params["activityid"], req.query.user, req.body.status, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.COMPLETED,
+                    xasujs.getActivityType(),
+                    `/activities/${req.params["activityid"]}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).withContextExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
@@ -940,10 +1256,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Set the completion status for all the participants of the specified activity 
     router.post('/activities/:activityid/completion/multi', auth, redirectToLogin, async (req, res, next) => {
-        Simva.setMultiActivityCompletion(req.params["activityid"], req.body, req.session.id, (error, result) => {
+        Simva.setMultiActivityCompletion(req.params["activityid"], req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.COMPLETED,
+                    xasujs.getActivityType(),
+                    `/activities/${req.params["activityid"]}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).withContextExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
@@ -951,7 +1273,7 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Get the hasResult data of all participants of the specified activity 
     router.get('/activities/:activityid/hasresult', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getActivityHasResult(req.params["activityid"], req.session.id, (error, result) => {
+        Simva.getActivityHasResult(req.params["activityid"], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -962,7 +1284,7 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Get the result data of of the specified activity 
     router.get('/activities/:activityid/result', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getActivityResult(req.params["activityid"], req.query.users, req.query.type,  req.session.id, (error, result) => {
+        Simva.getActivityResult(req.params["activityid"], req.query.users, req.query.type,  req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -973,7 +1295,7 @@ module.exports = function(auth, redirectToLogin, config){
 
     // TODO: Document / remove?
     router.get('/activities/:activityid/suspension', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getActivitySuspension(req.params["activityid"], req.session.id, (error, result) => {
+        Simva.getActivitySuspension(req.params["activityid"], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -984,10 +1306,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Set the specified activity status for the specified participant 
     router.post('/activities/:activityid/suspension', auth, redirectToLogin, async (req, res, next) => {
-        Simva.setActivitySuspension(req.params["activityid"], req.body.user, req.body, req.session.id, (error, result) => {
+        Simva.setActivitySuspension(req.params["activityid"], req.body.user, req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.SUSPENDED,
+                    xasujs.getActivityType(),
+                    `/activities/${req.params["activityid"]}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).withContextExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
@@ -1012,6 +1340,12 @@ module.exports = function(auth, redirectToLogin, config){
                 logger.warn(`The SIMLET and the session of the activity ${req.params["activityid"]} are unknown, fetching the statements of every actor`);
                 statements = await collectLrsStatements(() => fetchFirstPage(undefined), fetchNextPage);
             }
+            (await xasujs.trace(
+                xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                xasujs.getActivityType(),
+                `/activities/${req.params["activityid"]}/lrs/statements`,
+                userClientsListManager.getJWT(req.session.id)
+            )).withResultExtensions(getCleanQuery(req)).send();
             res.status(200).send({ data: statementsToContent(statements) });
         } catch(error) {
             next(error.response?.data || error);
@@ -1025,6 +1359,12 @@ module.exports = function(auth, redirectToLogin, config){
                 () => SimvaAsync.getActivityTestLRSData(req.params["activityid"], req.session.id),
                 (more) => SimvaAsync.getActivityMoreTestLRSData(req.params["activityid"], more, req.session.id)
             );
+            (await xasujs.trace(
+                xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                xasujs.getActivityType(),
+                `/activities/${req.params["activityid"]}/lrs_test_statements`,
+                userClientsListManager.getJWT(req.session.id)
+            )).withResultExtensions(getCleanQuery(req)).send();
             res.status(200).send({ data: statementsToContent(statements) });
         } catch(error) {
             next(error.response?.data || error);
@@ -1037,18 +1377,30 @@ module.exports = function(auth, redirectToLogin, config){
     // Get all groups in the specified SIMLET matching the query search parameters
     router.get('/simlets/:simlet_id/groups', auth, redirectToLogin, async (req, res, next) => {
         if(req.query.use_new_generation) {
-            Simva.getSimletGroupsWithVersion(req.query.use_new_generation === 'true', req.params["simlet_id"], getCleanQuery(req), req.session.id, (error, result) => {
+            Simva.getSimletGroupsWithVersion(req.query.use_new_generation === 'true', req.params["simlet_id"], getCleanQuery(req), req.session.id, async (error, result) => {
                 if(error) {
                     next(error.response?.data || error);
                 } else {
+                    (await xasujs.trace(
+                        xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                        xasujs.getGroupType(),
+                        `/simlets/${req.params["simlet_id"]}/groups`,
+                        userClientsListManager.getJWT(req.session.id)
+                    )).withResultExtensions(getCleanQuery(req)).send();
                     res.status(200).send(result);
                 }
             });
         } else {
-            Simva.getSimletGroups(req.params["simlet_id"], getCleanQuery(req), req.session.id, (error, result) => {
+            Simva.getSimletGroups(req.params["simlet_id"], getCleanQuery(req), req.session.id, async (error, result) => {
                 if(error) {
                     next(error.response?.data || error);
                 } else {
+                    (await xasujs.trace(
+                        xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                        xasujs.getGroupType(),
+                        `/simlets/${req.params["simlet_id"]}/groups`,
+                        userClientsListManager.getJWT(req.session.id)
+                    )).withResultExtensions(getCleanQuery(req)).send();
                     res.status(200).send(result);
                 }
             });
@@ -1058,7 +1410,7 @@ module.exports = function(auth, redirectToLogin, config){
     // Get the amount of groups in the specified SIMLET matching the query search parameters
     router.get('/simlets/:simlet_id/groups/count', auth, redirectToLogin, async (req, res, next) => {
         if(req.query.use_new_generation) {
-            Simva.getSimletGroupsWithVersionCount(req.query.use_new_generation === 'true', req.params["simlet_id"], getCleanQuery(req), req.session.id, (error, result) => {
+            Simva.getSimletGroupsWithVersionCount(req.query.use_new_generation === 'true', req.params["simlet_id"], getCleanQuery(req), req.session.id, async (error, result) => {
                 if(error) {
                     next(error.response?.data || error);
                 } else {
@@ -1066,7 +1418,7 @@ module.exports = function(auth, redirectToLogin, config){
                 }
             });
         } else {
-            Simva.getSimletGroupsCount(req.params["simlet_id"], getCleanQuery(req), req.session.id, (error, result) => {
+            Simva.getSimletGroupsCount(req.params["simlet_id"], getCleanQuery(req), req.session.id, async (error, result) => {
                 if(error) {
                     next(error.response?.data || error);
                 } else {
@@ -1078,10 +1430,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Add a new group to the specified SIMLET
     router.post('/simlets/:simlet_id/groups', auth, redirectToLogin, async (req, res, next) => {
-        Simva.addGroup(req.params['simlet_id'], req.body, req.session.id, (error, result) => {
+        Simva.addGroup(req.params['simlet_id'], req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_CREATED,
+                    xasujs.getGroupType(),
+                    `/simlets/${req.params["simlet_id"]}/groups`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
@@ -1089,10 +1447,16 @@ module.exports = function(auth, redirectToLogin, config){
     
     // TODO: Document / remove?
     router.post('/studies/:studyid/groups/:groupid', auth, redirectToLogin, async (req, res, next) => {
-        Simva.addStudyGroup(req.params["studyid"], req.params["groupid"], req.session.id, (error, result) => {
+        Simva.addStudyGroup(req.params["studyid"], req.params["groupid"], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_CREATED,
+                    xasujs.getGroupType(),
+                    `/simlets/${req.params["studyid"]}/groups/${req.params["groupid"]}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
@@ -1106,6 +1470,12 @@ module.exports = function(auth, redirectToLogin, config){
         let sessionid = req.session.id;
         try {
             let group = await groupcontroler.importGroup(simlet_id, newgroup, sessionid);
+            (await xasujs.trace(
+                xasujs.tracker().ALL.VERBS.ADLVOCABULARYPROFILE_IMPORTED,
+                xasujs.getGroupType(),
+                `/simlets/${simlet_id}/groups`,
+                userClientsListManager.getJWT(sessionid)
+            )).withResultExtensions(req.body).send();
             res.status(200).send(group);
         } catch(error) {
             next(error);
@@ -1119,6 +1489,12 @@ module.exports = function(auth, redirectToLogin, config){
         let sessionid = req.session.id;
         try {
             let group = await groupcontroler.getCompleteGroup(simlet_id, groupid, sessionid);
+            (await xasujs.trace(
+                xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                xasujs.getGroupType(),
+                `/simlets/${simlet_id}/groups/${groupid}`,
+                userClientsListManager.getJWT(sessionid)
+            )).withResultExtensions(getCleanQuery(req)).send();
             res.status(200).send(group);
         } catch(error) {
             next(error);
@@ -1133,6 +1509,12 @@ module.exports = function(auth, redirectToLogin, config){
         let sessionid = req.session.id;
         try {
             let group = await groupcontroler.exportGroup(simlet_id, groupid, complete, sessionid);
+            (await xasujs.trace(
+                xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_SHARED,
+                xasujs.getGroupType(),
+                `/simlets/${simlet_id}/groups/${groupid}`,
+                userClientsListManager.getJWT(sessionid)
+            )).withResultExtensions(getCleanQuery(req)).send();
             res.status(200).send(group);
         } catch(error) {
             next(error);
@@ -1141,10 +1523,16 @@ module.exports = function(auth, redirectToLogin, config){
     
     // Update the specified group from the specified SIMLET
     router.patch('/simlets/:simlet_id/groups/:groupid', auth, redirectToLogin, async (req, res, next) => {
-        Simva.updateGroup(req.params['simlet_id'], req.params['groupid'], req.body, req.session.id, (error, result) => {
+        Simva.updateGroup(req.params['simlet_id'], req.params['groupid'], req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_UPDATED,
+                    xasujs.getGroupType(),
+                    `/simlets/${req.params["simlet_id"]}/groups/${req.params["groupid"]}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
@@ -1152,10 +1540,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Delete the specified group from the specified SIMLET
     router.delete('/simlets/:simlet_id/groups/:groupid', auth, redirectToLogin, async (req, res, next) => {
-        Simva.deleteGroup(req.params['simlet_id'], req.params['groupid'], req.session.id, (error, result) => {
+        Simva.deleteGroup(req.params['simlet_id'], req.params['groupid'], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_DELETED,
+                    xasujs.getGroupType(),
+                    `/simlets/${req.params["simlet_id"]}/groups/${req.params["groupid"]}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).send();
                 res.status(200).send(result);
             }
         });
@@ -1163,10 +1557,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // TODO: Document / remove?
     router.delete('/studies/:studyid/groups/:groupid', auth, redirectToLogin, async (req, res, next) => {
-        Simva.deleteStudyGroup(req.params["studyid"], req.params["groupid"], req.session.id, (error, result) => {
+        Simva.deleteStudyGroup(req.params["studyid"], req.params["groupid"], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_DELETED,
+                    xasujs.getGroupType(),
+                    `/simlets/${req.params["studyid"]}/groups/${req.params["groupid"]}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).send();
                 res.status(200).send(result);
             }
         });
@@ -1177,10 +1577,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Get all the existing allocator types
     router.get('/allocatortypes', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getAllocatorTypes(req.session.id, (error, result) => {
+        Simva.getAllocatorTypes(req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                    xasujs.getSimletType(),
+                    `/allocatortypes`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(getCleanQuery(req)).send();
                 logger.info("Allocator types before i18n processing:", result);
                 res.status(200).send(result);
             }
@@ -1189,10 +1595,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Get the allocator for the specified SIMLET
     router.get('/studies/:studyid/allocator', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getAllocator(req.params["studyid"], req.session.id, (error, result) => {
+        Simva.getAllocator(req.params["studyid"], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                    xasujs.getSimletType(),
+                    `/simlets/${req.params["studyid"]}/allocator`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
@@ -1201,10 +1613,16 @@ module.exports = function(auth, redirectToLogin, config){
     // TODO: Remove?
     // Update the allocator for the specified SIMLET
     router.patch('/studies/:studyid/allocator', auth, redirectToLogin, async (req, res, next) => {
-        Simva.updateAllocator(req.params["studyid"], req.body, req.session.id, (error, result) => {
+        Simva.updateAllocator(req.params["studyid"], req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_UPDATED,
+                    xasujs.getSimletType(),
+                    `/simlets/${req.params["studyid"]}/allocator`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
@@ -1212,10 +1630,16 @@ module.exports = function(auth, redirectToLogin, config){
     
     // Allocate the specified participant of the specified group to the specified session of the specified SIMLET
     router.post('/studies/:studyid/groups/:groupid/allocate/:testid', auth, redirectToLogin, async (req, res, next) => {
-        Simva.allocateToSession(req.params["studyid"], req.params["groupid"], req.params["testid"], req.body, req.session.id, (error, result) => {
+        Simva.allocateToSession(req.params["studyid"], req.params["groupid"], req.params["testid"], req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_CREATED,
+                    xasujs.getSimletType(),
+                    `/simlets/${req.params["studyid"]}/groups/${req.params["groupid"]}/allocate/${req.params["testid"]}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).json(result ?? {});
             }
         });
@@ -1223,10 +1647,16 @@ module.exports = function(auth, redirectToLogin, config){
     
     // Allocate the specified participant of the specified group to a random session of the specified SIMLET
     router.post('/studies/:studyid/groups/:groupid/allocate/random', auth, redirectToLogin, async (req, res, next) => {
-        Simva.allocateRandomly(req.params["studyid"], req.params["groupid"], req.body, req.session.id, (error, result) => {
+        Simva.allocateRandomly(req.params["studyid"], req.params["groupid"], req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_CREATED,
+                    xasujs.getSimletType(),
+                    `/simlets/${req.params["studyid"]}/groups/${req.params["groupid"]}/allocate/random`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).json(result ?? {});
             }
         });
@@ -1237,10 +1667,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Get all the participants of the specified SIMLET
     router.get('/studies/:studyid/participants', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getSimletParticipants(req.params["studyid"], req.session.id, (error, result) => {
+        Simva.getSimletParticipants(req.params["studyid"], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                    xasujs.getSimletType(),
+                    `/simlets/${req.params["studyid"]}/participants`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
@@ -1248,7 +1684,7 @@ module.exports = function(auth, redirectToLogin, config){
     
     // Get the amount of participants in each group of the specified SIMLET
     router.get('/simlets/:simlet_id/groups/participants/count', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getSimletGroupsParticipantsCount(req.params['simlet_id'], getCleanQuery(req), req.session.id, (error, result) => {
+        Simva.getSimletGroupsParticipantsCount(req.params['simlet_id'], getCleanQuery(req), req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -1259,10 +1695,16 @@ module.exports = function(auth, redirectToLogin, config){
     
     // Get all the participants in the specified session of the specified SIMLET
     router.get('/studies/:studyid/tests/:testid/participants', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getSessionParticipants(req.params["studyid"], req.params["testid"], req.session.id, (error, result) => {
+        Simva.getSessionParticipants(req.params["studyid"], req.params["testid"], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                    xasujs.getSimletType(),
+                    `/simlets/${req.params["studyid"]}/sessions/${req.params["testid"]}/participants`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
@@ -1270,10 +1712,16 @@ module.exports = function(auth, redirectToLogin, config){
     
     // Get all the participants in the specified group of the specified SIMLET
     router.get('/simlets/:simlet_id/groups/:groupid/participants', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getGroupParticipants(req.params['simlet_id'], req.params['groupid'], req.session.id, (error, result) => {
+        Simva.getGroupParticipants(req.params['simlet_id'], req.params['groupid'], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                    xasujs.getSimletType(),
+                    `/simlets/${req.params['simlet_id']}/sessions/${req.params['groupid']}/participants`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
@@ -1281,7 +1729,7 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Get the amount of participants in the specified group of the specified SIMLET
     router.get('/simlets/:simlet_id/groups/:groupid/participants/count', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getGroupParticipantsCount(req.params['simlet_id'], req.params['groupid'], getCleanQuery(req), req.session.id, (error, result) => {
+        Simva.getGroupParticipantsCount(req.params['simlet_id'], req.params['groupid'], getCleanQuery(req), req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -1295,10 +1743,16 @@ module.exports = function(auth, redirectToLogin, config){
         let simletid = req.params['simletid'];
         let groupid = req.params['groupid'];
         let participantid = req.params['participantid'];
-        Simva.addGroupParticipant(simletid, groupid, participantid, req.session.id, (error, result) => {
+        Simva.addGroupParticipant(simletid, groupid, participantid, req.session.id, async (error, result) => {
             if(error) {
                     next(error.response?.data || error);
                 } else {
+                    (await xasujs.trace(
+                        xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_CREATED,
+                        xasujs.getGroupType(),
+                        `/simlets/${simletid}/groups/${groupid}/participants/${participantid}`,
+                        userClientsListManager.getJWT(req.session.id)
+                    )).withResultExtensions(req.body).send();
                     res.status(200).send(result);
                 }
             });
@@ -1310,10 +1764,16 @@ module.exports = function(auth, redirectToLogin, config){
         let groupid = req.params['groupid'];
         let participantid = req.params['participantid'];
         let removeKeycloak = req.query.keycloakDelete === 'true';
-        Simva.deleteGroupParticipant(simlet_id, groupid, participantid, removeKeycloak, req.session.id, (error, result) => {
+        Simva.deleteGroupParticipant(simlet_id, groupid, participantid, removeKeycloak, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_DELETED,
+                    xasujs.getGroupType(),
+                    `/simlets/${simlet_id}/groups/${groupid}/participants/${participantid}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).send();
                 res.status(200).send(result);
             }
         });
@@ -1327,25 +1787,37 @@ module.exports = function(auth, redirectToLogin, config){
         const query = getCleanQuery(req);
         // Get user by exact username
         if (query.username) {
-            Simva.getUser(query.username, req.session.id, (error, result) => {
+            Simva.getUser(query.username, req.session.id, async (error, result) => {
                 if(error) {
                     next(error.response?.data || error);
                 } else {
+                    (await xasujs.trace(
+                        xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                        xasujs.getUserType(),
+                        `/users/${query.username}`,
+                        userClientsListManager.getJWT(req.session.id)
+                    )).send();
                     res.status(200).send(result);
                 }
             });
         } else if (query.username_like) {
-            Simva.getUsers(query, req.session.id, (error, result) => {
+            Simva.getUsers(query, req.session.id, async (error, result) => {
                 if(error) {
                     next(error.response?.data || error);
                 } else {
+                    (await xasujs.trace(
+                        xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                        xasujs.getUserType(),
+                        `/users?username_like=${query.username_like}`,
+                        userClientsListManager.getJWT(req.session.id)
+                    )).send();
                     res.status(200).send(result);
                 }
             });
         } 
         // Get users by matching (either partially or completely) username
         else {
-            Simva.getUsers(query, req.session.id, (error, result) => {
+            Simva.getUsers(query, req.session.id, async (error, result) => {
                 if(error) {
                     next(error.response?.data || error);
                 } else {
@@ -1357,7 +1829,7 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Get the user data of the current user
     router.get('/users/me', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getCurrentUser(req.session.id, (error, result) => {
+        Simva.getCurrentUser(req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -1365,6 +1837,12 @@ module.exports = function(auth, redirectToLogin, config){
                 if(result.isToken) {
                     name={token : result.token, user_id : result.user_id};
                 }
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                    xasujs.getUserType(),
+                    `/users/me`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(getCleanQuery(req)).send();
                 res.status(200).send(name);
             }
         });
@@ -1400,15 +1878,27 @@ module.exports = function(auth, redirectToLogin, config){
                     // continue loop → it will retry failed ones
                 }
             }
+            (await xasujs.trace(
+                xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_CREATED,
+                xasujs.getUserType(),
+                `/users`,
+                userClientsListManager.getJWT(req.session.id)
+            )).withResultExtensions(req.body).send();
 
             res.status(200).send(users);
         } 
         // Register a user with custom username, email, password and role, and add it to the group 
         else {
-            Simva.register(simletid, groupid, req.body.username, req.body.email, req.body.password, req.body.role, req.session.id, (error, result) => {
+            Simva.register(simletid, groupid, req.body.username, req.body.email, req.body.password, req.body.role, req.session.id, async (error, result) => {
                 if(error) {
                     next(error.response?.data || error);
                 } else {
+                    (await xasujs.trace(
+                        xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_CREATED,
+                        xasujs.getUserType(),
+                        `/users/${result.username}`,
+                        userClientsListManager.getJWT(req.session.id)
+                    )).withResultExtensions(req.body).send();
                     res.status(200).send(result);
                 }
             });
@@ -1417,10 +1907,16 @@ module.exports = function(auth, redirectToLogin, config){
     
     // TODO: Document / remove?
     router.post('/users/link', auth, redirectToLogin, async (req, res, next) => {
-        Simva.linkUserAccount(req.body, req.session.id, (error, result) => {
+        Simva.linkUserAccount(req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_CREATED,
+                    xasujs.getUserType(),
+                    `/users/${result.username}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
@@ -1428,10 +1924,16 @@ module.exports = function(auth, redirectToLogin, config){
     
     // TODO: Document / remove?
     router.post('/users/events', auth, redirectToLogin, async (req, res, next) => {
-        Simva.processUserEvents(req.body, req.session.id, (error, result) => {
+        Simva.processUserEvents(req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_CREATED,
+                    xasujs.getUserType(),
+                    `/users/events`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
@@ -1439,10 +1941,16 @@ module.exports = function(auth, redirectToLogin, config){
     
     // TODO: Document / remove?
     router.patch('/users/:username', auth, redirectToLogin, async (req, res, next) => {
-        Simva.setRole(req.params.username, req.body, req.session.id, (error, result) => {
+        Simva.setRole(req.params.username, req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_UPDATED,
+                    xasujs.getUserType(),
+                    `/users/${req.params.username}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
@@ -1455,7 +1963,7 @@ module.exports = function(auth, redirectToLogin, config){
      * @param {function} next - Next middleware function
      */
     router.get('/limesurvey/isAdmin', auth, redirectToLogin, async (req, res, next) => {
-        Simva.islimesurveyadmin(req.session.id, (error, result) => {
+        Simva.islimesurveyadmin(req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -1469,7 +1977,7 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Get the permissions data for all the coordinators of the specified SIMLET
     router.get('/studies/:studyid/permissions', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getSimletDirectPermissions(req.params["studyid"], req.session.id, (error, result) => {
+        Simva.getSimletDirectPermissions(req.params["studyid"], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -1480,10 +1988,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Add permissions data for a user to the specified SIMLET
     router.post('/studies/:studyid/permissions', auth, redirectToLogin, async (req, res, next) => {
-        Simva.createSimletPermissions(req.params["studyid"], req.body, req.session.id, (error, result) => {
+        Simva.createSimletPermissions(req.params["studyid"], req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_CREATED,
+                    xasujs.getUserType(),
+                    `/simlets/${req.params["studyid"]}/permissions`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
@@ -1492,10 +2006,16 @@ module.exports = function(auth, redirectToLogin, config){
     // TODO: Remove?
     // Get the permissions data for the specified user of the specified SIMLET
     router.get('/studies/:studyid/permissions/:userid', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getSimletPermissionsForUser(req.params["studyid"], req.params['userid'], req.session.id, (error, result) => {
+        Simva.getSimletPermissionsForUser(req.params["studyid"], req.params['userid'], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                    xasujs.getUserType(),
+                    `/simlets/${req.params["studyid"]}/permissions/${req.params['userid']}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
@@ -1504,10 +2024,16 @@ module.exports = function(auth, redirectToLogin, config){
     // TODO: Remove?
     // Update the permissions data for the specified user of the specified SIMLET
     router.patch('/studies/:studyid/permissions/:userid', auth, redirectToLogin, async (req, res, next) => {
-        Simva.patchSimletPermissionsForUser(req.params["studyid"], req.params['userid'], req.body, req.session.id, (error, result) => {
+        Simva.patchSimletPermissionsForUser(req.params["studyid"], req.params['userid'], req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_UPDATED,
+                    xasujs.getUserType(),
+                    `/simlets/${req.params["studyid"]}/permissions/${req.params['userid']}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
@@ -1515,108 +2041,154 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Delete the permissions data for the specified user of the specified SIMLET
     router.delete('/studies/:studyid/permissions/:userid', auth, redirectToLogin, async (req, res, next) => {
-        Simva.deleteSimletPermissionsForUser(req.params["studyid"], req.params['userid'], req.session.id, (error, result) => {
+        Simva.deleteSimletPermissionsForUser(req.params["studyid"], req.params['userid'], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_DELETED,
+                    xasujs.getUserType(),
+                    `/simlets/${req.params["studyid"]}/permissions/${req.params['userid']}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).send();
                 res.status(200).send(result);
             }
         });
     });
 
     
-    // TODO: Remove?
     // Get the permissions data for all the coordinators of the specified session of the specified SIMLET
     router.get('/studies/:studyid/tests/:testid/permissions', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getSessionPermissions(req.params["studyid"], req.params["testid"], req.session.id, (error, result) => {
+        Simva.getSessionPermissions(req.params["studyid"], req.params["testid"], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                    xasujs.getUserType(),
+                    `/simlets/${req.params["studyid"]}/sessions/${req.params["testid"]}/permissions`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
     });
 
-    // TODO: Remove?
     // Add permissions data for a user to the specified session of the specified SIMLET
     router.post('/studies/:studyid/tests/:testid/permissions', auth, redirectToLogin, async (req, res, next) => {
-        Simva.createSessionPermissions(req.params["studyid"], req.params["testid"], req.body, req.session.id, (error, result) => {
+        Simva.createSessionPermissions(req.params["studyid"], req.params["testid"], req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_CREATED,
+                    xasujs.getUserType(),
+                    `/simlets/${req.params["studyid"]}/sessions/${req.params["testid"]}/permissions`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
     });
 
-    // TODO: Remove?
     // Get the permissions data for the specified user of the specified session of the specified SIMLET
     router.get('/studies/:studyid/tests/:testid/permissions/:userid', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getSessionPermissionsForUser(req.params["studyid"], req.params["testid"], req.params['userid'], req.session.id, (error, result) => {
+        Simva.getSessionPermissionsForUser(req.params["studyid"], req.params["testid"], req.params['userid'], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                    xasujs.getUserType(),
+                    `/simlets/${req.params["studyid"]}/sessions/${req.params["testid"]}/permissions/${req.params['userid']}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
     });
 
-    // TODO: Remove?
     // Update the permissions data for the specified user of the specified session of the specified SIMLET
     router.patch('/studies/:studyid/tests/:testid/permissions/:userid', auth, redirectToLogin, async (req, res, next) => {
-        Simva.patchSessionPermissionsForUser(req.params["studyid"], req.params["testid"], req.params['userid'], req.body, req.session.id, (error, result) => {
+        Simva.patchSessionPermissionsForUser(req.params["studyid"], req.params["testid"], req.params['userid'], req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_UPDATED,
+                    xasujs.getUserType(),
+                    `/simlets/${req.params["studyid"]}/sessions/${req.params["testid"]}/permissions/${req.params['userid']}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
     });
 
-    // TODO: Remove?
     // Delete the permissions data for the specified user of the specified session of the specified SIMLET
     router.delete('/studies/:studyid/tests/:testid/permissions/:userid', auth, redirectToLogin, async (req, res, next) => {
-        Simva.deleteSessionPermissionsForUser(req.params["studyid"], req.params["testid"], req.params['userid'], req.session.id, (error, result) => {
+        Simva.deleteSessionPermissionsForUser(req.params["studyid"], req.params["testid"], req.params['userid'], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_DELETED,
+                    xasujs.getUserType(),
+                    `/simlets/${req.params["studyid"]}/sessions/${req.params["testid"]}/permissions/${req.params['userid']}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).send();
                 res.status(200).send(result);
             }
         });
     });
     
 
-    // TODO: Remove?
     // Get the permissions data for all the coordinators of the specified group of the specified SIMLET
     router.get('/simlets/:simlet_id/groups/:groupid/permissions', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getGroupDirectPermissions(req.params['simlet_id'], req.params['groupid'], req.session.id, (error, result) => {
+        Simva.getGroupDirectPermissions(req.params['simlet_id'], req.params['groupid'], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                    xasujs.getGroupType(),
+                    `/simlets/${req.params['simlet_id']}/groups/${req.params['groupid']}/permissions`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
     });
 
-    // TODO: Remove?
     // Add permissions data for a user to the specified group of the specified SIMLET
     router.post('/simlets/:simlet_id/groups/:groupid/permissions', auth, redirectToLogin, async (req, res, next) => {
-        Simva.createGroupPermissions(req.params['simlet_id'], req.params['groupid'], req.body, req.session.id, (error, result) => {
+        Simva.createGroupPermissions(req.params['simlet_id'], req.params['groupid'], req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_CREATED,
+                    xasujs.getGroupType(),
+                    `/simlets/${req.params['simlet_id']}/groups/${req.params['groupid']}/permissions`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
     });
 
-    // TODO: Remove?
     // Get the permissions data for the specified user of the specified group of the specified SIMLET
     router.get('/simlets/:simlet_id/groups/:groupid/permissions/:userid', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getGroupPermissionsForUser(req.params['simlet_id'], req.params['groupid'], req.params['userid'], req.session.id, (error, result) => {
+        Simva.getGroupPermissionsForUser(req.params['simlet_id'], req.params['groupid'], req.params['userid'], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                    xasujs.getGroupType(),
+                    `/simlets/${req.params['simlet_id']}/groups/${req.params['groupid']}/permissions/${req.params['userid']}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
@@ -1625,10 +2197,16 @@ module.exports = function(auth, redirectToLogin, config){
     // TODO: Remove?
     // Update the permissions data for the specified user of the specified group of the specified SIMLET
     router.patch('/simlets/:simlet_id/groups/:groupid/permissions/:userid', auth, redirectToLogin, async (req, res, next) => {
-        Simva.patchGroupPermissionsForUser(req.params['simlet_id'], req.params['groupid'], req.params['userid'], req.body, req.session.id, (error, result) => {
+        Simva.patchGroupPermissionsForUser(req.params['simlet_id'], req.params['groupid'], req.params['userid'], req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_UPDATED,
+                    xasujs.getGroupType(),
+                    `/simlets/${req.params['simlet_id']}/groups/${req.params['groupid']}/permissions/${req.params['userid']}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
@@ -1637,10 +2215,16 @@ module.exports = function(auth, redirectToLogin, config){
     // TODO: Remove?
     // Delete the permissions data for the specified user of the specified group of the specified SIMLET
     router.delete('/simlets/:simlet_id/groups/:groupid/permissions/:userid', auth, redirectToLogin, async (req, res, next) => {
-        Simva.deleteGroupPermissionsForUser(req.params['simlet_id'], req.params['groupid'], req.params['userid'], req.session.id, (error, result) => {
+        Simva.deleteGroupPermissionsForUser(req.params['simlet_id'], req.params['groupid'], req.params['userid'], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_DELETED,
+                    xasujs.getGroupType(),
+                    `/simlets/${req.params['simlet_id']}/groups/${req.params['groupid']}/permissions/${req.params['userid']}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).send();
                 res.status(200).send(result);
             }
         });
@@ -1651,10 +2235,16 @@ module.exports = function(auth, redirectToLogin, config){
 
     // Add to task list
     router.get('/tasklist', auth, redirectToLogin, async (req, res, next) => {
-        Simva.addToTaskList(req.body, req.session.id, (error, result) => {
+        Simva.addToTaskList(req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                    xasujs.getSimletType(),
+                    `/tasklist`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
@@ -1667,10 +2257,16 @@ module.exports = function(auth, redirectToLogin, config){
      * @param {function} next - Next middleware function
      */
     router.get('/activities/:activityid/presignedurl', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getMinioDataUrl(req.params["activityid"], req.session.id, (error, result) => {
+        Simva.getMinioDataUrl(req.params["activityid"], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                    xasujs.getActivityType(),
+                    `${xasujs.getStandaloneActivityUrl(req.params["activityid"])}/presignedurl`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
@@ -1681,30 +2277,48 @@ module.exports = function(auth, redirectToLogin, config){
     // LTI
 
     router.get('/lti/tools', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getLtiTools(req.session.id, (error, result) => {
+        Simva.getLtiTools(req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                    xasujs.getSimletType(),
+                    `/lti/tools`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
     });
 
     router.post('/lti/tools', auth, redirectToLogin, async (req, res, next) => {
-        Simva.addLtiTool(req.body, req.session.id, (error, result) => {
+        Simva.addLtiTool(req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_CREATED,
+                    xasujs.getSimletType(),
+                    `/lti/tools`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
     });
 
     router.delete('/lti/tools/:toolid', auth, redirectToLogin, async (req, res, next) => {
-        Simva.deleteLtiTool(req.params["toolid"], req.session.id, (error, result) => {
+        Simva.deleteLtiTool(req.params["toolid"], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_DELETED,
+                    xasujs.getSimletType(),
+                    `/lti/tools/${req.params["toolid"]}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).send();
                 res.status(200).send(result);
             }
         });
@@ -1715,30 +2329,48 @@ module.exports = function(auth, redirectToLogin, config){
         if(req.query.searchString) {
             studyid = JSON.parse(req.query.searchString).studyId;
         }
-        Simva.getLtiPlatforms(studyid, req.session.id, (error, result) => {
+        Simva.getLtiPlatforms(studyid, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED,
+                    xasujs.getSimletType(),
+                    `/lti/platforms`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(getCleanQuery(req)).send();
                 res.status(200).send(result);
             }
         });
     });
 
     router.post('/lti/platforms', auth, redirectToLogin, async (req, res, next) => {
-        Simva.addLtiPlatform(req.body, req.session.id, (error, result) => {
+        Simva.addLtiPlatform(req.body, req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_CREATED,
+                    xasujs.getSimletType(),
+                    `/lti/platforms`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).withResultExtensions(req.body).send();
                 res.status(200).send(result);
             }
         });
     });
 
     router.delete('/lti/platforms/:platformid', auth, redirectToLogin, async (req, res, next) => {
-        Simva.removePlatform(req.params["platformid"], req.session.id, (error, result) => {
+        Simva.removePlatform(req.params["platformid"], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
+                (await xasujs.trace(
+                    xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_DELETED,
+                    xasujs.getSimletType(),
+                    `/lti/platforms/${req.params["platformid"]}`,
+                    userClientsListManager.getJWT(req.session.id)
+                )).send();
                 res.status(200).send(result);
             }
         });
