@@ -319,7 +319,8 @@
             
             Simva.generateShlink(currSimletId, custom_slug, null, (error, result) => {
                 if (!error) {
-                    const shortUrl = result.shortUrl;
+					shlink = result;
+                    const shortUrl = shlink.shortUrl;
                     // Copy the text inside the text field
                     navigator.clipboard.writeText(shortUrl);
                     // Alert Short URL
@@ -352,7 +353,8 @@
             
             Simva.generateShlink(currSimletId, null, length, (error, result) => {
                 if (!error) {
-                    const shortUrl = result.shortUrl;
+                    shlink = result;
+                    const shortUrl = shlink.shortUrl;
                     // Copy the text inside the text field
                     navigator.clipboard.writeText(shortUrl);
                     // Alert Short URL
@@ -386,8 +388,9 @@
 		Simva.getShLink(simletId, (error, result) => {
 			if (!error) {
 				shlink = result;
+				const shortUrl = shlink.shortUrl;
 				Utils.toggleFormInFloating('simlet_url_settings');
-				$('#shlink_url_short').val(`<%- t('scheduler.shlink.message', { ns : 'SIMLETs', shlink : '${result.shortUrl}' }) %>`);
+				$('#shlink_url_short').val(`<%- t('scheduler.shlink.message', { ns : 'SIMLETs', shlink : '${shortUrl}' }) %>`);
 			}
 			else {
 				openGenerateLinkForm();
