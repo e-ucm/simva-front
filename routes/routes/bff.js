@@ -2,6 +2,7 @@ const activitiescontroler = require('../lib/activitiescontroler');
 const SimvaAsync = require('../lib/simvaAsync');
 const usertools = require('../lib/usertools');
 const xasujs = require('../lib/tracker');
+const userClientsListManager = require('../lib/userClientsListManager');
 
 /**
  * Filter out empty strings, null, and undefined values
@@ -248,8 +249,8 @@ module.exports = function(auth, redirectToLogin, config){
             xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_ACCESSED, 
             xasujs.getSimletType(), 
             "/simlets", 
-            req.session.id
-        ))//.send();
+            userClientsListManager.getJWT(req.session.id)
+        )).send();
         //await xasujs.flush();
         Simva.getSimlets(getCleanQuery(req), req.session.id, (error, result, cleanQuery) => {
             if(error) {
@@ -280,8 +281,8 @@ module.exports = function(auth, redirectToLogin, config){
                 (await xasujs.trace(xasujs.tracker().ALL.VERBS.ACTIVITYSTREAMSVOCABULARYPROFILE_CREATED, 
                                     xasujs.getSimletType(), 
                                     xasujs.getSimletUrl(result.simlet_id), 
-                                    req.session.id)
-                )//.send();
+                                    userClientsListManager.getJWT(req.session.id)
+                )).send();
                 res.status(200).send(result);
             }
         });

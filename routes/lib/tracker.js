@@ -2,8 +2,7 @@ const { LRSTracker } = require("js-tracker");
 const config = require("../../config.js");
 const ms = require("ms");
 const logger = require("../../logger.js");
-const jwt = require('jsonwebtoken');
-const userClientsListManager = require('./userClientsListManager');
+const usertools = require('../lib/usertools.js');
 
 class XasuJSClient {
     xapiTracker;
@@ -57,13 +56,12 @@ class XasuJSClient {
         await this.xapiTracker.flush();
     }
 
-    async trace(verb, objectType, objectId, reqSessionId) {
+    async trace(verb, objectType, objectId, jwtToken) {
         await this.ensureLoggedAndStarted().catch(err => {
             logger.error(err, 'Tracker login failed');
             return null;
         });
-        const simvaToken = userClientsListManager.getJWT(reqSessionId) || (req.session.user && req.session.user.jwt);
-        const username = simvaToken ? jwt.decode(simvaToken).preferred_username : null;
+        const username = jwtToken ? usertools.decodeJWT(jwtToken).preferred_username : null;
         return this.xapiTracker.trace(verb, objectType, objectId).withActorAccount(username || reqSessionId, config.simva.url);
     }
 
