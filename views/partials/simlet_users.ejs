@@ -977,7 +977,7 @@
 			// A participant will only be removed from keycloak if it's been generated as a token
 			Simva.deleteGroupParticipant(simletId, groupId, participantId, getParticipantFromId(participantId).isToken, function(response) {
 				if (response.status === 200) {
-					onDeleteParticipant(groupId, participantId);
+					onDeleteParticipant(groupId, participantId, participantName);
 				}
 			});
 		}
@@ -1574,7 +1574,9 @@
 		}
 	}
 
-	const onDeleteParticipant = function(groupId, participantId) {
+	const onDeleteParticipant = function(groupId, participantId, participantName) {
+		participantsById.delete(participantId);
+		participantsByUsername.delete(participantName);
 		onGroupUsersChange(groupId, [participantId]);
 	}
 	
