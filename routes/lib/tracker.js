@@ -1,4 +1,4 @@
-const { LRSTracker } = require("js-tracker");
+const { LRSTracker } = require("xasu-js");
 const config = require("../../config.js");
 const ms = require("ms");
 const logger = require("../../logger.js");
