@@ -37,7 +37,7 @@ class UserClientsListManager {
         if(result && result.session) {
             return result.session;
         } else {
-            result = { id : sessionId };
+            return { id : sessionId };
         }
     }
 

@@ -9,7 +9,9 @@
     "dev:clinic:doctor": "clinic doctor $CLINIC_ARGS -- pm2-runtime ecosystem.config.js",
     "dev:clinic:bubbleprof": "clinic bubbleprof $CLINIC_ARGS -- pm2-runtime ecosystem.config.js",
     "dev:clinic:flame": "clinic flame $CLINIC_ARGS -- pm2-runtime ecosystem.config.js",
-    "dev:clinic:heapprofiler": "clinic heapprofiler $CLINIC_ARGS -- pm2-runtime ecosystem.config.js"
+    "dev:clinic:heapprofiler": "clinic heapprofiler $CLINIC_ARGS -- pm2-runtime ecosystem.config.js",
+    "test": "node --test tests",
+    "test:watch": "node --test --watch tests"
   },
   "dependencies": {
     "axios": "^1.7.4",
