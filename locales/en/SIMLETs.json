@@ -72,7 +72,7 @@
     "single.title": "SIMLET",
         "single.description": "General information and settings for the selected SIMLET",
         "sessions.tab.description": "Manage sessions and activities in this SIMLET: create, edit, monitor progres and download data",
-        "users.tab.description": "Manage users, groups, coordinators and related assignments in this SIMLET",
+        "users.tab.description": "Manage users, groups, and related assignments in this SIMLET",
         "sessions.download.description": "Download all available data for this session",
         "sessions.tab.title": "Sessions",
         "users.tab.title": "Users",

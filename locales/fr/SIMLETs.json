@@ -72,7 +72,7 @@
     "single.title": "SIMLET",
         "single.description": "Informations generales et configuration du SIMLET selectionne.",
         "sessions.tab.description": "Gerer les sessions de ce SIMLET: creer, modifier, suivre la progression et telecharger les donnees de session.",
-        "users.tab.description": "Gerer les utilisateurs, groupes, coordinateurs et leurs affectations dans ce SIMLET.",
+        "users.tab.description": "Gerer les utilisateurs, groupes et leurs affectations dans ce SIMLET.",
         "sessions.download.description": "Telecharger toutes les donnees disponibles pour cette session, y compris les donnees des activites.",
         "sessions.tab.title": "Sessions",
         "users.tab.title": "Users",

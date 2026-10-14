@@ -1,24 +1,24 @@
 
 <!-- Section where all users will be painted -->
 <div class="users">
-	<!-- Coordinators table -->
-    <div class="card coordinators">
+	<!-- Supervisors table -->
+    <div class="card supervisors">
         <div class="groupTop">
 			<div class="tooltipLine">
-	            <h2><%- t('coordinators.title', { ns : 'groups' }) %></h2>
+	            <h2><%- t('supervisors.title', { ns : 'groups' }) %></h2>
 				<div class="tooltip">
 					&#x1F6C8;
 					<span class="tooltiptext">
-						<%= t('coordinator.description', { ns : 'about' }) %>
+						<%= t('supervisor.description', { ns : 'about' }) %>
 					</span>
 				</div>
 			</div>
-            <div class="expandButton" onclick="toggleCoordinators()"></div>
+            <div class="expandButton" onclick="toggleSupervisors()"></div>
         </div>
-        <table class="owners" id="coordinators">
+        <table class="owners" id="supervisors">
             <thead>
-                <th><%- t('coordinators.table.username.title', { ns : 'groups' }) %></th>
-                <th><%- t('coordinators.table.permissions.title', { ns : 'groups' }) %></th>
+                <th><%- t('supervisors.table.username.title', { ns : 'groups' }) %></th>
+                <th><%- t('supervisors.table.permissions.title', { ns : 'groups' }) %></th>
                 <th></th>
             </thead>
             <tbody>
@@ -27,15 +27,21 @@
         </table>
     </div>
 
-	<!-- Template for each row of the coordinators table -->
-	<div id="coordinator_template" style="display: none;">
+	<!-- Template for each row of the supervisors table -->
+	<div id="supervisor_template" style="display: none;">
 		<!-- tr needs to be contained inside a table, otherwise the 
 		browser will delete it and won't be able to be cloned -->
 		<table>
 			<tr>
 				<td class="username">-</td>
-				<td class="permissions">-</td>
-				<td><input class="red" type="button" value="<%- t('coordinators.delete.title', { ns : 'groups' }) %>"></td>
+				<td>
+					<select class="permissions">
+						<option value="FULL" disabled hidden><%- t('supervisors.permissions.full', { ns : 'groups' }) %></option>
+						<option value="READ"><%- t('supervisors.permissions.read', { ns : 'groups' }) %></option>
+						<option value="WRITE"><%- t('supervisors.permissions.write', { ns : 'groups' }) %></option>
+					</select>
+				</td>
+				<td><input class="red" type="button" value="<%- t('supervisors.delete.title', { ns : 'groups' }) %>"></td>
 			</tr>
 		</table>
 	</div>
@@ -148,7 +154,7 @@
 
 </div>
 
-<!-- Add/edit groups/Add coordinator menu -->
+<!-- Add/edit groups + Add supervisor/coordinator menu -->
 <div id ="users_form_menu" class="new_element floating">
 	<div class="floater">
 		<div class="form" id="group_form">
@@ -156,7 +162,7 @@
 			<div class="tabs" id="add_group_tabs">
 				<span id="group_name_desc_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'group_form','group_name_desc_tab')"><%- t('groups.add.new.tab', { ns : 'groups' }) %></span>
 				<span class="tab" onclick="Utils.changeTab(this, 'group_form','import_group_tab')"><%- t('groups.import.tab', { ns : 'groups' }) %></span>
-				<span class="tab" onclick="Utils.changeTab(this, 'group_form','coordinators_tab')"><%- t('coordinators.add.title', { ns : 'groups' }) %></span>
+				<span class="tab" onclick="Utils.changeTab(this, 'group_form','supervisors_tab')"><%- t('supervisors.add.title', { ns : 'groups' }) %></span>
 			</div>
 
 			<!-- Create/edit group -->
@@ -189,26 +195,26 @@
 				</form>
 			</div>
 
-			<!-- Add coordinator -->
-			<div id="coordinators_tab" class="subform">
-				<form id="existing_coordinator_form">
-					<h3><%- t('coordinators.name.title', { ns : 'groups' }) %></h3>
-					<input type="text" class="name_field" id="coordinator_name" name="name" placeholder="<%- t('coordinators.name.placeholder', { ns : 'groups' }) %>" required>
+			<!-- Add supervisor -->
+			<div id="supervisors_tab" class="subform">
+				<form id="existing_supervisor_form">
+					<h3><%- t('supervisors.name.title', { ns : 'groups' }) %></h3>
+					<input type="text" class="name_field" id="supervisor_name" name="name" placeholder="<%- t('supervisors.name.placeholder', { ns : 'groups' }) %>" required>
 					<div class="tooltipLine">
-						<h3><%- t('coordinators.permission.title', { ns : 'groups' }) %></h3>
+						<h3><%- t('supervisors.permission.title', { ns : 'groups' }) %></h3>
 						<div class="tooltip">
 							&#x1F6C8;
 							<span class="tooltiptext">
-								<%= t('coordinator.description', { ns : 'about' }) %>
+								<%= t('supervisor.description', { ns : 'about' }) %>
 							</span>
 						</div>
 					</div>
 					<select name="permission" required>
-						<option value=""><%- t('coordinators.permission.placeholder', { ns : 'groups' }) %></option>
-						<option value="READ"><%- t('coordinators.permissions.read', { ns : 'groups' }) %></option>
-						<option value="WRITE"><%- t('coordinators.permissions.write', { ns : 'groups' }) %></option>
+						<option value=""><%- t('supervisors.permission.placeholder', { ns : 'groups' }) %></option>
+						<option value="READ"><%- t('supervisors.permissions.read', { ns : 'groups' }) %></option>
+						<option value="WRITE"><%- t('supervisors.permissions.write', { ns : 'groups' }) %></option>
 					</select>
-					<input type="submit" value="<%- t('coordinators.add.title', { ns : 'groups' }) %>">
+					<input type="submit" value="<%- t('supervisors.add.title', { ns : 'groups' }) %>">
 				</form>
 			</div>
 			
@@ -408,7 +414,8 @@
 	const ADD_METHOD_NEW = "new";
 	const ADD_METHOD_BATCH = "batch";
 	
-	
+	const NO_SESSION_ID = -1;
+
 	// Menus
 	
 	$(document).ready(function() {
@@ -423,20 +430,20 @@
 		});
 
 
-		// When submitting the add coordinator form
-		$(document).on('submit', "#existing_coordinator_form", function(event) {
+		// When submitting the add supervisor form
+		$(document).on('submit', "#existing_supervisor_form", function(event) {
 			let form = Utils.getFormData($(this));
 			let errorbox = $('#users_error');
-			const coordinators = simlet.direct_permissions || simlet.owners || [];
+			const supervisors = simlet.direct_permissions || simlet.owners || [];
 
-			coordinators.forEach((coordinator) => {
-				if (coordinator.username == form.name) {
-					errorbox.text("<%- t('coordinators.error.already_in', { ns : 'groups' }) %>");
+			supervisors.forEach((supervisor) => {
+				if (supervisor.username == form.name) {
+					errorbox.text("<%- t('supervisors.error.already_in', { ns : 'groups' }) %>");
 					return false;
 				}
 			});
 			if (form.permission !== "READ" && form.permission !== "WRITE") {
-				errorbox.text("<%- t('coordinators.error.permission', { ns : 'groups' }) %>");
+				errorbox.text("<%- t('supervisors.error.permission', { ns : 'groups' }) %>");
 				return false;
 			}
 
@@ -449,7 +456,7 @@
 				const foundUser = Array.isArray(users) ? users[0] : users;
 				if (!foundUser || !foundUser.user_id) {
 					// TODO: other error showing in this case instead of this one
-					errorbox.text("<%- t('coordinators.error.not_found', { ns : 'groups' }) %>");
+					errorbox.text("<%- t('supervisors.error.not_found', { ns : 'groups' }) %>");
 					return;
 				}
 
@@ -460,7 +467,7 @@
 						errorbox.text(createError.message || createError);
 					} else {
 						Utils.toggleFormInFloating('users_form_menu');
-						onCoordinatorsChanged();
+						onSupervisorsChanged();
 					}
 				});
 			});
@@ -766,10 +773,10 @@
 
 	});
 
-	// Expand/hide the coordinators table
-    const toggleCoordinators = function() {
-		$(".card.coordinators .expandButton").toggleClass('collapsed');
-		$(".card.coordinators .owners").toggle();
+	// Expand/hide the supervisors table
+    const toggleSupervisors = function() {
+		$(".card.supervisors .expandButton").toggleClass('collapsed');
+		$(".card.supervisors .owners").toggle();
 	}
 
 	// Expand/hide group info
@@ -785,7 +792,7 @@
 		Utils.toggleFormInFloating("users_form_menu");
 
 		// Reset tab state when opening modal
-		$("#coordinator_name").val("");
+		$("#supervisor_name").val("");
 		$('#users_error').text("");
 		$('#edit_group_id').val("");
 		$('#group_name').val("");
@@ -854,8 +861,8 @@
 	// Sync add group and import group name input 
 	$(document).on("input", $(`#group_form .${NAME_FIELD_CLASS}`), function(e) {
 		$(`#group_form .${NAME_FIELD_CLASS}`).each(function() {
-			// Ignore the add coordinator input box
-			if (this != e.target && $(e.target).is("input:text") && $(e.target).is(`.${NAME_FIELD_CLASS}`) && $(this).closest("#coordinators_tab").length == 0) {
+			// Ignore the add supervisor input box
+			if (this != e.target && $(e.target).is("input:text") && $(e.target).is(`.${NAME_FIELD_CLASS}`) && $(this).closest("#supervisors_tab").length == 0) {
 				$(this).val($(e.target).val());
 			} 
 		});
@@ -932,10 +939,16 @@
 		deleteGroup(data[GROUP_DATA_ID_KEY], data[GROUP_DATA_NAME_KEY]);
 	});
 
-	// Delete coordinator
+	$(document).on('change', ".owners .permissions", function(e) {
+		const data = $(this).closest("tr").data();
+		changeSupervisorPermissions(data[USER_DATA_ID_KEY], data[USER_DATA_NAME_KEY], $(this));
+	});
+	
+	
+	// Delete supervisor
 	$(document).on('click', ".owners .red", function(e) {
 		const data = $(this).closest("tr").data();
-		deleteCoordinator(data[USER_DATA_ID_KEY], data[USER_DATA_NAME_KEY]);
+		deleteSupervisor(data[USER_DATA_ID_KEY], data[USER_DATA_NAME_KEY]);
 	});
 	
 	// Delete participant
@@ -953,11 +966,30 @@
 
 	// Functionality
     
-	const deleteCoordinator = function(userId, coordinatorName) {
-		if (confirm(`<%- t('coordinators.delete.confirm', { ns : 'groups', coordinator : '${coordinatorName}', SIMLET : '${simlet.simlet_name}' }) %>`)) {
+	const changeSupervisorPermissions = function(userId, username, dropdown) {
+		Simva.patchSimletPermissionsForUser(simletId, userId, { user_id: userId, username: username, permission: dropdown.val(), isCurrentUser: false }, function(error, result) {
+			if (!error) {
+				$.toast({
+					heading: "<%= t('supervisors.change_permissions.message', { ns : 'groups' }) %>",
+					position: 'top-right',
+					icon: 'success',
+					stack: false
+				});
+			}
+			else {
+
+			}
+		});
+	}
+
+	const deleteSupervisor = function(userId, supervisorName) {
+		if (confirm(`<%- t('supervisors.delete.confirm', { ns : 'groups', supervisor : '${supervisorName}', SIMLET : '${simlet.simlet_name}' }) %>`)) {
 			Simva.deleteSimletPermissionsForUser(simletId, userId, function(response) {
 				if (response.status === 200) {
-					onCoordinatorsChanged();
+					onSupervisorsChanged();
+				}
+				else {
+					
 				}
 			});
 		}
@@ -1021,13 +1053,13 @@
 
 	const allocateToSession = function(groupId, sessionId, participantId = null) {
 		// Determine the current session the group/participant is allocated to
-		let prevSessionId = getCurrentAllocation(groupId, participantId);
+		const prevSessionId = getCurrentAllocation(groupId, participantId);
 
 		let participantInfo = participantId == null ? { } : { participant_id: participantId };
 		Simva.allocateToSession(simletId, groupId, sessionId, participantInfo, function(error, result) {
 			if (!error) {
 				// Update both the previous and the current session users
-				if (prevSessionId != null) {
+				if (prevSessionId > NO_SESSION_ID) {
 					onSessionUsersChange(prevSessionId);
 				}
 				onSessionUsersChange(sessionId);
@@ -1040,6 +1072,8 @@
 				});
 			}
 			else {
+				const dropdown = participantId == null ? $(`#allocation_group_${groupId}`) : $(`#allocation_${groupId}_${participantId}`);
+				dropdown.val(prevSessionId);
 				$.toast({
 					heading: "<%= t('allocator.add.error', { ns : 'groups' }) %>",
 					text: error.message,
@@ -1075,7 +1109,7 @@
 			selected: true,
 			disabled: true,
 			hidden: true,
-            value: -1,
+            value: NO_SESSION_ID,
             text: "<%= t('groups.allocate_to.noSession', { ns : 'groups' }) %>",
         }));
         
@@ -1098,45 +1132,42 @@
 	
 	
 	/**
-	 * Fill the coordinators table
+	 * Fill the supervisor table
 	 */
-	const paintCoordinators = function() {
-		Simva.getSimletDirectPermissions(simletId, function(error, result) {
+	const paintSupervisors = function() {
+		Simva.getSimletPermissions(simletId, function(error, result) {
 			if (!error) {
-				clearTableBody($("#coordinators"));
+				clearTableBody($("#supervisors"));
 
-				result.forEach((coordinator) => {
-					// Add the coordinator row synchronously to ensure they appear in order
-					const row = $("#coordinator_template tr").clone()
-					$('#coordinators').append(row);
+				result.forEach((supervisor) => {
+					// Add the supervisor row synchronously to ensure they appear in order
+					const row = $("#supervisor_template tr").clone()
+					$('#supervisors').append(row);
 
-					row.data(USER_DATA_ID_KEY, coordinator.user_id);
-					row.data(USER_DATA_NAME_KEY, coordinator.username);
+					row.data(USER_DATA_ID_KEY, supervisor.user_id);
+					row.data(USER_DATA_NAME_KEY, supervisor.username);
 
 					// Then, fill its details asynchronously since the order of execution doesn't matter once the row has been added
-					fillCoordinatorRow(coordinator, row);
+					fillSupervisorRow(supervisor, row);
 				});
-
-				// Block coordinator addition/deletion when SIMLET is archived
-				paintCoordinatorsArchived();
 			}
 		});
 	}
 
 	/**
-	 * Fill the coordinator row info programatically to avoid XSS
-	 * @param {object} coordinator - object containing the coordinator info
+	 * Fill the supervisor row info programatically to avoid XSS
+	 * @param {object} supervisor - object containing the supervisor info
 	 * @param {object} row - jquery object reference of the row element
 	 */
-	const fillCoordinatorRow = async function(coordinator, row) {
-		row.find(".username").text(coordinator.username);
+	const fillSupervisorRow = async function(supervisor, row) {
+		row.find(".username").text(supervisor.username);
 		
 		const dropdown = row.find(".permissions"); 
-		dropdown.val(coordinator.permission);
+		dropdown.val(supervisor.permission);
 		
-		// Block the delete button if the added coordinator is the same as the current user, 
+		// Block the delete button if the added supervisor is the same as the current user, 
 		// if it has full permissions, or if the current user only has read permissions
-		const blockChanges = coordinator.isCurrentUser || coordinator.permission === "FULL" || simlet.current_user_permission === "READ";
+		const blockChanges = supervisor.isCurrentUser || supervisor.permission === "FULL" || simlet.current_user_permission === "READ";
 		dropdown.prop("disabled", blockChanges);
 		row.find(".red").prop("disabled", blockChanges);
 	}
@@ -1402,8 +1433,8 @@
 
 	// Functions to call to avoid reloading the whole view when updating info of any session 
 
-	const onCoordinatorsChanged = function() {
-		paintCoordinators();
+	const onSupervisorsChanged = function() {
+		paintSupervisors();
 	}
 	
 	const onCreateOrEditGroup = function(newGroupInfo) {

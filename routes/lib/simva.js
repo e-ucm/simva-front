@@ -1224,19 +1224,19 @@ class Simva {
 	// PERMISSIONS
 	
 	/**
-	 * Send a GET request to the Axios wrapper to fetch the permissions data for all the coordinators of the specified SIMLET
-	 * @param {number} simletId - id of the SIMLET to fetch the data from
+	 * Send a GET request to the Axios wrapper to fetch the permissions info of all the supervisors of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET to fetch the permissions info from
 	 * @param {CurrSessionId} currSessionId
 	 * @param {Callback} callback 
 	 */
-	getSimletDirectPermissions(simletId, currSessionId, callback){
+	getSimletPermissions(simletId, currSessionId, callback){
 		this.get(`${this.apiurl}/simlets/${simletId}/permissions`, currSessionId, callback);
 	}
 
 	/**
-	 * Send a POST request to the Axios wrapper to add permissions data for a user to the specified SIMLET
-	 * @param {number} simletId - id of the SIMLET to add the data to
-	 * @param {object} permissions - object containing the user_id, and permission type (READ/WRITE)
+	 * Send a POST request to the Axios wrapper to add supervisor permissions for the specified user in the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET to add the user permissions to
+	 * @param {object} permissions - object containing user_id and permission (READ/WRITE)
 	 * @param {CurrSessionId} currSessionId
 	 * @param {Callback} callback 
 	 */
@@ -1244,77 +1244,160 @@ class Simva {
 		this.post(`${this.apiurl}/simlets/${simletId}/permissions`, null, permissions, currSessionId, callback);
 	}
 
-	// TODO: Document / remove?
-	getSimletPermissionsForUser(simletId, user_id, currSessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simletId}/permissions/${user_id}`, currSessionId, callback);
-	}
-
-	// TODO: Document / remove?
-	patchSimletPermissionsForUser(simletId, user_id, permissions, currSessionId, callback){
-		this.patch(`${this.apiurl}/simlets/${simletId}/permissions/${user_id}`, null, permissions, currSessionId, callback);
-	}
-
 	/**
-	 * Send a DELETE request to the Axios wrapper to delete the permissions of the specified user in the specified SIMLET
-	 * @param {number} simletId - id of the SIMLET that has the user
-	 * @param {number} userId - id of the user to remove the permissions from
+	 * Send a GET request to the Axios wrapper to fetch the supervisor permissions info for the specified user in the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET that has the user as supervisor
+	 * @param {number} userId - id of the user to fetch the permissions info for
 	 * @param {CurrSessionId} currSessionId
 	 * @param {Callback} callback 
 	 */
-	deleteSimletPermissionsForUser(simletId, user_id, currSessionId, callback){
-		this.delete(`${this.apiurl}/simlets/${simletId}/permissions/${user_id}`, currSessionId, callback);
+	getSimletPermissionsForUser(simletId, userId, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/permissions/${userId}`, currSessionId, callback);
+	}
+
+	/**
+	 * Send a PATCH request to the Axios wrapper to change the supervisor permissions info for the specified user in the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET that has the user as supervisor
+	 * @param {number} userId - id of the user to change the permissions info for
+	 * @param {object} permissions - object containing user_id and permission (READ/WRITE)
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	patchSimletPermissionsForUser(simletId, userId, permissions, currSessionId, callback){
+		this.patch(`${this.apiurl}/simlets/${simletId}/permissions/${userId}`, null, permissions, currSessionId, callback);
+	}
+
+	/**
+	 * Send a DELETE request to the Axios wrapper to delete the supervisor permissions info for the specified user in the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET that has the user as supervisor
+	 * @param {number} userId - id of the user to delete the permissions info for
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	deleteSimletPermissionsForUser(simletId, userId, currSessionId, callback){
+		this.delete(`${this.apiurl}/simlets/${simletId}/permissions/${userId}`, currSessionId, callback);
 	}
 
 
-	// TODO: Document / remove?
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the permissions info of all the coordinators of the specified session of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to fetch the permissions info from
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
 	getSessionPermissions(simletId, sessionId, currSessionId, callback){
 		this.get(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/permissions`, currSessionId, callback);
 	}
 
-	// TODO: Document / remove?
+	/**
+	 * Send a POST request to the Axios wrapper to add coordinator permissions for the specified user in the specified session of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to add the user permissions to
+	 * @param {object} permissions - object containing user_id and permission (READ/WRITE)
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
 	createSessionPermissions(simletId, sessionId, permissions, currSessionId, callback){
 		this.post(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/permissions`, null, permissions, currSessionId, callback);
 	}
 
-	// TODO: Document / remove?
-	getSessionPermissionsForUser(simletId, sessionId, user_id, currSessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/permissions/${user_id}`, currSessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the coordinator permissions info for the specified user in the specified session of the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session that has the user as coordinator
+	 * @param {number} userId - id of the user to fetch the permissions info for
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getSessionPermissionsForUser(simletId, sessionId, userId, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/permissions/${userId}`, currSessionId, callback);
 	}
 
-	// TODO: Document / remove?
-	patchSessionPermissionsForUser(simletId, sessionId, user_id, permissions, currSessionId, callback){
-		this.patch(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/permissions/${user_id}`, null, permissions, currSessionId, callback);
+	/**
+	 * Send a PATCH request to the Axios wrapper to change the coordinator permissions info for the specified user in the specified session of the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session that has the user as coordinator
+	 * @param {number} userId - id of the user to change the permissions info for
+	 * @param {object} permissions - object containing user_id and permission (READ/WRITE)
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	patchSessionPermissionsForUser(simletId, sessionId, userId, permissions, currSessionId, callback){
+		this.patch(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/permissions/${userId}`, null, permissions, currSessionId, callback);
 	}
 
-	// TODO: Document / remove?
-	deleteSessionPermissionsForUser(simletId, sessionId, user_id, currSessionId, callback){
-		this.delete(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/permissions/${user_id}`, currSessionId, callback);
+	/**
+	 * Send a DELETE request to the Axios wrapper to delete the coordinator permissions info for the specified user in the specified session of the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session that has the user as coordinator
+	 * @param {number} userId - id of the user to delete the permissions info for
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	deleteSessionPermissionsForUser(simletId, sessionId, userId, currSessionId, callback){
+		this.delete(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/permissions/${userId}`, currSessionId, callback);
 	}
 
 
-	// TODO: Document / remove?
-	getGroupDirectPermissions(simletId, groupId, currSessionId, callback){
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the permissions info of all the coordinators of the specified group of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group to fetch the permissions info from
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getGroupPermissions(simletId, groupId, currSessionId, callback){
 		this.get(`${this.apiurl}/simlets/${simletId}/groups/${groupId}/permissions`, currSessionId, callback);
 	}
 
-	// TODO: Document / remove?
+	/**
+	 * Send a POST request to the Axios wrapper to add coordinator permissions for the specified user in the specified group of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group to add the user permissions to
+	 * @param {object} permissions - object containing user_id and permission (READ/WRITE)
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
 	createGroupPermissions(simletId, groupId, permissions, currSessionId, callback){
 		this.post(`${this.apiurl}/simlets/${simletId}/groups/${groupId}/permissions`, null, permissions, currSessionId, callback);
 	}
 
-	// TODO: Document / remove?
-	getGroupPermissionsForUser(simletId, groupId, user_id, currSessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simletId}/groups/${groupId}/permissions/${user_id}`, currSessionId, callback);
+	/**
+	 * Send a GET request to the Axios wrapper to fetch the coordinator permissions info for the specified user in the specified group of the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group that has the user as coordinator
+	 * @param {number} userId - id of the user to fetch the permissions info for
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	getGroupPermissionsForUser(simletId, groupId, userId, currSessionId, callback){
+		this.get(`${this.apiurl}/simlets/${simletId}/groups/${groupId}/permissions/${userId}`, currSessionId, callback);
 	}
 
-	// TODO: Document / remove?
-	patchGroupPermissionsForUser(simletId, groupId, user_id, permissions, currSessionId, callback){
-		this.patch(`${this.apiurl}/simlets/${simletId}/groups/${groupId}/permissions/${user_id}`, null, permissions, currSessionId, callback);
+	/**
+	 * Send a PATCH request to the Axios wrapper to change the coordinator permissions info for the specified user in the specified group of the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group that has the user as coordinator
+	 * @param {number} userId - id of the user to change the permissions info for
+	 * @param {object} permissions - object containing user_id and permission (READ/WRITE)
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	patchGroupPermissionsForUser(simletId, groupId, userId, permissions, currSessionId, callback){
+		this.patch(`${this.apiurl}/simlets/${simletId}/groups/${groupId}/permissions/${userId}`, null, permissions, currSessionId, callback);
 	}
 
-	// TODO: Document / remove?
-	deleteGroupPermissionsForUser(simletId, groupId, user_id, currSessionId, callback){
-		this.delete(`${this.apiurl}/simlets/${simletId}/groups/${groupId}/permissions/${user_id}`, currSessionId, callback);
+	/**
+	 * Send a DELETE request to the Axios wrapper to delete the coordinator permissions info for the specified user in the specified group of the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group that has the user as coordinator
+	 * @param {number} userId - id of the user to delete the permissions info for
+	 * @param {CurrSessionId} currSessionId
+	 * @param {Callback} callback 
+	 */
+	deleteGroupPermissionsForUser(simletId, groupId, userId, currSessionId, callback){
+		this.delete(`${this.apiurl}/simlets/${simletId}/groups/${groupId}/permissions/${userId}`, currSessionId, callback);
 	}
 
 

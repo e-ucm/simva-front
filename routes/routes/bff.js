@@ -1975,9 +1975,9 @@ module.exports = function(auth, redirectToLogin, config){
     
     // PERMISSIONS
 
-    // Get the permissions data for all the coordinators of the specified SIMLET
+    // Get the permissions info of all the supervisors of the specified SIMLET
     router.get('/studies/:studyid/permissions', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getSimletDirectPermissions(req.params["studyid"], req.session.id, async (error, result) => {
+        Simva.getSimletPermissions(req.params["studyid"], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -1986,7 +1986,7 @@ module.exports = function(auth, redirectToLogin, config){
         });
     });
 
-    // Add permissions data for a user to the specified SIMLET
+    // Add supervisor permissions for the specified user in the specified SIMLET
     router.post('/studies/:studyid/permissions', auth, redirectToLogin, async (req, res, next) => {
         Simva.createSimletPermissions(req.params["studyid"], req.body, req.session.id, async (error, result) => {
             if(error) {
@@ -2003,8 +2003,7 @@ module.exports = function(auth, redirectToLogin, config){
         });
     });
     
-    // TODO: Remove?
-    // Get the permissions data for the specified user of the specified SIMLET
+    // Get the supervisor permissions info for the specified user in the specified SIMLET 
     router.get('/studies/:studyid/permissions/:userid', auth, redirectToLogin, async (req, res, next) => {
         Simva.getSimletPermissionsForUser(req.params["studyid"], req.params['userid'], req.session.id, async (error, result) => {
             if(error) {
@@ -2021,8 +2020,7 @@ module.exports = function(auth, redirectToLogin, config){
         });
     });
 
-    // TODO: Remove?
-    // Update the permissions data for the specified user of the specified SIMLET
+    // Update the supervisor permissions info for the specified user in the specified SIMLET 
     router.patch('/studies/:studyid/permissions/:userid', auth, redirectToLogin, async (req, res, next) => {
         Simva.patchSimletPermissionsForUser(req.params["studyid"], req.params['userid'], req.body, req.session.id, async (error, result) => {
             if(error) {
@@ -2039,7 +2037,7 @@ module.exports = function(auth, redirectToLogin, config){
         });
     });
 
-    // Delete the permissions data for the specified user of the specified SIMLET
+    // Delete the supervisor permissions info for the specified user in the specified SIMLET 
     router.delete('/studies/:studyid/permissions/:userid', auth, redirectToLogin, async (req, res, next) => {
         Simva.deleteSimletPermissionsForUser(req.params["studyid"], req.params['userid'], req.session.id, async (error, result) => {
             if(error) {
@@ -2057,7 +2055,7 @@ module.exports = function(auth, redirectToLogin, config){
     });
 
     
-    // Get the permissions data for all the coordinators of the specified session of the specified SIMLET
+    // Get the permissions info of all the coordinators of the specified session of the specified SIMLET
     router.get('/studies/:studyid/tests/:testid/permissions', auth, redirectToLogin, async (req, res, next) => {
         Simva.getSessionPermissions(req.params["studyid"], req.params["testid"], req.session.id, async (error, result) => {
             if(error) {
@@ -2074,7 +2072,7 @@ module.exports = function(auth, redirectToLogin, config){
         });
     });
 
-    // Add permissions data for a user to the specified session of the specified SIMLET
+    // Add coordinator permissions for the specified user in the specified session of the specified SIMLET
     router.post('/studies/:studyid/tests/:testid/permissions', auth, redirectToLogin, async (req, res, next) => {
         Simva.createSessionPermissions(req.params["studyid"], req.params["testid"], req.body, req.session.id, async (error, result) => {
             if(error) {
@@ -2091,7 +2089,7 @@ module.exports = function(auth, redirectToLogin, config){
         });
     });
 
-    // Get the permissions data for the specified user of the specified session of the specified SIMLET
+    // Get the coordinator permissions info for the specified user in the specified session of the specified SIMLET 
     router.get('/studies/:studyid/tests/:testid/permissions/:userid', auth, redirectToLogin, async (req, res, next) => {
         Simva.getSessionPermissionsForUser(req.params["studyid"], req.params["testid"], req.params['userid'], req.session.id, async (error, result) => {
             if(error) {
@@ -2108,7 +2106,7 @@ module.exports = function(auth, redirectToLogin, config){
         });
     });
 
-    // Update the permissions data for the specified user of the specified session of the specified SIMLET
+    // Update the coordinator permissions info for the specified user in the specified session of the specified SIMLET 
     router.patch('/studies/:studyid/tests/:testid/permissions/:userid', auth, redirectToLogin, async (req, res, next) => {
         Simva.patchSessionPermissionsForUser(req.params["studyid"], req.params["testid"], req.params['userid'], req.body, req.session.id, async (error, result) => {
             if(error) {
@@ -2125,7 +2123,7 @@ module.exports = function(auth, redirectToLogin, config){
         });
     });
 
-    // Delete the permissions data for the specified user of the specified session of the specified SIMLET
+    // Delete the coordinator permissions info for the specified user in the specified session of the specified SIMLET 
     router.delete('/studies/:studyid/tests/:testid/permissions/:userid', auth, redirectToLogin, async (req, res, next) => {
         Simva.deleteSessionPermissionsForUser(req.params["studyid"], req.params["testid"], req.params['userid'], req.session.id, async (error, result) => {
             if(error) {
@@ -2143,9 +2141,9 @@ module.exports = function(auth, redirectToLogin, config){
     });
     
 
-    // Get the permissions data for all the coordinators of the specified group of the specified SIMLET
+    // Get the permissions info of all the coordinators of the specified group of the specified SIMLET
     router.get('/simlets/:simlet_id/groups/:groupid/permissions', auth, redirectToLogin, async (req, res, next) => {
-        Simva.getGroupDirectPermissions(req.params['simlet_id'], req.params['groupid'], req.session.id, async (error, result) => {
+        Simva.getGroupPermissions(req.params['simlet_id'], req.params['groupid'], req.session.id, async (error, result) => {
             if(error) {
                 next(error.response?.data || error);
             } else {
@@ -2160,7 +2158,7 @@ module.exports = function(auth, redirectToLogin, config){
         });
     });
 
-    // Add permissions data for a user to the specified group of the specified SIMLET
+    // Add coordinator permissions for the specified user in the specified group of the specified SIMLET
     router.post('/simlets/:simlet_id/groups/:groupid/permissions', auth, redirectToLogin, async (req, res, next) => {
         Simva.createGroupPermissions(req.params['simlet_id'], req.params['groupid'], req.body, req.session.id, async (error, result) => {
             if(error) {
@@ -2177,7 +2175,7 @@ module.exports = function(auth, redirectToLogin, config){
         });
     });
 
-    // Get the permissions data for the specified user of the specified group of the specified SIMLET
+    // Get the coordinator permissions info for the specified user in the specified group of the specified SIMLET 
     router.get('/simlets/:simlet_id/groups/:groupid/permissions/:userid', auth, redirectToLogin, async (req, res, next) => {
         Simva.getGroupPermissionsForUser(req.params['simlet_id'], req.params['groupid'], req.params['userid'], req.session.id, async (error, result) => {
             if(error) {
@@ -2194,8 +2192,7 @@ module.exports = function(auth, redirectToLogin, config){
         });
     });
 
-    // TODO: Remove?
-    // Update the permissions data for the specified user of the specified group of the specified SIMLET
+    // Update the coordinator permissions info for the specified user in the specified group of the specified SIMLET 
     router.patch('/simlets/:simlet_id/groups/:groupid/permissions/:userid', auth, redirectToLogin, async (req, res, next) => {
         Simva.patchGroupPermissionsForUser(req.params['simlet_id'], req.params['groupid'], req.params['userid'], req.body, req.session.id, async (error, result) => {
             if(error) {
@@ -2212,8 +2209,7 @@ module.exports = function(auth, redirectToLogin, config){
         });
     });
 
-    // TODO: Remove?
-    // Delete the permissions data for the specified user of the specified group of the specified SIMLET
+    // Delete the coordinator permissions info for the specified user in the specified group of the specified SIMLET 
     router.delete('/simlets/:simlet_id/groups/:groupid/permissions/:userid', auth, redirectToLogin, async (req, res, next) => {
         Simva.deleteGroupPermissionsForUser(req.params['simlet_id'], req.params['groupid'], req.params['userid'], req.session.id, async (error, result) => {
             if(error) {

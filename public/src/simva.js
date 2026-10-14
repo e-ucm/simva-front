@@ -103,7 +103,7 @@ var Simva = {
 
 	/**
 	 * Refresh authentication token
-	 * @param {Callback} callback - Function to call when request completes
+	 * @param {Callback} callback
 	 */
 	refreshAuth: function(callback) {
 		Utils.get(`/users/refresh_auth`, callback);
@@ -121,7 +121,7 @@ var Simva = {
 	// TAGS
 
 	/**
-	 * Send a GET request to the bff to fetch all the existing tags
+	 * Send a GET request to the BFF to fetch all the existing tags
 	 * @param {Callback} callback
 	 */
 	getTags: function(callback) {
@@ -129,7 +129,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch all the existing tags
+	 * Send a GET request to the BFF to fetch all the existing tags
 	 * @param {Callback} callback
 	 */
 	getTagsForSimlets: function(callback) {
@@ -137,7 +137,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch all the existing tags
+	 * Send a GET request to the BFF to fetch all the existing tags
 	 * @param {Callback} callback
 	 */
 	getTagsForSimlet: function(simlet_id, callback) {
@@ -145,7 +145,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a POST request to the bff to create a new tag
+	 * Send a POST request to the BFF to create a new tag
 	 * @param {object} body - object containing the tag_name and tag_color of the tag
 	 * @param {Callback} callback
 	 */
@@ -154,7 +154,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a PATCH request to the bff to update the specified tag info 
+	 * Send a PATCH request to the BFF to update the specified tag info 
 	 * @param {number} tagId - id of the tag to update
 	 * @param {object} body - object containing either the modified tag_name, the tag_color, or both
 	 * @param {Callback} callback
@@ -164,7 +164,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a DELETE request to the bff to delete the specified tag 
+	 * Send a DELETE request to the BFF to delete the specified tag 
 	 * @param {number} tagId - id of the tag to delete
 	 * @param {Callback} callback
 	 */
@@ -176,7 +176,7 @@ var Simva = {
 	// SIMLETS + SCHEDULERS
 
 	/**
-	 * Send a GET request to the bff to fetch the SIMLETs matching the query search parameters
+	 * Send a GET request to the BFF to fetch the SIMLETs matching the query search parameters
 	 * @param {Query | undefined} query
 	 * @param {Callback} callback
 	 */
@@ -186,7 +186,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch the amount of SIMLETs matching the query search parameters
+	 * Send a GET request to the BFF to fetch the amount of SIMLETs matching the query search parameters
 	 * @param {Query | undefined} query
 	 * @param {Callback} callback
 	 */
@@ -196,7 +196,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a POST request to the bff to add a SIMLET 
+	 * Send a POST request to the BFF to add a SIMLET 
 	 * @param {object} body - object containing the simlet_name and simlet_description of the SIMLET
 	 * @param {Callback} callback
 	 */
@@ -205,7 +205,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a POST request to the bff to import a SIMLET 
+	 * Send a POST request to the BFF to import a SIMLET 
 	 * @param {object} newStudy - object containing the simlet_name and file of the SIMLET
 	 * @param {Callback} callback
 	 */
@@ -214,7 +214,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch the specified SIMLET 
+	 * Send a GET request to the BFF to fetch the specified SIMLET 
 	 * @param {number} simletId - id of the SIMLET to fetch
 	 * @param {Callback} callback
 	 */
@@ -223,7 +223,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to export the specified SIMLET 
+	 * Send a GET request to the BFF to export the specified SIMLET 
 	 * @param {number} simletId - id of the SIMLET to export
 	 * @param {Callback} callback
 	 */
@@ -232,7 +232,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a PATCH request to the bff to update the specified SIMLET info 
+	 * Send a PATCH request to the BFF to update the specified SIMLET info 
 	 * @param {number} simletId - id of the SIMLET to update
 	 * @param {object} study - object containing either the modified simlet_name, the simlet_description, or both
 	 * @param {Callback} callback
@@ -242,7 +242,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a DELETE request to the bff to delete the specified SIMLET 
+	 * Send a DELETE request to the BFF to delete the specified SIMLET 
 	 * @param {number} simletId - id of the SIMLET to delete
 	 * @param {Callback} callback
 	 */
@@ -252,7 +252,7 @@ var Simva = {
 
 
 	/**
-	 * Send a GET request to the bff to fetch the scheduled SIMLETs matching the query search parameters
+	 * Send a GET request to the BFF to fetch the scheduled SIMLETs matching the query search parameters
 	 * @param {Query | undefined} query
 	 * @param {Callback} callback
 	 */
@@ -262,7 +262,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch the amount of scheduled SIMLETs matching the query search parameters
+	 * Send a GET request to the BFF to fetch the amount of scheduled SIMLETs matching the query search parameters
 	 * @param {Query | undefined} query
 	 * @param {Callback} callback
 	 */
@@ -272,7 +272,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch the scheduler of the specified SIMLET 
+	 * Send a GET request to the BFF to fetch the scheduler of the specified SIMLET 
 	 * @param {number} simletId - id of the SIMLET to fetch
 	 * @param {Callback} callback
 	 */
@@ -284,7 +284,7 @@ var Simva = {
 	//SHLINK URL
 
 	/**
-	 * Send a POST request to the bff to generate a shlink url for the specified SIMLET
+	 * Send a POST request to the BFF to generate a shlink url for the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that the shlink will be generated for
 	 * @param {string} customSlug - custom text that appears as the url
 	 * @param {number} length - length of the custom slug
@@ -299,7 +299,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch the shlink url of the specified SIMLET
+	 * Send a GET request to the BFF to fetch the shlink url of the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET the shlink will be fetched from
 	 * @param {Callback} callback 
 	 */
@@ -312,7 +312,7 @@ var Simva = {
 	 * @param {number} simletId - ID of the SIMLET
 	 * @param {string} customSlug - Custom slug for the URL
 	 * @param {number} length - Length of the custom slug
-	 * @param {Callback} callback - Function to call when request completes
+	 * @param {Callback} callback
 	 */
 	updateShLink(simletId, customSlug, length, callback) {
 		let body = {
@@ -323,7 +323,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a DELETE request to the bff to delete the shlink url of the specified SIMLET
+	 * Send a DELETE request to the BFF to delete the shlink url of the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET the shlink will be deleted from
 	 * @param {Callback} callback 
 	 */
@@ -335,7 +335,7 @@ var Simva = {
 	// SESSIONS
 
 	/**
-	 * Send a GET request to the bff to fetch the sessions matching the query search parameters in the specified SIMLET
+	 * Send a GET request to the BFF to fetch the sessions matching the query search parameters in the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET to fetch the sessions from
 	 * @param {Query | undefined} query 
 	 * @param {Callback} callback 
@@ -346,7 +346,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch the amount of sessions matching the query search parameters in the specified SIMLET
+	 * Send a GET request to the BFF to fetch the amount of sessions matching the query search parameters in the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET to fetch the sessions from
 	 * @param {Query | undefined} query 
 	 * @param {Callback} callback 
@@ -357,7 +357,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a POST request to the bff to add a session to the specified SIMLET
+	 * Send a POST request to the BFF to add a session to the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET to add the session to
 	 * @param {object} body - object containing the session_name, session_description, session_status and session_can_be_manually_activated of the session
 	 * @param {Callback} callback
@@ -367,7 +367,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a POST request to the bff to import a session in the specified SIMLET 
+	 * Send a POST request to the BFF to import a session in the specified SIMLET 
 	 * @param {number} simletId - id of the SIMLET to add the session to
 	 * @param {object} newSession - object containing the session_name and file of the session
 	 * @param {Callback} callback
@@ -377,7 +377,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch the specified session from the specified SIMLET
+	 * Send a GET request to the BFF to fetch the specified session from the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the session
 	 * @param {number} sessionId - id of the session to fetch
 	 * @param {Callback} callback 
@@ -387,7 +387,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch the complete info of the specified session from the specified SIMLET
+	 * Send a GET request to the BFF to fetch the complete info of the specified session from the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the session
 	 * @param {number} sessionId - id of the session to fetch
 	 * @param {Callback} callback 
@@ -397,7 +397,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to export the specified session from the specified SIMLET
+	 * Send a GET request to the BFF to export the specified session from the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the session
 	 * @param {number} sessionId - id of the session to export
 	 * @param {Callback} callback 
@@ -407,7 +407,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a PATCH request to the bff to update the specified session from the specified SIMLET
+	 * Send a PATCH request to the BFF to update the specified session from the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the session
 	 * @param {number} sessionId - id of the session to update
 	 * @param {object} body - object containing either the modified session_name, the session_description, or both
@@ -418,7 +418,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a DELETE request to the bff to delete the specified session from the specified SIMLET
+	 * Send a DELETE request to the BFF to delete the specified session from the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the session
 	 * @param {number} sessionId - id of the session to delete
 	 * @param {Callback} callback 
@@ -429,7 +429,7 @@ var Simva = {
 
 
 	/**
-	 * Send a PATCH request to the bff to change the status of the specified session from the specified SIMLET
+	 * Send a PATCH request to the BFF to change the status of the specified session from the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the session
 	 * @param {number} sessionId - id of the session to update
 	 * @param {object} body - object containing the activate of the session
@@ -441,7 +441,7 @@ var Simva = {
 
 
 	/**
-	 * Send a PATCH request to the bff to add the specified tag to the specified session from the specified SIMLET
+	 * Send a PATCH request to the BFF to add the specified tag to the specified session from the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the session
 	 * @param {number} sessionId - id of the session to update
 	 * @param {number} tagId - id of the tag to add
@@ -452,7 +452,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a DELETE request to the bff to delete the specified tag to the specified session from the specified SIMLET
+	 * Send a DELETE request to the BFF to delete the specified tag to the specified session from the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the session
 	 * @param {number} sessionId - id of the session to update
 	 * @param {number} tagId - id of the tag to delete
@@ -464,7 +464,7 @@ var Simva = {
 
 
 	/**
-	 * Send a POST request to the bff to set the current user as tester (allocate to session, create sandbox group if needed)
+	 * Send a POST request to the BFF to set the current user as tester (allocate to session, create sandbox group if needed)
 	 *  in the specified session from the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the session
 	 * @param {number} sessionId - id of the session to set the tester in
@@ -475,7 +475,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a POST request to the bff to unset the current user as tester (remove from group, delete group if sandbox)
+	 * Send a POST request to the BFF to unset the current user as tester (remove from group, delete group if sandbox)
 	 * in the specified session from the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the session
 	 * @param {number} sessionId - id of the session to unset the tester from
@@ -486,7 +486,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a POST request to the bff to resset the current user as tester (unset and set again as tester)
+	 * Send a POST request to the BFF to resset the current user as tester (unset and set again as tester)
 	 * in the specified session from the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the session
 	 * @param {number} sessionId - id of the session to reset the tester from
@@ -498,7 +498,7 @@ var Simva = {
 
 
 	/**
-	 * Send a GET request to the bff to fetch the LRS data of the specified session from the specified SIMLET
+	 * Send a GET request to the BFF to fetch the LRS data of the specified session from the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the session
 	 * @param {string | undefined} participantName - username of the participant to fetch the data from (data of every
 	 * participant if it isn't set)
@@ -514,7 +514,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch the LRS data for the test users of the specified session from the specified SIMLET
+	 * Send a GET request to the BFF to fetch the LRS data for the test users of the specified session from the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the session
 	 * @param {number} sessionId - id of the session to fetch the data from
 	 * @param {Callback} callback 
@@ -527,7 +527,7 @@ var Simva = {
 	// ACTIVITIES
 
 	/**
-	 * Send a GET request to the bff to fetch all the activities in the specified session of the specified SIMLET
+	 * Send a GET request to the BFF to fetch all the activities in the specified session of the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the session
 	 * @param {number} sessionId - id of the session that has the activities
 	 * @param {Callback} callback 
@@ -537,7 +537,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch all the existing activity types
+	 * Send a GET request to the BFF to fetch all the existing activity types
 	 * @param {Callback} callback 
 	 */
 	getActivityTypes: function(callback) {
@@ -545,7 +545,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a POST request to the bff to add an activity to the specified session of the specified SIMLET
+	 * Send a POST request to the BFF to add an activity to the specified session of the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the session
 	 * @param {number} sessionId - id of the session to add the activity to
 	 * @param {object} activity - object containing the activity info
@@ -560,7 +560,7 @@ var Simva = {
 	},
 
 	/**
-	   * Send a POST request to the bff to import an activity to the specified session of the specified SIMLET
+	   * Send a POST request to the BFF to import an activity to the specified session of the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the session
 	 * @param {number} sessionId - id of the session to add the activity to
 	 * @param {object} activityData - object containing the activity_name and file of the activity
@@ -571,7 +571,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch the specified activity
+	 * Send a GET request to the BFF to fetch the specified activity
 	 * @param {number} activityId - id of the activity to fetch
 	 * @param {Callback} callback 
 	 */
@@ -583,13 +583,13 @@ var Simva = {
 	 * Export activity
 	 * @param {number} activityId - ID of the activity to export
 	 * @param {boolean} complete - Whether to export complete data
-	 * @param {Callback} callback - Function to call when request completes
+	 * @param {Callback} callback
 	 */
 	exportActivity: function(activityId, complete, callback) {
 		Utils.get(`/bff/activities/${activityId}/export?complete=${complete}`, callback);
 	},
 	/**
-	 * Send a PATCH request to the bff to update the specified activity info of the specified session of the specified SIMLET
+	 * Send a PATCH request to the BFF to update the specified activity info of the specified session of the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the session
 	 * @param {number} sessionId - id of the session that has the activity
 	 * @param {number} activityId - id of the activity to update
@@ -605,7 +605,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a DELETE request to the bff to delete the specified activity of the specified session of the specified SIMLET
+	 * Send a DELETE request to the BFF to delete the specified activity of the specified session of the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the session
 	 * @param {number} sessionId - id of the session that has the activity
 	 * @param {number} activityId - id of the activity to delete
@@ -616,7 +616,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to get the Xasu config of the specified activity
+	 * Send a GET request to the BFF to get the Xasu config of the specified activity
 	 * @param {number} activityId - id of the activity the config will be fetched from
 	 * @param {Callback} callback 
 	 */
@@ -629,14 +629,14 @@ var Simva = {
 	 * Set activity test
 	 * @param {number} activityId - ID of the activity
 	 * @param {object} payload - Payload for the test
-	 * @param {Callback} callback - Function to call when request completes
+	 * @param {Callback} callback
 	 */
 	setActivityTest: function(activityId, payload, callback) {
 		Utils.post(`/bff/activities/${activityId}/test`, payload, callback);
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch the target of the specified activity
+	 * Send a GET request to the BFF to fetch the target of the specified activity
 	 * @param {number} activityId - id of the activity to fetch the target from
 	 * @param {Callback} callback 
 	 */
@@ -646,7 +646,7 @@ var Simva = {
 
 
 	/**
-	 * Send a GET request to the bff to fetch all the available surveys
+	 * Send a GET request to the BFF to fetch all the available surveys
 	 * @param {Callback} callback 
 	 */
 	getSurveyList: function(callback) {
@@ -654,7 +654,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch the languages of the specified survey
+	 * Send a GET request to the BFF to fetch the languages of the specified survey
 	 * @param {number} surveyId - id of the survey to fetch the languages from
 	 * @param {Callback} callback 
 	 */
@@ -663,7 +663,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a PATCH request to the bff to set the owner of a survey
+	 * Send a PATCH request to the BFF to set the owner of a survey
 	 * @param {number} surveyId - id of the survey to set the owner in
 	 * @param {Callback} callback 
 	 */
@@ -672,7 +672,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to check if the specified activity can be opened
+	 * Send a GET request to the BFF to check if the specified activity can be opened
 	 * @param {number} activityId - id of the activity to check
 	 * @param {Callback} callback 
 	 */
@@ -683,14 +683,14 @@ var Simva = {
 	/**
 	 * Open activity
 	 * @param {number} activityId - ID of the activity to open
-	 * @param {Callback} callback - Function to call when request completes
+	 * @param {Callback} callback
 	 */
 	openActivity: function(activityId, callback) {
 		Utils.get(`/bff/activities/${activityId}/open`, callback);
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch the initialized data of all participants of the specified activity 
+	 * Send a GET request to the BFF to fetch the initialized data of all participants of the specified activity 
 	 * @param {number} activityId - id of the activity to check
 	 * @param {Callback} callback 
 	 */
@@ -703,14 +703,14 @@ var Simva = {
 	 * @param {number} activityId - ID of the activity
 	 * @param {number} participantId - ID of the participant
 	 * @param {boolean} status - Initialization status
-	 * @param {Callback} callback - Function to call when request completes
+	 * @param {Callback} callback
 	 */
 	setActivityInitialized: function(activityId, participantId, status, callback) {
 		Utils.post(`/bff/activities/${activityId}/initialized?user=${participantId}`, { status: status }, callback);
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch the completion data of all participants of the specified activity 
+	 * Send a GET request to the BFF to fetch the completion data of all participants of the specified activity 
 	 * @param {number} activityId - id of the activity to fetch the progress from
 	 * @param {Callback} callback 
 	 */
@@ -723,7 +723,7 @@ var Simva = {
 	 * @param {number} activityId - ID of the activity
 	 * @param {number} participantId - ID of the participant
 	 * @param {boolean} status - Progress status
-	 * @param {Callback} callback - Function to call when request completes
+	 * @param {Callback} callback
 	 */
 	setActivityProgress: function(activityId, participantId, status, callback) {
 		const userQuery = participantId ? `?user=${participantId}` : '';
@@ -731,7 +731,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch the completion data of all participants of the specified activity 
+	 * Send a GET request to the BFF to fetch the completion data of all participants of the specified activity 
 	 * @param {number} activityId - id of the activity to fetch the completion from
 	 * @param {Callback} callback 
 	 */
@@ -740,7 +740,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a POST request to the bff to set the completion status for the specified participant of the specified activity 
+	 * Send a POST request to the BFF to set the completion status for the specified participant of the specified activity 
 	 * @param {number} activityId - id of the activity that has the participant
 	 * @param {number} participantId - id of the participant to change the completion for 
 	 * @param {boolean} status - true to set the activity as completed, false otherwise
@@ -751,7 +751,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a POST request to the bff to set the completion status for all the participants of the specified activity 
+	 * Send a POST request to the BFF to set the completion status for all the participants of the specified activity 
 	 * @param {number} activityId - id of the activity to set the status for
 	 * @param {boolean} status - true to set the activity as completed, false otherwise
 	 * @param {Callback} callback 
@@ -761,7 +761,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch the hasResult data of all participants of the specified activity 
+	 * Send a GET request to the BFF to fetch the hasResult data of all participants of the specified activity 
 	 * @param {number} activityId - id of the activity to fetch the hasResult from
 	 * @param {Callback} callback 
 	 */
@@ -771,7 +771,7 @@ var Simva = {
 
 
 	/**
-	 * Send a GET request to the bff to fetch the result data of the specified participant from the specified activity with the specified type
+	 * Send a GET request to the BFF to fetch the result data of the specified participant from the specified activity with the specified type
 	 * @param {number} activityId - id of the activity that has the participant
 	 * @param {number} participantId - id of the participant to fetch the result data from 
 	 * @param {string} resultType - type of result of the result data to fetch (full/code/traces)
@@ -804,14 +804,14 @@ var Simva = {
 	/**
 	 * Get activity suspension
 	 * @param {number} activityId - ID of the activity
-	 * @param {Callback} callback - Function to call when request completes
+	 * @param {Callback} callback
 	 */
 	getActivitySuspension: function(activityId, callback) {
 		Utils.get(`/bff/activities/${activityId}/suspension`, callback);
 	},
 
 	/**
-	 * Send a POST request to the bff to change the specified activity status for the specified participant 
+	 * Send a POST request to the BFF to change the specified activity status for the specified participant 
 	 * @param {number} activityId - id of the activity that has the participant
 	 * @param {number} participantId - id of the participant to set the status for  
 	 * @param {boolean} status - true to set the activity as suspended, false otherwise
@@ -824,7 +824,7 @@ var Simva = {
 
 
 	/**
-	 * Send a GET request to the bff to fetch the LRS data for the specified activity
+	 * Send a GET request to the BFF to fetch the LRS data for the specified activity
 	 * @param {number} activityId - id of the activity to fetch the data from
 	 * @param {string | undefined} participantName - username of the participant to fetch the data from (data of every
 	 * participant if it isn't set)
@@ -843,7 +843,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch the LRS data for the test users of the specified activity
+	 * Send a GET request to the BFF to fetch the LRS data for the test users of the specified activity
 	 * @param {number} activityId - id of the activity to fetch the data from
 	 * @param {Callback} callback 
 	 */
@@ -855,7 +855,7 @@ var Simva = {
 	// GROUPS
 
 	/**
-	 * Send a GET request to the bff to fetch the groups matching the query search parameters in the specified SIMLET
+	 * Send a GET request to the BFF to fetch the groups matching the query search parameters in the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET to fetch the groups from
 	 * @param {Query | undefined} query 
 	 * @param {Callback} callback 
@@ -866,7 +866,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch the amount of groups matching the query search parameters in the specified SIMLET
+	 * Send a GET request to the BFF to fetch the amount of groups matching the query search parameters in the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET to fetch the groups from
 	 * @param {Query | undefined} query 
 	 * @param {Callback} callback 
@@ -877,7 +877,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a POST request to the bff to add a group to the specified SIMLET
+	 * Send a POST request to the BFF to add a group to the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET to add the group to
 	 * @param {object} body - object containing the group_name, group_sandbox and group_use_new_generation of the group
 	 * @param {Callback} callback 
@@ -890,14 +890,14 @@ var Simva = {
 	 * Add study group
 	 * @param {number} simletId - ID of the SIMLET
 	 * @param {number} groupId - ID of the group
-	 * @param {Callback} callback - Function to call when request completes
+	 * @param {Callback} callback
 	 */
 	addStudyGroup: function(simletId, groupId, callback) {
 		Utils.post(`/bff/studies/${simletId}/groups/${groupId}`, {}, callback);
 	},
 
 	/**
-	 * Send a POST request to the bff to import a group in the specified SIMLET 
+	 * Send a POST request to the BFF to import a group in the specified SIMLET 
 	 * @param {number} simletId - id of the SIMLET to add the group to
 	 * @param {object} groupData  - object containing the group_name and file of the group
 	 * @param {Callback} callback 
@@ -907,7 +907,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch the specified group from the specified SIMLET
+	 * Send a GET request to the BFF to fetch the specified group from the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the group
 	 * @param {number} groupId - id of the group to fetch
 	 * @param {Callback} callback 
@@ -917,7 +917,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to export the specified group from the specified SIMLET
+	 * Send a GET request to the BFF to export the specified group from the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the group
 	 * @param {number} groupId - id of the group to export
 	 * @param {boolean} complete - true to export the complete group info, false otherwise 
@@ -928,7 +928,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a PATCH request to the bff to update the specified group from the specified SIMLET
+	 * Send a PATCH request to the BFF to update the specified group from the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the group
 	 * @param {number} groupId - id of the group to update
 	 * @param {object} group - object containing either the modified group_name, group_sandbox, group_use_new_generation, or any combination of them
@@ -939,7 +939,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a DELETE request to the bff to delete the specified group from the specified SIMLET
+	 * Send a DELETE request to the BFF to delete the specified group from the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the group
 	 * @param {number} groupId  - id of the group to delete
 	 * @param {Callback} callback 
@@ -952,7 +952,7 @@ var Simva = {
 	 * Delete study group
 	 * @param {number} simletId - ID of the SIMLET
 	 * @param {number} groupId - ID of the group
-	 * @param {Callback} callback - Function to call when request completes
+	 * @param {Callback} callback
 	 */
 	deleteStudyGroup: function(simletId, groupId, callback) {
 		Utils.delete(`/bff/studies/${simletId}/groups/${groupId}`, callback);
@@ -962,7 +962,7 @@ var Simva = {
 	// ALLOCATOR
 
 	/**
-	 * Send a GET request to the bff to fetch all the allocator types
+	 * Send a GET request to the BFF to fetch all the allocator types
 	 * @param {Callback} callback 
 	 */
 	getAllocatorTypes: function(callback) {
@@ -970,7 +970,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch the allocator for the specified SIMLET
+	 * Send a GET request to the BFF to fetch the allocator for the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET to fetch the allocator from 
 	 * @param {Callback} callback 
 	 */
@@ -982,14 +982,14 @@ var Simva = {
 	 * Update allocator
 	 * @param {number} simletId - ID of the SIMLET
 	 * @param {object} allocator - Allocator data
-	 * @param {Callback} callback - Function to call when request completes
+	 * @param {Callback} callback
 	 */
 	updateAllocator: function(simletId, allocator, callback) {
 		Utils.patch(`/bff/studies/${simletId}/allocator`, allocator, callback);
 	},
 
 	/**
-	 * Send a POST request to the bff to allocate the specified participant of the specified group to the specified session of the specified SIMLET
+	 * Send a POST request to the BFF to allocate the specified participant of the specified group to the specified session of the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the session and the group
 	 * @param {number} groupId - id of the group that has the participant to allocate
 	 * @param {number} sessionId - id of the session to allocate the participant in
@@ -1001,7 +1001,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a POST request to the bff to allocate the specified participant of the specified group to a random session of the specified SIMLET
+	 * Send a POST request to the BFF to allocate the specified participant of the specified group to a random session of the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the session and the group
 	 * @param {number} groupId - id of the group that has the participant to allocate
 	 * @param {object} data - object containing the participant_id of the participant to allocate 
@@ -1015,7 +1015,7 @@ var Simva = {
 	// PARTICIPANTS
 
 	/**
-	 * Send a GET request to the bff to fetch all the participants of the specified SIMLET
+	 * Send a GET request to the BFF to fetch all the participants of the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET to fetch the participants from
 	 * @param {Callback} callback 
 	 */
@@ -1024,7 +1024,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch the amount of participants in each group of the specified SIMLET
+	 * Send a GET request to the BFF to fetch the amount of participants in each group of the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET to fetch the participants from
 	 * @param {Query | undefined} query 
 	 * @param {Callback} callback 
@@ -1035,7 +1035,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch all the participants in the specified session of the specified SIMLET
+	 * Send a GET request to the BFF to fetch all the participants in the specified session of the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the session
 	 * @param {number} sessionId - id of the session to fetch the participants from
 	 * @param {Callback} callback 
@@ -1045,7 +1045,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch all the participants in the specified group of the specified SIMLET
+	 * Send a GET request to the BFF to fetch all the participants in the specified group of the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the group
 	 * @param {number} groupId - id of the group to fetch the participants from
 	 * @param {Callback} callback 
@@ -1055,7 +1055,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch the amount of participants in the specified group of the specified SIMLET
+	 * Send a GET request to the BFF to fetch the amount of participants in the specified group of the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the group
 	 * @param {number} groupId - id of the group to fetch the participants from
 	 * @param {Query | undefined} query - TODO: Remove?
@@ -1067,7 +1067,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a POST request to the bff to add a participant to the specified group of the specified SIMLET
+	 * Send a POST request to the BFF to add a participant to the specified group of the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the group
 	 * @param {number} groupId - id of the group to add the participant to
 	 * @param {number} participantId - id of the participant to add
@@ -1078,7 +1078,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a DELETE request to the bff to delete the specified participant from the specified group of the specified SIMLET
+	 * Send a DELETE request to the BFF to delete the specified participant from the specified group of the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the group
 	 * @param {number} groupId - id of the group to delete the participant from
 	 * @param {number} participantId - id of the participant to delete
@@ -1093,7 +1093,7 @@ var Simva = {
 	// USERS
 
 	/**
-	 * Send a GET request to the bff to fetch the users matching the query search parameters
+	 * Send a GET request to the BFF to fetch the users matching the query search parameters
 	 * @param {Query} query 
 	 * @param {Callback} callback 
 	 */
@@ -1103,7 +1103,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a GET request to the bff to fetch the user data with the specified username
+	 * Send a GET request to the BFF to fetch the user data with the specified username
 	 * @param {string} username - username of the user to fetch 
 	 * @param {Callback} callback 
 	 */
@@ -1113,7 +1113,7 @@ var Simva = {
 
 
 	/**
-	 * Send a GET request to the bff to fetch the user data of the current user
+	 * Send a GET request to the BFF to fetch the user data of the current user
 	 * @param {Callback} callback 
 	 */
 	getCurrentUser: function(callback) {
@@ -1121,7 +1121,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a POST request to the bff to add a batch of generated users to the specified group of the specified SIMLET
+	 * Send a POST request to the BFF to add a batch of generated users to the specified group of the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the group
 	 * @param {number} groupId - id of the group where the users will be added to
 	 * @param {string} algorithm - algorithm to use for the token generation (letters/alphanumeric/base58)
@@ -1139,7 +1139,7 @@ var Simva = {
 	},
 
 	/**
-	 * Send a POST request to the bff to add a new participant to the specified group of the specified SIMLET
+	 * Send a POST request to the BFF to add a new participant to the specified group of the specified SIMLET
 	 * @param {number} simletId - id of the SIMLET that has the group
 	 * @param {number} groupId - id of the group where the participant will be added to
 	 * @param {string} username - username of the new user
@@ -1162,7 +1162,7 @@ var Simva = {
 	 * Set user role
 	 * @param {string} username - Username of the user
 	 * @param {object|string} body - Role data or string
-	 * @param {Callback} callback - Function to call when request completes
+	 * @param {Callback} callback
 	 */
 	setRole: function(username, body, callback) {
 		const normalizedBody = (typeof body === 'string') ? { role: body } : body;
@@ -1181,18 +1181,18 @@ var Simva = {
 	// PERMISSIONS
 
 	/**
-	 * Send a GET request to the bff to fetch the permissions data for all the coordinators of the specified SIMLET
-	 * @param {number} simletId - id of the SIMLET to fetch the data from
+	 * Send a GET request to the BFF to fetch the permissions info of all the supervisors of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET to fetch the permissions info from
 	 * @param {Callback} callback 
 	 */
-	getSimletDirectPermissions: function(simletId, callback) {
+	getSimletPermissions: function(simletId, callback) {
 		Utils.get(`/bff/studies/${simletId}/permissions`, callback);
 	},
 
 	/**
-	 * Send a POST request to the bff to add permissions data for a user to the specified SIMLET
-	 * @param {number} simletId - id of the SIMLET to add the data to
-	 * @param {object} permissions - object containing the user_id, and permission type (READ/WRITE)
+	 * Send a POST request to the BFF to add supervisor permissions for the specified user in the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET to add the user permissions to
+	 * @param {object} permissions - object containing user_id and permission (READ/WRITE)
 	 * @param {Callback} callback 
 	 */
 	createSimletPermissions: function(simletId, permissions, callback) {
@@ -1200,30 +1200,30 @@ var Simva = {
 	},
 
 	/**
-	 * Get permissions for user in SIMLET
-	 * @param {number} simletId - ID of the SIMLET
-	 * @param {number} userId - ID of the user
-	 * @param {Callback} callback - Function to call when request completes
+	 * Send a GET request to the BFF to fetch the supervisor permissions info for the specified user in the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET that has the user as supervisor
+	 * @param {number} userId - id of the user to fetch the permissions info for
+	 * @param {Callback} callback
 	 */
 	getSimletPermissionsForUser: function(simletId, userId, callback) {
 		Utils.get(`/bff/studies/${simletId}/permissions/${userId}`, callback);
 	},
 
 	/**
-	 * Patch permissions for user in SIMLET
-	 * @param {number} simletId - ID of the SIMLET
-	 * @param {number} userId - ID of the user
-	 * @param {object} permissions - Permissions data
-	 * @param {Callback} callback - Function to call when request completes
+	 * Send a PATCH request to the BFF to change the supervisor permissions info for the specified user in the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET that has the user as supervisor
+	 * @param {number} userId - id of the user to change the permissions info for
+	 * @param {object} permissions - object containing user_id and permission (READ/WRITE)
+	 * @param {Callback} callback
 	 */
 	patchSimletPermissionsForUser: function(simletId, userId, permissions, callback) {
 		Utils.patch(`/bff/studies/${simletId}/permissions/${userId}`, permissions, callback);
 	},
 
 	/**
-	 * Send a DELETE request to the bff to delete the permissions of the specified user in the specified SIMLET
-	 * @param {number} simletId - id of the SIMLET that has the user
-	 * @param {number} userId - id of the user to remove the permissions from
+	 * Send a DELETE request to the BFF to delete the supervisor permissions info for the specified user in the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET that has the user as supervisor
+	 * @param {number} userId - id of the user to delete the permissions info for
 	 * @param {Callback} callback 
 	 */
 	deleteSimletPermissionsForUser: function(simletId, userId, callback) {
@@ -1232,55 +1232,55 @@ var Simva = {
 
 
 	/**
-	 * Get session permissions
-	 * @param {number} simletId - ID of the SIMLET
-	 * @param {number} sessionId - ID of the session
-	 * @param {Callback} callback - Function to call when request completes
+	 * Send a GET request to the BFF to fetch the permissions info of all the coordinators of the specified session of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to fetch the permissions info from
+	 * @param {Callback} callback
 	 */
 	getSessionPermissions: function(simletId, sessionId, callback) {
 		Utils.get(`/bff/studies/${simletId}/tests/${sessionId}/permissions`, callback);
 	},
 
 	/**
-	 * Create session permissions
-	 * @param {number} simletId - ID of the SIMLET
-	 * @param {number} sessionId - ID of the session
-	 * @param {object} permissions - Permissions data
-	 * @param {Callback} callback - Function to call when request completes
+	 * Send a POST request to the BFF to add coordinator permissions for the specified user in the specified session of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session to add the user permissions to
+	 * @param {object} permissions - object containing user_id and permission (READ/WRITE)
+	 * @param {Callback} callback
 	 */
 	createSessionPermissions: function(simletId, sessionId, permissions, callback) {
 		Utils.post(`/bff/studies/${simletId}/tests/${sessionId}/permissions`, permissions, callback);
 	},
 
 	/**
-	 * Get session permissions for user
-	 * @param {number} simletId - ID of the SIMLET
-	 * @param {number} sessionId - ID of the session
-	 * @param {number} userId - ID of the user
-	 * @param {Callback} callback - Function to call when request completes
+	 * Send a GET request to the BFF to fetch the coordinator permissions info for the specified user in the specified session of the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session that has the user as coordinator
+	 * @param {number} userId - id of the user to fetch the permissions info for
+	 * @param {Callback} callback
 	 */
 	getSessionPermissionsForUser: function(simletId, sessionId, userId, callback) {
 		Utils.get(`/bff/studies/${simletId}/tests/${sessionId}/permissions/${userId}`, callback);
 	},
 
 	/**
-	 * Patch session permissions for user
-	 * @param {number} simletId - ID of the SIMLET
-	 * @param {number} sessionId - ID of the session
-	 * @param {number} userId - ID of the user
-	 * @param {object} permissions - Permissions data
-	 * @param {Callback} callback - Function to call when request completes
+	 * Send a PATCH request to the BFF to change the coordinator permissions info for the specified user in the specified session of the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session that has the user as coordinator
+	 * @param {number} userId - id of the user to change the permissions info for
+	 * @param {object} permissions - object containing user_id and permission (READ/WRITE)
+	 * @param {Callback} callback
 	 */
 	patchSessionPermissionsForUser: function(simletId, sessionId, userId, permissions, callback) {
 		Utils.patch(`/bff/studies/${simletId}/tests/${sessionId}/permissions/${userId}`, permissions, callback);
 	},
 
 	/**
-	 * Delete session permissions for user
-	 * @param {number} simletId - ID of the SIMLET
-	 * @param {number} sessionId - ID of the session
-	 * @param {number} userId - ID of the user
-	 * @param {Callback} callback - Function to call when request completes
+	 * Send a DELETE request to the BFF to delete the coordinator permissions info for the specified user in the specified session of the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET that has the session
+	 * @param {number} sessionId - id of the session that has the user as coordinator
+	 * @param {number} userId - id of the user to delete the permissions info for
+	 * @param {Callback} callback
 	 */
 	deleteSessionPermissionsForUser: function(simletId, sessionId, userId, callback) {
 		Utils.delete(`/bff/studies/${simletId}/tests/${sessionId}/permissions/${userId}`, callback);
@@ -1288,55 +1288,55 @@ var Simva = {
 
 
 	/**
-	 * Get group direct permissions
-	 * @param {number} simletId - ID of the SIMLET
-	 * @param {number} groupId - ID of the group
-	 * @param {Callback} callback - Function to call when request completes
+	 * Send a GET request to the BFF to fetch the permissions info of all the coordinators of the specified group of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group to fetch the permissions info from
+	 * @param {Callback} callback
 	 */
-	getGroupDirectPermissions: function(simletId, groupId, callback) {
+	getGroupPermissions: function(simletId, groupId, callback) {
 		Utils.get(`/bff/simlets/${simletId}/groups/${groupId}/permissions`, callback);
 	},
 
 	/**
-	 * Create group permissions
-	 * @param {number} simletId - ID of the SIMLET
-	 * @param {number} groupId - ID of the group
-	 * @param {object} permissions - Permissions data
-	 * @param {Callback} callback - Function to call when request completes
+	 * Send a POST request to the BFF to add coordinator permissions for the specified user in the specified group of the specified SIMLET
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group to add the user permissions to
+	 * @param {object} permissions - object containing user_id and permission (READ/WRITE)
+	 * @param {Callback} callback
 	 */
 	createGroupPermissions: function(simletId, groupId, permissions, callback) {
 		Utils.post(`/bff/simlets/${simletId}/groups/${groupId}/permissions`, permissions, callback);
 	},
 
 	/**
-	 * Get group permissions for user
-	 * @param {number} simletId - ID of the SIMLET
-	 * @param {number} groupId - ID of the group
-	 * @param {number} userId - ID of the user
-	 * @param {Callback} callback - Function to call when request completes
+	 * Send a GET request to the BFF to fetch the coordinator permissions info for the specified user in the specified group of the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group that has the user as coordinator
+	 * @param {number} userId - id of the user to fetch the permissions info for
+	 * @param {Callback} callback
 	 */
 	getGroupPermissionsForUser: function(simletId, groupId, userId, callback) {
 		Utils.get(`/bff/simlets/${simletId}/groups/${groupId}/permissions/${userId}`, callback);
 	},
 
 	/**
-	 * Patch group permissions for user
-	 * @param {number} simletId - ID of the SIMLET
-	 * @param {number} groupId - ID of the group
-	 * @param {number} userId - ID of the user
-	 * @param {object} permissions - Permissions data
-	 * @param {Callback} callback - Function to call when request completes
+	 * Send a PATCH request to the BFF to change the coordinator permissions info for the specified user in the specified group of the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group that has the user as coordinator
+	 * @param {number} userId - id of the user to change the permissions info for
+	 * @param {object} permissions - object containing user_id and permission (READ/WRITE)
+	 * @param {Callback} callback
 	 */
 	patchGroupPermissionsForUser: function(simletId, groupId, userId, permissions, callback) {
 		Utils.patch(`/bff/simlets/${simletId}/groups/${groupId}/permissions/${userId}`, permissions, callback);
 	},
 
 	/**
-	 * Delete group permissions for user
-	 * @param {number} simletId - ID of the SIMLET
-	 * @param {number} groupId - ID of the group
-	 * @param {number} userId - ID of the user
-	 * @param {Callback} callback - Function to call when request completes
+	 * Send a DELETE request to the BFF to delete the coordinator permissions info for the specified user in the specified group of the specified SIMLET 
+	 * @param {number} simletId - id of the SIMLET that has the group
+	 * @param {number} groupId - id of the group that has the user as coordinator
+	 * @param {number} userId - id of the user to delete the permissions info for
+	 * @param {Callback} callback
 	 */
 	deleteGroupPermissionsForUser: function(simletId, groupId, userId, callback) {
 		Utils.delete(`/bff/simlets/${simletId}/groups/${groupId}/permissions/${userId}`, callback);
@@ -1346,7 +1346,7 @@ var Simva = {
 	/**
 	 * Get SIMLET events presigned URL
 	 * @param {number} simletId - ID of the SIMLET
-	 * @param {Callback} callback - Function to call when request completes
+	 * @param {Callback} callback
 	 */
 	getSimletEventsPresignedUrl: function(simletId, callback) {
 		Utils.get(`/simlets/${simletId}/events/getPresignedUrl`, callback);
@@ -1355,7 +1355,7 @@ var Simva = {
 	/**
 	 * Get schedule events presigned URL
 	 * @param {number} simletId - ID of the SIMLET
-	 * @param {Callback} callback - Function to call when request completes
+	 * @param {Callback} callback
 	 */
 	getScheduleEventsPresignedUrl: function(simletId, callback) {
 		Utils.get(`/simlets/${simletId}/schedule/events/getPresignedUrl`, callback);
@@ -1365,7 +1365,7 @@ var Simva = {
 	 * Get group events presigned URL
 	 * @param {number} simletId - ID of the SIMLET
 	 * @param {number} groupId - ID of the group
-	 * @param {Callback} callback - Function to call when request completes
+	 * @param {Callback} callback
 	 */
 	getGroupEventsPresignedUrl: function(simletId, groupId, callback) {
 		Utils.get(`/groups/${simletId}/${groupId}/events/getPresignedUrl`, callback);
@@ -1373,7 +1373,7 @@ var Simva = {
 
 	/**
 	 * Get events presigned URL
-	 * @param {Callback} callback - Function to call when request completes
+	 * @param {Callback} callback
 	 */
 	getEventsPresignedUrl: function(callback) {
 		Utils.get(`/events/getPresignedUrl`, callback);
@@ -1382,7 +1382,7 @@ var Simva = {
 	/**
 	 * Get MinIO data URL
 	 * @param {number} activityId - ID of the activity
-	 * @param {Callback} callback - Function to call when request completes
+	 * @param {Callback} callback
 	 */
 	getMinioDataUrl: function(activityId, callback) {
 		Utils.get(`/bff/activities/${activityId}/presignedurl`, callback);
@@ -1391,7 +1391,7 @@ var Simva = {
 
 	/**
 	 * Get LTI tools
-	 * @param {Callback} callback - Function to call when request completes
+	 * @param {Callback} callback
 	 */
 	getLtiTools: function(callback) {
 		Utils.get(`/bff/lti/tools`, callback);

@@ -234,7 +234,7 @@ the elements and scripts defined in the simlet_commons partial -->
 
 		// Activities don't need to be handled since their buttons only depend on the session status
 
-		// Coordinators don't need to be handled since they can still be modified regardless of the SIMLET status
+		// Supervisors and oordinators don't need to be handled since they can still be modified regardless of the SIMLET status
 
 		// Iterate over all sessions and repaint their status and permissions
 		$("#groups .test").each(function() {
@@ -290,7 +290,7 @@ the elements and scripts defined in the simlet_commons partial -->
 					sessionsFilteringPaginationData["checkBottomReached"] = false;
 					sessionsFilteringPaginationData["updateSearch"]();
 
-					paintCoordinators();
+					paintSupervisors();
 
 					// Update all the groups search parameters and calls its onSearch to paint them
 					// Defined in the simlet_groups partial
