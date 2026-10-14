@@ -346,11 +346,19 @@
 
 		// Show test download button only if the current user is participant of the session
 		$("#session_test_data_download").hide();
+
+		$("#global_backup_download").val("");
 		
 		const activity = getActivityFromId(activityId);
 		if (activity == null) {
 			return;
 		}
+
+		const painter = getActivityPainterByType(activity.activity_type);
+		if (painter != null) {
+			$("#global_backup_download").val(painter.backupDownloadText);
+		}
+		
 		if (isCurrentUserParticipant(activity.session_id)) {
 			$("#activity_test_data_download").show();
 		}

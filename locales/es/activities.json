@@ -12,6 +12,8 @@
         "download.activity.title": "Descargar datos de la actividad en formato xAPI",
         "download.test.title": "Descargar datos de la actividad generados por el usuario de prueba",
         "download.backup.global.title": "Descargar copia de seguridad de todos los usuarios en un solo archivo",
+        "download.backup.game.title": "Descargar copia de seguridad del juego de todos los usuarios en un solo archivo",
+        "download.backup.limeSurvey.title": "Descargar datos de LimeSurvey de todos los usuarios en un solo archivo",
         "download.backup.user.title": "Descargar copia de seguridad de cada usuario en un archivo ZIP",
     "download.description": "Descargar todos los datos disponibles de esta actividad.",
 
@@ -125,11 +127,11 @@
     "init.on": "Si",
     "init.off": "No",
 
-    "result.title": "Resultado",
-    "result.error.loading": "Error al cargar el resultado",
-    "result.error.downloading": "Error al descargar el resultado",
-    "result.view.title": "Abrir el resultado en una ventana flotante",
-    "result.download.title": "Descargar los resultados",
+    "result.title": "Copia de seguridad",
+    "result.error.loading": "Error al cargar la copia de seguridad",
+    "result.error.downloading": "Error al descargar la copia de seguridad",
+    "result.view.title": "Abrir la copia de seguridad en una ventana flotante",
+    "result.download.title": "Descargar la copia de seguridad",
 
     "lrs.title": "Datos LRS",
     "lrs.view.title": "Abrir los datos LRS en una ventana flotante",

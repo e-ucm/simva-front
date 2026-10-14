@@ -12,6 +12,8 @@
         "download.activity.title": "Telecharger les données de l'activité (LRS)",
         "download.test.title": "Telecharger les données de test",
         "download.backup.global.title": "Telecharger la copie de sécurité globale de l'activité (MINIO)",
+        "download.backup.game.title": "",
+        "download.backup.limeSurvey.title": "",
         "download.backup.user.title": "Telecharger la copie de sécurité des utilisateurs dans un fichier ZIP (MINIO)",
     "download.description": "Telecharger toutes les donnees disponibles pour cette activité.",
 
@@ -125,11 +127,11 @@
     "init.on": "Oui",
     "init.off": "Non",
 
-    "result.title": "Résultat",
-    "result.error.loading": "Erreur de chargement du résultat",
-    "result.error.downloading": "Erreur de téléchargement du résultat",
-    "result.view.title": "Ouvrir le résultat dans une fenêtre flottante",
-    "result.download.title": "Télécharger les résultats",
+    "result.title": "Sauvegarde",
+    "result.error.loading": "Erreur de chargement de la sauvegarde",
+    "result.error.downloading": "Erreur de téléchargement de la sauvegarde",
+    "result.view.title": "Ouvrir la sauvegarde dans une fenêtre flottante",
+    "result.download.title": "Télécharger la sauvegarde",
 
     "lrs.title": "Données LRS",
     "lrs.view.title": "Ouvrir les données LRS dans une fenêtre flottante",
