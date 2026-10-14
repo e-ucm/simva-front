@@ -144,8 +144,10 @@
         
 
         // Render
-        
-        async fillActivityCard(activity, card) {
+
+        // Basic activity card rendering
+
+        async fillActivityCard(session, activity, card) {
             // Add the extra buttons to the 3-dot menu after the Tmon button
             const extraKebab = $("#manual_extra_kebab_template li").clone();
             card.find(".kebab-dropdown").find(".icon-url").after(extraKebab);
@@ -176,7 +178,7 @@
             // Add the type icon next to the activity name
             card.find(".activityName").addClass("text-with-icon").addClass(iconClass);
 
-            super.fillActivityCard(activity, card);
+            super.fillActivityCard(session, activity, card);
             this.simple_name = prevSimpleName;
         }
 
@@ -184,6 +186,25 @@
             super.fillParticipantsTable(card, activity, participants, true, false, false);
         }
         
+        async paintActivitySessionStatusAndPermissions(session, card) {
+            super.paintActivitySessionStatusAndPermissions(session, card);
+
+    		// By default, hide every button that can modify the activity info 
+		    card.find(".icon-activate").hide();
+		    card.find(".icon-pause").hide();
+
+            // Only the users with permissions other than read can use the hidden buttons,
+            if (simlet.current_user_permission !== "READ") { 
+                // The activity completion only be changed if the session isn't finished
+                if (session.session_status != SESSION_FINISHED_STATUS) {
+                    card.find(".icon-activate").show();
+                    card.find(".icon-pause").show();
+                }
+            }
+
+            // Disable the checkboxes if the activity is finished or if the user has read only permissions
+            card.find("table input:checkbox").prop("disabled", session.session_status === SESSION_FINISHED_STATUS || simlet.current_user_permission === "READ");
+        }
     }
 
 </script>

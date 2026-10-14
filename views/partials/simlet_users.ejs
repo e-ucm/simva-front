@@ -868,6 +868,7 @@
 		});
 	});
 
+	
 	// Groups buttons shared listeners using event delegation to ensure 
 	// the handler works even if element is added after the document ready event
 
@@ -1109,6 +1110,9 @@
 					const row = $("#coordinator_template tr").clone()
 					$('#coordinators').append(row);
 
+					row.data(USER_DATA_ID_KEY, coordinator.user_id);
+					row.data(USER_DATA_NAME_KEY, coordinator.username);
+
 					// Then, fill its details asynchronously since the order of execution doesn't matter once the row has been added
 					fillCoordinatorRow(coordinator, row);
 				});
@@ -1125,25 +1129,16 @@
 	 * @param {object} row - jquery object reference of the row element
 	 */
 	const fillCoordinatorRow = async function(coordinator, row) {
-		row.data(USER_DATA_ID_KEY, coordinator.user_id);
-		row.data(USER_DATA_NAME_KEY, coordinator.username);
-		
-		// Determine the permissions text
-		let permissions = `<%- t('coordinators.permissions.full', { ns : 'groups' }) %>`
-		if (coordinator.permission.toLowerCase() === "read") {
-			permissions = `<%- t('coordinators.permissions.read', { ns : 'groups' }) %>`
-		}
-		else if (coordinator.permission.toLowerCase() === "write") {
-			permissions = `<%- t('coordinators.permissions.write', { ns : 'groups' }) %>`
-		}
-		
 		row.find(".username").text(coordinator.username);
-		row.find(".permissions").text(permissions);
-
-		// Block the delete button if the added coordinator is the same as the current user or if it has full permissions
-		if (coordinator.isCurrentUser || coordinator.permission.toLowerCase() === "full") {
-			row.find(".red").prop("disabled", true);
-		}
+		
+		const dropdown = row.find(".permissions"); 
+		dropdown.val(coordinator.permission);
+		
+		// Block the delete button if the added coordinator is the same as the current user, 
+		// if it has full permissions, or if the current user only has read permissions
+		const blockChanges = coordinator.isCurrentUser || coordinator.permission === "FULL" || simlet.current_user_permission === "READ";
+		dropdown.prop("disabled", blockChanges);
+		row.find(".red").prop("disabled", blockChanges);
 	}
 
 	
@@ -1236,6 +1231,8 @@
 				toggleGroup(group.group_id);
 			}
 
+			paintGroupStatusAndPermissions(group, card);
+
 			// Then, update and fill the card info asynchronously since the order of execution doesn't matter once it's been added
 			Simva.getGroup(simletId, group.group_id, (error, result) => {
 				if(!error) {
@@ -1254,10 +1251,31 @@
 				toggleGroup(firstGroupCard.data()[GROUP_DATA_ID_KEY]);
 			}
 		}
-
-		// Block group/user addition/deletion/allocation of all groups cards when SIMLET is archived
-		paintGroupsArchived();
 	}
+
+	/**
+	 * Update the group buttons that get affected by the SIMLET status and permissions
+	 * @param {object} session - object containing the group info
+	 */
+	const paintGroupStatusAndPermissions = async function(group, card) {
+		// By default, hide every button that can modify the session info 
+		card.find(".icon-edit").hide();
+		card.find(".icon-add").hide();
+		card.find(".icon-gear").hide();
+		card.find(".icon-delete").hide();
+		
+		// Only the users with permissions other than read can use the hidden buttons,
+		if (simlet.current_user_permission !== "READ") { 
+			card.find(".icon-edit").show();
+			// Only show the add, allocator and delete buttons if the SIMLET is active
+			if (!simlet.simlet_archived) {
+				card.find(".icon-add").show();
+				card.find(".icon-gear").show();
+				card.find(".icon-delete").show();
+			}
+		}
+	}
+	
 	
 	/**
 	 * Fill the group card info programatically to avoid XSS
@@ -1310,20 +1328,26 @@
 			});
 		}
 		
+		paintParticipantsStatusAndPermissions(card);
+
 		// Paint/repaint the allocator once all the participants have been added
 		card.find(".allocatorContent").empty();
-		paintAllocator(group);
-
-		// Block user deletion when SIMLET is archived
-		paintParticipantsArchived();
+		paintAllocator(group, card);
 	}
 
+	/**
+	 * Update the participants buttons that get affected by the SIMLET status and permissions
+	 * @param {object} session - object containing the group info
+	 */
+	const paintParticipantsStatusAndPermissions = async function(card) {
+		card.find(".participants .red").prop("disabled", simlet.simlet_archived || simlet.current_user_permission == "READ");
+	}
 
 	/**
 	 * Paint the allocator info on the group card
 	 * @param {object} group - object containing the group info
 	 */
-	const paintAllocator = async function(group) {
+	const paintAllocator = async function(group, card) {
 		const onLoadComplete = () => {
 			const painter = getAllocatorPainterByType(group.group_allocator_type || 'default');
 			if (painter != null) {
@@ -1347,7 +1371,15 @@
 			})
 		}
 
-		paintAllocatorsArchived();
+		paintAllocatorsStatusAndPermissions(card);
+	}
+
+	/**
+	 * Update the allocator dropdowns that get affected by the SIMLET status and permissions
+	 * @param {object} session - object containing the group info
+	 */
+	const paintAllocatorsStatusAndPermissions = async function(card) {
+		card.find("select").prop("disabled", simlet.simlet_archived || simlet.current_user_permission == "READ");
 	}
 
 	const paintNoGroupsMessage = function() {

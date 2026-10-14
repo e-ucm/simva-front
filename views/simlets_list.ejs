@@ -301,6 +301,7 @@ the elements and scripts defined in the simlet_commons partial -->
 				card.data(SIMLET_DATA_DESCRIPTION_KEY, simlet.simlet_description);
 
 				// Then, fill its details asynchronously since the order of execution doesn't matter once the card has been added
+				paintSimletStatusAndPermissions(simlet.simlet_id, card);
 				fillSimletCard(simlet, card);
 			}
 		});
@@ -309,40 +310,101 @@ the elements and scripts defined in the simlet_commons partial -->
 	}
 
 	/**
+	 * Paint the corresponding buttons depending of the SIMLET status (active/archived) 
+	 * and current user permissions and activate them depending on all sessions' status
+	 * @param {number} simletId - id of the SIMLET to paint the buttons for
+	 * @param {object} card - jquery object reference of the card element
+	 */
+	const paintSimletStatusAndPermissions = async function(simletId, card) {
+		const kebab = $("#kebab_template .kebab-dropdown").clone();
+		card.find(".kebab").append(kebab);
+		
+		const editButton = kebab.find(".icon-edit");
+		const urlButton = kebab.find(".icon-url");
+		const archiveButton = kebab.find(".icon-archive");
+		const dearchiveButton = kebab.find(".icon-dearchive");
+		const deleteButton = kebab.find(".icon-delete");
+
+		// By default, hide every button that can modify the SIMLET info 
+		editButton.hide();
+		urlButton.hide();
+		archiveButton.hide();
+		archiveButton.addClass("li-disabled");
+		dearchiveButton.hide();
+		deleteButton.hide();
+		
+		Simva.getCurrentUser((error, user) => {
+			Simva.getSimletPermissionsForUser(simletId, user.user_id, (error, result) => {
+				// Only the users with permissions other than read can use the edit and url buttons
+				if (result.permission !== "READ") {
+					editButton.show();
+					urlButton.show();
+				}
+
+				// Only the users with full permissions can see the archive and delete buttons
+				if (result.permission === "FULL") {
+					deleteButton.show();
+
+					// If the SIMLET is active (not archived)
+					if (!ARCHIVED) {
+						archiveButton.show();
+
+						Simva.getSimletSessions(simletId, function(error, result) {
+							// Check if all sessions are finished
+							let allSessionsFinished = true;
+
+							result.forEach((session, id) => {
+								allSessionsFinished = allSessionsFinished && (result.session_status == "terminated");
+							});
+							
+							// If all sessions are finished, enable the archive button
+							if (allSessionsFinished) {
+								archiveButton.removeClass("li-disabled");
+							}
+						});
+						
+					}
+					else {
+						// TEST: Uncomment to allow dearchivation
+						// dearchiveButton.show();
+					}
+				}
+			});
+		});
+		
+
+		// if (ARCHIVED) {
+		// 	kebab.find(".icon-archive").hide();
+
+		// 	// TEST: Uncomment to allow dearchivation 
+		// 	// kebab.find(".icon-dearchive").show();
+		// } 
+		// else {
+		// 	kebab.find(".icon-archive").show();
+
+		// 	// Disable archive button if not all sessions are finished
+		// 	Simva.getSimletSessions(simlet.simlet_id, function(error, result) {
+		// 		if (!error) {
+		// 			let allSessionsFinished = true;
+		// 			result.forEach((session, id) => {
+		// 				allSessionsFinished = allSessionsFinished && (result.session_status == "terminated");
+		// 			});
+		// 			if (!allSessionsFinished) {
+		// 				kebab.find(".icon-archive").addClass('li-disabled');
+		// 			}
+		// 		}
+		// 	});
+		// }
+		
+	}
+	
+	/**
 	 * Fill the SIMLET card info programatically to avoid XSS
 	 * @param {object} simlet - object containing the SIMLET info
 	 * @param {object} card - jquery object reference of the card element
 	 */
 	const fillSimletCard = async function(simlet, card) {
 		card.attr("href", `/simlets/${simlet.simlet_id}`);
-				
-		const kebab = $("#kebab_template .kebab-dropdown").clone();
-		card.find(".kebab").append(kebab);
-		
-		kebab.find(".icon-dearchive").hide();
-		if (ARCHIVED) {
-			kebab.find(".icon-archive").hide();
-
-			// TEST: Uncomment to allow dearchivation 
-			// kebab.find(".icon-dearchive").show();
-		} 
-		else {
-			kebab.find(".icon-archive").show();
-
-			// Disable archive button if not all sessions are finished
-			Simva.getSimletSessions(simlet.simlet_id, function(error, result) {
-				if (!error) {
-					let allSessionsFinished = true;
-					result.forEach((session, id) => {
-						allSessionsFinished = allSessionsFinished && (result.session_status == "terminated");
-					});
-					if (!allSessionsFinished) {
-						kebab.find(".icon-archive").addClass('li-disabled');
-					}
-				}
-			});
-		}
-		
 		card.find(".simletCardTitle h1").text(simlet.simlet_name);
 		card.find(".cardDescription").text(simlet.simlet_description);
 		card.find(".cardCreationDate").text(getFormattedDate(simlet.createdAt, currentlanguageCode));

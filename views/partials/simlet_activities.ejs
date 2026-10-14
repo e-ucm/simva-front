@@ -636,14 +636,11 @@
 			activities.forEach((activity) => {
 				const painter = getActivityPainterByType(activity.activity_type);
 				if (painter != null) {
-                    painter.addActivityCard(simletId, activity, sessionCard);
+                    painter.addActivityCard(session, activity, sessionCard);
                 }
 			});
 			sessionCard.find(".activities_loader").hide();
 		}
-
-		// Block activity changes when session is finished
-		paintSessionStatusForActivities(session, sessionCard);
 	}
 
 	
@@ -656,29 +653,6 @@
 		const painter = getActivityPainterByType($("#activity_type_field").val());
 		if (painter != null) {
 			painter.paintExtraForm(activity);
-		}
-	}
-	
-	const paintSessionStatusForActivities = function(session, card) {
-		// Block activity changes when session is finished
-		if (session.session_status == SESSION_FINISHED_STATUS || simlet.current_user_permission == "READ") {
-			card.find(".activityTopActions .kebab-dropdown .icon-delete").hide();
-			card.find(".activityTopActions .kebab-dropdown .icon-activate").hide();
-			card.find(".activityTopActions .kebab-dropdown .icon-pause").hide();
-		}
-		else {
-			card.find(".activityTopActions .kebab-dropdown .icon-delete").show();
-			card.find(".activityTopActions .kebab-dropdown .icon-activate").show();
-			card.find(".activityTopActions .kebab-dropdown .icon-pause").show();
-		}
-		card.find(".activity table input:checkbox").prop("disabled", session.session_status === SESSION_FINISHED_STATUS);
-
-		if (simlet.current_user_permission == "READ") {
-			card.find(".activityTopActions .kebab-dropdown .icon-delete").hide();
-			card.find(".activityTopActions .kebab-dropdown .icon-activate").hide();
-			card.find(".activityTopActions .kebab-dropdown .icon-pause").hide();
-			card.find(".activityTopActions .kebab-dropdown .icon-edit").hide();
-			card.find(".activity table input:checkbox").prop("disabled", true);
 		}
 	}
 	

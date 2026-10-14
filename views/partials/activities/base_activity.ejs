@@ -390,20 +390,19 @@
                 
         // Render
         
-        // Initial activity card rendering
+        // Basic activity card rendering
 
-        addActivityCard(sessionId, activity, sessionCard) {
+        addActivityCard(session, activity, sessionCard) {
             // Add the session card synchronously to ensure they appear in order
             const card = $("#activity_template .activity").clone();
             sessionCard.find(".activities").append(card);
             card.find(".kebab-dropdown").hide();
 
-            card.data(SESSION_DATA_ID_KEY, sessionId);
             card.data(ACTIVITY_DATA_ID_KEY, activity.activity_id);
             card.data(ACTIVITY_DATA_NAME_KEY, activity.activity_name);
             card.attr("id", `activity_${activity.activity_id}`);
 
-            this.fillActivityCard(activity, card);
+            this.fillActivityCard(session, activity, card);
         }
 
         /**
@@ -411,7 +410,7 @@
          * @param {object} activity - object containing the activity info
          * @param {object} card - jquery object reference of the card element
          */
-        async fillActivityCard(activity, card) {
+        async fillActivityCard(session, activity, card) {
             card.addClass(`t${activity.activity_type}`);
             card.find(".activityName").text(activity.activity_name);
 
@@ -432,6 +431,8 @@
             
             this.fillParticipantsTable(card, activity, participants);
             this.updateParticipants(activity, participants);
+
+            this.paintActivitySessionStatusAndPermissions(session, card);
         }
 
 
@@ -482,7 +483,23 @@
                         // Remove the activity result column from the table
             if (!result) {
                 card.find(".resProgress").remove();
-            }
+            } 
+        }
+
+        async paintActivitySessionStatusAndPermissions(session, card) {
+    		// By default, hide every button that can modify the activity info 
+		    card.find(".icon-edit").hide();
+		    card.find(".icon-delete").hide();
+
+            // Only the users with permissions other than read can use the hidden buttons,
+            if (simlet.current_user_permission !== "READ") { 
+    		    card.find(".icon-edit").show();
+                
+                // The activity can only be deleted if the session isn't finished
+                if (session.session_status != SESSION_FINISHED_STATUS) {
+		            card.find(".icon-delete").show();
+                }
+            } 
         }
 
 

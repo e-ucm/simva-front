@@ -120,33 +120,34 @@ the elements and scripts defined in the simlet_commons partial -->
 	// Add the floating class to the content element to add space at the bottom 
 	// of the page so the floating button doesnt cover any other element
 	$(".content").addClass("floating");
+	$(".basic").hide();
 	
 	$(document).ready(function() {
-		// Create the SIMLET 3-dot button from the template 
+		// Create the SIMLET 3-dot button from the template and hide by default the buttons that change the SIMLET info
 		const kebab = $("#kebab_template .kebab-dropdown").clone();
 		$(".simletSettings .kebab").append(kebab);
-		kebab.find(".icon-edit").on("click", () => { openSimletForm(simletId); });
-		kebab.find(".icon-url").on("click", () => { openUrlSettingsForm(simletId, simlet.simlet_name); });
-		kebab.find(".icon-download").on("click", () => { exportSimlet(simletId); });
+		kebab.find(".icon-edit").on("click", () => { openSimletForm(simletId); }).hide();
+		kebab.find(".icon-url").on("click", () => { openUrlSettingsForm(simletId, simlet.simlet_name); }).hide();
 		kebab.find(".icon-export").on("click", () => { exportSimlet(simletId); });
-		kebab.find(".icon-delete").on("click", () => { deleteSimlet(simletId, simlet.simlet_name); });
 		kebab.find(".icon-archive").on("click", (e) => { 
 			if($(e.target).hasClass("li-disabled") || simlet == null) {
 				return;
 			}
 			archiveSimlet(simlet.simlet_id, simlet.simlet_name, true);
-		});
+		}).hide();
 		kebab.find(".icon-dearchive").on("click", () => {
 			if (simlet == null) {
 				return;
 			}
 			archiveSimlet(simlet.simlet_id, simlet.simlet_name, false);
-		});
+		}).hide();
+		kebab.find(".icon-delete").on("click", () => { deleteSimlet(simletId, simlet.simlet_name); }).hide();
 
 		// Delete the add and import SIMLET tabs from the name/description menu
 		$("#add_simlet_tabs").remove();
 		$("#import_simlet_tab").remove();
 		
+
 		// Get the current user, store it, and paint the rest of the SIMLET
 		Simva.getCurrentUser((error, user) => {
 			if (!error) {
@@ -222,7 +223,27 @@ the elements and scripts defined in the simlet_commons partial -->
 	// Declared on the simlet_commons partial
 	onArchiveSimlet = function(newSimletInfo) {
 		simlet = newSimletInfo;
-		paintArchived();
+		paintSimletStatusAndPermissions();
+
+		// Iterate over all sessions and repaint their status and permissions
+		$("#sessions .test").each(function() {
+			const card = $(this);
+			const data = $(this).closest(".test").data();
+			paintSessionStatusAndPermissions(sessionsById.get(data[SESSION_DATA_ID_KEY]), card);
+		});
+
+		// Activities don't need to be handled since their buttons only depend on the session status
+
+		// Coordinators don't need to be handled since they can still be modified regardless of the SIMLET status
+
+		// Iterate over all sessions and repaint their status and permissions
+		$("#groups .test").each(function() {
+			const card = $(this);
+			const data = $(this).closest(".test").data();
+			paintGroupStatusAndPermissions(completeGroupsById.get(data[GROUP_DATA_ID_KEY]), card);
+			paintParticipantsStatusAndPermissions(card);
+			paintAllocatorsStatusAndPermissions(card);
+		});
 	}
 	
 	// Declared on the simlet_commons partial
@@ -249,6 +270,19 @@ the elements and scripts defined in the simlet_commons partial -->
 				$("#simlet_tags").remove();
 				$(".simletTop").after($(renderTags(simlet)).attr("id", "simlet_tags"));
 
+				// Try fetching the sessions and groups before paintAllocator in the simlet_users partial
+				// to potentially avoid fetching them multiple times, since the first paintAllocator calls
+				// run asynchronously and practically at the same time 
+				if (sessionsById.size != simlet.sessions.length) {
+					Simva.getSimletSessions(simletId, function(error, result) {
+						if (!error) {
+							sessionsById = new Map(result.map(obj => [obj.session_id, obj]));
+						}
+					});
+				}
+			
+				paintSimletStatusAndPermissions();
+
 				if (paintAll) {
 					// Update all the sessions search parameters and calls its onSearch to paint them
 					// No need to paint the activities here as they will be painted when painting the sessions
@@ -265,19 +299,6 @@ the elements and scripts defined in the simlet_commons partial -->
 
 					// TODO: Store platforms
 				}
-
-				// Try fetching the sessions and groups before paintAllocator in the simlet_users partial
-				// to potentially avoid fetching them multiple times, since the first paintAllocator calls
-				// run asynchronously and practically at the same time 
-				if (sessionsById.size != simlet.sessions.length) {
-					Simva.getSimletSessions(simletId, function(error, result) {
-						if (!error) {
-							sessionsById = new Map(result.map(obj => [obj.session_id, obj]));
-						}
-					});
-				}
-			
-				paintArchived();
 			} 
 			else {
 				console.error(error);
@@ -316,7 +337,8 @@ the elements and scripts defined in the simlet_commons partial -->
 		});
 		
 	}
-		
+	
+	
 	const getSessionFromId = function(sessionId) {
 		if (completeSessionsById.has(Number(sessionId))) {
 			return completeSessionsById.get(Number(sessionId));
@@ -364,129 +386,6 @@ the elements and scripts defined in the simlet_commons partial -->
 
 
 	// Render
-	
-	/**
-	 * Paint the corresponding archivation button depending of the SIMLET status (active/archived) 
-	 * and activate/deactivate it depending on all the sessions status  
-	 */
-	const paintArchived = async function() {
-		const active = !simlet.simlet_archived;
-
-		const archiveButton = $(".icon-archive");
-		const dearchiveButton = $(".icon-dearchive");
-		
-		$(".basic").hide();
-		archiveButton.hide();
-		dearchiveButton.hide();
-		archiveButton.addClass("li-disabled");
-
-		// If the SIMLET is active
-		if (active == null || active) {
-			// Show the add session/users floating buttons
-			$(".basic").show();
-
-			archiveButton.show();
-			
-			const checkAllSessionsFinished = () => {
-				// Check if all sessions are finished
-				let allSessionsFinished = true;
-
-				sessionsById.forEach((session, id) => {
-																					// Defined in the simlet_sessions partial
-					allSessionsFinished = allSessionsFinished && session.session_status == SESSION_FINISHED_STATUS;
-				});
-
-				// If all sessions are finished, enable the archive button
-				if (allSessionsFinished) {
-					archiveButton.removeClass("li-disabled");
-				}
-			}
-
-			// If all sessions have already been fetched, call the callback directly
-			if (sessionsById.size == simlet.sessions.length) {
-				checkAllSessionsFinished();
-			}
-			// Otherwise, fetch them from the database, store them, and call the callback once it's done
-			else {
-				Simva.getSimletSessions(simletId, function(error, result) {
-					if (!error) {
-						sessionsById = new Map(result.map(obj => [obj.session_id, obj]));
-						checkAllSessionsFinished();
-					}
-				});
-			}
-		}
-		// If the SIMLET is archived
-		else {
-			// Hide the add session/users floating buttons
-			$(".basic").hide();
-
-			// TEST: Uncomment to allow dearchivation
-			// dearchiveButton.show();
-		}
-		
-		paintAllArchived();
-		if (simlet.current_user_permission == "READ") {
-			$(".simletTop .kebab .icon-edit").hide();
-			$(".simletTop .kebab .icon-delete").hide();
-			$("#generate_shlink_url").remove();
-			$("#delete_shlink_url").remove();
-			$(".basic").hide();
-			archiveButton.addClass("li-disabled");
-			dearchiveButton.addClass("li-disabled");
-		}
-	}
-
-	const paintAllArchived = function() {
-		paintSessionsArchived();
-		paintCoordinatorsArchived();
-		paintGroupsArchived();
-		paintParticipantsArchived();
-	}
-	
-	// Hide the delete button from the sessions 3-dot menus
-	const paintSessionsArchived = function() {
-		if (simlet.simlet_archived || simlet.current_user_permission == "READ") {
-			$("#sessions .test .sessionTop .kebab .icon-delete").hide();
-		}
-		else {
-			$("#sessions .test .sessionTop .kebab .icon-delete").show();
-		}
-	}
-
-	// Disable the delete button from the coordinators table
-	const paintCoordinatorsArchived = function() {
-		$("#coordinators .red").prop("disabled", simlet.simlet_archived || simlet.current_user_permission == "READ");
-		$(`#coordinators .username:contains("${currentUser.username}")`).parent().find(".red").prop("disabled", true);
-	}
-
-	// Hide the groups 3-dot menus buttons that allow modifying the group users 
-	const paintGroupsArchived = function() {
-		if (simlet.simlet_archived || simlet.current_user_permission == "READ") {
-			$("#groups .test .groupTop .kebab .icon-delete").hide();
-			$("#groups .test .groupTop .kebab .icon-add").hide();
-			$("#groups .test .groupTop .kebab .icon-gear").hide();
-
-			if (simlet.current_user_permission == "READ") {
-				$("#groups .test .groupTop .kebab .icon-edit").hide();
-			}
-		}
-		else {
-			$("#groups .test .groupTop .kebab .icon-delete").show();
-			$("#groups .test .groupTop .kebab .icon-add").show();
-			$("#groups .test .groupTop .kebab .icon-gear").show();
-		}
-	}
-
-	// Disable the delete button from the participants table
-	const paintParticipantsArchived = function() {
-		$(".participants .red").prop("disabled", simlet.simlet_archived || simlet.current_user_permission == "READ");
-	}
-	
-	// Disable the unselected options from the allocator dropdowns
-	const paintAllocatorsArchived = function () {
-		$("#groups .test select option:not(:selected)").prop("disabled", simlet.simlet_archived || simlet.current_user_permission == "READ");
-	}
 
 	/**
 	 * Paint/hide the icon to copy the shlink next to the SIMLET title
@@ -502,6 +401,82 @@ the elements and scripts defined in the simlet_commons partial -->
 		}
 	}
 	
+	/**
+	 * Paint the corresponding buttons depending of the SIMLET status (active/archived) 
+	 * and current user permissions and activate them depending on all sessions' status  
+	 */
+	const paintSimletStatusAndPermissions = async function() {
+		const editButton = $(".simletTop .kebab .icon-edit");
+		const urlButton = $(".simletTop .kebab .icon-url");
+		const archiveButton = $(".simletTop .kebab .icon-archive");
+		const dearchiveButton = $(".simletTop .kebab .icon-dearchive");
+		const deleteButton = $(".simletTop .kebab .icon-delete");
+		const floatingAddButtons = $(".basic");
+		
+		// By default, hide every button that can modify the SIMLET info 
+		editButton.hide();
+		urlButton.hide();
+		archiveButton.hide();
+		archiveButton.addClass("li-disabled");
+		dearchiveButton.hide();
+		deleteButton.hide();
+		floatingAddButtons.hide();
+
+		// Only the users with permissions other than read can use the edit, url and add session/group buttons
+		if (simlet.current_user_permission !== "READ") {
+			editButton.show();
+			urlButton.show();
+			floatingAddButtons.show();
+		}
+
+		// Only the users with full permissions can see the archive and delete buttons
+		if (simlet.current_user_permission === "FULL") {
+			deleteButton.show();
+
+			// If the SIMLET is active (not archived)
+			if (simlet.simlet_archived != null && !simlet.simlet_archived) {
+				archiveButton.show();
+
+				const checkAllSessionsFinished = () => {
+					// Check if all sessions are finished
+					let allSessionsFinished = true;
+
+					sessionsById.forEach((session, id) => {
+																						// Defined in the simlet_sessions partial
+						allSessionsFinished = allSessionsFinished && session.session_status == SESSION_FINISHED_STATUS;
+					});
+
+					// If all sessions are finished, enable the archive button
+					if (allSessionsFinished) {
+						archiveButton.removeClass("li-disabled");
+					}
+				}
+
+				// If all sessions have already been fetched, call the callback directly
+				if (sessionsById.size == simlet.sessions.length) {
+					checkAllSessionsFinished();
+				}
+				// Otherwise, fetch them from the database, store them, and call the callback once it's done
+				else {
+					Simva.getSimletSessions(simletId, function(error, result) {
+						if (!error) {
+							sessionsById = new Map(result.map(obj => [obj.session_id, obj]));
+							checkAllSessionsFinished();
+						}
+					});
+				}
+
+			}
+			// Otherwise (or by default if simlet_archived is null), only hide the 
+			// add floating buttons since the other buttons are already hidden
+			else {
+				floatingAddButtons.hide();
+				
+				// TEST: Uncomment to allow dearchivation
+				// dearchiveButton.show();
+			}
+		}
+	}
 
 </script>
 

@@ -624,6 +624,23 @@
 		return false
 	}
 
+	/**
+	 * Check if a user is still allocated to the session: the users that aren't (they were moved
+	 * to another session after participating here) are marked as off in the participants tables
+	 * of the activities and aren't counted as completed in the session summary
+	 * @param {object} session - object containing the session info
+	 * @param {number} participantId - id of the user to check
+	 */
+	const isUserInSession = function(session, participantId) {
+		const participant = getParticipantFromId(participantId);
+		if (participant == null) {
+			// If the user can't be found, count it as usual
+			return true;
+		}
+		return getCurrentAllocation(participant.group_id, participant.user_id) == session.session_id;
+	}
+
+	
 	const deleteSession = function(sessionId, sessionName) {
 		if (confirm(`<%- t('delete.confirm', { ns : 'sessions', session : '${sessionName}', SIMLET : '${simlet.simlet_name}' }) %>`)) {
 			Simva.deleteSession(simletId, sessionId, function(error, result) {
@@ -707,7 +724,7 @@
 	}
 
 	/**
-	 * Add current user as tester (participant) for the session
+	 * Add current user as a tester participant for the session
 	 */
 	const setTesterForSession = function (sessionId) {
         Simva.setTesterForSession(simletId, sessionId, function(error, result) {
@@ -721,7 +738,7 @@
     }
 
 	/**
-	 * Remove current user as tester (participant) for the session
+	 * Remove current user as tester participant for the session
 	 */
 	const unsetTesterForSession = function(sessionId) {
 		Simva.unsetTesterForSession(simletId, sessionId, function(error, result) {
@@ -734,6 +751,9 @@
 		});
 	}
 
+	/**
+	 *  Reset the current user tester info for the session
+	 */
 	const resetTesterForSession = function(sessionId) {
 		Simva.resetTesterForSession(simletId, sessionId, function(error, result) {
 			if (error) {
@@ -817,7 +837,7 @@
 				card = $("#session_template .test").clone();
 				$('#sessions').append(card);
 				card.find(".kebab-dropdown").hide();
-				card.find(".sessionTestLauch").hide();
+				card.find(".icon-show").hide();
 
 				card.data(SESSION_DATA_ID_KEY, session.session_id);
 				card.data(SESSION_DATA_NAME_KEY, session.session_name);
@@ -826,6 +846,8 @@
 				toggleSession(session.session_id);
 			}
 			
+			paintSessionStatusAndPermissions(session, card);
+
 			// Then, update and fill the card info asynchronously since the order of execution doesn't matter once it's been added
 			Simva.getSimletSessionComplete(simletId, session.session_id, (error, result) => {
 				if(!error) {
@@ -840,7 +862,6 @@
 						completeActivitiesById.set(activity.activity_id, activity);
 					})
 					
-					paintArchived();
 					fillSessionCard(session, card);
 				}
 			});
@@ -856,25 +877,98 @@
 				toggleSession(firstSessionCard.data()[SESSION_DATA_ID_KEY]);
 			}
 		}
-		
-		// Block any session from being deleted if the SIMLET is archived
-		paintSessionsArchived();
 	}
 
+
 	/**
-	 * Check if a user is still allocated to the session: the users that aren't (they were moved
-	 * to another session after participating here) are marked as off in the participants tables
-	 * of the activities and aren't counted as completed in the session summary
+	 * Update the session status tag and the buttons that get affected by the SIMLET and session status and permissions
 	 * @param {object} session - object containing the session info
-	 * @param {number} participantId - id of the user to check
 	 */
-	const isUserInSession = function(session, participantId) {
-		const participant = getParticipantFromId(participantId);
-		if (participant == null) {
-			// If the user can't be found, count it as usual
-			return true;
+	const paintSessionStatusAndPermissions = async function(session, card) {
+		// By default, hide every button that can modify the session info 
+		card.find(".icon-edit").hide();
+		card.find(".icon-add").hide();
+		card.find(".icon-activate").hide();
+		card.find(".icon-pause").hide();
+		card.find(".icon-finish").hide();
+		card.find(".icon-tester").hide();
+		card.find(".icon-reset-tester").hide();
+		card.find(".icon-untester").hide();
+		card.find(".icon-delete").hide();
+		card.find(".sessionTestLauch").hide();
+		
+		const isTester = isCurrentUserParticipant(session.session_id);
+		currentUserTesterSessionId = isTester ? session.session_id : null;
+
+		// If the current user is set as tester of the session, show the play button regardless of permissions
+		if (isTester) {
+			card.find(".sessionTestLauch").show();
 		}
-		return getCurrentAllocation(participant.group_id, participant.user_id) == session.session_id;
+
+		let statusClass = session.session_status;
+		let statusLabelText = "";
+
+		// Determine the status label text (can't be done via string interpolation because the
+		// i18n instance processes text before js runs, so passing '${statusClass}.title' as 
+		// the translation key does nothing)
+		if (statusClass === SESSION_ACTIVE_STATUS) {
+			statusLabelText = `<%- t('active.title', { ns : 'sessions' }) %>`;
+		} 
+		else if (statusClass == SESSION_PAUSED_STATUS) {
+			statusLabelText = `<%- t('paused.title', { ns : 'sessions' }) %>`;
+		}
+		else if (statusClass == SESSION_FINISHED_STATUS) {
+			statusLabelText = `<%- t('finished.title', { ns : 'sessions' }) %>`;
+
+			// Hide the play button regardless of permissions
+			card.find(".sessionTestLauch").hide();
+		}
+		
+		card.find(".sessionStatusLabel").removeClass(`${SESSION_ACTIVE_STATUS} ${SESSION_PAUSED_STATUS} ${SESSION_FINISHED_STATUS}`);
+		card.find(".sessionStatusLabel").addClass(statusClass);
+		card.find(".sessionStatusLabel").text(statusLabelText);
+
+		// Only the users with permissions other than read can use the hidden buttons,
+		if (simlet.current_user_permission !== "READ") { 
+			card.find(".icon-edit").show();
+			card.find(".icon-add").show();
+			// Only show the delete button if the SIMLET is active
+			if (!simlet.simlet_archived) {
+				card.find(".icon-delete").show();
+			}
+
+			// Show/hide the tester buttons depending on the current user
+			if (isTester) {
+				card.find(".icon-tester").hide();
+				card.find(".icon-reset-tester").show();
+				card.find(".icon-untester").show();
+			}
+			else {
+				card.find(".icon-tester").show();
+				card.find(".icon-reset-tester").hide();
+				card.find(".icon-untester").hide();
+			}
+
+			// When the session is active, show pause and finalize
+			if (statusClass === SESSION_ACTIVE_STATUS) {
+				card.find(".icon-activate").hide();
+				card.find(".icon-pause").show();
+				card.find(".icon-finish").show();
+			}
+			// When the session is paused, show activate and finalize
+			else if (statusClass == SESSION_PAUSED_STATUS) {
+				card.find(".icon-pause").hide();
+				card.find(".icon-activate").show();
+				card.find(".icon-finish").show();
+			}
+			// When the session is terminated, hide the add and tester buttons
+			else {
+				card.find(".icon-add").hide();
+				card.find(".icon-tester").hide();
+				card.find(".icon-reset-tester").hide();
+				card.find(".icon-untester").hide();
+			}
+		}
 	}
 
 	/**
@@ -883,18 +977,16 @@
 	 * @param {object} card - jquery object reference of the card element
 	 */
 	const fillSessionCard = async function(session, card) {
-		card.find(".icon-tester").show();
-		card.find(".icon-reset-tester").hide();
-		card.find(".icon-untester").hide();
-		card.find(".icon-show").hide();
-		card.find(".sessionTestLauch").hide();
-		
 		card.find(".sessionTitle").text(session.session_name);
 		card.find(".sessionDescription").text(session.session_description);
 		card.find(".sessionCreateDate").text(getFormattedDate(session.createdAt, currentlanguageCode));
 		
 		const activities = session.completeActivities;
 		card.find(".sessionActivities").text(activities.length);
+
+		const participants = session.completeParticipants;
+		let userCount = participants.length;
+		card.find(".sessionUsers").text(userCount);
 
 		// If the session has any activities and the last activity is not null, iterate 
 		// over its data.completion property and get how many users have completed it.
@@ -909,10 +1001,6 @@
 			}
 		}
 
-		const participants = session.completeParticipants;
-		let userCount = participants.length;
-		card.find(".sessionUsers").text(userCount);
-
 		// If there are any users, calculate the percentage of users that have completed the last activity
 		let lastActivityCompletion = 0;
 		if (userCount > 0) {
@@ -925,16 +1013,11 @@
 		card.find(".sessionSummary .completedUsers").text(completeUserCount);
 		card.find(".sessionSummary .completedTotalUsers").text(userCount);
 
-		// Paint all the activities in this session (defined at simlet_activities)
-		paintSessionActivities(session, activities, card);
-
-		// Show/hide tester menu items based on current user status
-		paintCurrentUserTester(session.session_id, card);
-
-		paintSessionStatus(session);
-		
 		card.find(".sessionTags").empty();
 		card.find(".sessionTags").append(renderTags(session));
+
+		// Paint all the activities in this session (defined at simlet_activities)
+		paintSessionActivities(session, activities, card);
 	}
 
 	/**
@@ -957,80 +1040,6 @@
 		}
 	}
 	
-	/**
-	 * Update the session status tag and the buttons that get affected by the status change
-	 * @param {object} session - object containing the session info
-	 */
-	const paintSessionStatus = function(session) {
-		let sessionClass = session.session_status;
-		let sessionStatusLabel = "";
-		
-		const card = $(`#session_${session.session_id}`);
-
-		// Show/hide action buttons based on session status
-		if (sessionClass === SESSION_ACTIVE_STATUS) {
-			// Only show pause and finalize
-			card.find(".icon-activate").hide();
-			card.find(".icon-pause").show();
-			card.find(".icon-finish").show();
-			sessionStatusLabel = `<%- t('active.title', { ns : 'sessions' }) %>`;
-		} else if (sessionClass == SESSION_PAUSED_STATUS) {
-			// Only show activate and finalize
-			card.find(".icon-pause").hide();
-			card.find(".icon-activate").show();
-			card.find(".icon-finish").show();
-			sessionStatusLabel = `<%- t('paused.title', { ns : 'sessions' }) %>`;
-		} else if (sessionClass == SESSION_FINISHED_STATUS) {
-			// Hide all action, add, and tester buttons
-			card.find(".icon-activate").hide();
-			card.find(".icon-pause").hide();
-			card.find(".icon-finish").hide();
-			card.find(".icon-add").hide();
-			card.find(".icon-tester").hide();
-			card.find(".icon-reset-tester").hide();
-			card.find(".icon-untester").hide();
-			sessionStatusLabel = `<%- t('finished.title', { ns : 'sessions' }) %>`;
-		}
-
-		if (simlet.current_user_permission == "READ") {
-			card.find(".icon-edit").hide();
-			card.find(".icon-activate").hide();
-			card.find(".icon-pause").hide();
-			card.find(".icon-finish").hide();
-			card.find(".icon-add").hide();
-			card.find(".icon-tester").hide();
-			card.find(".icon-reset-tester").hide();
-			card.find(".icon-untester").hide();
-		}
-		
-		card.find(".sessionStatusLabel").removeClass(`${SESSION_ACTIVE_STATUS} ${SESSION_PAUSED_STATUS} ${SESSION_FINISHED_STATUS}`);
-		card.find(".sessionStatusLabel").addClass(sessionClass);
-		card.find(".sessionStatusLabel").text(sessionStatusLabel);
-
-		// Declared in the simlet_activities partial
-		paintSessionStatusForActivities(session, card);
-	}
-	
-	/**
-	 * Update the session buttons that get affected by the current user participation in the session
-	 * @param {number} sessionId - id of the session to check if the current user is participant
-	 * @param {object} card - jquery object reference of the session card element
-	 */
-	const paintCurrentUserTester = function(sessionId, card) {
-		if (isCurrentUserParticipant(sessionId)) {
-			currentUserTesterSessionId = sessionId;
-			card.find(".icon-tester").hide();
-			card.find(".icon-reset-tester").show();
-			card.find(".icon-untester").show();
-			card.find(".sessionTestLauch").show();
-		} else {
-			card.find(".icon-tester").show();
-			card.find(".icon-reset-tester").hide();
-			card.find(".icon-untester").hide();
-			card.find(".sessionTestLauch").hide();
-		}
-	}
-
 	
 	// Functions to call to avoid reloading the whole view when updating info of any session 
 

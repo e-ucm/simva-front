@@ -157,8 +157,10 @@
         
 
         // Render
-
-        async fillActivityCard(activity, card) {
+        
+        // Basic activity card rendering
+        
+        async fillActivityCard(session, activity, card) {
             // Add the type icon next to the activity name
             card.find(".activityName").addClass("text-with-icon").addClass("icon-survey");
             
@@ -176,7 +178,19 @@
             meta.find(".surveyId").text(activity.survey_id);
             meta.find(".surveyLang").text(activity.survey_language);
 
-            super.fillActivityCard(activity, card);
+            super.fillActivityCard(session, activity, card);
+        }
+
+        async paintActivitySessionStatusAndPermissions(session, card) {
+            super.paintActivitySessionStatusAndPermissions(session, card);
+
+            // By default, hide every button that can modify the activity info 
+		    card.find(".icon-edit-survey").hide();
+
+            // Only the users with permissions other than read can use the hidden buttons,
+            if (simlet.current_user_permission !== "READ") { 
+                card.find(".icon-edit-survey").show();
+            }
         }
 
     }
