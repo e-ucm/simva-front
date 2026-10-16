@@ -15,6 +15,7 @@ FROM deps AS dev
 
 RUN npm install -g clinic
 RUN chown -R node:node /app/node_modules
+COPY --chown=node:node ./ecosystem.config.dev.js ./ecosystem.config.js
 
 USER node
 EXPOSE 3050
@@ -26,6 +27,7 @@ FROM base AS prod
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY --chown=node:node . .
+COPY --chown=node:node ./ecosystem.config.prod.js ./ecosystem.config.js
 
 USER node
 
