@@ -2,9 +2,9 @@
 
 <div class="tooltipLine">
 <% if (typeof archived !== 'undefined' && !archived) { %>
-	<h1><%- t('title', { ns : 'SIMLETs' }) %></h1>
+	<h1><%= t('title', { ns : 'SIMLETs' }) %></h1>
 <% } else { %>
-	<h1><%- t('archived.title', { ns : 'SIMLETs' }) %></h1>
+	<h1><%= t('archived.title', { ns : 'SIMLETs' }) %></h1>
 <% } %>
 	<div class="tooltip">
 		&#x1F6C8;
@@ -46,16 +46,16 @@ the elements and scripts defined in the simlet_commons partial -->
 				<div class="kebab"></div>
 			</div>
 			<p class="cardDescription"> 	</p>
-			<p><strong><%- t('card.created_at', { ns : 'SIMLETs' }) %>: </strong><span class="cardCreationDate">		</span></p>
-			<p><strong><%- t('card.updated_at', { ns : 'SIMLETs' }) %>: </strong><span class="cardUpdateDate">		</span></p>
-			<p><strong><%- t('card.sessions', { ns : 'SIMLETs' }) %>: </strong><span class="cardSessions">		</span></p>
+			<p><strong><%= t('card.created_at', { ns : 'SIMLETs' }) %>: </strong><span class="cardCreationDate">		</span></p>
+			<p><strong><%= t('card.updated_at', { ns : 'SIMLETs' }) %>: </strong><span class="cardUpdateDate">		</span></p>
+			<p><strong><%= t('card.sessions', { ns : 'SIMLETs' }) %>: </strong><span class="cardSessions">		</span></p>
 			<p>
-				<strong><%- t('card.groups', { ns : 'SIMLETs' }) %>: </strong><span class="cardGroups">		</span>
+				<strong><%= t('card.groups', { ns : 'SIMLETs' }) %>: </strong><span class="cardGroups">		</span>
 				&nbsp; 
-				<strong><%- t('card.users', { ns : 'SIMLETs' }) %>: </strong><span class="cardUsers">		</span>
+				<strong><%= t('card.users', { ns : 'SIMLETs' }) %>: </strong><span class="cardUsers">		</span>
 			</p>
 			<div class="simletTagsRow">
-				<strong><%- t('card.tags', { ns : 'SIMLETs' }) %>:</strong>
+				<strong><%= t('card.tags', { ns : 'SIMLETs' }) %>:</strong>
 				
 			</div>
 		</div>
@@ -133,7 +133,7 @@ the elements and scripts defined in the simlet_commons partial -->
 				};
 				reader.readAsDataURL(fileInput.files[0]);
 			}else {
-				$("#simlet_form_error").text("<%- t('import.upload.error', { ns : 'SIMLETs' }) %>");
+				$("#simlet_form_error").text("<%= t('import.upload.error', { ns : 'SIMLETs' }) %>");
 				Utils.toggleSubmit();
 			}
 			return false;
@@ -156,8 +156,8 @@ the elements and scripts defined in the simlet_commons partial -->
 			Utils.toggleFormInFloating("simlet_form_menu");
 			$("#add_simlet_tabs").show();
 			
-			$("#simlet_form_title").text("<%- t('add.title', { ns : 'SIMLETs' }) %>");
-			$("#simlet_name_desc_submit").val("<%- t('new.submit', { ns : 'SIMLETs' }) %>");
+			$("#simlet_form_title").text("<%= t('add.title', { ns : 'SIMLETs' }) %>");
+			$("#simlet_name_desc_submit").val("<%= t('new.submit', { ns : 'SIMLETs' }) %>");
 
 			$('#prev_simlet_name').val("");
 			$('#prev_simlet_description').val("");
@@ -175,8 +175,8 @@ the elements and scripts defined in the simlet_commons partial -->
 
 				$("#add_simlet_tabs").hide();
 
-				$("#simlet_form_title").text("<%- t('edit.title', { ns : 'SIMLETs' }) %>");
-				$("#simlet_name_desc_submit").val("<%- t('edit.submit', { ns : 'SIMLETs' }) %>");
+				$("#simlet_form_title").text("<%= t('edit.title', { ns : 'SIMLETs' }) %>");
+				$("#simlet_name_desc_submit").val("<%= t('edit.submit', { ns : 'SIMLETs' }) %>");
 
 				$('#prev_simlet_name').val(simlet.simlet_name);
 				$('#prev_simlet_description').val(simlet.simlet_description);
@@ -429,15 +429,15 @@ the elements and scripts defined in the simlet_commons partial -->
 			// There are no SIMLETs in the current section (active/archived)
 			if (simletsById.size == 0) {
 				if (!ARCHIVED) {
-					$('#no_simlets_msg').text("<%- t('no_simlets.message', { ns : 'SIMLETs' }) %>");
+					$('#no_simlets_msg').text("<%= t('no_simlets.message', { ns : 'SIMLETs' }) %>");
 				}
 				else {
-					$('#no_simlets_msg').text("<%- t('no_archived.message', { ns : 'SIMLETs' }) %>");
+					$('#no_simlets_msg').text("<%= t('no_archived.message', { ns : 'SIMLETs' }) %>");
 				}
 			}
 			// There are SIMLETs, but none of them matched the search parameters
 			else {
-				$('#no_simlets_msg').text("<%- t('search.no_matches', { ns : 'SIMLETs' }) %>");
+				$('#no_simlets_msg').text("<%= t('search.no_matches', { ns : 'SIMLETs' }) %>");
 			}
 		}
 		else {

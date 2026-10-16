@@ -4,7 +4,7 @@
 
 <!-- Top part of the view, which includes the SIMLET name and the 3-dot menu button -->
 <div class="simletTop">
-	<h1 title="<%- t('single.description', { ns : 'SIMLETs' }) %>"><%- t('single.title', { ns : 'SIMLETs' }) %>: <span id="simlet_name"></span></h1>
+	<h1 title="<%= t('single.description', { ns : 'SIMLETs' }) %>"><%= t('single.title', { ns : 'SIMLETs' }) %>: <span id="simlet_name"></span></h1>
 	<img src="../images/icons/link.png" style="display: none;" onclick="copyShortURL()">
 	<div class="simletSettings">
 		<div class="kebab">
@@ -22,8 +22,8 @@ the elements and scripts defined in the simlet_commons partial -->
 <!-- Sessions/groups tabs -->
 <div id="study_tabs">
 	<div class="tabs studyTabsButtons">
-		<input id="sessions_tab_button" class="tab yellow selected" type="button" title="<%- t('sessions.tab.description', { ns : 'SIMLETs' }) %>" onclick="openSessionsTab()" value="<%- t('sessions.tab.title', { ns : 'SIMLETs' }) %>">
-		<input id="users_tab_button" class="tab yellow" type="button" title="<%- t('users.tab.description', { ns : 'SIMLETs' }) %>" onclick="openUsersTab()" value="<%- t('users.tab.title', { ns : 'SIMLETs' }) %>">
+		<input id="sessions_tab_button" class="tab yellow selected" type="button" title="<%= t('sessions.tab.description', { ns : 'SIMLETs' }) %>" onclick="openSessionsTab()" value="<%= t('sessions.tab.title', { ns : 'SIMLETs' }) %>">
+		<input id="users_tab_button" class="tab yellow" type="button" title="<%= t('users.tab.description', { ns : 'SIMLETs' }) %>" onclick="openUsersTab()" value="<%= t('users.tab.title', { ns : 'SIMLETs' }) %>">
 	</div>
 	
 	<div id="sessions_tab" class="subform studyTab selected">
@@ -39,29 +39,29 @@ the elements and scripts defined in the simlet_commons partial -->
 
 					<div id="download_session_data" class="subform selected">
 						<!-- onClick functions defined on the simlet_sessions partial -->
-						<input class="yellow" id="session_data_download" type="button" value="<%- t('download.session.title', { ns : 'sessions' }) %>" onclick="downloadSessionData()">
-						<input class="yellow" id="session_test_data_download" type="button" value="<%- t('download.test.title', { ns : 'sessions' }) %>" onclick="downloadSessionTestData()">
+						<input class="yellow" id="session_data_download" type="button" value="<%= t('download.session.title', { ns : 'sessions' }) %>" onclick="downloadSessionData()">
+						<input class="yellow" id="session_test_data_download" type="button" value="<%= t('download.test.title', { ns : 'sessions' }) %>" onclick="downloadSessionTestData()">
 						
 						<div id="download_session_loader" style="margin-bottom: 20px;">
 							<div class="loader" style="margin-bottom: 10px;">
 								<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 							</div>
-							<p style="text-align: center;"><%- t('download.wait_message', { ns : 'SIMLETs' }) %></p>
+							<p style="text-align: center;"><%= t('download.wait_message', { ns : 'SIMLETs' }) %></p>
 						</div>
 					</div>
 
 					<div id="download_activity_data" class="subform">
 						<!-- onClick functions defined on the simlet_activities partial -->
-						<input class="yellow" id="activity_data_download" type="button" value="<%- t('download.activity.title', { ns : 'activities' }) %>" onclick="downloadActivityData()">
-						<input class="yellow" id="activity_test_data_download" type="button" value="<%- t('download.test.title', { ns : 'activities' }) %>" onclick="downloadActivityTestData()">
-						<input class="yellow" id="global_backup_download" type="button" value="<%- t('download.backup.global.title', { ns : 'activities' }) %>" onclick="downloadGlobalActivityBackup()">
-						<input class="yellow" id="backup_download" type="button" value="<%- t('download.backup.user.title', { ns : 'activities' }) %>" onclick="downloadUsersActivityBackup()">
+						<input class="yellow" id="activity_data_download" type="button" value="<%= t('download.activity.title', { ns : 'activities' }) %>" onclick="downloadActivityData()">
+						<input class="yellow" id="activity_test_data_download" type="button" value="<%= t('download.test.title', { ns : 'activities' }) %>" onclick="downloadActivityTestData()">
+						<input class="yellow" id="global_backup_download" type="button" value="<%= t('download.backup.global.title', { ns : 'activities' }) %>" onclick="downloadGlobalActivityBackup()">
+						<input class="yellow" id="backup_download" type="button" value="<%= t('download.backup.user.title', { ns : 'activities' }) %>" onclick="downloadUsersActivityBackup()">
 
 						<div id="download_activity_loader">
 							<div class="loader" style="margin-bottom: 10px;">
 								<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 							</div>
-							<p style="text-align: center;"><%- t('download.wait_message', { ns : 'SIMLETs' }) %></p>
+							<p style="text-align: center;"><%= t('download.wait_message', { ns : 'SIMLETs' }) %></p>
 						</div>
 					</div>
 				</div>
@@ -82,9 +82,9 @@ the elements and scripts defined in the simlet_commons partial -->
 	<h3 id="printable_group_name">	</h3>
 	<table id="printable_table">
 		<thead>
-			<th style="width: 6%;"><%- t('print_table.number_col.title', { ns : 'groups' }) %></th>
-			<th style="width: 46%;"><%- t('print_table.name_col.title', { ns : 'groups' }) %></th>
-			<th style="width: 46%;" colspan="4"><%- t('print_table.code_col.title', { ns : 'groups' }) %></th>
+			<th style="width: 6%;"><%= t('print_table.number_col.title', { ns : 'groups' }) %></th>
+			<th style="width: 46%;"><%= t('print_table.name_col.title', { ns : 'groups' }) %></th>
+			<th style="width: 46%;" colspan="4"><%= t('print_table.code_col.title', { ns : 'groups' }) %></th>
 		</thead>
 		<tbody>
 
@@ -198,8 +198,8 @@ the elements and scripts defined in the simlet_commons partial -->
 		$('#simlet_form_error').text("");
 		$('#edit_simlet_id').val(simletId);
 		
-		$("#simlet_form_title").text("<%- t('edit.title', { ns : 'SIMLETs' }) %>");
-		$("#simlet_name_desc_submit").val("<%- t('edit.submit', { ns : 'SIMLETs' }) %>");
+		$("#simlet_form_title").text("<%= t('edit.title', { ns : 'SIMLETs' }) %>");
+		$("#simlet_name_desc_submit").val("<%= t('edit.submit', { ns : 'SIMLETs' }) %>");
 
 		$('#prev_simlet_name').val(simlet.simlet_name);
 		$('#prev_simlet_description').val(simlet.simlet_description);
@@ -393,7 +393,7 @@ the elements and scripts defined in the simlet_commons partial -->
 	const paintShlink = async function() {
 		if (shlink != null && shlink.shortUrl != null && shlink.shortUrl != "") {
 			$(".simletTop img").show();
-			$(".simletTop img").attr("title", `<%- t('scheduler.shlink.message', { ns : 'SIMLETs', shlink : '${shlink.shortUrl}' }) %>`);
+			$(".simletTop img").attr("title", `<%= t('scheduler.shlink.message', { ns : 'SIMLETs', shlink : '${shlink.shortUrl}' }) %>`);
 		}
 		else {
 			$(".simletTop img").hide();

@@ -6,7 +6,7 @@
     <div class="card supervisors">
         <div class="groupTop">
 			<div class="tooltipLine">
-	            <h2><%- t('supervisors.title', { ns : 'groups' }) %></h2>
+	            <h2><%= t('supervisors.title', { ns : 'groups' }) %></h2>
 				<div class="tooltip">
 					&#x1F6C8;
 					<span class="tooltiptext">
@@ -18,8 +18,8 @@
         </div>
         <table class="owners" id="supervisors">
             <thead>
-                <th><%- t('supervisors.table.username.title', { ns : 'groups' }) %></th>
-                <th><%- t('supervisors.table.permissions.title', { ns : 'groups' }) %></th>
+                <th><%= t('supervisors.table.username.title', { ns : 'groups' }) %></th>
+                <th><%= t('supervisors.table.permissions.title', { ns : 'groups' }) %></th>
                 <th></th>
             </thead>
             <tbody>
@@ -37,12 +37,12 @@
 				<td class="username">-</td>
 				<td>
 					<select class="permissions">
-						<option value="FULL" disabled hidden><%- t('supervisors.permissions.full', { ns : 'groups' }) %></option>
-						<option value="READ"><%- t('supervisors.permissions.read', { ns : 'groups' }) %></option>
-						<option value="WRITE"><%- t('supervisors.permissions.write', { ns : 'groups' }) %></option>
+						<option value="FULL" disabled hidden><%= t('supervisors.permissions.full', { ns : 'groups' }) %></option>
+						<option value="READ"><%= t('supervisors.permissions.read', { ns : 'groups' }) %></option>
+						<option value="WRITE"><%= t('supervisors.permissions.write', { ns : 'groups' }) %></option>
 					</select>
 				</td>
-				<td><input class="red" type="button" value="<%- t('supervisors.delete.title', { ns : 'groups' }) %>"></td>
+				<td><input class="red" type="button" value="<%= t('supervisors.delete.title', { ns : 'groups' }) %>"></td>
 			</tr>
 		</table>
 	</div>
@@ -51,7 +51,7 @@
 	<div class="card groups">
 		<div class="top groupTop">
 			<div class="tooltipLine">
-				<h2><%- t('groups.title', { ns : 'groups' }) %></h2>
+				<h2><%= t('groups.title', { ns : 'groups' }) %></h2>
 				<div class="tooltip">
 					&#x1F6C8;
 					<span class="tooltiptext">
@@ -83,35 +83,35 @@
                 <div class="expandButton"></div>
                 <div class="kebab">
                     <ul class="kebab-dropdown">
-                        <li class="text-with-icon icon-edit" title="<%- t('groups.settings.groups.edit.title', { ns : 'groups' }) %>">
-                            <%- t('groups.settings.groups.edit.title', { ns : 'groups' }) %>
+                        <li class="text-with-icon icon-edit" title="<%= t('groups.settings.groups.edit.title', { ns : 'groups' }) %>">
+                            <%= t('groups.settings.groups.edit.title', { ns : 'groups' }) %>
                         </li>
-                        <li class="text-with-icon icon-add" title="<%- t('groups.settings.add.title', { ns : 'groups' }) %>">
-                            <%- t('groups.settings.add.title', { ns : 'groups' }) %>
+                        <li class="text-with-icon icon-add" title="<%= t('groups.settings.add.title', { ns : 'groups' }) %>">
+                            <%= t('groups.settings.add.title', { ns : 'groups' }) %>
                         </li>
-                        <li class="text-with-icon icon-gear" title="<%- t('groups.settings.allocator.title', { ns : 'groups' }) %>">
-                            <%- t('groups.settings.allocator.title', { ns : 'groups' }) %>
-						<li class="text-with-icon icon-download" title="<%- t('groups.settings.print.title', { ns : 'groups' }) %>">
-							<%- t('groups.settings.print.title', { ns : 'groups' }) %>
+                        <li class="text-with-icon icon-gear" title="<%= t('groups.settings.allocator.title', { ns : 'groups' }) %>">
+                            <%= t('groups.settings.allocator.title', { ns : 'groups' }) %>
+						<li class="text-with-icon icon-download" title="<%= t('groups.settings.print.title', { ns : 'groups' }) %>">
+							<%= t('groups.settings.print.title', { ns : 'groups' }) %>
                         </li>
                         </li>
-						<li class="text-with-icon icon-export" title="<%- t('groups.settings.export.title', { ns : 'groups' }) %>">
-							<%- t('groups.settings.export.title', { ns : 'groups' }) %>
+						<li class="text-with-icon icon-export" title="<%= t('groups.settings.export.title', { ns : 'groups' }) %>">
+							<%= t('groups.settings.export.title', { ns : 'groups' }) %>
 						</li>
-                        <li class="text-with-icon icon-delete" title="<%- t('groups.settings.delete.title', { ns : 'groups' }) %>">
-                            <%- t('groups.settings.delete.title', { ns : 'groups' }) %>
+                        <li class="text-with-icon icon-delete" title="<%= t('groups.settings.delete.title', { ns : 'groups' }) %>">
+                            <%= t('groups.settings.delete.title', { ns : 'groups' }) %>
                         </li>
                     </ul>
                 </div>
             </div>
 			<div class="deprecated_generation">
-				<p><%- t('deprecated.message', { ns : 'groups' }) %></p>
+				<p><%= t('deprecated.message', { ns : 'groups' }) %></p>
             </div>
             <div class="allocatorContent">
             </div>
-			<strong><%- t('participants.title', { ns : 'groups' }) %>: </strong><span  class="groupParticipantsCount">-</span>
+			<strong><%= t('participants.title', { ns : 'groups' }) %>: </strong><span  class="groupParticipantsCount">-</span>
 			<div class="tooltipLine participantsTitle" style="margin-top: 15px; margin-bottom: 15px;">
-				<h3><%- t('participants.title', { ns : 'groups' }) %></h3>
+				<h3><%= t('participants.title', { ns : 'groups' }) %></h3>
 				<div class="tooltip">
 					&#x1F6C8;
 					<span class="tooltiptext">
@@ -124,10 +124,10 @@
 				<span class="no_participants_msg"></span>
                 <table class="participants">
                     <thead>
-                        <th><%- t('participants.table.username.title', { ns : 'groups' }) %></th>
-                        <th><%- t('participants.table.token.title', { ns : 'groups' }) %></th>
-                        <th><%- t('participants.table.email.title', { ns : 'groups' }) %></th>
-                        <th><%- t('participants.table.role.title', { ns : 'groups' }) %></th>
+                        <th><%= t('participants.table.username.title', { ns : 'groups' }) %></th>
+                        <th><%= t('participants.table.token.title', { ns : 'groups' }) %></th>
+                        <th><%= t('participants.table.email.title', { ns : 'groups' }) %></th>
+                        <th><%= t('participants.table.role.title', { ns : 'groups' }) %></th>
                         <th></th>
                     </thead>
                     <tbody>
@@ -148,7 +148,7 @@
 				<td class="token">	</td>
 				<td><a class="email">	</a></td>
 				<td class="role">	</td>
-				<td><input class="red" type="button" value="<%- t('participant.delete.title', { ns : 'groups' }) %>"></td>
+				<td><input class="red" type="button" value="<%= t('participant.delete.title', { ns : 'groups' }) %>"></td>
 			</tr>
 		</table>
 	</div>
@@ -161,9 +161,9 @@
 		<div class="form" id="group_form">
 			<h1 id="users_form_title">  </h1>
 			<div class="tabs" id="add_group_tabs">
-				<span id="group_name_desc_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'group_form','group_name_desc_tab')"><%- t('groups.add.new.tab', { ns : 'groups' }) %></span>
-				<span class="tab" onclick="Utils.changeTab(this, 'group_form','import_group_tab')"><%- t('groups.import.tab', { ns : 'groups' }) %></span>
-				<span class="tab" onclick="Utils.changeTab(this, 'group_form','supervisors_tab')"><%- t('supervisors.add.title', { ns : 'groups' }) %></span>
+				<span id="group_name_desc_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'group_form','group_name_desc_tab')"><%= t('groups.add.new.tab', { ns : 'groups' }) %></span>
+				<span class="tab" onclick="Utils.changeTab(this, 'group_form','import_group_tab')"><%= t('groups.import.tab', { ns : 'groups' }) %></span>
+				<span class="tab" onclick="Utils.changeTab(this, 'group_form','supervisors_tab')"><%= t('supervisors.add.title', { ns : 'groups' }) %></span>
 			</div>
 
 			<!-- Create/edit group -->
@@ -171,38 +171,38 @@
 				<form id="group_form">
 					<input hidden type="text" name="editingGroupId" id="edit_group_id">
 					<input hidden type="text" name="prevGroupName" id="prev_group_name">
-					<h3><%- t('groups.name.title', { ns : 'groups' }) %></h3>
-					<input type="text" class="name_field" name="groupName" id="group_name" placeholder="<%- t('groups.name.placeholder', { ns : 'groups' }) %>" required>
-					<h3 class="group_allocate_title"><%- t('groups.allocate_to.title', { ns : 'groups' }) %></h3>
+					<h3><%= t('groups.name.title', { ns : 'groups' }) %></h3>
+					<input type="text" class="name_field" name="groupName" id="group_name" placeholder="<%= t('groups.name.placeholder', { ns : 'groups' }) %>" required>
+					<h3 class="group_allocate_title"><%= t('groups.allocate_to.title', { ns : 'groups' }) %></h3>
 					<select class="group_allocate_dropdown"></select>
 					<!-- TEST -->
-					<!-- <h3><%- t('deprecated.title', { ns : 'groups' }) %></h3> -->
-					<!-- <input type="checkbox" name="group_use_deprecated_generation" id="group_use_deprecated_generation" title="<%- t('deprecated.tooltip', { ns : 'groups' }) %>"><label for="group_use_deprecated_generation" ><%- t('deprecated.title', { ns : 'groups' }) %></label> -->
+					<!-- <h3><%= t('deprecated.title', { ns : 'groups' }) %></h3> -->
+					<!-- <input type="checkbox" name="group_use_deprecated_generation" id="group_use_deprecated_generation" title="<%= t('deprecated.tooltip', { ns : 'groups' }) %>"><label for="group_use_deprecated_generation" ><%= t('deprecated.title', { ns : 'groups' }) %></label> -->
 					<!-- <br><br> -->
-					<input type="submit" id="group_submit" value="<%- t('groups.add.new.submit', { ns : 'groups' }) %>">
+					<input type="submit" id="group_submit" value="<%= t('groups.add.new.submit', { ns : 'groups' }) %>">
 				</form>
 			</div>
 
 			<!-- Import group -->
 			<div id="import_group_tab" class="subform" style="display: none;">
 				<form id="import_group_form_modal">
-					<h3><%- t('groups.name.title', { ns : 'groups' }) %></h3>
-					<input type="text" class="name_field" name="groupName" id="import_group_name_modal" placeholder="<%- t('groups.name.placeholder', { ns : 'groups' }) %>" required>
-					<h3 class="group_allocate_title"><%- t('groups.allocate_to.title', { ns : 'groups' }) %></h3>
+					<h3><%= t('groups.name.title', { ns : 'groups' }) %></h3>
+					<input type="text" class="name_field" name="groupName" id="import_group_name_modal" placeholder="<%= t('groups.name.placeholder', { ns : 'groups' }) %>" required>
+					<h3 class="group_allocate_title"><%= t('groups.allocate_to.title', { ns : 'groups' }) %></h3>
 					<select class="group_allocate_dropdown"></select>
-					<h3><%- t('groups.import.input', { ns : 'groups' }) %></h3>
+					<h3><%= t('groups.import.input', { ns : 'groups' }) %></h3>
 					<input type="file" name="jsonFile" accept=".json" required>
-					<input type="submit" value="<%- t('groups.import.submit', { ns : 'groups' }) %>">
+					<input type="submit" value="<%= t('groups.import.submit', { ns : 'groups' }) %>">
 				</form>
 			</div>
 
 			<!-- Add supervisor -->
 			<div id="supervisors_tab" class="subform">
 				<form id="existing_supervisor_form">
-					<h3><%- t('supervisors.name.title', { ns : 'groups' }) %></h3>
-					<input type="text" class="name_field" id="supervisor_name" name="name" placeholder="<%- t('supervisors.name.placeholder', { ns : 'groups' }) %>" required>
+					<h3><%= t('supervisors.name.title', { ns : 'groups' }) %></h3>
+					<input type="text" class="name_field" id="supervisor_name" name="name" placeholder="<%= t('supervisors.name.placeholder', { ns : 'groups' }) %>" required>
 					<div class="tooltipLine">
-						<h3><%- t('supervisors.permission.title', { ns : 'groups' }) %></h3>
+						<h3><%= t('supervisors.permission.title', { ns : 'groups' }) %></h3>
 						<div class="tooltip">
 							&#x1F6C8;
 							<span class="tooltiptext">
@@ -211,11 +211,11 @@
 						</div>
 					</div>
 					<select name="permission" required>
-						<option value=""><%- t('supervisors.permission.placeholder', { ns : 'groups' }) %></option>
-						<option value="READ"><%- t('supervisors.permissions.read', { ns : 'groups' }) %></option>
-						<option value="WRITE"><%- t('supervisors.permissions.write', { ns : 'groups' }) %></option>
+						<option value=""><%= t('supervisors.permission.placeholder', { ns : 'groups' }) %></option>
+						<option value="READ"><%= t('supervisors.permissions.read', { ns : 'groups' }) %></option>
+						<option value="WRITE"><%= t('supervisors.permissions.write', { ns : 'groups' }) %></option>
 					</select>
-					<input type="submit" value="<%- t('supervisors.add.title', { ns : 'groups' }) %>">
+					<input type="submit" value="<%= t('supervisors.add.title', { ns : 'groups' }) %>">
 				</form>
 			</div>
 			
@@ -240,7 +240,7 @@
 			<div id="existing_participant_tab" class="subform selected">
 				<form id="existing_participant_form">
 					<br>
-					<textarea type="text" name="name" style="max-height: 10rem; " placeholder="<%- t('participants.username.placeholder.batch', { ns : 'groups' }) %>" required></textarea>
+					<textarea type="text" name="name" style="max-height: 10rem; " placeholder="<%= t('participants.username.placeholder.batch', { ns : 'groups' }) %>" required></textarea>
 					<input type="submit" value="<%= t('participants.add.existing.submit' , { ns : 'groups' }) %>">
 				</form>
 			</div>
@@ -297,7 +297,7 @@
 			<div id="change_allocator" class="subform selected">
 				<form id="change_allocator_form">
 					
-					<input type="submit" value="<%- t('allocator.change.submit', { ns : 'groups' }) %>">
+					<input type="submit" value="<%= t('allocator.change.submit', { ns : 'groups' }) %>">
 				</form>
 			</div>
 
@@ -310,11 +310,11 @@
 <!-- TODO PLATFORMS -->
 <!--  <% if (config.lti.enabled == 'true') { %>
 	<div class="graybox lti_platforms default">
-		<h2><%- t('lti_platform.title', { ns : 'groups' }) %></h2>
+		<h2><%= t('lti_platform.title', { ns : 'groups' }) %></h2>
 		<p></p>
 		<table id="lti_platforms">
 		</table>
-		<input class="violet" type="button" value="<%- t('lti_platform.add.title', { ns : 'groups' }) %>" onclick="Utils.toggleFormInFloating('add_platform')">
+		<input class="violet" type="button" value="<%= t('lti_platform.add.title', { ns : 'groups' }) %>" onclick="Utils.toggleFormInFloating('add_platform')">
 	</div>
 <% } %>
 -->
@@ -323,22 +323,22 @@
 	<div class="floater">
 		<div class="form">
 			<div id="add_platform_tab" class="subform selected">
-				<h2><%- t('lti_platforms.add.title', { ns : 'SIMLETs' }) %></h2>
+				<h2><%= t('lti_platforms.add.title', { ns : 'SIMLETs' }) %></h2>
 				<form id="add_platform_form">
-					<p><%- t('lti_platforms.add.name.title', { ns : 'SIMLETs' }) %>:</p>
+					<p><%= t('lti_platforms.add.name.title', { ns : 'SIMLETs' }) %>:</p>
 					<input type="text" name="name" placeholder="imsglobal">
-					<p><%- t('lti_platforms.add.url.title', { ns : 'SIMLETs' }) %>:</p>
+					<p><%= t('lti_platforms.add.url.title', { ns : 'SIMLETs' }) %>:</p>
 					<input type="text" name="url" placeholder="https://lti-ri.imsglobal.org/platforms/2056">
-					<p><%- t('lti_platforms.add.client_id.title', { ns : 'SIMLETs' }) %>:</p>
+					<p><%= t('lti_platforms.add.client_id.title', { ns : 'SIMLETs' }) %>:</p>
 					<input type="text" name="clientId" placeholder="lti-test">
-					<p><%- t('lti_platforms.add.authentication_endpoint.title', { ns : 'SIMLETs' }) %>:</p>
+					<p><%= t('lti_platforms.add.authentication_endpoint.title', { ns : 'SIMLETs' }) %>:</p>
 					<input type="text" name="authenticationEndpoint" placeholder="https://lti-ri.imsglobal.org/platforms/2056/authorizations/new">
-					<p><%- t('lti_platforms.add.accesstoken_endpoint.title', { ns : 'SIMLETs' }) %>Accesstoken Endpoint:</p>
+					<p><%= t('lti_platforms.add.accesstoken_endpoint.title', { ns : 'SIMLETs' }) %>Accesstoken Endpoint:</p>
 					<input type="text" name="accesstokenEndpoint" placeholder="https://lti-ri.imsglobal.org/platforms/2056/access_tokens">
-					<p><%- t('lti_platforms.add.jkws_url.title', { ns : 'SIMLETs' }) %>:</p>
+					<p><%= t('lti_platforms.add.jkws_url.title', { ns : 'SIMLETs' }) %>:</p>
 					<input type="text" name="jkwsUrl" placeholder="https://lti-ri.imsglobal.org/platforms/2056/platform_keys/1952.json">
 
-					<input type="submit" value="<%- t('lti_platforms.add.title', { ns : 'SIMLETs' }) %>">
+					<input type="submit" value="<%= t('lti_platforms.add.title', { ns : 'SIMLETs' }) %>">
 					<span class="loader" style="display: none"><div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></span>
 					<span class="error"></span>
 				</form>
@@ -439,12 +439,12 @@
 
 			supervisors.forEach((supervisor) => {
 				if (supervisor.username == form.name) {
-					errorbox.text("<%- t('supervisors.error.already_in', { ns : 'groups' }) %>");
+					errorbox.text("<%= t('supervisors.error.already_in', { ns : 'groups' }) %>");
 					return false;
 				}
 			});
 			if (form.permission !== "READ" && form.permission !== "WRITE") {
-				errorbox.text("<%- t('supervisors.error.permission', { ns : 'groups' }) %>");
+				errorbox.text("<%= t('supervisors.error.permission', { ns : 'groups' }) %>");
 				return false;
 			}
 
@@ -457,7 +457,7 @@
 				const foundUser = Array.isArray(users) ? users[0] : users;
 				if (!foundUser || !foundUser.user_id) {
 					// TODO: other error showing in this case instead of this one
-					errorbox.text("<%- t('supervisors.error.not_found', { ns : 'groups' }) %>");
+					errorbox.text("<%= t('supervisors.error.not_found', { ns : 'groups' }) %>");
 					return;
 				}
 
@@ -504,12 +504,12 @@
 					} catch (parseError) {
 						console.error('Import error:', parseError);
 						Utils.toggleSubmit();
-						errorbox.text("<%- t('groups.import.error.invalid_file', { ns : 'groups' }) %> " + (parseError.message ? (': ' + parseError.message) : ''));
+						errorbox.text("<%= t('groups.import.error.invalid_file', { ns : 'groups' }) %> " + (parseError.message ? (': ' + parseError.message) : ''));
 					}
 				};
 				reader.readAsDataURL(fileInput.files[0]);
 			} else {
-				errorbox.text("<%- t('groups.import.upload.error', { ns : 'groups' }) %>");
+				errorbox.text("<%= t('groups.import.upload.error', { ns : 'groups' }) %>");
 				Utils.toggleSubmit();
 			}
 			return false;
@@ -549,7 +549,7 @@
 
 				const nameChanged = form.prevGroupName != form.groupName;
 				if (!nameChanged) {
-					errorbox.text("<%- t('groups.edit.no_changes.message', { ns : 'groups' }) %>");
+					errorbox.text("<%= t('groups.edit.no_changes.message', { ns : 'groups' }) %>");
 					Utils.toggleSubmit();
 				}
 				else {
@@ -612,7 +612,7 @@
 						// If some users have been added, add an extra message asking for 
 						// manual refreshing (to allow the user to see the error message)
 						if (added > 0) {
-							errorText += `<%- t("participants.error_message.reload_manually", { ns : "groups" }) %> <br> `
+							errorText += `<%= t("participants.error_message.reload_manually", { ns : "groups" }) %> <br> `
 						}
 						errorbox.html(errorText);
 						return false;
@@ -660,7 +660,7 @@
 			usernames.forEach((username) => {
 				// If any participant is already in the group, add each user to the error message 
 				if (groupParticipants.has(username)) {
-					errorText += `<%- t("participants.error_message.already_in_group", { ns : "groups", group : "${group.group_name}", participant : "${username}" }) %> <br> `;
+					errorText += `<%= t("participants.error_message.already_in_group", { ns : "groups", group : "${group.group_name}", participant : "${username}" }) %> <br> `;
 					checkUserComplete();
 				}
 				// Otherwise, try to fetch an user from the database with said username
@@ -673,7 +673,7 @@
 						else {
 							const foundUser = Array.isArray(result) ? result[0] : result;
                 			if(!foundUser || !foundUser.user_id){
-								errorText += `<%- t("participants.error_message.already_in_group", { ns : "groups", participant : "${username}" }) %> <br> `
+								errorText += `<%= t("participants.error_message.already_in_group", { ns : "groups", participant : "${username}" }) %> <br> `
 							}
 							// If there's a user with that username, add it to the found users
 							else {
@@ -803,7 +803,7 @@
 		$('#import_group_error_modal').text("");
 
 		// Set form title to common title
-		$("#users_form_title").text("<%- t('users.add.title', { ns : 'groups' }) %>");
+		$("#users_form_title").text("<%= t('users.add.title', { ns : 'groups' }) %>");
 
 		const dropdown = $(".group_allocate_dropdown");
 		fillSessionsDropdown(dropdown);
@@ -830,8 +830,8 @@
 		const group = getGroupFromId(groupId);
 		$("#add_group_tabs").hide();
 		// Set form title to edit title
-		$("#users_form_title").text("<%- t('groups.edit.title', { ns : 'groups' }) %>");
-		$("#group_submit").val("<%- t('groups.edit.submit', { ns : 'groups' }) %>");
+		$("#users_form_title").text("<%= t('groups.edit.title', { ns : 'groups' }) %>");
+		$("#group_submit").val("<%= t('groups.edit.submit', { ns : 'groups' }) %>");
 		if (group) {
 			$('#prev_group_name').val(group.group_name);
 			$('#group_name').val(group.group_name);
@@ -911,7 +911,7 @@
 		const group = getGroupFromId(data[GROUP_DATA_ID_KEY]);
 		
 		// Change the table group name and clear it
-		$("#printable_group_name").text(`<%- t('print_table.title', { ns : 'groups' }) %> ${data[GROUP_DATA_NAME_KEY]}`);
+		$("#printable_group_name").text(`<%= t('print_table.title', { ns : 'groups' }) %> ${data[GROUP_DATA_NAME_KEY]}`);
 		clearTableBody($("#printable_table"));
 
 		// Add each participant as a row
@@ -1330,7 +1330,7 @@
 		// If there are no participants, hide the table and show a message
 		if (group.participants.length == 0) {
 			table.hide();
-			card.find(".no_participants_msg").text("<%- t('participants.no_users.message', { ns : 'groups' }) %>");
+			card.find(".no_participants_msg").text("<%= t('participants.no_users.message', { ns : 'groups' }) %>");
 		}
 		// Otherwise, show it and fill it with the participants info
 		else {
@@ -1349,7 +1349,7 @@
 				row.data(USER_DATA_NAME_KEY, participant.username);
 				table.append(row);
 
-				let role = participant.role === "teacher" ? `<%- t('teacher', { ns : 'roles' }) %>` : `<%- t('student', { ns : 'roles' }) %>`
+				let role = participant.role === "teacher" ? `<%= t('teacher', { ns : 'roles' }) %>` : `<%= t('student', { ns : 'roles' }) %>`
 				let token = participant.token == null ? "-" : participant.token
 				
 				row.find(".username").text(participant.username);
@@ -1419,11 +1419,11 @@
 		if (groupsFilteringPaginationData["totalResults"] == 0) {
 			// No groups
 			if (simlet.groups.length == 0) {
-				$('#no_groups_msg').text("<%- t('groups.no_groups.message', { ns : 'groups' }) %>");
+				$('#no_groups_msg').text("<%= t('groups.no_groups.message', { ns : 'groups' }) %>");
 			}
 			// There are groups, but none of them matched the search parameters
 			else {
-				$('#no_groups_msg').text("<%- t('search.no_matches', { ns : 'SIMLETs' }) %>");
+				$('#no_groups_msg').text("<%= t('search.no_matches', { ns : 'SIMLETs' }) %>");
 			}
 		}
 		else {
@@ -1669,7 +1669,7 @@
 	// const paintPlatforms = function(platforms) {
 	// 	$('#lti_platforms').html('');
 	// 	if (platforms.length == 0) {
-	// 		$('#lti_platforms').append("<p><%- t('lti_platform.zero.message', { ns : 'groups' }) %></p>");
+	// 		$('#lti_platforms').append("<p><%= t('lti_platform.zero.message', { ns : 'groups' }) %></p>");
 	// 	} else {
 	// 		for (var i = 0; i < platforms.length; i++) {
 	// 			$('#lti_platforms').append(platformRow(platforms[i]));
@@ -1678,7 +1678,7 @@
 	// }
 	
 	// const platformRow = function(platform) {
-	// 	let toret = `<tr><td>${platform.name}</td><td><input class="red" type="button" value="<%- t('lti_platform.delete.title', { ns : 'groups' }) %>"
+	// 	let toret = `<tr><td>${platform.name}</td><td><input class="red" type="button" value="<%= t('lti_platform.delete.title', { ns : 'groups' }) %>"
 	// 	onclick="removePlatform('${platform._id}')"
 	// 	></td></tr>`;
 	// 	return toret;

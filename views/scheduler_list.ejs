@@ -1,6 +1,6 @@
 <% extend('layout_with_menu_and_sse') %>
 
-<h1><%- t('play.title', { ns : 'SIMLETs' }) %></h1>
+<h1><%= t('play.title', { ns : 'SIMLETs' }) %></h1>
 
 <% const searchBarPlaceholder = t('search_bar.placeholder', { ns : 'SIMLETs' }); %>
 <%- include('partials/filtering_pagination_commons', { id:"scheduler", searchBarPlaceholderText: searchBarPlaceholder }) %>
@@ -96,11 +96,11 @@
 		if (batch.length == 0) {
 			// There are no SIMLETs in the current section
 			if (filteringPaginationData["totalResults"] == 0) {
-				$('#no_simlets_msg').text("<%- t('scheduler.no_simlet.title', { ns : 'SIMLETs' }) %>");
+				$('#no_simlets_msg').text("<%= t('scheduler.no_simlet.title', { ns : 'SIMLETs' }) %>");
 			}
 			// There are SIMLETs, but none of them matched the search parameters
 			else {
-				$('#no_simlets_msg').text("<%- t('search.no_matches', { ns : 'SIMLETs' }) %>");
+				$('#no_simlets_msg').text("<%= t('search.no_matches', { ns : 'SIMLETs' }) %>");
 			}
 		}
 		else {
@@ -116,7 +116,7 @@
 	const fillSimletCard = async function(simlet, card) {
 		card.attr("href", `/scheduler/${simlet.simlet_id}`);
 		card.find(".cardTitle").text(simlet.simlet_name);
-		card.find(".cardDescription").text("<%- t('scheduler.title', { ns : 'SIMLETs' }) %>");
+		card.find(".cardDescription").text("<%= t('scheduler.title', { ns : 'SIMLETs' }) %>");
 	}
 	
 </script>
