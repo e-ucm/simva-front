@@ -98,13 +98,6 @@ router.get('/about', function (req, res, next) {
     });
 });
 
-router.get('/e-ucm', function (req, res, next) {
-    res.render('logout_e_ucm', {
-        config: config,
-        t: req.t
-    });
-});
-
 router.get('/', usertools.auth(0), usertools.redirectToLogin(0), function (req, res, next) {
     if (req.session.user.data.role == 'teacher' || req.session.user.data.role == 'administrator' || req.session.user.data.role == 'lrsmanager'  || req.session.user.data.role == 'student') {
         res.render('home', {

@@ -70,7 +70,7 @@ module.exports = function(auth, redirectToLogin, config){
   });
 
   router.get('/login', function(req, res, next) {
-      res.render('users_login', { 
+      res.render('login', { 
         config: config, 
         t : req.t
       });

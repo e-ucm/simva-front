@@ -5,7 +5,7 @@ module.exports = function(auth, redirectToLogin, config){
   const logger = require('../../logger');
 
   router.get('/', auth, redirectToLogin, function(req, res, next) {
-  	   res.render('sccheduler_list', { 
+  	   res.render('scheduler_list', { 
          config: config,
          user: req.session.user,
          t : req.t
@@ -20,7 +20,7 @@ module.exports = function(auth, redirectToLogin, config){
       req.session.intendedUrl = `/scheduler/${studyId}/device`;
       return res.redirect(`/users/openidscheduler?study=${studyId}`);
     }
-    res.render('device_auth', {
+    res.render('layout_device_auth', {
         config: config,
         user: req.session.user,
         study: studyId,

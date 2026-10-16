@@ -1,6 +1,9 @@
-<%# views/users_login.ejs %>
+<%# views/login.ejs %>
  
 <% extend('layout_logout') %>
+
+<iframe id="sso_connect" class="content_filled" src="/users/ssoconnect">
+</iframe>
 
 <script type="text/javascript">
 	document.addEventListener('DOMContentLoaded', () => {
@@ -19,6 +22,3 @@
 		});
 	});
 </script>
-
-<iframe id="sso_connect" class="content_filled" src="/users/ssoconnect">
-</iframe>
