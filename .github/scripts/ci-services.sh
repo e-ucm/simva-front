@@ -38,8 +38,8 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# `npm start` relies on the ecosystem.config.js that the deployment mounts, so
-# start the HTTP server directly instead.
+# The health probe starts the HTTP server directly instead of going through
+# `npm start` (PM2), so it does not depend on a PM2 ecosystem config.
 docker rm -f "${CONTAINER}" >/dev/null 2>&1 || true
 docker run -d --name "${CONTAINER}" \
   -e SIMVA_PORT=3050 \
