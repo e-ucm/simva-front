@@ -28,7 +28,7 @@
 	</script>
 </head>
 <body class="black">
-	<%- include('partials/header_authenticated') %>
+	<%- include('partials/header', { isLoggedIn: true }) %>
 	<div style="width:100%; height:100vh;">
 		<iframe id="sso_device" class="content_filled" src="<%= config.sso.deviceUrl %>?user_code=<%= usercode %>"></iframe>
 	</div>

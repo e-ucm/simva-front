@@ -1,0 +1,197 @@
+<% 
+const loggedIn = typeof isLoggedIn !== 'undefined' && isLoggedIn; 
+const schedulerMode = typeof isScheduler !== 'undefined' && isScheduler; 
+const schedulerTestMode = typeof testMode !== 'undefined' && testMode;
+%>
+
+<div class="header<%= schedulerMode ? ' black' : '' %>" <%= !loggedIn ? 'id=logout_header' : '' %>>
+    <div class="left">
+        <select id="language-dropdown" style="margin-right: 15px;" onchange="changeLanguage()">
+        </select>
+		<img class="logo" src="/images/logo.png">
+
+        <!-- In scheduler, show the current activity name instead of the SIMVA title -->
+		<span style="margin: 10px; white-space: nowrap;">
+            <%= schedulerMode ? t('scheduler.current', { ns : 'SIMLETs' }) : t('title') %>
+        </span>
+        <% if (schedulerMode) { %>
+            <span id="current_activity_name"></span>
+        <% } %>
+    </div>
+
+    <div class="right">
+        <ul>
+            <!-- When logged out, show the about, e-ucm and login options -->
+            <% if (!loggedIn) { %>
+            <li>
+				<a href="/about">
+					<img src="/images/icons/information.png"> <%= t('title', { ns : 'about'}) %>
+				</a>
+			</li>
+			<li>
+				<a href="https://www.e-ucm.es/es/people/" target="_blank" rel="noopener noreferrer">
+					<img src="/images/icons/eucm_icon.ico"> <%= t('contact.title') %>
+				</a>
+			</li>
+			<li>
+				<a class="login" href="/users/login">
+					<img src="/images/icons/power-button-off.png" style="filter: invert(100%);"> <%= t('login.title') %>
+				</a>
+			</li>
+            <!-- When logged in, -->
+            <% } else { %>
+                <!-- While in scheduler mode, show the refresh and complete activity buttons -->
+                <% if (schedulerMode) { %>
+                    <li>
+                        <a id="refresh" style="cursor: pointer;" onclick="location.reload()">
+                            <img src="/images/icons/undo.png" style="filter: invert(100%);"> <%= t('scheduler.refresh', { ns : 'SIMLETs' }) %>
+                        </a>
+                    </li>
+                    
+                    <li id="complete_activity" style="display: none">
+                        <a style="cursor: pointer;" onclick="completeActivity()">
+                            <img src="/images/icons/check.png" style="filter: invert(100%);"> <%= t('scheduler.complete', { ns : 'SIMLETs' }) %>
+                        </a>
+                    </li>
+                    
+                    <!-- Only if not running the scheduler mode as a tester, show the exit SIMLET button -->
+                    <% if(!schedulerTestMode) { %>
+                    <li>
+                        <a href="/scheduler/">
+                            <img src="/images/icons/back.png" style="filter: invert(100%);"> <%= t('scheduler.exit', { ns : 'SIMLETs' }) %></span>
+                        </a>
+                    </li>
+                    <% } %>
+
+                    <!-- If running the scheduler mode as a tester (in a floating iframe), add margin to the username so it doesn't overlap with the close button -->
+                    <li <%= schedulerTestMode ? 'style=margin-right:35px;' : '' %>>
+                        <a>
+                            <img src="/images/icons/user.png" style="filter: invert(100%);"> <span id="username" style="padding: 0px;">
+                        </a>
+                    </li>
+                <!-- Outside of scheduler mode, show the e-ucm option and the user name with the option to open the account config -->
+                <% } else { %>
+                <li>
+                    <a href="https://www.e-ucm.es/es/people/" target="_blank" rel="noopener noreferrer">
+                        <img src="/images/icons/eucm_icon.ico"> <%= t('contact.title') %>
+                    </a>
+                </li>
+                <li>
+                    <a id="account_username" href="<%= config.sso.accountUrl%>">
+                        <img src="/images/icons/user.png"> <span id="username" style="padding: 0px;">
+                    </a>
+                </li>
+                <% } %>
+
+                <!-- Only if not running the scheduler mode as a tester, show the logout button -->
+                <% if (!schedulerTestMode) { %>
+                <li>
+                    <a class="logout" href="/users/logout">
+                        <img src="/images/icons/power-button-off.png" style="filter: invert(100%);"> <%= t('logout.title') %>
+                    </a>
+                </li>
+                <% } %>
+
+            <% } %>
+        </ul>
+
+    </div>
+</div>
+
+<!-- Language selector -->
+<script>
+	const currentUrl = window.location.href;
+	let currentlanguageCode = null;
+
+	$(document).ready(function () {
+		Simva.getLanguage(function (error, result) {
+			if (error) {
+				console.log(error.message);
+			}
+			else {
+				// No language selected
+				if (!result.current) {
+					let newLangCode;
+
+					const preferredLangs = navigator.languages;
+					console.log(`The Preferred languages are: ${preferredLangs}.`);
+
+					// Set the newLangCode to the first language of the preferred 
+					// navigator languages that is included in the available languages
+					if (Array.isArray(result.languages)) {
+						preferredLangs.forEach((lang) => {
+							if (!newLangCode && result.languages.find(language => language.code === lang)) {
+								newLangCode = lang;
+							}
+						});
+					}
+					// If none of the preferred navigator languages is in the 
+					// available languages, set newLangCode to the default one
+					if (!newLangCode && result.default) {
+						newLangCode = result.default;
+					}
+
+					// If no language has been selected before and there's a 
+					// default language to change to, update the language
+					if (!currentUrl.includes("lng=") && newLangCode) {
+						updateLanguage(newLangCode);
+						return;
+					}
+				}
+				
+				// If there are any available languages
+				if (Array.isArray(result.languages)) {
+					// Get the language whose code matches the current language code
+					const currentlanguage = result.languages.find(language => language.code === result.current);
+					currentlanguageCode = currentlanguage.code;
+
+					// Iterate over all the available languages
+					result.languages.forEach((lang) => {
+						// Add a new option to the dropdown
+						$("#language-dropdown").append($('<option>', {
+							value: lang.code,
+							text: `${result.flags[lang.code] || result.flags["default"]} ${lang.name}`
+						}));
+
+						// Set the current language as the selected option
+						if (lang.code == currentlanguageCode) {
+							$("#language-dropdown").val(lang.code)
+						}
+					});
+				}
+				
+			}
+		});
+	});
+
+	const changeLanguage = function (langCode) {
+		const selectedLang = $("#language-dropdown").val();
+		updateLanguage(selectedLang);
+	}
+
+	const updateLanguage = function (newLangCode) {
+		Simva.updateLanguage(newLangCode, function (updateError) {
+			if (updateError) {
+				console.log(updateError.message);
+			}
+			else {
+				// If the current url has query parameters
+				if (currentUrl.includes("?")) {
+					// If the current url already has the lng parameter, replace its value with the new owe
+					if (currentUrl.includes("lng=")) {
+						window.location.href = currentUrl.replace(`lng=${currentlanguageCode}`,`lng=${newLangCode}`);
+					}
+					// Otherwise, add the lng parameter to the existing query parameters
+					else {
+						window.location.href = `${currentUrl}&lng=${newLangCode}`;
+					}
+				}
+				// Otherwise, add a new query with the selected lng parameter  
+				else {
+					window.location.href = `${currentUrl}?lng=${newLangCode}`;
+				}
+			}
+		});
+	}
+
+</script>

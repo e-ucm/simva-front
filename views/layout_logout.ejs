@@ -7,7 +7,7 @@
 	<%- include('partials/layout_common_script') %>
 </head>
 <body>
-	<%- include('partials/header_logout') %>
+	<%- include('partials/header', { isLoggedIn: false }) %>
 
 	<%- content %>
 </body>

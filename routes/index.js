@@ -16,14 +16,14 @@ app.use(bodyParser.json({ limit: '1mb' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(session(
-  {
-    secret: 'simva app',
-    cookie: { 
-      maxAge: config.simva.cookieMaxAgeInMin*60*1000
-    },
-    resave: false, // Set this to false
-    saveUninitialized: false, // Set this to false
-  }
+    {
+        secret: 'simva app',
+        cookie: {
+            maxAge: config.simva.cookieMaxAgeInMin * 60 * 1000
+        },
+        resave: false, // Set this to false
+        saveUninitialized: false, // Set this to false
+    }
 ));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '/../public')));
@@ -44,12 +44,12 @@ router = express.Router();
 app.use('/', router);
 app.use('/users', require('./routes/users.js')(usertools.auth(1), usertools.redirectToLogin(1), config));
 app.use('/bff', (req, res, next) => {
-  // Only redirect on direct browser navigation
-  if (req.headers['sec-fetch-mode'] === 'navigate' || (req.method === 'GET' && req.headers.accept?.includes('text/html'))) {
-    return res.redirect('/');
-  }
-  // API requests pass through normally
-  next(); 
+    // Only redirect on direct browser navigation
+    if (req.headers['sec-fetch-mode'] === 'navigate' || (req.method === 'GET' && req.headers.accept?.includes('text/html'))) {
+        return res.redirect('/');
+    }
+    // API requests pass through normally
+    next();
 });
 app.use('/bff', require('./routes/bff.js')(usertools.auth(1), usertools.redirectToLogin(1), config));
 app.use('/events', require('./routes/events.js')(usertools.auth(1), usertools.redirectToLogin(1), config));
@@ -68,88 +68,83 @@ const createDOMPurify = require('dompurify');
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
 
-router.get('/about', function(req, res, next) {
-  const isAuthenticated = !!(req.session && req.session.user);
-  
-  // Read the about.md file
-  const docPath = path.join(__dirname, '/../public', "about.md");
-  fs.readFile(docPath, 'utf8', (err, content) => {
-    if (err) {
-      return next(err); 
-    }
+router.get('/about', function (req, res, next) {
+    const isAuthenticated = !!(req.session && req.session.user);
 
-    // Translate the keys in the markdown, then parse the content to html
-    const localizedMd = ejs.render(content, { 
-      t: (key, options) => req.t(key, options),
-      user: isAuthenticated ? req.session.user : undefined,
-    });
-    let parsedHmtl = marked(localizedMd);
-    parsedHmtl = DOMPurify.sanitize(parsedHmtl);
-    
-    res.render('about', {
-      config: config,
-      user: isAuthenticated ? req.session.user : undefined,
-      layoutTemplate: isAuthenticated ? 'layout_with_menu_and_sse' : 'layout_logout',
-      t: req.t,
-      aboutContent: parsedHmtl,
-      // md: localizedMd
-    });
+    // Read the about.md file
+    const docPath = path.join(__dirname, '/../public', "about.md");
+    fs.readFile(docPath, 'utf8', (err, content) => {
+        if (err) {
+            return next(err);
+        }
 
-  });
+        // Translate the keys in the markdown, then parse the content to html
+        const localizedMd = ejs.render(content, {
+            t: (key, options) => req.t(key, options),
+            user: isAuthenticated ? req.session.user : undefined,
+        });
+        let parsedHmtl = marked(localizedMd);
+        parsedHmtl = DOMPurify.sanitize(parsedHmtl);
+
+        res.render('about', {
+            config: config,
+            user: isAuthenticated ? req.session.user : undefined,
+            layoutTemplate: isAuthenticated ? 'layout_with_menu_and_sse' : 'layout_logout',
+            t: req.t,
+            aboutContent: parsedHmtl,
+            // md: localizedMd
+        });
+
+    });
 });
 
-router.get('/e-ucm', function(req, res, next) {
-  res.render('logout_e_ucm', { 
-    config: config,
-    t: req.t
-  });
+router.get('/e-ucm', function (req, res, next) {
+    res.render('logout_e_ucm', {
+        config: config,
+        t: req.t
+    });
 });
 
-router.get('/', usertools.auth(0), usertools.redirectToLogin(0), function(req, res, next) {
-  if(req.session.user.data.role == 'teacher' || req.session.user.data.role == 'administrator' || req.session.user.data.role == 'lrsmanager'){
-    res.render('home', { 
-      config: config, 
-      user: req.session.user,
-      t : req.t
-     });
-  }else if(req.session.user.data.role == 'student'){
-    res.render('studenthome', { 
-      config: config, 
-      user: req.session.user,
-      t : req.t
-     });
-  } else {
-    if(config.sso.userCanSelectRole == "true") {
-      return res.redirect('/users/role_selection');
-    } else {
-      return res.redirect('/users/contact_admin?error=no_role');
+router.get('/', usertools.auth(0), usertools.redirectToLogin(0), function (req, res, next) {
+    if (req.session.user.data.role == 'teacher' || req.session.user.data.role == 'administrator' || req.session.user.data.role == 'lrsmanager'  || req.session.user.data.role == 'student') {
+        res.render('home', {
+            config: config,
+            user: req.session.user,
+            t: req.t
+        });
+    } 
+    else {
+        if (config.sso.userCanSelectRole == "true") {
+            return res.redirect('/users/role_selection');
+        } else {
+            return res.redirect('/users/contact_admin?error=no_role');
+        }
     }
-  }
 });
 
 // catch 404
 app.use((req, res, next) => {
-  logger.info(`Error 404 on ${req.url}.`);
-  res.status(404).send({ message: 'Not found' });
+    logger.info(`Error 404 on ${req.url}.`);
+    res.status(404).send({ message: 'Not found' });
 });
 
 // catch errors
 app.use((err, req, res, next) => {
-  logger.info(err);
-  const status = err.status || 500;
-  const msg = err.error || err.message;
-  logger.info(`Error ${status} (${msg}) on ${req.method} ${req.url} with payload ${req.body}.`);
-  logger.error(err);
-  
-  if(res.frontendRedirect) {
-    return res.redirect(res.frontendRedirect);
-  }
+    logger.info(err);
+    const status = err.status || 500;
+    const msg = err.error || err.message;
+    logger.info(`Error ${status} (${msg}) on ${req.method} ${req.url} with payload ${req.body}.`);
+    logger.error(err);
 
-  if (!req.session || !req.session.user) {
-    return res.redirect('/users/login');
-  }
-  
-  res.status(status).send({ message: msg });
+    if (res.frontendRedirect) {
+        return res.redirect(res.frontendRedirect);
+    }
+
+    if (!req.session || !req.session.user) {
+        return res.redirect('/users/login');
+    }
+
+    res.status(status).send({ message: msg });
 });
 
 

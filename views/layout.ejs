@@ -7,7 +7,7 @@
 	<%- include('partials/layout_common_script', { includeSimvaBase: true, includeUserToken: true }) %>
 </head>
 <body>
-	<%- include('partials/header_authenticated') %>
+	<%- include('partials/header', { isLoggedIn: true }) %>
 	
 	<%- content %>
 </body>
