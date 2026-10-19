@@ -1,91 +1,61 @@
 { 
-    "title": "SIMLETs activos",
-    "simlets.description": "Listado de SIMLETs disponibles y acceso rapido para crear, editar, archivar o eliminarlos",
-    "archived.title": "SIMLETs archivados",
-    "archived.description": "Lista de SIMLETs que han sido archivados",
-    "no_simlets.message": "Aún no tienes ningún SIMLET. Crea uno utilizando el botón inferior derecho (+).",
-    "no_archived.message": "No hay SIMLETs archivados.",
-        
-    "search_bar.placeholder": "Busca un SIMLET por su nombre o descripción",
-    "filters.sort_by.title": "Ordenar por",
-        "filters.sort_by.id": "Defecto",
-        "filters.sort_by.name.asc": "Nombre (A-Z)",
-        "filters.sort_by.name.desc": "Nombre (Z-A)",
-        "filters.sort_by.created_at.asc": "Fecha de creación (Más antiguos primero)",
-        "filters.sort_by.created_at.desc": "Fecha de creación (Más nuevos primero)",
-        "filters.sort_by.updated_at.asc": "Fecha de actualización (Más antiguos primero)",
-        "filters.sort_by.updated_at.desc": "Fecha de actualización (Más nuevos primero)",
-    
-    "filters.tags.title": "Etiquetas",
-        "filters.tags.selected.title": "{{count}} seleccionada(s)",
-        "filters.tags.search_bar.placeholder": "Busca una etiqueta por su nombre",
-    
-    "search.no_matches": "No hay coincidencias para tu búsqueda",
-    
-    "card.created_at": "Creado el",
-    "card.updated_at": "Actualizado el",
-    "card.sessions": "Sesiones",
-    "card.groups": "Grupos",
-    "card.users": "Usuarios",
-    "card.tags": "Etiquetas",
+    "simlets.title": "SIMLETs",
+    "simlets.title.single": "SIMLET",
+    "simlets.decription.single": "Informacion general y configuracion del SIMLET seleccionado",
 
-    "add.title": "Añadir SIMLET",
-        "new.tab": "Nuevo SIMLET",
-        "new.submit": "Crear SIMLET",
+    "simlets.active.title": "SIMLETs activos",
+    "simlets.active.description": "Listado de SIMLETs disponibles y acceso rapido para crear, editar, archivar o eliminarlos",
+    "simlets.active.no_simlets.message": "Aún no tienes ningún SIMLET. Crea uno utilizando el botón inferior derecho (+).",
 
-        "import.tab": "Importar SIMLET existente",
-            "import.input": "Selecciona un archivo de SIMLET exportado",
-            "import.submit": "Importar SIMLET",
-            "import.upload.error": "Selecciona el archivo a importar.",
-    
-    "settings.edit.title": "Editar",
-        "edit.title": "Editar SIMLET",
-        "edit.submit": "Editar SIMLET",
+    "simlets.archived.title": "SIMLETs archivados",
+    "simlets.archived.description": "Lista de SIMLETs que han sido archivados",
+    "simlets.archived.no_simlets.message": "No hay SIMLETs archivados.",
 
-    "name.title": "Nombre",
-    "name.placeholder": "Nombre del SIMLET",
-    "description.title": "Descipción",
-    "description.placeholder": "Descipción del SIMLET",
+    "scheduler.title": "Ejecutar SIMLET",
+    "scheduler.description": "Ejecutar un SIMLET en el que participas",
+    "scheduler.no_simlets.message": "Aún no tienes SIMLETs en los que participar.",
+        "scheduler.text": "Pulsa aquí para iniciar o continuar tu sesión en el SIMLET",
+        "scheduler.current": "Actividad actual: ",
+        "scheduler.refresh": "Actualizar para continuar",
+        "scheduler.complete": "Completar la Actividad",
+        "scheduler.exit": "Salir del SIMLET",
+
+    "simlets.search_bar.placeholder": "Busca un SIMLET por su nombre o descripción",
+
+    "simlets.form.add.title": "Añadir SIMLET",
+        "simlets.new.tab": "Nuevo SIMLET",
+            "simlets.new.submit": "Crear SIMLET",
+
+        "simlets.import.tab": "Importar SIMLET existente",
+            "simlets.import.input": "Selecciona un archivo de SIMLET exportado",
+            "simlets.import.submit": "Importar SIMLET",
+            "simlets.import.error.invalid_file": "Selecciona el archivo a importar.",
     
-    "settings.url.title": "Configuración de la URL",
+    "simlets.kebab.edit.title": "Editar",
+        "simlets.form.edit.title": "Editar SIMLET",
+        "simlets.form.edit.submit": "Editar SIMLET",
+
+    "simlets.name.placeholder": "Nombre del SIMLET",
+    "simlets.description.placeholder": "Descipción del SIMLET",
+    
+    "simlets.kebab.scheduler.shlink.title": "Configuración de la URL",
         "scheduler.shlink.generate.title": "Generar URL acortada",
-        "scheduler.shlink.generate.randomly_length.title": "Generada aleatoriamente",
-        "scheduler.shlink.generate.randomly_length.message": "Con una longitud de: ",
+        "scheduler.shlink.generate.random_length.title": "Generada aleatoriamente",
+            "scheduler.shlink.generate.random_length.message": "Con una longitud de: ",
         "scheduler.shlink.generate.custom_slug.title": "Utilizar un nombre personalizado",
+            "scheduler.shlink.generate.custom_slug.message": "Nombre personalizado",
+            "scheduler.shlink.custom_slug.placeholder": "Nombre personalizado",
         "scheduler.shlink.generate.submit": "Generar",
-        "scheduler.shlink.message": "Copiar URL corta: {{shlink}}",
-        "scheduler.shlink.custom_slug.placeholder": "Nombre personalizado",
+        "scheduler.shlink.copy.message": "Copiar URL corta: {{shlink}}",
         "scheduler.shlink.delete.title": "Borrar URL acortada",
         "scheduler.shlink.delete.confirm": "ADVERTENCIA:\n¿Estás seguro de que quieres eliminar el enlace corto '{{shlink}}' del SIMLET '{{SIMLET}}'?\nPodrás generar una nueva URL acortada después.",
         
-    "settings.export.title": "Exportar",
+    "simlets.kebab.export.title": "Exportar",
         
-    "settings.archive.title": "Archivar",
-        "archive.confirm": "ADVERTENCIA:\n¿Estás seguro de que quieres archivar el SIMLET '{{SIMLET}}'?\nEsta acción no se puede revertir y el SIMLET se moverá a la pestaña de archivados.",
-    "settings.dearchive.title": "Desarchivar",
+    "simlets.kebab.archive.title": "Archivar",
+        "simlets.archive.confirm": "ADVERTENCIA:\n¿Estás seguro de que quieres archivar el SIMLET '{{SIMLET}}'?\nEsta acción no se puede revertir y el SIMLET se moverá a la pestaña de archivados.",
+    "simlets.kebab.dearchive.title": "Desarchivar",
 
-    "settings.delete.title": "Eliminar",
-        "delete.confirm": "ADVERTENCIA:\n¿Estás seguro de que quieres eliminar el SIMLET '{{SIMLET}}'?\nEsta acción no se puede revertir y se borrarán todas las sesiones, actividades, grupos y datos.",
-
-    "edit.no_changes.message": "No se detectaron cambios",
-
-    "single.title": "SIMLET",
-        "single.description": "Informacion general y configuracion del SIMLET seleccionado",
-        "sessions.tab.description": "Gestiona las sesiones y actividades de este SIMLET: crear, editar, supervisar el progreso y descargar sus datos",
-        "users.tab.description": "Gestiona los usuarios, grupos y sus asignaciones dentro de este SIMLET",
-        "sessions.download.description": "Descarga todos los datos disponibles de esta sesion",
-        "sessions.tab.title": "Sesiones",
-        "users.tab.title": "Usuarios",
-        
-    "play.title": "Ejecutar SIMLET",
-    "play.description": "Ejecutar un SIMLET en el que participas",
-
-    "download.wait_message": "Generando el archivo con los datos. Este proceso puede tardar un rato.",
-
-    "scheduler.no_simlet.title": "Aún no tienes SIMLETs en los que participar",
-    "scheduler.title": "Pulsa aquí para iniciar o continuar tu sesión en el SIMLET",
-    "scheduler.current": "Actividad actual: ",
-    "scheduler.refresh": "Actualizar para continuar",
-    "scheduler.complete": "Completa la Actividad",
-    "scheduler.exit": "Salir del SIMLET"
+    "simlets.kebab.delete.title": "Eliminar",
+        "simlets.delete.confirm": "ADVERTENCIA:\n¿Estás seguro de que quieres eliminar el SIMLET '{{SIMLET}}'?\nEsta acción no se puede revertir y se borrarán todas las sesiones, actividades, grupos y datos."
 }

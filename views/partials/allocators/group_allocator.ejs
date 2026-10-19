@@ -5,7 +5,7 @@
 <!-- Template for the allocator dropdown -->
 <div id="group_allocator_template" style="display: none;">
     <p>
-        <%= t('allocator.sessions.title', { ns : 'groups' }) %>: 
+        <%= t('sessions.title.single', { ns : 'sessions' }) %>: 
         <select>
         </select>
     </p>
@@ -19,8 +19,8 @@
             super();
 
             this.supportedType = "group";
-            this.name = "<%= t('allocator.group.title', { ns : 'groups' }) %>";
-            this.description = "<%= t('allocator.group.description', { ns : 'groups' }) %>";
+            this.name = "<%- t('allocators.group_allocator.title', { ns : 'groups' }) %>";
+            this.description = "<%- t('allocators.group_allocator.description', { ns : 'groups' }) %>";
         }
 
         getCurrentAllocation(group, participant = null) { 

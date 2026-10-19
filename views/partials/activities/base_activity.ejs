@@ -8,15 +8,17 @@
         <div class="top">
             <h3 class="activityName">    </h3>
 			<div class="activityTopActions">
-				<div class="activityDownload text-with-icon icon-download" title="<%= t('download.description', { ns : 'activities' }) %>"><b><%= t('download.title', { ns : 'activities' }) %></b></div>
+				<div class="activityDownload text-with-icon icon-download" title="<%= t('activities.download.description', { ns : 'activities' }) %>">
+                    <b><%= t('activities.download.title', { ns : 'activities' }) %></b>
+                </div>
     			<div class="expandButton"></div>
 				<div class="kebab">
 					<ul class="kebab-dropdown">
-						<li class="text-with-icon icon-edit" title="<%= t('settings.edit.title', { ns : 'activities' }) %>"><%= t('settings.edit.title', { ns : 'activities' }) %></li>
-						<li class="text-with-icon icon-export" title="<%= t('settings.export.title', { ns : 'activities' }) %>"><%= t('settings.export.title', { ns : 'activities' }) %></li>
-						<li class="text-with-icon icon-url" title="<%= t('settings.tmon.title', { ns : 'activities' }) %>"><%= t('settings.tmon.title', { ns : 'activities' }) %></li>
-                        
-                        <li class="text-with-icon icon-delete" title="<%= t('settings.delete.title', { ns : 'activities' }) %>"><%= t('settings.delete.title', { ns : 'activities' }) %></li>
+						<li class="text-with-icon icon-edit"><%= t('activities.kebab.edit.title', { ns : 'activities' }) %></li>
+						<li class="text-with-icon icon-export"><%= t('activities.kebab.export.title', { ns : 'activities' }) %></li>
+						<li class="text-with-icon icon-url"><%= t('activities.kebab.tmon.title', { ns : 'activities' }) %></li>
+                        <!-- Activity type specific buttons will be placed before the delete button -->
+                        <li class="text-with-icon icon-delete"><%= t('activities.kebab.delete.title', { ns : 'activities' }) %></li>
 					</ul>
 				</div>
 			</div>
@@ -27,25 +29,25 @@
         <div class="activity-meta"> </div>
 
         <!-- Top progress bar -->
-        <div class="progress initCompProgress" title="<%= t('init.bar.tooltip', { ns : 'activities' }) %>">
+        <div class="progress initCompProgress" title="<%= t('activities.table.init.bar.tooltip', { ns : 'activities' }) %>">
             <div class="partial"></div>
             <div class="done"></div>
         </div>
         <!-- Top progress bar color legend -->
         <ul class="legend">
-            <li class="total"><b><%= t('total.title', { ns : 'activities' }) %>:</b> <total>0</total></li>
-            <li class="init"><span class="yellow"></span> <b><%= t('init.title', { ns : 'activities' }) %>:</b> <done>0</done>% (<doneres>0</doneres>)</li>
-            <li class="comp"><span class="green"></span> <b><%= t('completed.title', { ns : 'activities' }) %>:</b> <done>0</done>% (<doneres>0</doneres>)</li>
+            <li class="total"><b><%= t('activities.table.total.title', { ns : 'activities' }) %>:</b> <total>0</total></li>
+            <li class="init"><span class="yellow"></span> <b><%= t('activities.table.init.title', { ns : 'activities' }) %>:</b> <done>0</done>% (<doneres>0</doneres>)</li>
+            <li class="comp"><span class="green"></span> <b><%= t('activities.table.completed.title', { ns : 'activities' }) %>:</b> <done>0</done>% (<doneres>0</doneres>)</li>
         </ul>
 
         <!-- Participants table -->
         <table>
             <thead>
-                <th title="<%= t('participant.tooltip', { ns : 'activities' }) %>"><%= t('participant.title', { ns : 'activities' }) %></th>
-                <th class="actProgress" title="<%= t('progress.tooltip', { ns : 'activities' }) %>"><%= t('progress.title', { ns : 'activities' }) %></th>
-                <th class="compProgress" title="<%= t('completed.tooltip', { ns : 'activities' }) %>"><%= t('completed.title', { ns : 'activities' }) %></th>
-                <th class="lrsProgress" title="<%= t('lrs.tooltip', { ns : 'activities' }) %>"><%= t('lrs.title', { ns : 'activities' }) %></th>
-                <th class="resProgress" title="<%= t('result.tooltip', { ns : 'activities' }) %>"><%= t('result.title', { ns : 'activities' }) %></th>
+                <th title="<%= t('activities.table.participant.tooltip', { ns : 'activities' }) %>"><%= t('activities.table.participant.title', { ns : 'activities' }) %></th>
+                <th class="actProgress" title="<%= t('activities.table.progress.tooltip', { ns : 'activities' }) %>"><%= t('activities.table.progress.title', { ns : 'activities' }) %></th>
+                <th class="compProgress" title="<%= t('activities.table.completed.tooltip', { ns : 'activities' }) %>"><%= t('activities.table.completed.title', { ns : 'activities' }) %></th>
+                <th class="lrsProgress" title="<%= t('activities.table.lrs.tooltip', { ns : 'activities' }) %>"><%= t('activities.table.lrs.title', { ns : 'activities' }) %></th>
+                <th class="resProgress" title="<%= t('activities.table.backup.tooltip', { ns : 'activities' }) %>"><%= t('activities.table.backup.title', { ns : 'activities' }) %></th>
             </thead>
             <tbody>
                 
@@ -73,12 +75,12 @@
     </table>
 
     <div class="activity_backup_result">
-        <img src="/images/icons/eye.png" class="showResult" title="<%= t('result.view.title', { ns : 'activities' }) %>">
-        <img src="/images/icons/direct-download.png" class="downloadResult" title="<%= t('result.download.title', { ns : 'activities' }) %>">
+        <img src="/images/icons/eye.png" class="showResult" title="<%= t('activities.table.backup.view.title', { ns : 'activities' }) %>">
+        <img src="/images/icons/direct-download.png" class="downloadResult" title="<%= t('activities.table.backup.download.title', { ns : 'activities' }) %>">
     </div>
     <div class="activity_lrs_result">
-        <img src="/images/icons/eye.png" class="showLRSData" title="<%= t('lrs.view.title', { ns : 'activities' }) %>">
-        <img src="/images/icons/direct-download.png" class="downloadLRSData" title="<%= t('lrs.download.title', { ns : 'activities' }) %>">
+        <img src="/images/icons/eye.png" class="showLRSData" title="<%= t('activities.table.lrs.view.title', { ns : 'activities' }) %>">
+        <img src="/images/icons/direct-download.png" class="downloadLRSData" title="<%= t('activities.table.lrs.download.title', { ns : 'activities' }) %>">
     </div>
 </div>
 
@@ -88,10 +90,10 @@
     class BaseActivityPainter {
         constructor() {
             this.supportedType = "activity";
-        	this.simple_name = "<%= t('activity.name', { ns : 'activities' }) %>";
-            this.description = "<%= t('activity.description', { ns : 'activities' }) %>";
+        	this.simple_name = "<%- t('activities.default_activity.name', { ns : 'activities' }) %>";
+            this.description = "<%- t('activities.default_activity.description', { ns : 'activities' }) %>";
 
-            this.backupDownloadText = "<%= t('download.backup.global.title', { ns : 'activities' }) %>";
+            this.backupDownloadText = "<%- t('activities.download.global_backup.title', { ns : 'activities' }) %>";
             this.individualDataExtension = "json";
             this.globalDataExtension = "ndjson";
         }
@@ -126,12 +128,12 @@
          * @param {number} participantId - id of the participant to show the results from 
          * @param {string} resultType - type of result of data(full/code/traces)
          */
-        openResults(activityId, participantId, resultType) {
-            let errorMsg = "<%= t('result.error.loading', { ns : 'activities' }) %>";
+        showBackupData(activityId, participantId, resultType) {
+            let errorHeading = "<%- t('activities.backup.load.error_toast.heading', { ns : 'activities' }) %>";
             Simva.getActivityResult(activityId, participantId, resultType, (error, result) => {
                 if (error) {
                     $.toast({
-                        heading: errorMsg,
+                        heading: errorHeading,
                         text: error.message,
                         position: 'top-right',
                         icon: 'error',
@@ -139,7 +141,7 @@
                     });
                 } 
                 else {
-                    Utils.openResultContent(result[participantId], errorMsg);
+                    Utils.openResultContent(result[participantId], errorHeading);
                 }
             });
         }
@@ -150,13 +152,13 @@
          * @param {number} participantId - id of the participant to show the LRS data from
          */
         showLRSData(activityId, participantId) {
-            let errorMsg = "<%= t('result.error.loading', { ns : 'activities' }) %>";
+            let errorHeading = "<%- t('activities.lrs.load.error_toast.heading', { ns : 'activities' }) %>";
             const participant = getParticipantFromId(participantId);
             const activity = getActivityFromId(activityId);
             Simva.getActivityLRSData(activityId, participant ? participant.username : null, { simletId: simletId, sessionId: activity.session_id }, (error, result) => {
                 if (error) {
                     $.toast({
-                        heading: errorMsg,
+                        heading: errorHeading,
                         text: error.message,
                         position: 'top-right',
                         icon: 'error',
@@ -164,7 +166,7 @@
                     });
                 } 
                 else {
-                    Utils.openResultContent(result.data, errorMsg);
+                    Utils.openResultContent(result.data, errorHeading);
                 }
             });
         }
@@ -172,17 +174,17 @@
         // Functionality 
 
         /**
-         * Download the results (from the backup) of the entire activity or a participant 
+         * Download (from the backup) the data of an entire activity or a participant 
          * @param {number} activityId - id of the activity that has the participant
          * @param {number} participantId - id of the participant to download the results from 
          * @param {string} resultType - type of the result data(full/code/traces)
          */
-        downloadResults(activityId, participantId, type) {
-            let errorMsg = "<%= t('result.error.downloading', { ns : 'activities' }) %>";
+        downloadBackupData(activityId, participantId, type) {
+            let errorHeading = "<%- t('activities.backup.download.error_toast.heading', { ns : 'activities' }) %>";
             Simva.getActivityResult(activityId, participantId, type, (error, result) => {
                 if (error) {
                     $.toast({
-                        heading: errorMsg,
+                        heading: errorHeading,
                         text: error.message,
                         position: 'top-right',
                         icon: 'error',
@@ -196,7 +198,7 @@
                     if (participantId) {
                         const participant = getParticipantFromId(participantId);
                         filename += `-participant_${participant.username}-${this.supportedType}_results.${this.individualDataExtension}`;
-                        Utils.downloadContent(result[participantId], filename, errorMsg);
+                        Utils.downloadContent(result[participantId], filename, errorHeading);
                     }
                     else {
                         filename += `-${this.supportedType}_results.${this.globalDataExtension}`;
@@ -212,14 +214,14 @@
          * @param {number} participantId - id of the participant to download the LRS data from 
          */
         downloadLRSData(activityId, participantId) {
-            let errorMsg = "<%= t('result.error.downloading', { ns : 'activities' }) %>";
+            let errorHeading = "<%- t('activities.lrs.download.error_toast.heading', { ns : 'activities' }) %>";
             const participant = getParticipantFromId(participantId);
             const activity = getActivityFromId(activityId);
             const session = getSessionFromId(activity.session_id);
             Simva.getActivityLRSData(activityId, participant ? participant.username : null, { simletId: simletId, sessionId: activity.session_id }, (error, result) => {
                 if (error) {
                     $.toast({
-                        heading: errorMsg,
+                        heading: errorHeading,
                         text: error.message,
                         position: 'top-right',
                         icon: 'error',
@@ -234,13 +236,13 @@
                     } else {
                         filename += `-${this.supportedType}_lrs_data.${this.globalDataExtension}`;
                     }
-                    Utils.downloadContent(result.data, filename, errorMsg);
+                    Utils.downloadContent(result.data, filename, errorHeading);
                 }
             });
         }
 
         /**
-         * Download (from MinIO) the entire activity backup in a single file 
+         * Download (from the backup) the entire activity data in a single file 
          * @param {number} activityId - id of the activity to download the info from
          */
         downloadGlobalActivityBackup(activityId) {
@@ -249,10 +251,10 @@
             Simva.getMinioDataUrl(activityId, (error, result) => {
                 showActivityDownloadFormButtons(downloadActivityId);
                 
-                let errorMsg = "<%= t('result.error.downloading', { ns : 'activities' }) %>";
+                let errorHeading = "<%- t('activities.backup.download.error_toast.heading', { ns : 'activities' }) %>";
                 if (error) {
                     $.toast({
-                        heading: errorMsg,
+                        heading: errorHeading,
                         text: error.message,
                         position: 'top-right',
                         icon: 'error',
@@ -263,25 +265,25 @@
                     const activity = getActivityFromId(activityId);
                     const session = getSessionFromId(activity.session_id);
                     const filename = `${getActivityFilenamePrefix(session, activity)}-${this.supportedType}_backup.${this.globalDataExtension}`;
-                    Utils.downloadContent(result.url, filename, errorMsg);
+                    Utils.downloadContent(result.url, filename, errorHeading);
                 }
             });
         }
         /**
-         * Download (from MinIO) the activity backup for each participant (a file for each) and compress them into a zip
+         * Download (from the backup) the activity data for each participant (a file for each) and compress them into a zip
          * @param {number} activityId - id of the activity to download the info from
          * @param {string} resultType - type of result of the result data(full/code/traces)
          */
-        downloadBackup(activityId, resultType) {
+        downloadUsersBackupZip(activityId, resultType) {
             showActivityDownloadFormLoader();
             
             Simva.getActivityResult(activityId, null, resultType, (error, result) => {
                 showActivityDownloadFormButtons(downloadActivityId);
                 
-                let errorMsg = "<%= t('result.error.downloading', { ns : 'activities' }) %>";
+                let errorHeading = "<%- t('activities.backup.download.error_toast.heading', { ns : 'activities' }) %>";
 				if (error) {
 					$.toast({
-                        heading: errorMsg,
+                        heading: errorHeading,
                         text: error.message,
                         position: 'top-right',
                         icon: 'error',

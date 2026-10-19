@@ -1,125 +1,124 @@
 { 
-    "users.add.title": "Ajouter utilisateurs",
+    "users.title": "Utilisateurs",
+    "users.tab.description": "Gerer les utilisateurs, groupes et leurs affectations dans ce SIMLET",
+
+    "users.form.add.title": "Ajouter utilisateurs",
     
+    "users.username.tile": "Nom d'utilisateur",
+    "users.permissions.title": "Permissions",
+        "users.permission.placeholder": "Permissions",
+        "users.permissions.full": "Complet",
+        "users.permissions.read": "Lecture",
+        "users.permissions.write": "Écriture",
+        "users.permissions.error": "La permission sélectionnée n'est pas valide.",
+    "users.error.not_found": "L'utilisateur {{username}} est introuvable.",
+    "users.delete.title": "Supprimer",
+
     "supervisors.title": "Superviseurs",
-        "supervisors.table.username.title": "Nom d'utilisateur",
-        "supervisors.table.permissions.title": "Permissions",
-
-        "supervisors.delete.title": "Supprimer",
-            "supervisors.delete.confirm": "Êtes-vous sûr de vouloir supprimer le superviseur '{{supervisor}}' du SIMLET '{{SIMLET}}'?",
-            
         "supervisors.add.title": "Ajouter un superviseur",
-            "supervisors.name.title": "Nom",
             "supervisors.name.placeholder": "Nom d'utilisateur du superviseur",
-            "supervisors.permission.placeholder": "Nom d'utilisateur du superviseur",
-            "supervisors.permission.title": "Permissions",
-            "supervisors.permissions.full": "Complet",
-            "supervisors.permissions.read": "Lecture",
-            "supervisors.permissions.write": "Écriture",
             "supervisors.error.already_in": "Le superviseur est déjà dans le SIMLET.",
-            "supervisors.error.permission": "La permission sélectionnée n'est pas valide.",
-            "supervisors.error.not_found": "L'utilisateur est introuvable.",
-        "supervisors.change_permissions.message": "",
-        "supervisors.change_permissions.error": "",
-        "supervisors.delete.error": "",
+        "supervisors.change_permissions.toast.heading": "",
+        "supervisors.change_permissions.error_toast.heading": "",
+        "supervisors.delete.confirm": "Êtes-vous sûr de vouloir supprimer le superviseur '{{supervisor}}' du SIMLET '{{SIMLET}}'?",
+            "supervisors.delete.error_toast.heading": "",
+
+    "coordinators.title": "Coordinateur",
+        "coordinators.add.title": "Ajouter un coordinateur",
+            "coordinators.name.placeholder": "Nom d'utilisateur du coordinateur",
+            "coordinators.error.already_in": "Le coordinateur est déjà dans le SIMLET.",
+        "coordinators.change_permissions.toast.heading": "",
+        "coordinators.change_permissions.error_toast.heading": "",
+        "coordinators.delete.confirm": "",
+            "coordinators.delete.error_toast.heading": "",
+
+
+    "groups.search_bar.placeholder": "Recherchez un groupe par son nom ou sa description",
+    
+    "groups.title": "Groupes",
+    "groups.title.single": "Groupe",
+    "groups.no_groups.message": "Il n'y a pas de groupes pour cette SIMLET. Essayez d'en ajouter une en utilisant le bouton en bas à droite (+)",
         
-    "search_bar.placeholder": "Recherchez un groupe par son nom ou sa description",
-
-    "groups.title": "Groups",
-        "groups.no_groups.message": "You have 0 groups yet. Create one using the bottom right (+) button",
-
-        "participants.no_users.message": "Il n'y a pas de participants dans ce groupe. Essayez d'en ajouter en utilisant le bouton [...] à droite.",
-
-        "participants.title": "Participants",
+    "groups.name.placeholder": "Nom du groupe",
         
-        "participants.table.username.title": "Nom d'utilisateur",
+    "groups.form.add.title": "Ajouter un groupe",
+        "groups.new.tab": "Ajouter un groupe",
+            "groups.new.submit": "Ajouter le groupe",
+            "deprecated.title": "Utiliser la version obsolète de génération de code",
+            "deprecated.message": "/!\\ Ce groupe utilise la version obsolète de génération de code.",
+            "deprecated.tooltip": "/!\\ Ce groupe utilisera la version obsolète de génération de code.",
+
+        "groups.import.tab": "Importer un groupe",
+            "groups.import.input": "Fichier d'import du groupe",
+            "groups.import.submit": "Importer le groupe",
+            "groups.import.error.invalid_file": "Le fichier sélectionné n'est pas un fichier de groupe valide.",
+
+        "groups.allocate_to.title": "Affecter le groupe à",
+
+    "groups.kebab.edit.title": "Modifier",
+        "groups.form.edit.title": "Modifier groupe",
+        "groups.form.edit.submit": "Modifier groupe",
+
+    "participants.no_participants.message": "Il n'y a pas de participants dans ce groupe. Essayez d'en ajouter en utilisant le bouton [...] à droite.",
+    "groups.kebab.add_participants.title": "Ajouter des participants",
+        "groups.form.add_participants.title": "Ajouter des participants",
+        "participants.username.placeholder.batch": "Nombre de participants à ajouter",
+        "participants.username.placeholder": "Nom d'utilisateur du participant",
+    
+        "participants.add_existing.tab": "Ajouter existant",
+            "participants.add_existing.submit": "Ajouter existant",
+            "participants.add_existing.error.already_in_group": "Le participant '{{participant}}' est déjà dans le groupe '{{group}}'.",
+            "participants.add_existing.error.reload_manually": "Rafraîchissez la page pour voir les changements dans le groupe '{{group}}'.",
+            
+        "participants.add_new.tab": "Ajouter un nouveau",
+            "participants.add_new.email.placeholder": "email@example.com",
+            "participants.add_new.password.placeholder": "Mot de passe",
+            "participants.add_new.submit": "Ajouter participant",
+
+        "participants.add_batch.tab": "Ajouter un lot de jeton",
+            "participants.add_batch.number.title": "Combien ?",
+            "participants.add_batch.algorithm": "Les participants seront ajoutés avec des noms d'utilisateur aléatoires créés à l'aide de :",
+                "participants.add_batch.algorithm.letters": "Uniquement des lettres",
+                "participants.add_batch.algorithm.alphanumeric": "Lettres et chiffres",
+                "participants.add_batch.algorithm.base58": "Alphanumérique simplifié (Base58)",
+            "participants.add_batch.length.title": "Et une longueur de :",
+            "participants.add_batch.submit": "Ajouter lot",
+        
+    "participants.title": "Participants",
         "participants.table.token.title": "Jeton",
         "participants.table.email.title": "Mail",
         "participants.table.role.title": "Rôle",
-        "participant.delete.title": "Supprimer",
-            "participants.delete.confirm" : "Êtes-vous sûr de vouloir supprimer le participant '{{participant}}' du groupe '{{group}}' ?",
-        "participants.table.session.title": "Session",
+        "participants.delete.confirm" : "Êtes-vous sûr de vouloir supprimer le participant '{{participant}}' du groupe '{{group}}' ?",
+            "participants.delete.error_toast.heading": "",
         
-        "allocator.type.title": "Allocateur type",
-        "allocator.sessions.title": "Session",
-        "allocator.participants.title": "Participant",
-        "allocator.add.error": "Erreur dans l'ajout de l'allocation",
-        "allocator.add.message": "Mise à jour de l'Allocateur",
-        "allocator.add.title": "Ajouter un allocation",
+
+    "groups.kebab.allocator.title": "Modifier allocateur",
+        "allocators.type.title": "Allocateur type",
+        "allocators.form.submit": "Changer d'Allocateur",
+        "allocators.type.error.invalid_type": "",
+
+        "allocators.default_allocator.title": "Allocateur de base",
+            "allocators.default_allocator.description": "Cet allocateur vous permet d'affecter manuellement les participants aux sessions un par un. (S'il n'est pas assigné, il prendra le premier).",
+
+        "allocators.group_allocator.title": "Allocateur de Groupe",
+            "allocators.group_allocator.description": "Cet allocateur vous permet de sélectionner la branche de session à laquelle chaque groupe est affecté.",
         
-        "groups.name.title": "Nom",
-        "groups.name.placeholder": "Nom du groupe",
-        
-        "groups.add.title": "Ajouter un groupe",
-            "groups.add.new.tab": "Ajouter un groupe",
-                "groups.add.new.submit": "Ajouter le groupe",
-                "deprecated.title": "Utiliser la version obsolète de génération de code",
-                "deprecated.message": "/!\\ Ce groupe utilise la version obsolète de génération de code.",
-                "deprecated.tooltip": "/!\\ Ce groupe utilisera la version obsolète de génération de code.",
+        "allocators.no_session.title": "Pas de session",
+        "allocators.update.error_toast.heading": "Erreur dans l'ajout de l'allocation",
+        "allocators.update.toast.heading": "Mise à jour de l'Allocateur",
 
-            "groups.import.tab": "Importer un groupe",
-                "groups.import.input": "Fichier d'import du groupe",
-                "groups.import.submit": "Importer le groupe",
-                "groups.import.upload.error": "Sélectionnez le fichier à charger en premier",
-                "groups.import.error.invalid_file": "Le fichier sélectionné n'est pas un fichier de groupe valide.",
 
-            "groups.allocate_to.title": "Affecter le groupe à",
-            "groups.allocate_to.noSession": "Aucune session",
-            
-        "groups.settings.groups.edit.title": "Modifier",
-            "groups.edit.title": "Modifier groupe",
-            "groups.edit.submit": "Modifier groupe",
-            "groups.edit.no_changes.message": "Aucun changement n'a été détecté avec groupe nom !",
-        "groups.settings.add.title": "Ajouter des participants",
-            "participants.username.placeholder": "Nom d'utilisateur du participant",
-            "participants.username.placeholder.batch": "Nombre de participants à ajouter",
-            
-            "participants.add.existing.tab": "Ajouter existant",
-                "participants.add.existing.submit": "Ajouter existant",
-                "participants.error_message.already_in_group": "Le participant '{{participant}}' est déjà dans le groupe '{{group}}'.",
-                "participants.error_message.not_found": "Le participant '{{participant}}' n'a pas été trouvé dans le groupe '{{group}}'.",
-                "participants.error_message.reload_manually": "Rafraîchissez la page pour voir les changements dans le groupe '{{group}}'.",
-
-            "participants.add.new.tab": "Ajouter un nouveau",
-                "participants.add.new.email.placeholder": "email@example.com",
-                "participants.add.new.password.placeholder": "Mot de passe",
-                "participants.add.new.groups.add.new.submit": "Ajouter participant",
-
-            "participants.add.batch.tab": "Ajouter un lot de jeton",
-                "participants.add.batch.number.title": "Combien ?",
-                "participants.add.batch.algorithm_format": "Les participants seront ajoutés avec des noms d'utilisateur aléatoires créés à l'aide de :",
-                    "participants.add.batch.algorithm_format.letters": "Uniquement des lettres",
-                    "participants.add.batch.algorithm_format.alphanumeric": "Lettres et chiffres",
-                    "participants.add.batch.algorithm_format.base58": "Alphanumérique simplifié (Base58)",
-                "participants.add.batch.length.title": "Et une longueur de :",
-                "participants.add.batch.submit": "Ajouter lot",
-
-        "groups.settings.allocator.title": "Modifier allocateur",
-            "allocator.change.title": "Sélectionner le nouveau type d'allocateur",
-
-            "allocator.default.title": "Allocateur de base",
-                "allocator.default.type": "Défaut",
-                "allocator.default.description": "Cet allocateur vous permet d'affecter manuellement les participants aux sessions un par un. (S'il n'est pas assigné, il prendra le premier).",
-
-            "allocator.group.title": "Allocateur de Groupe",
-                "allocator.group.type": "Groupe",
-                "allocator.group.description": "Cet allocateur vous permet de sélectionner la branche de session à laquelle chaque groupe est affecté.",
-            
-            "allocator.change.submit": "Changer d'Allocateur",
-
-            "allocator.no_session_assigned.title": "Pas de session",
-
-        "groups.settings.print.title": "Telecharger le tableau en PDF",
-            "print_table.title": "Groupe : ",
-            "print_table.number_col.title": "No.",
-            "print_table.name_col.title": "Nom",
-            "print_table.code_col.title": "Code",
-        
-        "groups.settings.export.title": "Exporter",
-        
-        "groups.settings.delete.title": "Supprimer",
-            "groups.delete.confirm": "Êtes-vous sûr de vouloir supprimer le groupe '{{group}}' du SIMLET '{{SIMLET}}'?",
-
+    "groups.kebab.print.title": "Telecharger le tableau en PDF",
+        "print_table.title": "Groupe : ",
+        "print_table.number_col.title": "No.",
+        "print_table.name_col.title": "Nom",
+        "print_table.code_col.title": "Code",
+    
+    "groups.kebab.export.title": "Exporter",
+    
+    "groups.kebab.delete.title": "Supprimer",
+        "groups.delete.confirm": "Êtes-vous sûr de vouloir supprimer le groupe '{{group}}' du SIMLET '{{SIMLET}}'?",
+    
 
     "lti_platform.title": "Plate-forme LTI",
     "lti_platform.add.title": "Ajouter un plateforme LTI",

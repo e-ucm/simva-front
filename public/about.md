@@ -1,136 +1,136 @@
-# <%= t("title", { ns : "about" }) %>
-<%= t("description", { ns : "about" }) %>
+# <%= t("about.title", { ns : "about" }) %>
+<%= t("about.description", { ns : "about" }) %>
 <br><br>
-<%= t("text", { ns : "about" }) %>
+<%= t("about.description.note", { ns : "about" }) %>
 
 <hr>
 
-## <%= t("index.title", { ns : "about" }) %>
+## <%= t("about.index.title", { ns : "about" }) %>
 <%_ if (!user) { _%>
-- [<%= t("header.logout.title", { ns : "about" }) %>](#header-visitor-section)
+- [<%= t("about.header_visitors.title", { ns : "about" }) %>](#header-visitor-section)
 <%_ } else { _%>
-- [<%= t("header.login.title", { ns : "about" }) %>](#header-user-section)
-- [<%= t("menu.title", { ns : "about" }) %>](#left-menu-section)
+- [<%= t("about.header_user.title", { ns : "about" }) %>](#header-user-section)
+- [<%= t("about.left_menu.title", { ns : "about" }) %>](#left-menu-section)
 <%_ } _%>
-- [<%= t("simva.title", { ns : "about" }) %>](#simva-section)
-- [<%= t("simlet.title", { ns : "about" }) %>](#simlet-section)
-- [<%= t("session.title", { ns : "about" }) %>](#session-section)
-- [<%= t("activity.title", { ns : "about" }) %>](#activity-section) 
-- [<%= t("users.title", { ns : "about" }) %>](#users-section)
-- [<%= t("integration.title", { ns : "about" }) %>](#integration-section)
-- [<%= t("session_management.title", { ns : "about" }) %>](#session-management-section)
-- [<%= t("xapi.dashboard.title", { ns : "about" }) %>](#xapi-section)
-- [<%= t("credits.title", { ns : "about" }) %>](#credits-section)
+- [<%= t("about.simva.title", { ns : "about" }) %>](#simva-section)
+- [<%= t("about.simlet.title", { ns : "about" }) %>](#simlet-section)
+- [<%= t("sessions.title.single", { ns : "sessions" }) %>](#session-section)
+- [<%= t("activities.title.single", { ns : "activities" }) %>](#activity-section) 
+- [<%= t("users.title", { ns : "groups" }) %>](#users-section)
+- [<%= t("about.integration.title", { ns : "about" }) %>](#integration-section)
+- [<%= t("about.session_management.title", { ns : "about" }) %>](#session-management-section)
+- [<%= t("about.xapi.dashboard.title", { ns : "about" }) %>](#xapi-section)
+- [<%= t("about.credits.title", { ns : "about" }) %>](#credits-section)
 
 <hr>
 
 <% if (!user) { %>
 
-## <%= t("header.logout.title", { ns : "about" }) %> {#header-visitor-section}
-<%= t("header.logout.description", { ns : "about" }) %>
+## <%= t("about.header_visitors.title", { ns : "about" }) %> {#header-visitor-section}
+<%= t("about.header_visitors.description", { ns : "about" }) %>
 
 ![](./images/about/header_visitor.png)
 
-<%= t("header.logout.note", { ns : "about" }) %>
+<%= t("about.header_visitors.note", { ns : "about" }) %>
 <br>
 <br>
 
 <% } else { %>
 
-## <%= t("header.login.title", { ns : "about" }) %> {#header-user-section}
-<%= t("header.login.description", { ns : "about" }) %>
+## <%= t("about.header_user.title", { ns : "about" }) %> {#header-user-section}
+<%= t("about.header_user.description", { ns : "about" }) %>
 
 ![](./images/about/header_user.png)
 
-<%= t("header.login.note", { ns : "about" }) %>
+<%= t("about.header_user.note", { ns : "about" }) %>
 
 ![](./images/about/header_scheduler.png)
 <br>
 
 <% } %>
 
-#### <%= t("header.language.title", { ns : "about" }) %>
-<%= t("header.language.description", { ns : "about" }) %>
+#### <%= t("about.header.language.title", { ns : "about" }) %>
+<%= t("about.header.language.description", { ns : "about" }) %>
 
 <% if (!user) { %>
 
-#### ![](./images/icons/information.png) <%= t("header.logout.about.title", { ns : "about" }) %>
-<%= t("header.logout.about.description", { ns : "about" }) %>
+#### ![](./images/icons/information.png) <%= t("about.title", { ns : "about" }) %>
+<%= t("about.header_visitors.about.description", { ns : "about" }) %>
 
 <% } %>
 
-#### ![](./images/icons/eucm_icon.ico) <%= t("header.research.title", { ns : "about" }) %>
-<%= t("header.research.description", { ns : "about" }) %>
+#### ![](./images/icons/eucm_icon.ico) <%= t("about.header.research.title", { ns : "about" }) %>
+<%= t("about.header.research.description", { ns : "about" }) %>
 
 <% if (!user) { %>
 
-#### ![](./images/icons/power-button-off.png) <%= t("header.logout.login.title", { ns : "about" }) %>
-<%= t("header.logout.login.description", { ns : "about" }) %>
+#### ![](./images/icons/power-button-off.png) <%= t("header.login.title", { ns : "commons" }) %>
+<%= t("about.header_visitors.login.description", { ns : "about" }) %>
 
 <% } else { %>
 
-#### ![](./images/icons/user.png) <%= t("header.login.account.title", { ns : "about" }) %>
-<%= t("header.login.account.description", { ns : "about" }) %>
+#### ![](./images/icons/user.png) <%= t("about.header_user.account.title", { ns : "about" }) %>
+<%= t("about.header_user.account.description", { ns : "about" }) %>
 
-#### ![](./images/icons/power-button-off.png) <%= t("header.login.logout.title", { ns : "about" }) %>
-<%= t("header.login.logout.description", { ns : "about" }) %>
+#### ![](./images/icons/power-button-off.png) <%= t("header.logout.title", { ns : "commons" }) %>
+<%= t("about.header_user.logout.description", { ns : "about" }) %>
 
 <hr>
 
-## <%= t("menu.title", { ns : "about" }) %> {#left-menu-section}
-<%= t("menu.description", { ns : "about" }) %>
+## <%= t("about.left_menu.title", { ns : "about" }) %> {#left-menu-section}
+<%= t("about.left_menu.description", { ns : "about" }) %>
 
 ![](./images/about/left_menu.png)
 
-<%= t("menu.note", { ns : "about" }) %>
+<%= t("about.left_menu.note", { ns : "about" }) %>
 <br>
 <br>
 
-#### ![](./images/icons/home.png) <%= t("menu.home.title", { ns : "about" }) %>
-<%= t("menu.home.description", { ns : "about" }) %>
+#### ![](./images/icons/home.png) <%= t("home.title", { ns : "home" }) %>
+<%= t("about.left_menu.home.description", { ns : "about" }) %>
 
-#### ![](./images/icons/study.png) <%= t("menu.simlets.title", { ns : "about" }) %>
-<%= t("menu.simlets.description", { ns : "about" }) %>
+#### ![](./images/icons/study.png) <%= t("simlets.active.title", { ns : "SIMLETs" }) %>
+<%= t("about.left_menu.simlets.description", { ns : "about" }) %>
 
-#### ![](./images/icons/documents.png) <%= t("menu.archived.title", { ns : "about" }) %>
-<%= t("menu.archived.description", { ns : "about" }) %>
+#### ![](./images/icons/documents.png) <%= t("simlets.archived.title", { ns : "SIMLETs" }) %>
+<%= t("about.left_menu.archived.description", { ns : "about" }) %>
 
-#### ![](./images/icons/play-button-outline.png) <%= t("menu.play.title", { ns : "about" }) %>
-<%= t("menu.play.description", { ns : "about" }) %>
+#### ![](./images/icons/play-button-outline.png) <%= t("scheduler.title", { ns : "SIMLETs" }) %>
+<%= t("about.left_menu.play.description", { ns : "about" }) %>
 
-#### ![](./images/icons/information.png) <%= t("menu.about.title", { ns : "about" }) %>
-<%= t("menu.about.description", { ns : "about" }) %>
+#### ![](./images/icons/information.png) <%= t("about.title", { ns : "about" }) %>
+<%= t("about.left_menu.about.description", { ns : "about" }) %>
 
 <% } %>
 
 <hr>
 
-## <%= t("simva.title", { ns : "about" }) %> {#simva-section}
-<%= t("simva.description", { ns : "about" }) %>
+## <%= t("about.simva.title", { ns : "about" }) %> {#simva-section}
+<%= t("about.simva.description", { ns : "about" }) %>
 
-#### <%= t("simva.frontend.title", { ns : "about" }) %>
-<%= t("simva.frontend.description", { ns : "about" }) %>
+#### <%= t("about.simva.frontend.title", { ns : "about" }) %>
+<%= t("about.simva.frontend.description", { ns : "about" }) %>
 
-#### <%= t("simva.roles.title", { ns : "about" }) %>
-<%= t("simva.roles.description", { ns : "about" }) %>
-
-<hr>
-
-## <%= t("simlet.title", { ns : "about" }) %> {#simlet-section}
-<%= t("simlet.description", { ns : "about" }) %>
-
-#### <%= t("archived_simlet.title", { ns : "about" }) %>
-<%= t("archived_simlet.description", { ns : "about" }) %>
+#### <%= t("about.simva.roles.title", { ns : "about" }) %>
+<%= t("about.simva.roles.description", { ns : "about" }) %>
 
 <hr>
 
-## <%= t("session.title", { ns : "about" }) %> {#session-section}
-<%= t("session.description", { ns : "about" }) %>
+## <%= t("about.simlet.title", { ns : "about" }) %> {#simlet-section}
+<%= t("about.simlet.description", { ns : "about" }) %>
+
+#### <%= t("simlets.archived.title", { ns : "SIMLETs" }) %>
+<%= t("about.archived_simlet.description", { ns : "about" }) %>
 
 <hr>
 
-## <%= t("activity.title", { ns : "about" }) %> {#activity-section}
-<%= t("activity.description", { ns : "about" }) %>
+## <%= t("sessions.title.single", { ns : "sessions" }) %> {#session-section}
+<%= t("about.session.description", { ns : "about" }) %>
+
+<hr>
+
+## <%= t("activities.title.single", { ns : "activities" }) %> {#activity-section}
+<%= t("about.activity.description", { ns : "about" }) %>
 
 <!-- #### <%= t("limesurvey.title", { ns : "about" }) %>
 <%= t("limesurvey.description", { ns : "about" }) %>
@@ -143,55 +143,55 @@
 
 <hr>
 
-## <%= t("group.title", { ns : "about" }) %> {#group-section}
-<%= t("group.description", { ns : "about" }) %>
+## <%= t("groups.title", { ns : "groups" }) %> {#group-section}
+<%= t("about.group.description", { ns : "about" }) %>
 
 <hr>
 
-## <%= t("users.title", { ns : "about" }) %> {#users-section}
-<%= t("users.description", { ns : "about" }) %>
+## <%= t("users.title", { ns : "groups" }) %> {#users-section}
+<%= t("about.users.description", { ns : "about" }) %>
 
-#### <%= t("supervisor.title", { ns : "about" }) %>
-<%= t("supervisor.description", { ns : "about" }) %>
+#### <%= t("supervisors.title", { ns : "groups" }) %>
+<%= t("about.users.supervisor.description", { ns : "about" }) %>
 
-#### <%= t("coordinator.title", { ns : "about" }) %>
-<%= t("coordinator.description", { ns : "about" }) %>
+#### <%= t("coordinators.title", { ns : "groups" }) %>
+<%= t("about.users.coordinator.description", { ns : "about" }) %>
 
-#### <%= t("participant.title", { ns : "about" }) %>
-<%= t("participant.description", { ns : "about" }) %>
+#### <%= t("participants.title", { ns : "groups" }) %>
+<%= t("about.users.participant.description", { ns : "about" }) %>
 
 <hr>
 
-## <%= t("integration.title", { ns : "about" }) %> {#integration-section}
+## <%= t("about.integration.title", { ns : "about" }) %> {#integration-section}
 <br>
 
-#### <%= t("gameclient.title", { ns : "about" }) %>
-<%= t("gameclient.description", { ns : "about" }) %>
+#### <%= t("about.integration.game_client.title", { ns : "about" }) %>
+<%= t("about.integration.game_client.description", { ns : "about" }) %>
 
-<!-- #### <%= t("integratedgame.title", { ns : "about" }) %>
-<%= t("integratedgame.description", { ns : "about" }) %> -->
-
-<hr>
-
-## <%= t("session_management.title", { ns : "about" }) %> {#session-management-section}
-<br>
-
-#### <%= t("manual_completion.title", { ns : "about" }) %>
-<%= t("manual_completion.description", { ns : "about" }) %>
-
-#### <%= t("dashboard.title", { ns : "about" }) %>
-<%= t("dashboard.description", { ns : "about" }) %>
+<!-- #### <%= t("about.integration.integrated_game.title", { ns : "about" }) %>
+<%= t("about.integration.integrated_game.description", { ns : "about" }) %> -->
 
 <hr>
 
-## <%= t("xapi.dashboard.title", { ns : "about" }) %> {#xapi-section}
-<%= t("xapi.dashboard.intro", { ns : "about" }) %>
-
-![<%= t("xapi.dashboard.image.alt", { ns : "about" }) %>](./images/about/dashboard_example.png)
+## <%= t("about.session_management.title", { ns : "about" }) %> {#session-management-section}
 <br>
 
-#### <%= t("xapi.dashboard.backend.title", { ns : "about" }) %>
-<%= t("xapi.dashboard.backend.desc", { ns : "about" }) %>
+#### <%= t("about.session_management.manual_completion.title", { ns : "about" }) %>
+<%= t("about.session_management.manual_completion.description", { ns : "about" }) %>
+
+#### <%= t("about.session_management.dashboard.title", { ns : "about" }) %>
+<%= t("about.session_management.dashboard.description", { ns : "about" }) %>
+
+<hr>
+
+## <%= t("about.xapi.dashboard.title", { ns : "about" }) %> {#xapi-section}
+<%= t("about.xapi.dashboard.intro", { ns : "about" }) %>
+
+![<%= t("about.xapi.dashboard.image.alt", { ns : "about" }) %>](./images/about/dashboard_example.png)
+<br>
+
+#### <%= t("about.xapi.dashboard.backend.title", { ns : "about" }) %>
+<%= t("about.xapi.dashboard.backend.description", { ns : "about" }) %>
 ```
 {
 	"actor": {
@@ -224,24 +224,24 @@
 <br>
 <br>
 
-#### <%= t("xapi.dashboard.activity_types.title", { ns : "about" }) %>
+#### <%= t("about.xapi.dashboard.activity_types.title", { ns : "about" }) %>
 <br>
 
-| <%= t("xapi.dashboard.activity_types.col1", { ns : "about" }) %>       	| <%= t("xapi.dashboard.activity_types.col2", { ns : "about" }) %> 	|
+| <%= t("about.xapi.dashboard.activity_types.col1", { ns : "about" }) %>    | <%= t("about.xapi.dashboard.activity_types.col2", { ns : "about" }) %> 	|
 |----------|----------|
-| <%= t("xapi.dashboard.activity_types.game", { ns : "about" }) %>       	| https://w3id.org/xapi/seriousgames/activity-types/serious-game  	|
-| <%= t("xapi.dashboard.activity_types.limesurvey", { ns : "about" }) %> 	| http://adlnet.gov/expapi/activities/assessment                  	|
-| <%= t("xapi.dashboard.activity_types.manual", { ns : "about" }) %>     	| http://adlnet.gov/expapi/activities/???                         	|
+| <%= t("activities.gameplay_activity.name", { ns : "activities" }) %>      | https://w3id.org/xapi/seriousgames/activity-types/serious-game  	|
+| <%= t("activities.limeSurvey_activity.name", { ns : "activities" }) %> 	| http://adlnet.gov/expapi/activities/assessment                  	|
+| <%= t("activities.manual_activity.name", { ns : "activities" }) %>     	| http://adlnet.gov/expapi/activities/???                         	|
 
 <br>
 <br>
 
-#### <%= t("xapi.dashboard.visible_data.title", { ns : "about" }) %>
-<%= t("xapi.dashboard.visible_data.desc", { ns : "about" }) %>
+#### <%= t("about.xapi.dashboard.visible_data.title", { ns : "about" }) %>
+<%= t("about.xapi.dashboard.visible_data.description", { ns : "about" }) %>
 
-**<%= t("xapi.dashboard.initialized.title", { ns : "about" }) %>**
+**<%= t("about.xapi.dashboard.visible_data.initialized.title", { ns : "about" }) %>**
 \
-<%= t("xapi.dashboard.initialized.desc", { ns : "about" }) %>
+<%= t("about.xapi.dashboard.visible_data.initialized.description", { ns : "about" }) %>
 
 ```
 {
@@ -273,15 +273,15 @@
 ```
 <br>
 
-**<%= t("xapi.dashboard.progress.title", { ns : "about" }) %>**
+**<%= t("about.xapi.dashboard.visible_data.progress.title", { ns : "about" }) %>**
 \
-<%= t("xapi.dashboard.progress.desc", { ns : "about" }) %>
+<%= t("about.xapi.dashboard.visible_data.progress.description", { ns : "about" }) %>
 
-| <%= t("xapi.dashboard.progress.col1", { ns : "about" }) %>       	        | <%= t("xapi.dashboard.progress.col2", { ns : "about" }) %> 	|
+| <%= t("about.xapi.dashboard.visible_data.progress.col1", { ns : "about" }) %> | <%= t("about.xapi.dashboard.visible_data.progress.col2", { ns : "about" }) %> 	|
 |----------|----------|
-| <%= t("xapi.dashboard.activity_types.game", { ns : "about" }) %>       	| result.extensions['https://w3id.org/xapi/seriousgames/extensions/progress']  	|
-| <%= t("xapi.dashboard.activity_types.limesurvey", { ns : "about" }) %> 	| result.score.scaled                  	                                        |
-| <%= t("xapi.dashboard.activity_types.manual", { ns : "about" }) %>     	| result.score.scaled                         	                                |
+| <%= t("activities.gameplay_activity.name", { ns : "activities" }) %>      | result.extensions['https://w3id.org/xapi/seriousgames/extensions/progress']  	|
+| <%= t("activities.limeSurvey_activity.name", { ns : "activities" }) %> 	| result.score.scaled                  	                                        |
+| <%= t("activities.manual_activity.name", { ns : "activities" }) %>     	| result.score.scaled                         	                                |
 
 <br>
 
@@ -320,9 +320,9 @@
 ```
 <br>
 
-**<%= t("xapi.dashboard.completed.title", { ns : "about" }) %>**
+**<%= t("about.xapi.dashboard.visible_data.completed.title", { ns : "about" }) %>**
 \
-<%= t("xapi.dashboard.completed.desc", { ns : "about" }) %>
+<%= t("about.xapi.dashboard.visible_data.completed.description", { ns : "about" }) %>
 
 ```
 {
@@ -360,7 +360,7 @@
 
 <hr>
 
-## <%= t("credits.title", { ns : "about" }) %> {#credits-section}
+## <%= t("about.credits.title", { ns : "about" }) %> {#credits-section}
 * [Information (Magnific) - Flaticon](https://www.flaticon.com/free-icon/information_1076745)
 * [User (Magnific) - Flaticon](https://www.flaticon.com/free-icon/user_747376)
 * [Power Button Off (Dave Gandy) - Flaticon](https://www.flaticon.com/free-icon/power-button-off_25706)

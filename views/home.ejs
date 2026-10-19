@@ -3,17 +3,17 @@
 <% extend('layout_with_menu_and_sse') %>
 
 <div class="card">
-	<h1><%= t('home.title') %></h1>
-	<p><%= t('welcome.user.text', { username: user.data.username }) %>
+	<h1><%= t('home.title', { ns: 'home' }) %></h1>
+	<p><%= t('home.welcome.user.text', { ns: 'home', username: user.data.username }) %>
 	<p>
 		<% if (typeof user !== 'undefined' && user.data.role == 'student') { %>
-			<p><%- t('welcome.student.text').replace(/\n/g, '<br><br>') %></p>
+			<p><%- t('home.welcome.student.text', { ns: 'home' }).replace(/\n/g, '<br><br>') %></p>
 		<% } else { %>
-			<%- t('welcome.teacher.text').replace(/\n/g, '<br><br>') %>
+			<%- t('home.welcome.teacher.text', { ns: 'home' }).replace(/\n/g, '<br><br>') %>
 			<ul>
-				<li><%= t('github.title') %>: <a href="https://github.com/e-ucm/simva" target="_blank" rel="noopener noreferrer">https://github.com/e-ucm/simva/</a></li>
-				<li><%= t('eUCMResearch.title') %>: <a href="https://e-ucm.es/" target="_blank" rel="noopener noreferrer">https://e-ucm.es/</a></li>
-				<li><%= t('moreprojects.title') %>: <a href="https://e-ucm.es/" target="_blank" rel="noopener noreferrer">https://github.com/e-ucm/</a></li>
+				<li><%= t('home.github.title', { ns: 'home' }) %>: <a href="https://github.com/e-ucm/simva" target="_blank" rel="noopener noreferrer">https://github.com/e-ucm/simva/</a></li>
+				<li><%= t('home.eUCM_Research.title', { ns: 'home' }) %>: <a href="https://e-ucm.es/" target="_blank" rel="noopener noreferrer">https://e-ucm.es/</a></li>
+				<li><%= t('home.more_projects.title', { ns: 'home' }) %>: <a href="https://e-ucm.es/" target="_blank" rel="noopener noreferrer">https://github.com/e-ucm/</a></li>
 			</ul>
 		<% } %>
 	</p>

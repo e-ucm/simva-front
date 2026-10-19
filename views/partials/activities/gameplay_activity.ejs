@@ -4,9 +4,9 @@
 
 <!-- Template for the 3-dot menu of the activity  -->
 <div id="gameplay_extra_kebab_template" style="display: none;">
-    <li class="text-with-icon icon-download" title="<%= t('settings.download.tracker_config.title', { ns : 'activities' }) %>"><%= t('settings.download.tracker_config.title', { ns : 'activities' }) %></li>
-    <li class="text-with-icon icon-activate" title="<%= t('completed.all.set', { ns : 'activities' }) %>"><%= t('completed.all.set', { ns : 'activities' }) %></li>
-    <li class="text-with-icon icon-pause" title="<%= t('completed.all.unset', { ns : 'activities' }) %>"><%= t('completed.all.unset', { ns : 'activities' }) %></li>
+    <li class="text-with-icon icon-download"><%= t('activities.kebab.download.tracker_config.title', { ns : 'activities' }) %></li>
+    <li class="text-with-icon icon-activate"><%= t('activities.kebab.set_completion.title', { ns : 'activities' }) %></li>
+    <li class="text-with-icon icon-pause"><%= t('activities.kebab.unset_completion.title', { ns : 'activities' }) %></li>
 </div>
 
 <!-- Template for the meta section of the activity -->
@@ -14,8 +14,9 @@
     <div class="gameplayMeta">
         <i class="text-with-icon icon-url" style="margin-top: 5px;">   </i>
         <ul>
-            <li class="storage"><%= t('storage.title', { ns : 'activities' }) %><input type="checkbox" style="pointer-events: none;"></li> 
-            <li class="backup"><%= t('gameplay.result.title', { ns : 'activities' }) %><input type="checkbox" style="pointer-events: none;"></li> 
+            <li class="storage"><%= t('activities.gameplay_activity.storage.title', { ns : 'activities' }) %><input type="checkbox" style="pointer-events: none;"></li> 
+            <li class="backup"><%= t('activities.gameplay_activity.backup.title', { ns : 'activities' }) %><input type="checkbox" style="pointer-events: none;"></li> 
+            <li class="restarted"><%= t('activities.gameplay_activity.restarted.title', { ns : 'activities' }) %><input type="checkbox" style="pointer-events: none;"></li> 
         </ul>
     </div>
 </div>
@@ -26,11 +27,11 @@
         <div class="activitySettigsCheckbox">
             <input type="checkbox" id="gameplay_trace_storage" name="trace_storage" checked>
             <div class="tooltipLine">
-                <label for="gameplay_trace_storage"><b><%= t('gameplay.storage.title', { ns : 'activities' }) %></b></label>
+                <label for="gameplay_trace_storage"><b><%= t('activities.gameplay_activity.storage.title', { ns : 'activities' }) %></b></label>
                 <div class="tooltip">
                     &#x1F6C8;
                     <span class="tooltiptext">
-                        <%= t('gameplay.storage.description', { ns : 'activities' }) %>
+                        <%= t('activities.gameplay_activity.storage.description', { ns : 'activities' }) %>
                     </span>
                 </div>
             </div>
@@ -39,11 +40,11 @@
         <div class="activitySettigsCheckbox">
             <input type="checkbox" id="gameplay_backup" name="backup" checked>
             <div class="tooltipLine">
-                <label for="gameplay_backup"><b><%= t('gameplay.result.title', { ns : 'activities' }) %></b></label>
+                <label for="gameplay_backup"><b><%= t('activities.gameplay_activity.backup.title', { ns : 'activities' }) %></b></label>
                 <div class="tooltip">
                     &#x1F6C8;
                     <span class="tooltiptext">
-                        <%= t('gameplay.result.description', { ns : 'activities' }) %>
+                        <%= t('activities.gameplay_activity.backup.description', { ns : 'activities' }) %>
                     </span>
                 </div>
             </div>
@@ -52,11 +53,11 @@
         <div class="activitySettigsCheckbox">
             <input type="checkbox" id="gameplay_restarted" name="restarted">
             <div class="tooltipLine">
-                <label for="gameplay_restarted"><b><%= t('gameplay.restarted.title', { ns : 'activities' }) %></b></label>
+                <label for="gameplay_restarted"><b><%= t('activities.gameplay_activity.restarted.title', { ns : 'activities' }) %></b></label>
                 <div class="tooltip">
                     &#x1F6C8;
                     <span class="tooltiptext">
-                        <%= t('gameplay.restarted.description', { ns : 'activities' }) %>
+                        <%= t('activities.gameplay_activity.restarted.description', { ns : 'activities' }) %>
                     </span>
                 </div>
             </div>
@@ -64,13 +65,13 @@
     </div>
 
     <div class="tooltipLine">
-        <h3><%= t('gameplay.platform.title', { ns : 'activities' }) %></h3>
+        <h3><%= t('activities.gameplay_activity.platform.title', { ns : 'activities' }) %></h3>
         <div class="tooltip">
             &#x1F6C8;
             <span class="tooltiptext">
                 <ul>
-                    <li><b><%= t('gameplay.web.title', { ns : 'activities' }) %></b>: <%= t('gameplay.web.description', { ns : 'activities' }) %></li>
-                    <li><b><%= t('gameplay.desktop.title', { ns : 'activities' }) %></b>: <%= t('gameplay.desktop.description', { ns : 'activities' }) %></li>
+                    <li><b><%= t('activities.gameplay_activity.platform.web.title', { ns : 'activities' }) %></b>: <%= t('activities.gameplay_activity.platform.web.description', { ns : 'activities' }) %></li>
+                    <li><b><%= t('activities.gameplay_activity.platform.desktop.title', { ns : 'activities' }) %></b>: <%= t('activities.gameplay_activity.platform.desktop.description', { ns : 'activities' }) %></li>
                 </ul>
             </span>
         </div>
@@ -78,20 +79,20 @@
     
     <div class="tabs">
         <span class="tab selected text-with-icon icon-gameplay-web" id="gameplay_web_tab_button" method="WEB" onclick="Utils.changeTab(this, 'gameplay_extra_form','gameplay_web')">
-            <%= t('gameplay.web.title', { ns : 'activities' }) %>
+            <%= t('activities.gameplay_activity.platform.web.title', { ns : 'activities' }) %>
         </span>
         <span class="tab text-with-icon icon-gameplay-desktop" id="gameplay_desktop_tab_button" method="DESKTOP" onclick="Utils.changeTab(this, 'gameplay_extra_form','gameplay_desktop')">
-            <%= t('gameplay.desktop.title', { ns : 'activities' }) %>
+            <%= t('activities.gameplay_activity.platform.desktop.title', { ns : 'activities' }) %>
         </span>
     </div>
     
     <div id="gameplay_web" class="subform selected">
         <div class="tooltipLine">
-            <h3><%= t('gameplay.game_uri.title', { ns : 'activities' }) %></h3>
+            <h3><%= t('activities.gameplay_activity.platform.web.game_uri.title', { ns : 'activities' }) %></h3>
             <div class="tooltip">
                 &#x1F6C8;
                 <span class="tooltiptext">
-                    <%= t('gameplay.game_uri.description', { ns : 'activities' }) %>
+                    <%= t('activities.gameplay_activity.platform.web.game_uri.description', { ns : 'activities' }) %>
                 </span>
             </div>
         </div>
@@ -101,11 +102,11 @@
         <div class="activitySettigsCheckbox" style="grid-column: span 2; margin-top: 15px;">
             <input type="checkbox" id="gameplay_scorm_xAPI" name="scorm_xapi">
             <div class="tooltipLine">
-                <label for="gameplay_scorm_xAPI"><b><%= t('gameplay.xapi_by_game.title', { ns : 'activities' }) %></b></label>
+                <label for="gameplay_scorm_xAPI"><b><%= t('activities.gameplay_activity.platform.desktop.xapi_by_game.title', { ns : 'activities' }) %></b></label>
                 <div class="tooltip">
                     &#x1F6C8;
                     <span class="tooltiptext">
-                        <%= t('gameplay.xapi_by_game.description', { ns : 'activities' }) %>
+                        <%= t('activities.gameplay_activity.platform.desktop.xapi_by_game.description', { ns : 'activities' }) %>
                     </span>
                 </div>
             </div>
@@ -113,18 +114,18 @@
         
         <!-- <input type="checkbox" id="gameplay_use_simvaUnity" name="use_simvaUnity"> -->
         <div class="tooltipLine">
-            <h3><%= t('gameplay.tracker_settings.title', { ns : 'activities' }) %></h3>
+            <h3><%= t('activities.gameplay_activity.platform.desktop.tracker_type.title', { ns : 'activities' }) %></h3>
             <div class="tooltip">
                 &#x1F6C8;
                 <span class="tooltiptext">
-                    <%= t('gameplay.tracker_settings.description', { ns : 'activities' }) %>
+                    <%= t('activities.gameplay_activity.platform.desktop.tracker_type.description', { ns : 'activities' }) %>
                 </span>
             </div>
         </div>
         <select  id="gameplay_tracker_settings" name="tracker_settings">
-            <option value="Xasu"><%= t('gameplay.tracker_settings.xasu.title', { ns : 'activities' }) %></option>
-            <option value="Xasu+Simva_Plugin"><%= t('gameplay.tracker_settings.simva_unity.title', { ns : 'activities' }) %></option>
-            <option value="None"><%= t('gameplay.tracker_settings.other.title', { ns : 'activities' }) %></option>
+            <option value="Xasu"><%= t('activities.gameplay_activity.platform.desktop.tracker_type.xasu.title', { ns : 'activities' }) %></option>
+            <option value="Xasu+Simva_Plugin"><%= t('activities.gameplay_activity.platform.desktop.tracker_type.simva_unity.title', { ns : 'activities' }) %></option>
+            <option value="None"><%= t('activities.gameplay_activity.platform.desktop.tracker_type.other.title', { ns : 'activities' }) %></option>
         </select>
     </div>
 </div>
@@ -137,10 +138,10 @@
             super();
             
             this.supportedType = "gameplay";
-        	this.simple_name = "<%= t('gameplay.title', { ns : 'about' }) %>";
-            this.description = "<%= t('gameplay.description', { ns : 'about' }) %>";
+        	this.simple_name = "<%- t('activities.gameplay_activity.name', { ns : 'activities' }) %>";
+            this.description = "<%- t('about.activity_types.gameplay.description', { ns : 'about' }) %>";
 
-            this.backupDownloadText = "<%= t('download.backup.game.title', { ns : 'activities' }) %>";
+            this.backupDownloadText = "<%- t('activities.download.game_backup.title', { ns : 'activities' }) %>";
         }
 
 
@@ -213,6 +214,7 @@
             card.find(".activity-meta").append(meta);
             meta.find(".storage input[type='checkbox']").attr("checked", activity.activity_trace_storage);
             meta.find(".backup input[type='checkbox']").attr("checked", activity.game_backup);
+            meta.find(".restarted input[type='checkbox']").attr("checked", activity.activity_can_be_restarted);
 
             // Determine the type icon and subtitle based on the activity type
             let iconClass = "";
@@ -221,14 +223,14 @@
             card.find(".kebab-dropdown .icon-download").hide();
             if (activity.game_type === 'WEB') {
                 iconClass = "icon-gameplay-web";
-                this.simple_name += " - <%= t('gameplay.web.title', { ns : 'activities' }) %>"
-                this.description = "<%= t('gameplay.web.description', { ns : 'activities' }) %>";
+                this.simple_name += " - <%- t('activities.gameplay_activity.platform.web.title', { ns : 'activities' }) %>"
+                this.description = "<%- t('activities.gameplay_activity.platform.web.description', { ns : 'activities' }) %>";
                 meta.find("i").text(activity.game_url || "-");
             }
             else {
                 iconClass = "icon-gameplay-desktop";
-                this.simple_name += " - <%= t('gameplay.desktop.title', { ns : 'activities' }) %>"
-                this.description = "<%= t('gameplay.desktop.description', { ns : 'activities' }) %>";
+                this.simple_name += " - <%- t('activities.gameplay_activity.platform.desktop.title', { ns : 'activities' }) %>"
+                this.description = "<%- t('activities.gameplay_activity.platform.desktop.description', { ns : 'activities' }) %>";
                 meta.find(".icon-url").removeClass("icon-url");
 
                 if (activity.game_tracker_technology != null) {

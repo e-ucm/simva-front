@@ -1,16 +1,16 @@
 <div class="menu">
 	<ul>
 		<li>
-			<a href="/" title="<%= t('home.description') %>">
+			<a href="/" title="<%= t('home.description', {ns: 'home' }) %>">
 				<span><img src="/images/icons/home.png" style="filter: invert(100%);"></span>
-				<span><%= t('home.title') %></span>
+				<span><%= t('home.title', {ns: 'home' }) %></span>
 			</a>
 		</li>
 		<% if(user.data.role === 'teacher' || user.data.role === 'administrator') { %>
 			<li>
-				<a href="/simlets/" title="<%= t('simlets.description', { ns : 'SIMLETs' }) %>">
+				<a href="/simlets/" title="<%= t('simlets.active.description', { ns : 'SIMLETs' }) %>">
 					<span><img src="/images/icons/study.png" style="filter: invert(100%);"></span>
-					<span><%= t('title', { ns : 'SIMLETs' }) %></span>
+					<span><%= t('simlets.active.title', { ns : 'SIMLETs' }) %></span>
 				</a>
 			</li>
 			<% if(config.activities.enabled == 'true') {  %>
@@ -22,16 +22,16 @@
 				</li>  
 			<% } %>
 			<li>
-				<a href="/archived/" title="<%= t('archived.description', { ns : 'SIMLETs' }) %>">
+				<a href="/archived/" title="<%= t('simlets.archived.description', { ns : 'SIMLETs' }) %>">
 					<span><img src="/images/icons/documents.png" style="filter: invert(100%);"></span>
-					<span><%= t('archived.title', { ns : 'SIMLETs' }) %></span>
+					<span><%= t('simlets.archived.title', { ns : 'SIMLETs' }) %></span>
 				</a>
 			</li>
 		<% } %>
 		<li>
-			<a href="/scheduler/" title="<%= t('play.description', { ns : 'SIMLETs' }) %>">
+			<a href="/scheduler/" title="<%= t('scheduler.description', { ns : 'SIMLETs' }) %>">
 				<span><img src="/images/icons/play-button-outline.png" style="filter: invert(100%);"></span>
-				<span><%= t('play.title', { ns : 'SIMLETs' }) %></span>
+				<span><%= t('scheduler.title', { ns : 'SIMLETs' }) %></span>
 			</a>
 		</li>
 		<% if(user.data.role === 'teacher' || user.data.role === 'administrator') { %>
@@ -45,9 +45,9 @@
 			<% } %>
 		<% } %>
 		<li>
-			<a href="/about" title="<%= t('description', { ns : 'about'}) %>">
+			<a href="/about" title="<%= t('about.header_visitors.about.description', { ns : 'about'}) %>">
 				<span><img src="/images/icons/information.png" style="filter: invert(100%);"></span>
-				<span><%= t('title', { ns : 'about'}) %></span>
+				<span><%= t('about.title', { ns : 'about'}) %></span>
 			</a>
 		</li>
 	</ul>

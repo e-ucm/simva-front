@@ -9,27 +9,27 @@
 			<h1 id="activity_form_title">	</h1>
 
 			<div class="tabs" id="add_activity_tabs">
-				<span id="activity_name_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'activity_form','activity_name_ab')"><%= t('add.new.tab', { ns : 'activities' }) %></span>
-				<span class="tab" onclick="Utils.changeTab(this, 'activity_form','import_activity_tab')"><%= t('import.tab', { ns : 'activities' }) %></span>
+				<span id="activity_name_tab_button" class="tab selected" onclick="Utils.changeTab(this, 'activity_form','activity_name_ab')"><%= t('activities.new.tab', { ns : 'activities' }) %></span>
+				<span class="tab" onclick="Utils.changeTab(this, 'activity_form','import_activity_tab')"><%= t('activities.import.tab', { ns : 'activities' }) %></span>
 			</div>
 
 			<div id="activity_name_ab" class="subform selected">
 				<form id="activity_name_form">
 					<input hidden type="text" name="editingActivityId" id="edit_activity_id">
 
-					<h3 class="activity_form_name"><%= t('name.title', { ns : 'activities' }) %></h3>
-					<input type="text" class="name_field" name="activityName" id="activity_name" placeholder="<%= t('name.placeholder', { ns : 'activities' }) %>" required>
+					<h3 class="activity_form_name"><%= t('forms.name.title', { ns : 'commons' }) %></h3>
+					<input type="text" class="name_field" name="activityName" id="activity_name" placeholder="<%= t('activities.name.placeholder', { ns : 'activities' }) %>" required>
 					
 					<div id="activity_type" style="display: flex; align-items: center; gap: 10px;">
 						<div class="tooltipLine">
-							<h3><%= t('activity.type.title', { ns : 'activities' }) %></h3>
+							<h3><%= t('activities.type.title', { ns : 'activities' }) %></h3>
 							<div class="tooltip">
 								&#x1F6C8;
 								<span class="tooltiptext">
 									<ul>
-										<li><b><%= t('gameplay.title', { ns : 'about' }) %></b>: <%= t('gameplay.description', { ns : 'about' }) %></li>
-										<li><b><%= t('limesurvey.title', { ns : 'about' }) %></b>: <%= t('limesurvey.description', { ns : 'about' }) %></li>
-										<li><b><%= t('manual.title', { ns : 'about' }) %></b>: <%= t('manual.description', { ns : 'about' }) %></li>
+										<li><b><%= t('activities.gameplay_activity.name', { ns : 'activities' }) %></b>: <%= t('about.activity_types.gameplay.description', { ns : 'about' }) %></li>
+										<li><b><%= t('activities.limeSurvey_activity.name', { ns : 'activities' }) %></b>: <%= t('about.activity_types.limeSurvey.description', { ns : 'about' }) %></li>
+										<li><b><%= t('activities.manual_activity.name', { ns : 'activities' }) %></b>: <%= t('about.activity_types.manual.description', { ns : 'about' }) %></li>
 									</ul>
 								</span>
 							</div>
@@ -37,7 +37,7 @@
 						
 						<select class="activityTypeSelector" name="type" id="activity_type_field" onchange="selectActivityType()" required>
 							<!-- Default 'no selected' option -->
-							<option selected disabled hidden><%= t('activity.type.select', { ns : 'activities' }) %>
+							<option selected disabled hidden value=""><%= t('activities.type.placeholder', { ns : 'activities' }) %>
 	                    </select>
 					</div>
                     <fieldset id="activity_extras">
@@ -50,11 +50,11 @@
 
 			<div id="import_activity_tab" class="subform" style="display: none;">
                 <form id="import_activity_form">
-					<h3><%= t('name.placeholder', { ns : 'activities' }) %></h3>
-                    <input type="text" class="name_field" name="activityName" placeholder="<%= t('name.placeholder', { ns : 'activities' }) %>" required>
-                    <h3><%= t('import.input', { ns : 'activities' }) %></h3>
+					<h3><%= t('forms.name.title', { ns : 'commons' }) %></h3>
+                    <input type="text" class="name_field" name="activityName" placeholder="<%= t('activities.name.placeholder', { ns : 'activities' }) %>" required>
+                    <h3><%= t('activities.import.input', { ns : 'activities' }) %></h3>
 					<input name="jsonFile" type="file" accept=".json" required>
-                    <input type="submit" value="<%= t('import.submit', { ns : 'activities' }) %>">
+                    <input type="submit" value="<%= t('activities.import.submit', { ns : 'activities' }) %>">
                 </form>
             </div>
 
@@ -138,16 +138,9 @@
 			let form = Utils.getFormData($(this));
 			Utils.toggleSubmit();
 			
-			// Require the user to select a type
-			if (!form.type) {
-				errorbox.text("<%= t('activity.type.select_required', { ns : 'activities' }) %>");
-				Utils.toggleSubmit();
-				return false;
-			}
-
 			const painter = getActivityPainterByType(form.type);
 			if (painter == null) {
-				errorbox.text("<%= t('activity.type.select_required', { ns : 'activities' }) %>");
+				errorbox.text("<%- t('activities.type.error.invalid_type', { ns : 'activities' }) %>");
 				Utils.toggleSubmit();
 				return false;
 			}
@@ -175,7 +168,7 @@
 					if (closestWebTab.length > 0 && closestWebTab.is(".selected") && (
 						(form.game_uri == "" || form.game_uri == null) && (form.uri == "" || form.uri == null))
 					) {
-						if (confirm(`<%- t('add.new.web.no_url_message', { ns : 'activities' }) %>`)) {
+						if (confirm(`<%- t('activities.new.web.no_url_message', { ns : 'activities' }) %>`)) {
 							addActivity();
 						}
 						else {
@@ -197,7 +190,7 @@
 
 					// Compare the previous activity info with the updated one
 					if (JSON.stringify(prevActivityInfo) === JSON.stringify(activityInfo)) {
-						errorbox.text("<%= t('edit.no_changes.message', { ns : 'SIMLETs' }) %>");
+						errorbox.text("<%- t('forms.edit.no_changes.message', { ns : 'commons' }) %>");
 						Utils.toggleSubmit();
 						return false;
 					}
@@ -255,13 +248,10 @@
 					} catch (parseError) {
 						console.error('Import error:', parseError);
 						Utils.toggleSubmit();
-						errorbox.text("<%= t('import.error.invalid_file', { ns : 'activities' }) %> " + (parseError.message ? (': ' + parseError.message) : ''));
+						errorbox.text("<%- t('activities.import.error.invalid_file', { ns : 'activities' }) %> " + (parseError.message ? (': ' + parseError.message) : ''));
 					}
 				};
 				reader.readAsDataURL(fileInput.files[0]);
-			} else {
-				errorbox.text("<%= t('import.upload.error', { ns : 'activities' }) %>");
-				Utils.toggleSubmit();
 			}
 			return false;
 		});
@@ -286,8 +276,8 @@
 			$("#add_activity_tabs").show();
 			$("#activity_type option:not(:selected)").prop("disabled", false);
 
-			$("#activity_form_title").text("<%= t('add.title', { ns : 'activities' }) %>");
-			$("#activity_submit").val("<%= t('add.submit', { ns : 'activities' }) %>");
+			$("#activity_form_title").text("<%- t('activities.form.add.title', { ns : 'activities' }) %>");
+			$("#activity_submit").val("<%- t('activities.new.submit', { ns : 'activities' }) %>");
 
 			$('#prev_activity_name').val("");
 			$('#prev_activity_type').val("");
@@ -304,8 +294,8 @@
 			// Hide the add new/import tabs (only the name/description/tags tab is needed when editing session)
 			$("#add_activity_tabs").hide();
 
-			$("#activity_form_title").text("<%= t('edit.title', { ns : 'activities' }) %>");
-			$("#activity_submit").val("<%= t('edit.submit', { ns : 'activities' }) %>");
+			$("#activity_form_title").text("<%- t('activities.form.edit.title', { ns : 'activities' }) %>");
+			$("#activity_submit").val("<%- t('activities.form.edit.submit', { ns : 'activities' }) %>");
 
 			$('#prev_activity_name').val(activity.activity_name);
 			$('#prev_activity_type').val(activity.activity_type);
@@ -336,7 +326,7 @@
         downloadActivityId = activityId;
 		const activity = getActivityFromId(activityId);
 
-		$("#downloadFormTitle").text(`<%= t('single.title', { ns : 'activities' }) %>: ${activity.activity_name}`);
+		$("#downloadFormTitle").text(`<%- t('activities.title.single', { ns : 'activities' }) %>: ${activity.activity_name}`);
 	}
 
 	const showActivityDownloadFormButtons = function(activityId) {
@@ -460,7 +450,7 @@
 		if (act != null) {
 			const painter = getActivityPainterByType(act.activity_type);
 			if (painter != null) {
-				painter.openResults(act.activity_id, data[USER_DATA_ID_KEY]);
+				painter.showBackupData(act.activity_id, data[USER_DATA_ID_KEY]);
 			}
 		}
 	});
@@ -474,7 +464,7 @@
 		if (act != null) {
 			const painter = getActivityPainterByType(act.activity_type);
 			if (painter != null) {
-				painter.downloadResults(act.activity_id, data[USER_DATA_ID_KEY]);
+				painter.downloadBackupData(act.activity_id, data[USER_DATA_ID_KEY]);
 			}
 		}
 	});
@@ -513,7 +503,7 @@
     const deleteActivity = function(activityId, activityName, sessionId) {
 		let session = getSessionFromId(sessionId);
 		let sessionName = session && session.session_name ? session.session_name : sessionId;
-		if (confirm(`<%- t('delete.confirm', { ns : 'activities', activity : '${activityName}', session: '${sessionName}' , SIMLET : '${simlet.simlet_name}' }) %>`)) {
+		if (confirm(`<%- t('activities.delete.confirm', { ns : 'activities', activity : '${activityName}', session: '${sessionName}' , SIMLET : '${simlet.simlet_name}' }) %>`)) {
 			Simva.deleteActivity(simletId, sessionId, activityId, function(error, result) {
 				onEditSessionActivities(sessionId);
 			});
@@ -526,16 +516,7 @@
 	
 	const exportActivity = function(activityId) {
 		Simva.exportActivity(activityId, true, (error, result) => {
-			if(error){
-				$.toast({
-					heading: error.message,
-					text: error.message,
-					position: 'top-right',
-					icon: 'error',
-					stack: false
-				});
-			} 
-			else {
+			if (!error){
 				const session = getSessionFromId(result.session_id);
 				const filename = `${getActivityFilenamePrefix(session, result)}-export.json`;
 				Utils.downloadContent(JSON.stringify(result, null, 2), filename);
@@ -550,7 +531,7 @@
 		Simva.getActivityLRSData(downloadActivityId, null, { simletId: simletId, sessionId: activity.session_id }, (error, result) => {
 			showActivityDownloadFormButtons(downloadActivityId);
 
-            let errorMsg = "<%= t('result.error.downloading', { ns : 'activities' }) %>";
+            let errorMsg = "<%- t('activities.download.data.error_toast.heading', { ns : 'activities' }) %>";
 			if(error){
 				$.toast({
 					heading: errorMsg,
@@ -573,7 +554,7 @@
 		Simva.getActivityTestLRSData(downloadActivityId, (error, result) => {
 			showActivityDownloadFormButtons(downloadActivityId);
 
-            let errorMsg = "<%= t('result.error.downloading', { ns : 'activities' }) %>";
+            let errorMsg = "<%- t('activities.download.test_data.error_toast.heading', { ns : 'activities' }) %>";
 			if(error){
 				$.toast({
 					heading: errorMsg,
@@ -606,7 +587,7 @@
 		if (act != null) {
 			const painter = getActivityPainterByType(act.activity_type);
 			if (painter != null) {
-				painter.downloadBackup(downloadActivityId);
+				painter.downloadUsersBackupZip(downloadActivityId);
 			}
 		}
 	}
@@ -615,8 +596,8 @@
 		Simva.setMultiActivityCompletion(activityId, status, (error, result) => {
 			if (error){
 				$.toast({
-					heading: error.message,
-					text: "<%= t('completed.error.message', { ns : 'activities' }) %>",
+					heading: "<%- t('activities.set_completion.error_toast.heading', { ns : 'activities' }) %>",
+					text: error.message,
 					position: 'top-right',
 					icon: 'error',
 					stack: false
@@ -639,7 +620,7 @@
 		sessionCard.find(".activities_loader").show();
 
 		if (activities.length === 0) {
-			$(`#session_${session.session_id} .activities`).text("<%= t('no_activities.message', { ns : 'activities' }) %>");
+			$(`#session_${session.session_id} .activities`).text("<%- t('activities.no_activities.message', { ns : 'activities' }) %>");
 			sessionCard.find(".activities_loader").hide();
 		} 
 		else {

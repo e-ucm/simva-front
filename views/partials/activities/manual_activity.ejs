@@ -4,8 +4,8 @@
 
 <!-- Template for the 3-dot menu of the activity  -->
 <div id="manual_extra_kebab_template" style="display: none;">
-    <li class="text-with-icon icon-activate" title="<%= t('completed.all.set', { ns : 'activities' }) %>"><%= t('completed.all.set', { ns : 'activities' }) %></li>
-    <li class="text-with-icon icon-pause" title="<%= t('completed.all.unset', { ns : 'activities' }) %>"><%= t('completed.all.unset', { ns : 'activities' }) %></li>
+    <li class="text-with-icon icon-activate"><%= t('activities.kebab.set_completion.title', { ns : 'activities' }) %></li>
+    <li class="text-with-icon icon-pause"><%= t('activities.kebab.unset_completion.title', { ns : 'activities' }) %></li>
 </div>
 
 <!-- Template for the meta section of the activity -->
@@ -13,8 +13,10 @@
     <div class="manualMeta">
         <i class="text-with-icon icon-url" style="margin-top: 5px;">   </i>
         <ul>
-            <li class="storage"><%= t('storage.title', { ns : 'activities' }) %><input type="checkbox" style="pointer-events: none;"></li> 
-            <li class="complete"><%= t('manual.student_complete.ok', { ns : 'activities' }) %><input type="checkbox" style="pointer-events: none;"></li> 
+            <li class="storage"><%= t('activities.manual_activity.storage.title', { ns : 'activities' }) %><input type="checkbox" style="pointer-events: none;"></li> 
+            <li class="complete"><%= t('activities.manual_activity.completable.title', { ns : 'activities' }) %><input type="checkbox" style="pointer-events: none;"></li> 
+            <li class="restarted"><%= t('activities.manual_activity.restarted.title', { ns : 'activities' }) %><input type="checkbox" style="pointer-events: none;"></li> 
+
         </ul>
     </div>
 </div>
@@ -25,11 +27,11 @@
         <div class="activitySettigsCheckbox">
             <input type="checkbox" id="manual_user_managed" name="user_managed">
             <div class="tooltipLine">
-                <label for="manual_user_managed"><b><%= t('manual.student_complete.title', { ns : 'activities' }) %></b></label>
+                <label for="manual_user_managed"><b><%= t('activities.manual_activity.completable.title', { ns : 'activities' }) %></b></label>
                 <div class="tooltip">
                     &#x1F6C8;
                     <span class="tooltiptext">
-                        <%= t('manual.student_complete.description', { ns : 'activities' }) %>
+                        <%= t('activities.manual_activity.completable.description', { ns : 'activities' }) %>
                     </span>
                 </div>
             </div>
@@ -38,11 +40,11 @@
         <div class="activitySettigsCheckbox">
             <input type="checkbox" id="manual_restarted" name="restarted">
             <div class="tooltipLine">
-                <label for="manual_restarted"><b><%= t('manual.restarted.title', { ns : 'activities' }) %></b></label>
+                <label for="manual_restarted"><b><%= t('activities.manual_activity.restarted.title', { ns : 'activities' }) %></b></label>
                 <div class="tooltip">
                     &#x1F6C8;
                     <span class="tooltiptext">
-                        <%= t('manual.restarted.description', { ns : 'activities' }) %>
+                        <%= t('activities.manual_activity.restarted.description', { ns : 'activities' }) %>
                     </span>
                 </div>
             </div>
@@ -50,13 +52,13 @@
     </div>
 
     <div class="tooltipLine">
-        <h3><%= t('manual.platform.title', { ns : 'activities' }) %></h3>
+        <h3><%= t('activities.manual_activity.platform.title', { ns : 'activities' }) %></h3>
         <div class="tooltip">
             &#x1F6C8;
             <span class="tooltiptext">
                 <ul>
-                    <li><b><%= t('manual.web.title', { ns : 'activities' }) %></b>: <%= t('manual.web.description', { ns : 'activities' }) %></li>
-                    <li><b><%= t('manual.external.title', { ns : 'activities' }) %></b>: <%= t('manual.external.description', { ns : 'activities' }) %></li>
+                    <li><b><%= t('activities.manual_activity.platform.web.title', { ns : 'activities' }) %></b>: <%= t('activities.manual_activity.platform.web.description', { ns : 'activities' }) %></li>
+                    <li><b><%= t('activities.manual_activity.platform.external.title', { ns : 'activities' }) %></b>: <%= t('activities.manual_activity.platform.external.description', { ns : 'activities' }) %></li>
                 </ul>
             </span>
         </div>
@@ -64,20 +66,20 @@
     
     <div class="tabs">
         <span class="tab selected text-with-icon icon-gameplay-web" id="manual_web_tab_button" method="WEB" onclick="Utils.changeTab(this, 'manual_extra_form','manual_web')">
-            <%= t('manual.web.title', { ns : 'activities' }) %>
+            <%= t('activities.manual_activity.platform.web.title', { ns : 'activities' }) %>
         </span>
         <span class="tab text-with-icon icon-manual-external" id="manual_external_tab_button" method="EXTERNAL" onclick="Utils.changeTab(this, 'manual_extra_form','manual_external')">
-            <%= t('manual.external.title', { ns : 'activities' }) %>
+            <%= t('activities.manual_activity.platform.external.title', { ns : 'activities' }) %>
         </span>
     </div>
     
     <div id="manual_web" class="subform selected">
         <div class="tooltipLine">
-            <h3><%= t('manual.uri.title', { ns : 'activities' }) %></h3>
+            <h3><%= t('activities.manual_activity.platform.web.uri.title', { ns : 'activities' }) %></h3>
             <div class="tooltip">
                 &#x1F6C8;
                 <span class="tooltiptext">
-                    <%= t('manual.uri.description', { ns : 'activities' }) %>
+                    <%= t('activities.manual_activity.platform.web.uri.description', { ns : 'activities' }) %>
                 </span>
             </div>
         </div>
@@ -96,8 +98,8 @@
             super();
             
             this.supportedType = "manual";
-        	this.simple_name = "<%= t('manual.title', { ns : 'about' }) %>";
-            this.description = "<%= t('manual.description', { ns : 'about' }) %>";
+        	this.simple_name = "<%- t('activities.manual_activity.name', { ns : 'activities' }) %>";
+            this.description = "<%- t('about.activity_types.manual.description', { ns : 'about' }) %>";
         }
 
 
@@ -158,6 +160,7 @@
             card.find(".activity-meta").append(meta);
             meta.find(".storage input[type='checkbox']").attr("checked", activity.activity_trace_storage);
             meta.find(".complete input[type='checkbox']").attr("checked", activity.manual_user_managed);
+            meta.find(".restarted input[type='checkbox']").attr("checked", activity.activity_can_be_restarted);
 
             // Determine the type icon and subtitle based on the activity type
             let iconClass = "";
@@ -165,14 +168,14 @@
             
             if (activity.manual_ressource_type === 'WEB') {
                 iconClass = "icon-gameplay-web";
-                this.simple_name += " - <%= t('manual.web.title', { ns : 'activities' }) %>"
-                this.description = "<%= t('manual.web.description', { ns : 'activities' }) %>";
+                this.simple_name += " - <%- t('activities.manual_activity.platform.web.title', { ns : 'activities' }) %>"
+                this.description = "<%- t('activities.manual_activity.platform.web.description', { ns : 'activities' }) %>";
                 meta.find("i").text(activity.manual_ressource_url || "-");
             }
             else {
                 iconClass = "icon-manual-external";
-                this.simple_name += " - <%= t('manual.external.title', { ns : 'activities' }) %>"
-                this.description = "<%= t('manual.external.description', { ns : 'activities' }) %>";
+                this.simple_name += " - <%- t('activities.manual_activity.platform.external.title', { ns : 'activities' }) %>"
+                this.description = "<%- t('activities.manual_activity.platform.external.description', { ns : 'activities' }) %>";
                 meta.find(".icon-url").removeClass("icon-url");
             }
 

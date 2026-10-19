@@ -76,7 +76,7 @@
 		let studyId = "<%= study %>";
 		let username = "<%= user.data.username %>";
 		let currentUserId = null;
-		let authMethod = "<%= typeof authMethod !== 'undefined' ? authMethod : '' %>";
+		let authMethod = "<%- typeof authMethod !== 'undefined' ? authMethod : '' %>";
 
 		var manual = '<body style="background-color: black; color: white; font-family: sans-serif; text-align: center;"><h1>External Activity</h1><p>Ask or listen your teacher for what you have to do on this activity.</p><p>If you are allowed to complete the activity on your own, there should be a "complete activity" button above.</p></body>';
 

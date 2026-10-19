@@ -1,125 +1,124 @@
 { 
-    "users.add.title": "Añadir usuarios",
+    "users.title": "Usuarios",
+    "users.tab.description": "Gestiona los usuarios, grupos y sus asignaciones dentro de este SIMLET",
+
+    "users.form.add.title": "Añadir usuarios",
     
+    "users.username.tile": "Nombre de usuario",
+    "users.permissions.title": "Permisos",
+        "users.permission.placeholder": "Selecciona los permisos",
+        "users.permissions.full": "Completos",
+        "users.permissions.read": "Lectura",
+        "users.permissions.write": "Escritura",
+        "users.permissions.error": "Los permisios seleccionados no son válidos.",
+    "users.error.not_found": "No se encontró el usuario {{username}}.",
+    "users.delete.title": "Eliminar",
+
     "supervisors.title": "Supervisores",
-        "supervisors.table.username.title": "Nombre de usuario",
-        "supervisors.table.permissions.title": "Permisos",
-
-        "supervisors.delete.title": "Borrar",
-            "supervisors.delete.confirm": "ADVERTENCIA:\n¿Estás seguro de que quieres eliminar al supervisor '{{supervisor}}' del SIMLET '{{SIMLET}}'?\nPodrás volver a añadirlo después.",
-            
         "supervisors.add.title": "Añadir supervisor",
-            "supervisors.name.title": "Nombre",
             "supervisors.name.placeholder": "Nombre de usuario del supervisor",
-            "supervisors.permission.title": "Permisos",
-            "supervisors.permission.placeholder": "Selecciona los permisos",
-            "supervisors.permissions.full": "Completos",
-            "supervisors.permissions.read": "Lectura",
-            "supervisors.permissions.write": "Escritura",
             "supervisors.error.already_in": "El supervisor ya está en el SIMLET.",
-            "supervisors.error.permission": "El permiso seleccionado no es válido.",
-            "supervisors.error.not_found": "No se ha encontrado el usuario.",
-        "supervisors.change_permissions.message": "Permisos del supervisor actualizados",
-        "supervisors.change_permissions.error": "Error al cambiar los permisos del supervisor",
-        "supervisors.delete.error": "Error eliminando al supervisor",
+        "supervisors.change_permissions.toast.heading": "Permisos del supervisor actualizados",
+        "supervisors.change_permissions.error_toast.heading": "Error al cambiar los permisos del supervisor",
+        "supervisors.delete.confirm": "ADVERTENCIA:\n¿Estás seguro de que quieres eliminar al supervisor '{{supervisor}}' del SIMLET '{{SIMLET}}'?\nPodrás volver a añadirlo después.",
+            "supervisors.delete.error_toast.heading": "Error al eliminar el supervisor",
 
-    "search_bar.placeholder": "Busca un grupo por su nombre o descripción",
+    "coordinators.title": "Coordinadores",
+        "coordinators.add.title": "Añadir coordinador",
+            "coordinators.name.placeholder": "Nombre de usuario del coordinador",
+            "coordinators.error.already_in": "El coordinador ya está en el SIMLET.",
+        "coordinators.change_permissions.toast.heading": "Permisos del coordinador actualizados",
+        "coordinators.change_permissions.error_toast.heading": "Error al cambiar los permisos del coordinador",
+        "coordinators.delete.confirm": "ADVERTENCIA:\n¿Estás seguro de que quieres eliminar los permisos del coordinador '{{coordinator}}'?\nPodrás volver a añadirlo después.",
+            "coordinators.delete.error_toast.heading": "Error al eliminar el coordinador",
 
+
+    "groups.search_bar.placeholder": "Busca un grupo por su nombre o descripción",
+    
     "groups.title": "Grupos",
-        "groups.no_groups.message": "Aún no hay grupos en este SIMLET. Crea uno utilizando el botón inferior derecho (+).",
-        "participants.no_users.message": "Aún no hay participantes en este grupo. Añade algunos utilizando el botón de el menú de 3 puntos a la derecha.",
+    "groups.title.single": "Grupo",
+    "groups.no_groups.message": "Aún no hay grupos en este SIMLET. Crea uno utilizando el botón inferior derecho (+).",
         
-        "participants.title": "Participantes",
+    "groups.name.placeholder": "Nombre del grupo",
+        
+    "groups.form.add.title": "Añadir grupo",
+        "groups.new.tab": "Nuevo grupo",
+            "groups.new.submit": "Crear grupo",
+            "deprecated.title": "Usar versión obsoleta de generación de código",
+            "deprecated.message": "/!\\ Este grupo utiliza la versión obsoleta de generación de códigos.",
+            "deprecated.tooltip": "/!\\ Este grupo utilizará la versión obsoleta de generación de códigos.",
 
-        "participants.table.username.title": "Nombre de usuario",
+        "groups.import.tab": "Importar grupo existente",
+            "groups.import.input": "Selecciona un archivo de grupo exportado",
+            "groups.import.submit": "Importar grupo",
+            "groups.import.error.invalid_file": "El archivo seleccionado no es un archivo de grupo válido.",
+
+        "groups.allocate_to.title": "Asignar grupo a",
+
+    "groups.kebab.edit.title": "Editar",
+        "groups.form.edit.title": "Editar grupo",
+        "groups.form.edit.submit": "",
+
+    "participants.no_participants.message": "Aún no hay participantes en este grupo. Añade algunos utilizando el botón de el menú de 3 puntos a la derecha.",
+    "groups.kebab.add_participants.title": "Añadir participantes",
+        "groups.form.add_participants.title": "Añadir participantes",
+        "participants.username.placeholder.batch": "Nombres de usuario de los participantes separados por ,",
+        "participants.username.placeholder": "Nombre de usuario del participante",
+    
+        "participants.add_existing.tab": "Añadir existente",
+            "participants.add_existing.submit": "Añadir usuario",
+            "participants.add_existing.error.already_in_group": "El participante '{{participant}}' ya está en el grupo '{{group}}'.",
+            "participants.add_existing.error.reload_manually": "Recarga la página para ver los cambios.",
+            
+        "participants.add_new.tab": "Nuevo usuario",
+            "participants.add_new.email.placeholder": "email@ejemplo.com",
+            "participants.add_new.password.placeholder": "Contraseña",
+            "participants.add_new.submit": "Crear y añadir usuario",
+
+        "participants.add_batch.tab": "Añadir tanda de códigos",
+            "participants.add_batch.number.title": "¿Cuántos?",
+            "participants.add_batch.algorithm": "Los participantes se añadirán con nombres de usuario aleatorios creados con:",
+                "participants.add_batch.algorithm.letters": "Solo letras",
+                "participants.add_batch.algorithm.alphanumeric": "Letras y números",
+                "participants.add_batch.algorithm.base58": "Alfanumérico simplificado (Base58)",
+            "participants.add_batch.length.title": "Y una longitud de:",
+            "participants.add_batch.submit": "Crear y añadir tanda",
+        
+    "participants.title": "Participantes",
         "participants.table.token.title": "Código",
         "participants.table.email.title": "Correo electrónico",
         "participants.table.role.title": "Rol",
-        "participant.delete.title": "Eliminar",
-            "participants.delete.confirm" : "ADVERTENCIA:\n¿Estás seguro de que quieres eliminar al participante '{{participant}}' del grupo '{{group}}'?\nEsta acción no se puede revertir y todos los datos de este participante se eliminarán de las sesiones y actividades.",
-        "participants.table.session.title": "Sesión",
-    
-        "allocator.type.title": "Tipo de asignador",
-        "allocator.sessions.title": "Sesión",
-        "allocator.participants.title": "Participante",
-        "allocator.add.error": "Error al añadir la asignación",
-        "allocator.add.message": "Asignador actualizado",
-        "allocator.add.title": "Añadir asignacion",
-            
-        "groups.name.title": "Nombre",
-        "groups.name.placeholder": "Nombre del grupo",
+        "participants.delete.confirm" : "ADVERTENCIA:\n¿Estás seguro de que quieres eliminar al participante '{{participant}}' del grupo '{{group}}'?\nEsta acción no se puede revertir y todos los datos de este participante se eliminarán de las sesiones y actividades.",
+            "participants.delete.error_toast.heading": "Error al eliminar al participante",
         
-        "groups.add.title": "Añadir grupo",
-            "groups.add.new.tab": "Añadir nuevo",
-                "groups.add.new.submit": "Crear grupo",
-                "deprecated.title": "Usar versión obsoleta de generación de código",
-                "deprecated.message": "/!\\ Este grupo utiliza la versión obsoleta de generación de códigos.",
-                "deprecated.tooltip": "/!\\ Este grupo utilizará la versión obsoleta de generación de códigos.",
 
-            "groups.import.tab": "Importar grupo existente",
-                "groups.import.input": "Selecciona un archivo de grupo exportado",
-                "groups.import.submit": "Importar grupo",
-                "groups.import.upload.error": "Selecciona el archivo a importar.",
-                "groups.import.error.invalid_file": "El archivo seleccionado no es un archivo de grupo válido.",
+    "groups.kebab.allocator.title": "Editar asignador",
+        "allocators.type.title": "Tipo de asignador",
+        "allocators.form.submit": "Cambiar asignador",
+        "allocators.type.error.invalid_type": "El tipo de asignador seleccionado no es válido",
 
-            "groups.allocate_to.title": "Asignar grupo a",
-            "groups.allocate_to.noSession": "Ninguna sesión",
+        "allocators.default_allocator.title": "Asignador básico",
+            "allocators.default_allocator.description": "Este asignador permite asignar manualmente los participantes a las sesiones uno por uno.",
+
+        "allocators.group_allocator.title": "Asignador de grupos",
+            "allocators.group_allocator.description": "Este asignador permite asignar un grupo entero a una sesión.",
+        
+        "allocators.no_session.title": "Ninguna",
+        "allocators.update.error_toast.heading": "Error al añadir la asignación",
+        "allocators.update.toast.heading": "Asignación actualizada",
+
+
+    "groups.kebab.print.title": "Descargar tabla como PDF",
+        "print_table.title": "Grupo: ",
+        "print_table.number_col.title": "Nº",
+        "print_table.name_col.title": "Nombre",
+        "print_table.code_col.title": "Código",
     
-        "groups.settings.groups.edit.title": "Editar",
-            "groups.edit.title": "Editar grupo",
-            "groups.edit.submit": "Editar grupo",
-            "groups.edit.no_changes.message": "No se han detectado cambios en el nombre del nuevo grupo.",
-
-        "groups.settings.add.title": "Añadir participantes",
-            "participants.username.placeholder": "Nombre de usuario del participante",
-            "participants.username.placeholder.batch": "Nombres de usuario de los participantes separados por ,",
-            
-            "participants.add.existing.tab": "Añadir existente",
-                "participants.add.existing.submit": "Añadir usuario",
-                "participants.error_message.already_in_group": "El participante '{{participant}}' ya está en el grupo '{{group}}'.",
-                "participants.error_message.not_found": "No se encontró el usuario '{{participant}}'.",
-                "participants.error_message.reload_manually": "Recarga la página para ver los cambios.",
-
-            "participants.add.new.tab": "Nuevo usuario",
-                "participants.add.new.email.placeholder": "email@ejemplo.com",
-                "participants.add.new.password.placeholder": "Contraseña",
-                "participants.add.new.groups.add.new.submit": "Crear y añadir usuario",
-
-            "participants.add.batch.tab": "Añadir tanda de códigos",
-                "participants.add.batch.number.title": "¿Cuántos?",
-                "participants.add.batch.algorithm_format": "Los participantes se añadirán con nombres de usuario aleatorios creados con:",
-                    "participants.add.batch.algorithm_format.letters": "Sólo letras",
-                    "participants.add.batch.algorithm_format.alphanumeric": "Letras y números",
-                    "participants.add.batch.algorithm_format.base58": "Alfanumérico simplificado (Base58)",
-                "participants.add.batch.length.title": "Y una longitud de:",
-                "participants.add.batch.submit": "Crear y añadir tanda",
-
-        "groups.settings.allocator.title": "Editar asignador",
-            "allocator.change.title": "Selecciona el nuevo tipo de asignador",
-
-            "allocator.default.title": "Asignador básico",
-                "allocator.default.type": "Por defecto",
-                "allocator.default.description": "Este asignador permite asignar manualmente los participantes a las sesiones uno por uno.",
-
-            "allocator.group.title": "Asignador de grupos",
-                "allocator.group.type": "Grupo",
-                "allocator.group.description": "Este asignador permite asignar un grupo entero a una sesión",
-            
-            "allocator.change.submit": "Cambiar asignador",
-
-            "allocator.no_session_assigned.title": "Sin sesión",
-
-        "groups.settings.print.title": "Descargar tabla como PDF",
-            "print_table.title": "Grupo: ",
-            "print_table.number_col.title": "Nº",
-            "print_table.name_col.title": "Nombre",
-            "print_table.code_col.title": "Código",
-            
-        "groups.settings.export.title": "Exportar",
+    "groups.kebab.export.title": "Exportar",
     
-        "groups.settings.delete.title": "Eliminar",
-            "groups.delete.confirm": "ADVERTENCIA:\n¿Estás seguro de que quieres eliminar el grupo '{{group}}' del SIMLET '{{SIMLET}}'?\nEsta acción no se puede revertir y todos los datos de sus participantes se eliminarán de las sesiones y actividades.",
-
+    "groups.kebab.delete.title": "Eliminar",
+        "groups.delete.confirm": "ADVERTENCIA:\n¿Estás seguro de que quieres eliminar el grupo '{{group}}' del SIMLET '{{SIMLET}}'?\nEsta acción no se puede revertir y todos los datos de sus participantes se eliminarán de las sesiones y actividades.",
+    
 
     "lti_platform.title": "Plataforma LTI",
     "lti_platform.add.title": "Añadir plataforma LTI",

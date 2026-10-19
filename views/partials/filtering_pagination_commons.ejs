@@ -6,27 +6,27 @@
 	<input type="text" id="<%= id %>_search_bar" placeholder="<%= searchBarPlaceholderText %>">
     
 	<div class="filters">
-		<span><%= t('filters.sort_by.title', { ns : 'SIMLETs' }) %></span>
+		<span><%= t('filters.sort_by.title', { ns : 'commons' }) %></span>
 		<select id="<%= id %>_sort_by">
-			<option value="id" data-order="asc" ><%= t('filters.sort_by.id', { ns : 'SIMLETs' }) %></option>
-			<option value="name" data-order="asc"><%= t('filters.sort_by.name.asc', { ns : 'SIMLETs' }) %></option>
-			<option value="name" data-order="desc"><%= t('filters.sort_by.name.desc', { ns : 'SIMLETs' }) %></option>
-			<option value="createdAt" data-order="desc"><%= t('filters.sort_by.created_at.desc', { ns : 'SIMLETs' }) %></option>
-			<option value="createdAt" data-order="asc"><%= t('filters.sort_by.created_at.asc', { ns : 'SIMLETs' }) %></option>
-			<option value="updatedAt" data-order="desc"><%= t('filters.sort_by.updated_at.desc', { ns : 'SIMLETs' }) %></option>
-			<option value="updatedAt" data-order="asc"><%= t('filters.sort_by.updated_at.asc', { ns : 'SIMLETs' }) %></option>
+			<option value="id" data-order="asc" ><%= t('filters.sort_by.id', { ns : 'commons' }) %></option>
+			<option value="name" data-order="asc"><%= t('filters.sort_by.name.asc', { ns : 'commons' }) %></option>
+			<option value="name" data-order="desc"><%= t('filters.sort_by.name.desc', { ns : 'commons' }) %></option>
+			<option value="createdAt" data-order="desc"><%= t('filters.sort_by.created_at.desc', { ns : 'commons' }) %></option>
+			<option value="createdAt" data-order="asc"><%= t('filters.sort_by.created_at.asc', { ns : 'commons' }) %></option>
+			<option value="updatedAt" data-order="desc"><%= t('filters.sort_by.updated_at.desc', { ns : 'commons' }) %></option>
+			<option value="updatedAt" data-order="asc"><%= t('filters.sort_by.updated_at.asc', { ns : 'commons' }) %></option>
 		</select>
 	</div>
 
 <!-- Session status filtering -->
 <% if (typeof id !== 'undefined' && id == "sessions" ) { %>
     <div class="filters">
-		<span><%= t('filters.status.title', { ns : 'sessions' }) %></span>
+		<span><%= t('sessions.status.title', { ns : 'sessions' }) %></span>
 		<select id="<%= id %>_status">
 			<option value=""><%= t('filters.status.all', { ns : 'sessions' }) %></option>
-			<option value="active"><%= t('active.title', { ns : 'sessions' }) %></option>
-			<option value="inactive"><%= t('paused.title', { ns : 'sessions' }) %></option>
-			<option value="terminated"><%= t('finished.title', { ns : 'sessions' }) %></option>
+			<option value="active"><%= t('sessions.status.active.title', { ns : 'sessions' }) %></option>
+			<option value="inactive"><%= t('sessions.status.paused.title', { ns : 'sessions' }) %></option>
+			<option value="terminated"><%= t('sessions.status.finished.title', { ns : 'sessions' }) %></option>
 		</select>
 	</div>
 <% } %>
@@ -34,7 +34,7 @@
 <!-- Tags filtering -->
 <% if (typeof id !== 'undefined' && (id == "simlets" || id == "sessions") ) { %>
     <div class="filters filtersTags">
-        <span><%= t('filters.tags.title', { ns : 'SIMLETs' }) %></span>
+        <span><%= t('filters.tags.title', { ns : 'commons' }) %></span>
 
         <select id="<%= id %>_tags_selector">
             <!-- Default option to show a value in the dropdown -->
@@ -43,7 +43,7 @@
         
         <!-- Fake select dropdown that will appear instead of the default one -->
         <div id="<%= id %>_tags_dropdown" class="filtersTagsDropdown">
-            <input type="text" id="<%= id %>_tags_search_bar" placeholder="<%= t('filters.tags.search_bar.placeholder', { ns : 'SIMLETs' }) %>">
+            <input type="text" id="<%= id %>_tags_search_bar" placeholder="<%= t('filters.tags.search_bar.placeholder', { ns : 'commons' }) %>">
             <ul id="<%= id %>_tags_list" class="filtersTagsList">
                 
             </ul>
@@ -239,7 +239,7 @@
         window.dispatchEvent(new Event("resize"));
         
         // Reset the tags selection
-        $("#<%= id %>_selected_tags_amount").text("<%= t('filters.tags.selected.title', { ns : 'SIMLETs', count: 0 }) %>");
+        $("#<%= id %>_selected_tags_amount").text("<%- t('filters.tags.selected.title', { ns : 'commons', count: 0 }) %>");
         $("#<%= id %>_search_bar").val("");
 	});
     
@@ -292,7 +292,7 @@
             return !val; 
         });
         
-        $("#<%= id %>_selected_tags_amount").text(`<%= t('filters.tags.selected.title', { ns : 'SIMLETs', count: '${selectedTagsIds.size}' }) %>`);
+        $("#<%= id %>_selected_tags_amount").text(`<%- t('filters.tags.selected.title', { ns : 'commons', count: '${selectedTagsIds.size}' }) %>`);
         $("#<%= id %>_filtering").data()["searchParams"].searchTags = Array.from(selectedTagsIds);
         $("#<%= id %>_filtering").data()["resetSearchTimer"]();
     });
@@ -340,7 +340,7 @@
             $('#<%= id %>_tags_list').append(tagObj);
         });
         if (searchResult.length == 0) {
-            $('#<%= id %>_tags_list').text("<%= t('search.no_matches', { ns : 'SIMLETs' }) %>");
+            $('#<%= id %>_tags_list').text("<%- t('filters.search.no_matches.message', { ns : 'commons' }) %>");
         }
     }
 

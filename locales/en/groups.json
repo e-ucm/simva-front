@@ -1,125 +1,123 @@
 { 
-    "users.add.title": "Add users",
-    
-    "supervisors.title": "Supervisors",
-        "supervisors.table.username.title": "Username",
-        "supervisors.table.permissions.title": "Permissions",
+    "users.title": "Users",
+    "users.tab.description": "Manage users, groups, and related assignments in this SIMLET",
 
-        "supervisors.delete.title": "Delete",
-            "supervisors.delete.confirm": "WARNING:\nAre you sure you want to delete the supervisor '{{supervisor}}' from SIMLET '{{SIMLET}}'?\nYou will be able to add it agan later.",
-        
+    "users.form.add.title": "Add users",
+    
+    "users.username.tile": "Username",
+    "users.permissions.title": "Permissions",
+        "users.permission.placeholder": "Select permission",
+        "users.permissions.full": "Full",
+        "users.permissions.read": "Read",
+        "users.permissions.write": "Write",
+        "users.permissions.error": "The selected permission is not valid.",
+    "users.error.not_found": "The user {{username}} has not been found.",
+    "users.delete.title": "Delete",
+
+    "supervisors.title": "Supervisors",
         "supervisors.add.title": "Add supervisor",
-            "supervisors.name.title": "Username",
             "supervisors.name.placeholder": "Supervisor username",
-            "supervisors.permission.title": "Permission",
-            "supervisors.permission.placeholder": "Select permission",
-            "supervisors.permissions.full": "Full",
-            "supervisors.permissions.read": "Read",
-            "supervisors.permissions.write": "Write",
             "supervisors.error.already_in": "The supervisor is already in the SIMLET.",
-            "supervisors.error.permission": "The selected permission is not valid.",
-            "supervisors.error.not_found": "The user has not been found.",
-        "supervisors.change_permissions.message": "Supervisor permissions updated",
-        "supervisors.change_permissions.error": "Error changing supervisor permissions",
-        "supervisors.delete.error": "Error deleting supervisor",
-        
-        
-    "search_bar.placeholder": "Search a group by name or description",
+        "supervisors.change_permissions.toast.heading": "Supervisor permissions updated",
+        "supervisors.change_permissions.error_toast.heading": "Error changing supervisor permissions",
+        "supervisors.delete.confirm": "WARNING:\nAre you sure you want to delete the supervisor '{{supervisor}}' from the SIMLET '{{SIMLET}}'?\nYou will be able to add it agan later.",
+            "supervisors.delete.error_toast.heading": "Error deleting supervisor",
+
+    "coordinators.title": "Coordinators",
+        "coordinators.add.title": "Add coordinator",
+            "coordinators.name.placeholder": "Coordinator username",
+            "coordinators.error.already_in": "The coordinator is already in the SIMLET.",
+        "coordinators.change_permissions.toast.heading": "Coordinator permissions updated",
+        "coordinators.change_permissions.error_toast.heading": "Error changing coordinator permissions",
+        "coordinators.delete.confirm": "WARNING:\nAre you sure you want to delete the coordinator '{{coordinator}}' permissions?\nYou will be able to add it agan later.",
+            "coordinators.delete.error_toast.heading": "Error deleting coordinator",
+
+
+    "groups.search_bar.placeholder": "Search a group by name or description",
     
     "groups.title": "Groups",
-        "groups.no_groups.message": "There are no groups in this SIMLET yet. Create one using the button on the bottom right (+).",
-        "participants.no_users.message": "There are no participants in this group yet. Add some using the 3-dot menu on the right.",
+    "groups.title.single": "Group",
+    "groups.no_groups.message": "There are no groups in this SIMLET yet. Create one using the button on the bottom right (+).",
         
-        "participants.title": "Participants",
+    "groups.name.placeholder": "Group name",
+        
+    "groups.form.add.title": "Add group",
+        "groups.new.tab": "Add new group",
+            "groups.new.submit": "Add new group",
+            "deprecated.title": "Use deprecated version of token generation",
+            "deprecated.message": "/!\\ This group use the deprecated version of token generation.",
+            "deprecated.tooltip": "/!\\ This group will use the deprecated version of token generation.",
 
-        "participants.table.username.title": "Username",
+        "groups.import.tab": "Import existing group",
+            "groups.import.input": "Select an exported group file",
+            "groups.import.submit": "Import group",
+            "groups.import.error.invalid_file": "The selected file is not a valid group file.",
+
+        "groups.allocate_to.title": "Allocate group to",
+
+    "groups.kebab.edit.title": "Edit",
+        "groups.form.edit.title": "Edit group",
+        "groups.form.edit.submit": "Edit group",
+
+    "participants.no_participants.message": "There are no participants in this group yet. Add some using the 3-dot menu on the right.",
+    "groups.kebab.add_participants.title": "Add participants",
+        "groups.form.add_participants.title": "Add participants",
+        "participants.username.placeholder.batch": "Participant usernames separated by ,",
+        "participants.username.placeholder": "Participant username",
+    
+        "participants.add_existing.tab": "Add existing",
+            "participants.add_existing.submit": "Add existing",
+            "participants.add_existing.error.already_in_group": "The participant '{{participant}}' is already in the group '{{group}}'.",
+            "participants.add_existing.error.reload_manually": "Refresh the page to see the changes.",
+            
+        "participants.add_new.tab": "New user",
+            "participants.add_new.email.placeholder": "email@example.com",
+            "participants.add_new.password.placeholder": "Password",
+            "participants.add_new.submit": "Create and add user",
+
+        "participants.add_batch.tab": "Add batch of tokens",
+            "participants.add_batch.number.title": "How many?",
+            "participants.add_batch.algorithm": "The participants will be added with random usernames created using:",
+                "participants.add_batch.algorithm.letters": "Only letters",
+                "participants.add_batch.algorithm.alphanumeric": "Letters and numbers",
+                "participants.add_batch.algorithm.base58": "Simplified alphanumeric (Base58)",
+            "participants.add_batch.length.title": "And a length of:",
+            "participants.add_batch.submit": "Create and add batch",
+        
+    "participants.title": "Participants",
         "participants.table.token.title": "Token",
         "participants.table.email.title": "Email",
         "participants.table.role.title": "Role",
-        "participant.delete.title": "Delete",
-            "participants.delete.confirm" : "WARNING:\nAre you sure you want to delete the participant '{{participant}}' from the group '{{group}}'?\nThis action can't be reverted and all the data of this participant will be deleted from the sessions and activities too.",
-        "participants.table.session.title": "Session",
+        "participants.delete.confirm" : "WARNING:\nAre you sure you want to delete the participant '{{participant}}' from the group '{{group}}'?\nThis action can't be reverted and all the data of this participant will be deleted from the sessions and activities too.",
+            "participants.delete.error_toast.heading": "Error deleting participant",
         
-        "allocator.type.title": "Allocator type",
-        "allocator.sessions.title": "Session",
-        "allocator.participants.title": "Participant",
-        "allocator.add.error": "Error adding the allocation",
-        "allocator.add.message": "Allocator updated",
-        "allocator.add.title": "Add allocator",
+
+    "groups.kebab.allocator.title": "Edit allocator",
+        "allocators.type.title": "Allocator type",
+        "allocators.form.submit": "Change allocator",
+        "allocators.type.error.invalid_type": "The selected allocator type is not valid.",
+
+        "allocators.default_allocator.title": "Basic allocator",
+            "allocators.default_allocator.description": "This allocator allows you to manually assign the participants to the sessions one by one.",
+
+        "allocators.group_allocator.title": "Group allocator",
+            "allocators.group_allocator.description": "This allocator allows you assign the entire group to a session.",
         
-        "groups.name.title": "Name",
-        "groups.name.placeholder": "Group name",
-        
-        "groups.add.title": "Add group",
-            "groups.add.new.tab": "Add new group",
-                "groups.add.new.submit": "Add new group",
-                "deprecated.title": "Use deprecated version of token generation",
-                "deprecated.message": "/!\\ This group use the deprecated version of token generation.",
-                "deprecated.tooltip": "/!\\ This group will use the deprecated version of token generation.",
+        "allocators.no_session.title": "No session",
+        "allocators.update.error_toast.heading": "Error adding the allocation",
+        "allocators.update.toast.heading": "Allocator updated",
 
-            "groups.import.tab": "Import existing group",
-                "groups.import.input": "Select an exported group file",
-                "groups.import.submit": "Import group",
-                "groups.import.upload.error": "Select the file to import.",
-                "groups.import.error.invalid_file": "The selected file is not a valid group file.",
 
-            "groups.allocate_to.title": "Allocate group to",
-            "groups.allocate_to.noSession": "No session",
-
-        "groups.settings.groups.edit.title": "Edit",
-            "groups.edit.title": "Edit group",
-            "groups.edit.submit": "Edit group",
-            "groups.edit.no_changes.message": "No changes detected in new group name.",
-
-        "groups.settings.add.title": "Add participants",
-            "participants.username.placeholder": "Participant username",
-            "participants.username.placeholder.batch": "Participant usernames separated by ,",
-            
-            "participants.add.existing.tab": "Add existing",
-                "participants.add.existing.submit": "Add existing",
-                "participants.error_message.already_in_group": "The participant '{{participant}}' is already in the group '{{group}}'.",
-                "participants.error_message.not_found": "User '{{participant}}' not found.",
-                "participants.error_message.reload_manually": "Refresh the page to see the changes.",
-                
-            "participants.add.new.tab": "New user",
-                "participants.add.new.email.placeholder": "email@example.com",
-                "participants.add.new.password.placeholder": "Password",
-                "participants.add.new.groups.add.new.submit": "Create and add user",
-
-            "participants.add.batch.tab": "Add batch of tokens",
-                "participants.add.batch.number.title": "How many?",
-                "participants.add.batch.algorithm_format": "The participants will be added with random usernames created using:",
-                    "participants.add.batch.algorithm_format.letters": "Only letters",
-                    "participants.add.batch.algorithm_format.alphanumeric": "Letters and numbers",
-                    "participants.add.batch.algorithm_format.base58": "Simplified alphanumeric (Base58)",
-                "participants.add.batch.length.title": "And a length of:",
-                "participants.add.batch.submit": "Create and add batch",
-
-        "groups.settings.allocator.title": "Edit allocator",
-            "allocator.change.title": "Select the new allocator type",
-
-            "allocator.default.title": "Basic allocator",
-                "allocator.default.type": "Default",
-                "allocator.default.description": "This allocator allows you to manually assign the participants to the sessions one by one.",
-
-            "allocator.group.title": "Group allocator",
-                "allocator.group.type": "Group",
-                "allocator.group.description": "This allocator allows you assign the entire group to a session.",
-            
-            "allocator.change.submit": "Change allocator",
-
-            "allocator.no_session_assigned.title": "No session",
-
-        "groups.settings.print.title": "Download table as PDF",
-            "print_table.title": "Group: ",
-            "print_table.number_col.title": "No",
-            "print_table.name_col.title": "Name",
-            "print_table.code_col.title": "Code",
-        
-        "groups.settings.export.title": "Export",
-        
-        "groups.settings.delete.title": "Delete",
-            "groups.delete.confirm": "WARNING:\nAre you sure you want to delete the group '{{group}}' from SIMLET '{{SIMLET}}'?\nThis action can't be reverted and all the data of its participants will be deleted from the sessions and activities too.",
+    "groups.kebab.print.title": "Download table as PDF",
+        "print_table.title": "Group: ",
+        "print_table.number_col.title": "No",
+        "print_table.name_col.title": "Name",
+        "print_table.code_col.title": "Code",
+    
+    "groups.kebab.export.title": "Export",
+    
+    "groups.kebab.delete.title": "Delete",
+        "groups.delete.confirm": "WARNING:\nAre you sure you want to delete the group '{{group}}' from SIMLET '{{SIMLET}}'?\nThis action can't be reverted and all the data of its participants will be deleted from the sessions and activities too.",
     
 
     "lti_platform.title": "LTI Platform",

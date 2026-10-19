@@ -1,139 +1,107 @@
 {
-    "title": "About",
-    "description": "Welcome to the SIMVA front-end! This section provides an overview of the platform, its main features, and a guide to help you navigate through the interface. Whether you're a teacher, student, researcher, or developer, you'll find useful information to get started and make the most of SIMVA.",
-    "text": "This section collects navigation help, tutorials, and short explanations for SIMVA.\nUse the steps below to move through the main pages. Some options only appear for teachers, coordinators, or administrators.",
+    "about.title": "About",
+    "about.description": "Welcome to the SIMVA front-end! This section provides an overview of the platform, its main features, and a guide to help you navigate through the interface. Whether you're a teacher, student, researcher, or developer, you'll find useful information to get started and make the most of SIMVA.",
+    "about.description.note": "This section collects navigation help, tutorials, and short explanations for SIMVA.\nUse the steps below to move through the main pages. Some options only appear for teachers, coordinators, or administrators.",
         
-    "index.title": "Contents",
+    "about.index.title": "Contents",
     
-    "header.logout.title": "Header guide for visitors",
-    "header.logout.description": "This is the top bar shown before login. It gives access to the public pages and the login button.",
-    "header.logout.note": "These are the only buttons available before signing in.",
-        "header.logout.about.title": "About",
-        "header.logout.about.description": "Open this page to read the SIMVA overview and the navigation help.",
+    "about.header_visitors.title": "Header guide for visitors",
+    "about.header_visitors.description": "This is the top bar shown before login. It gives access to the public pages and the login button.",
+    "about.header_visitors.note": "These are the only buttons available before signing in.",
+        "about.header_visitors.about.description": "Open this page to read the SIMVA overview and the navigation help.",
+        "about.header_visitors.login.description": "Press this button to sign in and switch to the authenticated interface.",
 
-        "header.logout.login.title": "Login",
-        "header.logout.login.description": "Press this button to sign in and switch to the authenticated interface.",
+    "about.header_user.title": "Header guide for signed-in users",
+    "about.header_user.description": "This is the top bar shown after login. It shows your account and the logout button, plus extra controls on scheduler pages.",
+    "about.header_user.note": "On scheduler pages you may also see refresh, complete activity, and exit controls.",
+        "about.header_user.account.title": "Username",
+        "about.header_user.account.description": "Open your account area or profile information from the username button.",
 
-    "header.login.title": "Header guide for signed-in users",
-    "header.login.description": "This is the top bar shown after login. It shows your account and the logout button, plus extra controls on scheduler pages.",
-    "header.login.note": "On scheduler pages you may also see refresh, complete activity, and exit controls.",
-        "header.login.account.title": "Account name",
-        "header.login.account.description": "Open your account area or profile information from the username button.",
+        "about.header_user.logout.description": "End the current session and return to the public interface.",
 
-        "header.login.logout.title": "Logout",
-        "header.login.logout.description": "End the current session and return to the public interface.",
+    "about.header.language.title": "Language selector",
+    "about.header.language.description": "Change the interface language from the selector on the left.",
 
-    "header.language.title": "Language selector",
-    "header.language.description": "Change the interface language from the selector on the left.",
-
-    "header.research.title": "e-UCM Research",
-    "header.research.description": "Go to the research site for project information, related material, or reach the contact information.",
+    "about.header.research.title": "e-UCM Research",
+    "about.header.research.description": "Go to the research site for project information, related material, or reach the contact information.",
     
-    "menu.title": "Menu guide for signed-in users",
-    "menu.description": "This is the left navigation shown after login. It links you to the main areas of SIMVA.",
-    "menu.note": "Some entries only appear for teachers, coordinators, or administrators.",
-        "menu.home.title": "Home",
-        "menu.home.description": "Return to the start page with the latest welcome and account information.",
-        
-        "menu.play.title": "Play SIMLETs",
-        "menu.play.description": "Open the scheduler entry point for participants who need to play assigned SIMLETs.",
-        
-        "menu.simlets.title": "SIMLETs",
-        "menu.simlets.description": "Manage SIMLETs, sessions, participants, and results from the SIMLET area.",
-        
-        "menu.archived.title": "Archived SIMLETs",
-        "menu.archived.description": "Review SIMLETs that have been archived and kept for reference.",
-
-        "menu.about.title": "About",
-        "menu.about.description": "Open this tutorial page again whenever you need a reminder of the interface.",
+    "about.left_menu.title": "Menu guide for signed-in users",
+    "about.left_menu.description": "This is the left navigation shown after login. It links you to the main areas of SIMVA.",
+    "about.left_menu.note": "Some entries only appear for teachers, coordinators, or administrators.",
+        "about.left_menu.home.description": "Return to the start page with the latest welcome and account information.",
+        "about.left_menu.play.description": "Open the scheduler entry point for participants who need to play assigned SIMLETs.",
+        "about.left_menu.simlets.description": "Manage SIMLETs, sessions, participants, and results from the SIMLET area.",
+        "about.left_menu.archived.description": "Review SIMLETs that have been archived and kept for reference.",
+        "about.left_menu.about.description": "Open this tutorial page again whenever you need a reminder of the interface.",
     
-    "simva.title": "SIMVA",
-    "simva.description": "SIMVA infrastructure is an open architecture software which is composed of several interconnected systems. Among these systems are the unified SSO login system (KeyCloak), the processing queue system (Kafka), a cloud storage system (Minio) and a Learning record Store (LRS) to store the xAPI data. Its architecture is scalable and interoperable with other third-party tools, which enables the delegation of the most critical functionalities to reliable and scalable platforms.",
-        "simva.frontend.title": "SIMVA Front-end",
-        "simva.frontend.description": "SIMVA front-end is used to integrate the games into the system, create surveys, manage sessions, manage users participation in the sessions and to track/analyze sessions' data in real-time. This data evolves from users' responses to surveys to full insights and metrics during the whole session which also includes game-play data.",
+    "about.simva.title": "SIMVA",
+    "about.simva.description": "SIMVA infrastructure is an open architecture software which is composed of several interconnected systems. Among these systems are the unified SSO login system (KeyCloak), the processing queue system (Kafka), a cloud storage system (Minio) and a Learning record Store (LRS) to store the xAPI data. Its architecture is scalable and interoperable with other third-party tools, which enables the delegation of the most critical functionalities to reliable and scalable platforms.",
+        "about.simva.frontend.title": "SIMVA Front-end",
+        "about.simva.frontend.description": "SIMVA front-end is used to integrate the games into the system, create surveys, manage sessions, manage users participation in the sessions and to track/analyze sessions' data in real-time. This data evolves from users' responses to surveys to full insights and metrics during the whole session which also includes game-play data.",
 
-        "simva.roles.title": "Roles and Permissions",
-        "simva.roles.description": "In SIMVA, the user can be a teacher, a student, a researcher or a developer. The roles and permissions in the front-end are categorized into a supervisor, a coordinator and a participant. Which will be explained later in this document.",
+        "about.simva.roles.title": "Roles and Permissions",
+        "about.simva.roles.description": "In SIMVA, the user can be a teacher, a student, a researcher or a developer. The roles and permissions in the front-end are categorized into a supervisor, a coordinator and a participant. Which will be explained later in this document.",
     
-    "simlet.title": "SIMLET (SIMVA APPLET)",
-    "simlet.description": "A container in SIMVA front-end web application to encapsulate the data of different sessions. A SIMLET is created to achieve a particular objective, for example to compare the effectiveness of a particular SG, compare between the abilities of three groups of students or compare the programming knowledge acquired across different games. Each SIMLET has its own supervisors with full authority on the SIMLET's sessions and activities. The main supervisor (the user who created the SIMLET) is the only user allowed to delete the whole SIMLET.",
-        "archived_simlet.title": "Archived SIMLET",
-        "archived_simlet.description": "An archived SIMLET is kept for reference. It is hidden from active working lists but preserves its configuration and history.",
+    "about.simlet.title": "SIMLET (SIMVA APPLET)",
+    "about.simlet.description": "A container in SIMVA front-end web application to encapsulate the data of different sessions. A SIMLET is created to achieve a particular objective, for example to compare the effectiveness of a particular SG, compare between the abilities of three groups of students or compare the programming knowledge acquired across different games. Each SIMLET has its own supervisors with full authority on the SIMLET's sessions and activities. The main supervisor (the user who created the SIMLET) is the only user allowed to delete the whole SIMLET.",
+        "about.archived_simlet.description": "An archived SIMLET is kept for reference. It is hidden from active working lists but preserves its configuration and history.",
     
-    "session.title": "Session",
-    "session.description": "A container in SIMVA front-end web application to encapsulate the data of several activities. A session consists of one or more activities (pre-survey, game-play or manual/traditional learning activity and post-survey) to be undertaken by a group of participants. Each session has its own coordinators with full authority on the session's activities.",
+    "about.session.description": "A container in SIMVA front-end web application to encapsulate the data of several activities. A session consists of one or more activities (pre-survey, game-play or manual/traditional learning activity and post-survey) to be undertaken by a group of participants. Each session has its own coordinators with full authority on the session's activities.",
 
-    "activity.title": "Activity",
-    "activity.description": "An action or set of actions to be performed by participants. This action could be answering surveys (LimeSurvey activity), playing serious games (Gameplay activity) or undertaking traditional learning exercises (manual activity).",
-        "activity.types.title": "Activity Types",
+    "about.activity.description": "An action or set of actions to be performed by participants. This action could be answering surveys (LimeSurvey activity), playing serious games (Gameplay activity) or undertaking traditional learning exercises (manual activity).",
+        "about.activity_types.title": "Activity Types",
+            "about.activity_types.limeSurvey.description": "A survey-based activity that uses LimeSurvey as service, allowing participants to answer pre and post surveys and enabling the owners to collect data effectively.",
+            "about.activity_types.gameplay.description": "The action of playing the serious game where participants game interaction data are collected via the xAPI component (trackers in the code), designed to integrate educational content in an engaging manner.",
+            "about.activity_types.manual.description": "A traditional learning exercise to be undertaken by participants such as reading a book, reading an article, watching a video or any other passive learning task.",
+        
+        "about.activity.template.title": "Activity Template",
+        "about.activity.template.description": "An activity template represents the static description of an activity. It defines the metadata of an activity such as its title and description. One template can be used within many sessions by creating instances of the template. The activity template can be a survey activity, a manual activity or a game-play activity. In case of game-play activity, it will also contain game-client data.",
+        
+        "about.activity.instance.title": "Activity Instance",
+        "about.activity.instance.description": "An activity instance represents a concrete execution of an activity template. It stores participant's specific data, such as surveys' responses, manual activity performance, game-play activity interactions, such as traces and results. When the user adds an activity to a particular session, an instance of that activity template is automatically created. In case of game-play activity, the activity instance is referenced to the integrated game's ID. However, the game's collected data will be stored at the session's game-play activity level.",
+        
+    "about.group.description": "A Group is a set of participants used to organize assignments and allocation rules across sessions.",
     
-        "limesurvey.title": "LimeSurvey Activity",
-        "limesurvey.description": "A survey-based activity that uses LimeSurvey as service, allowing participants to answer pre and post surveys and enabling the owners to collect data effectively.",
-        
-        "gameplay.title": "Gameplay Activity",
-        "gameplay.description": "The action of playing the serious game where participants game interaction data are collected via the xAPI component (trackers in the code), designed to integrate educational content in an engaging manner.",
-        
-        "manual.title": "Manual Activity",
-        "manual.description": "A traditional learning exercise to be undertaken by participants such as reading a book, reading an article, watching a video or any other passive learning task.",
-        
-        "activitytemplate.title": "Activity Template",
-        "activitytemplate.description": "An activity template represents the static description of an activity. It defines the metadata of an activity such as its title and description. One template can be used within many sessions by creating instances of the template. The activity template can be a survey activity, a manual activity or a game-play activity. In case of game-play activity, it will also contain game-client data.",
-        
-        "activityinstance.title": "Activity Instance",
-        "activityinstance.description": "An activity instance represents a concrete execution of an activity template. It stores participant's specific data, such as surveys' responses, manual activity performance, game-play activity interactions, such as traces and results. When the user adds an activity to a particular session, an instance of that activity template is automatically created. In case of game-play activity, the activity instance is referenced to the integrated game's ID. However, the game's collected data will be stored at the session's game-play activity level.",
-        
-    "group.title": "Group",
-    "group.description": "A Group is a set of participants used to organize assignments and allocation rules across sessions.",
+    "about.users.description": "Users, groups, and coordinators define who participates in the Simlet and how participants are assigned to sessions.",
+        "about.users.supervisor.description": "A user who has full access to a particular SIMLET. The main supervisor creates the SIMLET first and then can edit/delete the SIMLET or assign other supervisors or coordinators specifying the permission mode whether \"Editor\" or \"Viewer\". A supervisor with \"Editor\" mode can edit the SIMLET's information (title and description), add/edit/delete sessions, add/edit/delete different activities that compose the sessions, and assign the participants to be involved in each session. Also, a supervisor with \"Editor\" mode can add tags to the sessions, start them, track and export the results. A supervisor with \"Viewer\" mode can only view the SIMLET's configurations alongside its sessions and the associated activities and its results with no ability to add, edit or delete. Only the main supervisor is allowed to delete the SIMLET.",
+        "about.users.coordinator.description": "A user who has full access to a particular session. There are two permission modes: \"Editor\" and \"Viewer\". A coordinator with \"Editor\" mode can edit the session's information (title and description), add tags to the session, add/edit/delete the different activities that form a session. In addition, a coordinator with \"Editor\" mode can assign other coordinators to the session and set their permission, whether \"Editor\" or \"Viewer\". Coordinators with both modes \"Editor\" and \"Viewer\" have access to the dashboard to view results and export them but starting the session is only limited to the coordinators with \"Editor\" mode.",
+        "about.users.participant.description": "A user (a student for example) whose role is to undertake the activities such as answering the surveys and playing the games. The supervisor of the SIMLET can view each participant's results.",
+
+    "about.integration.title": "Integration in games",
+        "about.integration.game_client.title": "Game-client",
+        "about.integration.game_client.description": "A game client is all metadata of the game such as title, description, category (awareness or education), and subject area (mathematics, programming, bullying, etc). It's the game's URL for a web game or the game compressed file for a desktop game.",
     
-    "users.title": "Users",
-    "users.description": "Users, groups, and coordinators define who participates in the Simlet and how participants are assigned to sessions.",
-        "supervisor.title": "SIMLET Supervisor",
-        "supervisor.description": "A user who has full access to a particular SIMLET. The main supervisor creates the SIMLET first and then can edit/delete the SIMLET or assign other supervisors or coordinators specifying the permission mode whether \"Editor\" or \"Viewer\". A supervisor with \"Editor\" mode can edit the SIMLET's information (title and description), add/edit/delete sessions, add/edit/delete different activities that compose the sessions, and assign the participants to be involved in each session. Also, a supervisor with \"Editor\" mode can add tags to the sessions, start them, track and export the results. A supervisor with \"Viewer\" mode can only view the SIMLET's configurations alongside its sessions and the associated activities and its results with no ability to add, edit or delete. Only the main supervisor is allowed to delete the SIMLET.",
+        "about.integration.integrated_game.title": "Integrated game into SIMVA",
+        "about.integration.integrated_game.description": "An integrated game into SIMVA means that the game-client is described in SIMVA and presented as a game-play activity template. Each time a new game is integrated into SIMVA, a game-play activity template with an ID is automatically generated. Each time the game is used in a game-play activity within a session, a new game-play activity instance is created from this template. This means that the game-play activity instance will reference the game-play activity template using its ID. Supervisors can display the integrated games from a menu in SIMVA front-end.",
         
-        "coordinator.title": "Session Coordinator",
-        "coordinator.description": "A user who has full access to a particular session. There are two permission modes: \"Editor\" and \"Viewer\". A coordinator with \"Editor\" mode can edit the session's information (title and description), add tags to the session, add/edit/delete the different activities that form a session. In addition, a coordinator with \"Editor\" mode can assign other coordinators to the session and set their permission, whether \"Editor\" or \"Viewer\". Coordinators with both modes \"Editor\" and \"Viewer\" have access to the dashboard to view results and export them but starting the session is only limited to the coordinators with \"Editor\" mode.",
+    "about.session_management.title": "Session management",
+        "about.session_management.manual_completion.title": "Manual Completion for Activities",
+        "about.session_management.manual_completion.description": "In case a participant completes an activity but its status is not set automatically to \"completed\" for a reason, there is a button that enables the supervisor/coordinator to manually change the status to \"completed\". It's also possible to manually change the status of an activity to \"completed\" for all participants at once.",
         
-        "participant.title": "Participant",
-        "participant.description": "A user (a student for example) whose role is to undertake the activities such as answering the surveys and playing the games. The supervisor of the SIMLET can view each participant's results.",
+        "about.session_management.dashboard.title": "SIMVA dashboard",
+        "about.session_management.dashboard.description": "Each SIMLET contains a visual dashboard with detailed information about sessions' activities. The dashboard demonstrates general information about each activity status showing the percentage of participants completion, progress and result. It also demonstrates a detailed list of the participants, this list shows each participant's name, completion status, progress status and backup result. While the activity is receiving xAPI data, whether it's in progress or completed the dashboard is updated correspondingly to the received traces.",
+        
+    "about.xapi.dashboard.title": "xAPI Data for SIMVA Dashboards",
+    "about.xapi.dashboard.intro": "For each session within a SIMLET, there are different dashboards that represent real-time tracking data for its activities. The following image shows an example of these dashboards.",
+    "about.xapi.dashboard.image.alt": "Example of SIMVA dashboards for session activities",
+        "about.xapi.dashboard.backend.title": "Backend xAPI Tracking",
+        "about.xapi.dashboard.backend.description": "In the backend, we track the xAPI traces for the dashboards. For example:",
+            "about.xapi.dashboard.activity_types.title": "Activity Types and xAPI Object Types",
+            "about.xapi.dashboard.activity_types.col1": "Activity Type",
+            "about.xapi.dashboard.activity_types.col2": "Object definition type in xAPI traces",
+            
+        "about.xapi.dashboard.visible_data.title": "Dashboard Data and xAPI Traces",
+        "about.xapi.dashboard.visible_data.description": "In the following lines, we are defining the visible data on the dashboards with its corresponding tracked xAPI traces.",
+            "about.xapi.dashboard.visible_data.initialized.title": "Initialized",
+            "about.xapi.dashboard.visible_data.initialized.description": "This represents whether the participant has started the activity or not. Its value could be 'true' or 'false'. The default value is 'false', and it will become 'true' when the participant initialises the activity. This means that in the backend the SIMVA server has received an xAPI trace with the verb id: http://adlnet.gov/expapi/verbs/initialized.",
 
-    "integration.title": "Integration in games",
-        "gameclient.title": "Game-client",
-        "gameclient.description": "A game client is all metadata of the game such as title, description, category (awareness or education), and subject area (mathematics, programming, bullying, etc). It's the game's URL for a web game or the game compressed file for a desktop game.",
-    
-        "integratedgame.title": "Integrated game into SIMVA",
-        "integratedgame.description": "An integrated game into SIMVA means that the game-client is described in SIMVA and presented as a game-play activity template. Each time a new game is integrated into SIMVA, a game-play activity template with an ID is automatically generated. Each time the game is used in a game-play activity within a session, a new game-play activity instance is created from this template. This means that the game-play activity instance will reference the game-play activity template using its ID. Supervisors can display the integrated games from a menu in SIMVA front-end.",
-        
-    "session_management.title": "Session management",
-        "manual_completion.title": "Manual Completion for Activities",
-        "manual_completion.description": "In case a participant completes an activity but its status is not set automatically to \"completed\" for a reason, there is a button that enables the supervisor/coordinator to manually change the status to \"completed\". It's also possible to manually change the status of an activity to \"completed\" for all participants at once.",
-        
-        "dashboard.title": "SIMVA dashboard",
-        "dashboard.description": "Each SIMLET contains a visual dashboard with detailed information about sessions' activities. The dashboard demonstrates general information about each activity status showing the percentage of participants completion, progress and result. It also demonstrates a detailed list of the participants, this list shows each participant's name, completion status, progress status and backup result. While the activity is receiving xAPI data, whether it's in progress or completed the dashboard is updated correspondingly to the received traces.",
-        
-    "xapi.dashboard.title": "xAPI Data for SIMVA Dashboards",
-    "xapi.dashboard.intro": "For each session within a SIMLET, there are different dashboards that represent real-time tracking data for its activities. The following image shows an example of these dashboards.",
-    "xapi.dashboard.image.alt": "Example of SIMVA dashboards for session activities",
-        "xapi.dashboard.backend.title": "Backend xAPI Tracking",
-        "xapi.dashboard.backend.desc": "In the backend, we track the xAPI traces for the dashboards. For example:",
-            "xapi.dashboard.activity_types.title": "Activity Types and xAPI Object Types",
-            "xapi.dashboard.activity_types.col1": "Activity Type",
-            "xapi.dashboard.activity_types.col2": "Object definition type in xAPI traces",
-            "xapi.dashboard.activity_types.game": "Game-play activity",
-            "xapi.dashboard.activity_types.limesurvey": "LimeSurvey activity",
-            "xapi.dashboard.activity_types.manual": "Manual Activity",
-        
-        "xapi.dashboard.visible_data.title": "Dashboard Data and xAPI Traces",
-        "xapi.dashboard.visible_data.desc": "In the following lines, we are defining the visible data on the dashboards with its corresponding tracked xAPI traces.",
-            "xapi.dashboard.initialized.title": "Initialized",
-            "xapi.dashboard.initialized.desc": "This represents whether the participant has started the activity or not. Its value could be 'true' or 'false'. The default value is 'false', and it will become 'true' when the participant initialises the activity. This means that in the backend the SIMVA server has received an xAPI trace with the verb id: http://adlnet.gov/expapi/verbs/initialized.",
+            "about.xapi.dashboard.visible_data.progress.title": "Progress",
+            "about.xapi.dashboard.visible_data.progress.description": "This represents the percentage of activity completion. Its value is between 0% and 100% both included. If the activity is not initialized yet, the progress default value is '-', while if it is initialized but with no progress the progress value is '0%'. If it is fully completed, the progress value is '100%'. This means that in the backend the SIMVA server has received an xAPI trace with the verb id: http://adlnet.gov/expapi/verbs/progressed, and also the result value scaled between 0 and 1 (both included) from the result label shown in the table:",
+                "about.xapi.dashboard.visible_data.progress.col1": "Activity Type",
+                "about.xapi.dashboard.visible_data.progress.col2": "Result label displayed in xAPI traces",
 
-            "xapi.dashboard.progress.title": "Progress",
-            "xapi.dashboard.progress.desc": "This represents the percentage of activity completion. Its value is between 0% and 100% both included. If the activity is not initialized yet, the progress default value is '-', while if it is initialized but with no progress the progress value is '0%'. If it is fully completed, the progress value is '100%'. This means that in the backend the SIMVA server has received an xAPI trace with the verb id: http://adlnet.gov/expapi/verbs/progressed, and also the result value scaled between 0 and 1 (both included) from the result label shown in the table:",
-                "xapi.dashboard.progress.col1": "Activity Type",
-                "xapi.dashboard.progress.col2": "Result label displayed in xAPI traces",
+            "about.xapi.dashboard.visible_data.completed.title": "Completed",
+            "about.xapi.dashboard.visible_data.completed.description": "This represents whether the participant has completed the activity or not. Its value could be 'true' or 'false'. The default value is 'false', and it will become 'true' when the participant completes the activity. This means that in the backend the SIMVA server has received an xAPI trace with the verb id: http://adlnet.gov/expapi/verbs/completed, and also the result completion value has to be set to 'true'.",
 
-            "xapi.dashboard.completed.title": "Completed",
-            "xapi.dashboard.completed.desc": "This represents whether the participant has completed the activity or not. Its value could be 'true' or 'false'. The default value is 'false', and it will become 'true' when the participant completes the activity. This means that in the backend the SIMVA server has received an xAPI trace with the verb id: http://adlnet.gov/expapi/verbs/completed, and also the result completion value has to be set to 'true'.",
-
-    "credits.title": "Credits"
+    "about.credits.title": "Credits"
 }

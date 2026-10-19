@@ -9,7 +9,7 @@
     <table>
         <tr>
             <th class="defaultAllocatorCol">
-                <%= t('allocator.sessions.title', { ns : 'groups' }) %>
+                <%= t('sessions.title.single', { ns : 'sessions' }) %>
             </th>
         </tr>
         <tr>
@@ -29,8 +29,8 @@
             super();
 
             this.supportedType = "default";
-            this.name = "<%= t('allocator.default.title', { ns : 'groups' }) %>";
-            this.description = "<%= t('allocator.default.description', { ns : 'groups' }) %>";
+            this.name = "<%- t('allocators.default_allocator.title', { ns : 'groups' }) %>";
+            this.description = "<%- t('allocators.default_allocator.description', { ns : 'groups' }) %>";
         }
 
         getCurrentAllocation(group, participant = null) { 

@@ -1,16 +1,31 @@
 {
-    "title": "SIMVA - Un SIMple VAlidador",
-    "login.title": "Iniciar sesión",
-    "logout.title": "Cerrar sesión",
-    "home.title": "Inicio",
-    "home.description": "¡Bienvenido a SIMVA! Este es el panel principal donde puedes acceder a todas las funciones de la plataforma. Usa el menú para navegar por las diferentes secciones. Ya seas un profesor, estudiante o investigador, encontrarás todo lo que necesitas para crear y gestionar tus simulaciones aquí.",
-    "welcome.user.text": "¡Bienvenido, {{username}}!\n",
-    "welcome.teacher.text": "Esta es la vista principal de Simva.\nPuedes utilizar la pestaña de SIMLETs activos para crear un SIMLET, donde se pueden configurar una serie de actividades para llevar a cabo una evaluación.\nPara obtener más información visita:",
-    "welcome.student.text": "Esta es la vista principal de Simva.\nUtiliza la pestaña de Ejecutar SIMLET para acceder a un SIMLET, en el que realizarás una evaluación compuesta por un conjunto de actividades.",
-    "contact.title": "Contáctanos",
-    "QA.title": "Preguntas",
-    "GDPR.title": "GDPR",
-    "github.title" : "GitHub",
-    "eUCMResearch.title": "Equipo de Investigación e-UCM",
-    "moreprojects.title" : "Más proyectos"
+    "simva.title": "SIMVA - Un SIMple VAlidador",
+    "header.contact.title": "Contáctanos",
+    "header.login.title": "Iniciar sesión",
+    "header.logout.title": "Cerrar sesión",
+
+    "info.created_at": "Creado el",
+    "info.updated_at": "Actualizado el",
+    "info.tags": "Etiquetas",
+    "info.tags.no_tags": "Sin etiquetas",
+
+    "filters.sort_by.title": "Ordenar por",
+        "filters.sort_by.id": "Defecto",
+        "filters.sort_by.name.asc": "Nombre (A-Z)",
+        "filters.sort_by.name.desc": "Nombre (Z-A)",
+        "filters.sort_by.created_at.desc": "Fecha de creación (Más nuevos primero)",
+        "filters.sort_by.created_at.asc": "Fecha de creación (Más antiguos primero)",
+        "filters.sort_by.updated_at.desc": "Fecha de actualización (Más nuevos primero)",
+        "filters.sort_by.updated_at.asc": "Fecha de actualización (Más antiguos primero)",
+    "filters.tags.title": "Etiquetas",
+        "filters.tags.selected.title": "{{count}} seleccionada(s)",
+        "filters.tags.search_bar.placeholder": "Busca una etiqueta por su nombre",
+    "filters.search.no_matches.message": "No hay coincidencias para tu búsqueda",
+
+    "forms.name.title": "Nombre",
+    "forms.description.title": "Descripción",
+    "forms.edit.no_changes.message": "No se detectaron cambios.",
+
+    "download.wait_message": "Generando el archivo con los datos. Este proceso puede tardar un rato."
+
 }

@@ -12,7 +12,7 @@ const schedulerTestMode = typeof testMode !== 'undefined' && testMode;
 
         <!-- In scheduler, show the current activity name instead of the SIMVA title -->
 		<span style="margin: 10px; white-space: nowrap;">
-            <%= schedulerMode ? t('scheduler.current', { ns : 'SIMLETs' }) : t('title') %>
+            <%= schedulerMode ? t('scheduler.current', { ns : 'SIMLETs' }) : t('simva.title', { ns: 'commons' }) %>
         </span>
         <% if (schedulerMode) { %>
             <span id="current_activity_name"></span>
@@ -25,17 +25,17 @@ const schedulerTestMode = typeof testMode !== 'undefined' && testMode;
             <% if (!loggedIn) { %>
             <li>
 				<a href="/about">
-					<img src="/images/icons/information.png"> <%= t('title', { ns : 'about'}) %>
+					<img src="/images/icons/information.png"> <%= t('about.title', { ns : 'about'}) %>
 				</a>
 			</li>
 			<li>
 				<a href="https://www.e-ucm.es/es/people/" target="_blank" rel="noopener noreferrer">
-					<img src="/images/icons/eucm_icon.ico"> <%= t('contact.title') %>
+					<img src="/images/icons/eucm_icon.ico"> <%= t('header.contact.title', { ns : 'commons'}) %>
 				</a>
 			</li>
 			<li>
 				<a class="login" href="/users/login">
-					<img src="/images/icons/power-button-off.png" style="filter: invert(100%);"> <%= t('login.title') %>
+					<img src="/images/icons/power-button-off.png" style="filter: invert(100%);"> <%= t('header.login.title', { ns: 'commons' }) %>
 				</a>
 			</li>
             <!-- When logged in, -->
@@ -73,7 +73,7 @@ const schedulerTestMode = typeof testMode !== 'undefined' && testMode;
                 <% } else { %>
                 <li>
                     <a href="https://www.e-ucm.es/es/people/" target="_blank" rel="noopener noreferrer">
-                        <img src="/images/icons/eucm_icon.ico"> <%= t('contact.title') %>
+                        <img src="/images/icons/eucm_icon.ico"> <%= t('header.contact.title', { ns: 'commons' }) %>
                     </a>
                 </li>
                 <li>
@@ -87,7 +87,7 @@ const schedulerTestMode = typeof testMode !== 'undefined' && testMode;
                 <% if (!schedulerTestMode) { %>
                 <li>
                     <a class="logout" href="/users/logout">
-                        <img src="/images/icons/power-button-off.png" style="filter: invert(100%);"> <%= t('logout.title') %>
+                        <img src="/images/icons/power-button-off.png" style="filter: invert(100%);"> <%= t('header.logout.title', { ns: 'commons' }) %>
                     </a>
                 </li>
                 <% } %>
