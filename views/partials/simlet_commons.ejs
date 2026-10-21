@@ -189,6 +189,35 @@
 
 	}
 	
+	// Input and textareas fields shared listeners using event delegation to ensure 
+	// the handler works even if element is added after the document ready event
+	// RUNS BEFORE the $.valHooks set function
+	$(document).on('input', `.${NAME_FIELD_CLASS}, .${DESCRIPTION_DIELD_CLASS}`, function(e) {
+		processAllowedCharacters(e);
+	});	
+
+	/**
+	 * Replace the text of the field to only allow alphanumeric characters and spaces
+	 * @param {object} e  - element that triggers the delegate event
+	 */
+	const processAllowedCharacters = function(e) {
+		const unprocessedValue = $(e.target).val();
+		const processedValue = unprocessedValue.replace(/[^A-Za-z0-9 ]/g, '');
+		$(e.target).val(processedValue);
+
+		// Get the .error element that is closest in depth to the parent iframe that contains the field
+		const parentIframe = $(e.target).closest(".iframe_content");
+		const closestError = parentIframe.find(".error").sort(function(a, b) {
+			return $(a).parentsUntil(parentIframe).length - $(b).parentsUntil(parentIframe).length;
+		}).first();
+		
+		closestError.text("");
+		// Show an error if any character gets removed
+		if (processedValue != unprocessedValue) {
+			closestError.text("<%- t('forms.edit.error.invalid_character', { ns : 'commons' }) %>");
+		}
+	}
+
 	// When changing an input value programatically, the 'input' event must be triggered manually with .trigger('input')
 	// To avoid having to do this every time an input field with a character counter changes its value programatically,
 	// the input elements setter is defined via $.valHooks (however the setter will change for all the elements of the same type) 
@@ -206,7 +235,6 @@
 			return undefined;
 		}
 	};
-
 
 	/**
 	 * Checks if the element has any of the classes with a character count and updates the count if it does
@@ -277,8 +305,11 @@
 			}
 			// Editing SIMLET
 			else {
-				if (form.prevSimletName == form.simletName && form.prevSimletDescription == form.simletDescription) {
-					$('#simlet_form_error').text("<%- t('forms.edit.no_changes.message', { ns : 'commons' }) %>");
+				const nameChanged = form.prevSimletName != Utils.trimString(form.simletName);
+				const descriptionChanged = form.prevSimletDescription != Utils.trimString(form.simletDescription);
+
+				if (!nameChanged && !descriptionChanged) {
+					$('#simlet_form_error').text("<%- t('forms.edit.error.no_changes', { ns : 'commons' }) %>");
 					Utils.toggleSubmit();
 				}
 				else {

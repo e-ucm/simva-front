@@ -458,7 +458,7 @@ var Utils = {
 	 * @param {string} token - JWT token to decode
 	 * @returns {object} - Decoded JWT payload
 	 */
-	decodeJWT: function (token) {
+	decodeJWT: function(token) {
 	    let base64Url = token.split('.')[1];
 	    let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
 	    let jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
@@ -466,5 +466,14 @@ var Utils = {
 	    }).join(''));
 
 	    return JSON.parse(jsonPayload);
+	},
+
+	/**
+	 * Remove trailing and leading spaces
+	 * @param {string} string - text to trim
+	 * @returns {string} - trimmed text
+	 */
+	trimString: function(string) {
+		return string.replace(/^\s+|\s+$/g, '');
 	}
 }

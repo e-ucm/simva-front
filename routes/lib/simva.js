@@ -39,6 +39,24 @@ class Simva {
 		this.shlinkapiurl = config.shlink.apiurl;
 	}
 
+
+	/**
+	 * Remove trailing and leading spaces of any string the body has as value
+	 * @param {object} body - object containing the request body 
+	 * @returns {object} - body object with all strings trimmed 
+	 */
+	trimBodyStrings(body) {
+		if (typeof body === 'object' && body !== null && !Array.isArray(body)) {
+			Object.entries(body).forEach(([key, value]) => {
+				if (typeof value === 'string' || value instanceof String) {
+					body[key] = value.replace(/^\s+|\s+$/g, '');
+				}
+			});
+		}
+		return body;
+	}
+	
+	
 	// REQUESTS
 
 	/**
@@ -72,7 +90,7 @@ class Simva {
 				callback(error);
 				return;
 			}
-			Utils.post(url, req, body, callback, userClientsListManager.getJWT(currSessionId));
+			Utils.post(url, req, this.trimBodyStrings(body), callback, userClientsListManager.getJWT(currSessionId));
 		});
 		
 	}
@@ -92,7 +110,7 @@ class Simva {
 				callback(error);
 				return;
 			}
-			Utils.patch(url, req, body, callback, userClientsListManager.getJWT(currSessionId));
+			Utils.patch(url, req, this.trimBodyStrings(body), callback, userClientsListManager.getJWT(currSessionId));
 		});
 	}
 
@@ -110,7 +128,7 @@ class Simva {
 				callback(error);
 				return;
 			}
-			Utils.put(url, req, body, callback, userClientsListManager.getJWT(currSessionId));
+			Utils.put(url, req, this.trimBodyStrings(body), callback, userClientsListManager.getJWT(currSessionId));
 		});
 	}
 

@@ -146,7 +146,7 @@
 			}
 			
 			let activityInfo = painter.getActivityInfoFromForm(form);
-			
+			activityInfo.activity_name = Utils.trimString(activityInfo.activity_name);
 			const submitForm = () => {
 				// Creating new activity
 				if (form.editingActivityId == null || form.editingActivityId == "") {
@@ -190,7 +190,7 @@
 
 					// Compare the previous activity info with the updated one
 					if (JSON.stringify(prevActivityInfo) === JSON.stringify(activityInfo)) {
-						errorbox.text("<%- t('forms.edit.no_changes.message', { ns : 'commons' }) %>");
+						errorbox.text("<%- t('forms.edit.error.no_changes', { ns : 'commons' }) %>");
 						Utils.toggleSubmit();
 						return false;
 					}

@@ -526,9 +526,9 @@
 			else {
 				const groupId = form.editingGroupId;
 
-				const nameChanged = form.prevGroupName != form.groupName;
+				const nameChanged = form.prevGroupName != Utils.trimString(form.groupName);
 				if (!nameChanged) {
-					errorbox.text("<%- t('forms.edit.no_changes.message', { ns : 'commons' }) %>");
+					errorbox.text("<%- t('forms.edit.error.no_changes', { ns : 'commons' }) %>");
 					Utils.toggleSubmit();
 				}
 				else {

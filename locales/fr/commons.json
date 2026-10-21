@@ -24,7 +24,8 @@
 
     "forms.name.title": "Nom",
     "forms.description.title": "Description",
-    "forms.edit.no_changes.message": "Aucun changement n'a été détecté.",
+    "forms.edit.error.no_changes": "Aucun changement n'a été détecté.",
+    "forms.edit.error.invalid_character": "",
 
     "download.wait_message": ""
 }

@@ -319,12 +319,12 @@
 			else {
 				const sessionId = form.editingSessionId;
 
-				const nameChanged = form.prevSessionName != form.sessionName;
-				const descriptionChanged = form.prevSessionDescription != form.sessionDescription;
+				const nameChanged = form.prevSessionName != Utils.trimString(form.sessionName);
+				const descriptionChanged = form.prevSessionDescription != Utils.trimString(form.sessionDescription);
 				const tagsChanged = selectedTagIds.length !== originalTagsIds.length || selectedTagIds.some((tagId) => !originalTagsIds.includes(tagId));
 
 				if (!nameChanged && !descriptionChanged && !tagsChanged) {
-					errorbox.text("<%- t('forms.edit.no_changes.message', { ns : 'commons' }) %>");
+					errorbox.text("<%- t('forms.edit.error.no_changes', { ns : 'commons' }) %>");
 					Utils.toggleSubmit();
 				}
 				else {
@@ -1227,14 +1227,14 @@
 	let selectedTags = [];
 	let originalTagsIds = [];
 	
-	const tagNameFieldClass = "tag_name_field";
+	const TAG_NAME_FIELD_CLASS = "tag_name_field";
 	const MAX_TAG_NAME_LENGTH = 20;
 
 	// Menus
 
 	$(document).ready(function() {
 		// Add counter to all tag name fields (defined in the simlet_commons partial)
-		addInputCharCountToClass(tagNameFieldClass, MAX_TAG_NAME_LENGTH);
+		addInputCharCountToClass(TAG_NAME_FIELD_CLASS, MAX_TAG_NAME_LENGTH);
 
 		
 		$(document).on('click', function (e) {
@@ -1245,6 +1245,9 @@
 		});
 	});
 
+	$(document).on('input', `.${TAG_NAME_FIELD_CLASS}`, function(e) {
+		processAllowedCharacters(e);
+	});	
 	
 	const toggleTagCreator = function() {
 		$("#session_tag_creator").toggle();
@@ -1409,13 +1412,13 @@
 		const tagName = $("#session_edit_tag_name").val();
 		const tagColor = $("#session_edit_tag_color").val();
 
-		const nameChanged = $("#prev_tag_name").val() != tagName;
+		const nameChanged = $("#prev_tag_name").val() != Utils.trimString(tagName);
 		const colorChanged = $("#prev_tag_color").val() != tagColor;
 
 		const errorBox = $("#session_tags_error");
 
 		if (!nameChanged && !colorChanged) {
-			errorBox.text("<%- t('forms.edit.no_changes.message', { ns : 'commons' }) %>");
+			errorBox.text("<%- t('forms.edit.error.no_changes', { ns : 'commons' }) %>");
 		}
 		else if ($("#session_edit_tag_name").val() == "" || $("#session_edit_tag_name").val() == null) {
 			errorBox.text('Tag name is required');
