@@ -9,8 +9,8 @@
 
 <script>
 	$(document).ready(function () {
-		$('#iframe_floating .iframe_floating_close').on('click', function () {
-			Utils.hideIframeFloating();
+		$('#iframe_floating .iframe_floating_close').on('click', function (e) {
+			Utils.hideIframeFloating($(e).attr("id"));
 		});
 		
 		// Click on backdrop closes modal
@@ -18,9 +18,15 @@
 		//	Utils.hideIframeFloating();
 		//});
 		//
+		
 		$(document).on('keydown', function(e) {
+			// Only process the escape press if the current iframe can be closed (the x button is visible)
 			if (e.key === 'Escape') {
-				Utils.hideIframeFloating();
+				const currentIframe = $(".iframe_floating:visible").first();
+				if (currentIframe.find(".iframe_floating_close").is(":visible")) {
+					Utils.hideIframeFloating(currentIframe.attr("id"));
+				}
+
 			}
 		});
 	});

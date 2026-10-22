@@ -290,6 +290,7 @@ var Utils = {
 		const $el = $(`#${iframeId}`);
 		$el.find('input[type="submit"]').toggle();
 		$el.find('.loader').toggle();
+		$el.find('.iframe_floating_close').toggle();
 	},
 
 
