@@ -232,9 +232,11 @@
 		// When submitting the import session form
 		$(document).on('submit','#import_session_form', function(event) {
 			let form = Utils.getFormData($(this));
-			Utils.toggleSubmit();
 			let errorbox = $('#session_form_error');
-			// Check for file
+			errorbox.text("");
+			Utils.toggleSubmit();
+
+			// Only process the input if a file has been uploaded
 			const fileInput = $(this).find('input[name="jsonFile"]').get(0);
 			if(fileInput && fileInput.files[0]){
 				const reader = new FileReader();
@@ -244,22 +246,28 @@
 						// Always extract base64 payload from data URL
 						raw = raw.substr(raw.indexOf(',') + 1);
 						const newTest = raw;
-						Simva.importSession(simletId, {file: newTest, session_name: form.sessionName}, function(importError, result) {
+						Simva.importSession(simletId, {file: newTest, session_name: form.sessionName}, function(error, result) {
 							Utils.toggleSubmit();
-							if (importError) {
-								errorbox.text(importError.responseJSON ? importError.responseJSON.message : importError.message || importError);
-								return;
+							if (error) {
+								errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
 							}
-							Utils.toggleFormInFloating('session_form_menu');
-							onCreateOrEditSession(result);
+							else {
+								Utils.toggleFormInFloating();
+								onCreateOrEditSession(result);
+							}
 						});
 					} catch (parseError) {
-						console.error('Import error:', parseError);
 						Utils.toggleSubmit();
+						console.error('Import error:', parseError);
 						errorbox.text("<%- t('sessions.import.error.invalid_file', { ns : 'sessions' }) %> " + (parseError.message ? (': ' + parseError.message) : ''));
 					}
 				};
 				reader.readAsDataURL(fileInput.files[0]);
+			}
+			// If no file has been uploaded (shouldn't happen unless the html gets altered since the file field has the required attribute)
+			else {
+				Utils.toggleSubmit();
+				errorbox.text("<%- t('forms.import.error.no_file', { ns : 'commons' }) %>");
 			}
 			return false;
 		});
@@ -268,6 +276,7 @@
         $(document).on('submit','#session_form', function(event) {
 			let errorbox = $('#session_form_error');
 			let form = Utils.getFormData($(this));
+			errorbox.text("");
 			Utils.toggleSubmit();
 			
 			const selectedTagIds = selectedTags.map((tag) => Number(tag.tag_id));
@@ -277,18 +286,14 @@
 				Simva.addSessionToSimlet(simletId, { session_name: form.sessionName, session_description: form.sessionDescription, 
 					session_can_be_manually_activated: true, session_status: form.sessionStatus }, function(error, result) 
 				{
-					if (error && error.responseJSON) {
+					if (error) {
 						Utils.toggleSubmit();
-						errorbox.text(error.responseJSON.message);
-					}
-					else if (error) {
-						Utils.toggleSubmit();
-						errorbox.text(error.message || error);
+						errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
 					}
 					else {
 						const createSession = function(resultTags) {
 							Utils.toggleSubmit();
-							Utils.toggleFormInFloating('session_form_menu');
+							Utils.toggleFormInFloating();
 
 							// Since the sesion needs to be created before adding the tags, add them manually to the result info
 							if (resultTags != null) {
@@ -298,12 +303,12 @@
 						}
 
 						if (selectedTagIds.length === 0) {
-							createSession();	
+							createSession();
 						}
 						else {
 							syncSessionTags(simletId, result.session_id, [], selectedTagIds, function(syncError, resultTags) {
-								Utils.toggleSubmit();
 								if (syncError) {
+									Utils.toggleSubmit();
 									errorbox.text(syncError.responseJSON ? syncError.responseJSON.message : syncError.message || syncError);
 								}
 								else {
@@ -318,27 +323,28 @@
 			// Editing session
 			else {
 				const sessionId = form.editingSessionId;
-
+				
+				// Compare the previous name and description with the updated ones (trimming the 
+				// new ones before to check if they will be the same after processing the strings)
 				const nameChanged = form.prevSessionName != Utils.trimString(form.sessionName);
 				const descriptionChanged = form.prevSessionDescription != Utils.trimString(form.sessionDescription);
+				
 				const tagsChanged = selectedTagIds.length !== originalTagsIds.length || selectedTagIds.some((tagId) => !originalTagsIds.includes(tagId));
 
 				if (!nameChanged && !descriptionChanged && !tagsChanged) {
-					errorbox.text("<%- t('forms.edit.error.no_changes', { ns : 'commons' }) %>");
 					Utils.toggleSubmit();
+					errorbox.text("<%- t('forms.edit.error.no_changes', { ns : 'commons' }) %>");
 				}
 				else {
-					errorbox.text("");
-
 					const updateSession = () => {
 						Simva.updateSession(simletId, Number(sessionId), { session_name : form.sessionName, session_description : form.sessionDescription }, function(error, result) {
+							Utils.toggleSubmit();
 							if (error) {
-								Utils.toggleSubmit();
 								errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
 							}
 							else {
 								onCreateOrEditSession(result);
-								Utils.toggleFormInFloating('session_form_menu');
+								Utils.toggleFormInFloating();
 							}
 						});
 					}
@@ -346,7 +352,6 @@
 					// Update the tags first and then update the session so the result info contains the updated tags
 					if (tagsChanged) {
 						syncSessionTags(simletId, Number(sessionId), originalTagsIds, selectedTagIds, function(syncError) {
-							Utils.toggleSubmit();
 							if (syncError) {
 								errorbox.text(syncError.responseJSON ? syncError.responseJSON.message : syncError.message || syncError);
 							}

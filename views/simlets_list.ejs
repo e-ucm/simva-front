@@ -98,12 +98,12 @@ the elements and scripts defined in the simlet_commons partial -->
 
 		// When submitting the import SIMLET form
 		$(document).on('submit', "#simlet_import_form", function(event) {
-			event.preventDefault();
-			let currentform = this;
 			let form = Utils.getFormData($(this));
-			Utils.toggleSubmit();
 			let errorbox = $("#simlet_form_error");
-			// Check for file presence
+			errorbox.text("");
+			Utils.toggleSubmit();
+
+			// Only process the input if a file has been uploaded
 			const fileInput = $(this).find('input[name="jsonFile"]').get(0);
 			if (fileInput && fileInput.files[0]) {
 				const reader = new FileReader();
@@ -115,20 +115,26 @@ the elements and scripts defined in the simlet_commons partial -->
 						const newStudy = raw;
 						Simva.importSimlet( {file: newStudy, simlet_name: form.simletName}, function(error, result) {
 							Utils.toggleSubmit();
-							if (!error) {
-								Utils.toggleFormInFloating('simlet_form_menu');
+							if (error) {
+								errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+							}
+							else {
+								Utils.toggleFormInFloating();
 								onCreateSimlet(result);
-							} else {
-								errorbox.text(error);
 							}
 						});
 					} catch (parseError) {
-						console.error('Import error:', parseError);
 						Utils.toggleSubmit();
+						console.error('Import error:', parseError);
 						errorbox.text("<%- t('simlets.import.error.invalid_file', { ns : 'SIMLETs' }) %> " + (parseError.message ? (': ' + parseError.message) : ''));
 					}
 				};
 				reader.readAsDataURL(fileInput.files[0]);
+			}
+			// If no file has been uploaded (shouldn't happen unless the html gets altered since the file field has the required attribute)
+			else {
+				Utils.toggleSubmit();
+				errorbox.text("<%- t('forms.import.error.no_file', { ns : 'commons' }) %>");
 			}
 			return false;
 		});

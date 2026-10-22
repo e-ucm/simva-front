@@ -112,17 +112,13 @@
     $(document).ready(function() {
 		$('#activity_extras').empty();
 
-		// Get all the available activity types and store extra info in the activityPainters
+		// Get all the available activity types, complete the extra info for the 
+		// valid activity painters, and add them as options in the add activity form
 		Simva.getActivityTypes(function(error, result) {
 			result.forEach((activityTypeInfo) => {
 				const painter = getActivityPainterByType(activityTypeInfo.activity_type);
 				if (painter != null) {
-					if (activityTypeInfo.activity_utils.newurl) {
-						newLimesurveyUrl = activityTypeInfo.activity_utils.newurl;
-					}
-					if (activityTypeInfo.activity_utils.editurl) {
-						editLimesurveyUrl = activityTypeInfo.activity_utils.editurl;
-					}
+					painter.setupAfterCreation(activityTypeInfo);
 
 					$('#activity_type_field').append($("<option>", {
 						value: activityTypeInfo.activity_type,
@@ -134,30 +130,32 @@
 
 		// When submitting the add/edit activity form
         $(document).on('submit','#activity_name_form', function(event) {
-			let errorbox = $('#activity_form_error');
 			let form = Utils.getFormData($(this));
+			let errorbox = $('#activity_form_error');
+			errorbox.text("");
 			Utils.toggleSubmit();
 			
 			const painter = getActivityPainterByType(form.type);
+
+			// If the activity type is invalid (shouldn't happen unless the html gets altered since the
+			// selectable options are only added if their names match with the existing painters supportedType)
 			if (painter == null) {
-				errorbox.text("<%- t('activities.type.error.invalid_type', { ns : 'activities' }) %>");
 				Utils.toggleSubmit();
+				errorbox.text("<%- t('activities.type.error.invalid_type', { ns : 'activities' }) %>");
 				return false;
 			}
 			
 			let activityInfo = painter.getActivityInfoFromForm(form);
-			activityInfo.activity_name = Utils.trimString(activityInfo.activity_name);
 			const submitForm = () => {
 				// Creating new activity
 				if (form.editingActivityId == null || form.editingActivityId == "") {
 					const addActivity = function() {
 						Simva.addActivityToSession(simletId, currSessionId, activityInfo, function(error, result) {
 							Utils.toggleSubmit();
-							if (error && error.responseJSON) {
-								errorbox.text(error.responseJSON.message);
-								return false;
+							if (error) {
+								errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
 							} else {
-								Utils.toggleFormInFloating('activity_form_menu');
+								Utils.toggleFormInFloating();
 								onEditSessionActivities(currSessionId);
 							}
 						});
@@ -171,9 +169,6 @@
 						if (confirm(`<%- t('activities.new.web.no_url_message', { ns : 'activities' }) %>`)) {
 							addActivity();
 						}
-						else {
-							Utils.toggleSubmit();
-						}
 					}
 					else {
 						addActivity();
@@ -181,26 +176,20 @@
 				}
 				// Editing activity
 				else {
-					let activity = getActivityFromId(form.editingActivityId);
-					if (activity == null) {
-						errorbox.text("Activity not found");
-						Utils.toggleSubmit();
-						return false;
-					}
-
-					// Compare the previous activity info with the updated one
+					// Compare the previous activity info with the updated one (trimming the new activity 
+					// name before to check if the name will be the same after processing the string)
+					activityInfo.activity_name = Utils.trimString(activityInfo.activity_name);
 					if (JSON.stringify(prevActivityInfo) === JSON.stringify(activityInfo)) {
 						errorbox.text("<%- t('forms.edit.error.no_changes', { ns : 'commons' }) %>");
-						Utils.toggleSubmit();
-						return false;
 					}
 					else {
+						Utils.toggleSubmit();
 						Simva.updateActivity(simletId, currSessionId, form.editingActivityId, activityInfo, function(error, result) {
 							Utils.toggleSubmit();
-							if (error && error.responseJSON) {
-								errorbox.text(error.responseJSON.message);
+							if (error) {
+								errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
 							} else {
-								Utils.toggleFormInFloating('activity_form_menu');
+								Utils.toggleFormInFloating();
 								onEditSessionActivities(currSessionId);
 							}
 						});
@@ -224,8 +213,11 @@
 		// When submitting the import activity form
 		$(document).on('submit', "#import_activity_form", function(event) {
 			let form = Utils.getFormData($(this));
-			Utils.toggleSubmit();
 			let errorbox = $('#activity_form_error');
+			errorbox.text("");
+			Utils.toggleSubmit();
+
+			// Only process the input if a file has been uploaded
 			const fileInput = $(this).find('input[name="jsonFile"]').get(0);
 			if(fileInput && fileInput.files[0]){
 				let reader = new FileReader();
@@ -234,24 +226,27 @@
 						let raw = reader.result;
 						raw = raw.substr(raw.indexOf(',') + 1);
 						const newActivity = raw;
-
-						Simva.importActivity(simletId, currSessionId, {file: newActivity, activity_name: form.activityName}, function(importError, result) {
+						Simva.importActivity(simletId, currSessionId, {file: newActivity, activity_name: form.activityName}, function(error, result) {
 							Utils.toggleSubmit();
-							if (importError) {
-								errorbox.text(importError.responseJSON ? importError.responseJSON.message : importError.message || importError);
-								return;
+							if (error) {
+								errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
 							} else {
+								Utils.toggleFormInFloating();
 								onEditSessionActivities(currSessionId);
-								Utils.toggleFormInFloating('activity_form_menu');
 							}
 						});
 					} catch (parseError) {
-						console.error('Import error:', parseError);
 						Utils.toggleSubmit();
+						console.error('Import error:', parseError);
 						errorbox.text("<%- t('activities.import.error.invalid_file', { ns : 'activities' }) %> " + (parseError.message ? (': ' + parseError.message) : ''));
 					}
 				};
 				reader.readAsDataURL(fileInput.files[0]);
+			}
+			// If no file has been uploaded (shouldn't happen unless the html gets altered since the file field has the required attribute)
+			else {
+				Utils.toggleSubmit();
+				errorbox.text("<%- t('forms.import.error.no_file', { ns : 'commons' }) %>");
 			}
 			return false;
 		});

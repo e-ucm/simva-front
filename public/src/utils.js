@@ -192,6 +192,7 @@ var Utils = {
 	showIframeFloating: function(iframeId = "iframe_floating") {
 		const $el = $(`#${iframeId}`);
 		$el.addClass('shown');
+		$el.find('.iframe_floating_close').show();
 	},
 
 	hideIframeFloating: function(iframeId = "iframe_floating") {
@@ -266,6 +267,7 @@ var Utils = {
 			if (id === iframeId) {
 				this.showIframeFloating(iframeId);
 			} else {
+				$el.find('.iframe_floating_close').show();
 				const form = $(`#${id}`);
 
 				// Grab the deepest .form content, skipping .new_element/.floater wrappers

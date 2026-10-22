@@ -409,6 +409,7 @@
 	
 	$(document).ready(function() {
 
+		// Get all the available allocator types, and add them as options in the change allocator form
 		Simva.getAllocatorTypes(function(error, result) {
 			result.forEach((allocatorType) => {
 				const painter = getAllocatorPainterByType(allocatorType.allocator_type);
@@ -423,33 +424,41 @@
 		$(document).on('submit', "#existing_supervisor_form", function(event) {
 			let form = Utils.getFormData($(this));
 			let errorbox = $('#users_error');
+			errorbox.text("");
+			Utils.toggleSubmit();
+			
 			const supervisors = simlet.direct_permissions || simlet.owners || [];
-
 			supervisors.forEach((supervisor) => {
 				if (supervisor.username == form.name) {
+					Utils.toggleSubmit();
 					errorbox.text("<%- t('supervisors.error.already_in', { ns : 'groups' }) %>");
 					return false;
 				}
 			});
+			
+			// If the permissions are other than READ or WRITE (shouldn't happen unless 
+			// the html gets altered since the selectable options values are hardcoded
 			if (form.permission !== "READ" && form.permission !== "WRITE") {
+				Utils.toggleSubmit();
 				errorbox.text("<%- t('users.permissions.error', { ns : 'groups' }) %>");
 				return false;
 			}
 
 			Simva.getUser(form.name, function(error, users) {
 				if (error) {
+					Utils.toggleSubmit();
 					errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
 					return;
 				}
 				
 				const foundUser = Array.isArray(users) ? users[0] : users;
-				Simva.createSimletPermissions(simletId, { user_id: foundUser.user_id, permission: form.permission }, function(createError) {
-					if (createError && createError.responseJSON) {
-						errorbox.text(createError.responseJSON.message);
-					} else if (createError) {
-						errorbox.text(createError.message || createError);
-					} else {
-						Utils.toggleFormInFloating('users_form_menu');
+				Simva.createSimletPermissions(simletId, { user_id: foundUser.user_id, permission: form.permission }, function(error) {
+					Utils.toggleSubmit();
+					if (error) {
+						errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+					}
+					else {
+						Utils.toggleFormInFloating();
 						onSupervisorsChanged();
 					}
 				});
@@ -461,16 +470,19 @@
 		
 		// When submitting the import group from
 		$(document).on('submit', '#import_group_form_modal', function(event) {
-			let currentform = this;
 			let form = Utils.getFormData($(this));
-			Utils.toggleSubmit();
 			let errorbox = $('#users_error');
+			errorbox.text("");
+			Utils.toggleSubmit();
+
+			// Only process the input if a file has been uploaded
 			const fileInput = $(this).find('input[name="jsonFile"]').get(0);
 			if(fileInput && fileInput.files[0]){
 				const reader = new FileReader();
 				reader.onload = function(){
 					try {
 						let raw = reader.result;
+						// Always extract base64 payload from data URL
 						raw = raw.substr(raw.indexOf(',') + 1);
 						const newGroup = raw;
 						Simva.importGroup(simletId, {file: newGroup, group_name: form.groupName}, function(importError, result) {
@@ -479,42 +491,46 @@
 								errorbox.text(importError.responseJSON ? importError.responseJSON.message : importError.message || importError);
 								return;
 							} else {
-								Utils.toggleFormInFloating('users_form_menu');
+								Utils.toggleFormInFloating();
 								onCreateOrEditGroup(result);
 							}
 						});
 					} catch (parseError) {
-						console.error('Import error:', parseError);
 						Utils.toggleSubmit();
+						console.error('Import error:', parseError);
 						errorbox.text("<%- t('groups.import.error.invalid_file', { ns : 'groups' }) %> " + (parseError.message ? (': ' + parseError.message) : ''));
 					}
 				};
 				reader.readAsDataURL(fileInput.files[0]);
-			} 
+			}
+			// If no file has been uploaded (shouldn't happen unless the html gets altered since the file field has the required attribute)
+			else {
+				Utils.toggleSubmit();
+				errorbox.text("<%- t('forms.import.error.no_file', { ns : 'commons' }) %>");
+			}
 			return false;
 		});
 
 		// When submitting the create/edit group form
 		$(document).on('submit', "#group_form", function(event) {
-			let errorbox = $('#users_error');
-			let currentform = this;
 			let form = Utils.getFormData($(this));
+			let errorbox = $('#users_error');
+			errorbox.text("");
 			Utils.toggleSubmit();
 			
 			// Creating new group
 			if (form.editingGroupId == null || form.editingGroupId == "") { 
 				let newGeneration = !Boolean(form.group_use_deprecated_generation);
-
 				Simva.addGroup(simletId, { group_name : form.groupName, group_sandbox : false, group_use_new_generation : newGeneration }, function(error, result) {
-					if (error && error.responseJSON) {
+					if (error) {
 						Utils.toggleSubmit();
-						errorbox.text(error.responseJSON.message);
+						errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
 					}
 					else {
 						// Fake a wait time and open the add participants form in the batch tab
 						setTimeout(() => {
 							Utils.toggleSubmit();
-							Utils.toggleFormInFloating('users_form_menu');
+							Utils.toggleFormInFloating();
 							openParticipantForm(result.group_id);
 							Utils.changeTab($('#add_batch_tab_button'), 'add_participant_form','batch_participant_tab');
 							onCreateOrEditGroup(result);
@@ -524,19 +540,18 @@
 			}
 			// Editing group
 			else {
-				const groupId = form.editingGroupId;
-
+				// Compare the previous group name with the updated one (trimming it
+				// before to check if it will be the same after processing the string)
 				const nameChanged = form.prevGroupName != Utils.trimString(form.groupName);
 				if (!nameChanged) {
-					errorbox.text("<%- t('forms.edit.error.no_changes', { ns : 'commons' }) %>");
 					Utils.toggleSubmit();
+					errorbox.text("<%- t('forms.edit.error.no_changes', { ns : 'commons' }) %>");
 				}
 				else {
-					errorbox.text("");
 					Simva.updateGroup(simletId, form.editingGroupId, { group_name : form.groupName }, function(error, result) {
+						Utils.toggleSubmit();
 						if (!error) {
-							Utils.toggleSubmit();
-							Utils.toggleFormInFloating('users_form_menu');
+							Utils.toggleFormInFloating();
 							onCreateOrEditGroup(result);
 						}
 					});
@@ -548,9 +563,11 @@
 
 		// When submitting the add existing user as participant form
 		$(document).on('submit', "#existing_participant_form", function(event){
-			let currentform = this;
 			let form = Utils.getFormData($(this));
 			let errorbox = $("#participants_error");
+			errorbox.text("");
+			Utils.toggleSubmit();
+			
 			let errorText = "";
 
 			// Get all users in the group and store them by username
@@ -562,12 +579,22 @@
 				);
 			}
 			else {
+				Utils.toggleSubmit();
 				return false;
 			}
 
-			// Remove all the white spaces from the text area and split all the usernames by commas
+			// Remove all the white spaces from the text area and reset the field
+			// if nothing was written or if the commas separate blank names
 			const noWhitespaces = form.name.replaceAll(/\s/g, '');
-			const usernames = noWhitespaces.split(",");
+			const usernames = new Set(noWhitespaces.split(",").filter(s => s !== ''));
+			if (noWhitespaces.length == 0 || usernames.size == 0) {
+				Utils.toggleSubmit();
+
+				$("#existing_participant_form textarea").val("");
+				// Trigger the please fill this field message
+				$("#existing_participant_form textarea")[0].reportValidity();
+				return false;
+			}
 			
 			let foundUsers = new Map();
 			let createdUsersInfo = new Set();
@@ -577,23 +604,22 @@
 			// Callback to wait for all the addGroupParticipant calls to finish
 			const allUsersAdded = () => {
 				completed++;
-				if (completed == usernames.length) {
+				if (completed == usernames.size) {
+					Utils.toggleSubmit();
+
 					// If all users have been correctly added, close the form
-					if (added == usernames.length) {
-						Utils.toggleSubmit();
-						Utils.toggleFormInFloating('add_participant');
+					if (added == usernames.size) {
+						Utils.toggleFormInFloating();
 						onCreateParticipants(ADD_METHOD_EXISTING, currGroupId, createdUsersInfo);
 					}
 					// Otherwise, don't close the form to show the error
 					else {
-						Utils.toggleSubmit();
-
 						// If some users have been added, add an extra message asking for 
 						// manual refreshing (to allow the user to see the error message)
 						if (added > 0) {
-							errorText += `<%- t("participants.add_existing.error.reload_manually", { ns : "groups" }) %> <br> `
+							errorText += `<%- t("participants.add_existing.error.reload_manually", { ns : "groups" }) %>\n`
 						}
-						errorbox.html(errorText);
+						errorbox.text(errorText.replace(/\n/g, '<br>'));
 						return false;
 					}
 				}
@@ -602,21 +628,20 @@
 			// Callback to wait for all the getUser calls to finish
 			const checkUserComplete = () => {
 				completed++;
-				if (completed == usernames.length) {
+				if (completed == usernames.size) {
 					// If all users can be added, iterate over them and try adding them 
-					if (foundUsers.size == usernames.length) {
+					if (foundUsers.size == usernames.size) {
 						completed = 0;
 						errorText = "";
 						
-						Utils.toggleSubmit();
 						foundUsers.forEach((user, username) => {
 							Simva.addGroupParticipant(simletId, currGroupId, user.user_id, function(addError, result){
 								// If there are any erorrs, add them to the error message
 								if(addError && addError.responseJSON) {
-									errorText += `${addError.responseJSON.message} <br> `
+									errorText += `${addError.responseJSON.message}\n`
 								}
 								else if(addError) {
-									errorText += `${(addError.message || addError)} <br> ` 
+									errorText += `${(addError.message || addError)}\n` 
 								}
 								// Otherwise, increase the added users count
 								else{
@@ -629,6 +654,7 @@
 					}
 					// Otherwise, don't add any user and show all the error messages
 					else {
+						Utils.toggleSubmit();
 						errorbox.html(errorText);
 						return false;
 					}
@@ -639,7 +665,7 @@
 			usernames.forEach((username) => {
 				// If any participant is already in the group, add each user to the error message 
 				if (groupParticipants.has(username)) {
-					errorText += `<%- t("participants.add_existing.error.already_in_group", { ns : "groups", group : "${group.group_name}", participant : "${username}" }) %> <br> `;
+					errorText += `<%- t("participants.add_existing.error.already_in_group", { ns : "groups", group : "${group.group_name}", participant : "${username}" }) %>\n`;
 					checkUserComplete();
 				}
 				// Otherwise, try to fetch an user from the database with said username
@@ -647,12 +673,12 @@
 					Simva.getUser(username, function(error, result) {
 						// If there's no user with that username, add if to the error message
 						if (error) {
-							errorText += `${(error.responseJSON ? error.responseJSON.message : error.message || error)} <br> ` 
+							errorText += `${(error.responseJSON ? error.responseJSON.message : error.message || error)}\n` 
 						}
 						else {
 							const foundUser = Array.isArray(result) ? result[0] : result;
                 			if(!foundUser || !foundUser.user_id){
-								errorText += `<%- t("participants.add_existing.error.already_in_group", { ns : "groups", participant : "${username}" }) %> <br> `
+								errorText += `<%- t("participants.add_existing.error.already_in_group", { ns : "groups", participant : "${username}" }) %>\n`
 							}
 							// If there's a user with that username, add it to the found users
 							else {
@@ -671,12 +697,16 @@
 		$(document).on('submit', "#new_participant_form", function(event){
 			let form = Utils.getFormData($(this));
 			let errorbox = $("#participants_error");
+			errorbox.text("");
+			Utils.toggleSubmit();
 
 			Simva.register(simletId, currGroupId, form.username.toLowerCase(), form.email, form.password, form.role, function(error, result){
-				if(error && error.responseJSON){
-					errorbox.text(error.responseJSON.message);
-				}else{
-					Utils.toggleFormInFloating('add_participant');
+				Utils.toggleSubmit();
+				if (error) {
+					errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+				}
+				else {
+					Utils.toggleFormInFloating();
 					onCreateParticipants(ADD_METHOD_NEW, currGroupId, result);
 				}
 			});
@@ -686,15 +716,18 @@
 
 		// When submitting the add batch of new users as participants form
 		$(document).on('submit', "#batch_participant_form", function(event){
-			let currentform = this;
-			Utils.toggleSubmit();
 			let form = Utils.getFormData($(this));
 			let errorbox = $("#participants_error");
+			errorbox.text("");
+			Utils.toggleSubmit();
 
-			Simva.generateAndRegister(simletId, currGroupId, form.algorithm, form.length, form.amount, (error, generated) => {
-				if(!error) { 
-					Utils.toggleFormInFloating('add_participant');
-					onCreateParticipants(ADD_METHOD_BATCH, currGroupId, generated);
+			Simva.generateAndRegister(simletId, currGroupId, form.algorithm, form.length, form.amount, (error, result) => {
+				if (error) {
+					errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+				}
+				else {
+					Utils.toggleFormInFloating();
+					onCreateParticipants(ADD_METHOD_BATCH, currGroupId, result);
 				}
 			});
 			return false;
@@ -702,38 +735,38 @@
 
 		// When submitting the change allocator form
 		$(document).on('submit', '#change_allocator_form', function(event) {
-			let currentform = this;
 			let form = Utils.getFormData($(this));
-			Utils.toggleSubmit();
 			let errorbox = $("#allocator_error");
 			errorbox.text("");
+			Utils.toggleSubmit();
 
 			if (currGroupId) {
 				const painter = getAllocatorPainterByType(form.type);
+				
+				// If the allocator type is invalid (shouldn't happen unless the html gets altered since the
+				// selectable options are only added if their names match with the existing painters supportedType)
 				if (painter == null) {
-					errorbox.text("<%- t('allocators.type.error.invalid_type', { ns : 'groups' }) %>");
 					Utils.toggleSubmit();
+					errorbox.text("<%- t('allocators.type.error.invalid_type', { ns : 'groups' }) %>");
 					return false;
 				}
 
 				const group = completeGroupsById.get(currGroupId);
 				if (group != null && group.group_allocator_type == form.type) {
-					errorbox.text("<%- t('forms.edit.no_changes.message', { ns : 'commons' }) %>");
 					Utils.toggleSubmit();
+					errorbox.text("<%- t('forms.edit.error.no_changes', { ns : 'commons' }) %>");
 					return false;
 				}
 
 				Simva.updateGroup(simletId, currGroupId, { group_allocator_type: form.type }, function(error, result) {
+					Utils.toggleSubmit();
 					if (error) {
 						errorbox.text(error.responseJSON ? error.responseJSON.message : error.message);
-						Utils.toggleSubmit();
 					} else {
-						Utils.toggleFormInFloating('change_allocator_menu');
+						Utils.toggleFormInFloating();
 						onChangeGroupAllocator(result);
 					}
 				});
-			} else {
-				Utils.toggleFormInFloating('change_allocator_menu');
 			}
 			
 			return false;

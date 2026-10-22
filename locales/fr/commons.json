@@ -24,6 +24,7 @@
 
     "forms.name.title": "Nom",
     "forms.description.title": "Description",
+    "forms.import.error.no_file": "",
     "forms.edit.error.no_changes": "Aucun changement n'a été détecté.",
     "forms.edit.error.invalid_character": "",
 

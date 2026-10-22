@@ -24,6 +24,7 @@
 
     "forms.name.title": "Name",
     "forms.description.title": "Description",
+    "forms.import.error.no_file": "Select a file to import.",
     "forms.edit.error.no_changes": "No changes detected.",
     "forms.edit.error.invalid_character": "Only alphanumeric (A-Z, a-z, 0-9) characters and spaces allowed.",
 

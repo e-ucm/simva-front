@@ -37,7 +37,7 @@
         <h3><%= t('activities.limeSurvey_activity.survey.title', { ns : 'activities' }) %></h3>
         <select name="existingid" id="existing_survey_field" onchange="loadSurveyLanguages()">
         </select>
-        <input type="button" class="openLimesurveyButton" value="<%= t('activities.limeSurvey_activity.existing.open_limseSurvey', { ns : 'activities' }) %>" onclick="openNewLimesurvey()"></input>
+        <input type="button" class="openLimeSurveyButton" value="<%= t('activities.limeSurvey_activity.existing.open_limseSurvey', { ns : 'activities' }) %>" onclick="openNewLimeSurvey()"></input>
 
         <h3><%= t('activities.limeSurvey_activity.language.title', { ns : 'activities' }) %></h3>
         <select name="language" id="survey_language_field">
@@ -63,8 +63,8 @@
 <script type="text/javascript">
     // MUST BE INCLUDED IN THE HTML AFTER BaseActivityPainter 
 
-    let newLimesurveyUrl = "";
-    let editLimesurveyUrl = "";
+    let newLimeSurveyUrl = "";
+    let editLimeSurveyUrl = "";
 
     class LimeSurveyPainter extends BaseActivityPainter {
         constructor() {
@@ -86,6 +86,17 @@
                     $("#limesurvey_extra_form_tabs").hide();
                 }
             });
+        }
+
+        setupAfterCreation(activityTypeInfo) {
+            super.setupAfterCreation();
+
+            if (activityTypeInfo.activity_utils.newurl && typeof newLimeSurveyUrl !== 'undefined') {
+            	newLimeSurveyUrl = activityTypeInfo.activity_utils.newurl;
+            }
+            if (activityTypeInfo.activity_utils.editurl && typeof editLimeSurveyUrl !== 'undefined') {
+            	editLimeSurveyUrl = activityTypeInfo.activity_utils.editurl;
+            }
         }
 
 
@@ -314,29 +325,29 @@
 
 	// Edit limesurvey by pressing either the survey id or the edit button 
 	$(document).on('click', ".activity-meta .limesurveyMeta a", function(e) {
-		openEditLimesurvey($(this).closest(".activity").data());
+		openEditLimeSurvey($(this).closest(".activity").data());
 	});
 	$(document).on('click', ".activityTopActions .icon-edit-survey", function(e) {
-		openEditLimesurvey($(this).closest(".activity").data());
+		openEditLimeSurvey($(this).closest(".activity").data());
 	});
 
     /**
 	 * Open a floating window with the limesurvey page to create a new activity
 	 */
-	const openNewLimesurvey = function() {
+	const openNewLimeSurvey = function() {
         Utils.hideIframeFloating("limesurvey_iframe");
-        Utils.toggleIframeInFloating(newLimesurveyUrl, "limesurvey_iframe");
+        Utils.toggleIframeInFloating(newLimeSurveyUrl, "limesurvey_iframe");
     }
 
 	/**
 	 * Open a floating window with the limesurvey edit page for the selected survey
 	 */
-    const openEditLimesurvey = function(activityData) {
+    const openEditLimeSurvey = function(activityData) {
 		const act = getActivityFromId(activityData[ACTIVITY_DATA_ID_KEY]);
 
 		if (act != null && act.survey_id != null) {
 			Simva.setSurveyOwner(act.activity_id, (error, result) => {
-				Utils.toggleIframeInFloating(`${editLimesurveyUrl.replace('{{surveyId}}', act.survey_id)}`);
+				Utils.toggleIframeInFloating(`${editLimeSurveyUrl.replace('{{surveyId}}', act.survey_id)}`);
 			});
 		}
     }
