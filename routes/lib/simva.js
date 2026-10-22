@@ -39,24 +39,6 @@ class Simva {
 		this.shlinkapiurl = config.shlink.apiurl;
 	}
 
-
-	/**
-	 * Remove trailing and leading spaces of any string the body has as value
-	 * @param {object} body - object containing the request body 
-	 * @returns {object} - body object with all strings trimmed 
-	 */
-	trimBodyStrings(body) {
-		if (typeof body === 'object' && body !== null && !Array.isArray(body)) {
-			Object.entries(body).forEach(([key, value]) => {
-				if (typeof value === 'string' || value instanceof String) {
-					body[key] = value.replace(/^\s+|\s+$/g, '');
-				}
-			});
-		}
-		return body;
-	}
-	
-	
 	// REQUESTS
 
 	/**
@@ -90,7 +72,7 @@ class Simva {
 				callback(error);
 				return;
 			}
-			Utils.post(url, req, this.trimBodyStrings(body), callback, userClientsListManager.getJWT(currSessionId));
+			Utils.post(url, req, Utils.trimBodyStrings(body), callback, userClientsListManager.getJWT(currSessionId));
 		});
 		
 	}
@@ -110,7 +92,7 @@ class Simva {
 				callback(error);
 				return;
 			}
-			Utils.patch(url, req, this.trimBodyStrings(body), callback, userClientsListManager.getJWT(currSessionId));
+			Utils.patch(url, req, Utils.trimBodyStrings(body), callback, userClientsListManager.getJWT(currSessionId));
 		});
 	}
 
@@ -128,7 +110,7 @@ class Simva {
 				callback(error);
 				return;
 			}
-			Utils.put(url, req, this.trimBodyStrings(body), callback, userClientsListManager.getJWT(currSessionId));
+			Utils.put(url, req, Utils.trimBodyStrings(body), callback, userClientsListManager.getJWT(currSessionId));
 		});
 	}
 
@@ -149,47 +131,6 @@ class Simva {
 	}
 
 	
-	/**
-	 * Convert query object to query string
-	 * @param {Query | undefined} query 
-	 * @returns {string} - string of the query parameters, including the starting ? if there are any parameters
-	 */
-	getQueryString(query) {
-		// Build the queryString manually by formatting each key-value to be like key=value, encode them to 
-		// percent-encoding and join them with the & symbol 
-		// It needs to be done this way because building it with URLSearchParams().toString() turns spaces into + 
-		// following the form encoding standard, instead of %20 following the percent encoding, which the api needs  
-		let params = Object.entries(query)
-			.map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-			.join('&');
-
-		// Manually replace !, ', (, ), and * to follow the percent encoding, since the RFC 3986 standard
-		// reserves these characters and doing encodeURIComponent leaves them unencoded
-		params = params.replace(
-			/[!'()*]/g,
-			(c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`
-		);
-		const queryString = params ? `?${params}` : "";
-		return queryString;
-	}
-
-	/**
-	 * Convert the username of a participant into the query string needed to fetch only the LRS statements of that participant
-	 * @param {string | undefined} actorName - username of the participant whose statements to fetch (statements of every
-	 * participant if it isn't set)
-	 * @returns {string} - string of the query parameters, including the starting ? if there are any parameters
-	 */
-	getLrsActorQueryString(actorName) {
-		if (!actorName) {
-			return "";
-		}
-		// The api filters the statements by the agent (the xAPI 2.0 name of the actor) as a json string, whose
-		// account is identified by the username of the participant and the external url of the platform
-		// (the homePage the LRS clients send)
-		const agent = JSON.stringify({ account: { name: actorName, homePage: config.simva.url } });
-		return this.getQueryString({ agent: agent });
-	}
-
 	
 	// TAGS
 
@@ -261,7 +202,7 @@ class Simva {
 	 * @param {Callback} callback 
 	 */
 	getSimlets(query, currSessionId, callback){
-		this.get(`${this.apiurl}/simlets${this.getQueryString(query)}`, currSessionId, callback);
+		this.get(`${this.apiurl}/simlets${Utils.getQueryString(query)}`, currSessionId, callback);
 	}
 
 	/**
@@ -271,7 +212,7 @@ class Simva {
 	 * @param {Callback} callback 
 	 */
 	getSimletsCount(query, currSessionId, callback) {
-		this.get(`${this.apiurl}/simlets/count${this.getQueryString(query)}`, currSessionId, callback);
+		this.get(`${this.apiurl}/simlets/count${Utils.getQueryString(query)}`, currSessionId, callback);
 	}
 	
 	/**
@@ -343,7 +284,7 @@ class Simva {
 	 * @param {Callback} callback 
 	 */
 	getSchedulerSimlets(query, currSessionId, callback){
-		this.get(`${this.apiurl}/simlets/scheduler${this.getQueryString(query)}`, currSessionId, callback);
+		this.get(`${this.apiurl}/simlets/scheduler${Utils.getQueryString(query)}`, currSessionId, callback);
 	}
 
 	/**
@@ -353,7 +294,7 @@ class Simva {
 	 * @param {Callback} callback 
 	 */
 	getSchedulerSimletsCount(query, currSessionId, callback){
-		this.get(`${this.apiurl}/simlets/scheduler/count${this.getQueryString(query)}`, currSessionId, callback);
+		this.get(`${this.apiurl}/simlets/scheduler/count${Utils.getQueryString(query)}`, currSessionId, callback);
 	}
 
 	/**
@@ -431,7 +372,7 @@ class Simva {
 	 * @param {Callback} callback 
 	 */
 	getSimletSessions(simletId, query, currSessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simletId}/sessions${this.getQueryString(query)}`, currSessionId, callback);
+		this.get(`${this.apiurl}/simlets/${simletId}/sessions${Utils.getQueryString(query)}`, currSessionId, callback);
 	}
 
 	/**
@@ -442,7 +383,7 @@ class Simva {
 	 * @param {Callback} callback 
 	 */
 	getSimletSessionsCount(simletId, query, currSessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simletId}/sessions/count${this.getQueryString(query)}`, currSessionId, callback);
+		this.get(`${this.apiurl}/simlets/${simletId}/sessions/count${Utils.getQueryString(query)}`, currSessionId, callback);
 	}
 
 	/**
@@ -571,7 +512,7 @@ class Simva {
 	 * @param {Callback} callback 
 	 */
 	getSessionLRSData(simletId, sessionId, actorName, currSessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/lrs/statements${this.getLrsActorQueryString(actorName)}`, currSessionId, callback);
+		this.get(`${this.apiurl}/simlets/${simletId}/sessions/${sessionId}/lrs/statements${Utils.getLrsActorQueryString(actorName)}`, currSessionId, callback);
 	}
 		
 	// TODO: Document
@@ -872,7 +813,7 @@ class Simva {
 	 * @param {Callback} callback 
 	 */
 	getActivityLRSData(activityId, actorName, currSessionId, callback){
-		this.get(`${this.apiurl}/activities/${activityId}/lrs/statements${this.getLrsActorQueryString(actorName)}`, currSessionId, callback);
+		this.get(`${this.apiurl}/activities/${activityId}/lrs/statements${Utils.getLrsActorQueryString(actorName)}`, currSessionId, callback);
 	}
 
 	// TODO: Document
@@ -905,7 +846,7 @@ class Simva {
 	 * @param {Callback} callback 
 	 */
 	getSimletGroups(simletId, query, currSessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simletId}/groups${this.getQueryString(query)}`, currSessionId, callback);
+		this.get(`${this.apiurl}/simlets/${simletId}/groups${Utils.getQueryString(query)}`, currSessionId, callback);
 	}
 
 	/**
@@ -916,7 +857,7 @@ class Simva {
 	 * @param {Callback} callback 
 	 */
 	getSimletGroupsCount(simletId, query, currSessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simletId}/groups/count${this.getQueryString(query)}`, currSessionId, callback);
+		this.get(`${this.apiurl}/simlets/${simletId}/groups/count${Utils.getQueryString(query)}`, currSessionId, callback);
 	}
 
 	/**
@@ -929,7 +870,7 @@ class Simva {
 	 */
 	getSimletGroupsWithVersion(useNewGeneration, simletId, query, currSessionId, callback){
 		query.useNewGeneration = useNewGeneration;
-		this.get(`${this.apiurl}/simlets/${simletId}/groups${this.getQueryString(query)}`, currSessionId, callback);
+		this.get(`${this.apiurl}/simlets/${simletId}/groups${Utils.getQueryString(query)}`, currSessionId, callback);
 	}
 
 	/**
@@ -942,7 +883,7 @@ class Simva {
 	 */
 	getSimletGroupsWithVersionCount(useNewGeneration, simletId, query, currSessionId, callback){
 		query.useNewGeneration = useNewGeneration;
-		this.get(`${this.apiurl}/simlets/${simletId}/groups${this.getQueryString(query)}`, currSessionId, callback);
+		this.get(`${this.apiurl}/simlets/${simletId}/groups${Utils.getQueryString(query)}`, currSessionId, callback);
 	}
 	
 	/**
@@ -1073,7 +1014,7 @@ class Simva {
 	 * @param {Callback} callback 
 	 */
 	getSimletGroupsParticipantsCount(simletId, query, currSessionId, callback) {
-		this.get(`${this.apiurl}/simlets/${simletId}/groups/participants/count${this.getQueryString(query)}`, currSessionId, callback);
+		this.get(`${this.apiurl}/simlets/${simletId}/groups/participants/count${Utils.getQueryString(query)}`, currSessionId, callback);
 	}
 	
 	/**
@@ -1107,7 +1048,7 @@ class Simva {
 	 * @param {Callback} callback 
 	 */
 	getGroupParticipantsCount(simletId, groupId, query, currSessionId, callback){
-		this.get(`${this.apiurl}/simlets/${simletId}/groups/${groupId}/participants/count${this.getQueryString(query)}`, currSessionId, callback);
+		this.get(`${this.apiurl}/simlets/${simletId}/groups/${groupId}/participants/count${Utils.getQueryString(query)}`, currSessionId, callback);
 	}
 	
 	/**
@@ -1145,7 +1086,7 @@ class Simva {
 	 * @param {Callback} callback 
 	 */
 	getUsers(query, currSessionId, callback){
-		this.get(`${this.apiurl}/users${this.getQueryString(query)}`, currSessionId, callback);
+		this.get(`${this.apiurl}/users${Utils.getQueryString(query)}`, currSessionId, callback);
 	}
 
 	/**
