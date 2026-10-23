@@ -113,15 +113,14 @@ the elements and scripts defined in the simlet_commons partial -->
 						// Always extract base64 payload from data URL
 						raw = raw.substr(raw.indexOf(',') + 1);
 						const newStudy = raw;
-						Simva.importSimlet( {file: newStudy, simlet_name: form.simletName}, function(error, result) {
+						Simva.importSimlet({ file: newStudy, simlet_name: form.simletName}, function(error, result) {
 							Utils.toggleSubmit();
 							if (error) {
 								errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+								return;
 							}
-							else {
-								Utils.toggleFormInFloating();
-								onCreateSimlet(result);
-							}
+							Utils.toggleFormInFloating();
+							onCreateSimlet(result);
 						});
 					} catch (parseError) {
 						Utils.toggleSubmit();
@@ -334,7 +333,11 @@ the elements and scripts defined in the simlet_commons partial -->
 		deleteButton.hide();
 		
 		Simva.getCurrentUser((error, user) => {
+			if (error) return;
+
 			Simva.getSimletPermissionsForUser(simletId, user.user_id, (error, result) => {
+				if (error) return;
+
 				// Only the users with permissions other than read can use the edit and url buttons
 				if (result.permission !== "READ") {
 					editButton.show();
@@ -350,6 +353,8 @@ the elements and scripts defined in the simlet_commons partial -->
 						archiveButton.show();
 
 						Simva.getSimletSessions(simletId, function(error, result) {
+							if (error) return;
+
 							// Check if all sessions are finished
 							let allSessionsFinished = true;
 
@@ -371,31 +376,6 @@ the elements and scripts defined in the simlet_commons partial -->
 				}
 			});
 		});
-		
-
-		// if (ARCHIVED) {
-		// 	kebab.find(".icon-archive").hide();
-
-		// 	// TEST: Uncomment to allow dearchivation 
-		// 	// kebab.find(".icon-dearchive").show();
-		// } 
-		// else {
-		// 	kebab.find(".icon-archive").show();
-
-		// 	// Disable archive button if not all sessions are finished
-		// 	Simva.getSimletSessions(simlet.simlet_id, function(error, result) {
-		// 		if (!error) {
-		// 			let allSessionsFinished = true;
-		// 			result.forEach((session, id) => {
-		// 				allSessionsFinished = allSessionsFinished && (result.session_status == "terminated");
-		// 			});
-		// 			if (!allSessionsFinished) {
-		// 				kebab.find(".icon-archive").addClass('li-disabled');
-		// 			}
-		// 		}
-		// 	});
-		// }
-		
 	}
 	
 	/**

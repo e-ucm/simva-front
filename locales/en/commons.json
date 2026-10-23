@@ -28,5 +28,6 @@
     "forms.edit.error.no_changes": "No changes detected.",
     "forms.edit.error.invalid_character": "Only alphanumeric (A-Z, a-z, 0-9) characters and spaces allowed.",
 
-    "download.wait_message": "Generating the file with the data. This process can take a while."
+    "download.wait_message": "Generating the file with the data. This process can take a while.",
+    "export.error_toast.heading.": "Error exporting the file"
 }

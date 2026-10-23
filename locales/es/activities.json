@@ -64,6 +64,7 @@
         "activities.limeSurvey_activity.import.message": "Selecciona un archivo .lss",
 
         "activities.kebab.edit_survey.title": "Editar encuesta",
+        "activities.limeSurvey_activity.edit_survey.error_toast.heading": "Error al abrir la página de editar encuesta",
 
     "activities.gameplay_activity.name": "Actividad de juego",
         "activities.gameplay_activity.storage.title": "Almacenar trazas",
@@ -92,7 +93,8 @@
                     "activities.gameplay_activity.platform.desktop.tracker_type.simva_unity.title": "Xasu Tracker junto al Simva Unity plugin",
                     "activities.gameplay_activity.platform.desktop.tracker_type.other.title": "Tracker personalizado",
 
-        "activities.kebab.download.tracker_config.title": "Descargar configuración del tracker",
+        "activities.kebab.download_tracker_config.title": "Descargar configuración del tracker",
+        "activities.gameplay_activity.download_tracker_config.error_toast.heading": "Error al descargar la configuración del tracker",
     
     "activities.manual_activity.name": "Actividad manual",
         "activities.manual_activity.storage.title": "Almacenar trazas",

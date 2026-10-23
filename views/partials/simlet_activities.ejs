@@ -115,6 +115,8 @@
 		// Get all the available activity types, complete the extra info for the 
 		// valid activity painters, and add them as options in the add activity form
 		Simva.getActivityTypes(function(error, result) {
+			if (error) return;
+			
 			result.forEach((activityTypeInfo) => {
 				const painter = getActivityPainterByType(activityTypeInfo.activity_type);
 				if (painter != null) {
@@ -154,10 +156,10 @@
 							Utils.toggleSubmit();
 							if (error) {
 								errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
-							} else {
-								Utils.toggleFormInFloating();
-								onEditSessionActivities(currSessionId);
+								return;
 							}
+							Utils.toggleFormInFloating();
+							onEditSessionActivities(currSessionId);
 						});
 					}
 
@@ -188,10 +190,10 @@
 							Utils.toggleSubmit();
 							if (error) {
 								errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
-							} else {
-								Utils.toggleFormInFloating();
-								onEditSessionActivities(currSessionId);
+								return;
 							}
+							Utils.toggleFormInFloating();
+							onEditSessionActivities(currSessionId);
 						});
 					}
 				}
@@ -230,10 +232,10 @@
 							Utils.toggleSubmit();
 							if (error) {
 								errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
-							} else {
-								Utils.toggleFormInFloating();
-								onEditSessionActivities(currSessionId);
+								return;
 							}
+							Utils.toggleFormInFloating();
+							onEditSessionActivities(currSessionId);
 						});
 					} catch (parseError) {
 						Utils.toggleSubmit();
@@ -500,7 +502,9 @@
 		let sessionName = session && session.session_name ? session.session_name : sessionId;
 		if (confirm(`<%- t('activities.delete.confirm', { ns : 'activities', activity : '${activityName}', session: '${sessionName}' , SIMLET : '${simlet.simlet_name}' }) %>`)) {
 			Simva.deleteActivity(simletId, sessionId, activityId, function(error, result) {
-				onEditSessionActivities(sessionId);
+				if (!error) {
+					onEditSessionActivities(sessionId);
+				}
 			});
 		}
 	}
@@ -511,11 +515,20 @@
 	
 	const exportActivity = function(activityId) {
 		Simva.exportActivity(activityId, true, (error, result) => {
-			if (!error){
-				const session = getSessionFromId(result.session_id);
-				const filename = `${getActivityFilenamePrefix(session, result)}-export.json`;
-				Utils.downloadContent(JSON.stringify(result, null, 2), filename);
+			if (error) {
+				$.toast({
+					heading: "<%- t('export.error_toast.heading', { ns : 'commons' }) %>",
+					text: error.responseJSON ? error.responseJSON.message : error.message || error,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+				return;
 			}
+
+			const session = getSessionFromId(result.session_id);
+			const filename = `${getActivityFilenamePrefix(session, result)}-export.json`;
+			Utils.downloadContent(JSON.stringify(result, null, 2), filename);
 		});
 	}
 
@@ -530,16 +543,17 @@
 			if(error){
 				$.toast({
 					heading: errorMsg,
-					text: error.message,
+					text: error.responseJSON ? error.responseJSON.message : error.message || error,
 					position: 'top-right',
 					icon: 'error',
 					stack: false
 				});
-			} else {
-				const session = getSessionFromId(activity.session_id);
-				const filename = `${getActivityFilenamePrefix(session, activity)}-full_xapi_data_.ndjson`;
-				Utils.downloadContent(result.data, filename, errorMsg);
+				return;
 			}
+
+			const session = getSessionFromId(activity.session_id);
+			const filename = `${getActivityFilenamePrefix(session, activity)}-full_xapi_data_.ndjson`;
+			Utils.downloadContent(result.data, filename, errorMsg);
 		});
 	}
 
@@ -553,17 +567,18 @@
 			if(error){
 				$.toast({
 					heading: errorMsg,
-					text: error.message,
+					text: error.responseJSON ? error.responseJSON.message : error.message || error,
 					position: 'top-right',
 					icon: 'error',
 					stack: false
 				});
-			} else {
-				const activity = getActivityFromId(downloadActivityId);
-				const session = getSessionFromId(activity.session_id);
-				const filename = `${getActivityFilenamePrefix(session, activity)}-test_xapi_data_.ndjson`;
-				Utils.downloadContent(result.data, filename, errorMsg);
+				return;
 			}
+
+			const activity = getActivityFromId(downloadActivityId);
+			const session = getSessionFromId(activity.session_id);
+			const filename = `${getActivityFilenamePrefix(session, activity)}-test_xapi_data_.ndjson`;
+			Utils.downloadContent(result.data, filename, errorMsg);
 		});
 	}
 
@@ -589,10 +604,10 @@
 
 	const setCompletionForAllParticipant = function(activityId, status) {
 		Simva.setMultiActivityCompletion(activityId, status, (error, result) => {
-			if (error){
+			if (error) {
 				$.toast({
 					heading: "<%- t('activities.set_completion.error_toast.heading', { ns : 'activities' }) %>",
-					text: error.message,
+					text: error.responseJSON ? error.responseJSON.message : error.message || error,
 					position: 'top-right',
 					icon: 'error',
 					stack: false

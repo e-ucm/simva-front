@@ -105,61 +105,57 @@ const schedulerTestMode = typeof testMode !== 'undefined' && testMode;
 
 	$(document).ready(function () {
 		Simva.getLanguage(function (error, result) {
-			if (error) {
-				console.log(error.message);
-			}
-			else {
-				// No language selected
-				if (!result.current) {
-					let newLangCode;
+			if (error) return;
 
-					const preferredLangs = navigator.languages;
-					console.log(`The Preferred languages are: ${preferredLangs}.`);
+			// No language selected
+			if (!result.current) {
+				let newLangCode;
 
-					// Set the newLangCode to the first language of the preferred 
-					// navigator languages that is included in the available languages
-					if (Array.isArray(result.languages)) {
-						preferredLangs.forEach((lang) => {
-							if (!newLangCode && result.languages.find(language => language.code === lang)) {
-								newLangCode = lang;
-							}
-						});
-					}
-					// If none of the preferred navigator languages is in the 
-					// available languages, set newLangCode to the default one
-					if (!newLangCode && result.default) {
-						newLangCode = result.default;
-					}
+				const preferredLangs = navigator.languages;
+				console.log(`The Preferred languages are: ${preferredLangs}.`);
 
-					// If no language has been selected before and there's a 
-					// default language to change to, update the language
-					if (!currentUrl.includes("lng=") && newLangCode) {
-						updateLanguage(newLangCode);
-						return;
-					}
-				}
-				
-				// If there are any available languages
+				// Set the newLangCode to the first language of the preferred 
+				// navigator languages that is included in the available languages
 				if (Array.isArray(result.languages)) {
-					// Get the language whose code matches the current language code
-					const currentlanguage = result.languages.find(language => language.code === result.current);
-					currentlanguageCode = currentlanguage.code;
-
-					// Iterate over all the available languages
-					result.languages.forEach((lang) => {
-						// Add a new option to the dropdown
-						$("#language-dropdown").append($('<option>', {
-							value: lang.code,
-							text: `${result.flags[lang.code] || result.flags["default"]} ${lang.name}`
-						}));
-
-						// Set the current language as the selected option
-						if (lang.code == currentlanguageCode) {
-							$("#language-dropdown").val(lang.code)
+					preferredLangs.forEach((lang) => {
+						if (!newLangCode && result.languages.find(language => language.code === lang)) {
+							newLangCode = lang;
 						}
 					});
 				}
-				
+				// If none of the preferred navigator languages is in the 
+				// available languages, set newLangCode to the default one
+				if (!newLangCode && result.default) {
+					newLangCode = result.default;
+				}
+
+				// If no language has been selected before and there's a 
+				// default language to change to, update the language
+				if (!currentUrl.includes("lng=") && newLangCode) {
+					updateLanguage(newLangCode);
+					return;
+				}
+			}
+			
+			// If there are any available languages
+			if (Array.isArray(result.languages)) {
+				// Get the language whose code matches the current language code
+				const currentlanguage = result.languages.find(language => language.code === result.current);
+				currentlanguageCode = currentlanguage.code;
+
+				// Iterate over all the available languages
+				result.languages.forEach((lang) => {
+					// Add a new option to the dropdown
+					$("#language-dropdown").append($('<option>', {
+						value: lang.code,
+						text: `${result.flags[lang.code] || result.flags["default"]} ${lang.name}`
+					}));
+
+					// Set the current language as the selected option
+					if (lang.code == currentlanguageCode) {
+						$("#language-dropdown").val(lang.code)
+					}
+				});
 			}
 		});
 	});
@@ -170,26 +166,23 @@ const schedulerTestMode = typeof testMode !== 'undefined' && testMode;
 	}
 
 	const updateLanguage = function (newLangCode) {
-		Simva.updateLanguage(newLangCode, function (updateError) {
-			if (updateError) {
-				console.log(updateError.message);
-			}
-			else {
-				// If the current url has query parameters
-				if (currentUrl.includes("?")) {
-					// If the current url already has the lng parameter, replace its value with the new owe
-					if (currentUrl.includes("lng=")) {
-						window.location.href = currentUrl.replace(`lng=${currentlanguageCode}`,`lng=${newLangCode}`);
-					}
-					// Otherwise, add the lng parameter to the existing query parameters
-					else {
-						window.location.href = `${currentUrl}&lng=${newLangCode}`;
-					}
+		Simva.updateLanguage(newLangCode, function (error, result) {
+			if (error) return;
+			
+			// If the current url has query parameters
+			if (currentUrl.includes("?")) {
+				// If the current url already has the lng parameter, replace its value with the new owe
+				if (currentUrl.includes("lng=")) {
+					window.location.href = currentUrl.replace(`lng=${currentlanguageCode}`,`lng=${newLangCode}`);
 				}
-				// Otherwise, add a new query with the selected lng parameter  
+				// Otherwise, add the lng parameter to the existing query parameters
 				else {
-					window.location.href = `${currentUrl}?lng=${newLangCode}`;
+					window.location.href = `${currentUrl}&lng=${newLangCode}`;
 				}
+			}
+			// Otherwise, add a new query with the selected lng parameter  
+			else {
+				window.location.href = `${currentUrl}?lng=${newLangCode}`;
 			}
 		});
 	}

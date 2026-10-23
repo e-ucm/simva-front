@@ -28,6 +28,7 @@
     "forms.edit.error.no_changes": "No se detectaron cambios.",
     "forms.edit.error.invalid_character": "Solo se permiten caracteres alfanuméricos (A-Z, a-z, 0-9) y espacios.",
 
-    "download.wait_message": "Generando el archivo con los datos. Este proceso puede tardar un rato."
+    "download.wait_message": "Generando el archivo con los datos. Este proceso puede tardar un rato.",
+    "export.error_toast.heading.": "Error al exportar el archivo"
 
 }

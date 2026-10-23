@@ -151,28 +151,40 @@ the elements and scripts defined in the simlet_commons partial -->
 		
 
 		// Get the current user, store it, and paint the rest of the SIMLET
-		Simva.getCurrentUser((error, user) => {
-			if (!error) {
-				Simva.getUser(user.username, function(error, result) {
-					currentUser = result;
-					participantsById.set(currentUser.user_id, currentUser);
-					participantsByUsername.set(currentUser.username, currentUser);
-					
-					updateSandboxGroups(() => {
-						updateSimletInfo(true);
-					});
-				});
-			} else {
-				console.error("Error fetching current user:", error);
+		Simva.getCurrentUser((error, result) => {
+			const showError = () => {
+				console.error("Error fetching current user:", error.responseJSON ? error.responseJSON.message : error.message || error);
 				currentUser = null;
 				// Optionally, display an error message to the user
 				alert("Error fetching user information. Some features may not work properly.");
 			}
+
+			if (error) {
+				showError();
+				return;
+			}
+			
+			Simva.getUser(result.username, function(error, result) {
+				if (error) {
+					showError();
+					return;
+				} 
+
+				currentUser = result;
+				participantsById.set(currentUser.user_id, currentUser);
+				participantsByUsername.set(currentUser.username, currentUser);
+				
+				updateSandboxGroups(() => {
+					updateSimletInfo(true);
+				});
+			});
 		});
 
 		Simva.getShLink(simletId, (error, result) => {
-			shlink = result;
-			paintShlink();
+			if (!error) {
+				shlink = result;
+				paintShlink();
+			}
 		});
 	});
 
@@ -303,7 +315,7 @@ the elements and scripts defined in the simlet_commons partial -->
 				}
 			} 
 			else {
-				console.error(error);
+				console.error(error.responseJSON ? error.responseJSON.message : error.message || error);
 			}
 
 			if (callback != null && typeof callback === "function") {
@@ -507,88 +519,86 @@ the elements and scripts defined in the simlet_commons partial -->
 
 		// Create an instance of SSEClientManager
 		Simva.getSimletEventsPresignedUrl(simletId, function(error, result) {
-			if (!error) {
-				const sseClient = new SSEClientManager(result.url);
+			if (error) return;
+			
+			const sseClient = new SSEClientManager(result.url);
 
-				// Listen for connection open event
-				sseClient.on('open', () => {
-					console.log('Connection to SSE server established.');
-				});
+			// Listen for connection open event
+			sseClient.on('open', () => {
+				console.log('Connection to SSE server established.');
+			});
 
-				// Listen for general messages (default "message" event)
-				sseClient.on('message', (data) => {
-					console.debug('New message from server:', data);
-					// Update UI or process data here
-				});
+			// Listen for general messages (default "message" event)
+			sseClient.on('message', (data) => {
+				console.debug('New message from server:', data);
+				// Update UI or process data here
+			});
 
-				// Handle custom event types from the server (if applicable)
-				// Example: You might send events like "activity_initialized" from the server
-				sseClient.triggerEvent('activity_initialized');
-				sseClient.on('activity_initialized', (data) => {
-					const activityId = data.activity_id;
-					const painter = getActivityPainterByType(data.activity_type);
-					if (painter != null) {
-						painter.updateActivityProgress(activityId, resolveParticipantKey(activityId, data), 0);
-						
-					}
-				});
-
-				// Handle custom event types from the server (if applicable)
-				// Example: You might send events like "activity_progressed" from the server
-				sseClient.triggerEvent('activity_progressed');
-				sseClient.on('activity_progressed', (data) => {
-					const activityId = data.activity_id;
-					const val = data.progress ?? data.value;
-					const painter = getActivityPainterByType(data.activity_type);
-					if (painter != null) {
-						painter.updateActivityProgress(activityId, resolveParticipantKey(activityId, data), val);
-					}
-				});
-
-				// Handle custom event types from the server (if applicable)
-				// Example: You might send events like "activity_completed" from the server
-				sseClient.triggerEvent('activity_completed');
-				sseClient.on('activity_completed', (data) => {
-					const activityId = data.activity_id;
-					const status = data.status ?? data.value ?? true;
-					const painter = getActivityPainterByType(data.activity_type);
-					if (painter != null) {
-						painter.updateActivityCompletion(activityId, resolveParticipantKey(activityId, data), status);
-					}
-				});
-				
-				sseClient.triggerEvent('survey_saved');
-				sseClient.on('survey_saved', (data) => {
-					if ($("#limesurvey_extra_form").is(":visible")) {
-						paintSurveysList(null, data.surveyId);
-					}
+			// Handle custom event types from the server (if applicable)
+			// Example: You might send events like "activity_initialized" from the server
+			sseClient.triggerEvent('activity_initialized');
+			sseClient.on('activity_initialized', (data) => {
+				const activityId = data.activity_id;
+				const painter = getActivityPainterByType(data.activity_type);
+				if (painter != null) {
+					painter.updateActivityProgress(activityId, resolveParticipantKey(activityId, data), 0);
 					
-				});
+				}
+			});
+
+			// Handle custom event types from the server (if applicable)
+			// Example: You might send events like "activity_progressed" from the server
+			sseClient.triggerEvent('activity_progressed');
+			sseClient.on('activity_progressed', (data) => {
+				const activityId = data.activity_id;
+				const val = data.progress ?? data.value;
+				const painter = getActivityPainterByType(data.activity_type);
+				if (painter != null) {
+					painter.updateActivityProgress(activityId, resolveParticipantKey(activityId, data), val);
+				}
+			});
+
+			// Handle custom event types from the server (if applicable)
+			// Example: You might send events like "activity_completed" from the server
+			sseClient.triggerEvent('activity_completed');
+			sseClient.on('activity_completed', (data) => {
+				const activityId = data.activity_id;
+				const status = data.status ?? data.value ?? true;
+				const painter = getActivityPainterByType(data.activity_type);
+				if (painter != null) {
+					painter.updateActivityCompletion(activityId, resolveParticipantKey(activityId, data), status);
+				}
+			});
+			
+			sseClient.triggerEvent('survey_saved');
+			sseClient.on('survey_saved', (data) => {
+				if ($("#limesurvey_extra_form").is(":visible")) {
+					paintSurveysList(null, data.surveyId);
+				}
 				
-				sseClient.triggerEvent('ping');
-				sseClient.on('ping', (data) => {
-					console.debug('ping:', data);
-				});
+			});
+			
+			sseClient.triggerEvent('ping');
+			sseClient.on('ping', (data) => {
+				console.debug('ping:', data);
+			});
 
-				sseClient.triggerEvent('refresh_auth');
-				sseClient.on('refresh_auth', (data) => {
-					console.debug('refresh_auth:', data);
-					Simva.refreshAuth((error, data) => {
-						if (error) {
-							console.error(error);
-						} else {
-							console.debug(data);
-						}
-					});
-				});
-
-				// Close the SSE connection when it's no longer needed
-				window.addEventListener('beforeunload', () => {
-					if (sseClient) {
-						sseClient.closeConnection(); // Call closeConnection method
+			sseClient.triggerEvent('refresh_auth');
+			sseClient.on('refresh_auth', (data) => {
+				console.debug('refresh_auth:', data);
+				Simva.refreshAuth((error, data) => {
+					if (!error) {
+						console.debug(data);
 					}
 				});
-			}
+			});
+
+			// Close the SSE connection when it's no longer needed
+			window.addEventListener('beforeunload', () => {
+				if (sseClient) {
+					sseClient.closeConnection(); // Call closeConnection method
+				}
+			});
 		});
 	}
 </script>

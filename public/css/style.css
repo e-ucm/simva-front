@@ -1109,7 +1109,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 }
 .icon-survey::before, .icon-edit-survey::before { background-image: url("../images/icons/questionnaire.png"); }
 .icon-survey::before { width: 24px; height: 24px; }
-input[type="button"].openLimesurveyButton { 
+input[type="button"].openLimeSurveyButton { 
 	background-color: #3f8446;
 	width: auto;
 	margin-left: auto;

@@ -411,6 +411,8 @@
 
 		// Get all the available allocator types, and add them as options in the change allocator form
 		Simva.getAllocatorTypes(function(error, result) {
+			if (error) return;
+			
 			result.forEach((allocatorType) => {
 				const painter = getAllocatorPainterByType(allocatorType.allocator_type);
 				if (painter != null) {
@@ -456,11 +458,11 @@
 					Utils.toggleSubmit();
 					if (error) {
 						errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+						return;
 					}
-					else {
-						Utils.toggleFormInFloating();
-						onSupervisorsChanged();
-					}
+
+					Utils.toggleFormInFloating();
+					onSupervisorsChanged();
 				});
 			});
 
@@ -485,15 +487,14 @@
 						// Always extract base64 payload from data URL
 						raw = raw.substr(raw.indexOf(',') + 1);
 						const newGroup = raw;
-						Simva.importGroup(simletId, {file: newGroup, group_name: form.groupName}, function(importError, result) {
+						Simva.importGroup(simletId, {file: newGroup, group_name: form.groupName}, function(error, result) {
 							Utils.toggleSubmit();
-							if (importError) {
-								errorbox.text(importError.responseJSON ? importError.responseJSON.message : importError.message || importError);
+							if (error) {
+								errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
 								return;
-							} else {
-								Utils.toggleFormInFloating();
-								onCreateOrEditGroup(result);
 							}
+							Utils.toggleFormInFloating();
+							onCreateOrEditGroup(result);
 						});
 					} catch (parseError) {
 						Utils.toggleSubmit();
@@ -525,17 +526,17 @@
 					if (error) {
 						Utils.toggleSubmit();
 						errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+						return;
 					}
-					else {
-						// Fake a wait time and open the add participants form in the batch tab
-						setTimeout(() => {
-							Utils.toggleSubmit();
-							Utils.toggleFormInFloating();
-							openParticipantForm(result.group_id);
-							Utils.changeTab($('#add_batch_tab_button'), 'add_participant_form','batch_participant_tab');
-							onCreateOrEditGroup(result);
-						}, 200);
-					}
+					
+					// Fake a wait time and open the add participants form in the batch tab
+					setTimeout(() => {
+						Utils.toggleSubmit();
+						Utils.toggleFormInFloating();
+						openParticipantForm(result.group_id);
+						Utils.changeTab($('#add_batch_tab_button'), 'add_participant_form','batch_participant_tab');
+						onCreateOrEditGroup(result);
+					}, 200);
 				});
 			}
 			// Editing group
@@ -704,11 +705,11 @@
 				Utils.toggleSubmit();
 				if (error) {
 					errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+					return;
 				}
-				else {
-					Utils.toggleFormInFloating();
-					onCreateParticipants(ADD_METHOD_NEW, currGroupId, result);
-				}
+				
+				Utils.toggleFormInFloating();
+				onCreateParticipants(ADD_METHOD_NEW, currGroupId, result);
 			});
 
 			return false;
@@ -724,11 +725,11 @@
 			Simva.generateAndRegister(simletId, currGroupId, form.algorithm, form.length, form.amount, (error, result) => {
 				if (error) {
 					errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+					return;
 				}
-				else {
-					Utils.toggleFormInFloating();
-					onCreateParticipants(ADD_METHOD_BATCH, currGroupId, result);
-				}
+				
+				Utils.toggleFormInFloating();
+				onCreateParticipants(ADD_METHOD_BATCH, currGroupId, result);
 			});
 			return false;
 		});
@@ -762,10 +763,11 @@
 					Utils.toggleSubmit();
 					if (error) {
 						errorbox.text(error.responseJSON ? error.responseJSON.message : error.message);
-					} else {
-						Utils.toggleFormInFloating();
-						onChangeGroupAllocator(result);
-					}
+						return;
+					} 
+					
+					Utils.toggleFormInFloating();
+					onChangeGroupAllocator(result);
 				});
 			}
 			
@@ -997,22 +999,23 @@
     
 	const changeSupervisorPermissions = function(userId, username, dropdown) {
 		Simva.patchSimletPermissionsForUser(simletId, userId, { user_id: userId, username: username, permission: dropdown.val(), isCurrentUser: false }, function(error, result) {
-			if (!error) {
-				$.toast({
-					heading: "<%- t('supervisors.change_permissions.toast.heading', { ns : 'groups' }) %>",
-					position: 'top-right',
-					icon: 'success',
-					stack: false
-				});
-			}
-			else {
+			if (error) {
 				$.toast({
 					heading: "<%- t('supervisors.change_permissions.error_toast.heading', { ns : 'groups' }) %>",
+					text: error.responseJSON ? error.responseJSON.message : error.message || error,
 					position: 'top-right',
 					icon: 'error',
 					stack: false
 				});
+				return;
 			}
+			
+			$.toast({
+				heading: "<%- t('supervisors.change_permissions.toast.heading', { ns : 'groups' }) %>",
+				position: 'top-right',
+				icon: 'success',
+				stack: false
+			});
 		});
 	}
 
@@ -1062,13 +1065,20 @@
 
 	const exportGroup = function(groupId) {
 		Simva.exportGroup(simletId, groupId, true, function(error, result) {
-			if (!error) {
-				const content = JSON.stringify(result, null, 2);
-				const filename = `simlet_${simlet.simlet_name}-group_${result.group_name}-export.json`;
-				Utils.download(filename, content);
-			} else {
-				alert(error.responseJSON ? error.responseJSON.message : (error.message || error));
+			if (error) {
+				$.toast({
+					heading: "<%- t('export.error_toast.heading', { ns : 'commons' }) %>",
+					text: error.responseJSON ? error.responseJSON.message : error.message || error,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+				return;
 			}
+			
+			const content = JSON.stringify(result, null, 2);
+			const filename = `simlet_${simlet.simlet_name}-group_${result.group_name}-export.json`;
+			Utils.download(filename, content);
 		});
 	}
 
@@ -1091,31 +1101,32 @@
 
 		let participantInfo = participantId == null ? { } : { participant_id: participantId };
 		Simva.allocateToSession(simletId, groupId, sessionId, participantInfo, function(error, result) {
-			if (!error) {
-				// Update both the previous and the current session users
-				if (prevSessionId > NO_SESSION_ID) {
-					onSessionUsersChange(prevSessionId);
-				}
-				onSessionUsersChange(sessionId);
-				
-				$.toast({
-					heading: "<%- t('allocators.update.toast.heading', { ns : 'groups' }) %>",
-					position: 'top-right',
-					icon: 'success',
-					stack: false
-				});
-			}
-			else {
+			if (error) {
 				const dropdown = participantId == null ? $(`#allocation_group_${groupId}`) : $(`#allocation_${groupId}_${participantId}`);
 				dropdown.val(prevSessionId);
+				
 				$.toast({
 					heading: "<%- t('allocators.update.error_toast.heading', { ns : 'groups' }) %>",
-					text: error.message,
+					text: error.responseJSON ? error.responseJSON.message : error.message || error,
 					position: 'top-right',
 					icon: 'error',
 					stack: false
 				});
+				return;
 			}
+
+			// Update both the previous and the current session users
+			if (prevSessionId > NO_SESSION_ID) {
+				onSessionUsersChange(prevSessionId);
+			}
+			onSessionUsersChange(sessionId);
+			
+			$.toast({
+				heading: "<%- t('allocators.update.toast.heading', { ns : 'groups' }) %>",
+				position: 'top-right',
+				icon: 'success',
+				stack: false
+			});
 		});
 	}
 
@@ -1205,8 +1216,8 @@
 		dropdown.prop("disabled", blockChanges);
 		row.find(".red").prop("disabled", blockChanges);
 	}
-
 	
+
 	const GROUPS_SHOW_AT_ONCE = 4;
 	let groupsFilteringPaginationData = $("#groups_filtering").data();
 
@@ -1246,25 +1257,27 @@
 		
 		// Get only the sandbox groups and remove them from the SIMLET groups list to correctly display the no groups message
 		Simva.getSimletGroups(simletId, { sandbox: true }, function(error, result) {
-			result.forEach((group) => {
-				const index = simlet.groups.indexOf(group.group_id);
-				if (index > -1) {
-					simlet.groups.splice(index, 1);
-				}
-			});
+			if (!error) {
+				result.forEach((group) => {
+					const index = simlet.groups.indexOf(group.group_id);
+					if (index > -1) {
+						simlet.groups.splice(index, 1);
+					}
+				});
 			
-			// Then, get only the non sandbox groups and paint them
-			Simva.getSimletGroups(simletId, groupsFilteringPaginationData["searchParams"], function(error, result) {
-				if (!error) {
-					paintGroupBatch(result);
-					$("#groups_loader").hide();
+				// Then, get only the non sandbox groups and paint them
+				Simva.getSimletGroups(simletId, groupsFilteringPaginationData["searchParams"], function(error, result) {
+					if (!error) {
+						paintGroupBatch(result);
+						$("#groups_loader").hide();
 
-					// Once all results have loaded, allow the bottom reached check
-					// just in case more results fit on the screen
-					groupsFilteringPaginationData["checkBottomReached"] = true;
-					groupsFilteringPaginationData["bottomReached"]();
-				}
-			});
+						// Once all results have loaded, allow the bottom reached check
+						// just in case more results fit on the screen
+						groupsFilteringPaginationData["checkBottomReached"] = true;
+						groupsFilteringPaginationData["bottomReached"]();
+					}
+				});
+			}
 		});
 
 	}
@@ -1428,9 +1441,7 @@
 		else {
 			Simva.getSimletSessions(simletId, function(error, result) {
 				if (!error) {
-					sessionsById = new Map(
-						result.map(obj => [obj.session_id, obj])
-					);
+					sessionsById = new Map(result.map(obj => [obj.session_id, obj]));
 					onLoadComplete();
 				}
 			})

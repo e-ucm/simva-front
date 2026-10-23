@@ -293,12 +293,11 @@
 					Utils.toggleSubmit();
 					if (error) {
 						errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+						return;
 					}
-					else {
-						Utils.toggleFormInFloating();
-						if (onCreateSimlet != null && typeof onCreateSimlet === "function") {
-							onCreateSimlet(result);
-						}
+					Utils.toggleFormInFloating();
+					if (onCreateSimlet != null && typeof onCreateSimlet === "function") {
+						onCreateSimlet(result);
 					}
 				});
 			}
@@ -317,8 +316,9 @@
 						Utils.toggleSubmit();
 						if (error) {
 							errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+							return;
 						}
-						else if (onEditSimlet != null && typeof onEditSimlet === "function") {
+						if (onEditSimlet != null && typeof onEditSimlet === "function") {
 							Utils.toggleFormInFloating();
 							onEditSimlet(result);
 						}
@@ -336,25 +336,8 @@
 			errorbox.text("");
             Utils.toggleSubmit();
 
-            let custom_slug = form.custom_slug;
-            
-            Simva.generateShlink(currSimletId, custom_slug, null, (error, result) => {
-				Utils.toggleSubmit();
-                if (!error) {
-					shlink = result;
-                    const shortUrl = shlink.shortUrl;
-                    // Copy the text inside the text field
-                    navigator.clipboard.writeText(shortUrl);
-                    // Alert Short URL
-                    alert(shortUrl);
-                    Utils.toggleFormInFloating();
-					if (onEditShlink != null && typeof onEditShlink === "function") {
-						onEditShlink();
-					}
-                } 
-                else {
-                    errorbox.text(error.message);
-                }
+            Simva.generateShlink(currSimletId, form.custom_slug, null, (error, result) => {
+                onGenerateURL(error, result);
             });
 
             return false;
@@ -373,22 +356,7 @@
         	}
             
             Simva.generateShlink(currSimletId, null, length, (error, result) => {
-                Utils.toggleSubmit();
-                if (!error) {
-                    shlink = result;
-                    const shortUrl = shlink.shortUrl;
-                    // Copy the text inside the text field
-                    navigator.clipboard.writeText(shortUrl);
-                    // Alert Short URL
-                    alert(shortUrl);
-                    Utils.toggleFormInFloating();
-					if (onEditShlink != null && typeof onEditShlink === "function") {
-						onEditShlink();
-					}
-                } 
-                else {
-                    errorbox.text(error.message);
-                }
+                onGenerateURL(error, result);
             });
             return false;
         });
@@ -396,6 +364,28 @@
 
 
     // --- URL FORM ---
+
+	const onGenerateURL = function(error, result) {
+		Utils.toggleSubmit();
+		shlink = null;
+		if (error) {
+			errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+			return;
+		}
+
+		shlink = result;
+		const shortUrl = shlink.shortUrl;
+
+		// Copy the shortUrl to the clipboard
+		navigator.clipboard.writeText(shortUrl);
+		alert(shortUrl);
+
+		Utils.toggleFormInFloating();
+		if (onEditShlink != null && typeof onEditShlink === "function") {
+			onEditShlink();
+		} 
+	}
+	
 
     const openUrlSettingsForm = function(simletId, simletName) {
 		// Always open form in the generate random link with length tab
@@ -406,15 +396,15 @@
         currSimletId = simletId;
 		shlink = null;
 		Simva.getShLink(simletId, (error, result) => {
-			if (!error) {
-				shlink = result;
-				const shortUrl = shlink.shortUrl;
-				Utils.toggleFormInFloating('simlet_url_settings');
-				$('#shlink_url_short').val(`<%- t('scheduler.shlink.copy.message', { ns : 'SIMLETs', shlink : '${shortUrl}' }) %>`);
-			}
-			else {
+			if (error) {
 				openGenerateLinkForm();
+				return;
 			}
+			
+			shlink = result;
+			const shortUrl = shlink.shortUrl;
+			Utils.toggleFormInFloating('simlet_url_settings');
+			$('#shlink_url_short').val(`<%- t('scheduler.shlink.copy.message', { ns : 'SIMLETs', shlink : '${shortUrl}' }) %>`);
 		});
 	}
 
@@ -435,24 +425,24 @@
     const deleteShLink = function() {
 		Utils.toggleSubmit();
         Simva.getSimlet(currSimletId, (error, result) => {
-			if (!error) {
-				let shortCode = shlink.shortCode;
-				if (confirm(`<%- t('scheduler.shlink.delete.confirm', { ns : 'SIMLETs', shlink : '${shortCode}', SIMLET : '${result.simlet_name}' }) %>`)) {
-					Simva.deleteShLink(currSimletId, (error, result) => {
-						if (!error) {
-							Utils.toggleFormInFloating();
-							if (onEditShlink != null && typeof onEditShlink === "function") {
-								onEditShlink();
-							}
-						}
-					});
-				}
-				shlink = null;
-			}
-			else {
+			if (error) {
 				shlink = null;
 				Utils.toggleSubmit();
+				return;
 			}
+
+			let shortCode = shlink.shortCode;
+			if (confirm(`<%- t('scheduler.shlink.delete.confirm', { ns : 'SIMLETs', shlink : '${shortCode}', SIMLET : '${result.simlet_name}' }) %>`)) {
+				Simva.deleteShLink(currSimletId, (error, result) => {
+					if (!error) {
+						Utils.toggleFormInFloating();
+						if (onEditShlink != null && typeof onEditShlink === "function") {
+							onEditShlink();
+						}
+					}
+				});
+			}
+			shlink = null;
 		});
 	}
 
@@ -462,7 +452,7 @@
 	const archiveSimlet = function(simletId, simletName, archive = true) {
 		if(confirm(`<%- t('simlets.archive.confirm', { ns : 'SIMLETs', SIMLET : '${simletName}' }) %>`)){
 			Simva.updateSimlet(simletId, { simlet_archived: archive }, function(error, result) {
-				if (!error  && onArchiveSimlet != null && typeof onArchiveSimlet === "function") {
+				if (!error && onArchiveSimlet != null && typeof onArchiveSimlet === "function") {
 					onArchiveSimlet(result);
 				}
 			});
@@ -472,10 +462,12 @@
 	const deleteSimlet = function(simletId, simletName){
 		if(confirm(`<%- t('simlets.delete.confirm', { ns : 'SIMLETs', SIMLET : '${simletName}' }) %>`)){
 			Simva.deleteSimlet(simletId, function(response) {
-				if(response.status !== 200) {
-					// Muestra el error real para depuración
+				// Muestra el error real para depuración
+				if (response.status !== 200) {
 					alert(response.responseJSON.message);
-				} else if(onDeleteSimlet != null && typeof onDeleteSimlet === "function") {
+					return;
+				}
+				if (onDeleteSimlet != null && typeof onDeleteSimlet === "function") {
 					onDeleteSimlet(simletId);
 				}
 			});
@@ -487,11 +479,20 @@
 
 	const exportSimlet = function(simletId) {
 		Simva.exportSimlet(simletId, function(error, result) {
-			if (!error) {
-				const content = JSON.stringify(result, null, 2);
-				const filename = `simlet_${result.simlet_name}-export.json`;
-				Utils.download(filename, content);
+			if (error) {
+				$.toast({
+					heading: "<%- t('export.error_toast.heading', { ns : 'commons' }) %>",
+					text: error.responseJSON ? error.responseJSON.message : error.message || error,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+				return;
 			}
+
+			const content = JSON.stringify(result, null, 2);
+			const filename = `simlet_${result.simlet_name}-export.json`;
+			Utils.download(filename, content);
 		})
 	}
 
@@ -506,6 +507,8 @@
 
 	// Get all the existing tags and store them in allTags, tagsById, tagsByName and remainingTags
 	Simva.getTagsForSimlets(function(error, result) {
+		if (error) return;
+
 		result.forEach(tag => {
 			if (!tagsById.has(tag.tag_id)) {
 				allTags.add(tag);

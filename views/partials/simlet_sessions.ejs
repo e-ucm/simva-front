@@ -250,11 +250,10 @@
 							Utils.toggleSubmit();
 							if (error) {
 								errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+								return;
 							}
-							else {
-								Utils.toggleFormInFloating();
-								onCreateOrEditSession(result);
-							}
+							Utils.toggleFormInFloating();
+							onCreateOrEditSession(result);
 						});
 					} catch (parseError) {
 						Utils.toggleSubmit();
@@ -289,34 +288,33 @@
 					if (error) {
 						Utils.toggleSubmit();
 						errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+						return;
+					}
+					
+					const createSession = function(resultTags) {
+						Utils.toggleSubmit();
+						Utils.toggleFormInFloating();
+
+						// Since the sesion needs to be created before adding the tags, add them manually to the result info
+						if (resultTags != null) {
+							result.tags = resultTags;
+						}
+						onCreateOrEditSession(result);
+					}
+
+					if (selectedTagIds.length === 0) {
+						createSession();
 					}
 					else {
-						const createSession = function(resultTags) {
-							Utils.toggleSubmit();
-							Utils.toggleFormInFloating();
-
-							// Since the sesion needs to be created before adding the tags, add them manually to the result info
-							if (resultTags != null) {
-								result.tags = resultTags;
+						syncSessionTags(simletId, result.session_id, [], selectedTagIds, function(syncError, resultTags) {
+							if (syncError) {
+								Utils.toggleSubmit();
+								errorbox.text(syncError.responseJSON ? syncError.responseJSON.message : syncError.message || syncError);
+								return;
 							}
-							onCreateOrEditSession(result);
-						}
-
-						if (selectedTagIds.length === 0) {
-							createSession();
-						}
-						else {
-							syncSessionTags(simletId, result.session_id, [], selectedTagIds, function(syncError, resultTags) {
-								if (syncError) {
-									Utils.toggleSubmit();
-									errorbox.text(syncError.responseJSON ? syncError.responseJSON.message : syncError.message || syncError);
-								}
-								else {
-									createSession(resultTags);	
-								}
-							});
-						
-						}
+							createSession(resultTags);	
+						});
+					
 					}
 				});	
 			}
@@ -334,35 +332,33 @@
 				if (!nameChanged && !descriptionChanged && !tagsChanged) {
 					Utils.toggleSubmit();
 					errorbox.text("<%- t('forms.edit.error.no_changes', { ns : 'commons' }) %>");
+					return;
+				}
+				
+				const updateSession = () => {
+					Simva.updateSession(simletId, Number(sessionId), { session_name : form.sessionName, session_description : form.sessionDescription }, function(error, result) {
+						Utils.toggleSubmit();
+						if (error) {
+							errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+							return;
+						}
+						onCreateOrEditSession(result);
+						Utils.toggleFormInFloating();
+					});
+				}
+
+				// Update the tags first and then update the session so the result info contains the updated tags
+				if (tagsChanged) {
+					syncSessionTags(simletId, Number(sessionId), originalTagsIds, selectedTagIds, function(syncError) {
+						if (syncError) {
+							errorbox.text(syncError.responseJSON ? syncError.responseJSON.message : syncError.message || syncError);
+							return;
+						}
+						updateSession();
+					});
 				}
 				else {
-					const updateSession = () => {
-						Simva.updateSession(simletId, Number(sessionId), { session_name : form.sessionName, session_description : form.sessionDescription }, function(error, result) {
-							Utils.toggleSubmit();
-							if (error) {
-								errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
-							}
-							else {
-								onCreateOrEditSession(result);
-								Utils.toggleFormInFloating();
-							}
-						});
-					}
-
-					// Update the tags first and then update the session so the result info contains the updated tags
-					if (tagsChanged) {
-						syncSessionTags(simletId, Number(sessionId), originalTagsIds, selectedTagIds, function(syncError) {
-							if (syncError) {
-								errorbox.text(syncError.responseJSON ? syncError.responseJSON.message : syncError.message || syncError);
-							}
-							else {
-								updateSession();
-							}
-						});
-					}
-					else {
-						updateSession();
-					}
+					updateSession();
 				}
 			}
 			return false;
@@ -623,7 +619,9 @@
 	const deleteSession = function(sessionId, sessionName) {
 		if (confirm(`<%- t('sessions.delete.confirm', { ns : 'sessions', session : '${sessionName}', SIMLET : '${simlet.simlet_name}' }) %>`)) {
 			Simva.deleteSession(simletId, sessionId, function(error, result) {
-				onDeleteSession(sessionId);
+				if (!error) {
+					onDeleteSession(sessionId);
+				}
 			});
 		}
 	}
@@ -648,11 +646,20 @@
 
 	const exportSession = function(sessionId) {
 		Simva.exportSession(simletId, sessionId, function(error, result) {
-			if(!error) {
-				const content = JSON.stringify(result, null, 2);
-				const filename = `${getSessionFilenamePrefix(result)}-export.json`;
-				Utils.download(filename, content);
+			if (error) {
+				$.toast({
+					heading: "<%- t('export.error_toast.heading', { ns : 'commons' }) %>",
+					text: error.responseJSON ? error.responseJSON.message : error.message || error,
+					position: 'top-right',
+					icon: 'error',
+					stack: false
+				});
+				return;
 			}
+			
+			const content = JSON.stringify(result, null, 2);
+			const filename = `${getSessionFilenamePrefix(result)}-export.json`;
+			Utils.download(filename, content);
 		})
 	}
 	
@@ -663,8 +670,8 @@
 		Simva.getSessionLRSData(simletId, null, downloadSessionId, function(error, result){
 			showSessionDownloadFormButtons(downloadSessionId);
 
+			let errorMsg = "<%- t('sessions.download.data.error_toast.heading', { ns : 'sessions' }) %>"
 			if(error) {
-				let errorMsg = "<%- t('sessions.download.data.error_toast.heading', { ns : 'sessions' }) %>"
 				$.toast({
 					heading: errorMsg,
 					text: error.responseJSON ? error.responseJSON.message : error.message,
@@ -687,8 +694,8 @@
 		Simva.getSessionTestLRSData(simletId, downloadSessionId, function(error, result){
 			showSessionDownloadFormButtons(downloadSessionId);
 			
+			let errorMsg = "<%- t('sessions.download.test_data.error_toast.heading', { ns : 'sessions' }) %>"
 			if (error) {
-				let errorMsg = "<%- t('sessions.download.test_data.error_toast.heading', { ns : 'sessions' }) %>"
 				$.toast({
 					heading: errorMsg,
 					text: error.responseJSON ? error.responseJSON.message : error.message,
@@ -712,20 +719,21 @@
             if (error) {
 				$.toast({
 					heading: "<%- t('sessions.set_tester.error_toast.heading', { ns : 'sessions' }) %>",
-					text: error.message,
+					text: error.responseJSON ? error.responseJSON.message : error.message || error,
 					position: 'top-right',
 					icon: 'error',
 					stack: false
 				});
-            } else {
-				$.toast({
-					heading: "<%- t('sessions.set_tester.toast.heading', { ns : 'sessions' }) %>",
-					position: 'top-right',
-					icon: 'success',
-					stack: false
-				});
-				onSessionUsersChange(sessionId, true);
+				return;
             }
+
+			$.toast({
+				heading: "<%- t('sessions.set_tester.toast.heading', { ns : 'sessions' }) %>",
+				position: 'top-right',
+				icon: 'success',
+				stack: false
+			});
+			onSessionUsersChange(sessionId, true);
         });
     }
 
@@ -737,20 +745,21 @@
 			if (error) {
 				$.toast({
 					heading: "<%- t('sessions.unset_tester.error_toast.heading', { ns : 'sessions' }) %>",
-					text: error.message,
+					text: error.responseJSON ? error.responseJSON.message : error.message || error,
 					position: 'top-right',
 					icon: 'error',
 					stack: false
 				});
-            } else {
-				$.toast({
-					heading: "<%- t('sessions.unset_tester.toast.heading', { ns : 'sessions' }) %>",
-					position: 'top-right',
-					icon: 'success',
-					stack: false
-				});
-				onSessionUsersChange(sessionId, true);
+				return;
             }
+
+			$.toast({
+				heading: "<%- t('sessions.unset_tester.toast.heading', { ns : 'sessions' }) %>",
+				position: 'top-right',
+				icon: 'success',
+				stack: false
+			});
+			onSessionUsersChange(sessionId, true);
 		});
 	}
 
@@ -762,19 +771,20 @@
 			if (error) {
 				$.toast({
 					heading: "<%- t('sessions.reset_tester.error_toast.heading', { ns : 'sessions' }) %>",
-					text: error.message,
+					text: error.responseJSON ? error.responseJSON.message : error.message || error,
 					position: 'top-right',
 					icon: 'error',
 					stack: false
 				});
-            } else {
-				$.toast({
-					heading: "<%- t('sessions.reset_tester.toast.heading', { ns : 'sessions' }) %>",
-					position: 'top-right',
-					icon: 'success',
-					stack: false
-				});
+				return;
             }
+
+			$.toast({
+				heading: "<%- t('sessions.reset_tester.toast.heading', { ns : 'sessions' }) %>",
+				position: 'top-right',
+				icon: 'success',
+				stack: false
+			});
 		});
 	}
 
@@ -864,20 +874,20 @@
 
 			// Then, update and fill the card info asynchronously since the order of execution doesn't matter once it's been added
 			Simva.getSimletSessionComplete(simletId, session.session_id, (error, result) => {
-				if(!error) {
-					session = result;
-					completeSessionsById.set(session.session_id, session);
-					// Store the complete participants and activities
-					session.completeParticipants.forEach((participant) => {
-						participantsById.set(participant.user_id, participant);
-						participantsByUsername.set(participant.username, participant);
-					});
-					session.completeActivities.forEach((activity) => {
-						completeActivitiesById.set(activity.activity_id, activity);
-					})
-					
-					fillSessionCard(session, card);
-				}
+				if (error) return;
+
+				session = result;
+				completeSessionsById.set(session.session_id, session);
+				// Store the complete participants and activities
+				session.completeParticipants.forEach((participant) => {
+					participantsById.set(participant.user_id, participant);
+					participantsByUsername.set(participant.username, participant);
+				});
+				session.completeActivities.forEach((activity) => {
+					completeActivitiesById.set(activity.activity_id, activity);
+				})
+				
+				fillSessionCard(session, card);
 			});
 		
 		});
@@ -1215,7 +1225,7 @@
 			
 			completeGroupsById.forEach((group, groupId) => {
 				Simva.getGroup(simletId, group.group_id, (error, result) => {
-					if(!error) {
+					if (!error) {
 						completeGroupsById.set(group.group_id, result);
 					};
 					allGroupsUpdated();
@@ -1434,8 +1444,8 @@
 					errorBox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
 					return;
 				}
-				closeTagEditor();
 
+				closeTagEditor();
 				updateAndRenderCurrentTags(function(loadError) {
 					if (loadError) {
 						errorBox.text(loadError.responseJSON ? loadError.responseJSON.message : loadError.message || loadError);

@@ -215,6 +215,7 @@
 	 */
     const paintSurveysList = function(activity, autoSelectSurveyId) {
         $("#existing_survey_field").empty();
+
         Simva.getSurveyList(function(error, result) {
             // Add a default no surveys option
             $("#existing_survey_field").append($("<option>", {
@@ -223,36 +224,35 @@
                 hidden: true,
                 text: "<%- t('activities.limeSurvey_activity.existing.no_surveys.message', { ns : 'activities' }) %>",
             }));
+
             if (error) {
                 console.error('Error fetching survey list:', error);
                 return;
             }
-            else {
-                if (result.length == 0) {
-                    return;
-                }
-
-                // If there are any surveys, remove the default no surveys option and fill the dropdown
-                $("#existing_survey_field").empty();                
-                result.forEach((survey) => {
-                    $("#existing_survey_field").append($("<option>", {
-                        value: survey.sid,
-                        text: `${survey.surveyls_title} - ${survey.sid}`,
-                    }));
-                });
-
-                // Select the first returned survey by default. If a survey has been selected by default, select it. 
-                // Otherwise, if the activity has info about the associated survey, select it 
-                let selectId = result[0].sid;
-                if (autoSelectSurveyId != null) {
-                    selectId = autoSelectSurveyId;
-                }
-                else if (activity != null) {
-                    selectId = activity.survey_id
-                }
-                $("#existing_survey_field").val(selectId);
-                loadSurveyLanguages(activity);
+            if (result.length == 0) {
+                return;
             }
+
+            // If there are any surveys, remove the default no surveys option and fill the dropdown
+            $("#existing_survey_field").empty();                
+            result.forEach((survey) => {
+                $("#existing_survey_field").append($("<option>", {
+                    value: survey.sid,
+                    text: `${survey.surveyls_title} - ${survey.sid}`,
+                }));
+            });
+
+            // Select the first returned survey by default. If a survey has been selected by default, select it. 
+            // Otherwise, if the activity has info about the associated survey, select it 
+            let selectId = result[0].sid;
+            if (autoSelectSurveyId != null) {
+                selectId = autoSelectSurveyId;
+            }
+            else if (activity != null) {
+                selectId = activity.survey_id
+            }
+            $("#existing_survey_field").val(selectId);
+            loadSurveyLanguages(activity);
         });
     }
 
@@ -265,6 +265,8 @@
         
         $("#survey_language_field").empty();
         Simva.getSurveyLanguages(surveyId, function(error, result) {
+            if (error) return;
+            
             result.list.forEach((language) => {
                 $("#survey_language_field").append($("<option>", {
                     value: language,
@@ -343,11 +345,20 @@
 	 * Open a floating window with the limesurvey edit page for the selected survey
 	 */
     const openEditLimeSurvey = function(activityData) {
-		const act = getActivityFromId(activityData[ACTIVITY_DATA_ID_KEY]);
-
-		if (act != null && act.survey_id != null) {
-			Simva.setSurveyOwner(act.activity_id, (error, result) => {
-				Utils.toggleIframeInFloating(`${editLimeSurveyUrl.replace('{{surveyId}}', act.survey_id)}`);
+		const activity = getActivityFromId(activityData[ACTIVITY_DATA_ID_KEY]);
+		if (activity != null && activity.survey_id != null) {
+			Simva.setSurveyOwner(activity.activity_id, (error, result) => {
+                if (error) {
+                    $.toast({
+                        heading: "<%- t('activities.limeSurvey_activity.edit_survey.error_toast.heading', { ns : 'activities' }) %>",
+                        text: error.responseJSON ? error.responseJSON.message : error.message || error,
+                        position: 'top-right',
+                        icon: 'error',
+                        stack: false
+                    });
+                    return;
+                }
+                Utils.toggleIframeInFloating(`${editLimeSurveyUrl.replace('{{surveyId}}', activity.survey_id)}`);
 			});
 		}
     }

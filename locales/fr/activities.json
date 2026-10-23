@@ -64,6 +64,7 @@
         "activities.limeSurvey_activity.import.message": "Charger LSS",
 
         "activities.kebab.edit_survey.title": "Modifier l'enquête",
+        "activities.limeSurvey_activity.edit_survey.error_toast.heading": "",
 
     "activities.gameplay_activity.name": "Activité de jeu",
         "activities.gameplay_activity.storage.title": "Stockage de traces",
@@ -92,7 +93,8 @@
                     "activities.gameplay_activity.platform.desktop.tracker_type.simva_unity.title": "Tracker Xasu avec le plugin Simva Unity",
                     "activities.gameplay_activity.platform.desktop.tracker_type.other.title": "Tracker personnalisé",
 
-        "activities.kebab.download.tracker_config.title": "Télécharger la configuration du tracker",
+        "activities.kebab.download_tracker_config.title": "Télécharger la configuration du tracker",
+        "activities.gameplay_activity.download_tracker_config.error_toast.heading": "",
     
     "activities.manual_activity.name": "Activité manuelle",
         "activities.manual_activity.storage.title": "Stockage de traces",

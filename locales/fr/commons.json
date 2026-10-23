@@ -28,5 +28,6 @@
     "forms.edit.error.no_changes": "Aucun changement n'a été détecté.",
     "forms.edit.error.invalid_character": "",
 
-    "download.wait_message": ""
+    "download.wait_message": "",
+    "export.error_toast.heading.": ""
 }

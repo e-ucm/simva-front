@@ -136,15 +136,14 @@
                 if (error) {
                     $.toast({
                         heading: errorHeading,
-                        text: error.message,
+                        text: error.responseJSON ? error.responseJSON.message : error.message || error,
                         position: 'top-right',
                         icon: 'error',
                         stack: false
                     });
+                    return;
                 } 
-                else {
-                    Utils.openResultContent(result[participantId], errorHeading);
-                }
+                Utils.openResultContent(result[participantId], errorHeading);
             });
         }
 
@@ -161,15 +160,14 @@
                 if (error) {
                     $.toast({
                         heading: errorHeading,
-                        text: error.message,
+                        text: error.responseJSON ? error.responseJSON.message : error.message || error,
                         position: 'top-right',
                         icon: 'error',
                         stack: false
                     });
+                    return;
                 } 
-                else {
-                    Utils.openResultContent(result.data, errorHeading);
-                }
+                Utils.openResultContent(result.data, errorHeading);
             });
         }
 
@@ -187,25 +185,25 @@
                 if (error) {
                     $.toast({
                         heading: errorHeading,
-                        text: error.message,
+                        text: error.responseJSON ? error.responseJSON.message : error.message || error,
                         position: 'top-right',
                         icon: 'error',
                         stack: false
                     });
-                } 
+                    return;
+                }
+
+                const activity = getActivityFromId(activityId);
+                const session = getSessionFromId(activity.session_id);
+                let filename = getActivityFilenamePrefix(session, activity);
+                if (participantId) {
+                    const participant = getParticipantFromId(participantId);
+                    filename += `-participant_${participant.username}-${this.supportedType}_results.${this.individualDataExtension}`;
+                    Utils.downloadContent(result[participantId], filename, errorHeading);
+                }
                 else {
-                    const activity = getActivityFromId(activityId);
-                    const session = getSessionFromId(activity.session_id);
-                    let filename = getActivityFilenamePrefix(session, activity);
-                    if (participantId) {
-                        const participant = getParticipantFromId(participantId);
-                        filename += `-participant_${participant.username}-${this.supportedType}_results.${this.individualDataExtension}`;
-                        Utils.downloadContent(result[participantId], filename, errorHeading);
-                    }
-                    else {
-                        filename += `-${this.supportedType}_results.${this.globalDataExtension}`;
-                        Utils.download(filename, JSON.stringify(result, null, 2));
-                    }
+                    filename += `-${this.supportedType}_results.${this.globalDataExtension}`;
+                    Utils.download(filename, JSON.stringify(result, null, 2));
                 }
             });
         }
@@ -224,22 +222,22 @@
                 if (error) {
                     $.toast({
                         heading: errorHeading,
-                        text: error.message,
+                        text: error.responseJSON ? error.responseJSON.message : error.message || error,
                         position: 'top-right',
                         icon: 'error',
                         stack: false
                     });
-                } else {
-                    let filename = getActivityFilenamePrefix(session, activity);
-
-                    if (participantId) {
-                        filename += `-participant_${participant.username}-${this.supportedType}_lrs_data.${this.globalDataExtension}`;
-                        
-                    } else {
-                        filename += `-${this.supportedType}_lrs_data.${this.globalDataExtension}`;
-                    }
-                    Utils.downloadContent(result.data, filename, errorHeading);
+                    return;
                 }
+                
+                let filename = getActivityFilenamePrefix(session, activity);
+                if (participantId) {
+                    filename += `-participant_${participant.username}-${this.supportedType}_lrs_data.${this.globalDataExtension}`;
+                    
+                } else {
+                    filename += `-${this.supportedType}_lrs_data.${this.globalDataExtension}`;
+                }
+                Utils.downloadContent(result.data, filename, errorHeading);
             });
         }
 
@@ -257,18 +255,19 @@
                 if (error) {
                     $.toast({
                         heading: errorHeading,
-                        text: error.message,
+                        text: error.responseJSON ? error.responseJSON.message : error.message || error,
                         position: 'top-right',
                         icon: 'error',
                         stack: false
                     });
-                } else {
-                    console.log('Minio URL for backup:', result);
-                    const activity = getActivityFromId(activityId);
-                    const session = getSessionFromId(activity.session_id);
-                    const filename = `${getActivityFilenamePrefix(session, activity)}-${this.supportedType}_backup.${this.globalDataExtension}`;
-                    Utils.downloadContent(result.url, filename, errorHeading);
+                    return;
                 }
+
+                console.log('Minio URL for backup:', result);
+                const activity = getActivityFromId(activityId);
+                const session = getSessionFromId(activity.session_id);
+                const filename = `${getActivityFilenamePrefix(session, activity)}-${this.supportedType}_backup.${this.globalDataExtension}`;
+                Utils.downloadContent(result.url, filename, errorHeading);
             });
         }
         /**
@@ -286,54 +285,55 @@
 				if (error) {
 					$.toast({
                         heading: errorHeading,
-                        text: error.message,
+                        text: error.responseJSON ? error.responseJSON.message : error.message || error,
                         position: 'top-right',
                         icon: 'error',
                         stack: false
                     });
-				} else {
-                    const activity = getActivityFromId(activityId);
-                    const session = getSessionFromId(activity.session_id);
-                    let filename = getActivityFilenamePrefix(session, activity);
-
-                    let zip = new JSZip();
-					let hasResults = false;
-					let downloadPromises = [];
-					for(const participantId in result) {
-						if (result.hasOwnProperty(participantId) && result[participantId] != null) {
-							downloadPromises.push(
-								fetch(result[participantId])
-								.then((response) => {
-									if (!response.ok) {
-										throw new Error(`HTTP ${response.status}`);
-									}
-									return response.blob();
-								})
-								.then((blob) => {
-                                    const participant = getParticipantFromId(participantId);
-                                    const userFilename = filename + `-participant_${participant.username}-${this.supportedType}_backup.${this.individualDataExtension}`;
-									zip.file(userFilename, blob);
-								})
-								.catch((error) => {
-									console.error(`Error fetching result for participant ${participantId}:`, error);
-								})
-							);
-							hasResults = true;
-						};
-					}
-					if (!hasResults) {
-                        filename += "_backup_no_data.json";
-						Utils.download(filename, JSON.stringify(result,null,2));
-					} else {
-						Promise.all(downloadPromises)
-						.then(() => zip.generateAsync({type:"blob"}))
-						.then((content) => {
-                            filename += `-${this.supportedType}_backup.zip`;
-							// see FileSaver.js
-							saveAs(content, filename);
-						});
-					}
+                    return;
 				}
+                
+                const activity = getActivityFromId(activityId);
+                const session = getSessionFromId(activity.session_id);
+                let filename = getActivityFilenamePrefix(session, activity);
+
+                let zip = new JSZip();
+                let hasResults = false;
+                let downloadPromises = [];
+                for (const participantId in result) {
+                    if (result.hasOwnProperty(participantId) && result[participantId] != null) {
+                        downloadPromises.push(
+                            fetch(result[participantId])
+                            .then((response) => {
+                                if (!response.ok) {
+                                    throw new Error(`HTTP ${response.status}`);
+                                }
+                                return response.blob();
+                            })
+                            .then((blob) => {
+                                const participant = getParticipantFromId(participantId);
+                                const userFilename = filename + `-participant_${participant.username}-${this.supportedType}_backup.${this.individualDataExtension}`;
+                                zip.file(userFilename, blob);
+                            })
+                            .catch((error) => {
+                                console.error(`Error fetching result for participant ${participantId}:`, error);
+                            })
+                        );
+                        hasResults = true;
+                    };
+                }
+                if (!hasResults) {
+                    filename += "_backup_no_data.json";
+                    Utils.download(filename, JSON.stringify(result,null,2));
+                } else {
+                    Promise.all(downloadPromises)
+                    .then(() => zip.generateAsync({type:"blob"}))
+                    .then((content) => {
+                        filename += `-${this.supportedType}_backup.zip`;
+                        // see FileSaver.js
+                        saveAs(content, filename);
+                    });
+                }
 			});
         }
 
