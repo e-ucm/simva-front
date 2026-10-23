@@ -24,6 +24,8 @@
 </div>
 
 <script type="text/javascript">
+	let totalSimletsCount = 0;
+	
 	const SHOW_AT_ONCE = 9;
 	let filteringPaginationData = $("#scheduler_filtering").data();
 
@@ -37,6 +39,14 @@
 		// update the initial search parameters and paint the initial results
 		filteringPaginationData["checkBottomReached"] = false;
 		filteringPaginationData["updateSearch"]();
+
+		// Get the total number of SIMLETs at the beginning, 
+		// since it can't be changed while being in this page
+		Simva.getSchedulerSimletsCount(function(error, result) {
+			if (!error) {
+				totalSimletsCount = result.count;
+			}
+		});
 	});
 
 	/**
@@ -82,8 +92,6 @@
 	 * @param {Array} batch - Array of objects containing the simlet info
 	 */
 	const paintSimletBatch = function(batch) {
-		filteringPaginationData = $("#scheduler_filtering").data();
-
 		batch.forEach((simlet) => {
 			// Add the SIMLET card synchronously to ensure they appear in order
 			const card = $("#simlet_card_template a").clone();
@@ -94,8 +102,8 @@
 		});
 		
 		if (batch.length == 0) {
-			// There are no SIMLETs in the current section
-			if (filteringPaginationData["totalResults"] == 0) {
+			// There are no SIMLETs
+			if (totalSimletsCount == 0) {
 				$('#no_simlets_msg').text("<%- t('scheduler.no_simlets.message', { ns : 'SIMLETs' }) %>");
 			}
 			// There are SIMLETs, but none of them matched the search parameters
