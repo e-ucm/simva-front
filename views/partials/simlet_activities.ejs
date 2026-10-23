@@ -144,7 +144,7 @@
 			if (painter == null) {
 				Utils.toggleSubmit();
 				errorbox.text("<%- t('activities.type.error.invalid_type', { ns : 'activities' }) %>");
-				return false;
+				return;
 			}
 			
 			let activityInfo = painter.getActivityInfoFromForm(form);
@@ -183,19 +183,19 @@
 					activityInfo.activity_name = Utils.trimString(activityInfo.activity_name);
 					if (JSON.stringify(prevActivityInfo) === JSON.stringify(activityInfo)) {
 						errorbox.text("<%- t('forms.edit.error.no_changes', { ns : 'commons' }) %>");
+						return;
 					}
-					else {
+
+					Utils.toggleSubmit();
+					Simva.updateActivity(simletId, currSessionId, form.editingActivityId, activityInfo, function(error, result) {
 						Utils.toggleSubmit();
-						Simva.updateActivity(simletId, currSessionId, form.editingActivityId, activityInfo, function(error, result) {
-							Utils.toggleSubmit();
-							if (error) {
-								errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
-								return;
-							}
-							Utils.toggleFormInFloating();
-							onEditSessionActivities(currSessionId);
-						});
-					}
+						if (error) {
+							errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+							return;
+						}
+						Utils.toggleFormInFloating();
+						onEditSessionActivities(currSessionId);
+					});
 				}
 			}
 
@@ -209,6 +209,7 @@
 			else {
 				submitForm();
 			}
+			
 			return false;
 		});
 
@@ -241,6 +242,7 @@
 						Utils.toggleSubmit();
 						console.error('Import error:', parseError);
 						errorbox.text("<%- t('activities.import.error.invalid_file', { ns : 'activities' }) %> " + (parseError.message ? (': ' + parseError.message) : ''));
+						return;
 					}
 				};
 				reader.readAsDataURL(fileInput.files[0]);
@@ -249,7 +251,9 @@
 			else {
 				Utils.toggleSubmit();
 				errorbox.text("<%- t('forms.import.error.no_file', { ns : 'commons' }) %>");
+				return;
 			}
+
 			return false;
 		});
 

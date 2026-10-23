@@ -310,20 +310,20 @@
 				if (!nameChanged && !descriptionChanged) {
 					Utils.toggleSubmit();
 					errorbox.text("<%- t('forms.edit.error.no_changes', { ns : 'commons' }) %>");
+					return;
 				}
-				else {
-					Simva.updateSimlet(form.editingSimletId, { simlet_name : form.simletName, simlet_description : form.simletDescription }, function(error, result) {
-						Utils.toggleSubmit();
-						if (error) {
-							errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
-							return;
-						}
-						if (onEditSimlet != null && typeof onEditSimlet === "function") {
-							Utils.toggleFormInFloating();
-							onEditSimlet(result);
-						}
-					});
-				}
+				
+				Simva.updateSimlet(form.editingSimletId, { simlet_name : form.simletName, simlet_description : form.simletDescription }, function(error, result) {
+					Utils.toggleSubmit();
+					if (error) {
+						errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+						return;
+					}
+					if (onEditSimlet != null && typeof onEditSimlet === "function") {
+						Utils.toggleFormInFloating();
+						onEditSimlet(result);
+					}
+				});
 			}
 
 			return false;
@@ -332,8 +332,6 @@
 		// When submitting the generate custom shlink form
         $(document).on('submit',"#generate_simlet_custom_slug_link_form", function(event) {
             let form = Utils.getFormData($(this));
-			let errorbox = $("#generate_link_error");
-			errorbox.text("");
             Utils.toggleSubmit();
 
             Simva.generateShlink(currSimletId, form.custom_slug, null, (error, result) => {
@@ -346,8 +344,6 @@
 		// When submitting the generate random shlink form
 		$(document).on('submit',"#generate_simlet_link_length_form", function(event) {
 			form = Utils.getFormData($(this));
-			let errorbox = $("#generate_link_error");
-			errorbox.text("");
         	Utils.toggleSubmit();
 
         	let length = 0;
@@ -358,6 +354,7 @@
             Simva.generateShlink(currSimletId, null, length, (error, result) => {
                 onGenerateURL(error, result);
             });
+
             return false;
         });
 	});
@@ -366,6 +363,9 @@
     // --- URL FORM ---
 
 	const onGenerateURL = function(error, result) {
+		let errorbox = $("#generate_link_error");
+		errorbox.text("");
+
 		Utils.toggleSubmit();
 		shlink = null;
 		if (error) {

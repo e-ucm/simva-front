@@ -51,6 +51,7 @@
         "tags.search.no_tags.message": "",
         "tags.search.all_matches": "Tous les tags correspondants sont déjà dans cette session",
         "tags.name.placeholder": "Nom du tag",
+        "tags.error.required_name": "",
         "tags.create.title": "Créer",
         "tags.save.title": "Enregistrer",
         "tags.cancel.title": "Annuler",

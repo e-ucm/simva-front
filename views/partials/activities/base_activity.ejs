@@ -233,7 +233,6 @@
                 let filename = getActivityFilenamePrefix(session, activity);
                 if (participantId) {
                     filename += `-participant_${participant.username}-${this.supportedType}_lrs_data.${this.globalDataExtension}`;
-                    
                 } else {
                     filename += `-${this.supportedType}_lrs_data.${this.globalDataExtension}`;
                 }

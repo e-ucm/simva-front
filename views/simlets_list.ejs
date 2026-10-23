@@ -126,6 +126,7 @@ the elements and scripts defined in the simlet_commons partial -->
 						Utils.toggleSubmit();
 						console.error('Import error:', parseError);
 						errorbox.text("<%- t('simlets.import.error.invalid_file', { ns : 'SIMLETs' }) %> " + (parseError.message ? (': ' + parseError.message) : ''));
+						return;
 					}
 				};
 				reader.readAsDataURL(fileInput.files[0]);
@@ -134,7 +135,9 @@ the elements and scripts defined in the simlet_commons partial -->
 			else {
 				Utils.toggleSubmit();
 				errorbox.text("<%- t('forms.import.error.no_file', { ns : 'commons' }) %>");
+				return;
 			}
+			
 			return false;
 		});
 		
@@ -217,13 +220,11 @@ the elements and scripts defined in the simlet_commons partial -->
 	});
 
 	$(document).on('click', ".simletCardTitle .icon-archive", function(e) {
-		if ($(this).hasClass("li-disabled")) {
-			return;
+		if (!$(this).hasClass("li-disabled")) {
+			const data = $(this).closest("a").data();
+			// Defined in the simlet_commons partial
+			archiveSimlet(data[SIMLET_DATA_ID_KEY], data[SIMLET_DATA_NAME_KEY], true);
 		}
-		
-		const data = $(this).closest("a").data();
-		// Defined in the simlet_commons partial
-		archiveSimlet(data[SIMLET_DATA_ID_KEY], data[SIMLET_DATA_NAME_KEY], true);
 	});
 
 	$(document).on('click', ".simletCardTitle .icon-dearchive", function(e) {

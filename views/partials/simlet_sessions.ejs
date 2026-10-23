@@ -259,6 +259,7 @@
 						Utils.toggleSubmit();
 						console.error('Import error:', parseError);
 						errorbox.text("<%- t('sessions.import.error.invalid_file', { ns : 'sessions' }) %> " + (parseError.message ? (': ' + parseError.message) : ''));
+						return;
 					}
 				};
 				reader.readAsDataURL(fileInput.files[0]);
@@ -267,7 +268,9 @@
 			else {
 				Utils.toggleSubmit();
 				errorbox.text("<%- t('forms.import.error.no_file', { ns : 'commons' }) %>");
+				return;
 			}
+
 			return false;
 		});
 
@@ -361,6 +364,7 @@
 					updateSession();
 				}
 			}
+
 			return false;
 		});
     });
@@ -1392,7 +1396,7 @@
 		errorBox.text("");
 
 		if (!tagName) {
-			errorBox.text('Tag name is required');
+			errorBox.text("<%- t('tags.error.required_name', { ns : 'sessions' }) %>");
 			return;
 		}
 
@@ -1434,9 +1438,11 @@
 
 		if (!nameChanged && !colorChanged) {
 			errorBox.text("<%- t('forms.edit.error.no_changes', { ns : 'commons' }) %>");
+			return;
 		}
 		else if ($("#session_edit_tag_name").val() == "" || $("#session_edit_tag_name").val() == null) {
-			errorBox.text('Tag name is required');
+			errorBox.text("<%- t('tags.error.required_name', { ns : 'sessions' }) %>");
+			return;
 		}
 		else {
 			Simva.updateTag(tagId, { tag_name: tagName, tag_color: tagColor }, function(error) {

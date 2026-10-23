@@ -51,6 +51,7 @@
         "tags.search.no_tags.message": "No tags yet. Press the (+) button to create one.",
         "tags.search.all_matches": "All matching tags are already in this session",
         "tags.name.placeholder": "Tag name",
+        "tags.error.required_name": "Tag name is required.",
         "tags.create.title": "Create",
         "tags.save.title": "Save",
         "tags.cancel.title": "Cancel",

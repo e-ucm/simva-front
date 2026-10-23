@@ -132,16 +132,14 @@ the elements and scripts defined in the simlet_commons partial -->
 		kebab.find(".icon-url").on("click", () => { openUrlSettingsForm(simletId, simlet.simlet_name); }).hide();
 		kebab.find(".icon-export").on("click", () => { exportSimlet(simletId); });
 		kebab.find(".icon-archive").on("click", (e) => { 
-			if($(e.target).hasClass("li-disabled") || simlet == null) {
-				return;
+			if(!$(e.target).hasClass("li-disabled") && simlet != null) {
+				archiveSimlet(simlet.simlet_id, simlet.simlet_name, true);
 			}
-			archiveSimlet(simlet.simlet_id, simlet.simlet_name, true);
 		}).hide();
 		kebab.find(".icon-dearchive").on("click", () => {
-			if (simlet == null) {
-				return;
+			if (simlet != null) {
+				archiveSimlet(simlet.simlet_id, simlet.simlet_name, false);
 			}
-			archiveSimlet(simlet.simlet_id, simlet.simlet_name, false);
 		}).hide();
 		kebab.find(".icon-delete").on("click", () => { deleteSimlet(simletId, simlet.simlet_name); }).hide();
 

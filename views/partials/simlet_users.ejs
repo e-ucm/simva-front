@@ -434,7 +434,7 @@
 				if (supervisor.username == form.name) {
 					Utils.toggleSubmit();
 					errorbox.text("<%- t('supervisors.error.already_in', { ns : 'groups' }) %>");
-					return false;
+					return;
 				}
 			});
 			
@@ -443,7 +443,7 @@
 			if (form.permission !== "READ" && form.permission !== "WRITE") {
 				Utils.toggleSubmit();
 				errorbox.text("<%- t('users.permissions.error', { ns : 'groups' }) %>");
-				return false;
+				return;
 			}
 
 			Simva.getUser(form.name, function(error, users) {
@@ -500,6 +500,7 @@
 						Utils.toggleSubmit();
 						console.error('Import error:', parseError);
 						errorbox.text("<%- t('groups.import.error.invalid_file', { ns : 'groups' }) %> " + (parseError.message ? (': ' + parseError.message) : ''));
+						return;
 					}
 				};
 				reader.readAsDataURL(fileInput.files[0]);
@@ -508,7 +509,9 @@
 			else {
 				Utils.toggleSubmit();
 				errorbox.text("<%- t('forms.import.error.no_file', { ns : 'commons' }) %>");
+				return;
 			}
+			
 			return false;
 		});
 
@@ -547,16 +550,16 @@
 				if (!nameChanged) {
 					Utils.toggleSubmit();
 					errorbox.text("<%- t('forms.edit.error.no_changes', { ns : 'commons' }) %>");
+					return;
 				}
-				else {
-					Simva.updateGroup(simletId, form.editingGroupId, { group_name : form.groupName }, function(error, result) {
-						Utils.toggleSubmit();
-						if (!error) {
-							Utils.toggleFormInFloating();
-							onCreateOrEditGroup(result);
-						}
-					});
-				}
+				
+				Simva.updateGroup(simletId, form.editingGroupId, { group_name : form.groupName }, function(error, result) {
+					Utils.toggleSubmit();
+					if (!error) {
+						Utils.toggleFormInFloating();
+						onCreateOrEditGroup(result);
+					}
+				});
 			}
 			return false;
 		});
@@ -571,18 +574,16 @@
 			
 			let errorText = "";
 
-			// Get all users in the group and store them by username
 			const group = getGroupFromId(currGroupId);
-			let groupParticipants = new Map();
-			if (group != null) {
-				groupParticipants = new Map(
-					group.completeParticipants.map(obj => [obj.username, obj])
-				);
-			}
-			else {
+			if (group == null) {
 				Utils.toggleSubmit();
-				return false;
+				return;
 			}
+			
+			// Get all users in the group and store them by username
+			let groupParticipants = new Map(
+				group.completeParticipants.map(obj => [obj.username, obj])
+			);
 
 			// Remove all the white spaces from the text area and reset the field
 			// if nothing was written or if the commas separate blank names
@@ -594,7 +595,7 @@
 				$("#existing_participant_form textarea").val("");
 				// Trigger the please fill this field message
 				$("#existing_participant_form textarea")[0].reportValidity();
-				return false;
+				return;
 			}
 			
 			let foundUsers = new Map();
@@ -621,7 +622,7 @@
 							errorText += `<%- t("participants.add_existing.error.reload_manually", { ns : "groups" }) %>\n`
 						}
 						errorbox.text(errorText.replace(/\n/g, '<br>'));
-						return false;
+						return;
 					}
 				}
 			}
@@ -656,8 +657,8 @@
 					// Otherwise, don't add any user and show all the error messages
 					else {
 						Utils.toggleSubmit();
-						errorbox.html(errorText);
-						return false;
+						errorbox.html(errorText.replace(/\n/g, '<br>'));
+						return;
 					}
 				}
 			}
@@ -749,14 +750,14 @@
 				if (painter == null) {
 					Utils.toggleSubmit();
 					errorbox.text("<%- t('allocators.type.error.invalid_type', { ns : 'groups' }) %>");
-					return false;
+					return;
 				}
 
 				const group = completeGroupsById.get(currGroupId);
 				if (group != null && group.group_allocator_type == form.type) {
 					Utils.toggleSubmit();
 					errorbox.text("<%- t('forms.edit.error.no_changes', { ns : 'commons' }) %>");
-					return false;
+					return;
 				}
 
 				Simva.updateGroup(simletId, currGroupId, { group_allocator_type: form.type }, function(error, result) {

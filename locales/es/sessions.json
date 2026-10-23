@@ -51,6 +51,7 @@
         "tags.search.no_tags.message": "Aún no hay etiquetas. Pulsa el botón (+) para crear una.",
         "tags.search.all_matches": "Todas las etiquetas que coinciden ya están en esta sesión",
         "tags.name.placeholder": "Nombre de la etiqueta",
+        "tags.error.required_name": "El nombre de la etiqueta es necesario.",
         "tags.create.title": "Crear",
         "tags.save.title": "Guardar",
         "tags.cancel.title": "Cancelar",
