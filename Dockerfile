@@ -1,9 +1,8 @@
- # stick with Debian, not Alpine
-FROM node:26.8.2-bookworm-slim AS base
+FROM node:26.12.1-alpine AS base
 WORKDIR /app
 
 # Entrypoint runs scripts with /bin/sh; ensure it's bash (not dash) for -o pipefail support
-RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates bash && \
+RUN apk add --no-cache curl ca-certificates bash git && \
     ln -sf /bin/bash /bin/sh && \
     rm -rf /var/lib/apt/lists/*
 

@@ -1,5 +1,6 @@
 var axios = require('axios');
 const logger = require('../../logger');
+const config = require('../../config');
 
 /**
  * @typedef {string} RequestUrl - url to send the request to
