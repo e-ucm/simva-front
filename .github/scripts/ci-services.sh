@@ -9,21 +9,22 @@
 #
 set -euo pipefail
 
-IMAGE="simva-front:ci"
+TARGET="${TARGET:-prod}"
+IMAGE="simva-front:ci-${TARGET}"
 CONTAINER="ci-simva-front"
 
 cache_args=()
 if [[ -n "${GITHUB_ACTIONS:-}" ]]; then
   cache_args=(
-    --cache-from "type=gha,scope=simva-front"
-    --cache-to "type=gha,mode=max,scope=simva-front"
+    --cache-from "type=gha,scope=simva-front-${TARGET}"
+    --cache-to "type=gha,mode=max,scope=simva-front-${TARGET}"
   )
 fi
 
 echo "::group::Building simva-front"
 docker buildx build \
   --load \
-  --target prod \
+  --target "${TARGET}" \
   --tag "${IMAGE}" \
   "${cache_args[@]}" \
   .
@@ -40,11 +41,21 @@ trap cleanup EXIT
 
 # The health probe starts the HTTP server directly instead of going through
 # `npm start` (PM2), so it does not depend on a PM2 ecosystem config.
+# prod runs the compiled/served app directly. dev runs the image's own CMD
+# (`npm run dev`) with the checked-out repo mounted over /app, keeping the
+# image's node_modules through an anonymous volume, as docker-compose does.
+run_args=()
+cmd=(node bin/www)
+if [[ "${TARGET}" == "dev" ]]; then
+  run_args=(-v "$(pwd):/app" -v /app/node_modules)
+  cmd=()
+fi
+
 docker rm -f "${CONTAINER}" >/dev/null 2>&1 || true
 docker run -d --name "${CONTAINER}" \
   -e SIMVA_PORT=3050 \
   -e LOG_FOLDER=/tmp \
-  "${IMAGE}" node bin/www >/dev/null
+  "${run_args[@]}" "${IMAGE}" "${cmd[@]}" >/dev/null
 
 # The probe runs inside the container through Node's built-in fetch so that the
 # check does not depend on host ports or on curl being installed in the image.
