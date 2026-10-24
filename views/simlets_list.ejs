@@ -391,11 +391,11 @@ the elements and scripts defined in the simlet_commons partial -->
 		card.find(".cardCreationDate").text(getFormattedDate(simlet.createdAt, currentlanguageCode));
 		card.find(".cardUpdateDate").text(getFormattedDate(simlet.updatedAt, currentlanguageCode));
 		card.find(".cardSessions").text(simlet.sessions.length);
-		card.find(".cardGroups").text(simlet.groups.length);
 		card.find(".simletTagsRow").append(renderTags(simlet));
 		
 		Simva.getSimletGroupsParticipantsCount(simlet.simlet_id, function(error, result) {
 			if (!error) {
+				card.find(".cardGroups").text(Object.keys(result).length);
 				let total = 0;
 				Object.entries(result).forEach(([group, count]) => {
 					total += count;

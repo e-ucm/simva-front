@@ -33,13 +33,6 @@
             this.description = "<%- t('allocators.default_allocator.description', { ns : 'groups' }) %>";
         }
 
-        getCurrentAllocation(group, participant = null) { 
-            if (participant == null) return null;
-            // If the group has the allocations property and the property has the participant
-            // id, return the session id stored for the group id. Otherwise return null
-            return (group.allocations != null && group.allocations[participant.user_id] != null) ? Number(group.allocations[participant.user_id]) : null;
-        }
-
         paintInGroup(group) {
             super.paintInGroup(group);
             
@@ -49,14 +42,14 @@
             
             const participants = group.participants;
             for (let i = 0; i < participants.length; i++) {
-                const participant = getParticipantFromId(participants[i]);
+                const participant = getUserFromId(participants[i]);
                 
                 const content = $("#default_allocator_template td").clone();
                 const dropdown = content.find("select");
                 dropdown.attr("id", `allocation_${group.group_id}_${participant.user_id}`);
                 
                 fillSessionsDropdown(dropdown);
-                selectAllocatedSession(dropdown, this.getCurrentAllocation(group, participant));
+                selectAllocatedSession(dropdown, participant.session_id || NO_SESSION_ID);
                 
                 row = $(table.find("tbody tr")).eq(i);
                 row.find('td:last').before(content);

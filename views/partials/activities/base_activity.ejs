@@ -154,7 +154,7 @@
          */
         showLRSData(activityId, participantId) {
             let errorHeading = "<%- t('activities.lrs.load.error_toast.heading', { ns : 'activities' }) %>";
-            const participant = getParticipantFromId(participantId);
+            const participant = getUserFromId(participantId);
             const activity = getActivityFromId(activityId);
             Simva.getActivityLRSData(activityId, participant ? participant.username : null, { simletId: simletId, sessionId: activity.session_id }, (error, result) => {
                 if (error) {
@@ -197,7 +197,7 @@
                 const session = getSessionFromId(activity.session_id);
                 let filename = getActivityFilenamePrefix(session, activity);
                 if (participantId) {
-                    const participant = getParticipantFromId(participantId);
+                    const participant = getUserFromId(participantId);
                     filename += `-participant_${participant.username}-${this.supportedType}_results.${this.individualDataExtension}`;
                     Utils.downloadContent(result[participantId], filename, errorHeading);
                 }
@@ -215,7 +215,7 @@
          */
         downloadLRSData(activityId, participantId) {
             let errorHeading = "<%- t('activities.lrs.download.error_toast.heading', { ns : 'activities' }) %>";
-            const participant = getParticipantFromId(participantId);
+            const participant = getUserFromId(participantId);
             const activity = getActivityFromId(activityId);
             const session = getSessionFromId(activity.session_id);
             Simva.getActivityLRSData(activityId, participant ? participant.username : null, { simletId: simletId, sessionId: activity.session_id }, (error, result) => {
@@ -310,7 +310,7 @@
                                 return response.blob();
                             })
                             .then((blob) => {
-                                const participant = getParticipantFromId(participantId);
+                                const participant = getUserFromId(participantId);
                                 const userFilename = filename + `-participant_${participant.username}-${this.supportedType}_backup.${this.individualDataExtension}`;
                                 zip.file(userFilename, blob);
                             })
@@ -393,6 +393,15 @@
             return undefined;
         }
         
+        getTotalActiveParticipants(activity, participants) {
+            let total = participants.length;
+            participants.forEach((participant) => {
+                if (!isUserIdInSession(activity.session_id, participant.user_id)) {
+                    total--;
+                }
+            });
+            return total;
+        }
                 
         // Render
         
@@ -429,7 +438,7 @@
 
             let participants = [];
             Object.keys(activity.data.completion).forEach((participantId) => {
-                const participant = getParticipantFromId(participantId);
+                const participant = getUserFromId(participantId);
                 if (participant != null) {
                     participants.push(participant);
                 }
@@ -450,7 +459,8 @@
                 row.data(USER_DATA_ID_KEY, participant.user_id);
                 table.append(row);
 
-                if (this.isParticipantOff(activity, participant)) {
+                // If the participant isn't allocated anymore to the session that has the activity, show the row as dimmed
+                if (!isUserIdInSession(activity.session_id, participant.user_id)) {
                     row.addClass("off");
                 }
 
@@ -529,7 +539,7 @@
 
         
         paintActivityInit(activity, status, participants) {
-            let total = participants.length;
+            let total = this.getTotalActiveParticipants(activity, participants);
             if (!status) {
                 // Even without status, update total if we have participant count
                 if (total > 0) {
@@ -547,7 +557,7 @@
                 if (value === true || (typeof value === "number" && value >= 1)) {
                     // Participants that aren't allocated to this session anymore keep their
                     // status, but aren't counted in the initialized progress
-                    if (!this.isParticipantOff(activity, participant)) {
+                    if (isUserIdInSession(activity.session_id, participant.user_id)) {
                         done++;
                     }
                     this.paintParticipantInit(activity.activity_id, participantKey);
@@ -558,30 +568,6 @@
             });
 
             this.paintInitBarProgress(activity.activity_id, total, done);
-        }
-
-        // Check if a participant has started the activity (its progress is a number >= 0, not ---)
-        hasProgress(activityId, participantId) {
-            const progress = parseFloat($(`#progress_${activityId}_${participantId} done`).text());
-            return !isNaN(progress) && progress >= 0;
-        }
-
-        // Check if a participant isn't allocated to the activity session anymore (their row is
-        // dimmed), so their status is kept but isn't counted in the activity progress bars
-        isParticipantOff(activity, participant) {
-            return getCurrentAllocation(participant.group_id, participant.user_id) != activity.session_id;
-        }
-
-        // Same check as isParticipantOff, but using the ids used to build the row ids of the
-        // participants table (used when the status is updated by the simlet events)
-        isParticipantOffByKey(activityId, participantKey) {
-            const activity = getActivityFromId(activityId);
-            const participant = getParticipantFromId(participantKey);
-            if (activity == null || participant == null) {
-                // If the participant or the activity can't be found, count it as usual
-                return false;
-            }
-            return this.isParticipantOff(activity, participant);
         }
 
         // Paint a single participant row as not initialized
@@ -669,7 +655,7 @@
 
         
         paintActivityCompletion(activity, status, participants) {
-            let total = participants.length;
+            let total = this.getTotalActiveParticipants(activity, participants);
             if (!status) {
                 // Even without status, update total if we have participant count
                 if (total > 0) {
@@ -688,7 +674,7 @@
                 if (value) {
                     // Participants that aren't allocated to this session anymore keep their
                     // status, but aren't counted in the completed progress
-                    if (!this.isParticipantOff(activity, participant)) {
+                    if (isUserIdInSession(activity.session_id, participant.user_id)) {
                         done++;
                     }
                     $(`#progress_${activity.activity_id}_${participantKey} .done`).removeClass("partial");
@@ -738,6 +724,13 @@
                     $(`#result_${activity.activity_id}_${participantKey}`).text("---");
                 }
             });
+        }
+        
+
+        // Check if a participant has started the activity (its progress is a number >= 0, not ---)
+        hasProgress(activityId, participantId) {
+            const progress = parseFloat($(`#progress_${activityId}_${participantId} done`).text());
+            return !isNaN(progress) && progress >= 0;
         }
         
         // Paint the result column of a single participant
@@ -797,7 +790,7 @@
          */
         updateActivityProgress(activityId, participantId, value) {
             const progress = parseInt($(`#progress_${activityId}_${participantId} done`).text());
-
+            
             // If the activity wasn't initialized (the value is 0 and it wasn't a number), paint 
             // the participant as initialized and update the initialized progress of the top bar
             if (value == 0 && isNaN(progress)) {
@@ -805,7 +798,7 @@
 
                 // Participants that aren't allocated to this session anymore keep their
                 // status, but aren't counted in the initialized progress
-                if (!this.isParticipantOffByKey(activityId, participantId)) {
+                if (isUserIdInSession(activityId, participantId)) {
                     const total = parseInt($(`#activity_${activityId} .legend .total total`).text());
                     let done = parseInt($(`#activity_${activityId} .legend .init doneres`).text());
                     done++;
@@ -846,7 +839,7 @@
 
                 // Participants that aren't allocated to this session anymore keep their
                 // status, but aren't counted in the completed progress
-                const count = !this.isParticipantOffByKey(activityId, participantId);
+                const count = isUserIdInSession(activityId, participantId);
 
                 // If the activity will be marked as completed, add another participant to
                 // the completed progress of the top bar and make its progress bar green

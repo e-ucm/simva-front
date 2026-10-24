@@ -951,7 +951,7 @@
 		group.participants.forEach((participantId) => {
 			i++;
 
-			const participant = getParticipantFromId(participantId);
+			const participant = getUserFromId(participantId);
 			let username = participant.username;
 			if (participant.isToken) {
 				username = participant.token;
@@ -1047,7 +1047,7 @@
 	const deleteParticipant = function(participantId, participantName, groupId, groupName){
 		if(confirm(`<%- t('participants.delete.confirm', { ns : 'groups',  participant : '${participantName}', group : '${groupName}' }) %>`)) {
 			// A participant will only be removed from keycloak if it's been generated as a token
-			Simva.deleteGroupParticipant(simletId, groupId, participantId, getParticipantFromId(participantId).isToken, function(response) {
+			Simva.deleteGroupParticipant(simletId, groupId, participantId, getUserFromId(participantId).isToken, function(response) {
 				if (response.status === 200) {
 					onDeleteParticipant(groupId, participantId, participantName);
 				}
@@ -1086,14 +1086,16 @@
 
 
 	const getCurrentAllocation = function(groupId, participantId = null) {
-		const group = getGroupFromId(groupId) || getSandboxGroupFromId(groupId);
-		if (group != null) {
-			const painter = getAllocatorPainterByType(group.group_allocator_type || 'default');
-			if (painter != null) {
-				const participant = (participantId == null) ? null : getParticipantFromId(participantId);
-				return painter.getCurrentAllocation(group, participant);
-			}
+		const participant = getUserFromId(participantId);
+		if (participant != null && participant.session_id) {
+			return participant.session_id;
 		}
+
+		const group = getGroupFromId(groupId);
+		if (group != null && group.allocations != null && group.allocations[group.group_id] != null) {
+			return group.allocations[group.group_id];
+		}
+
 		return null;
 	}
 
@@ -1177,47 +1179,33 @@
 		}
 	}
 	
-	
+
 	/**
 	 * Fill the supervisor table
 	 */
-	const paintSupervisors = function() {
-		Simva.getSimletPermissions(simletId, function(error, result) {
-			if (!error) {
-				clearTableBody($("#supervisors"));
+	const paintSupervisors = async function() {
+		clearTableBody($("#supervisors"));
+		supervisorsIds.forEach((supervisor) => {
+			const row = $("#supervisor_template tr").clone()
+			$('#supervisors').append(row);
 
-				result.forEach((supervisor) => {
-					// Add the supervisor row synchronously to ensure they appear in order
-					const row = $("#supervisor_template tr").clone()
-					$('#supervisors').append(row);
+			row.data(USER_DATA_ID_KEY, supervisor.user_id);
+			row.data(USER_DATA_NAME_KEY, supervisor.username);
+			
+			// Fill the supervisor row info programatically to avoid XSS
+			row.find(".username").text(supervisor.username);
 
-					row.data(USER_DATA_ID_KEY, supervisor.user_id);
-					row.data(USER_DATA_NAME_KEY, supervisor.username);
-
-					// Then, fill its details asynchronously since the order of execution doesn't matter once the row has been added
-					fillSupervisorRow(supervisor, row);
-				});
-			}
+			const dropdown = row.find(".permissions"); 
+			dropdown.val(supervisor.permission);
+			
+			// Block the delete button if the added supervisor is the same as the current user, 
+			// if it has full permissions, or if the current user only has read permissions
+			const blockChanges = supervisor.isCurrentUser || supervisor.permission === "FULL" || simlet.current_user_permission === "READ";
+			dropdown.prop("disabled", blockChanges);
+			row.find(".red").prop("disabled", blockChanges);
 		});
 	}
-
-	/**
-	 * Fill the supervisor row info programatically to avoid XSS
-	 * @param {object} supervisor - object containing the supervisor info
-	 * @param {object} row - jquery object reference of the row element
-	 */
-	const fillSupervisorRow = async function(supervisor, row) {
-		row.find(".username").text(supervisor.username);
-		
-		const dropdown = row.find(".permissions"); 
-		dropdown.val(supervisor.permission);
-		
-		// Block the delete button if the added supervisor is the same as the current user, 
-		// if it has full permissions, or if the current user only has read permissions
-		const blockChanges = supervisor.isCurrentUser || supervisor.permission === "FULL" || simlet.current_user_permission === "READ";
-		dropdown.prop("disabled", blockChanges);
-		row.find(".red").prop("disabled", blockChanges);
-	}
+	
 	
 
 	const GROUPS_SHOW_AT_ONCE = 4;
@@ -1257,31 +1245,18 @@
 	const loadGroupBatch = function() {
 		$("#groups_loader").show();
 		
-		// Get only the sandbox groups and remove them from the SIMLET groups list to correctly display the no groups message
-		Simva.getSimletGroups(simletId, { sandbox: true }, function(error, result) {
+		// Get only the non sandbox groups and paint them
+		Simva.getSimletGroups(simletId, groupsFilteringPaginationData["searchParams"], function(error, result) {
 			if (!error) {
-				result.forEach((group) => {
-					const index = simlet.groups.indexOf(group.group_id);
-					if (index > -1) {
-						simlet.groups.splice(index, 1);
-					}
-				});
-			
-				// Then, get only the non sandbox groups and paint them
-				Simva.getSimletGroups(simletId, groupsFilteringPaginationData["searchParams"], function(error, result) {
-					if (!error) {
-						paintGroupBatch(result);
-						$("#groups_loader").hide();
+				paintGroupBatch(result);
+				$("#groups_loader").hide();
 
-						// Once all results have loaded, allow the bottom reached check
-						// just in case more results fit on the screen
-						groupsFilteringPaginationData["checkBottomReached"] = true;
-						groupsFilteringPaginationData["bottomReached"]();
-					}
-				});
+				// Once all results have loaded, allow the bottom reached check
+				// just in case more results fit on the screen
+				groupsFilteringPaginationData["checkBottomReached"] = true;
+				groupsFilteringPaginationData["bottomReached"]();
 			}
 		});
-
 	}
 	
 	/**
@@ -1388,9 +1363,6 @@
 			clearTableBody(table);
 			table.find("[class]").remove();
 			group.completeParticipants.forEach((participant) => {
-				participantsById.set(participant.user_id, participant);
-				participantsByUsername.set(participant.username, participant);
-
 				const row = $("#participant_template tr").clone();
 				row.attr("id", `group_${group.group_id}_participant_${participant.user_id}`);
 				row.data(USER_DATA_ID_KEY, participant.user_id);
@@ -1644,8 +1616,8 @@
 
 		const registerAndAdd = () => {
 			participantsInfo.forEach((participant) => {
-				participantsById.set(participant.user_id, participant);
-				participantsByUsername.set(participant.username, participant);
+				usersById.set(participant.user_id, participant);
+				usersByUsername.set(participant.username, participant);
 			});
 			onGroupUsersChange(groupId, Array.from(participantsInfo).map(obj => obj.user_id));
 		}
@@ -1685,8 +1657,8 @@
 	}
 
 	const onDeleteParticipant = function(groupId, participantId, participantName) {
-		participantsById.delete(participantId);
-		participantsByUsername.delete(participantName);
+		usersById.delete(participantId);
+		usersByUsername.delete(participantName);
 		onGroupUsersChange(groupId, [participantId]);
 	}
 	

@@ -73,7 +73,7 @@
                 <br>
                 <strong><%= t('activities.title', { ns : 'activities' }) %>: </strong><span class="sessionActivities">-</span>  
 					&nbsp; 
-				<strong><%= t('users.title', { ns : 'groups' }) %>: </strong><span class="sessionUsers">-</span>
+				<strong><%= t('participants.title', { ns : 'groups' }) %>: </strong><span class="sessionUsers">-</span>
             </div>
             <div class="sessionProgress progress">
                 <div class="done">	</div>
@@ -462,7 +462,7 @@
 		
 		// Show session download button based on participant status
 		$("#session_test_data_download").hide();
-		if (isCurrentUserParticipant(sessionId)) {
+		if (isUserIdInSession(sessionId, currentUser.user_id)) {
 			$("#session_test_data_download").show();
 		}
 	}
@@ -496,6 +496,7 @@
 			} 
 		});
 	});
+
 
 	// Sessions buttons shared listeners using event delegation to ensure 
 	// the handler works even if element is added after the document ready event
@@ -589,37 +590,27 @@
 	// Functionality
 
 	/**
-	 * Check if the current user is a participant of a session based whether its group is allocated to it
-	 * (Can't be done by checking the session participants, since it stores the info of all the previous participants to paint their data)
-	 * @param {number} sessionId - id of the sesssion to check if the current user is participant
-	 * @returns {boolean} - true if the current user is in the session participants, false otherwise
-	 */
-	const isCurrentUserParticipant = function(sessionId) {
-		// Iterate over all sandbox groups (since the current user info doesn't store the group it belongs to)
-		return Array.from(completeSandboxGroupsById).some(([groupId, group]) => {
-			// The current user is participant of the session if the group is allocated to the session 
-			return group.group_owner_user_id != null && group.group_owner_user_id == currentUser.user_id
-				&& group.allocations != null && Object.values(group.allocations).includes(sessionId);
-		});
-		return false
-	}
-
-	/**
 	 * Check if a user is still allocated to the session: the users that aren't (they were moved
 	 * to another session after participating here) are marked as off in the participants tables
 	 * of the activities and aren't counted as completed in the session summary
-	 * @param {object} session - object containing the session info
-	 * @param {number} participantId - id of the user to check
+	 * @param {object} sessionId - id of the session to check if the user is in
+	 * @param {number} userId - id of the user to check
 	 */
-	const isUserInSession = function(session, participantId) {
-		const participant = getParticipantFromId(participantId);
-		if (participant == null) {
-			// If the user can't be found, count it as usual
-			return true;
+	const isUserIdInSession = function(sessionId, userId) {
+		// If the user is a tester of any session, return if its sandbox group is allocated to the session
+		if (sandboxGroupsByOwnerId.has(userId)) {
+			const group = sandboxGroupsByOwnerId.get(userId);
+			return group.allocations != null && Object.values(group.allocations).includes(sessionId);
 		}
-		return getCurrentAllocation(participant.group_id, participant.user_id) == session.session_id;
+		
+		// Otherwise, return if the participant belongs to the session
+		const participant = getUserFromId(userId);
+		return participant.session_id != null && participant.session_id == sessionId;
 	}
 
+	const isUsernameInSession = function(sessionId, username) {
+		return isUserIdInSession(sessionId, getUserFromUsername(username).user_id);
+	}
 	
 	const deleteSession = function(sessionId, sessionName) {
 		if (confirm(`<%- t('sessions.delete.confirm', { ns : 'sessions', session : '${sessionName}', SIMLET : '${simlet.simlet_name}' }) %>`)) {
@@ -738,7 +729,7 @@
 				icon: 'success',
 				stack: false
 			});
-			onSessionUsersChange(sessionId, true);
+			onSessionUsersChange(sessionId);
         });
     }
 
@@ -764,7 +755,7 @@
 				icon: 'success',
 				stack: false
 			});
-			onSessionUsersChange(sessionId, true);
+			onSessionUsersChange(sessionId);
 		});
 	}
 
@@ -883,11 +874,7 @@
 
 				session = result;
 				completeSessionsById.set(session.session_id, session);
-				// Store the complete participants and activities
-				session.completeParticipants.forEach((participant) => {
-					participantsById.set(participant.user_id, participant);
-					participantsByUsername.set(participant.username, participant);
-				});
+				// Store the complete activities info
 				session.completeActivities.forEach((activity) => {
 					completeActivitiesById.set(activity.activity_id, activity);
 				})
@@ -926,7 +913,7 @@
 		card.find(".icon-delete").hide();
 		card.find(".sessionTestLauch").hide();
 		
-		const isTester = isCurrentUserParticipant(session.session_id);
+		const isTester = isUserIdInSession(session.session_id, currentUser.user_id);
 		currentUserTesterSessionId = isTester ? session.session_id : null;
 
 		// If the current user is set as tester of the session, show the play button regardless of permissions
@@ -1024,7 +1011,7 @@
 		let completeUserCount = 0;
 		if (activities.length > 0 && activities[activities.length - 1] != null) {
 			for (const [userId, completed] of Object.entries(activities[activities.length - 1].data.completion)) {
-				if (completed && isUserInSession(session, userId)) {
+				if (completed && isUserIdInSession(session, userId)) {
 					completeUserCount++;
 				}
 			}
@@ -1206,37 +1193,8 @@
 		updateEntireSession(sessionId);
 	}
 	
-	const onSessionUsersChange = function(sessionId, updatingCurrentUser = false) {
-		// If only updating the current user, clear all the stored sandbox groups to 
-		// correctly update them (when setting the current user as tester of a session,
-		// a new sandbox group is created, and when unsetting the tester, the entire
-		// sandbox group is deleted). Then, update the entire session
-		if (updatingCurrentUser) {
-			completeSandboxGroupsById.clear();
-			updateSandboxGroups(() => {
-				updateEntireSession(sessionId);
-			});
-		}
-		// If updating the users of a group, update all the currently stored groups
-		// to store the allocators info correctly and then update the entire session
-		else {
-			let completed = 0;
-			const allGroupsUpdated = () => {
-				completed++;
-				if (completed >= completeGroupsById.size) {
-					updateEntireSession(sessionId);
-				}
-			}
-			
-			completeGroupsById.forEach((group, groupId) => {
-				Simva.getGroup(simletId, group.group_id, (error, result) => {
-					if (!error) {
-						completeGroupsById.set(group.group_id, result);
-					};
-					allGroupsUpdated();
-				});
-			});
-		}
+	const onSessionUsersChange = function(sessionId) {
+		onEditSessionActivities(sessionId);
 	}
 
 </script>

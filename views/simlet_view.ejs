@@ -100,20 +100,20 @@ the elements and scripts defined in the simlet_commons partial -->
 	let currentUser = null;
 	let simlet = null;
 
-	// Needs to contain all the sessions from the start to show them as options in the group allocator
-	let sessionsById = new Map();	// Defined when loading the SIMLET or on paintAllocator in the simlet_users partial (whichever loads first)
-	
+	// Defined when loading the SIMLET info
+	let sessionsById = new Map();
+	let usersById = new Map();
+	let usersByUsername = new Map();
+	let sandboxGroupsByOwnerId = new Map();
+	let supervisorsIds = new Set();
+
 	// Stored to avoid having to fetch them every time the search parameters change 
 	// They don't need to contain all the data from the start since they're only neeeded
 	// when they're getting painted and when interacting with the elements they're painted on
 	let completeSessionsById = new Map();		// Defined on paintSessionBatch in the simlet_sessions partial 
 	let	completeActivitiesById = new Map();		// Defined on fillSessionCard in the simlet_sessions partial
 	let completeGroupsById = new Map();			// Defined on paintGroupBatch in the simlet_users partial
-	let completeSandboxGroupsById = new Map();	// Defined when loading the SIMLET info or when checking if the current 
-												// user is participant of a session in the simlet_sessions partial
-	let participantsById = new Map();			// Defined on paintAllocator in the simlet_users partial
-	let participantsByUsername = new Map();		// Defined on paintAllocator in the simlet_users partial
-	
+
 	// TODO: Declare platforms
 
 	
@@ -150,32 +150,15 @@ the elements and scripts defined in the simlet_commons partial -->
 
 		// Get the current user, store it, and paint the rest of the SIMLET
 		Simva.getCurrentUser((error, result) => {
-			const showError = () => {
+			if (error) {
 				console.error("Error fetching current user:", error.responseJSON ? error.responseJSON.message : error.message || error);
 				currentUser = null;
 				// Optionally, display an error message to the user
 				alert("Error fetching user information. Some features may not work properly.");
-			}
-
-			if (error) {
-				showError();
 				return;
 			}
-			
-			Simva.getUser(result.username, function(error, result) {
-				if (error) {
-					showError();
-					return;
-				} 
-
-				currentUser = result;
-				participantsById.set(currentUser.user_id, currentUser);
-				participantsByUsername.set(currentUser.username, currentUser);
-				
-				updateSandboxGroups(() => {
-					updateSimletInfo(true);
-				});
-			});
+			currentUser = result;
+			updateSimletInfo(true);
 		});
 
 		Simva.getShLink(simletId, (error, result) => {
@@ -282,74 +265,111 @@ the elements and scripts defined in the simlet_commons partial -->
 				$("#simlet_tags").remove();
 				$(".simletTop").after($(renderTags(simlet)).attr("id", "simlet_tags"));
 
-				// Try fetching the sessions and groups before paintAllocator in the simlet_users partial
-				// to potentially avoid fetching them multiple times, since the first paintAllocator calls
-				// run asynchronously and practically at the same time 
-				if (sessionsById.size != simlet.sessions.length) {
-					Simva.getSimletSessions(simletId, function(error, result) {
-						if (!error) {
-							sessionsById = new Map(result.map(obj => [obj.session_id, obj]));
-						}
-					});
-				}
-			
-				paintSimletStatusAndPermissions();
 
-				if (paintAll) {
-					// Update all the sessions search parameters and calls its onSearch to paint them
-					// No need to paint the activities here as they will be painted when painting the sessions
-					// Defined in the simlet_sessions partial
-					sessionsFilteringPaginationData["checkBottomReached"] = false;
-					sessionsFilteringPaginationData["updateSearch"]();
+				const promises = []
+
+				// Update the sessions (not complete) info if the stored sessions ids don't match with the SIMLET ones
+				if ([...sessionsById.keys()].every(key => simlet.sessions.includes(key))) {
+					promises.push(
+						new Promise((resolve) => {
+							Simva.getSimletSessions(simletId, function(error, result) {
+								if (!error) {
+									sessionsById = new Map(result.map(obj => [obj.session_id, obj]));
+								}
+								resolve();
+							});
+						})
+					);
+				}
+
+				// Get only the sandbox groups and remove them from the SIMLET
+				// groups list to correctly paint the no groups message
+				promises.push(
+					new Promise((resolve) => {
+						Simva.getSimletGroups(simletId, { sandbox: true }, function(error, result) {
+							sandboxGroupsByOwnerId.clear();
+							if (!error) {
+								result.forEach((group) => {
+									sandboxGroupsByOwnerId.set(group.group_owner_user_id, group);
+									const index = simlet.groups.indexOf(group.group_id);
+									if (index > -1) {
+										simlet.groups.splice(index, 1);
+									}
+								});
+								resolve();
+							}
+						});
+					})
+				);
+				
+				// Store/update all users (participants and supervisors) in the SIMLET 
+				promises.push(
+					new Promise((resolve) => {
+						Simva.getSimletParticipants(simletId, (error, result) => {
+							if (!error) {
+								result.forEach((participant) => {
+									usersById.set(participant.user_id, participant);
+									usersByUsername.set(participant.username, participant);
+								});
+								resolve();
+							}
+						});
+					}),
+					new Promise((resolve) => {
+						supervisorsIds.clear();
+						Simva.getSimletPermissions(simletId, (error, result) => {
+							if (!error) {
+								result.forEach((supervisor) => {
+									supervisorsIds.add(supervisor.user_id);
+									usersById.set(supervisor.user_id, supervisor);
+									usersByUsername.set(supervisor.username, supervisor);
+								});
+								resolve();
+							}
+						});
+					}),
+				);
+				
+
+				// Wait for all sessions (incomplete) info and/or users and participants to be stored/updated
+				// before trying to paint anything, since multiple async calls depend on them at the same time
+				// and there's no way to ensure which one will need the info first without making the rendering
+				// synchronous or trying to get the info multiple times just in case 
+				Promise.all(promises).then(() => {
+					paintSimletStatusAndPermissions();
+					
+					if (paintAll) {
+						// Update all the sessions search parameters and calls its onSearch to paint them
+						// No need to paint the activities here as they will be painted when painting the sessions
+						// Defined in the simlet_sessions partial
+						sessionsFilteringPaginationData["checkBottomReached"] = false;
+						sessionsFilteringPaginationData["updateSearch"]();
 
 					paintSupervisors();
 
-					// Update all the groups search parameters and calls its onSearch to paint them
-					// Defined in the simlet_groups partial
-					groupsFilteringPaginationData["checkBottomReached"] = false;
-					groupsFilteringPaginationData["updateSearch"]();
+						// Update all the groups search parameters and calls its onSearch to paint them
+						// Defined in the simlet_groups partial
+						groupsFilteringPaginationData["checkBottomReached"] = false;
+						groupsFilteringPaginationData["updateSearch"]();
 
-					// TODO: Store platforms
-				}
-			} 
-			else {
-				console.error(error.responseJSON ? error.responseJSON.message : error.message || error);
-			}
-
-			if (callback != null && typeof callback === "function") {
-				callback();
-			}
-		});
-	}
-
-	// Get and store the sandbox groups
-	const updateSandboxGroups = function(callback = null) {
-		Simva.getSimletGroups(simletId, { sandbox: true }, function(error, result) {
-			let completed = 0;
-			const allGroupsFetched = () => {
-				completed++;
-				if (completed >= result.length) {
+						// TODO: Store platforms
+					}
+					
 					if (callback != null && typeof callback === "function") {
 						callback();
 					}
-				}
-			};
-			
-			result.forEach((group) => {
-				Simva.getGroup(simletId, group.group_id, (error, result) => {
-					if(!error) {
-						completeSandboxGroupsById.set(group.group_id, result);
-					}
-					allGroupsFetched();
 				});
-			});
-			if (result.length == 0) {
-				allGroupsFetched();
+			} 
+			else {
+				console.error(error.responseJSON ? error.responseJSON.message : error.message || error);
+				if (callback != null && typeof callback === "function") {
+					callback();
+				}
 			}
 		});
-		
 	}
-	
+
+
 	
 	const getSessionFromId = function(sessionId) {
 		if (completeSessionsById.has(Number(sessionId))) {
@@ -372,16 +392,16 @@ the elements and scripts defined in the simlet_commons partial -->
 		return null;
 	}
 
-	const getSandboxGroupFromId = function (groupId) {
-		if (completeSandboxGroupsById.has(Number(groupId))) {
-			return completeSandboxGroupsById.get(Number(groupId));
+	const getUserFromId = function(userId) {
+		if (usersById.has(Number(userId))) {
+			return usersById.get(Number(userId));
 		}
 		return null;
 	}
 
-	const getParticipantFromId = function(participantId) {
-		if (participantsById.has(Number(participantId))) {
-			return participantsById.get(Number(participantId));
+	const getUserFromUsername = function(username) {
+		if (usersByUsername.has(username)) {
+			return usersByUsername.get(username);
 		}
 		return null;
 	}
@@ -449,35 +469,17 @@ the elements and scripts defined in the simlet_commons partial -->
 			if (simlet.simlet_archived != null && !simlet.simlet_archived) {
 				archiveButton.show();
 
-				const checkAllSessionsFinished = () => {
-					// Check if all sessions are finished
-					let allSessionsFinished = true;
+				// Check if all sessions are finished
+				let allSessionsFinished = true;
+				sessionsById.forEach((session, id) => {
+																					// Defined in the simlet_sessions partial
+					allSessionsFinished = allSessionsFinished && session.session_status == SESSION_FINISHED_STATUS;
+				});
 
-					sessionsById.forEach((session, id) => {
-																						// Defined in the simlet_sessions partial
-						allSessionsFinished = allSessionsFinished && session.session_status == SESSION_FINISHED_STATUS;
-					});
-
-					// If all sessions are finished, enable the archive button
-					if (allSessionsFinished) {
-						archiveButton.removeClass("li-disabled");
-					}
+				// If all sessions are finished, enable the archive button
+				if (allSessionsFinished) {
+					archiveButton.removeClass("li-disabled");
 				}
-
-				// If all sessions have already been fetched, call the callback directly
-				if (sessionsById.size == simlet.sessions.length) {
-					checkAllSessionsFinished();
-				}
-				// Otherwise, fetch them from the database, store them, and call the callback once it's done
-				else {
-					Simva.getSimletSessions(simletId, function(error, result) {
-						if (!error) {
-							sessionsById = new Map(result.map(obj => [obj.session_id, obj]));
-							checkAllSessionsFinished();
-						}
-					});
-				}
-
 			}
 			// Otherwise (or by default if simlet_archived is null), only hide the 
 			// add floating buttons since the other buttons are already hidden
