@@ -326,10 +326,7 @@
     
 
 	// Edit limesurvey by pressing either the survey id or the edit button 
-	$(document).on('click', ".activity-meta .limesurveyMeta a", function(e) {
-		openEditLimeSurvey($(this).closest(".activity").data());
-	});
-	$(document).on('click', ".activityTopActions .icon-edit-survey", function(e) {
+	$(document).on('click', ".activity-meta .limesurveyMeta a, .activityTopActions .icon-edit-survey", function(e) {
 		openEditLimeSurvey($(this).closest(".activity").data());
 	});
 
