@@ -68,6 +68,7 @@
         "participants.add_existing.tab": "Ajouter existant",
             "participants.add_existing.submit": "Ajouter existant",
             "participants.add_existing.error.already_in_group": "Le participant '{{participant}}' est déjà dans le groupe '{{group}}'.",
+            "participants.add_existing.error.already_in_other_group": "",
             "participants.add_existing.error.reload_manually": "Rafraîchissez la page pour voir les changements dans le groupe '{{group}}'.",
             
         "participants.add_new.tab": "Ajouter un nouveau",

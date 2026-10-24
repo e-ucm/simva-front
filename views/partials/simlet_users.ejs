@@ -598,99 +598,83 @@
 				return false;
 			}
 			
-			let foundUsers = new Map();
-			let createdUsersInfo = new Set();
-			let completed = 0;
-			let added = 0;
-
-			// Callback to wait for all the addGroupParticipant calls to finish
-			const allUsersAdded = () => {
-				completed++;
-				if (completed == usernames.size) {
-					Utils.toggleSubmit();
-
-					// If all users have been correctly added, close the form
-					if (added == usernames.size) {
-						Utils.toggleFormInFloating();
-						onCreateParticipants(ADD_METHOD_EXISTING, currGroupId, createdUsersInfo);
-					}
-					// Otherwise, don't close the form to show the error
-					else {
-						// If some users have been added, add an extra message asking for 
-						// manual refreshing (to allow the user to see the error message)
-						if (added > 0) {
-							errorText += `<%- t("participants.add_existing.error.reload_manually", { ns : "groups" }) %>\n`
-						}
-						errorbox.text(errorText.replace(/\n/g, '<br>'));
-						return false;
-					}
-				}
-			}
-
-			// Callback to wait for all the getUser calls to finish
-			const checkUserComplete = () => {
-				completed++;
-				if (completed == usernames.size) {
-					// If all users can be added, iterate over them and try adding them 
-					if (foundUsers.size == usernames.size) {
-						completed = 0;
-						errorText = "";
-						
-						foundUsers.forEach((user, username) => {
-							Simva.addGroupParticipant(simletId, currGroupId, user.user_id, function(addError, result){
-								// If there are any erorrs, add them to the error message
-								if(addError && addError.responseJSON) {
-									errorText += `${addError.responseJSON.message}\n`
-								}
-								else if(addError) {
-									errorText += `${(addError.message || addError)}\n` 
-								}
-								// Otherwise, increase the added users count
-								else{
-								    added++;
-									createdUsersInfo.add(user);
-								}
-								allUsersAdded();
-							});
-						});
-					}
-					// Otherwise, don't add any user and show all the error messages
-					else {
-						Utils.toggleSubmit();
-						errorbox.html(errorText.replace(/\n/g, '<br>'));
-						return false;
-					}
-				}
-			}
-  			
-			// Try adding all the usernames
+			// Try getting all the users info from their usernames
+			let promises = [];
+			let foundUsers = new Map();		
 			usernames.forEach((username) => {
-				// If any participant is already in the group, add each user to the error message 
+				const participant = getUserFromUsername(username);
+
+				// If any participant is already in the group
 				if (groupParticipants.has(username)) {
 					errorText += `<%- t("participants.add_existing.error.already_in_group", { ns : "groups", group : "${group.group_name}", participant : "${username}" }) %>\n`;
-					checkUserComplete();
+				}
+				// If any user has already been stored and belongs to another group
+				else if (participant != null && participant.group_id != null && participant.group_id != currGroupId) {
+					errorText += `<%- t("participants.add_existing.error.already_in_other_group", { ns : "groups", group : "${group.group_name}", participant : "${username}" }) %>\n`;
 				}
 				// Otherwise, try to fetch an user from the database with said username
 				else {
-					Simva.getUser(username, function(error, result) {
-						// If there's no user with that username, add if to the error message
-						if (error) {
-							errorText += `${(error.responseJSON ? error.responseJSON.message : error.message || error)}\n` 
-						}
-						else {
-							const foundUser = Array.isArray(result) ? result[0] : result;
-                			if(!foundUser || !foundUser.user_id){
-								errorText += `<%- t("participants.add_existing.error.already_in_group", { ns : "groups", participant : "${username}" }) %>\n`
+					promises.push(new Promise((resolve) => {
+						Simva.getUser(username, function(error, result) {
+							if (error) {
+								errorText += `${(error.responseJSON ? error.responseJSON.message : error.message || error)}\n` 
 							}
-							// If there's a user with that username, add it to the found users
 							else {
-								foundUsers.set(username, foundUser)
+								const foundUser = Array.isArray(result) ? result[0] : result;
+								if (!foundUser || !foundUser.user_id){
+									errorText += `<%- t("participants.add_existing.error.already_in_group", { ns : "groups", participant : "${username}" }) %>\n`
+								}
+								// If there's a user with that username, add it to the found users
+								else {
+									foundUsers.set(username, foundUser);
+								}
 							}
-						}
-						checkUserComplete();
-					});
+							resolve();
+						});
+					}));
 				}
-			})
+			});
+
+			// Once all the users info has been fetched
+			Promise.all(promises).then(() => {
+				// Try adding all the fetched users
+				promises = [];
+				let createdUsersInfo = new Set();
+				foundUsers.forEach((user, username) => {
+					promises.push(new Promise((resolve) => {
+						Simva.addGroupParticipant(simletId, currGroupId, user.user_id, function(error, result){
+							if (error) {
+								errorText += `${error.responseJSON ? error.responseJSON.message : error.message || error}\n`
+							}
+							else {
+								createdUsersInfo.add(user);
+							}
+							resolve();
+						});
+					}));
+				});
+				
+				// Once all users have been tried to get added
+				Promise.all(promises).then(() => {
+					Utils.toggleSubmit();
+
+					// If all users have been correctly added, close the form
+					if (createdUsersInfo.size == usernames.size) {
+						Utils.toggleFormInFloating();
+						onCreateParticipants(ADD_METHOD_EXISTING, currGroupId, createdUsersInfo);
+					}
+					// Otherwise, don't close it and show the error
+					else {
+						// If some users have been added, add an extra message asking for 
+						// manual refreshing (to allow the user to see the error message)
+						if (createdUsersInfo.size > 0) {
+							errorText += `<%- t("participants.add_existing.error.reload_manually", { ns : "groups" }) %>\n`
+						}
+						errorbox.html(errorText.replace(/\n/g, '<br>'));
+						return false;
+					}
+				});
+			});
 			
 			return false;
 		});
@@ -1636,23 +1620,21 @@
 		else if (addMethod == ADD_METHOD_BATCH) {
 			let completed = 0;
 
-			// Callback to call each time an user id gets fetched
-			const allParticipantsFetched = () => {
-				completed++;
-				if (completed >= creationResult.length) {
-					registerAndAdd();
-				}
-			}
-
 			// Get the complete user info from each participant username 
-			creationResult.forEach((username) => {
-				Simva.getUser(username, (error, result) => {
-					if (!error) {
-						participantsInfo.add(result);
-					}
-					allParticipantsFetched();
-				});
-			})
+			const promises = creationResult.map((username) => new Promise((resolve) => {
+					Simva.getUser(username, (error, result) => {
+						if (!error) {
+							participantsInfo.add(result);
+						}
+						resolve();
+					});
+				})
+			);
+			
+			// Wait for all the user info to be fetched
+			Promise.all(promises).then(() => {
+				registerAndAdd();
+			});
 		}
 	}
 

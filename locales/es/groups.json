@@ -68,6 +68,7 @@
         "participants.add_existing.tab": "Añadir existente",
             "participants.add_existing.submit": "Añadir usuario",
             "participants.add_existing.error.already_in_group": "El participante '{{participant}}' ya está en el grupo '{{group}}'.",
+            "participants.add_existing.error.already_in_other_group": "El participante '{{participant}}' ya está en otro grupo de este SIMLET.",
             "participants.add_existing.error.reload_manually": "Recarga la página para ver los cambios.",
             
         "participants.add_new.tab": "Nuevo usuario",
