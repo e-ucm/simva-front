@@ -434,7 +434,7 @@
 				if (supervisor.username == form.name) {
 					Utils.toggleSubmit();
 					errorbox.text("<%- t('supervisors.error.already_in', { ns : 'groups' }) %>");
-					return;
+					return false;
 				}
 			});
 			
@@ -443,14 +443,14 @@
 			if (form.permission !== "READ" && form.permission !== "WRITE") {
 				Utils.toggleSubmit();
 				errorbox.text("<%- t('users.permissions.error', { ns : 'groups' }) %>");
-				return;
+				return false;
 			}
 
 			Simva.getUser(form.name, function(error, users) {
 				if (error) {
 					Utils.toggleSubmit();
 					errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
-					return;
+					return false;
 				}
 				
 				const foundUser = Array.isArray(users) ? users[0] : users;
@@ -458,7 +458,7 @@
 					Utils.toggleSubmit();
 					if (error) {
 						errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
-						return;
+						return false;
 					}
 
 					Utils.toggleFormInFloating();
@@ -491,7 +491,7 @@
 							Utils.toggleSubmit();
 							if (error) {
 								errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
-								return;
+								return false;
 							}
 							Utils.toggleFormInFloating();
 							onCreateOrEditGroup(result);
@@ -500,7 +500,7 @@
 						Utils.toggleSubmit();
 						console.error('Import error:', parseError);
 						errorbox.text("<%- t('groups.import.error.invalid_file', { ns : 'groups' }) %> " + (parseError.message ? (': ' + parseError.message) : ''));
-						return;
+						return false;
 					}
 				};
 				reader.readAsDataURL(fileInput.files[0]);
@@ -509,7 +509,7 @@
 			else {
 				Utils.toggleSubmit();
 				errorbox.text("<%- t('forms.import.error.no_file', { ns : 'commons' }) %>");
-				return;
+				return false;
 			}
 			
 			return false;
@@ -529,7 +529,7 @@
 					if (error) {
 						Utils.toggleSubmit();
 						errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
-						return;
+						return false;
 					}
 					
 					// Fake a wait time and open the add participants form in the batch tab
@@ -550,7 +550,7 @@
 				if (!nameChanged) {
 					Utils.toggleSubmit();
 					errorbox.text("<%- t('forms.edit.error.no_changes', { ns : 'commons' }) %>");
-					return;
+					return false;
 				}
 				
 				Simva.updateGroup(simletId, form.editingGroupId, { group_name : form.groupName }, function(error, result) {
@@ -577,7 +577,7 @@
 			const group = getGroupFromId(currGroupId);
 			if (group == null) {
 				Utils.toggleSubmit();
-				return;
+				return false;
 			}
 			
 			// Get all users in the group and store them by username
@@ -595,7 +595,7 @@
 				$("#existing_participant_form textarea").val("");
 				// Trigger the please fill this field message
 				$("#existing_participant_form textarea")[0].reportValidity();
-				return;
+				return false;
 			}
 			
 			let foundUsers = new Map();
@@ -622,7 +622,7 @@
 							errorText += `<%- t("participants.add_existing.error.reload_manually", { ns : "groups" }) %>\n`
 						}
 						errorbox.text(errorText.replace(/\n/g, '<br>'));
-						return;
+						return false;
 					}
 				}
 			}
@@ -658,7 +658,7 @@
 					else {
 						Utils.toggleSubmit();
 						errorbox.html(errorText.replace(/\n/g, '<br>'));
-						return;
+						return false;
 					}
 				}
 			}
@@ -706,7 +706,7 @@
 				Utils.toggleSubmit();
 				if (error) {
 					errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
-					return;
+					return false;
 				}
 				
 				Utils.toggleFormInFloating();
@@ -725,8 +725,9 @@
 
 			Simva.generateAndRegister(simletId, currGroupId, form.algorithm, form.length, form.amount, (error, result) => {
 				if (error) {
+					Utils.toggleSubmit();
 					errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
-					return;
+					return false;
 				}
 				
 				Utils.toggleFormInFloating();
@@ -750,21 +751,21 @@
 				if (painter == null) {
 					Utils.toggleSubmit();
 					errorbox.text("<%- t('allocators.type.error.invalid_type', { ns : 'groups' }) %>");
-					return;
+					return false;
 				}
 
 				const group = completeGroupsById.get(currGroupId);
 				if (group != null && group.group_allocator_type == form.type) {
 					Utils.toggleSubmit();
 					errorbox.text("<%- t('forms.edit.error.no_changes', { ns : 'commons' }) %>");
-					return;
+					return false;
 				}
 
 				Simva.updateGroup(simletId, currGroupId, { group_allocator_type: form.type }, function(error, result) {
 					Utils.toggleSubmit();
 					if (error) {
 						errorbox.text(error.responseJSON ? error.responseJSON.message : error.message);
-						return;
+						return false;
 					} 
 					
 					Utils.toggleFormInFloating();

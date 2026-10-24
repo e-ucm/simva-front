@@ -250,7 +250,7 @@
 							Utils.toggleSubmit();
 							if (error) {
 								errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
-								return;
+								return false;
 							}
 							Utils.toggleFormInFloating();
 							onCreateOrEditSession(result);
@@ -259,7 +259,7 @@
 						Utils.toggleSubmit();
 						console.error('Import error:', parseError);
 						errorbox.text("<%- t('sessions.import.error.invalid_file', { ns : 'sessions' }) %> " + (parseError.message ? (': ' + parseError.message) : ''));
-						return;
+						return false;
 					}
 				};
 				reader.readAsDataURL(fileInput.files[0]);
@@ -291,7 +291,7 @@
 					if (error) {
 						Utils.toggleSubmit();
 						errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
-						return;
+						return false;
 					}
 					
 					const createSession = function(resultTags) {
@@ -313,7 +313,7 @@
 							if (syncError) {
 								Utils.toggleSubmit();
 								errorbox.text(syncError.responseJSON ? syncError.responseJSON.message : syncError.message || syncError);
-								return;
+								return false;
 							}
 							createSession(resultTags);	
 						});
@@ -335,7 +335,7 @@
 				if (!nameChanged && !descriptionChanged && !tagsChanged) {
 					Utils.toggleSubmit();
 					errorbox.text("<%- t('forms.edit.error.no_changes', { ns : 'commons' }) %>");
-					return;
+					return false;
 				}
 				
 				const updateSession = () => {
@@ -343,7 +343,7 @@
 						Utils.toggleSubmit();
 						if (error) {
 							errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
-							return;
+							return false;
 						}
 						onCreateOrEditSession(result);
 						Utils.toggleFormInFloating();
@@ -354,8 +354,9 @@
 				if (tagsChanged) {
 					syncSessionTags(simletId, Number(sessionId), originalTagsIds, selectedTagIds, function(syncError) {
 						if (syncError) {
+							Utils.toggleSubmit();
 							errorbox.text(syncError.responseJSON ? syncError.responseJSON.message : syncError.message || syncError);
-							return;
+							return false;
 						}
 						updateSession();
 					});
@@ -1394,13 +1395,16 @@
 		let tagColor = $("#session_new_tag_color").val();
 		let errorBox = $('#session_tags_error');
 		errorBox.text("");
+		Utils.toggleSubmit();
 
 		if (!tagName) {
+			Utils.toggleSubmit();
 			errorBox.text("<%- t('tags.error.required_name', { ns : 'sessions' }) %>");
 			return;
 		}
-
+		
 		Simva.createTag({ tag_name: tagName, tag_color: tagColor }, function(error, createdTag) {
+			Utils.toggleSubmit();
 			if (error) {
 				errorBox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
 				return;
@@ -1435,17 +1439,22 @@
 		const colorChanged = $("#prev_tag_color").val() != tagColor;
 
 		const errorBox = $("#session_tags_error");
+		Utils.toggleSubmit();
 
 		if (!nameChanged && !colorChanged) {
+			Utils.toggleSubmit();
 			errorBox.text("<%- t('forms.edit.error.no_changes', { ns : 'commons' }) %>");
 			return;
 		}
 		else if ($("#session_edit_tag_name").val() == "" || $("#session_edit_tag_name").val() == null) {
+			Utils.toggleSubmit();
 			errorBox.text("<%- t('tags.error.required_name', { ns : 'sessions' }) %>");
 			return;
 		}
 		else {
 			Simva.updateTag(tagId, { tag_name: tagName, tag_color: tagColor }, function(error) {
+				Utils.toggleSubmit();
+				
 				if (error) {
 					errorBox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
 					return;

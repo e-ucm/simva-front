@@ -293,7 +293,7 @@
 					Utils.toggleSubmit();
 					if (error) {
 						errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
-						return;
+						return false;
 					}
 					Utils.toggleFormInFloating();
 					if (onCreateSimlet != null && typeof onCreateSimlet === "function") {
@@ -310,14 +310,14 @@
 				if (!nameChanged && !descriptionChanged) {
 					Utils.toggleSubmit();
 					errorbox.text("<%- t('forms.edit.error.no_changes', { ns : 'commons' }) %>");
-					return;
+					return false;
 				}
 				
 				Simva.updateSimlet(form.editingSimletId, { simlet_name : form.simletName, simlet_description : form.simletDescription }, function(error, result) {
 					Utils.toggleSubmit();
 					if (error) {
 						errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
-						return;
+						return false;
 					}
 					if (onEditSimlet != null && typeof onEditSimlet === "function") {
 						Utils.toggleFormInFloating();
