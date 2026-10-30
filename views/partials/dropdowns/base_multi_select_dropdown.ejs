@@ -1,0 +1,210 @@
+<%# views/partials/dropdowns/base_multi_select_dropdown.ejs %>
+
+<!-- Elements and base class for a multi select dropdown -->
+
+<!-- Ensure the partial only gets included once and that the document event delegates
+that hide the dropdown and that dispatch the window resize only get registered once -->
+<%  let nestedPartialsResources = partialsResources; %>
+<% if (!nestedPartialsResources["base_multi_select_dropdown.ejs"]) { %>
+    <% nestedPartialsResources["base_multi_select_dropdown.ejs"] = true; %>
+
+<!-- Template for the multi select dropdown -->
+<div class="multiSelect">
+	<select class="multiSelectSelector">
+		<!-- Default option to show a value in the dropdown -->
+		<option value="" selected disabled hidden></option>
+	</select>
+	
+	<div class="multiSelectDropdown">
+		<input type="text" class="searchBar"></input>
+		<ul class="options">
+			
+		</ul>
+		<span class="dropdownMessage noOptions">	</span>
+		<span class="dropdownMessage allMatching"><%= t('filters.search.all_matching.message', { ns : 'commons' }) %></span>
+		<span class="dropdownMessage noMatches"><%= t('filters.search.no_matches.message', { ns : 'commons' }) %></span>
+	</div>
+</div>
+
+
+<script>
+	const MULTI_SELECT_DROPDOWN_DATA_KEY = "multiSelectDropdown";
+	
+	class BaseMultiSelectDropdown {
+		constructor($rootElem) {
+			this.$selector = $rootElem.find(".multiSelectSelector");
+			this.$selectorPlaceholder = this.$selector.find("option");
+			this.$dropdown = $rootElem.find(".multiSelectDropdown");
+			this.$dropdown.hide();
+
+			this.$searchBar = this.$dropdown.find(".searchBar");
+			
+			this.$noOptionsMessage = this.$dropdown.find(".noOptions");
+			this.$allMatchingMessage = this.$dropdown.find(".allMatching");
+			this.$noMatchesMessage = this.$dropdown.find(".noMatches");
+			this.$options = this.$dropdown.find(".options");
+			
+			this.selectedOptions = new Set();
+			this.unselectedOptions = new Set();
+			
+			this.setupDropdownEvents();
+			this.setupWindowEvents();
+		}
+
+		setupDropdownEvents() {
+			this.$selector.on("mousedown", (e) => {
+				// Prevent the default select dropdown to open
+				e.preventDefault();
+
+				this.$dropdown.fadeToggle(100);
+
+				// If the options list is being shown, reset the search, focus the search bar and show the options
+				if (this.$dropdown.is(":visible")) {
+					this.$searchBar.val("");
+					this.$searchBar.focus();
+					this.showMatchingResults();
+				}
+			});
+			
+			this.$searchBar.on("input", (e) => {
+				this.showMatchingResults();
+			});
+		}
+
+		setupWindowEvents() {
+			// When changing the window size, place the dropdown to the 
+			// left or to the right bellow the select depending on its position
+			$(window).on("resize", () => {
+				if (this.$selector[0].getBoundingClientRect().left > window.innerWidth / 2) {
+					this.$dropdown.css({
+						right: 0,
+						left: "auto"
+					});
+				}
+				else {
+					this.$dropdown.css({
+						left: 0,
+						right: "auto"
+					});
+				}
+			});
+
+		}
+
+		filterOptions(options, query) {
+			query = query.trim().toLowerCase() || "";
+			if (query == null || query == "") {
+				return Array.from(options);
+			}
+
+			return Array.from(options).filter((optionText) => {
+				const name = (String(optionText) || '').toLowerCase();
+				return name.includes(query);
+			});
+		}
+		
+		// By default, sort from lowest to greatest
+		sortOptions(options) {
+			return Array.from(options).sort((a, b) => a - b);
+		}
+		
+		showMatchingResults() {
+			// By default, remove all options, show the list, and hide all messages
+            this.$options.empty();
+            this.$options.show();
+            this.$noOptionsMessage.hide();
+            this.$allMatchingMessage.hide();
+            this.$noMatchesMessage.hide();
+			
+            // If there are no unselected nor selected options, show the message, hide the options container, and do nothing else
+            if (this.unselectedOptions.size == 0 && this.selectedOptions.size == 0) {
+                this.$options.hide();
+                this.$noOptionsMessage.show();
+                return;
+            }
+            
+            // Render the sorted selected options on top
+            const sortedSelectedOptions = this.sortOptions(this.selectedOptions);
+            sortedSelectedOptions.forEach((option) => {
+                this.$options.append(this.createOption(option))
+            });
+
+            // If searching any option while there are selected options,
+            if (this.$searchBar.val() != "" && this.selectedOptions.size > 0) {
+                // If there are matching results and more selected options than matching results, show the message and do nothing else
+                const matchingSelectedOptions = this.filterOptions(this.selectedOptions, this.$searchBar.val());
+                if (matchingSelectedOptions.length > 0 && this.selectedOptions.size >= matchingSelectedOptions.length) {
+                    this.$allMatchingMessage.show();
+                    return;
+                }
+            }
+
+            const matchingUnselectedOptions = this.filterOptions(this.unselectedOptions, this.$searchBar.val());
+
+            // If searching any option, if there are no matching options, show the message and do nothing else
+            if (matchingUnselectedOptions.length == 0 && this.$searchBar.val() != "") {
+				// If there are no selected options, hide the options container
+            	if (this.selectedOptions.size == 0) {
+					this.$options.hide();
+				}
+                this.$noMatchesMessage.show();
+                return;
+            }
+
+            // Render the sorted unselected options
+            const sortedUnselectedOptions = this.sortOptions(matchingUnselectedOptions);
+            sortedUnselectedOptions.forEach((option) => {
+                this.$options.append(this.createOption(option));
+            });
+		}
+
+		createOption(optionText) {
+			return $("<li>", { text: `Option ${optionText}` });
+		}
+
+		onOptionClick($listElem) { }
+	}
+
+
+	// The select elements click events must be handled in the mousedown event instead 
+	// of on the click event to effectively handle them in time, since the mousedown event 
+	// triggers before and runs before the default select dropdown appears
+	
+	// Since the multiselect doesn't behave as the regular select dropdown, make it not hide
+	// automatically after clicking outside of it or when pressing another select element
+	$(document).on("click", (e) => {
+		hideMultiSelectDropdown(e);
+	});
+	$("select").on("mousedown", (e) => {
+		hideMultiSelectDropdown(e);
+	});
+
+	// Hide any visible dropdowns if the interacted element is not on the multiselect hierarchy
+	const hideMultiSelectDropdown = function(e) {
+		const rootElem = $(e.target).closest(".multiSelect");
+		const openedDropdowns = $(".multiSelectDropdown:visible");
+		if (openedDropdowns.length && !rootElem.length) {
+			e.preventDefault();
+			$(".multiSelectDropdown:visible").fadeOut(100);
+		}
+	}
+
+	// Trigger the resize window event to adjust the dropdown for the first time
+	$(document).ready(() => {
+		window.dispatchEvent(new Event("resize"));
+	});
+
+
+	// When clicking an option on the option list, call the onOptionClick of its MultiSelectDropdown instance
+	$(document).on("click", ".multiSelectDropdown .options li", (e) => {
+		const multiSelect = $(e.target).closest(".multiSelect");
+		if (multiSelect && multiSelect.data()[MULTI_SELECT_DROPDOWN_DATA_KEY]) {
+			// Stop the event propagation to avoid closing the dropdown
+			e.stopPropagation();
+			multiSelect.data()[MULTI_SELECT_DROPDOWN_DATA_KEY].onOptionClick($(e.target));
+		}
+	});
+	
+</script>
+
+<% } %>

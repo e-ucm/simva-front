@@ -1,5 +1,11 @@
 <%# views/partials/simlet_users.ejs %>
 
+<% 
+	const FILTERING_PAGINATION_ID = "groups_filtering"
+	const SEARCH_BAR_PLACEHOLDER = t('groups.search_bar.placeholder', { ns : 'groups' }); 
+	let newstedPartialsResources = partialsResources;
+%>
+
 <!-- Section where all users will be painted -->
 <div class="users">
 	<!-- Supervisors table -->
@@ -61,8 +67,9 @@
 			</div>
 		</div>
 		
-		<% const searchBarPlaceholder = t('groups.search_bar.placeholder', { ns : 'groups' }); %>
-		<%- include('filtering_pagination_commons', { id:"groups", searchBarPlaceholderText: searchBarPlaceholder }) %>
+		
+		<%- include('filtering_pagination_commons', { id: FILTERING_PAGINATION_ID, partialsResources: newstedPartialsResources, searchBarPlaceholderText: SEARCH_BAR_PLACEHOLDER }) %>
+
 
 		<!-- Container for all the groups cards -->
 		<span id="no_groups_msg"></span>
@@ -1193,17 +1200,17 @@
 	
 
 	const GROUPS_SHOW_AT_ONCE = 4;
-	let groupsFilteringPaginationData = $("#groups_filtering").data();
+	let groupsFilteringPagination = $("#<%= FILTERING_PAGINATION_ID %>").data()[FILTERS_PAGINATION_DATA_KEY];
 
 	$(document).ready(function() {
 		// Set properties of filtering_pagination_commons partial
-		groupsFilteringPaginationData["showAtOnce"] = GROUPS_SHOW_AT_ONCE;
-		groupsFilteringPaginationData["updateSearchCallback"] = onGroupSearch;
-		groupsFilteringPaginationData["checkLoadMore"] = () => {
+		groupsFilteringPagination.showAtOnce = GROUPS_SHOW_AT_ONCE;
+		groupsFilteringPagination.updateSearchCallback = onGroupSearch;
+		groupsFilteringPagination.checkLoadMore = () => {
 			return $("#users_tab").is(".selected");
 		};
-		groupsFilteringPaginationData["loadMoreCallback"] = loadGroupBatch;
-		groupsFilteringPaginationData["searchParams"].sandbox = false;
+		groupsFilteringPagination.loadMoreCallback = loadGroupBatch;
+		groupsFilteringPagination.searchParams.sandbox = false;
 	});
 
 	// When updating any filter parameter, remove all the groups studies and load a new batch
@@ -1212,11 +1219,11 @@
 		$('#groups').empty();
 
 		// Recalculate the total count of matching results
-		Simva.getSimletGroupsCount(simletId, groupsFilteringPaginationData["searchParams"], function(error, result) {
+		Simva.getSimletGroupsCount(simletId, groupsFilteringPagination.searchParams, function(error, result) {
 			if (!error) {
 				// Update the total results and recalculate the number of pages (but don't perform the search again)
-				groupsFilteringPaginationData["totalResults"] = result.count;
-				groupsFilteringPaginationData["updateSearchOptions"]();
+				groupsFilteringPagination.totalResults = result.count;
+				groupsFilteringPagination.updateSearchOptions();
 				loadGroupBatch();
 			}
 		});
@@ -1230,15 +1237,15 @@
 		$("#groups_loader").show();
 		
 		// Get only the non sandbox groups and paint them
-		Simva.getSimletGroups(simletId, groupsFilteringPaginationData["searchParams"], function(error, result) {
+		Simva.getSimletGroups(simletId, groupsFilteringPagination.searchParams, function(error, result) {
 			if (!error) {
 				paintGroupBatch(result);
 				$("#groups_loader").hide();
 
 				// Once all results have loaded, allow the bottom reached check
 				// just in case more results fit on the screen
-				groupsFilteringPaginationData["checkBottomReached"] = true;
-				groupsFilteringPaginationData["bottomReached"]();
+				groupsFilteringPagination.checkBottomReached = true;
+				groupsFilteringPagination.bottomReached();
 			}
 		});
 	}
@@ -1418,7 +1425,7 @@
 
 	const paintNoGroupsMessage = function() {
 		// No results
-		if (groupsFilteringPaginationData["totalResults"] == 0) {
+		if (groupsFilteringPagination.totalResults == 0) {
 			// No groups
 			if (simlet.groups.length == 0) {
 				$('#no_groups_msg').text("<%- t('groups.no_groups.message', { ns : 'groups' }) %>");
@@ -1450,8 +1457,8 @@
 			
 			// If the group is new, update the searching parameters and allocate it to the selected session
 			if (isNew) {
-				groupsFilteringPaginationData["totalResults"]++;
-				groupsFilteringPaginationData["updateSearchOptions"]();
+				groupsFilteringPagination.totalResults++;
+				groupsFilteringPagination.updateSearchOptions();
 				
 				if ($(".group_allocate_dropdown").val() != null) {
 					allocateToSession(newGroupInfo.group_id, $(".group_allocate_dropdown").val());
@@ -1461,32 +1468,32 @@
 			// Determine sort order callback
 			let sortOrder = (a, b) => a.group_id - b.group_id;
 			// From lower to higher
-			if (groupsFilteringPaginationData["searchParams"].order.toLowerCase() == "asc") {
-				if (groupsFilteringPaginationData["searchParams"].orderBy.toLowerCase() == "id") {
+			if (groupsFilteringPagination.searchParams.order.toLowerCase() == "asc") {
+				if (groupsFilteringPagination.searchParams.orderBy.toLowerCase() == "id") {
 					sortOrder = (a, b) => a.group_id - b.group_id;
 				}
-				else if (groupsFilteringPaginationData["searchParams"].orderBy.toLowerCase() == "name") {
+				else if (groupsFilteringPagination.searchParams.orderBy.toLowerCase() == "name") {
 					sortOrder = (a, b) => a.group_name.localeCompare(b.group_name);
 				}
-				else if (groupsFilteringPaginationData["searchParams"].orderBy.toLowerCase() == "createdAt") {
+				else if (groupsFilteringPagination.searchParams.orderBy.toLowerCase() == "createdAt") {
 					sortOrder = (a, b) => a.createdAt - b.createdAt;
 				}
-				else if (groupsFilteringPaginationData["searchParams"].orderBy.toLowerCase() == "updatedAt") {
+				else if (groupsFilteringPagination.searchParams.orderBy.toLowerCase() == "updatedAt") {
 					sortOrder = (a, b) => a.updatedAt - b.updatedAt;
 				} 
 			}
 			// From higher to lower
 			else {
-				if (groupsFilteringPaginationData["searchParams"].orderBy.toLowerCase() == "id") {
+				if (groupsFilteringPagination.searchParams.orderBy.toLowerCase() == "id") {
 					sortOrder = (a, b) => b.group_id - a.group_id;
 				}
-				else if (groupsFilteringPaginationData["searchParams"].orderBy.toLowerCase() == "name") {
+				else if (groupsFilteringPagination.searchParams.orderBy.toLowerCase() == "name") {
 					sortOrder = (a, b) => b.group_name.localeCompare(a.session_name);
 				}
-				else if (groupsFilteringPaginationData["searchParams"].orderBy.toLowerCase() == "createdAt") {
+				else if (groupsFilteringPagination.searchParams.orderBy.toLowerCase() == "createdAt") {
 					sortOrder = (a, b) => b.createdAt - a.createdAt;
 				}
-				else if (groupsFilteringPaginationData["searchParams"].orderBy.toLowerCase() == "updatedAt") {
+				else if (groupsFilteringPagination.searchParams.orderBy.toLowerCase() == "updatedAt") {
 					sortOrder = (a, b) => b.updatedAt - a.updatedAt;
 				} 
 			}
@@ -1497,7 +1504,7 @@
 
 			// Determine what position will take the new card 
 			const cardPosition = sortedIds.indexOf(newGroupInfo.group_id);
-			const currentMaxVisible = groupsFilteringPaginationData["searchParams"].limit;
+			const currentMaxVisible = groupsFilteringPagination.searchParams.limit;
 
 			// If the card should be visible after being added/edited
 			if (cardPosition < currentMaxVisible) {
@@ -1536,8 +1543,8 @@
 		// Delete the group from the stored groups
 		if (completeGroupsById.delete(groupId)) {
 			// Update the pagination parameters
-			groupsFilteringPaginationData["totalResults"]--;
-			groupsFilteringPaginationData["updateSearchOptions"]();
+			groupsFilteringPagination.totalResults--;
+			groupsFilteringPagination.updateSearchOptions();
 
 			updateSimletInfo(false, () => {
 				// If the group card was painted, remove it and potentially paint the one that will take the free space or the no group message
@@ -1553,12 +1560,12 @@
 			if (card.length > 0) {
 				card.remove();
 				
-				const currentMaxVisible = groupsFilteringPaginationData["searchParams"].limit;
+				const currentMaxVisible = groupsFilteringPagination.searchParams.limit;
 
 				// If there could be more cards painted after removing the session AND there are at least enough total results to fill the maximum, 
 				// load a new batch of sessions (the page will be the same as the current one, but the already painted sessions will be omitted and 
 				// only the new ones will be added to the page)
-				if ($("#groups").find(".test").length < currentMaxVisible && groupsFilteringPaginationData["totalResults"] >= currentMaxVisible) {
+				if ($("#groups").find(".test").length < currentMaxVisible && groupsFilteringPagination.totalResults >= currentMaxVisible) {
 					loadGroupBatch();
 				}
 				// Otherwise, the already existing cards will just move to take the removed one position

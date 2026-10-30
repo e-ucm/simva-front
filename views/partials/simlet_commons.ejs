@@ -1,6 +1,6 @@
 <%# views/partials/simlet_commons.ejs %>
 
-<!-- Elements that are common both the SIMLETs/archived SIMLETs list view and the individual SIMLET view -->
+<!-- Elements that are common both the active/archived/play SIMLETs list view and the individual SIMLET view -->
 
 <!-- Add/edit SIMLET form -->
 <div id ="simlet_form_menu" class="new_element floating">
@@ -108,11 +108,18 @@
 	<span class="char-count"></span>
 </div>
 
-<!-- Template for the no tags element of the tags list -->
-<div id="no_tags_template" style="display: none;">
+<!-- Templates for tags elements -->
+<div id="tags_template" style="display: none;">
+	<!-- No tags message of the tags list -->
 	<div class="sessionTagList">
 		<span class="sessionTagEmpty"><%= t('info.tags.no_tags', { ns : 'commons' }) %></span>
 	</div>
+
+	<!-- Tag chip with its color and name -->
+	<span class="sessionTagChip">
+		<span class="sessionTagColor"></span>
+		<span class="sessionTagName"></span>
+	</span>
 </div>
 
 
@@ -535,6 +542,19 @@
 		});
 	}
 
+	/**
+	 * Create the html elements for a tag chip
+	 * @param {object} tag  - object containing the tag info
+	 * @returns {object} - jquery object reference of the created tag chip 
+	*/
+	const createTagChip = function(tag) {
+		const tagChip = $("#tags_template .sessionTagChip").clone();
+		tagChip.find(".sessionTagColor").css({
+            background: tag.tag_color
+        });
+        tagChip.find(".sessionTagName").text(tag.tag_name);
+		return tagChip;
+	}
 	
 	/**
 	 * Create the html element containing all the tags
@@ -545,7 +565,7 @@
 		const tags = Array.isArray(taggedElem.tags) ? taggedElem.tags : [];
 		
 		if (tags.length === 0) {
-			return $("#no_tags_template .sessionTagList").html();
+			return $("#tags_template .sessionTagList").html();
 		}
 		let tagsHtml = '<div class="sessionTagList">';
 		for (let i = 0; i < tags.length; i++) {

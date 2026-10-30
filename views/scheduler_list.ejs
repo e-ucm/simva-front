@@ -2,8 +2,15 @@
 
 <h1><%= t('scheduler.title', { ns : 'SIMLETs' }) %></h1>
 
-<% const searchBarPlaceholder = t('simlets.search_bar.placeholder', { ns : 'SIMLETs' }); %>
-<%- include('partials/filtering_pagination_commons', { id:"scheduler", searchBarPlaceholderText: searchBarPlaceholder }) %>
+<!-- Needs to be added before other partials to allow them to use
+the elements and scripts defined in the simlet_commons partial -->
+<%- include('partials/simlet_commons') %>
+<% 
+const FILTERING_PAGINATION_ID = "scheduler_filtering"
+const SEARCH_BAR_PLACEHOLDER = t('simlets.search_bar.placeholder', { ns : 'SIMLETs' }); 
+let partialsResources = { }
+%>
+<%- include('partials/filtering_pagination_commons', { id: FILTERING_PAGINATION_ID, partialsResources: partialsResources, searchBarPlaceholderText: SEARCH_BAR_PLACEHOLDER }) %>
 
 <span id="no_simlets_msg"></span>
 <div id="simlets_list" class="simletsCardsList">
@@ -27,18 +34,18 @@
 	let totalSimletsCount = 0;
 	
 	const SHOW_AT_ONCE = 9;
-	let filteringPaginationData = $("#scheduler_filtering").data();
+	let filteringPagination = $("#<%= FILTERING_PAGINATION_ID %>").data()[FILTERS_PAGINATION_DATA_KEY];
 
 	$(document).ready(function() {
 		// Set properties of filtering_pagination_commons partial
-		filteringPaginationData["showAtOnce"] = SHOW_AT_ONCE;
-		filteringPaginationData["updateSearchCallback"] = onSearch;
-		filteringPaginationData["loadMoreCallback"] = loadSimletBatch;
+		filteringPagination.showAtOnce = SHOW_AT_ONCE;
+		filteringPagination.updateSearchCallback = onSearch;
+		filteringPagination.loadMoreCallback = loadSimletBatch;
 
 		// Initially block the bottom reached check and call the updateSearch to 
 		// update the initial search parameters and paint the initial results
-		filteringPaginationData["checkBottomReached"] = false;
-		filteringPaginationData["updateSearch"]();
+		filteringPagination.checkBottomReached = false;
+		filteringPagination.updateSearch();
 
 		// Get the total number of SIMLETs at the beginning, 
 		// since it can't be changed while being in this page
@@ -56,11 +63,11 @@
 	const onSearch = function() {
 		$('#simlets_list').empty();
 
-		Simva.getSchedulerSimletsCount(filteringPaginationData["searchParams"], function(error, result) {
+		Simva.getSchedulerSimletsCount(filteringPagination.searchParams, function(error, result) {
 			if (!error) {
 				// Update the total results and recalculate the number of pages (but don't perform the search again)
-				filteringPaginationData["totalResults"] = result.count;
-				filteringPaginationData["updateSearchOptions"]();
+				filteringPagination.totalResults = result.count;
+				filteringPagination.updateSearchOptions();
 				
 				loadSimletBatch();
 			}
@@ -74,15 +81,15 @@
 	const loadSimletBatch = function() {
 		$("#loader").show();
 		
-		Simva.getSchedulerSimlets(filteringPaginationData["searchParams"], function(error, result) {
+		Simva.getSchedulerSimlets(filteringPagination.searchParams, function(error, result) {
 			if (!error) {
 				paintSimletBatch(result);
 				$("#loader").hide();
 
 				// Once all results have loaded, allow the bottom reached check
 				// just in case more results fit on the screen
-				filteringPaginationData["checkBottomReached"] = true;
-				filteringPaginationData["bottomReached"]();
+				filteringPagination.checkBottomReached = true;
+				filteringPagination.bottomReached();
 			}
 		});
 	}

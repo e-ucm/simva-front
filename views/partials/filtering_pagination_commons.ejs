@@ -2,12 +2,18 @@
 
 <!-- Elements that are common for all views that include a search bar + filters for filtering and pagination -->
 
-<div id="<%= id %>_filtering" class="filtering">
-	<input type="text" id="<%= id %>_search_bar" placeholder="<%= searchBarPlaceholderText %>">
+<% 
+const INCLUDE_SESSIONS_STATUS = typeof id !== 'undefined' && (id.toLowerCase()).includes("sessions");
+const INCLUDE_TAGS_FILTERING = typeof id !== 'undefined' && ((id.toLowerCase()).includes("simlets") || INCLUDE_SESSIONS_STATUS);
+let nestedPartialsResources = partialsResources;
+%>
+
+<div id="<%= id %>" class="filtering">
+	<input type="text" class="filteringSearchBar" placeholder="<%= searchBarPlaceholderText %>">
     
 	<div class="filters">
 		<span><%= t('filters.sort_by.title', { ns : 'commons' }) %></span>
-		<select id="<%= id %>_sort_by">
+		<select class="filteringSortBy">
 			<option value="id" data-order="asc" ><%= t('filters.sort_by.id', { ns : 'commons' }) %></option>
 			<option value="name" data-order="asc"><%= t('filters.sort_by.name.asc', { ns : 'commons' }) %></option>
 			<option value="name" data-order="desc"><%= t('filters.sort_by.name.desc', { ns : 'commons' }) %></option>
@@ -19,10 +25,10 @@
 	</div>
 
 <!-- Session status filtering -->
-<% if (typeof id !== 'undefined' && id == "sessions" ) { %>
+<% if (INCLUDE_SESSIONS_STATUS) { %>
     <div class="filters">
 		<span><%= t('sessions.status.title', { ns : 'sessions' }) %></span>
-		<select id="<%= id %>_status">
+		<select class="filteringStatus">
 			<option value=""><%= t('filters.status.all', { ns : 'sessions' }) %></option>
 			<option value="active"><%= t('sessions.status.active.title', { ns : 'sessions' }) %></option>
 			<option value="inactive"><%= t('sessions.status.paused.title', { ns : 'sessions' }) %></option>
@@ -32,330 +38,74 @@
 <% } %>
 
 <!-- Tags filtering -->
-<% if (typeof id !== 'undefined' && (id == "simlets" || id == "sessions") ) { %>
-    <div class="filters filtersTags">
-        <span><%= t('filters.tags.title', { ns : 'commons' }) %></span>
-
-        <select id="<%= id %>_tags_selector">
-            <!-- Default option to show a value in the dropdown -->
-            <option id="<%= id %>_selected_tags_amount" value="" selected disabled hidden></option>
-        </select>
-        
-        <!-- Fake select dropdown that will appear instead of the default one -->
-        <div id="<%= id %>_tags_dropdown" class="filtersTagsDropdown">
-            <input type="text" id="<%= id %>_tags_search_bar" placeholder="<%= t('filters.tags.search_bar.placeholder', { ns : 'commons' }) %>">
-            <ul id="<%= id %>_tags_list" class="filtersTagsList">
-                
-            </ul>
-            
-        </div>
-	</div>
-
-    <!-- Template for each element of the tags list -->
-    <div id="search_tag_template" style="display: none;">
-        <li class="searchTag">
-            <input type="checkbox">
-                <span class="sessionTagChip">
-                    <span class="sessionTagColor"></span>
-                    <span class="sessionTagName"></span>
-                </span>
-            </input>
-        </li>
-    </div>
+<% if (INCLUDE_TAGS_FILTERING) { %>
+    <%- include('dropdowns/base_multi_select_dropdown', { partialsResources: nestedPartialsResources }) %>
 <% } %>
 
 </div>
 
-<script type="text/javascript">
-    // Variables and functions need to be stored in the div data-* attribute to avoid 
-    // declaration conflicts when including the partial multiple times in the same view
+<!-- Ensure the filteringPagination script only gets included once, that the FILTERS_PAGINATION_DATA_KEY variable only get 
+declared once, and that the document event delegate that blurs the select elements focus only gets registered once -->
+<% if (nestedPartialsResources !== 'undefined' && !nestedPartialsResources["filteringPagination.js"]) { %>
 
-
-    $("#<%= id %>_filtering").data()["showAtOnce"] = 1;     // Maximum amount of results that will be returned on each search
-    $("#<%= id %>_filtering").data()["currentPage"] = 1;    // "Page" from where the search will take the results (used to calculate skip and limit)
-    $("#<%= id %>_filtering").data()["totalResults"] = 1;   // Amount of results available for the search
-
-    // Default callbacks. To change their behavior, a function needs to be asigned as their value
-    $("#<%= id %>_filtering").data()["updateSearchCallback"] = () => {};            // Called when updating a search to get new results
-    $("#<%= id %>_filtering").data()["checkBottomReached"] = false;                 // Allow/block checking if the page is scrolled all the way down 
-                                                                                    // (to prevent it from instantly updating the current page number 
-                                                                                    // after repainting the results, which makes it skip the first page)
-    $("#<%= id %>_filtering").data()["checkLoadMore"] = () => { return true; };     // Called to check extra conditions to know when to load more results
-    $("#<%= id %>_filtering").data()["loadMoreCallback"] = () => {};                // Called to load more results in the current search
-
-    $("#<%= id %>_filtering").data()["searchTimerInterval"] = 200;     // Time in ms to wait before performing a search update
-    $("#<%= id %>_filtering").data()["searchTimer"] = null;
-
-    // Object that defines the parameters that will be passed to the api calls as a query
-    // The default parameters common all calls are:
-    // - skip (pagination)
-    // - limit (pagination)
-    // - searchString (filtering)
-    // - orderBy (filtering)
-    // - order (filtering)
-    // Other parameters that are exclusive to certain calls are searchTags or status
-    // When calling the /count endpoints, only searchString and the exclusive parameters will be taken into account
-    $("#<%= id %>_filtering").data()["searchParams"] = { };
-
-    
-    // Update the search parameters
-    $("#<%= id %>_filtering").data()["updateSearchOptions"] = function() {
-        let data = $("#<%= id %>_filtering").data();
-        
-        data["totalPages"] = Math.ceil(data["totalResults"] / data["showAtOnce"]);
-        // Fix total and current pages so that there are always at least 1 page and
-        // the current page never is lower than 1 or bigger than the total pages
-        if (data["totalPages"] < 1) {
-            data["totalPages"] = 1;
-        }
-        if (data["currentPage"] > data["totalPages"]) {
-            data["currentPage"] = data["totalPages"];
-        }
-        else if (data["currentPage"] < 1) {
-            data["currentPage"] = 1;
-        }
-        
-        // Set each parameter individually instead of setting the entire data["searchParams"]
-        // object to allow extra parameters to be added from anywhere else
-        data["searchParams"].skip = (data["currentPage"] - 1) * data["showAtOnce"];
-        data["searchParams"].limit = data["currentPage"] * data["showAtOnce"];
-        data["searchParams"].searchString = $("#<%= id %>_search_bar").val().trim().toLowerCase() || "";
-        data["searchParams"].orderBy = $("#<%= id %>_sort_by").val() || "id";
-        data["searchParams"].order = $("#<%= id %>_sort_by option:selected").data("order") || "desc";
-
-        if ($("#<%= id %>_status").length) {
-            data["searchParams"].status = $("#<%= id %>_status").val() || "";
-        }
-    }
-    
-    // Update the search parameters and call the update function
-    $("#<%= id %>_filtering").data()["updateSearch"] = function() {
-        let data = $("#<%= id %>_filtering").data();
-        data["currentPage"] = 1;
-
-        data["updateSearchOptions"]();
-        data["updateSearchCallback"]();
-    }
-
-    // Check if the page has been scrolled all the way down to load more results
-    $("#<%= id %>_filtering").data()["bottomReached"] = function() {
-        let data = $("#<%= id %>_filtering").data();
-
-        // If the check is not blocked
-        if (data["checkBottomReached"]) {
-            // Calculate the distance to the bottom
-            // IMPORTANT: $(window).scrollTop(), $(document).height() and $(window).height() 
-            // behave differently on different browsers so jquery can't be used to calculate
-            // if the page is scrolled all the way to the bottom
-            const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
-            const distanceToBottom = scrollHeight - scrollTop - clientHeight;
-            
-            // If the distance is less than 1px (1 and not 0 just in case of floating pixels)
-            if (Math.abs(distanceToBottom) < 1) {
-                // If there are still pages to load, update the current page and load more
-                if (data["currentPage"] < data["totalPages"] && data["checkLoadMore"]()) {
-                    data["currentPage"]++;
-
-                    data["updateSearchOptions"]();
-                    data["loadMoreCallback"]();
-                }
-            }
-        }
-    }
-
-    // Before updating the search results, wait a certain time to ensure the user is done changing parameters
-    $("#<%= id %>_filtering").data()["resetSearchTimer"] = function() {
-        const data = $("#<%= id %>_filtering").data();
-        
-        // Reset the timeout callback on each call and create it again
-        clearTimeout(data["searchTimer"]);
-        data["searchTimer"] = setTimeout(() => {
-           data["updateSearch"]();
-
-        }, data["searchTimerInterval"]);
-    }
-
-
-    // Shared listeners 
-    
-    $(window).scroll(function(e) {
-        $("#<%= id %>_filtering").data()["bottomReached"]();
-    });
-
-    // Writing on the search bar input
-    $("#<%= id %>_search_bar").on("input", function () {
-        $("#<%= id %>_filtering").data()["resetSearchTimer"]();
-    });
-
-    // Changing the value of the Sort by dropdown
-    $("#<%= id %>_sort_by").on("change", function () {
-        $("#<%= id %>_filtering").data()["resetSearchTimer"]();
-    });
-
-    
-    $(document).on("click", function(e) {
-        // Force select elements of the filtering options to lose focus when clicking outside of them
-        // (they don't lose focus even after clicking outside, so by default they don't detect they're 
-        // getting hovered until clicking outside again) 
-        if (!$(e.target).closest("select").length) {
-            $(".filtering select").blur();
-        }
-    });
-
-</script>
-
-
-<% if (typeof id !== 'undefined' && (id == "simlets" || id == "sessions") ) { %>
+<script type="text/javascript" src="/src/filteringPagination.js"></script>
+<% nestedPartialsResources["filteringPagination.js"] = true; %>
 
 <script type="text/javascript">
-    // Since this part will never be included multiple times in the same view, variables 
-    // and functions can be declared normally instead of storing them in the div data
-    
-    $("#<%= id %>_tags_dropdown").hide();
-    let selectedTagsIds = new Set();
 
-    // When changing the window size, place the tags dropdown to the 
-    // left or to the right bellow the select depending on its position
-    $(window).on("resize", function() {
-        const tagsSelector = $(".filtersTags");
-        const tagsDropdown = $(".filtersTags .filtersTagsDropdown");
+    const FILTERS_PAGINATION_DATA_KEY = "filteringPagination";
 
-        if (tagsSelector[0].getBoundingClientRect().left > window.innerWidth / 2) {
-            tagsDropdown.css({
-                right: 0,
-                left: "auto"
-            });
-        }
-        else {
-            tagsDropdown.css({
-                left: 0,
-                right: "auto"
-            });
-        }
-    });
-
-    $(document).ready(function() {
-        // Trigger the resize window event to adjust the tags dropdown for the first time
-        window.dispatchEvent(new Event("resize"));
-        
-        // Reset the tags selection
-        $("#<%= id %>_selected_tags_amount").text("<%- t('filters.tags.selected.title', { ns : 'commons', count: 0 }) %>");
-        $("#<%= id %>_search_bar").val("");
-	});
-    
-
-    // Shared listeners using event delegation to ensure the handler 
-    // works even if element is added after the document ready event
-
-    // The select elements click events must be handled in the mousedown event instead of on the click event to
-    // effectively handle them in time, since the mousedown event triggers before and runs before the default
-    // select dropdown appears
-    
-    // Hide the filtersTagsDropdown since it doesn't behave as the regular select dropdown, so it doesn't
-    // hide automatically after clicking outside of it or when pressing another select element
     $(document).on("click", function(e) {
-        hideTagsDropdown(e);
-    });
-    $("select").on('mousedown', function (e) {
-        hideTagsDropdown(e);
-    });
-    
-    // Tags select element press
-    $("#<%= id %>_tags_selector").on("mousedown", function (e) {
-        // Prevent the default select dropdown to open
-        e.preventDefault();
-        
-        // Toggle the dropdown
-        const $dropdown = $("#<%= id %>_tags_dropdown");
-        $dropdown.fadeToggle(100);
-
-        // Focus the tags search bar and reset the search
-        if ($dropdown.is(":visible")) {
-            $("#<%= id %>_tags_search_bar").focus();
-            $("#<%= id %>_tags_search_bar").val("");
-            renderMatchingTags();
-        }
+        // Force select elements of the filtering options to lose focus when clicking anywhere, 
+        // since they don't automatically lose focus after clicking anywhere else and they 
+        // don't detect hovering until clicking outside again
+        $(".filtering select").blur();
     });
     
-    // When clicking any element of the search tags dropdown
-    $(document).on("click", ".searchTag", function (e) {
-        const data = $(this).data();
-        $(this).find("input[type='checkbox']").prop("checked", function(i, val) { 
-            // If it's checked, it will get unchecked, so remove it from the selected tags
-            if (val) {
-                selectedTagsIds.delete(data["id"]);
-            }
-            // Otherwise, it will get checked, so add it
-            else {
-                selectedTagsIds.add(data["id"]);
-            }
-            return !val; 
-        });
-        
-        $("#<%= id %>_selected_tags_amount").text(`<%- t('filters.tags.selected.title', { ns : 'commons', count: '${selectedTagsIds.size}' }) %>`);
-        $("#<%= id %>_filtering").data()["searchParams"].searchTags = Array.from(selectedTagsIds);
-        $("#<%= id %>_filtering").data()["resetSearchTimer"]();
-    });
-
-
-    // Writing on the tags search bar
-    $("#<%= id %>_tags_search_bar").on("input", function () {
-        renderMatchingTags();
-    });
-
-
-    const hideTagsDropdown = function(e) {
-        const dropdown = $("#<%= id %>_tags_dropdown");
-        // Hide if the dropdown is visible and the interacted element is other than the select or the dropdown
-        if (dropdown.is(":visible") && !$(e.target).closest("#<%= id %>_tags_selector").length && !$(e.target).closest(dropdown).length ) {
-            e.preventDefault();
-            dropdown.fadeOut(100);
-        }
-    }
-
-    // Render the tags that match the search in the tags dropdown
-    const renderMatchingTags = function () {
-        $('#<%= id %>_tags_list').empty();
-
-        // No tags
-        // allTags defined on the simlet_commons partial
-        if (allTags.size == 0) {
-            $('#<%= id %>_tags_list').append($("#no_tags_template .sessionTagList").clone());
-            return;
-        }
-        
-        let searchValue = $("#<%= id %>_tags_search_bar").val().trim().toLowerCase() || "";
-        const searchResult = searchTagsByName(searchValue);
-
-        searchResult.forEach(tag => {
-            const tagObj = $("#search_tag_template .searchTag").clone();
-            tagObj.data("id", tag.tag_id);
-
-            $(tagObj).find("input[type='checkbox']").prop("checked", selectedTagsIds.has(tag.tag_id));
-            tagObj.find(".sessionTagColor").css({
-                background: tag.tag_color
-            });
-            tagObj.find(".sessionTagName").text(tag.tag_name);
-
-            $('#<%= id %>_tags_list').append(tagObj);
-        });
-        if (searchResult.length == 0) {
-            $('#<%= id %>_tags_list').text("<%- t('filters.search.no_matches.message', { ns : 'commons' }) %>");
-        }
-    }
-
 </script>
-
 <% } %>
 
-<% if (typeof id !== 'undefined' && id == "sessions") { %>
 
 <script type="text/javascript">
-    // Changing the value of the session status dropdown
-    $("#<%= id %>_status").on("change", function () {
-        $("#<%= id %>_filtering").data()["resetSearchTimer"]();
-    });
-
+    
+    // Assign a new FilteringPagination instance to the root object
+    $("#<%= id %>").data(FILTERS_PAGINATION_DATA_KEY, new FilteringPagination($("#<%- id %>")));
+    
 </script>
 
+
+<!-- Tags dropdown -->
+<% if (INCLUDE_TAGS_FILTERING) { %>
+<%- include('dropdowns/tags_multi_select_dropdown', { partialsResources: nestedPartialsResources }) %>
+
+<script type="text/javascript">
+    const tagsMultiSelect = $("#<%- id %>").find(".multiSelect");
+
+    // Add the class and title for the filtering and pagination dropdown
+    tagsMultiSelect.addClass("filters filtersTags");
+    tagsMultiSelect.prepend($("<span>", { text: "<%- t('filters.tags.title', { ns : 'commons' }) %>" }));
+
+    // Change the selected option and the search bar placeholder text
+    tagsMultiSelect.find(".multiSelectSelector option").text("<%- t('filters.tags.selected.title', { ns : 'commons', count: 0 }) %>")
+    tagsMultiSelect.find(".searchBar").attr("placeholder", "<%- t('filters.tags.search_bar.placeholder', { ns : 'commons' }) %>");
+
+    class FiltersTagsMultiSelectDropdown extends TagsMultiSelectDropdown {
+        constructor($rootElem) {
+            super($rootElem);
+            this.filteringPagination = $rootElem.closest(".filtering").data()[FILTERS_PAGINATION_DATA_KEY];
+        }
+        
+        onOptionClick($listElem) {
+            super.onOptionClick($listElem);
+            this.$selectorPlaceholder.text(`<%- t('filters.tags.selected.title', { ns : 'commons', count: '${this.selectedOptions.size}' }) %>`);
+            this.filteringPagination.searchParams.searchTags = Array.from(this.selectedOptions);
+            this.filteringPagination.resetSearchTimer();
+        }
+    }
+
+    // Assign a new FiltersTagsMultiSelectDropdown instance to the root object
+    tagsMultiSelect.data(MULTI_SELECT_DROPDOWN_DATA_KEY, new FiltersTagsMultiSelectDropdown(tagsMultiSelect));
+    
+</script>
+    
 <% } %>

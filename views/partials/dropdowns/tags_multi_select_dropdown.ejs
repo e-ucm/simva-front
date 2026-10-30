@@ -1,0 +1,95 @@
+<%# views/partials/dropdowns/tags_multi_select_dropdown.ejs %>
+
+<!-- Elements and class for a multi select dropdown that renders a tag list -->
+
+<!-- Ensure the partial only gets included once -->
+<% let nestedPartialsResources = partialsResources; %>
+<% if (!nestedPartialsResources["tags_multi_select_dropdown.ejs"]) { %>
+    <% nestedPartialsResources["tags_multi_select_dropdown.ejs"] = true; %>
+
+<!-- Template for each element of the tags list -->
+<div id="search_tag_template" style="display: none;">
+    <li class="searchTag">
+        <input type="checkbox" style="pointer-events: none;"></input>
+    </li>
+</div>
+
+<script>
+    // MUST BE INCLUDED IN THE HTML AFTER BaseMultiSelectDropdown 
+
+    class TagsMultiSelectDropdown extends BaseMultiSelectDropdown {
+        constructor($rootElem) {
+            super($rootElem);
+            this.LIST_ELEM_DATA_ID_KEY = "id";
+
+            // Set an invalid value for the available options to check for them 
+            // when showing the dropdown, since the tags are fetched asynchronously
+            this.unselectedOptions = null;
+            
+            this.$noOptionsMessage.text("<%- t('filters.tags.no_tags.message', { ns : 'commons' }) %>");
+        }
+
+        filterOptions(options, query) {
+            query = query.trim().toLowerCase() || "";
+            if (query == null || query == "") {
+                return Array.from(options);
+            }
+
+            return Array.from(options).filter((option) => {
+                return tagsById.has(option) && tagsById.get(option).tag_name.toLowerCase().includes(query)
+            });
+        }
+
+        showMatchingResults() {
+            // Set the value of the available options
+            if (this.unselectedOptions == null) {
+                this.unselectedOptions = new Set();
+                // Defined on the simlets_commons partial
+                allTags.forEach((tag) => {
+                    this.unselectedOptions.add(tag.tag_id);
+                });
+            }
+
+            super.showMatchingResults();
+        }
+
+        createOption(tagId) {
+            const tag = tagsById.get(tagId);
+
+            const listOption = $("#search_tag_template .searchTag").clone();
+            listOption.data(this.LIST_ELEM_DATA_ID_KEY, tagId);
+
+            const checkbox = $(listOption).find("input[type='checkbox']");
+            checkbox.prop("checked", this.selectedOptions.has(tagId));
+            
+            // Defined on the simlets_commons partial
+            const tagChip = createTagChip(tag);
+            tagChip.css("pointer-events", "none");
+            tagChip.find(".sessionTagColor").css("pointer-events", "none");
+            tagChip.find(".sessionTagName").css("pointer-events", "none");
+            listOption.append(tagChip);
+
+            return listOption;
+        }
+
+        // Update the selected and unselected options, paint the checkbox accordingly, and repaint the options
+        onOptionClick($listElem) {
+            const checkbox = $listElem.find("input[type='checkbox']");
+            const id = $listElem.data()[this.LIST_ELEM_DATA_ID_KEY];
+
+            if (this.selectedOptions.has(id)) {
+                this.selectedOptions.delete(id);
+                this.unselectedOptions.add(id);
+            }
+            else {
+                this.selectedOptions.add(id);
+                this.unselectedOptions.delete(id);
+            }
+            checkbox.prop("checked", this.selectedOptions.has(id));
+            this.showMatchingResults();
+        }
+    }
+
+</script>
+
+<% } %>

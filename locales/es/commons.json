@@ -20,7 +20,9 @@
     "filters.tags.title": "Etiquetas",
         "filters.tags.selected.title": "{{count}} seleccionada(s)",
         "filters.tags.search_bar.placeholder": "Busca una etiqueta por su nombre",
-    "filters.search.no_matches.message": "No hay coincidencias para tu búsqueda",
+        "filters.tags.no_tags.message": "No hay etiquetas que seleccionar",
+    "filters.search.all_matching.message": "Ya se han elegido todos los resultados coincidentes",
+    "filters.search.no_matches.message": "No hay coincidencias para la búsqueda",
 
     "forms.name.title": "Nombre",
     "forms.description.title": "Descripción",

@@ -20,6 +20,8 @@
     "filters.tags.title": "Tags",
         "filters.tags.selected.title": "{{count}} sélectionné(s)",
         "filters.tags.search_bar.placeholder": "Rechercher un tag par nom",
+        "filters.tags.no_tags.message": "",
+    "filters.search.all_matching.message": "",
     "filters.search.no_matches.message": "Aucune correspondance trouvée",
 
     "forms.name.title": "Nom",

@@ -22,8 +22,12 @@ const schedulerTestMode = typeof testMode !== 'undefined' && testMode;
 <!-- Needs to be added before other partials to allow them to use
 the elements and scripts defined in the simlet_commons partial -->
 <%- include('partials/simlet_commons') %>
-<% const searchBarPlaceholder = t('simlets.search_bar.placeholder', { ns : 'SIMLETs' }); %>
-<%- include('partials/filtering_pagination_commons', { id:"simlets", searchBarPlaceholderText: searchBarPlaceholder }) %>
+<% 
+const FILTERING_PAGINATION_ID = "simlets_filtering"
+const SEARCH_BAR_PLACEHOLDER = t('simlets.search_bar.placeholder', { ns : 'SIMLETs' }); 
+let partialsResources = { }
+%>
+<%- include('partials/filtering_pagination_commons', { id: FILTERING_PAGINATION_ID, partialsResources: partialsResources, searchBarPlaceholderText: SEARCH_BAR_PLACEHOLDER }) %>
 
 <span id="no_simlets_msg"></span>
 <div id="simlets_list" class="simletsCardsList">
@@ -76,7 +80,7 @@ the elements and scripts defined in the simlet_commons partial -->
 	
 	// Assign properties and functions of filtering_pagination_commons partial
 	const SHOW_AT_ONCE = 9;
-	let filteringPaginationData = $("#simlets_filtering").data();
+	let filteringPagination = $("#<%= FILTERING_PAGINATION_ID %>").data()[FILTERS_PAGINATION_DATA_KEY];
 	
 	// Add the floating class to the content element to add space at the bottom 
 	// of the page so the floating button doesnt cover any other element
@@ -85,15 +89,15 @@ the elements and scripts defined in the simlet_commons partial -->
 	
 	$(document).ready(function() {
 		// Assign properties and functions of filtering_pagination_commons partial
-		filteringPaginationData["showAtOnce"] = SHOW_AT_ONCE;
-		filteringPaginationData["searchParams"].status = ARCHIVED ? "archived" : "active";
-		filteringPaginationData["updateSearchCallback"] = onSearch;
-		filteringPaginationData["loadMoreCallback"] = loadSimletBatch;
+		filteringPagination.showAtOnce = SHOW_AT_ONCE;
+		filteringPagination.searchParams.status = ARCHIVED ? "archived" : "active";
+		filteringPagination.updateSearchCallback = onSearch;
+		filteringPagination.loadMoreCallback = loadSimletBatch;
 		
 		// Initially block the bottom reached check and call the updateSearch to 
 		// update the initial search parameters and paint the initial results
-		filteringPaginationData["checkBottomReached"] = false;
-		filteringPaginationData["updateSearch"]();
+		filteringPagination.checkBottomReached = false;
+		filteringPagination.updateSearch();
 
 
 		// When submitting the import SIMLET form
@@ -249,11 +253,11 @@ the elements and scripts defined in the simlet_commons partial -->
 	const onSearch = function() {
 		$('#simlets_list').empty();
 
-		Simva.getSimletsCount(filteringPaginationData["searchParams"], function(error, result) {
+		Simva.getSimletsCount(filteringPagination.searchParams, function(error, result) {
 			if (!error) {
 				// Update the total results and recalculate the number of pages (but don't perform the search again)
-				filteringPaginationData["totalResults"] = result.count;
-				filteringPaginationData["updateSearchOptions"]();
+				filteringPagination.totalResults = result.count;
+				filteringPagination.updateSearchOptions();
 				loadSimletBatch();
 			}
 		});
@@ -267,15 +271,15 @@ the elements and scripts defined in the simlet_commons partial -->
 	const loadSimletBatch = function() {
 		$("#loader").show();
 		
-		Simva.getSimlets(filteringPaginationData["searchParams"], function(error, result) {
+		Simva.getSimlets(filteringPagination.searchParams, function(error, result) {
 			if (!error) {
 				paintSimletBatch(result);
 				$("#loader").hide();
 
 				// Once all results have loaded, allow the bottom reached check
 				// just in case more results fit on the screen
-				filteringPaginationData["checkBottomReached"] = true;
-				filteringPaginationData["bottomReached"]();
+				filteringPagination.checkBottomReached = true;
+				filteringPagination.bottomReached();
 			}
 		});
 	}
@@ -406,7 +410,7 @@ the elements and scripts defined in the simlet_commons partial -->
 	}
 
 	const paintNoSimletsMessage = async function() {
-		if (filteringPaginationData["totalResults"] == 0) {
+		if (filteringPagination.totalResults == 0) {
 			// There are no SIMLETs in the current section (active/archived)
 			if (simletsById.size == 0) {
 				if (!ARCHIVED) {
@@ -432,38 +436,38 @@ the elements and scripts defined in the simlet_commons partial -->
 		if (!simletsById.has(newSimletInfo.simlet_id)) {
 			simletsById.set(newSimletInfo.simlet_id, newSimletInfo);
 
-			filteringPaginationData["totalResults"]++;
-			filteringPaginationData["updateSearchOptions"]();
+			filteringPagination.totalResults++;
+			filteringPagination.updateSearchOptions();
 			
 			// Determine sort order callback
 			let sortOrder = (a, b) => a.simlet_id - b.simlet_id;
 			// From lower to higher
-			if (filteringPaginationData["searchParams"].order.toLowerCase() == "asc") {
-				if (filteringPaginationData["searchParams"].orderBy.toLowerCase() == "id") {
+			if (filteringPagination.searchParams.order.toLowerCase() == "asc") {
+				if (filteringPagination.searchParams.orderBy.toLowerCase() == "id") {
 					sortOrder = (a, b) => a.simlet_id - b.simlet_id;
 				}
-				else if (filteringPaginationData["searchParams"].orderBy.toLowerCase() == "name") {
+				else if (filteringPagination.searchParams.orderBy.toLowerCase() == "name") {
 					sortOrder = (a, b) => a.simlet_name.localeCompare(b.simlet_name);
 				}
-				else if (filteringPaginationData["searchParams"].orderBy.toLowerCase() == "createdAt") {
+				else if (filteringPagination.searchParams.orderBy.toLowerCase() == "createdAt") {
 					sortOrder = (a, b) => a.createdAt - b.createdAt;
 				}
-				else if (filteringPaginationData["searchParams"].orderBy.toLowerCase() == "updatedAt") {
+				else if (filteringPagination.searchParams.orderBy.toLowerCase() == "updatedAt") {
 					sortOrder = (a, b) => a.updatedAt - b.updatedAt;
 				} 
 			}
 			// From higher to lower
 			else {
-				if (filteringPaginationData["searchParams"].orderBy.toLowerCase() == "id") {
+				if (filteringPagination.searchParams.orderBy.toLowerCase() == "id") {
 					sortOrder = (a, b) => b.simlet_id - a.simlet_id;
 				}
-				else if (filteringPaginationData["searchParams"].orderBy.toLowerCase() == "name") {
+				else if (filteringPagination.searchParams.orderBy.toLowerCase() == "name") {
 					sortOrder = (a, b) => b.simlet_name.localeCompare(a.simlet_name);
 				}
-				else if (filteringPaginationData["searchParams"].orderBy.toLowerCase() == "createdAt") {
+				else if (filteringPagination.searchParams.orderBy.toLowerCase() == "createdAt") {
 					sortOrder = (a, b) => b.createdAt - a.createdAt;
 				}
-				else if (filteringPaginationData["searchParams"].orderBy.toLowerCase() == "updatedAt") {
+				else if (filteringPagination.searchParams.orderBy.toLowerCase() == "updatedAt") {
 					sortOrder = (a, b) => b.updatedAt - a.updatedAt;
 				} 
 			}
@@ -474,7 +478,7 @@ the elements and scripts defined in the simlet_commons partial -->
 
 			// Determine what position will take the new card 
 			const cardPosition = sortedIds.indexOf(newSimletInfo.simlet_id);
-			const currentMaxVisible = filteringPaginationData["searchParams"].limit;
+			const currentMaxVisible = filteringPagination.searchParams.limit;
 
 			// If the card should be visible after being added
 			if (cardPosition < currentMaxVisible) {
@@ -524,20 +528,20 @@ the elements and scripts defined in the simlet_commons partial -->
 		simletsById.delete(simletId);
 
 		// Update the pagination parameters
-		filteringPaginationData["totalResults"]--;
-		filteringPaginationData["updateSearchOptions"]();
+		filteringPagination.totalResults--;
+		filteringPagination.updateSearchOptions();
 
 		// If the SIMLET card was painted, remove it and potentially paint the one that will take the free space or the no SIMLETs message
 		const card = $(`#simlet_${simletId}`);
 		if (card.length > 0) {
 			card.remove();
 
-			const currentMaxVisible = filteringPaginationData["searchParams"].limit;
+			const currentMaxVisible = filteringPagination.searchParams.limit;
 
 			// If there could be more cards painted after removing the SIMLET AND there are at least enough total results to fill the maximum, 
 			// load a new batch of SIMLETs (the page will be the same as the current one, but the already painted SIMLETs will be omitted and 
 			// only the new ones will be added to the page)
-			if ($("#simlets_list").find(".cardColumn").length < currentMaxVisible && filteringPaginationData["totalResults"] >= currentMaxVisible) {
+			if ($("#simlets_list").find(".cardColumn").length < currentMaxVisible && filteringPagination.totalResults >= currentMaxVisible) {
 				loadSimletBatch();
 			}
 			// Otherwise, the already existing cards will just move to take the removed one position

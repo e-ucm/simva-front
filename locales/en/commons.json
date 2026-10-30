@@ -20,6 +20,8 @@
     "filters.tags.title": "Tags",
         "filters.tags.selected.title": "{{count}} selected",
         "filters.tags.search_bar.placeholder": "Search a tag by name",
+        "filters.tags.no_tags.message": "There are no tags to select from",
+    "filters.search.all_matching.message": "All matching results are already selected",
     "filters.search.no_matches.message": "No matches for your search",
 
     "forms.name.title": "Name",

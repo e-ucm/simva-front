@@ -16,8 +16,12 @@
 		</div>
 	</div>
 	
-	<% const searchBarPlaceholder = t('sessions.search_bar.placeholder', { ns : 'sessions' }); %>
-	<%- include('filtering_pagination_commons', { id:"sessions", searchBarPlaceholderText: searchBarPlaceholder }) %>
+	<% 
+		const FILTERING_PAGINATION_ID = "sessions_filtering"
+		const SEARCH_BAR_PLACEHOLDER = t('sessions.search_bar.placeholder', { ns : 'sessions' }); 
+		let newstedPartialsResources = partialsResources;
+	%>
+	<%- include('filtering_pagination_commons', { id: FILTERING_PAGINATION_ID, partialsResources: newstedPartialsResources, searchBarPlaceholderText: SEARCH_BAR_PLACEHOLDER }) %>
 
 	<!-- Container for all the session cards -->
 	<span id="no_sessions_msg"></span>
@@ -778,16 +782,16 @@
     // Render + filtering + pagination
 
 	const SESSIONS_SHOW_AT_ONCE = 4;
-	let sessionsFilteringPaginationData = $("#sessions_filtering").data();
+	let sessionsFilteringPagination = $("#<%= FILTERING_PAGINATION_ID %>").data()[FILTERS_PAGINATION_DATA_KEY];
 
 	$(document).ready(function() {
 		// Set properties of filtering_pagination_commons partial
-		sessionsFilteringPaginationData["showAtOnce"] = SESSIONS_SHOW_AT_ONCE;
-		sessionsFilteringPaginationData["updateSearchCallback"] = onSessionSearch;
-		sessionsFilteringPaginationData["checkLoadMore"] = () => {
+		sessionsFilteringPagination.showAtOnce = SESSIONS_SHOW_AT_ONCE;
+		sessionsFilteringPagination.updateSearchCallback = onSessionSearch;
+		sessionsFilteringPagination.checkLoadMore = () => {
 			return $("#sessions_tab").is(".selected");
 		};
-		sessionsFilteringPaginationData["loadMoreCallback"] = loadSessionBatch;
+		sessionsFilteringPagination.loadMoreCallback = loadSessionBatch;
 	});
 
 
@@ -799,11 +803,11 @@
 		$('#sessions').empty();
 
 		// Recalculate the total count of matching results
-		Simva.getSimletSessionsCount(simletId, sessionsFilteringPaginationData["searchParams"], function(error, result) {
+		Simva.getSimletSessionsCount(simletId, sessionsFilteringPagination.searchParams, function(error, result) {
 			if (!error) {
 				// Update the total results and recalculate the number of pages (but don't perform the search again)
-				sessionsFilteringPaginationData["totalResults"] = result.count;
-				sessionsFilteringPaginationData["updateSearchOptions"]();
+				sessionsFilteringPagination.totalResults = result.count;
+				sessionsFilteringPagination.updateSearchOptions();
 				loadSessionBatch();
 			}
 		});
@@ -816,15 +820,15 @@
 	const loadSessionBatch = function() {
 		$("#sessions_loader").show();
 		
-		Simva.getSimletSessions(simletId, sessionsFilteringPaginationData["searchParams"], function(error, result){
+		Simva.getSimletSessions(simletId, sessionsFilteringPagination.searchParams, function(error, result){
 			if (!error) {
 				paintSessionBatch(result);
 				$("#sessions_loader").hide();
 
 				// Once all results have loaded, allow the bottom reached check
 				// just in case more results fit on the screen
-				sessionsFilteringPaginationData["checkBottomReached"] = true;
-				sessionsFilteringPaginationData["bottomReached"]();
+				sessionsFilteringPagination.checkBottomReached = true;
+				sessionsFilteringPagination.bottomReached();
 			}
 		});
 	}
@@ -1031,7 +1035,7 @@
 	 */
 	const paintNoSessionsMessage = async function() {
 		// No results
-		if (sessionsFilteringPaginationData["totalResults"] == 0) {
+		if (sessionsFilteringPagination.totalResults == 0) {
 			// No sessions
 			if (simlet.sessions.length == 0) {
 				$('#no_sessions_msg').text("<%- t('sessions.no_sessions.message', { ns : 'sessions' }) %>");
@@ -1059,8 +1063,8 @@
 
 			// If the session is new, update the searching parameters
 			if (prevInfo == null) {
-				sessionsFilteringPaginationData["totalResults"]++;
-				sessionsFilteringPaginationData["updateSearchOptions"]();
+				sessionsFilteringPagination.totalResults++;
+				sessionsFilteringPagination.updateSearchOptions();
 			}
 
 			// If the session is new or its name changed, update it in the allocators dropdowns
@@ -1071,32 +1075,32 @@
 			// Determine the sort order callback
 			let sortOrder = (a, b) => a.session_id - b.session_id;
 			// From lower to higher
-			if (sessionsFilteringPaginationData["searchParams"].order.toLowerCase() == "asc") {
-				if (sessionsFilteringPaginationData["searchParams"].orderBy.toLowerCase() == "id") {
+			if (sessionsFilteringPagination.searchParams.order.toLowerCase() == "asc") {
+				if (sessionsFilteringPagination.searchParams.orderBy.toLowerCase() == "id") {
 					sortOrder = (a, b) => a.session_id - b.session_id;
 				}
-				else if (sessionsFilteringPaginationData["searchParams"].orderBy.toLowerCase() == "name") {
+				else if (sessionsFilteringPagination.searchParams.orderBy.toLowerCase() == "name") {
 					sortOrder = (a, b) => a.session_name.localeCompare(b.session_name);
 				}
-				else if (sessionsFilteringPaginationData["searchParams"].orderBy.toLowerCase() == "createdAt") {
+				else if (sessionsFilteringPagination.searchParams.orderBy.toLowerCase() == "createdAt") {
 					sortOrder = (a, b) => a.createdAt - b.createdAt;
 				}
-				else if (sessionsFilteringPaginationData["searchParams"].orderBy.toLowerCase() == "updatedAt") {
+				else if (sessionsFilteringPagination.searchParams.orderBy.toLowerCase() == "updatedAt") {
 					sortOrder = (a, b) => a.updatedAt - b.updatedAt;
 				} 
 			}
 			// From higher to lower
 			else {
-				if (sessionsFilteringPaginationData["searchParams"].orderBy.toLowerCase() == "id") {
+				if (sessionsFilteringPagination.searchParams.orderBy.toLowerCase() == "id") {
 					sortOrder = (a, b) => b.session_id - a.session_id;
 				}
-				else if (sessionsFilteringPaginationData["searchParams"].orderBy.toLowerCase() == "name") {
+				else if (sessionsFilteringPagination.searchParams.orderBy.toLowerCase() == "name") {
 					sortOrder = (a, b) => b.session_name.localeCompare(a.session_name);
 				}
-				else if (sessionsFilteringPaginationData["searchParams"].orderBy.toLowerCase() == "createdAt") {
+				else if (sessionsFilteringPagination.searchParams.orderBy.toLowerCase() == "createdAt") {
 					sortOrder = (a, b) => b.createdAt - a.createdAt;
 				}
-				else if (sessionsFilteringPaginationData["searchParams"].orderBy.toLowerCase() == "updatedAt") {
+				else if (sessionsFilteringPagination.searchParams.orderBy.toLowerCase() == "updatedAt") {
 					sortOrder = (a, b) => b.updatedAt - a.updatedAt;
 				} 
 			}
@@ -1107,7 +1111,7 @@
 
 			// Determine what position will take the new card 
 			const cardPosition = sortedIds.indexOf(newSessionInfo.session_id);
-			const currentMaxVisible = sessionsFilteringPaginationData["searchParams"].limit;
+			const currentMaxVisible = sessionsFilteringPagination.searchParams.limit;
 
 			// If the card should be visible after being added/edited
 			if (cardPosition < currentMaxVisible) {
@@ -1139,8 +1143,8 @@
 			completeSessionsById.delete(sessionId);
 
 			// Update the pagination parameters
-			sessionsFilteringPaginationData["totalResults"]--;
-			sessionsFilteringPaginationData["updateSearchOptions"]();
+			sessionsFilteringPagination.totalResults--;
+			sessionsFilteringPagination.updateSearchOptions();
 
 			updateSimletInfo(false, () => {
 				// If the session card was painted, remove it and potentially paint the one that will take the free space or the no sessions message
@@ -1148,12 +1152,12 @@
 				if (card.length > 0) {
 					card.remove();
 
-					const currentMaxVisible = sessionsFilteringPaginationData["searchParams"].limit;
+					const currentMaxVisible = sessionsFilteringPagination.searchParams.limit;
 
 					// If there could be more cards painted after removing the session AND there are at least enough total results to fill the maximum, 
 					// load a new batch of sessions (the page will be the same as the current one, but the already painted sessions will be omitted and 
 					// only the new ones will be added to the page)
-					if ($("#sessions").find(".test").length < currentMaxVisible && sessionsFilteringPaginationData["totalResults"] >= currentMaxVisible) {
+					if ($("#sessions").find(".test").length < currentMaxVisible && sessionsFilteringPagination.totalResults >= currentMaxVisible) {
 						loadSessionBatch();
 					}
 					// Otherwise, the already existing cards will just move to take the removed one position
