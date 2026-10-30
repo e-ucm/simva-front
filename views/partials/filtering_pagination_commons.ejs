@@ -39,7 +39,7 @@ let nestedPartialsResources = partialsResources;
 
 <!-- Tags filtering -->
 <% if (INCLUDE_TAGS_FILTERING) { %>
-    <%- include('dropdowns/base_multi_select_dropdown', { partialsResources: nestedPartialsResources }) %>
+    <%- include('dropdowns/tags_multi_select_dropdown', { partialsResources: nestedPartialsResources }) %>
 <% } %>
 
 </div>
@@ -76,7 +76,6 @@ declared once, and that the document event delegate that blurs the select elemen
 
 <!-- Tags dropdown -->
 <% if (INCLUDE_TAGS_FILTERING) { %>
-<%- include('dropdowns/tags_multi_select_dropdown', { partialsResources: nestedPartialsResources }) %>
 
 <script type="text/javascript">
     const tagsMultiSelect = $("#<%- id %>").find(".multiSelect");

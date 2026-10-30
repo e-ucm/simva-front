@@ -4,6 +4,8 @@
 
 <!-- Ensure the partial only gets included once -->
 <% let nestedPartialsResources = partialsResources; %>
+<%- include('base_multi_select_dropdown', { partialsResources: nestedPartialsResources }) %>
+
 <% if (!nestedPartialsResources["tags_multi_select_dropdown.ejs"]) { %>
     <% nestedPartialsResources["tags_multi_select_dropdown.ejs"] = true; %>
 
