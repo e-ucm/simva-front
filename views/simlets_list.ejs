@@ -395,7 +395,7 @@ let partialsResources = { }
 		card.find(".cardCreationDate").text(getFormattedDate(simlet.createdAt, currentlanguageCode));
 		card.find(".cardUpdateDate").text(getFormattedDate(simlet.updatedAt, currentlanguageCode));
 		card.find(".cardSessions").text(simlet.sessions.length);
-		card.find(".simletTagsRow").append(renderTags(simlet));
+		card.find(".simletTagsRow").append(createTagsList(simlet.tags));
 		
 		Simva.getSimletGroupsParticipantsCount(simlet.simlet_id, function(error, result) {
 			if (!error) {

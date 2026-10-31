@@ -2,6 +2,11 @@
 
 <!-- Elements of the sessions tab in the SIMLET view (not including the activities) -->
 
+<% 
+	const FILTERING_PAGINATION_ID = "sessions_filtering"
+	const SEARCH_BAR_PLACEHOLDER = t('sessions.search_bar.placeholder', { ns : 'sessions' }); 
+	let nestedPartialsResources = partialsResources;
+%>
 <!-- Section where all sessions will be painted -->
 <div class="card">
 	<div class="top">
@@ -15,13 +20,8 @@
 			</div>
 		</div>
 	</div>
-	
-	<% 
-		const FILTERING_PAGINATION_ID = "sessions_filtering"
-		const SEARCH_BAR_PLACEHOLDER = t('sessions.search_bar.placeholder', { ns : 'sessions' }); 
-		let newstedPartialsResources = partialsResources;
-	%>
-	<%- include('filtering_pagination_commons', { id: FILTERING_PAGINATION_ID, partialsResources: newstedPartialsResources, searchBarPlaceholderText: SEARCH_BAR_PLACEHOLDER }) %>
+
+	<%- include('filtering_pagination_commons', { id: FILTERING_PAGINATION_ID, partialsResources: nestedPartialsResources, searchBarPlaceholderText: SEARCH_BAR_PLACEHOLDER }) %>
 
 	<!-- Container for all the session cards -->
 	<span id="no_sessions_msg"></span>
@@ -131,52 +131,33 @@
 
 					<h3><%= t('forms.name.title', { ns : 'commons' }) %></h3>
 					<input class="session_form_name name_field" type="text" name="sessionName" id="session_name" placeholder="<%= t('sessions.name.placeholder', { ns : 'sessions' }) %>" required>
+
 					<h3 id="session_description_label"><%= t('forms.description.title', { ns : 'commons' }) %></h3>
 					<textarea class="description_field" type="text" name="sessionDescription" id="session_description" placeholder="<%= t('sessions.description.placeholder', { ns : 'sessions' }) %>"></textarea>
+					
 					<h3 id="session_status_title"><%= t('sessions.status.title', { ns : 'sessions' }) %></h3>
 					<select id="session_status_selector" name="sessionStatus">
 						<option value="active"><%= t('sessions.status.active.title', { ns : 'sessions' }) %></option>
 						<option value="inactive"><%= t('sessions.status.paused.title', { ns : 'sessions' }) %></option>
 					</select>
-					<h3><%= t('filters.tags.title', { ns : 'commons' }) %></h3>
-					<div id="session_tags_area" style="margin-top: 5px;">
-						<div class="tagPickerArea">
-							<div class="tagPickerRow">
-								<div class="tagPickerInputWrap"  >
-									<div id="session_selected_tags" class="tagSelectedChips"></div>
-									<input
-										type="text"
-										id="session_tag_search"
-										class="tagSearchInput"
-										placeholder="<%= t('tags.search.placeholder', { ns : 'sessions' }) %>"
-										onfocus="openTagDropdown()"
-										oninput="renderAvailableTags()"
-									>
-									<div id="session_tag_dropdown" class="tagDropdown" style="display:none;" tabindex="-1">
-
-									</div>
-								</div>
-								<button type="button" class="tagPlusButton" onclick="toggleTagCreator()">+</button>
-							</div>
-						</div>
-						<div id="session_tag_creator" class="tagCreator" style="display:none;">
-							<input type="text" class="tag_name_field" id="session_new_tag_name" placeholder="<%= t('tags.name.placeholder', { ns : 'sessions' }) %>" style="flex: 1;">
-							<input type="color" id="session_new_tag_color" value="#3b82f6" style="width: 44px; padding: 0;">
-							<button type="button" onclick="createAndSelectTag()"><%= t('tags.create.title', { ns : 'sessions' }) %></button>
-							<button type="button" onclick="closeTagCreator()"><%= t('tags.cancel.title', { ns : 'sessions' }) %></button>
-						</div>
-						<div id="session_tag_editor" class="tagEditor" style="display:none;">
-							<input hidden type="text" id="edit_tag_id">
-							<input hidden type="text" id="prev_tag_name">
-							<input hidden type="color" id="prev_tag_color">
-
-							<input type="text" class="tag_name_field" id="session_edit_tag_name" placeholder="<%= t('tags.name.placeholder', { ns : 'sessions' }) %>" style="flex: 1;">
-							<input type="color" id="session_edit_tag_color" value="#3b82f6" style="width: 44px; padding: 0;">
-							<button type="button" onclick="saveEditingTag()"><%= t('tags.save.title', { ns : 'sessions' }) %></button>
-							<button type="button" onclick="closeTagEditor()"><%= t('tags.cancel.title', { ns : 'sessions' }) %></button>
-						</div>
-						<span class="error" id="session_tags_error"></span>
+					
+					<h3 style="margin-top:15px;"><%= t('filters.tags.title', { ns : 'commons' }) %></h3>
+					<div style="display: flex; gap: 10px; align-items: center;" >
+						<%- include('dropdowns/tags_multi_select_dropdown', { partialsResources: nestedPartialsResources }) %>
+						<button type="button" class="tagPlusButton" onclick="openTagForm()" title="<%= t('tags.create.title', { ns : 'sessions' }) %>">+</button>
 					</div>
+					<div id="session_tag_form" class="tagForm" style="display:none;">
+						<input hidden type="text" id="edit_tag_id">
+						<input hidden type="text" id="prev_tag_name">
+						<input hidden type="color" id="prev_tag_color">
+						
+						<input type="text" class="tag_name_field" id="tag_name_field" placeholder="<%= t('tags.name.placeholder', { ns : 'sessions' }) %>" style="flex: 1;">
+						<input type="color" id="tag_color_field" value="#3b82f6" style="width: 44px; padding: 0;">
+						<button type="button" id="tag_create_button" onclick="createAndSelectTag()"><%= t('tags.create.title', { ns : 'sessions' }) %></button>
+						<button type="button" id="tag_edit_button" onclick="editTag()"><%= t('tags.edit.title', { ns : 'sessions' }) %></button>
+						<button type="button" onclick="closeTagForm()"><%= t('tags.cancel.title', { ns : 'sessions' }) %></button>
+					</div>
+					<span class="error" id="session_tags_error"></span>
 
 					<!--
 					<div id="can_be_manually_activated" >
@@ -285,7 +266,7 @@
 			errorbox.text("");
 			Utils.toggleSubmit();
 			
-			const selectedTagIds = selectedTags.map((tag) => Number(tag.tag_id));
+			const selectedTagIds = Array.from(sessionTagsMultiSelectInstance.selectedOptions);
 
 			// Creating new session
 			if (form.editingSessionId == null || form.editingSessionId == "") {
@@ -334,6 +315,9 @@
 				const nameChanged = form.prevSessionName != Utils.trimString(form.sessionName);
 				const descriptionChanged = form.prevSessionDescription != Utils.trimString(form.sessionDescription);
 				
+				const originalTagsIds = Array.from(originalSelectedTagsIds);
+				const selectedTagIds = Array.from(sessionTagsMultiSelectInstance.selectedOptions);
+
 				const tagsChanged = selectedTagIds.length !== originalTagsIds.length || selectedTagIds.some((tagId) => !originalTagsIds.includes(tagId));
 
 				if (!nameChanged && !descriptionChanged && !tagsChanged) {
@@ -406,8 +390,7 @@
 			$('#session_name').val("");
 			$('#session_description').val("");
 			
-			selectedTags = [];
-			originalTagsIds = [];
+			fillSessionFormTagsDropdown([]);
 		}
 		// Editing session
 		else {
@@ -427,21 +410,8 @@
 			$('#session_name').val(session.session_name);
 			$('#session_description').val(session.session_description);
 			
-			const currentTags = Array.isArray(session.tags) ? session.tags.map(normalizeTag).filter((tag) => tag !== null) : [];
-			selectedTags = currentTags;
-			originalTagsIds = currentTags.map((tag) => Number(tag.tag_id));
+			fillSessionFormTagsDropdown(session.tags);
 		}
-
-		closeTagCreator();
-		closeTagDropdown();
-		closeTagEditor();
-
-		updateAndRenderCurrentTags(function(loadError) {
-			if (loadError) {
-				$('#session_form_error').text(loadError.responseJSON ? loadError.responseJSON.message : loadError.message || loadError);
-				return;
-			}
-		});
 	}
 
 	
@@ -608,10 +578,12 @@
 	
 	const deleteSession = function(sessionId, sessionName) {
 		if (confirm(`<%- t('sessions.delete.confirm', { ns : 'sessions', session : '${sessionName}', SIMLET : '${simlet.simlet_name}' }) %>`)) {
-			Simva.deleteSession(simletId, sessionId, function(error, result) {
-				if (!error) {
-					onDeleteSession(sessionId);
+			Simva.deleteSession(simletId, sessionId, function(response) {
+				if (response.status !== 200) {
+					alert(response.responseJSON.message);
+					return;
 				}
+				onDeleteSession(sessionId);
 			});
 		}
 	}
@@ -1024,7 +996,7 @@
 		card.find(".sessionSummary .completedTotalUsers").text(userCount);
 
 		card.find(".sessionTags").empty();
-		card.find(".sessionTags").append(renderTags(session));
+		card.find(".sessionTags").append(createTagsList(session.tags));
 
 		// Paint all the activities in this session (defined at simlet_activities)
 		paintSessionActivities(session, activities, card);
@@ -1193,98 +1165,279 @@
 
 </script>
 
+
 <!-- TAGS -->
+<div id="tags_buttons_template" style="display: none;">
+	<div class="tagsButtons">
+		<img src="/images/icons/pencil.png" class="editTagButton" title="<%= t('tags.edit.title', { ns : 'sessions' }) %>">
+		<img src="/images/icons/trash-bin.png" class="deleteTagButton" title="<%= t('tags.delete.title', { ns : 'sessions' }) %>">
+	</div>
+</div>
+
 <script type="text/javascript">
-	let availableTags = [];
-	let selectedTags = [];
-	let originalTagsIds = [];
+
+    // Define a specific TagsMultiSelectDropdown child class that updates the 
+	// original behavior to reassign its elements to an new jquery element instance
+	// since opening a floating modal clones all the form elements, which makes the
+	// original TagsMultiSelectDropdown instance not reference the correct elements
+	class ReplaceableTagsMultiSelectDropdown extends TagsMultiSelectDropdown {
+		constructor($rootElem) {
+			super($rootElem);
+
+			this.$noOptionsMessage.text("<%- t('tags.search.no_tags.message', { ns : 'sessions' }) %>");
+			this.$allMatchingMessage.text("<%- t('tags.search.all_matches', { ns : 'sessions' }) %>");
+		}
+		
+		reassign($newRootElem) {
+			this.$selector = $newRootElem.find(".multiSelectSelector");
+			this.$selectorPlaceholder = this.$selector.find("option");
+			this.$dropdown = $newRootElem.find(".multiSelectDropdown");
+			this.$dropdown.hide();
+
+			this.$searchBar = this.$dropdown.find(".searchBar");
+			
+			this.$noOptionsMessage = this.$dropdown.find(".noOptions");
+			this.$allMatchingMessage = this.$dropdown.find(".allMatching");
+			this.$noMatchesMessage = this.$dropdown.find(".noMatches");
+			this.$options = this.$dropdown.find(".options");
+
+			this.setupDropdownEvents();
+
+            if (this.unselectedOptions == null) {
+				this.unselectedOptions = new Set();
+			}
+			this.unselectedOptions.clear();
+			allTags.forEach((tag) => {
+				this.unselectedOptions.add(tag.tag_id);
+			});
+			this.selectedOptions.clear();
+		}
+
+		createOption(tagId) {
+			const listOption = super.createOption(tagId);
+			listOption.append($("#tags_buttons_template div").clone());
+			return listOption;
+		}
+
+		onOptionClick($listElem) {
+            super.onOptionClick($listElem);
+            this.$selectorPlaceholder.text(`<%- t('filters.tags.selected.title', { ns : 'commons', count: '${this.selectedOptions.size}' }) %>`);
+        }
+		
+	}
 	
+	let sessionTagsMultiSelect = $("#session_form").find(".multiSelect");
+	// Change the selected option and the search bar placeholder text
+	sessionTagsMultiSelect.find(".multiSelectSelector option").text("<%- t('filters.tags.selected.title', { ns : 'commons', count: 0 }) %>")
+	sessionTagsMultiSelect.find(".searchBar").attr("placeholder", "<%- t('filters.tags.search_bar.placeholder', { ns : 'commons' }) %>");
+	
+    // Store the ReplaceableTagsMultiSelectDropdown instance using the original form as root object
+	const sessionTagsMultiSelectInstance = new ReplaceableTagsMultiSelectDropdown(sessionTagsMultiSelect);
+    
+
+	let originalSelectedTagsIds = new Set();
+
+	const fillSessionFormTagsDropdown = function(tags) {
+		originalSelectedTagsIds.clear();
+
+		// Update the tags just in case the fetched tags were only the ones
+		// that were assigned to the SIMLETs instead of all existing tags
+		Simva.getTags((error, result) => {
+			updateTagsCallback(error, result);
+			
+			// Reassign the root object of the ReplaceableTagsMultiSelectDropdown instance
+			sessionTagsMultiSelect = $("#session_form").find(".multiSelect");
+			sessionTagsMultiSelectInstance.reassign(sessionTagsMultiSelect);
+			sessionTagsMultiSelect.data(MULTI_SELECT_DROPDOWN_DATA_KEY, sessionTagsMultiSelectInstance);
+
+			// Update the ReplaceableTagsMultiSelectDropdown instance to select the tags passed in the parameters
+			sessionTagsMultiSelectInstance.$selectorPlaceholder.text(`<%- t('filters.tags.selected.title', { ns : 'commons', count: '${tags.length}' }) %>`);
+			tags.forEach((tag) => {
+				// Store the currently selected tags ids
+				originalSelectedTagsIds.add(tag.tag_id);
+				
+				sessionTagsMultiSelectInstance.unselectedOptions.delete(tag.tag_id);
+				sessionTagsMultiSelectInstance.selectedOptions.add(tag.tag_id);
+			});
+		});
+	}
+
+
 	const TAG_NAME_FIELD_CLASS = "tag_name_field";
 	const MAX_TAG_NAME_LENGTH = 20;
-
-	// Menus
-
+	
 	$(document).ready(function() {
 		// Add counter to all tag name fields (defined in the simlet_commons partial)
 		addInputCharCountToClass(TAG_NAME_FIELD_CLASS, MAX_TAG_NAME_LENGTH);
-
-		
-		$(document).on('click', function (e) {
-			if (!$(e.target).closest('#session_tag_search').length && !$(e.target).closest('#session_tag_dropdown').length
-				&& !$(e.target).closest('#session_selected_tags').length) {
-				closeTagDropdown();
-			}
-		});
 	});
 
 	$(document).on('input', `.${TAG_NAME_FIELD_CLASS}`, function(e) {
 		processAllowedCharacters(e);
 	});	
 	
-	const toggleTagCreator = function() {
-		$("#session_tag_creator").toggle();
+
+	// Menus
+	
+	$(document).on("click", ".tagsButtons", (e) => {
+		e.stopPropagation();
+	});
+
+	$(document).on("click", ".tagsButtons .editTagButton", (e) => {
+		const tagData = $(e.target).closest(".searchTag").data();
+		$(".multiSelectDropdown:visible").fadeOut(100);
+		openTagForm(tagData[LIST_ELEM_DATA_ID_KEY]);
+	});
+
+	$(document).on("click", ".tagsButtons .deleteTagButton", (e) => {
+		const tagData = $(e.target).closest(".searchTag").data();
+		deleteTag(tagData[LIST_ELEM_DATA_ID_KEY], tagsById.get(tagData[LIST_ELEM_DATA_ID_KEY]).tag_name);
+	});
+
+	const openTagForm = function(editingTagId = null) {
+		$("#session_tag_form").show();
 		$("#session_tags_error").text("");
-		
-		if ($("#session_tag_creator").is(":visible")) {
-			closeTagEditor();
+
+		// Reset al previous form values
+		$("#edit_tag_id").val("");
+		$("#prev_tag_name").val("");
+		$("#prev_tag_color").val("#3b82f6");
+
+		$("#tag_name_field").val("");
+		$("#tag_color_field").val("#3b82f6");
+
+		// Creating new tag
+		if (editingTagId == null) {
+			$("#tag_create_button").show();
+			$("#tag_edit_button").hide();
+		}
+		// Editing tag
+		else {
+			$("#tag_create_button").hide();
+			$("#tag_edit_button").show();
+
+			const tag = tagsById.get(editingTagId);
+			$("#edit_tag_id").val(tag.tag_id);
+			$("#prev_tag_name").val(tag.tag_name);
+			$("#prev_tag_color").val(tag.tag_color);
+
+			$("#tag_name_field").val(tag.tag_name);
+			$("#tag_color_field").val(tag.tag_color);
 		}
 	}
-	const closeTagCreator = function() {
-		$("#session_tag_creator").hide();
-		$("#session_tags_error").text("");
-	}
 
-	const openTagDropdown = function() {
-		$("#session_tag_dropdown").show();
-	}
-	const closeTagDropdown = function() {
-		$("#session_tag_dropdown").hide();
-	}
-
-	const openTagEditor = function(tagId) {
-		$("#session_tag_editor").show();
-		closeTagDropdown();
-		closeTagCreator();
-		
-		const tag = getTagFromTagId(tagId);
-		$("#edit_tag_id").val(tag.tag_id);
-		$("#prev_tag_name").val(tag.tag_name);
-		$("#prev_tag_color").val(tag.tag_color);
-		
-		$("#session_edit_tag_name").val(tag.tag_name);
-		$("#session_edit_tag_color").val(tag.tag_color);
-	}
-	const closeTagEditor = function() {
-		$("#session_tag_editor").hide();
-		$("#session_tags_error").text("");
+	const closeTagForm = function() {
+		$("#session_tag_form").hide();
 	}
 
 
 	// Functionality
 
-	const getTagFromTagId = function(tagId) {
-		const normalizedTagId = Number(tagId);
+	const createAndSelectTag = function() {
+		const tagName = $("#tag_name_field").val().trim();
+		const tagColor = $("#tag_color_field").val();
+		const errorBox = $('#session_tags_error');
+		errorBox.text("");
+		Utils.toggleSubmit();
 
-		for (let i = 0; i < availableTags.length; i++) {
-			let tag = availableTags[i];
-			if (tag.tag_id === normalizedTagId) {
-				return tag;
+		if (!tagName) {
+			Utils.toggleSubmit();
+			errorBox.text("<%- t('tags.error.required_name', { ns : 'sessions' }) %>");
+			return;
+		}
+
+		Simva.createTag({ tag_name: tagName, tag_color: tagColor }, function(error, createdTag) {
+			Utils.toggleSubmit();
+			if (error) {
+				errorBox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+				return;
 			}
-		}
-		return null;
+
+			closeTagForm();
+			// Update all the existing tags and add the created tag to 
+			// the multi select dropdown and render all the options again
+			Simva.getTags((error, result) => {
+				updateTagsCallback(error, result);
+
+				sessionTagsMultiSelectInstance.selectedOptions.add(createdTag.tag_id);
+				sessionTagsMultiSelectInstance.$selectorPlaceholder.text(`<%- t('filters.tags.selected.title', { ns : 'commons', count: '${tags.length}' }) %>`);
+				sessionTagsMultiSelectInstance.showMatchingResults();
+			});
+		});
 	}
 
-	const normalizeTag = function(tag) {
-		if (!tag) {
-			return null;
-		}
-		return {
-			tag_id: Number(tag.tag_id),
-			tag_name: tag.tag_name,
-			tag_color: tag.tag_color || "#3b82f6"
-		};
-	}
+	const editTag = function() {
+		const tagId = $("#edit_tag_id").val();
+		const tagName = $("#tag_name_field").val();
+		const tagColor = $("#tag_color_field").val();
 
+		const nameChanged = $("#prev_tag_name").val() != Utils.trimString(tagName);
+		const colorChanged = $("#prev_tag_color").val() != tagColor;
+
+		const errorBox = $("#session_tags_error");
+		errorBox.text("");
+		Utils.toggleSubmit();
+
+		if (!nameChanged && !colorChanged) {
+			Utils.toggleSubmit();
+			errorBox.text("<%- t('forms.edit.error.no_changes', { ns : 'commons' }) %>");
+			return;
+		}
+		else if ($("#tag_name_field").val() == "" || $("#tag_name_field").val() == null) {
+			Utils.toggleSubmit();
+			errorBox.text("<%- t('tags.error.required_name', { ns : 'sessions' }) %>");
+			return;
+		}
+		else {
+			Simva.updateTag(tagId, { tag_name: tagName, tag_color: tagColor }, function(error) {
+				Utils.toggleSubmit();
+				
+				if (error) {
+					errorBox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+					return;
+				}
+
+				closeTagForm();
+
+				// Update all the existing tags and render all the options again
+				Simva.getTags((error, result) => {
+					updateTagsCallback(error, result);
+					sessionTagsMultiSelectInstance.showMatchingResults();
+				});
+			});
+		}
+	}
+	
+	const deleteTag = function(tagId, tagName) {
+		const errorBox = $("#session_tags_error");
+		errorBox.text("");
+
+		// If the tag is being used by other SIMLET or session, show an alert and do nothing
+		if (assignedTagsIds.has(tagId)) {
+			alert(`<%- t('tags.delete.error.other_using', { ns : 'sessions', tagName : '${tagName}' }) %>`)
+			return;
+		}
+
+		if (confirm(`<%- t('tags.delete.confirm', { ns : 'sessions', tagName : '${tagName}' }) %>`)) {
+			Simva.deleteTag(tagId, function(error, result) {
+				if (error) {
+					// TODO: show error correctly when tag cant be deleted due to being used in other session
+					// (only error has content but it shows [object Object])
+					errorBox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+					return;
+				}
+
+				// Update all the existing tags, delete the deleted tag from 
+				// the multi select dropdown and render all the options again
+				Simva.getTags((error, result) => {
+					updateTagsCallback(error, result);
+					sessionTagsMultiSelectInstance.unselectedOptions.delete(tagId);
+					sessionTagsMultiSelectInstance.selectedOptions.delete(tagId);
+					sessionTagsMultiSelectInstance.showMatchingResults();
+				});
+			});
+		}
+	}
+	
 	const syncSessionTags = function(simletId, sessionId, originalTagIds, targetTagIds, callback) {
 		const toAdd = targetTagIds.filter((tagId) => !originalTagIds.includes(tagId));
 		const toDelete = originalTagIds.filter((tagId) => !targetTagIds.includes(tagId));
@@ -1311,206 +1464,6 @@
 		])
 			.then((result) => callback(null, result))
 			.catch((error) => callback(error));
-	}
-
-
-	const selectTag = function(tagId) {
-		const tag = getTagFromTagId(tagId);
-
-		if (!selectedTags.includes(tagId)) {
-			selectedTags.push(tag);
-			updateAndRenderCurrentTags();
-		}
-		$("#session_new_tag_name").val("");
-		$("session_tag_search").val("");
-		closeTagCreator();
-	}
-	
-	const unselectTag = function(tagId) {
-		const tagToUnselect = getTagFromTagId(tagId);
-		if (selectedTags.includes(tagToUnselect)) {
-			selectedTags = selectedTags.filter((tag) => tag != tagToUnselect);
-			updateAndRenderCurrentTags();
-		}
-	}
-
-	const createAndSelectTag = function() {
-		let tagName = $("#session_new_tag_name").val().trim();
-		let tagColor = $("#session_new_tag_color").val();
-		let errorBox = $('#session_tags_error');
-		errorBox.text("");
-		Utils.toggleSubmit();
-
-		if (!tagName) {
-			Utils.toggleSubmit();
-			errorBox.text("<%- t('tags.error.required_name', { ns : 'sessions' }) %>");
-			return;
-		}
-		
-		Simva.createTag({ tag_name: tagName, tag_color: tagColor }, function(error, createdTag) {
-			Utils.toggleSubmit();
-			if (error) {
-				errorBox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
-				return;
-			}
-
-			const created = normalizeTag(createdTag);
-			if (created) {
-				availableTags.push(createdTag);
-				selectTag(created.tag_id);
-			}
-		});
-	}
-
-	const deleteTag = function(tagId) {
-		Simva.deleteTag(tagId, function(error, result) {
-			if (error) {
-				// TODO: show error correctly when tag cant be deleted due to being used in other session
-				// (only error has content but it shows [object Object])
-				$('#session_tags_error').text(error.responseJSON ? error.responseJSON.message : error.message || error);
-				return;
-			}
-			updateAndRenderCurrentTags();
-		});
-	}
-
-	const saveEditingTag = function() {
-		const tagId = $("#edit_tag_id").val();
-		const tagName = $("#session_edit_tag_name").val();
-		const tagColor = $("#session_edit_tag_color").val();
-
-		const nameChanged = $("#prev_tag_name").val() != Utils.trimString(tagName);
-		const colorChanged = $("#prev_tag_color").val() != tagColor;
-
-		const errorBox = $("#session_tags_error");
-		Utils.toggleSubmit();
-
-		if (!nameChanged && !colorChanged) {
-			Utils.toggleSubmit();
-			errorBox.text("<%- t('forms.edit.error.no_changes', { ns : 'commons' }) %>");
-			return;
-		}
-		else if ($("#session_edit_tag_name").val() == "" || $("#session_edit_tag_name").val() == null) {
-			Utils.toggleSubmit();
-			errorBox.text("<%- t('tags.error.required_name', { ns : 'sessions' }) %>");
-			return;
-		}
-		else {
-			Simva.updateTag(tagId, { tag_name: tagName, tag_color: tagColor }, function(error) {
-				Utils.toggleSubmit();
-				
-				if (error) {
-					errorBox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
-					return;
-				}
-
-				closeTagEditor();
-				updateAndRenderCurrentTags(function(loadError) {
-					if (loadError) {
-						errorBox.text(loadError.responseJSON ? loadError.responseJSON.message : loadError.message || loadError);
-						return;
-					}
-					openTagDropdown();
-				});
-			});
-		}
-	}
-
-
-	const filterAvailableTagsBySearch = function() {
-		const query = $("#session_tag_search").val().trim().toLowerCase();
-		if (!query) {
-			return availableTags;
-		}
-
-		return availableTags.filter((tag) => {
-			const name = (tag.tag_name || '').toLowerCase();
-			return name.includes(query);
-		});
-	}
-
-
-	// Render
-
-	const renderAvailableTags = function() {
-		const container = $("#session_tag_dropdown");
-		container.empty();
-		const selectedIds = selectedTags.map((tag) => Number(tag.tag_id));
-		const filteredTags = filterAvailableTagsBySearch();
-		const addableTags = filteredTags.filter((tag) => !selectedIds.includes(Number(tag.tag_id)));
-
-		if (availableTags.length === 0) {
-			container.append(`<div class="tagDropdownEmpty"><%- t('tags.search.no_tags.message', { ns : 'sessions' }) %></div>`);
-			return;
-		}
-
-		if (filteredTags.length === 0) {
-			container.append(`<div class="tagDropdownEmpty"><%- t('filters.search.no_matches.message', { ns : 'commons' }) %></div>`);
-			return;
-		}
-
-		if (addableTags.length === 0) {
-			container.append(`<div class="tagDropdownEmpty"><%- t('tags.search.all_matches', { ns : 'sessions' }) %></div>`);
-			return;
-		}
-
-		for (let i = 0; i < addableTags.length; i++) {
-			const tag = addableTags[i];
-			const isSelected = selectedIds.includes(Number(tag.tag_id));
-			container.append(`
-				<div class="tagDropdownOption">
-					<button type="button" class="tagDropdownPick" onclick="selectTag(${tag.tag_id})">
-						<span class="tagPickerColor" style="background:${tag.tag_color};"></span>
-						<span class="tagDropdownLabel">${tag.tag_name}</span>
-					</button>
-					<button type="button" class="tagDropdownEdit" onclick="openTagEditor(${tag.tag_id})">Edit</button>
-					<button type="button" class="tagDropdownEdit" onclick="deleteTag(${tag.tag_id})">Delete</button>
-				</div>
-			`);
-		}
-	}
-
-	const renderSelectedSessionTags = function() {
-		const container = $("#session_selected_tags");
-		container.empty();
-
-		for (let i = 0; i < selectedTags.length; i++) {
-			const tag = selectedTags[i];
-			container.append(`
-				<span class="tagSelectedChip">
-					<span class="tagPickerColor" style="background:${tag.tag_color};"></span>
-					<span class="tagSelectedName">${tag.tag_name}</span>
-					<button type="button" class="tagSelectedRemove" onclick="unselectTag(${tag.tag_id})">x</button>
-				</span>
-			`);
-		}
-	}
-
-	const updateAndRenderCurrentTags = function(callback) {
-		Simva.getTags(function(error, tags) {
-			if (error && callback) {
-				callback(error);
-				return;
-			}
-			
-			availableTags = (Array.isArray(tags) ? tags : [])
-				.map(normalizeTag)
-				.filter((tag) => tag !== null)
-				.filter((tag, index, arr) => arr.findIndex((current) => Number(current.tag_id) === Number(tag.tag_id)) === index)
-				.sort((a, b) => a.tag_name.localeCompare(b.tag_name));
-			
-			selectedTags = selectedTags
-				.map((tag) => getTagFromTagId(tag.tag_id) || tag)
-				.filter((tag, index, arr) => arr.findIndex((current) => current.tag_id === tag.tag_id) === index);
-			
-
-			if (callback) {
-				callback(null, availableTags);
-			}
-
-			renderSelectedSessionTags();
-			renderAvailableTags();
-		});
 	}
 
 </script>

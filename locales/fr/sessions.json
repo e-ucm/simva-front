@@ -47,14 +47,19 @@
         "sessions.finish.confirm": "Êtes-vous sûr de vouloir terminer la session '{{session}}' ? Cette action est irréversible.",
     "filters.status.all": "Tous",
 
-    "tags.search.placeholder": "",
-        "tags.search.no_tags.message": "",
-        "tags.search.all_matches": "Tous les tags correspondants sont déjà dans cette session",
-        "tags.name.placeholder": "Nom du tag",
-        "tags.error.required_name": "",
-        "tags.create.title": "Créer",
-        "tags.save.title": "Enregistrer",
-        "tags.cancel.title": "Annuler",
+    "tags.search.no_tags.message": "",
+    "tags.search.all_matches": "Tous les tags correspondants sont déjà dans cette session",
+
+    "tags.name.placeholder": "Nom du tag",
+    "tags.error.required_name": "",
+
+    "tags.create.title": "Créer tag",
+    "tags.save.title": "Enregistrer tag",
+    "tags.cancel.title": "Annuler",
+    "tags.delete.title": "Supprimer tag",
+    "tags.delete.error.other_using": "",
+    "tags.delete.confirm": "",
+    
     "can_be_manually_activated": "La session peut être activée manuellement",
 
     "sessions.kebab.add_activity.title": "Ajouter une activité",

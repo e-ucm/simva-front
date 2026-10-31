@@ -506,45 +506,39 @@
 
 	// --- TAGS --- 
 
+	let assignedTagsIds = new Set();
 	let allTags =  new Set();
 	let tagsById = new Map();
 	let tagsByName = new Map(); 
 
-	let remainingTags =  new Set();
-
-	// Get all the existing tags and store them in allTags, tagsById, tagsByName and remainingTags
-	Simva.getTagsForSimlets(function(error, result) {
+	// Get all the existing tags and store them in allTags, tagsById, and tagsByName
+	
+	const updateTagsCallback = function(error, result) {
 		if (error) return;
 
+		allTags.clear();
+		tagsById.clear();
+		tagsByName.clear();
 		result.forEach(tag => {
-			if (!tagsById.has(tag.tag_id)) {
-				allTags.add(tag);
-				remainingTags.add(tag);
-			}
+			allTags.add(tag);
 			tagsById.set(tag.tag_id, tag);
 			tagsByName.set(tag.tag_name, tag);
 		});
-	});
-
-	/**
-	 * Get all the tags matching (partially or completely) the name
-	 * @param {string} tagName  - name of the tags to retrieve
-	 * @returns {Array} - array of objects with the info of the matching tags
-	*/
-	const searchTagsByName = function(tagName) {
-		if (!tagName) {
-			return remainingTags;
-		}
-
-		return Array.from(remainingTags).filter((tag) => {
-			const name = (tag.tag_name || '').toLowerCase();
-			return name.includes(tagName);
-		});
 	}
 
+	// Just at the beginning, get and store the tags that are assigned to any SIMLET/session
+	Simva.getTagsForSimlets(function(error, result) {
+		updateTagsCallback(error, result);
+
+		if (error) return;
+		result.forEach(tag => {
+			assignedTagsIds.add(tag.tag_id);
+		});
+	});
+	
 	/**
-	 * Create the html elements for a tag chip
-	 * @param {object} tag  - object containing the tag info
+	 * Create the elements for a tag chip programatically to avoid XSS
+	 * @param {object} tag - object containing the tag info
 	 * @returns {object} - jquery object reference of the created tag chip 
 	*/
 	const createTagChip = function(tag) {
@@ -557,32 +551,19 @@
 	}
 	
 	/**
-	 * Create the html element containing all the tags
-	 * @param {object} taggedElem - SIMLET or session to get the tags from
-	 * @returns {string} - string with the html elements needed to render the tags
+	 * Create the element that contains all the tags programatically to avoid XSS
+	 * @param {Array} tags - Array of objects containing the tags infos
+	 * @returns {object} - jquery object reference of the created tags list
 	*/
-	const renderTags = function(taggedElem) {
-		const tags = Array.isArray(taggedElem.tags) ? taggedElem.tags : [];
-		
-		if (tags.length === 0) {
-			return $("#tags_template .sessionTagList").html();
+	const createTagsList = function(tags) {
+		const tagList = $("#tags_template .sessionTagList").clone();
+		if (tags.length > 0) {
+			tagList.empty();
+			tags.forEach((tag) => {
+				tagList.append(createTagChip(tag));
+			});
 		}
-		let tagsHtml = '<div class="sessionTagList">';
-		for (let i = 0; i < tags.length; i++) {
-			const tag = tags[i] || {};
-			// const tagName = tag.tag_name || 'Tag';
-			// const tagColor = tag.tag_color || '#3b82f6';
-			const tagName = tag && tag.tag_name ? tag.tag_name : 'Tag';
-			const tagColor = tag && tag.tag_color ? tag.tag_color : '#3b82f6';
-			tagsHtml += `
-				<span class="sessionTagChip">
-					<span class="sessionTagColor" style="background:${tagColor};"></span>
-					<span class="sessionTagName">${tagName}</span>
-				</span>
-			`;
-		}
-		tagsHtml += '</div>';
-		return tagsHtml;
+		return tagList;
 	}
 	
 </script>

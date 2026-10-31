@@ -46,15 +46,20 @@
         "sessions.status.finished.description": "A finished session will no longer be able to receive data, have its activities modified, nor be reactivated.",
         "sessions.finish.confirm": "WARNING:\nAre you sure you want to finish the session '{{session}}'?\nThis action can't be reverted.",
     "filters.status.all": "All",
+    
+    "tags.search.no_tags.message": "No tags yet. Press the (+) button to create one.",
+    "tags.search.all_matches": "All matching tags are already in this session",
 
-    "tags.search.placeholder": "Type a tag to find or create it",
-        "tags.search.no_tags.message": "No tags yet. Press the (+) button to create one.",
-        "tags.search.all_matches": "All matching tags are already in this session",
-        "tags.name.placeholder": "Tag name",
-        "tags.error.required_name": "Tag name is required.",
-        "tags.create.title": "Create",
-        "tags.save.title": "Save",
-        "tags.cancel.title": "Cancel",
+    "tags.name.placeholder": "Tag name",
+    "tags.error.required_name": "Tag name is required.",
+
+    "tags.create.title": "Create tag",
+    "tags.edit.title": "Edit tag",
+    "tags.cancel.title": "Cancel",
+    "tags.delete.title": "Delete tag",
+    "tags.delete.error.other_using": "Another SIMLET or session is using the tag '{{tagName}}'.",
+    "tags.delete.confirm": "WARNING:\nAre you sure you want to delete the tag '{{tagName}}'?\nThis action can't be reverted.",
+    
     "can_be_manually_activated": "Can be manually activated",
 
     "sessions.kebab.add_activity.title": "Add activity",

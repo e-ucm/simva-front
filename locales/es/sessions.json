@@ -47,14 +47,19 @@
         "sessions.finish.confirm": "ADVERTENCIA:\n¿Estás seguro de que quieres finalizar la sesión '{{session}}'?\nEsta acción no se puede revertir.",
     "filters.status.all": "Todos",
 
-    "tags.search.placeholder": "Escribe una etiqueta para encontrarla o créala",
-        "tags.search.no_tags.message": "Aún no hay etiquetas. Pulsa el botón (+) para crear una.",
-        "tags.search.all_matches": "Todas las etiquetas que coinciden ya están en esta sesión",
-        "tags.name.placeholder": "Nombre de la etiqueta",
-        "tags.error.required_name": "El nombre de la etiqueta es necesario.",
-        "tags.create.title": "Crear",
-        "tags.save.title": "Guardar",
-        "tags.cancel.title": "Cancelar",
+    "tags.search.no_tags.message": "Aún no hay etiquetas. Pulsa el botón (+) para crear una.",
+    "tags.search.all_matches": "Todas las etiquetas que coinciden ya están en esta sesión",
+    
+    "tags.name.placeholder": "Nombre de la etiqueta",
+    "tags.error.required_name": "El nombre de la etiqueta es necesario.",
+
+    "tags.create.title": "Crear etiqueta",
+    "tags.save.title": "Editar etiqueta",
+    "tags.cancel.title": "Cancelar",
+    "tags.delete.title": "Eliminar etiqueta",
+    "tags.delete.error.other_using": "Otro SIMLET o sesión está usando la etiqueta '{{tagName}}'.",
+    "tags.delete.confirm": "WARNING:\n¿Estás seguro de que quieres eliminar la etiqueta '{{tagName}}'?\nEsta acción no se puede revertir.",
+
     "can_be_manually_activated": "Se puede activar manualmente",
 
     "sessions.kebab.add_activity.title": "Añadir actividad",

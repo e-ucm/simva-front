@@ -3,7 +3,7 @@
 <% 
 	const FILTERING_PAGINATION_ID = "groups_filtering"
 	const SEARCH_BAR_PLACEHOLDER = t('groups.search_bar.placeholder', { ns : 'groups' }); 
-	let newstedPartialsResources = partialsResources;
+	let nestedPartialsResources = partialsResources;
 %>
 
 <!-- Section where all users will be painted -->
@@ -68,7 +68,7 @@
 		</div>
 		
 		
-		<%- include('filtering_pagination_commons', { id: FILTERING_PAGINATION_ID, partialsResources: newstedPartialsResources, searchBarPlaceholderText: SEARCH_BAR_PLACEHOLDER }) %>
+		<%- include('filtering_pagination_commons', { id: FILTERING_PAGINATION_ID, partialsResources: nestedPartialsResources, searchBarPlaceholderText: SEARCH_BAR_PLACEHOLDER }) %>
 
 
 		<!-- Container for all the groups cards -->
