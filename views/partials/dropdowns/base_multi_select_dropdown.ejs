@@ -2,12 +2,6 @@
 
 <!-- Elements and base class for a multi select dropdown -->
 
-<!-- Ensure the partial only gets included once and that the document event delegates
-that hide the dropdown and that dispatch the window resize only get registered once -->
-<%  let nestedPartialsResources = partialsResources; %>
-<% if (!nestedPartialsResources["base_multi_select_dropdown.ejs"]) { %>
-    <% nestedPartialsResources["base_multi_select_dropdown.ejs"] = true; %>
-
 <!-- Template for the multi select dropdown -->
 <div class="multiSelect">
 	<select class="multiSelectSelector">
@@ -26,6 +20,12 @@ that hide the dropdown and that dispatch the window resize only get registered o
 	</div>
 </div>
 
+
+<!-- Ensure the partial only gets included once and that the document event delegates
+that hide the dropdown and that dispatch the window resize only get registered once -->
+<%  let nestedPartialsResources = partialsResources; %>
+<% if (!nestedPartialsResources["base_multi_select_dropdown.ejs"]) { %>
+    <% nestedPartialsResources["base_multi_select_dropdown.ejs"] = true; %>
 
 <script>
 	const MULTI_SELECT_DROPDOWN_DATA_KEY = "multiSelectDropdown";
@@ -48,7 +48,6 @@ that hide the dropdown and that dispatch the window resize only get registered o
 			this.unselectedOptions = new Set();
 			
 			this.setupDropdownEvents();
-			this.setupWindowEvents();
 		}
 
 		setupDropdownEvents() {
@@ -70,27 +69,14 @@ that hide the dropdown and that dispatch the window resize only get registered o
 				this.showMatchingResults();
 			});
 		}
+		
 
-		setupWindowEvents() {
-			// When changing the window size, place the dropdown to the 
-			// left or to the right bellow the select depending on its position
-			$(window).on("resize", () => {
-				if (this.$selector[0].getBoundingClientRect().left > window.innerWidth / 2) {
-					this.$dropdown.css({
-						right: 0,
-						left: "auto"
-					});
-				}
-				else {
-					this.$dropdown.css({
-						left: 0,
-						right: "auto"
-					});
-				}
-			});
-
-		}
-
+		/**
+		 * Get all the tags ids that match (partially or completely) the query name
+		 * @param {Set || Array} options - container that has the ids to search in
+		 * @param {string} query  - name of the tags to retrieve
+		 * @returns {Array} - array of objects with the ids of the matching tags
+		*/
 		filterOptions(options, query) {
 			query = query.trim().toLowerCase() || "";
 			if (query == null || query == "") {
@@ -188,13 +174,7 @@ that hide the dropdown and that dispatch the window resize only get registered o
 			$(".multiSelectDropdown:visible").fadeOut(100);
 		}
 	}
-
-	// Trigger the resize window event to adjust the dropdown for the first time
-	$(document).ready(() => {
-		window.dispatchEvent(new Event("resize"));
-	});
-
-
+	
 	// When clicking an option on the option list, call the onOptionClick of its MultiSelectDropdown instance
 	$(document).on("click", ".multiSelectDropdown .options li", (e) => {
 		const multiSelect = $(e.target).closest(".multiSelect");

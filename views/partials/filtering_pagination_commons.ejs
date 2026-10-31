@@ -78,16 +78,18 @@ declared once, and that the document event delegate that blurs the select elemen
 <% if (INCLUDE_TAGS_FILTERING) { %>
 
 <script type="text/javascript">
-    const tagsMultiSelect = $("#<%- id %>").find(".multiSelect");
+    const filteringPaginationTagsMultiSelect = $("#<%- id %>").find(".multiSelect");
 
     // Add the class and title for the filtering and pagination dropdown
-    tagsMultiSelect.addClass("filters filtersTags");
-    tagsMultiSelect.prepend($("<span>", { text: "<%- t('filters.tags.title', { ns : 'commons' }) %>" }));
+    filteringPaginationTagsMultiSelect.addClass("filters filtersTags");
+    filteringPaginationTagsMultiSelect.prepend($("<span>", { text: "<%- t('filters.tags.title', { ns : 'commons' }) %>" }));
 
     // Change the selected option and the search bar placeholder text
-    tagsMultiSelect.find(".multiSelectSelector option").text("<%- t('filters.tags.selected.title', { ns : 'commons', count: 0 }) %>")
-    tagsMultiSelect.find(".searchBar").attr("placeholder", "<%- t('filters.tags.search_bar.placeholder', { ns : 'commons' }) %>");
+    filteringPaginationTagsMultiSelect.find(".multiSelectSelector option").text("<%- t('filters.tags.selected.title', { ns : 'commons', count: 0 }) %>")
+    filteringPaginationTagsMultiSelect.find(".searchBar").attr("placeholder", "<%- t('filters.tags.search_bar.placeholder', { ns : 'commons' }) %>");
 
+    // Define a specific TagsMultiSelectDropdown child class that updates 
+    // the original behavior to make selecting tags also update the filters
     class FiltersTagsMultiSelectDropdown extends TagsMultiSelectDropdown {
         constructor($rootElem) {
             super($rootElem);
@@ -103,7 +105,42 @@ declared once, and that the document event delegate that blurs the select elemen
     }
 
     // Assign a new FiltersTagsMultiSelectDropdown instance to the root object
-    tagsMultiSelect.data(MULTI_SELECT_DROPDOWN_DATA_KEY, new FiltersTagsMultiSelectDropdown(tagsMultiSelect));
+    filteringPaginationTagsMultiSelect.data(MULTI_SELECT_DROPDOWN_DATA_KEY, new FiltersTagsMultiSelectDropdown(filteringPaginationTagsMultiSelect));
+    
+	// When changing the window size, place the dropdown to the 
+    // left or to the right bellow the select depending on its position
+    $(window).on("resize", () => {
+        $(".filtering .multiSelect .multiSelectDropdown").each(function() {
+			const dropdown = $(this);
+            
+            const visible =  dropdown.is(":visible");
+            if (!visible) {
+                dropdown.show();
+            }
+
+            if (dropdown[0].getBoundingClientRect().left > window.innerWidth / 2) {
+                dropdown.css({
+                    right: 0,
+                    left: "auto"
+                });
+            }
+            else {
+                dropdown.css({
+                    left: 0,
+                    right: "auto"
+                });
+            }
+
+            if (!visible) {
+                dropdown.hide();
+            }
+        });
+    });
+    
+	// Trigger the resize window event to adjust the dropdown for the first time
+	$(document).ready(() => {
+		window.dispatchEvent(new Event("resize"));
+	});
     
 </script>
     

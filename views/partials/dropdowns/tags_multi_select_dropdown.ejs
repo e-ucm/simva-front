@@ -19,10 +19,11 @@
 <script>
     // MUST BE INCLUDED IN THE HTML AFTER BaseMultiSelectDropdown 
 
+    const LIST_ELEM_DATA_ID_KEY = "id";
+    
     class TagsMultiSelectDropdown extends BaseMultiSelectDropdown {
         constructor($rootElem) {
             super($rootElem);
-            this.LIST_ELEM_DATA_ID_KEY = "id";
 
             // Set an invalid value for the available options to check for them 
             // when showing the dropdown, since the tags are fetched asynchronously
@@ -59,7 +60,7 @@
             const tag = tagsById.get(tagId);
 
             const listOption = $("#search_tag_template .searchTag").clone();
-            listOption.data(this.LIST_ELEM_DATA_ID_KEY, tagId);
+            listOption.data(LIST_ELEM_DATA_ID_KEY, tagId);
 
             const checkbox = $(listOption).find("input[type='checkbox']");
             checkbox.prop("checked", this.selectedOptions.has(tagId));
@@ -77,7 +78,7 @@
         // Update the selected and unselected options, paint the checkbox accordingly, and repaint the options
         onOptionClick($listElem) {
             const checkbox = $listElem.find("input[type='checkbox']");
-            const id = $listElem.data()[this.LIST_ELEM_DATA_ID_KEY];
+            const id = $listElem.data()[LIST_ELEM_DATA_ID_KEY];
 
             if (this.selectedOptions.has(id)) {
                 this.selectedOptions.delete(id);
