@@ -507,34 +507,18 @@
 	// --- TAGS --- 
 
 	let assignedTagsIds = new Set();
-	let allTags =  new Set();
 	let tagsById = new Map();
-	let tagsByName = new Map(); 
 
-	// Get all the existing tags and store them in allTags, tagsById, and tagsByName
+	// Get all the existing tags and store them in allTags, tagsById
 	
-	const updateTagsCallback = function(error, result) {
+	const onTagsUpdate = function(error, result) {
 		if (error) return;
-
-		allTags.clear();
 		tagsById.clear();
-		tagsByName.clear();
-		result.forEach(tag => {
-			allTags.add(tag);
+		result.forEach((tag) => {
 			tagsById.set(tag.tag_id, tag);
-			tagsByName.set(tag.tag_name, tag);
 		});
 	}
 
-	// Just at the beginning, get and store the tags that are assigned to any SIMLET/session
-	Simva.getTagsForSimlets(function(error, result) {
-		updateTagsCallback(error, result);
-
-		if (error) return;
-		result.forEach(tag => {
-			assignedTagsIds.add(tag.tag_id);
-		});
-	});
 	
 	/**
 	 * Create the elements for a tag chip programatically to avoid XSS

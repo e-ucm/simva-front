@@ -19,19 +19,19 @@
 <script>
     // MUST BE INCLUDED IN THE HTML AFTER BaseMultiSelectDropdown 
 
-    const LIST_ELEM_DATA_ID_KEY = "id";
-    
     class TagsMultiSelectDropdown extends BaseMultiSelectDropdown {
         constructor($rootElem) {
             super($rootElem);
 
-            // Set an invalid value for the available options to check for them 
-            // when showing the dropdown, since the tags are fetched asynchronously
-            this.unselectedOptions = null;
-            
             this.$noOptionsMessage.text("<%- t('filters.tags.no_tags.message', { ns : 'commons' }) %>");
         }
 
+		/**
+		 * Get all the tags ids that match (partially or completely) the query name
+		 * @param {Set || Array} options - container that has the ids to search in
+		 * @param {string} query  - name of the tags to retrieve
+		 * @returns {Array} - array of objects with the ids of the matching tags
+		*/
         filterOptions(options, query) {
             query = query.trim().toLowerCase() || "";
             if (query == null || query == "") {
@@ -39,21 +39,8 @@
             }
 
             return Array.from(options).filter((option) => {
-                return tagsById.has(option) && tagsById.get(option).tag_name.toLowerCase().includes(query)
+                return tagsById.has(option) && tagsById.get(option).tag_name.toLowerCase().includes(query);
             });
-        }
-
-        showMatchingResults() {
-            // Set the value of the available options
-            if (this.unselectedOptions == null) {
-                this.unselectedOptions = new Set();
-                // Defined on the simlets_commons partial
-                allTags.forEach((tag) => {
-                    this.unselectedOptions.add(tag.tag_id);
-                });
-            }
-
-            super.showMatchingResults();
         }
 
         createOption(tagId) {
@@ -89,7 +76,12 @@
                 this.unselectedOptions.delete(id);
             }
             checkbox.prop("checked", this.selectedOptions.has(id));
+            this.updateSelectorPlaceholder();
             this.showMatchingResults();
+        }
+
+		updateSelectorPlaceholder()  {
+            this.$selectorPlaceholder.text(`<%- t('filters.tags.selected.title', { ns : 'commons', count: '${this.selectedOptions.size}' }) %>`);
         }
     }
 

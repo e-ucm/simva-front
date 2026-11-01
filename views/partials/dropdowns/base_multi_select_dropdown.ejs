@@ -9,7 +9,7 @@
 		<option value="" selected disabled hidden></option>
 	</select>
 	
-	<div class="multiSelectDropdown">
+	<div class="multiSelectDropdown" style="display: none;">
 		<input type="text" class="searchBar"></input>
 		<ul class="options">
 			
@@ -29,9 +29,29 @@ that hide the dropdown and that dispatch the window resize only get registered o
 
 <script>
 	const MULTI_SELECT_DROPDOWN_DATA_KEY = "multiSelectDropdown";
+    const LIST_ELEM_DATA_ID_KEY = "id";
 	
 	class BaseMultiSelectDropdown {
 		constructor($rootElem) {
+			this.allOptions = new Set();
+			this.unselectedOptions = new Set();
+			this.selectedOptions = new Set();
+
+			this.$rootElem = $rootElem;
+
+			// the this object needs to be binded to the onSelectorClick function since it gets called
+			// as a handler and the this object that gets passed is different from the class this  
+			this.onSelectorClick = this.onSelectorClick.bind(this);
+			
+			this.assignElems($rootElem);
+		}
+
+		assignElems($rootElem) {
+			// Remove the class instance from the previous root element, update the root element, and store the class instance in the new one 
+			this.$rootElem.removeAttr(MULTI_SELECT_DROPDOWN_DATA_KEY);
+			this.$rootElem = $rootElem;
+			this.$rootElem.data(MULTI_SELECT_DROPDOWN_DATA_KEY, this);
+			
 			this.$selector = $rootElem.find(".multiSelectSelector");
 			this.$selectorPlaceholder = this.$selector.find("option");
 			this.$dropdown = $rootElem.find(".multiSelectDropdown");
@@ -44,39 +64,52 @@ that hide the dropdown and that dispatch the window resize only get registered o
 			this.$noMatchesMessage = this.$dropdown.find(".noMatches");
 			this.$options = this.$dropdown.find(".options");
 			
-			this.selectedOptions = new Set();
-			this.unselectedOptions = new Set();
-			
 			this.setupDropdownEvents();
 		}
 
-		setupDropdownEvents() {
-			this.$selector.on("mousedown", (e) => {
-				// Prevent the default select dropdown to open
-				e.preventDefault();
+		updateTotalOptions(newAllOptions) {
+			this.allOptions.clear();
+			this.unselectedOptions.clear();
 
-				this.$dropdown.fadeToggle(100);
-
-				// If the options list is being shown, reset the search, focus the search bar and show the options
-				if (this.$dropdown.is(":visible")) {
-					this.$searchBar.val("");
-					this.$searchBar.focus();
-					this.showMatchingResults();
+			newAllOptions.forEach((option) => {
+				this.allOptions.add(option);
+				if (!this.selectedOptions.has(option)) {
+					this.unselectedOptions.add(option);
 				}
-			});
-			
-			this.$searchBar.on("input", (e) => {
-				this.showMatchingResults();
 			});
 		}
 		
+		setupDropdownEvents() {
+			// Clear the events since the setupDropdownEvents function could be called more than once on the same object
+			this.$selector.off("mousedown", this.onSelectorClick);
+			this.$searchBar.off("input", this.showMatchingResults);
 
-		/**
-		 * Get all the tags ids that match (partially or completely) the query name
-		 * @param {Set || Array} options - container that has the ids to search in
-		 * @param {string} query  - name of the tags to retrieve
-		 * @returns {Array} - array of objects with the ids of the matching tags
-		*/
+			// The select elements click events must be handled in the mousedown event instead 
+			// of on the click event to effectively handle them in time, since the mousedown event 
+			// triggers before and runs before the default select dropdown appears
+			this.$selector.on("mousedown", this.onSelectorClick);
+			this.$searchBar.on("input", this.showMatchingResults);
+		}
+
+		// Defined as a class function to be able to clear it from the select events
+		onSelectorClick(e) {
+			// Prevent the default select dropdown to open
+			e.preventDefault();
+
+			// If the dropdown isn't visible, hide all other dropdowns and show this one
+			if (!this.$dropdown.is(":visible")) {
+				$(".multiSelectDropdown:visible").fadeOut(100);
+			}
+			this.$dropdown.fadeToggle(100);
+
+			// If the dropdown is being shown, reset the search, focus the search bar and show the options
+			if (this.$dropdown.is(":visible")) {
+				this.$searchBar.val("");
+				this.$searchBar.focus();
+				this.showMatchingResults();
+			}
+		}
+		
 		filterOptions(options, query) {
 			query = query.trim().toLowerCase() || "";
 			if (query == null || query == "") {
@@ -149,6 +182,8 @@ that hide the dropdown and that dispatch the window resize only get registered o
 		}
 
 		onOptionClick($listElem) { }
+
+		updateSelectorPlaceholder() { }
 	}
 
 
@@ -161,16 +196,16 @@ that hide the dropdown and that dispatch the window resize only get registered o
 	$(document).on("click", (e) => {
 		hideMultiSelectDropdown(e);
 	});
-	$("select").on("mousedown", (e) => {
+	$(document).on("mousedown", "select", (e) => {
 		hideMultiSelectDropdown(e);
 	});
 
 	// Hide any visible dropdowns if the interacted element is not on the multiselect hierarchy
 	const hideMultiSelectDropdown = function(e) {
-		const rootElem = $(e.target).closest(".multiSelect");
-		const openedDropdowns = $(".multiSelectDropdown:visible");
-		if (openedDropdowns.length && !rootElem.length) {
-			e.preventDefault();
+		if (!$(e.target).closest(".multiSelect").length) {
+			if ($(e.target).closest("select").length && $(".multiSelectDropdown:visible").length) {
+				e.preventDefault();
+			}
 			$(".multiSelectDropdown:visible").fadeOut(100);
 		}
 	}

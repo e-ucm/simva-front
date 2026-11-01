@@ -84,8 +84,7 @@ declared once, and that the document event delegate that blurs the select elemen
     filteringPaginationTagsMultiSelect.addClass("filters filtersTags");
     filteringPaginationTagsMultiSelect.prepend($("<span>", { text: "<%- t('filters.tags.title', { ns : 'commons' }) %>" }));
 
-    // Change the selected option and the search bar placeholder text
-    filteringPaginationTagsMultiSelect.find(".multiSelectSelector option").text("<%- t('filters.tags.selected.title', { ns : 'commons', count: 0 }) %>")
+    // Change the search bar placeholder text
     filteringPaginationTagsMultiSelect.find(".searchBar").attr("placeholder", "<%- t('filters.tags.search_bar.placeholder', { ns : 'commons' }) %>");
 
     // Define a specific TagsMultiSelectDropdown child class that updates 
@@ -98,14 +97,30 @@ declared once, and that the document event delegate that blurs the select elemen
         
         onOptionClick($listElem) {
             super.onOptionClick($listElem);
-            this.$selectorPlaceholder.text(`<%- t('filters.tags.selected.title', { ns : 'commons', count: '${this.selectedOptions.size}' }) %>`);
             this.filteringPagination.searchParams.searchTags = Array.from(this.selectedOptions);
             this.filteringPagination.resetSearchTimer();
         }
     }
+    
+    // Create a new FiltersTagsMultiSelectDropdown instance and update the select placeholder
+    filteringPaginationTagsMultiSelectInstance = new FiltersTagsMultiSelectDropdown(filteringPaginationTagsMultiSelect);
+    filteringPaginationTagsMultiSelectInstance.updateSelectorPlaceholder();
 
-    // Assign a new FiltersTagsMultiSelectDropdown instance to the root object
-    filteringPaginationTagsMultiSelect.data(MULTI_SELECT_DROPDOWN_DATA_KEY, new FiltersTagsMultiSelectDropdown(filteringPaginationTagsMultiSelect));
+
+
+	// Get and store the tags that are assigned to any SIMLET/session
+    const updateAssignedTags = function() {
+        Simva.getTagsForSimlets(function(error, result) {
+            onTagsUpdate(error, result);
+
+            if (error) return;
+            assignedTagsIds.clear();
+            result.forEach(tag => {
+                assignedTagsIds.add(tag.tag_id);
+                filteringPaginationTagsMultiSelectInstance.updateTotalOptions(Array.from(result.map(tag => tag.tag_id)));
+            });
+        });
+    }
     
 	// When changing the window size, place the dropdown to the 
     // left or to the right bellow the select depending on its position
@@ -140,6 +155,8 @@ declared once, and that the document event delegate that blurs the select elemen
 	// Trigger the resize window event to adjust the dropdown for the first time
 	$(document).ready(() => {
 		window.dispatchEvent(new Event("resize"));
+
+        updateAssignedTags();
 	});
     
 </script>

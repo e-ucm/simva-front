@@ -1026,6 +1026,8 @@
 	// Functions to call to avoid reloading the whole view when updating info of any session 
 
 	const onCreateOrEditSession = function(newSessionInfo) {
+		updateAssignedTags();
+
 		const prevInfo = getSessionFromId(newSessionInfo.session_id);
 
 		// Update the basic SIMLET info without repainting everything to get the new session and tags
@@ -1176,11 +1178,7 @@
 
 <script type="text/javascript">
 
-    // Define a specific TagsMultiSelectDropdown child class that updates the 
-	// original behavior to reassign its elements to an new jquery element instance
-	// since opening a floating modal clones all the form elements, which makes the
-	// original TagsMultiSelectDropdown instance not reference the correct elements
-	class ReplaceableTagsMultiSelectDropdown extends TagsMultiSelectDropdown {
+	class SessionFormTagsMultiSelectDropdown extends TagsMultiSelectDropdown {
 		constructor($rootElem) {
 			super($rootElem);
 
@@ -1188,31 +1186,6 @@
 			this.$allMatchingMessage.text("<%- t('tags.search.all_matches', { ns : 'sessions' }) %>");
 		}
 		
-		reassign($newRootElem) {
-			this.$selector = $newRootElem.find(".multiSelectSelector");
-			this.$selectorPlaceholder = this.$selector.find("option");
-			this.$dropdown = $newRootElem.find(".multiSelectDropdown");
-			this.$dropdown.hide();
-
-			this.$searchBar = this.$dropdown.find(".searchBar");
-			
-			this.$noOptionsMessage = this.$dropdown.find(".noOptions");
-			this.$allMatchingMessage = this.$dropdown.find(".allMatching");
-			this.$noMatchesMessage = this.$dropdown.find(".noMatches");
-			this.$options = this.$dropdown.find(".options");
-
-			this.setupDropdownEvents();
-
-            if (this.unselectedOptions == null) {
-				this.unselectedOptions = new Set();
-			}
-			this.unselectedOptions.clear();
-			allTags.forEach((tag) => {
-				this.unselectedOptions.add(tag.tag_id);
-			});
-			this.selectedOptions.clear();
-		}
-
 		createOption(tagId) {
 			const listOption = super.createOption(tagId);
 			listOption.append($("#tags_buttons_template div").clone());
@@ -1221,19 +1194,17 @@
 
 		onOptionClick($listElem) {
             super.onOptionClick($listElem);
-            this.$selectorPlaceholder.text(`<%- t('filters.tags.selected.title', { ns : 'commons', count: '${this.selectedOptions.size}' }) %>`);
         }
-		
 	}
 	
+    // Store the tags multi select dropdown instance instance using the original form as root object
 	let sessionTagsMultiSelect = $("#session_form").find(".multiSelect");
-	// Change the selected option and the search bar placeholder text
-	sessionTagsMultiSelect.find(".multiSelectSelector option").text("<%- t('filters.tags.selected.title', { ns : 'commons', count: 0 }) %>")
+	const sessionTagsMultiSelectInstance = new SessionFormTagsMultiSelectDropdown(sessionTagsMultiSelect);
+	sessionTagsMultiSelectInstance.updateSelectorPlaceholder();
+
+    // Change the search bar placeholder text
 	sessionTagsMultiSelect.find(".searchBar").attr("placeholder", "<%- t('filters.tags.search_bar.placeholder', { ns : 'commons' }) %>");
 	
-    // Store the ReplaceableTagsMultiSelectDropdown instance using the original form as root object
-	const sessionTagsMultiSelectInstance = new ReplaceableTagsMultiSelectDropdown(sessionTagsMultiSelect);
-    
 
 	let originalSelectedTagsIds = new Set();
 
@@ -1243,22 +1214,23 @@
 		// Update the tags just in case the fetched tags were only the ones
 		// that were assigned to the SIMLETs instead of all existing tags
 		Simva.getTags((error, result) => {
-			updateTagsCallback(error, result);
+			onTagsUpdate(error, result);
 			
-			// Reassign the root object of the ReplaceableTagsMultiSelectDropdown instance
+			// Reassign the root object of the tags multi select dropdown instance
 			sessionTagsMultiSelect = $("#session_form").find(".multiSelect");
-			sessionTagsMultiSelectInstance.reassign(sessionTagsMultiSelect);
-			sessionTagsMultiSelect.data(MULTI_SELECT_DROPDOWN_DATA_KEY, sessionTagsMultiSelectInstance);
+			sessionTagsMultiSelectInstance.assignElems(sessionTagsMultiSelect);
 
-			// Update the ReplaceableTagsMultiSelectDropdown instance to select the tags passed in the parameters
-			sessionTagsMultiSelectInstance.$selectorPlaceholder.text(`<%- t('filters.tags.selected.title', { ns : 'commons', count: '${tags.length}' }) %>`);
+			// Update the multi select dropdown instance instance to select the tags passed in the parameters
+			sessionTagsMultiSelectInstance.selectedOptions.clear();
 			tags.forEach((tag) => {
 				// Store the currently selected tags ids
 				originalSelectedTagsIds.add(tag.tag_id);
-				
-				sessionTagsMultiSelectInstance.unselectedOptions.delete(tag.tag_id);
 				sessionTagsMultiSelectInstance.selectedOptions.add(tag.tag_id);
 			});
+
+			sessionTagsMultiSelectInstance.updateTotalOptions(Array.from(result.map(tag => tag.tag_id)));
+
+			sessionTagsMultiSelectInstance.updateSelectorPlaceholder();
 		});
 	}
 
@@ -1356,10 +1328,10 @@
 			// Update all the existing tags and add the created tag to 
 			// the multi select dropdown and render all the options again
 			Simva.getTags((error, result) => {
-				updateTagsCallback(error, result);
+				onTagsUpdate(error, result);
 
 				sessionTagsMultiSelectInstance.selectedOptions.add(createdTag.tag_id);
-				sessionTagsMultiSelectInstance.$selectorPlaceholder.text(`<%- t('filters.tags.selected.title', { ns : 'commons', count: '${tags.length}' }) %>`);
+				sessionTagsMultiSelectInstance.updateSelectorPlaceholder();
 				sessionTagsMultiSelectInstance.showMatchingResults();
 			});
 		});
@@ -1400,7 +1372,7 @@
 
 				// Update all the existing tags and render all the options again
 				Simva.getTags((error, result) => {
-					updateTagsCallback(error, result);
+					onTagsUpdate(error, result);
 					sessionTagsMultiSelectInstance.showMatchingResults();
 				});
 			});
@@ -1429,7 +1401,7 @@
 				// Update all the existing tags, delete the deleted tag from 
 				// the multi select dropdown and render all the options again
 				Simva.getTags((error, result) => {
-					updateTagsCallback(error, result);
+					onTagsUpdate(error, result);
 					sessionTagsMultiSelectInstance.unselectedOptions.delete(tagId);
 					sessionTagsMultiSelectInstance.selectedOptions.delete(tagId);
 					sessionTagsMultiSelectInstance.showMatchingResults();
