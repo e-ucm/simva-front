@@ -264,7 +264,7 @@ the elements and scripts defined in the simlet_commons partial -->
 
 				$('#simlet_name').text(simlet.simlet_name);
 				$("#simlet_tags").remove();
-				$(".simletTop").after($(renderTags(simlet)).attr("id", "simlet_tags"));
+				$(".simletTop").after(createTagsList(simlet.tags).attr("id", "simlet_tags"));
 
 
 				const promises = []
