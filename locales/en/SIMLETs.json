@@ -46,11 +46,13 @@
             "scheduler.shlink.generate.custom_slug.message": "Custom name",
             "scheduler.shlink.custom_slug.placeholder": "Custom slug",
         "scheduler.shlink.generate.submit": "Generate",
+            "scheduler.shlink.generate.succesful_toast.heading": "The short URL was succesfully generated for the SIMLET '{{SIMLET}}'",
         "scheduler.shlink.copy.message": "Copy short URL: {{shlink}}",
-        "scheduler.shlink.copy.confirm": "Short URL copied: {{shlink}}",
+        "scheduler.shlink.copy.confirm": "SIMLET '{{SIMLET}}' short URL copied: {{shlink}}",
         "scheduler.shlink.delete.title": "Delete short URL",
             "scheduler.shlink.delete.confirm": "WARNING:\nAre you sure you want to delete the short URL '{{shlink}}' from the SIMLET '{{SIMLET}}'?\nA new short URL can be generated later.",
             "scheduler.shlink.delete.error_toast.heading": "Error deleting the short URL from the SIMLET '{{SIMLET}}'",
+            "scheduler.shlink.delete.succesful_toast.heading": "The short URL was succesfully deleted from the SIMLET '{{SIMLET}}'",
         
     "simlets.kebab.export.title": "Export",
         

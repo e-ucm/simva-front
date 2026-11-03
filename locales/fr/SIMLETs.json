@@ -46,11 +46,13 @@
             "scheduler.shlink.generate.custom_slug.message": "Custom name",
             "scheduler.shlink.custom_slug.placeholder": "Slug personnalisé",
         "scheduler.shlink.generate.submit": "Générer",
+            "scheduler.shlink.generate.succesful_toast.heading": "",
         "scheduler.shlink.copy.message": "Copier l'URL courte : {{shlink}}",
         "scheduler.shlink.copy.confirm": "",
         "scheduler.shlink.delete.title": "Supprimer l'URL du lien du planificateur",
             "scheduler.shlink.delete.confirm": "Êtes-vous sûr de vouloir supprimer le lien court '{{shlink}}' du SIMLET '{{SIMLET}}'?",
             "scheduler.shlink.delete.error_toast.heading": "",
+            "scheduler.shlink.delete.succesful_toast.heading": "",
         
     "simlets.kebab.export.title": "Exporter",
         

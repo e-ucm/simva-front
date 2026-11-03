@@ -99,6 +99,8 @@ the elements and scripts defined in the simlet_commons partial -->
 
 <script type="text/javascript">
 	const simletId = "<%= study %>";
+	currSimletId = simletId;
+	
 	let currentUser = null;
 	let simlet = null;
 
@@ -262,7 +264,8 @@ the elements and scripts defined in the simlet_commons partial -->
 		Simva.getSimlet(simletId, function(error, result) {
 			if (!error) {
 				simlet = result;
-
+				currSimletName = simlet.simlet_name;
+				
 				$('#simlet_name').text(simlet.simlet_name);
 				$("#simlet_tags").remove();
 				$(".simletTop").after(createTagsList(simlet.tags).attr("id", "simlet_tags"));

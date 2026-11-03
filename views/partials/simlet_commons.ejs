@@ -138,6 +138,7 @@
 	const START_WARNING_PERCENTAGE = 30;	// When the caracter count has this % of character remaining, its color changes to warn the user 
 
 	let currSimletId = null;	// Id of the SIMLET that is currently being edited
+	let currSimletName = "";
     let shlink = null;
 	
 	// Functions to call to avoid reloading the whole view when updating info of any SIMLET 
@@ -370,31 +371,6 @@
 
     // --- URL FORM ---
 
-	const onGenerateURL = function(error, result) {
-		let errorbox = $("#generate_link_error");
-		errorbox.text("");
-
-		Utils.toggleSubmit();
-		shlink = null;
-		if (error) {
-			errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
-			return;
-		}
-
-		shlink = result;
-		const shortUrl = shlink.shortUrl;
-
-		// Copy the shortUrl to the clipboard
-		navigator.clipboard.writeText(shortUrl);
-		alert(shortUrl);
-
-		Utils.toggleFormInFloating();
-		if (onEditShlink != null && typeof onEditShlink === "function") {
-			onEditShlink();
-		} 
-	}
-	
-
     const openUrlSettingsForm = function(simletId, simletName) {
 		// Always open form in the generate random link with length tab
 		Utils.changeTab($('#generate_link_length_tab_button'), 'generate_simlet_link_form','generate_simlet_link_length_tab');
@@ -422,14 +398,46 @@
         $('#custom_slug_shlink').val("");
         $('#link_length_shlink').val($('#link_length_shlink').prop("min"));
 	}
+	
+	const onGenerateURL = function(error, result) {
+		let errorbox = $("#generate_link_error");
+		errorbox.text("");
+
+		Utils.toggleSubmit();
+		shlink = null;
+		if (error) {
+			errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+			return;
+		}
+
+		shlink = result;
+		const shortUrl = shlink.shortUrl;
+
+		// Copy the shortUrl to the clipboard
+		navigator.clipboard.writeText(shortUrl);
+		alert(shortUrl);
+
+		console.log(result)
+		Utils.toggleFormInFloating();
+		$.toast({
+			heading: `<%- t('scheduler.shlink.generate.succesful_toast.heading', { ns : 'SIMLETs', SIMLET : '${currSimletName}' }) %>`,
+			position: 'top-right',
+			icon: 'success',
+			stack: false
+		});
+		if (onEditShlink != null && typeof onEditShlink === "function") {
+			onEditShlink();
+		} 
+	}
 
 	const copyShortURL = function() {
 		// Copy the text inside the text field
 		navigator.clipboard.writeText(shlink.shortUrl);
 		// Alert Short URL
-		alert(`<%- t('scheduler.shlink.copy.confirm', { ns : 'SIMLETs', shlink : '${shlink.shortUrl}' }) %>`);
+		alert(`<%- t('scheduler.shlink.copy.confirm', { ns : 'SIMLETs', SIMLET : '${currSimletName}', shlink : '${shlink.shortUrl}' }) %>`);
 	}
 
+	
     const deleteShLink = function() {
 		Utils.toggleSubmit();
         Simva.getSimlet(currSimletId, (error, result) => {
@@ -448,6 +456,14 @@
 						$("#edit_link_error").text(error.responseJSON ? error.responseJSON.message : error.message || error);
 						return;
 					}
+
+					Utils.toggleFormInFloating();
+					$.toast({
+						heading: `<%- t('scheduler.shlink.delete.succesful_toast.heading', { ns : 'SIMLETs', SIMLET : '${simletName}' }) %>`,
+						position: 'top-right',
+						icon: 'success',
+						stack: false
+					});
 					if (onEditShlink != null && typeof onEditShlink === "function") {
 						onEditShlink();
 					}
