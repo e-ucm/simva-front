@@ -55,6 +55,7 @@
 				<input type="button" id="shlink_url_short" class="green" onclick="copyShortURL()" style="white-space: normal; word-wrap: break-word;">
 				<input type="button" id="delete_shlink_url" class="red" value="<%= t('scheduler.shlink.delete.title', { ns : 'SIMLETs' }) %>" onclick="deleteShLink()">
 			</div>
+			<span class="error" id="edit_link_error"></span>
 		</div>
 	</div>
 </div>
@@ -397,11 +398,11 @@
     const openUrlSettingsForm = function(simletId, simletName) {
 		// Always open form in the generate random link with length tab
 		Utils.changeTab($('#generate_link_length_tab_button'), 'generate_simlet_link_form','generate_simlet_link_length_tab');
-
 		$(".formSimletTitle").text(`<%- t('simlets.title.single', { ns : 'SIMLETs' }) %>: ${simletName}`);
 
         currSimletId = simletId;
 		shlink = null;
+		$("#edit_link_error").text("");
 		Simva.getShLink(simletId, (error, result) => {
 			if (error) {
 				openGenerateLinkForm();
@@ -426,7 +427,7 @@
 		// Copy the text inside the text field
 		navigator.clipboard.writeText(shlink.shortUrl);
 		// Alert Short URL
-		alert(shlink.shortUrl);
+		alert(`<%- t('scheduler.shlink.copy.confirm', { ns : 'SIMLETs', shlink : '${shlink.shortUrl}' }) %>`);
 	}
 
     const deleteShLink = function() {
@@ -439,13 +440,16 @@
 			}
 
 			let shortCode = shlink.shortCode;
-			if (confirm(`<%- t('scheduler.shlink.delete.confirm', { ns : 'SIMLETs', shlink : '${shortCode}', SIMLET : '${result.simlet_name}' }) %>`)) {
+			const simletName = result.simlet_name;
+			if (confirm(`<%- t('scheduler.shlink.delete.confirm', { ns : 'SIMLETs', shlink : '${shortCode}', SIMLET : '${simletName}' }) %>`)) {
 				Simva.deleteShLink(currSimletId, (error, result) => {
-					if (!error) {
-						Utils.toggleFormInFloating();
-						if (onEditShlink != null && typeof onEditShlink === "function") {
-							onEditShlink();
-						}
+					Utils.toggleSubmit();
+					if (error) {
+						$("#edit_link_error").text(error.responseJSON ? error.responseJSON.message : error.message || error);
+						return;
+					}
+					if (onEditShlink != null && typeof onEditShlink === "function") {
+						onEditShlink();
 					}
 				});
 			}
@@ -469,9 +473,14 @@
 	const deleteSimlet = function(simletId, simletName){
 		if(confirm(`<%- t('simlets.delete.confirm', { ns : 'SIMLETs', SIMLET : '${simletName}' }) %>`)){
 			Simva.deleteSimlet(simletId, function(response) {
-				// Muestra el error real para depuración
 				if (response.status !== 200) {
-					alert(response.responseJSON.message);
+					$.toast({
+						heading: `<%- t('simlets.delete.error_toast.heading', { ns : 'SIMLETs', SIMLET : '${simletName}' }) %>`,
+						text: response.responseJSON ? response.responseJSON.message : response.message || response,
+						position: 'top-right',
+						icon: 'error',
+						stack: false
+					});
 					return;
 				}
 				if (onDeleteSimlet != null && typeof onDeleteSimlet === "function") {

@@ -47,8 +47,10 @@
             "scheduler.shlink.custom_slug.placeholder": "Custom slug",
         "scheduler.shlink.generate.submit": "Generate",
         "scheduler.shlink.copy.message": "Copy short URL: {{shlink}}",
+        "scheduler.shlink.copy.confirm": "Short URL copied: {{shlink}}",
         "scheduler.shlink.delete.title": "Delete short URL",
-        "scheduler.shlink.delete.confirm": "WARNING:\nAre you sure you want to delete the short URL '{{shlink}}' from the SIMLET '{{SIMLET}}'?\nA new short URL can be generated later.",
+            "scheduler.shlink.delete.confirm": "WARNING:\nAre you sure you want to delete the short URL '{{shlink}}' from the SIMLET '{{SIMLET}}'?\nA new short URL can be generated later.",
+            "scheduler.shlink.delete.error_toast.heading": "Error deleting the short URL from the SIMLET '{{SIMLET}}'",
         
     "simlets.kebab.export.title": "Export",
         
@@ -57,5 +59,6 @@
     "simlets.kebab.dearchive.title": "Dearchive",
 
     "simlets.kebab.delete.title": "Delete",
-        "simlets.delete.confirm": "WARNING:\nAre you sure you want to delete the SIMLET '{{SIMLET}}'?\nThis action can't be reverted and all the sessions, activities, groups and data will be deleted too."
+        "simlets.delete.confirm": "WARNING:\nAre you sure you want to delete the SIMLET '{{SIMLET}}'?\nThis action can't be reverted and all the sessions, activities, groups and data will be deleted too.",
+        "simlets.delete.error_toast.heading": "Error deleting the SIMLET '{{SIMLET}}'"
 }

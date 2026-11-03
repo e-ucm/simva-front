@@ -44,7 +44,7 @@
 
     "activities.kebab.delete.title": "Supprimer",
         "activities.delete.confirm": "Êtes-vous sûr de vouloir supprimer l'activité '{{activity}}' de la session '{{session}}' de la SIMLET '{{SIMLET}}'?\nToutes les données relatives à l'activité seront également supprimées",
-
+        "activities.delete.error_toast.heading": "",
 
     "activities.default_activity.name": "Activité par défaut",
     "activities.default_activity.description": "Une activité de base avec un état d'achèvement et un endroit où enregistrer les résultats.",    

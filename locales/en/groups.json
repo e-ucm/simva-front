@@ -90,8 +90,8 @@
         "participants.table.email.title": "Email",
         "participants.table.role.title": "Role",
         "participants.delete.confirm" : "WARNING:\nAre you sure you want to delete the participant '{{participant}}' from the group '{{group}}'?\nThis action can't be reverted and all the data of this participant will be deleted from the sessions and activities too.",
-            "participants.delete.error_toast.heading": "Error deleting participant",
-        
+            "participants.delete.error_toast.heading": "Error deleting the participant '{{participant}}' from the group '{{group}}'",
+
 
     "groups.kebab.allocator.title": "Edit allocator",
         "allocators.type.title": "Allocator type",
@@ -119,7 +119,7 @@
     
     "groups.kebab.delete.title": "Delete",
         "groups.delete.confirm": "WARNING:\nAre you sure you want to delete the group '{{group}}' from SIMLET '{{SIMLET}}'?\nThis action can't be reverted and all the data of its participants will be deleted from the sessions and activities too.",
-    
+        "groups.delete.error_toast.heading": "Error deleting the group '{{group}}' from the SIMLET '{{SIMLET}}'",
 
     "lti_platform.title": "LTI Platform",
     "lti_platform.add.title": "Add LTI Platform",

@@ -119,6 +119,7 @@
     
     "groups.kebab.delete.title": "Supprimer",
         "groups.delete.confirm": "Êtes-vous sûr de vouloir supprimer le groupe '{{group}}' du SIMLET '{{SIMLET}}'?",
+        "groups.delete.error_toast.heading": "",
     
 
     "lti_platform.title": "Plate-forme LTI",

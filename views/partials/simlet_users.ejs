@@ -1028,9 +1028,17 @@
 	const deleteGroup = function(groupId, groupName) {
 		if (confirm(`<%- t('groups.delete.confirm', { ns : 'groups', group : '${groupName}', SIMLET : '${simlet.simlet_name}' }) %>`)) {
 			Simva.deleteStudyGroup(simletId, groupId, function(response) {
-				if (response.status === 200) {
-					onDeleteGroup(groupId);
+				if (response.status !== 200) {
+					$.toast({
+						heading: `<%- t('groups.delete.error_toast.heading', { ns : 'groups', group : '${groupName}', SIMLET : '${simlet.simlet_name}' }) %>`,
+						text: response.responseJSON ? response.responseJSON.message : response.message || response,
+						position: 'top-right',
+						icon: 'error',
+						stack: false
+					});
+					return;
 				}
+				onDeleteGroup(groupId);
 			});
 		}
 	}
@@ -1039,9 +1047,17 @@
 		if(confirm(`<%- t('participants.delete.confirm', { ns : 'groups',  participant : '${participantName}', group : '${groupName}' }) %>`)) {
 			// A participant will only be removed from keycloak if it's been generated as a token
 			Simva.deleteGroupParticipant(simletId, groupId, participantId, getUserFromId(participantId).isToken, function(response) {
-				if (response.status === 200) {
-					onDeleteParticipant(groupId, participantId, participantName);
+				if (response.status !== 200) {
+					$.toast({
+						heading: `<%- t('participants.delete.error_toast.heading', { ns : 'groups',  participant : '${participantName}', group : '${groupName}' }) %>`,
+						text: response.responseJSON ? response.responseJSON.message : response.message || response,
+						position: 'top-right',
+						icon: 'error',
+						stack: false
+					});
+					return;
 				}
+				onDeleteParticipant(groupId, participantId, participantName);
 			});
 		}
 	}

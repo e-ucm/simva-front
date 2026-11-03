@@ -79,5 +79,6 @@
     "sessions.kebab.show_inactive_participants.title": "Hide inactive participants",
 
     "sessions.kebab.delete.title": "Delete",
-        "sessions.delete.confirm": "WARNING:\nAre you sure you want to delete the session '{{session}}' from the SIMLET '{{SIMLET}}'?\nThis action can't be reverted and all the activities and data will be deleted too."
+        "sessions.delete.confirm": "WARNING:\nAre you sure you want to delete the session '{{session}}' from the SIMLET '{{SIMLET}}'?\nThis action can't be reverted and all the activities and data will be deleted too.",
+        "sessions.delete.error_toast.heading": "Error deleting the session '{{session}}' from the SIMLET '{{SIMLET}}'"
 }

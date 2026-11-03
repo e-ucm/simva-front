@@ -506,10 +506,18 @@
 		let session = getSessionFromId(sessionId);
 		let sessionName = session && session.session_name ? session.session_name : sessionId;
 		if (confirm(`<%- t('activities.delete.confirm', { ns : 'activities', activity : '${activityName}', session: '${sessionName}' , SIMLET : '${simlet.simlet_name}' }) %>`)) {
-			Simva.deleteActivity(simletId, sessionId, activityId, function(error, result) {
-				if (!error) {
-					onEditSessionActivities(sessionId);
+			Simva.deleteActivity(simletId, sessionId, activityId, function(response) {
+				if (response.status !== 200) {
+					$.toast({
+						heading: `<%- t('activities.delete.error_toast.heading', { ns : 'activities', activity : '${activityName}', session: '${sessionName}' }) %>`,
+						text: response.responseJSON ? response.responseJSON.message : response.message || response,
+						position: 'top-right',
+						icon: 'error',
+						stack: false
+					});
+					return;
 				}
+				onEditSessionActivities(sessionId);
 			});
 		}
 	}

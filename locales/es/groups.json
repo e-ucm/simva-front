@@ -90,7 +90,7 @@
         "participants.table.email.title": "Correo electrónico",
         "participants.table.role.title": "Rol",
         "participants.delete.confirm" : "ADVERTENCIA:\n¿Estás seguro de que quieres eliminar al participante '{{participant}}' del grupo '{{group}}'?\nEsta acción no se puede revertir y todos los datos de este participante se eliminarán de las sesiones y actividades.",
-            "participants.delete.error_toast.heading": "Error al eliminar al participante",
+            "participants.delete.error_toast.heading": "Error al eliminar el participante '{{participant}}' del grupo '{{group}}'",
         
 
     "groups.kebab.allocator.title": "Editar asignador",
@@ -119,6 +119,7 @@
     
     "groups.kebab.delete.title": "Eliminar",
         "groups.delete.confirm": "ADVERTENCIA:\n¿Estás seguro de que quieres eliminar el grupo '{{group}}' del SIMLET '{{SIMLET}}'?\nEsta acción no se puede revertir y todos los datos de sus participantes se eliminarán de las sesiones y actividades.",
+        "groups.delete.error_toast.heading": "Error al eliminar el grupo '{{group}}' del SIMLET '{{SIMLET}}'",
     
 
     "lti_platform.title": "Plataforma LTI",

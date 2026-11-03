@@ -47,8 +47,10 @@
             "scheduler.shlink.custom_slug.placeholder": "Nombre personalizado",
         "scheduler.shlink.generate.submit": "Generar",
         "scheduler.shlink.copy.message": "Copiar URL corta: {{shlink}}",
-        "scheduler.shlink.delete.title": "Borrar URL acortada",
-        "scheduler.shlink.delete.confirm": "ADVERTENCIA:\n¿Estás seguro de que quieres eliminar el enlace corto '{{shlink}}' del SIMLET '{{SIMLET}}'?\nPodrás generar una nueva URL acortada después.",
+        "scheduler.shlink.copy.confirm": "URL corta copiada: {{shlink}}",
+        "scheduler.shlink.delete.title": "Borrar URL corta",
+            "scheduler.shlink.delete.confirm": "ADVERTENCIA:\n¿Estás seguro de que quieres eliminar la URL corta '{{shlink}}' del SIMLET '{{SIMLET}}'?\nPodrás generar una nueva URL corta después.",
+            "scheduler.shlink.delete.error_toast.heading": "Error al eliminar la URL corta del SIMLET '{{SIMLET}}'",
         
     "simlets.kebab.export.title": "Exportar",
         
@@ -57,5 +59,6 @@
     "simlets.kebab.dearchive.title": "Desarchivar",
 
     "simlets.kebab.delete.title": "Eliminar",
-        "simlets.delete.confirm": "ADVERTENCIA:\n¿Estás seguro de que quieres eliminar el SIMLET '{{SIMLET}}'?\nEsta acción no se puede revertir y se borrarán todas las sesiones, actividades, grupos y datos."
+        "simlets.delete.confirm": "ADVERTENCIA:\n¿Estás seguro de que quieres eliminar el SIMLET '{{SIMLET}}'?\nEsta acción no se puede revertir y se borrarán todas las sesiones, actividades, grupos y datos.",
+        "simlets.delete.error_toast.heading": "Error al eliminar el SIMLET '{{SIMLET}}'"
 }

@@ -44,6 +44,7 @@
 
     "activities.kebab.delete.title": "Delete",
         "activities.delete.confirm": "WARNING:\nAre you sure you want to delete the activity '{{activity}}' of the session '{{session}}' from the SIMLET '{{SIMLET}}'?\nThis action can't be reverted and all the data of the activity will be deleted too.",
+        "activities.delete.error_toast.heading": "Error deleting the activity '{{activity}}' from the session '{{session}}'",
 
 
     "activities.default_activity.name": "Default Activity",

@@ -44,7 +44,7 @@
     
     "activities.kebab.delete.title": "Eliminar",
         "activities.delete.confirm": "ADVERTENCIA:\n¿Estás seguro de que quieres eliminar la actividad '{{activity}}' de la sesión '{{session}}' del SIMLET '{{SIMLET}}'?\nEsta acción no se puede revertir y se eliminarán todos los datos de la actividad.",
-
+        "activities.delete.error_toast.heading": "Error al eliminar la actividad '{{activity}}' de la sesión '{{session}}'",
 
     "activities.default_activity.name": "Actividad por defecto",
     "activities.default_activity.description": "Una actividad básica con estado de finalización y un lugar para guardar los resultados.",

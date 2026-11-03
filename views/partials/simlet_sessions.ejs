@@ -580,7 +580,13 @@
 		if (confirm(`<%- t('sessions.delete.confirm', { ns : 'sessions', session : '${sessionName}', SIMLET : '${simlet.simlet_name}' }) %>`)) {
 			Simva.deleteSession(simletId, sessionId, function(response) {
 				if (response.status !== 200) {
-					alert(response.responseJSON.message);
+					$.toast({
+						heading: `<%- t('sessions.delete.error_toast.heading', { ns : 'sessions', session : '${sessionName}', SIMLET : '${simlet.simlet_name}' }) %>`,
+						text: response.responseJSON ? response.responseJSON.message : response.message || response,
+						position: 'top-right',
+						icon: 'error',
+						stack: false
+					});
 					return;
 				}
 				onDeleteSession(sessionId);

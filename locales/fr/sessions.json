@@ -79,5 +79,6 @@
     "sessions.kebab.show_inactive_participants.title": "Masquer les participants inactifs",
 
     "sessions.kebab.delete.title": "Supprimer",
-        "sessions.delete.confirm": "Êtes-vous sûr de vouloir supprimer la session '{{session}}' de l'SIMLET '{{SIMLET}}'?\nToutes les activités et les données seront également supprimées"
+        "sessions.delete.confirm": "Êtes-vous sûr de vouloir supprimer la session '{{session}}' de l'SIMLET '{{SIMLET}}'?\nToutes les activités et les données seront également supprimées",
+        "activities.delete.error_toast.heading": ""
 }

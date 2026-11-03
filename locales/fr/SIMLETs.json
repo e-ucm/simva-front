@@ -47,8 +47,10 @@
             "scheduler.shlink.custom_slug.placeholder": "Slug personnalisé",
         "scheduler.shlink.generate.submit": "Générer",
         "scheduler.shlink.copy.message": "Copier l'URL courte : {{shlink}}",
+        "scheduler.shlink.copy.confirm": "",
         "scheduler.shlink.delete.title": "Supprimer l'URL du lien du planificateur",
-        "scheduler.shlink.delete.confirm": "Êtes-vous sûr de vouloir supprimer le lien court '{{shlink}}' du SIMLET '{{SIMLET}}'?",
+            "scheduler.shlink.delete.confirm": "Êtes-vous sûr de vouloir supprimer le lien court '{{shlink}}' du SIMLET '{{SIMLET}}'?",
+            "scheduler.shlink.delete.error_toast.heading": "",
         
     "simlets.kebab.export.title": "Exporter",
         
@@ -57,5 +59,6 @@
     "simlets.kebab.dearchive.title": "Désarchiver",
 
     "simlets.kebab.delete.title": "Supprimer",
-        "simlets.delete.confirm": "Êtes-vous sûr de vouloir supprimer la SIMLET '{{SIMLET}}'?\nToutes les sessions, activités et données seront également supprimées"
+        "simlets.delete.confirm": "Êtes-vous sûr de vouloir supprimer la SIMLET '{{SIMLET}}'?\nToutes les sessions, activités et données seront également supprimées",
+        "simlets.delete.error_toast.heading": ""
 }
