@@ -10,37 +10,38 @@ const includeMenu = typeof withMenu !== 'undefined' && withMenu;
 <!DOCTYPE html>
 <html>
 <head>
-	<!-- express-ejs-extend doesn't support extend with data object as the second argument, so declare them as variables in scope -->
 	<% 
-		includeSSEManager = 'undefined'; 
-		includeSimvaBase = 'undefined'; 
-		includeTMonApi = 'undefined'; 
-		includeUserToken = 'undefined'; 
+		let layoutheadAssetsParams = { } 
+		let layoutScriptParams = { } 
 	%>
 
-	<!-- Don't include the SSE when logged out -->
+	<!-- Don't include the SSE in the layout_head_assets partial when logged out -->
 	<% if (!loggedIn) { %>
-		<% includeSSEManager = false; %>
+		<% layoutheadAssetsParams.includeSSEManager = false; %>
 
 	<!-- When logged in (Device auth, with menu, with menu and SSE) -->
 	<% } else { %>
-		<!-- Always include simvaBase -->
-		<% includeSimvaBase = true; %>
+		<!-- Always include simvaBase in the layout_common_script partial -->
+		<% layoutScriptParams.includeSimvaBase = true; %>
 
-		<!-- When outside the device auth page (with menu, with menu and SSE), 
-		 always include userToken and include the SSEManager only if stated -->
+		<!-- When outside the device auth page (with menu, with menu and SSE) -->
 		<% if (!deviceAuth) { %>
-			<% 
-				includeUserToken = true;
-				includeSSEManager = includeSSE; 
+			<%
+				// Always include userToken in the layout_common_script partial
+				layoutScriptParams.includeUserToken = true;
+
+				// Only if stated, include the SSE in the layout_head_assets partial and in the 
+				// layout_common_script partial and the TMonApi in the layout_common_script partial
+				layoutheadAssetsParams.includeSSEManager = includeSSE;
+				layoutScriptParams.includeSSEManager = includeSSE;
+				layoutScriptParams.includeTMonApi = includeSSE;
 			%>
 		<% } %>
-
 	<% } %>
 
 	<!-- Include the partials of the head assets and common scripts (the previous declared variables will be used inside these partials) -->
-	<%- include('partials/layout_head_assets') %>
-	<%- include('partials/layout_common_script') %>
+	<%- include('partials/layout_head_assets', layoutheadAssetsParams) %>
+	<%- include('partials/layout_common_script', layoutScriptParams) %>
 	
 	<!-- Extra script for  the device auth page -->
 	<% if (deviceAuth) { %>
@@ -101,8 +102,6 @@ const includeMenu = typeof withMenu !== 'undefined' && withMenu;
 				<%- content %>
 			</div>
 		<% } %>
-		
 	<% } %>
-
 </body>
 </html>
