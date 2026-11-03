@@ -89,10 +89,8 @@ router.get('/about', function (req, res, next) {
         res.render('about', {
             config: config,
             user: isAuthenticated ? req.session.user : undefined,
-            layoutTemplate: isAuthenticated ? 'layout_with_menu_and_sse' : 'layout_logout',
             t: req.t,
             aboutContent: parsedHmtl,
-            // md: localizedMd
         });
 
     });

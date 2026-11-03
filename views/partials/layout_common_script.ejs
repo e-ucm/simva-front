@@ -29,7 +29,7 @@
 		getUserToken();
 	<% } %>
 
-	<% if (typeof includeSSE !== 'undefined' && includeSSE) { %>
+	<% if (typeof includeSSEManager !== 'undefined' && includeSSEManager) { %>
 		Simva.getEventsPresignedUrl(function(error, result){
 			if(!error) {
 				const presignedUrl = result.url;

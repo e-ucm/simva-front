@@ -1,6 +1,6 @@
 <%# views/home.ejs %>
  
-<% extend('layout_with_menu_and_sse') %>
+<% extend('layout', { isLoggedIn: true, withDeviceAuth: false, withSSE: true, withMenu: true }) %>
 
 <div class="card">
 	<h1><%= t('home.title', { ns: 'home' }) %></h1>

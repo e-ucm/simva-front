@@ -1,6 +1,7 @@
 <%# views/study_view.ejs %>
  
-<% extend('layout_with_menu') %>
+<script src="/src/lib/SSEClientManager.js"></script>
+<% extend('layout', { isLoggedIn: true, withDeviceAuth: false, withSSE: false,  withMenu: true }) %>
 
 <!-- Top part of the view, which includes the SIMLET name and the 3-dot menu button -->
 <div class="simletTop">

@@ -1,6 +1,6 @@
 <%# views/login.ejs %>
  
-<% extend('layout_logout') %>
+<% extend('layout', { isLoggedIn: false }) %>
 
 <iframe id="sso_connect" class="content_filled" src="/users/ssoconnect">
 </iframe>

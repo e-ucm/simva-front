@@ -1,8 +1,8 @@
 <%# views/about.ejs %>
 
-<% extend(layoutTemplate || 'layout_logout') %>
-
 <% if (!user) { %>
+	<% extend('layout', { isLoggedIn: false }) %>
+
 	<!-- The logout layout doesn't include the container section -->
 	<div class="content">
 		<div class="card aboutPage">
@@ -10,6 +10,8 @@
 		</div>
 	</div>
 <% } else { %>
+	<% extend('layout', { isLoggedIn: true, withDeviceAuth: false, withSSE: true, withMenu: true }) %>
+
 	<div class="card aboutPage">
 		<%- aboutContent %>
 	</div>

@@ -20,13 +20,15 @@ module.exports = function(auth, redirectToLogin, config){
       req.session.intendedUrl = `/scheduler/${studyId}/device`;
       return res.redirect(`/users/openidscheduler?study=${studyId}`);
     }
-    res.render('layout_device_auth', {
+    res.render('layout', {
         config: config,
         user: req.session.user,
         study: studyId,
         authMethod: config.sso.authMethod || '',
         usercode: req.query.usercode || '',
-        t : req.t
+        t : req.t,
+        isLoggedIn: true,
+        withDeviceAuth: true
     });
   });
 

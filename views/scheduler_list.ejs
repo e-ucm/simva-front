@@ -1,4 +1,4 @@
-<% extend('layout_with_menu_and_sse') %>
+<% extend('layout', { isLoggedIn: true, withDeviceAuth: false, withSSE: true, withMenu: true }) %>
 
 <h1><%= t('scheduler.title', { ns : 'SIMLETs' }) %></h1>
 

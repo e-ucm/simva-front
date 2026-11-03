@@ -3,8 +3,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<%- include('partials/layout_head_assets') %>
-	<%- include('partials/layout_common_script', { includeSimvaBase: true }) %>
+	<%- include('partials/layout_head_assets', { includeSSEManager: true}) %>
+	<%- include('partials/layout_common_script', { includeSimvaBase: true, includeUserToken: false, includeSSEManager: false }) %>
 	<script type="text/javascript">
 		if(true) {
 			Simva.getScheduleEventsPresignedUrl('<%= study %>', function(error, result){
