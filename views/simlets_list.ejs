@@ -72,6 +72,13 @@ let partialsResources = { }
 <script type="text/javascript">
 	const ARCHIVED = "<%= archived %>" === "true";
 
+	if (ARCHIVED) {
+		$("#navbar_archived_simlets").addClass("selected");
+	}
+	else {
+		$("#navbar_active_simlets").addClass("selected");
+	}
+
 	const SIMLET_DATA_ID_KEY = "simletId"
 	const SIMLET_DATA_NAME_KEY = "simletName"
 	const SIMLET_DATA_DESCRIPTION_KEY = "simletDescription"

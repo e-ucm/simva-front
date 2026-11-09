@@ -19,12 +19,12 @@ const includeMenu = typeof withMenu !== 'undefined' && withMenu;
 	<% if (!loggedIn) { %>
 		<% layoutheadAssetsParams.includeSSEManager = false; %>
 
-	<!-- When logged in (Device auth, with menu, with menu and SSE) -->
+	<!-- When logged in (Device auth, with sidebar, with sidebar and SSE) -->
 	<% } else { %>
 		<!-- Always include simvaBase in the layout_common_script partial -->
 		<% layoutScriptParams.includeSimvaBase = true; %>
 
-		<!-- When outside the device auth page (with menu, with menu and SSE) -->
+		<!-- When outside the device auth page (with sidebar, with sidebar and SSE) -->
 		<% if (!deviceAuth) { %>
 			<%
 				// Always include userToken in the layout_common_script partial
@@ -71,7 +71,7 @@ const includeMenu = typeof withMenu !== 'undefined' && withMenu;
 </head>
 
 <!-- Add the black class only on the device auth page -->
-<body class="<%= deviceAuth ? ' black' : '' %>">
+<body <%= deviceAuth ? 'class="black"' : '' %>>
 	<!-- Always include the header -->
 	<%- include('partials/header', { isLoggedIn: loggedIn }) %>
 	
@@ -79,7 +79,7 @@ const includeMenu = typeof withMenu !== 'undefined' && withMenu;
 	<% if (!loggedIn) { %>
 		<%- content %>
 
-	<!-- When logged in (Device auth, with menu, with menu and SSE) -->
+	<!-- When logged in (Device auth, with sidebar, with sidebar and SSE) -->
 	<% } else { %>
 		<!-- On the device auth page, only include an iframe with the login page -->
 		<% if (deviceAuth) { %>
@@ -87,20 +87,20 @@ const includeMenu = typeof withMenu !== 'undefined' && withMenu;
 				<iframe id="sso_device" class="content_filled" src="<%= config.sso.deviceUrl %>?user_code=<%= usercode %>"></iframe>
 			</div>
 		
-		<!-- When outside the device auth page (with menu, with menu and SSE) -->
+		<!-- When outside the device auth page (with sidebar, with sidebar and SSE) -->
 		<% } else { %>
-			<!-- Always include the menu -->
-			<%- include('partials/menu_main') %>
+			<!-- Always include the sidebar -->
+			<%- include('partials/sidebar') %>
 
 			<!-- If including the SSE, include an iframe outside of the content -->
 			<% if (includeSSE) { %>
 				<%- include('partials/iframe') %>
 			<% } %>
 		
-			<div class="content">
+			<main class="content">
 				<%- include('partials/iframe') %>
 				<%- content %>
-			</div>
+			</main>
 		<% } %>
 	<% } %>
 </body>

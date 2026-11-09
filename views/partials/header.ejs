@@ -6,94 +6,106 @@ const schedulerTestMode = typeof testMode !== 'undefined' && testMode;
 
 <div class="header<%= schedulerMode ? ' black' : '' %>" <%= !loggedIn ? 'id=logout_header' : '' %>>
     <div class="left">
-        <select id="language-dropdown" style="margin-right: 15px;" onchange="changeLanguage()">
-        </select>
-		<img class="logo" src="/images/logo.png">
+		<!-- In regular view, show the SIMVA title and make it so clicking it goes to the main page -->
+		<% if (!schedulerMode) { %>
+			<a href="/">
+				<img src="/images/logo.png">
+				<span><%= t('simva.title', { ns: 'commons' }) %></span>
+			</a>
 
-        <!-- In scheduler, show the current activity name instead of the SIMVA title -->
-		<span style="margin: 10px; white-space: nowrap;">
-            <%= schedulerMode ? t('scheduler.current', { ns : 'SIMLETs' }) : t('simva.title', { ns: 'commons' }) %>
-        </span>
-        <% if (schedulerMode) { %>
-            <span id="current_activity_name"></span>
+		<!-- In scheduler view, don't make the title clickable and show the current activity name instead -->
+		<% } else { %>
+			<img class="logo" src="/images/logo.png">
+			<span style="margin: 0.5rem; white-space: nowrap;">
+				<%= t('scheduler.current', { ns : 'SIMLETs' }) %>
+			</span>
+			<span id="current_activity_name"></span>
         <% } %>
     </div>
 
     <div class="right">
-        <ul>
-            <!-- When logged out, show the about, e-ucm and login options -->
-            <% if (!loggedIn) { %>
-            <li>
-				<a href="/about">
-					<img src="/images/icons/information.png"> <%= t('about.title', { ns : 'about'}) %>
-				</a>
-			</li>
-			<li>
-				<a href="https://www.e-ucm.es/es/people/" target="_blank" rel="noopener noreferrer">
-					<img src="/images/icons/eucm_icon.ico"> <%= t('header.contact.title', { ns : 'commons'}) %>
-				</a>
-			</li>
-			<li>
-				<a class="login" href="/users/login">
-					<img src="/images/icons/power-button-off.png" style="filter: invert(100%);"> <%= t('header.login.title', { ns: 'commons' }) %>
-				</a>
-			</li>
-            <!-- When logged in, -->
-            <% } else { %>
-                <!-- While in scheduler mode, show the refresh and complete activity buttons -->
-                <% if (schedulerMode) { %>
-                    <li>
-                        <a id="refresh" style="cursor: pointer;" onclick="location.reload()">
-                            <img src="/images/icons/undo.png" style="filter: invert(100%);"> <%= t('scheduler.refresh', { ns : 'SIMLETs' }) %>
-                        </a>
-                    </li>
-                    
-                    <li id="complete_activity" style="display: none">
-                        <a style="cursor: pointer;" onclick="completeActivity()">
-                            <img src="/images/icons/check.png" style="filter: invert(100%);"> <%= t('scheduler.complete', { ns : 'SIMLETs' }) %>
-                        </a>
-                    </li>
-                    
-                    <!-- Only if not running the scheduler mode as a tester, show the exit SIMLET button -->
-                    <% if(!schedulerTestMode) { %>
-                    <li>
-                        <a href="/scheduler/">
-                            <img src="/images/icons/back.png" style="filter: invert(100%);"> <%= t('scheduler.exit', { ns : 'SIMLETs' }) %></span>
-                        </a>
-                    </li>
-                    <% } %>
+		<img src="/images/icons/menus.png" id="navbar-open-button" style="display: none;">
 
-                    <!-- If running the scheduler mode as a tester (in a floating iframe), add margin to the username so it doesn't overlap with the close button -->
-                    <li <%= schedulerTestMode ? 'style=margin-right:35px;' : '' %>>
-                        <a>
-                            <img src="/images/icons/user.png" style="filter: invert(100%);"> <span id="username" style="padding: 0px;">
-                        </a>
-                    </li>
-                <!-- Outside of scheduler mode, show the e-ucm option and the user name with the option to open the account config -->
-                <% } else { %>
-                <li>
-                    <a href="https://www.e-ucm.es/es/people/" target="_blank" rel="noopener noreferrer">
-                        <img src="/images/icons/eucm_icon.ico"> <%= t('header.contact.title', { ns: 'commons' }) %>
-                    </a>
-                </li>
-                <li>
-                    <a id="account_username" href="<%= config.sso.accountUrl%>">
-                        <img src="/images/icons/user.png"> <span id="username" style="padding: 0px;">
-                    </a>
-                </li>
-                <% } %>
+		<nav>
+			<img src="/images/icons/close.png" id="navbar-close-button" style="display: none;">
+			<select id="language-dropdown" style="margin-right: 0.5rem;" onchange="changeLanguage()"></select>
+			<ul>
+				<!-- When logged out, show the about, e-ucm and login options -->
+				<% if (!loggedIn) { %>
+				<li>
+					<a href="/about">
+						<img src="/images/icons/information.png"> <%= t('about.title', { ns : 'about'}) %>
+					</a>
+				</li>
+				<li>
+					<a href="https://www.e-ucm.es/es/people/" target="_blank" rel="noopener noreferrer">
+						<img src="/images/icons/eucm_icon.ico"> <%= t('header.contact.title', { ns : 'commons'}) %>
+					</a>
+				</li>
+				<li>
+					<a class="login" href="/users/login">
+						<img src="/images/icons/power-button-off.png" style="filter: invert(100%);"> <%= t('header.login.title', { ns: 'commons' }) %>
+					</a>
+				</li>
+				<!-- When logged in, -->
+				<% } else { %>
+					<!-- While in scheduler mode, show the refresh and complete activity buttons -->
+					<% if (schedulerMode) { %>
+						<li>
+							<a id="refresh" style="cursor: pointer;" onclick="location.reload()">
+								<img src="/images/icons/undo.png" style="filter: invert(100%);"> <%= t('scheduler.refresh', { ns : 'SIMLETs' }) %>
+							</a>
+						</li>
+						
+						<li id="complete_activity" style="display: none">
+							<a style="cursor: pointer;" onclick="completeActivity()">
+								<img src="/images/icons/check.png" style="filter: invert(100%);"> <%= t('scheduler.complete', { ns : 'SIMLETs' }) %>
+							</a>
+						</li>
+						
+						<!-- Only if not running the scheduler mode as a tester, show the exit SIMLET button -->
+						<% if(!schedulerTestMode) { %>
+						<li>
+							<a href="/scheduler/">
+								<img src="/images/icons/back.png" style="filter: invert(100%);"> <%= t('scheduler.exit', { ns : 'SIMLETs' }) %></span>
+							</a>
+						</li>
+						<% } %>
+	
+						<!-- If running the scheduler mode as a tester (in a floating iframe), add margin to the username so it doesn't overlap with the close button -->
+						<li <%= schedulerTestMode ? 'style=margin-right:35px;' : '' %>>
+							<a>
+								<img src="/images/icons/user.png" style="filter: invert(100%);"> <span id="username" style="padding: 0px;">
+							</a>
+						</li>
+					<!-- Outside of scheduler mode, show the e-ucm option and the user name with the option to open the account config -->
+					<% } else { %>
+					<li>
+						<a href="https://www.e-ucm.es/es/people/" target="_blank" rel="noopener noreferrer">
+							<img src="/images/icons/eucm_icon.ico"> <%= t('header.contact.title', { ns: 'commons' }) %>
+						</a>
+					</li>
+					<li>
+						<a id="account_username" href="<%= config.sso.accountUrl%>">
+							<img src="/images/icons/user.png"> <span id="username" style="padding: 0px;">
+						</a>
+					</li>
+					<% } %>
+	
+					<!-- Only if not running the scheduler mode as a tester, show the logout button -->
+					<% if (!schedulerTestMode) { %>
+					<li>
+						<a class="logout" href="/users/logout">
+							<img src="/images/icons/power-button-off.png" style="filter: invert(100%);"> <%= t('header.logout.title', { ns: 'commons' }) %>
+						</a>
+					</li>
+					<% } %>
+	
+				<% } %>
+			</ul>
+		</nav>
 
-                <!-- Only if not running the scheduler mode as a tester, show the logout button -->
-                <% if (!schedulerTestMode) { %>
-                <li>
-                    <a class="logout" href="/users/logout">
-                        <img src="/images/icons/power-button-off.png" style="filter: invert(100%);"> <%= t('header.logout.title', { ns: 'commons' }) %>
-                    </a>
-                </li>
-                <% } %>
-
-            <% } %>
-        </ul>
+		<div id="navbar-backdrop" class="backdrop" style="display: none;"></div>
 
     </div>
 </div>
@@ -186,4 +198,21 @@ const schedulerTestMode = typeof testMode !== 'undefined' && testMode;
 		});
 	}
 
+</script>
+
+<!-- Navbar -->
+<script>
+	$("#navbar-open-button").on("click", function() {
+		$(this).siblings("nav").addClass("shown");
+		$(this).siblings(".backdrop").show();
+	});
+	$("#navbar-close-button").on("click", function() {
+		$(this).closest("nav").removeClass("shown");
+		$(this).closest(".right").find(".backdrop").hide();
+	});
+
+	$("#navbar-backdrop").on("click", function() {
+		$(this).siblings("nav").removeClass("shown");
+		$(this).hide();
+	});
 </script>

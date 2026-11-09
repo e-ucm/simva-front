@@ -5,6 +5,7 @@
 <head>
 	<%- include('partials/layout_head_assets', { includeSSEManager: true}) %>
 	<%- include('partials/layout_common_script', { includeSimvaBase: true, includeUserToken: false, includeSSEManager: false }) %>
+	
 	<script type="text/javascript">
 		if(true) {
 			Simva.getScheduleEventsPresignedUrl('<%= study %>', function(error, result){
@@ -72,7 +73,6 @@
 		}
 	</script>
 	<script type="text/javascript">
-		//
 		let studyId = "<%= study %>";
 		let username = "<%= user.data.username %>";
 		let currentUserId = null;
@@ -299,6 +299,7 @@
 		}
 	</script>
 </head>
+
 <body class="black">
 	<%- include('partials/header', { isLoggedIn: true, isScheduler: true }) %>
 	
@@ -306,9 +307,7 @@
 		
 	</iframe>
 	<div class="underlay">
-		<div class="centered">
-			<div class="lds-roller white"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-		</div>
+		<div class="lds-roller white"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 	</div>
 </body>
 </html>

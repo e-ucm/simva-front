@@ -28,6 +28,7 @@
 
 
 <script>
+	$("#navbar_about").addClass("selected");
 	
 	const MIN_SCROLL = 300;
 
@@ -38,10 +39,6 @@
 
 		// Make the links in the credits section open in a new tab
 		$(".aboutPage #credits-section").nextAll("ul").find("a").attr("target", "_blank").attr("rel", "noopener noreferrer");
-
-		if ($(".menu").length <= 0) {
-			$(".content").css({ "padding-left": "10px" });
-		}
 	});
 
 	

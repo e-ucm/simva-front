@@ -1,133 +1,213 @@
-html { --themeOrangeColor: #ff8f22; scroll-behavior: smooth; }
-* { margin: 0px; padding: 0px; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box }
-html, body { font-family: sans-serif; margin: 0; height: 100%; width: 100% }
-body, div, p, h1, h2, h3, ul, li, form { margin: 0px; padding: 0px; }
-body {
-	background-color: #fff6ec;
-	padding-bottom: 200px; /* Adjust based on button size and position */
-	margin: 0; /* Ensure no default margin interferes */
+:root { 
+	--color-primary: #ff8f22;
+	--color-background: #fff6ec;
+	--color-font: black;
+
+	--color-primary_scheduler: black;
+	--color-background_scheduler: #171717;
+
+	--color-sidebar: #332d26;
+	--color-sidebar_hover: #50483e;
+	--color-sidebar_selected: #62594f;
+	--color-font_sidebar: white;
 }
-body.black { background-color: #171717; }
+* { margin: 0; padding: 0; box-sizing: border-box }
+html { 
+	height: 100dvh; /* For devices where the tabs get shown/hidden when scrolling on the page */
+	height: 100vh; 
+	width: 100vw; 
+	scroll-behavior: smooth; 
+	font-family: sans-serif;
+	color: var(--color-font);
+}
+body { 
+	background-color: var(--color-background);
+	&.black { background-color: var(--color-background_scheduler); }
+
+	display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+    "header header"
+    "sidebar content";
+}
 ul, ol, dl { list-style: none }
-a, img, input, select, textarea, fieldset { border: 0; outline: 0; font-family: sans-serif; }
-img { border: 0; user-drag: none; -moz-user-drag: none; -webkit-user-drag: none; user-select: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none }
+a, img, input, select, textarea, fieldset { border: 0; outline: 0; }
+img { -moz-user-drag: none; -webkit-user-drag: none; user-select: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none }
 hr { margin: 10px 0 0; border: 1px solid #000 }
 thead { display: table-header-group; }
 .hidden { display: none; }
 
 /* Input elements */
 input[type="text"], input[type="email"], input[type="password"], input[type="file"], input[type="date"], input[type="time"], input[type="number"], select, textarea { padding: 6px; font-size: 15px; border: 1px solid black; }
-.button, 		input[type="submit"], 		 input[type="button"] 		 { width: auto; border: 0; padding: 6px; background: #f0913f; font-size: 15px; color: #fff; cursor: pointer; }
-.button.violet, input[type="submit"].violet, input[type="button"].violet { background: #6b5faa }
-.button.blue, 	input[type="submit"].blue, 	 input[type="button"].blue 	 { background: #2b8eff }
-.button.green, 	input[type="submit"].green, input[type="button"].green { background: #52B846; }
-.button.red, 	input[type="submit"].red, 	 input[type="button"].red 	 { background: #f64e4e }
+textarea { resize: vertical; width: 100%; max-height: 5rem; }
+.button, input[type="submit"], input[type="button"] {
+	width: auto; border: 0; padding: 6px; background: #f0913f; font-size: 15px; color: #fff; cursor: pointer; 
+	&.green { background: #52B846; }
+	&.red { background: #f64e4e }
+}
 input[type="button"]:disabled { border: 1px solid lightgray; background: darkgray; color: gray; cursor: default; }
-textarea { 	resize: vertical; width: 100%; max-height: 5rem; }
 
 
-.login { background: #332d26; }
-.login #login_box, .login #register_box { width: 260px; background: #fff6ec; padding: 20px; display: inline-block; }
-.login #login_box img, .login #register_box img { width: 100% }
-.login #login_box form, .login #register_box form { margin: 4px 0 0 }
-.login #login_box input, .login #register_box form input { width: 100% }
-.login #login_box .small, .login #register_box .small { margin: 14px 0 0 }
-.login #error, .error { width: 100%; color: red; font-size: 14px; text-align: center; }
-.login .role_selector { text-align: left; margin-bottom: 10px; }
+.backdrop {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.5);
+	z-index: 0;
+}
 
+
+:root {
+    --header-height: 3rem;
+}
 .header {
-	display: flex;
+    grid-area: header;
+	
+	position:sticky;
+    top: 0;
+    z-index: 100;
+
+    display: flex;
+    align-items: center;
 	justify-content: space-between;
-	align-items: center;
 	flex-wrap: nowrap;
-	box-sizing: border-box;
 
-	gap: 15px;
-	width: 100%;
-	background-color: var(--themeOrangeColor);
-	height: 50px;
-	overflow-x: auto;
-	overflow-y: hidden;
-	box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.3);
-	padding: 10px;
-	position: fixed;
-	z-index: 100;
-}
-.header .left,
-.header .right {
-	display: inline-flex;
-	align-items: center;
-	flex-shrink: 0;
-	height: 100%;
-}
-.header.black { background-color: black; color: white; }
-.header a { text-decoration: none; color: black }
-.header.black a { color: white; }
-.header img { height: 30px; width: auto; }
-.header span { font-weight: bold; display: flex; align-items: center; }
-.header .right .logout, .header .right .login {
-	height: 30px;
-	background-color: black;
-	color: white;
-	padding: 5px;
-	padding-right: 10px;
-}
-.header.black .right .logout, .header.black .right .login {
-	background-color: white;
-	color: black;
-}
-.header.black .right .logout img { filter: none !important; }
-.header .right ul li {
-	display: inline-flex;
-	align-items: center;
-	height: 30px;
+    height: var(--header-height);
+    width: 100%;
+	padding: 0.5rem;
+    
+    background-color: var(--color-primary);
+	box-shadow: 0px 0px 0.3rem 0.15rem rgba(0, 0, 0, 0.3);
 	font-weight: bold;
-	padding-left: 10px;
-	margin-right: 5px;
-	border-left: 1px solid black;
+
+	* { 
+        display: flex;
+        align-items: center;
+		height: 100%;
+    }
+	a { text-decoration: none; color: black;}
+    img { height: 2rem; width: auto; margin-right: 0.5rem; }
+
+	.right {
+		margin-left: 1rem;
+		text-align: center; 
+		nav {
+			img { height: 1.5rem; width: auto; }
+			ul li {
+				padding-left: 0.5rem;
+				border-left: 1px solid black;
+			}
+			ul li:not(:last-child) { padding-right: 0.5rem; }
+			.logout, .login {
+				background-color: black;
+				color: white;
+				padding-right: 0.7rem;
+				padding-left: 0.5rem;
+			}
+		}
+	}
+	
+	&.black { 
+		background-color: var(--color-primary_scheduler);
+		color: white; 
+		a { color: white; }
+
+		#current_activity_name { 
+			overflow: hidden;
+			text-overflow: ellipsis;
+			overflow-wrap: anywhere; 
+		}
+		
+		.right {
+			nav {
+				background-color: var(--color-primary_scheduler);
+				.logout, .login {
+					background-color: white;
+					color: black;
+				}
+				.logout img { filter: none !important; }
+				ul li { border-left: 1px solid white; }
+			}
+			#navbar-open-button, #navbar-close-button { filter: invert(100%); }
+		}
+	}
 }
-.header.black .right ul li { border-left: 1px solid white; }
-.header .right ul li a {
-	display: inline-flex;
-	align-items: center;
+
+.sidebar { 
+    grid-area: sidebar;
+
+	position: sticky;
+    top: var(--header-height);
+    align-self: start;
+	
+	width: 175px;
+    height: calc(100dvh - var(--header-height));
+    height: calc(100vh - var(--header-height));
+
+    background-color: var(--color-sidebar);
+	color: var(--color-font_sidebar); 
+	
+	padding: 1rem;
+	padding-top: 0;
+
+	* { 
+        display: flex;
+        align-items: center;
+		width: 100%;
+    }
+	a { text-decoration: none; color: var(--color-font_sidebar); }
+	ul {
+		flex-direction: column;
+		li {
+			padding: 0.5rem;
+			height: 4rem;
+			border-bottom: 1px solid white; 
+
+			img { width: 2rem; height: auto; margin-right: 1rem; }
+			span { text-align: left; }
+		}
+		li:hover { 
+			background-color: var(--color-sidebar_hover); 
+			transition: 100ms;
+		}
+		li.selected { background-color: var(--color-sidebar_selected); }
+	}
 }
-.header .right ul li img {
-	height: 20px;
-	width: 20px;
-	margin-right: 5px;
+
+
+/* Activity container on the scheduler view */
+.content_filled, #activity_content, .underlay { 
+	position: absolute; 
+	z-index: 1; 
+	
+	margin-top: var(--header-height);
+	height: calc(100dvh - var(--header-height));
+    height: calc(100vh - var(--header-height)); 
+	width: 100%;
 }
-
-.header_content { width: 100%; height: 100%; padding-top: 50px; position: absolute; z-index: 1; }
-.content_filled { width: 100%; height: 100%; position: absolute; z-index: 1; }
-#activity_content { width: 100%; height: 100%; padding-top: 50px; position: absolute; z-index: 1; }
-.underlay { position: absolute; top: 0px; left: 0px; z-index: 0; display: table; width: 100%; height: 100%; }
-.underlay .centered { display: table-cell; width: 100%; height: 100%; text-align: center; vertical-align: middle; }
-
-.menu { background-color: #332d26; color: white; width: 175px; height: 100%; position: fixed; top: 50px; padding: 10px; }
-.menu li { width: 100%; border-bottom: 1px solid white; padding: 10px; cursor: pointer; }
-.menu li a { display: table; color: white; text-decoration: none; padding: 0px; margin: 0px; border: 0px; }
-.menu li span { display: table-cell; vertical-align: middle; text-align: left; }
-.menu li span:first-child { width: 50px; }
-.menu li img { width: 30px; height: auto; }
+.underlay { z-index: 0; display: flex; justify-content: center; align-items: center; }
 
 
-.content { padding: 60px 10px 10px 185px; }
-.content.floating { padding-bottom: 80px ;}
+.content {
+	padding: 1rem;
+	
+	&.floating { padding-bottom: 4rem ;}
+	
+	h1 { margin-bottom: 5px; }
+	p { padding: 10px; }
+	ul { padding: 10px; list-style: disc inside; }
+	li { padding: 10px; }
 
-.content h1 { margin-bottom: 5px; }
-.content p { padding: 10px; }
-.content ul { padding: 10px; list-style: square inside; }
-.content li { padding: 10px; }
-.content .floating_buttons {
-	position: fixed;
-	text-align: right;
-	bottom: 20px;
-	right: 20px;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	white-space: nowrap;
+	.floating_buttons {
+		position: fixed;
+		text-align: right;
+		bottom: 20px;
+		right: 20px;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+		white-space: nowrap;
+	}
 }
 
 
@@ -135,7 +215,7 @@ textarea { 	resize: vertical; width: 100%; max-height: 5rem; }
 	/* display: inline-block; */
 	width: 80px;
 	height: 80px;
-	background-color: var(--themeOrangeColor);
+	background-color: var(--color-primary);
 	font-size: 55px;
 	text-align: center;
 	margin-left: 10px;
@@ -241,13 +321,6 @@ textarea { 	resize: vertical; width: 100%; max-height: 5rem; }
 	align-items: center;
 }
 .iframe_floating.shown { display: flex !important; }
-
-.iframe_floating .iframe_backdrop {
-	position: fixed;
-	inset: 0;
-	background: rgba(0, 0, 0, 0.5);
-	z-index: 0;
-}
 
 .iframe_floating .floater {
 	position: relative;
@@ -460,7 +533,7 @@ form .role_selector input[type="radio"]:checked+label { font-weight: bold; backg
 		border-radius: 5px;
 		border: 1px solid black;
 		
-		background-color: var(--themeOrangeColor);
+		background-color: var(--color-primary);
 
 		span {
 			margin-left: 5px;
@@ -1149,7 +1222,6 @@ input[type="button"].openLimeSurveyButton {
 .activitySettigsCheckbox input[type="checkbox"] { width: max-content; }
 
 
-
 /* Groups + allocators */
 
 .groupTop .expandButton {
@@ -1207,27 +1279,13 @@ input[type="button"].openLimeSurveyButton {
 #change_allocator_form label .description { display: inline-block; font-size: 16px; font-style: italic; width: 100%; } */
 
 
-/* Styles for vertical/portrait display */
-@media (orientation: portrait) {
-	/* Make the left menu width as big as just the icons and hide the text */
-	.menu { width: max-content; }
-	.menu li span:first-child { width: max-content; }
-	.menu li span:last-child { display: none; }
-	.content { padding: 60px 10px 10px 83px; }
-	
-	/* Make the activities cards almost as big as its container */
-	.content .test .activities .activity {
-		min-width: 95%;
-		max-width: 95%;
-	}
-}
 
 #pdf_printable { display: none; }
 @page { size: A4; margin: 4mm 4mm 4mm 4mm; }
 @media print {
 	body { padding:0px; font-family: serif; background-color: white; }
 	.content { padding: 10px; width: 210mm; height: 297mm; }
-	.header, .menu, .content .simletTop, #simlet_tags, .sessionTagList, #study_tabs { display: none; }
+	.header, .sidebar, .content .simletTop, #simlet_tags, .sessionTagList, #study_tabs { display: none; }
 
 	#pdf_printable { 
 		display: contents;
@@ -1240,3 +1298,88 @@ input[type="button"].openLimeSurveyButton {
 	#pdf_printable table, #pdf_printable th, #pdf_printable td { padding: 5px; border: solid 1px black; }
 
 }
+
+
+/* Vertical/portrait display */
+@media (orientation: portrait) {
+	.header {
+		/* Hide the navbar elements and show the button to open the side menu */
+		.right {
+			nav {
+				/* Show the side menu fixed at the right side occupying the entire height */
+				position: fixed;
+				top: 0;
+				right: -100%; /* Hide it by default on the far right of the viewport */
+
+				/* When shown, place it back on the right part with an animation */
+				&.shown { right: 0; }
+				transition: right 300ms ease-out;
+				
+				display: flex;
+				flex-direction: column;
+				gap: 2rem;
+				z-index: 100;
+				
+				height: 100dvh;
+				height: 100vh;
+				width: min(15em, 100%);
+		
+				background-color: var(--color-primary);
+				box-shadow: 0px 0px 0.5rem 0.2rem rgba(0, 0, 0, 0.5);
+		
+				padding: 1.5rem;
+		
+				* { height: max-content; }
+				#navbar-close-button { 
+					margin-left: 0; 
+					margin-right: auto; 
+				}
+				ul { flex-direction: column;  }
+				ul li {
+					padding: 0.5rem;
+					border-left: 0;
+				}
+				ul li:not(:last-child) { padding-right: 0.5rem; }
+				.logout, .login {
+					padding: 0.5rem;
+					padding-right: 0.7rem;
+					padding-left: 0.5rem;
+				}
+			}
+
+			#navbar-open-button, #navbar-close-button { 
+				display: block !important;
+				height: 1.3rem; 
+				cursor: pointer;
+			}
+		}
+		
+		&.black {
+			.right nav ul li { border-left: 0; }
+		}
+	}
+
+	/* Make the sidebar width as big as just the icons and hide the text */
+	.sidebar { 
+		width: max-content; 
+		padding: 0.5rem;
+		ul {
+			li span { display: none; }
+			li img { margin: 0; }
+		}
+	}
+
+	/* Make the activities cards almost as big as its container */
+	.content .test .activities .activity {
+		min-width: 95%;
+		max-width: 95%;
+	}
+}
+
+/* Vertical/portrait display (small screens) */
+@media screen and (max-width:320px) {
+	/* Make the side navbar occupy the entire screen */
+	.header .right nav { width: 100% };
+
+}
+

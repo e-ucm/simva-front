@@ -1,36 +1,36 @@
-<div class="menu">
+<nav class="sidebar">
 	<ul>
-		<li>
+		<li id="navbar_home">
 			<a href="/" title="<%= t('home.description', {ns: 'home' }) %>">
-				<span><img src="/images/icons/home.png" style="filter: invert(100%);"></span>
+				<img src="/images/icons/home.png" style="filter: invert(100%);">
 				<span><%= t('home.title', {ns: 'home' }) %></span>
 			</a>
 		</li>
 		<% if(user.data.role === 'teacher' || user.data.role === 'administrator') { %>
-			<li>
+			<li id="navbar_active_simlets">
 				<a href="/simlets/" title="<%= t('simlets.active.description', { ns : 'SIMLETs' }) %>">
-					<span><img src="/images/icons/study.png" style="filter: invert(100%);"></span>
+					<img src="/images/icons/study.png" style="filter: invert(100%);">
 					<span><%= t('simlets.active.title', { ns : 'SIMLETs' }) %></span>
 				</a>
 			</li>
 			<% if(config.activities.enabled == 'true') {  %>
 				<li>
 					<a href="/activities/" title="<%= t('description', { ns : 'activities' }) %>">
-						<span><img src="/images/icons/survey.png"></span>
+						<img src="/images/icons/survey.png">
 						<span><%= t('title', { ns : 'activities' }) %></span>
 					</a>
 				</li>  
 			<% } %>
-			<li>
+			<li id="navbar_archived_simlets">
 				<a href="/archived/" title="<%= t('simlets.archived.description', { ns : 'SIMLETs' }) %>">
-					<span><img src="/images/icons/documents.png" style="filter: invert(100%);"></span>
+					<img src="/images/icons/documents.png" style="filter: invert(100%);">
 					<span><%= t('simlets.archived.title', { ns : 'SIMLETs' }) %></span>
 				</a>
 			</li>
 		<% } %>
-		<li>
+		<li id="navbar_scheduler">
 			<a href="/scheduler/" title="<%= t('scheduler.description', { ns : 'SIMLETs' }) %>">
-				<span><img src="/images/icons/play-button-outline.png" style="filter: invert(100%);"></span>
+				<img src="/images/icons/play-button-outline.png" style="filter: invert(100%);">
 				<span><%= t('scheduler.title', { ns : 'SIMLETs' }) %></span>
 			</a>
 		</li>
@@ -38,17 +38,17 @@
 			<% if(config.lti.enabled == 'true'){ %>
 				<li>
 					<a href="/lti-platform/" title="<%= t('LTIPlatfrom') %>">
-						<span><img src="/images/icons/survey.png"></span>
+						<img src="/images/icons/survey.png">
 						<span><%= t('LTIPlatfrom') %></span>
 					</a>
 				</li>
 			<% } %>
 		<% } %>
-		<li>
+		<li id="navbar_about">
 			<a href="/about" title="<%= t('about.header_visitors.about.description', { ns : 'about'}) %>">
-				<span><img src="/images/icons/information.png" style="filter: invert(100%);"></span>
+				<img src="/images/icons/information.png" style="filter: invert(100%);">
 				<span><%= t('about.title', { ns : 'about'}) %></span>
 			</a>
 		</li>
 	</ul>
-</div>
+</nav>

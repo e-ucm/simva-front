@@ -364,6 +364,8 @@
 * [Information (Magnific) - Flaticon](https://www.flaticon.com/free-icon/information_1076745)
 * [User (Magnific) - Flaticon](https://www.flaticon.com/free-icon/user_747376)
 * [Power Button Off (Dave Gandy) - Flaticon](https://www.flaticon.com/free-icon/power-button-off_25706)
+* [Menus (See Icons) - Flaticon](https://www.flaticon.com/free-icon/menus_10486773)
+* [Close (Pixel perfect) - Flaticon](https://www.flaticon.com/free-icon/close_1828774)
 * [Documents (Magnific) - Flaticon](https://www.flaticon.com/free-icon/documents_86101)
 * [Play Button (abdul allib) - Flaticon](https://www.flaticon.com/free-icon/play-button_3874990)
 * [Magnifying Glass (Chanut) - Flaticon](https://www.flaticon.com/free-icon/magnifying-glass_151773)
