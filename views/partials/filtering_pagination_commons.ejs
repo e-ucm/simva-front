@@ -56,10 +56,12 @@ declared once, and that the document event delegate that blurs the select elemen
     const FILTERS_PAGINATION_DATA_KEY = "filteringPagination";
 
     $(document).on("click", function(e) {
-        // Force select elements of the filtering options to lose focus when clicking anywhere, 
-        // since they don't automatically lose focus after clicking anywhere else and they 
+        // Force select elements of the filtering options to lose focus when clicking anywhere 
+        // else, since they don't automatically lose focus after clicking anywhere else and they 
         // don't detect hovering until clicking outside again
-        $(".filtering select").blur();
+        if (!$(e.target).is("select")) {
+            $(".filtering select").blur();
+        }
     });
     
 </script>

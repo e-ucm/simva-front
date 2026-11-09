@@ -211,7 +211,7 @@ that hide the dropdown and that dispatch the window resize only get registered o
 	}
 	
 	// When clicking an option on the option list, call the onOptionClick of its MultiSelectDropdown instance
-	$(document).on("click", ".multiSelectDropdown .options li", (e) => {
+	$(document).on("click", ".multiSelectDropdown .options li", function(e) {
 		const multiSelect = $(e.target).closest(".multiSelect");
 		if (multiSelect && multiSelect.data()[MULTI_SELECT_DROPDOWN_DATA_KEY]) {
 			// Stop the event propagation to avoid closing the dropdown
