@@ -167,6 +167,21 @@
             return activity;
         }     
 
+        submitCreateActivityForm(form, errorbox) {
+            let activityInfo = this.getActivityInfoFromForm(form);
+
+			// If the activity info returns a promise, wait for it to complete before submitting the info 
+            if (typeof activityInfo.then === 'function') {
+				activityInfo.then((activity) => {
+					activityInfo = activity;
+					createActivity(activityInfo, errorbox);
+				});
+			}
+			else {
+				createActivity(activityInfo, errorbox);
+			}
+        }
+        
 
         // Functionality 
         

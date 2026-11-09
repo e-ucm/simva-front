@@ -147,68 +147,13 @@
 				return false;
 			}
 			
-			let activityInfo = painter.getActivityInfoFromForm(form);
-			const submitForm = () => {
-				// Creating new activity
-				if (form.editingActivityId == null || form.editingActivityId == "") {
-					const addActivity = function() {
-						Simva.addActivityToSession(simletId, currSessionId, activityInfo, function(error, result) {
-							Utils.toggleSubmit();
-							if (error) {
-								errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
-								return false;
-							}
-							Utils.toggleFormInFloating();
-							onEditSessionActivities(currSessionId);
-						});
-					}
-
-					// If the activity is a web activity with no url, show a message asking confirmation
-					const closestWebTab = $(this).find("[method='WEB']");
-					if (closestWebTab.length > 0 && closestWebTab.is(".selected") && (
-						(form.game_uri == "" || form.game_uri == null) && (form.uri == "" || form.uri == null))
-					) {
-						if (confirm(`<%- t('activities.new.web.no_url_message', { ns : 'activities' }) %>`)) {
-							addActivity();
-						}
-					}
-					else {
-						addActivity();
-					}
-				}
-				// Editing activity
-				else {
-					// Compare the previous activity info with the updated one (trimming the new activity 
-					// name before to check if the name will be the same after processing the string)
-					activityInfo.activity_name = Utils.trimString(activityInfo.activity_name);
-					if (JSON.stringify(prevActivityInfo) === JSON.stringify(activityInfo)) {
-						Utils.toggleSubmit();
-						errorbox.text("<%- t('forms.edit.error.no_changes', { ns : 'commons' }) %>");
-						return false;
-					}
-
-					Utils.toggleSubmit();
-					Simva.updateActivity(simletId, currSessionId, form.editingActivityId, activityInfo, function(error, result) {
-						Utils.toggleSubmit();
-						if (error) {
-							errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
-							return false;
-						}
-						Utils.toggleFormInFloating();
-						onEditSessionActivities(currSessionId);
-					});
-				}
+			// Creating new activity
+			if (form.editingActivityId == null || form.editingActivityId == "") {
+				painter.submitCreateActivityForm(form, errorbox);
 			}
-
-			// If the activity info returns a promise, wait for it to complete before submitting the info 
-			if (typeof activityInfo.then === 'function') {
-				activityInfo.then((activity) => {
-					activityInfo = activity;
-					submitForm();
-				});
-			}
+			// Editing activity
 			else {
-				submitForm();
+				painter.submitEditActivityForm(form, errorbox);
 			}
 			
 			return false;
@@ -501,6 +446,30 @@
 
 
 	// Functionality
+
+	const createActivity = function(activityInfo, errorbox) {
+		Simva.addActivityToSession(simletId, currSessionId, activityInfo, function(error, result) {
+			Utils.toggleSubmit();
+			if (error) {
+				errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+				return false;
+			}
+			Utils.toggleFormInFloating();
+			onEditSessionActivities(currSessionId);
+		});
+	}
+
+	const editActivity = function(activityId, activityInfo, errorbox) {
+		Simva.updateActivity(simletId, currSessionId, activityId, activityInfo, function(error, result) {
+			Utils.toggleSubmit();
+			if (error) {
+				errorbox.text(error.responseJSON ? error.responseJSON.message : error.message || error);
+				return false;
+			}
+			Utils.toggleFormInFloating();
+			onEditSessionActivities(currSessionId);
+		});
+	}
 	
     const deleteActivity = function(activityId, activityName, sessionId) {
 		let session = getSessionFromId(sessionId);

@@ -141,6 +141,22 @@
             return activity;
         }
         
+        submitCreateActivityForm(form, errorbox) {
+            // If the activity is a web activity with no url, show a message asking confirmation
+            const method = $('#gameplay_extra_form .tab.selected').attr('method');
+            if (method ==  "WEB" && (form.uri == "" || form.uri == null)) {
+                if (confirm(`<%- t('activities.new.web.no_url_message', { ns : 'activities' }) %>`)) {
+                    createActivity(this.getActivityInfoFromForm(form), errorbox);
+                }
+                else {
+                    Utils.toggleSubmit();
+                    return false;
+                }
+            }
+            else {
+                createActivity(this.getActivityInfoFromForm(form), errorbox);
+            }
+        }
 
         // Functionality
         
